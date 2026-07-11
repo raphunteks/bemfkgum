@@ -35,6 +35,7 @@
                 <button onclick="switchSection('kalender', this)"><span>📅</span> Agenda Kalender</button>
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
+                <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span>🧑‍💻</span> Developer Team</button>
                 <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Manajemen Header & Footer</button>
                 <button onclick="logout()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
             </nav>
@@ -64,7 +65,6 @@
                 </div>
                 
                 <label style="color:var(--accent-neon);">Visi Kabinet</label>
-                <!-- FIXED: Changed onchange to oninput so it updates state dynamically immediately -->
                 <textarea id="editVisi" class="neo-input" rows="3" oninput="db.org.visi=this.value"></textarea>
                 
                 <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Pimpinan Inti BEM</h3>
@@ -126,7 +126,18 @@
                 </div>
             </section>
 
-            <!-- 7. PENGATURAN HEADER & FOOTER -->
+            <!-- NEW: 7. DEVELOPER TEAM (OUR TEAM) -->
+            <section id="sec-team" class="admin-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <h2>Manajemen Developer Team (Credits)</h2>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('team')">💾 Simpan Developer Team</button>
+                </div>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Sesuaikan struktur credits development untuk halaman /ourteam.</p>
+                <div id="cmsTeam" style="display:flex; flex-direction:column; gap:20px;"></div>
+                <button class="action-btn view" onclick="tambahKategoriTeam()" style="margin-top: 15px;">+ Tambah Kategori Role Baru</button>
+            </section>
+
+            <!-- 8. PENGATURAN HEADER & FOOTER -->
             <section id="sec-pengaturan" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Header & Footer</h2>
@@ -182,16 +193,15 @@
     <div class="toast" id="globalToast">Notifikasi</div>
 
     <script>
-        // MOCK DATA JIKA API OFFLINE (Biar Admin Panel gak kosong di Canvas)
+        // MOCK DATA JIKA API OFFLINE
         const FALLBACK_ADMIN_ORG = { visi: "Visi Default", pimpinan: [{jabatan: "Ketua BEM", nama: "Ailan", foto: "/img/bemfkgumi.png"}], departemen: [{nama: "Dept. Test", anggota: []}] };
-        let db = { org: FALLBACK_ADMIN_ORG, proker: [], kalender: [], dokumentasi: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
+        let db = { org: FALLBACK_ADMIN_ORG, proker: [], kalender: [], dokumentasi: [], team: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
         let aspirasiData = []; let pesanData = [];
 
         // FITUR AUTO-LOGIN
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('axa_admin_token');
             if (token) {
-                // Auto-login jika token ditemukan di local storage
                 document.getElementById('loginGate').style.display = 'none';
                 document.getElementById('dashboardContent').style.display = 'flex';
                 document.getElementById('dashboardContent').style.opacity = '1';
@@ -199,7 +209,7 @@
             }
         });
 
-        // FITUR LOGOUT (Hapus Token)
+        // FITUR LOGOUT
         function logout() {
             localStorage.removeItem('axa_admin_token');
             location.reload();
@@ -215,12 +225,12 @@
                 const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
                 const data = await res.json();
                 if(data.success) { 
-                    localStorage.setItem('axa_admin_token', data.token); // SIMPAN TOKEN KE LOCAL STORAGE
+                    localStorage.setItem('axa_admin_token', data.token);
                     unlockDashboard(); 
                 } else throw new Error();
             } catch(e) {
                 if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
-                    localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); // Mode Simulasi Canvas
+                    localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN');
                     showToast("Simulasi Canvas Aktif."); 
                     unlockDashboard(); 
                 } 
@@ -254,16 +264,26 @@
                 const req = await fetch(apiUrl);
                 if(req.ok) {
                     const data = await req.json();
-                    if(data.org && data.org.pimpinan) db.org = data.org;
-                    if(data.settings) db.settings = data.settings;
-                    db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || [];
+                    
+                    if(data.org) {
+                        db.org.visi = data.org.visi || "";
+                        db.org.pimpinan = data.org.pimpinan || [];
+                        db.org.departemen = data.org.departemen || [];
+                    }
+                    if(data.settings) {
+                        db.settings = { ...db.settings, ...data.settings };
+                    }
+                    db.proker = data.proker || [];
+                    db.kalender = data.kalender || [];
+                    db.dokumentasi = data.dokumentasi || [];
+                    db.team = data.team || [];
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
             } catch(err) { showToast("⚠️ Memuat data Offline/Simulasi."); }
             renderSemuaCMS();
         }
 
-        function renderSemuaCMS() { renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); }
+        function renderSemuaCMS() { renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); }
 
         function renderPengaturan() {
             if(db.settings) {
@@ -286,37 +306,37 @@
             } catch(e) { showToast("⚠️ Gagal menyimpan data."); }
         }
 
-        // --- RENDER ORG CMS ---
+        // --- RENDER ORG CMS (DENGAN PENGAMANAN ARRAY) ---
         function renderOrg() {
             document.getElementById('editVisi').value = db.org.visi || '';
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
             
-            db.org.pimpinan.forEach((p, i) => {
+            (db.org.pimpinan || []).forEach((p, i) => {
                 pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
-                    <img src="${p.foto}" style="height:60px; object-fit:contain; background:#000; border-radius:5px; margin-bottom:10px;">
+                    <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:#000; border-radius:5px; margin-bottom:10px;">
                     <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:5px;">Ubah Foto Pimpinan:</div>
                     <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px; width:100%; font-size:0.8rem;">
-                    <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
-                    <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama}" oninput="db.org.pimpinan[${i}].nama=this.value">
+                    <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan || ''}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
+                    <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama || ''}" oninput="db.org.pimpinan[${i}].nama=this.value">
                     <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus Pimpinan</button>
                 </div>`;
             });
 
             const dCont = document.getElementById('cmsDepartemen'); dCont.innerHTML = '';
-            db.org.departemen.forEach((d, i) => {
+            (db.org.departemen || []).forEach((d, i) => {
                 let html = `<div class="glass-card" style="border-top:2px solid var(--accent-neon); padding:15px;">
-                    <input type="text" class="neo-input" value="${d.nama}" placeholder="Nama Departemen" oninput="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; color:var(--accent-neon);">
+                    <input type="text" class="neo-input" value="${d.nama || ''}" placeholder="Nama Departemen" oninput="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; color:var(--accent-neon);">
                     <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                        <button class="action-btn view" onclick="db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:'/img/bemfkgumi.png'}); renderOrg();">+ Anggota</button>
+                        <button class="action-btn view" onclick="if(!db.org.departemen[${i}].anggota) db.org.departemen[${i}].anggota=[]; db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:'/img/bemfkgumi.png'}); renderOrg();">+ Anggota</button>
                         <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Departemen</button>
                     </div><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">`;
                 if(d.anggota) {
                     d.anggota.forEach((a, j) => {
                         html += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px; border: 1px solid var(--glass-border);">
-                            <img src="${a.foto}" style="width:100%; height:80px; object-fit:contain; background:#111; border-radius:5px; margin-bottom:5px;">
+                            <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:#111; border-radius:5px; margin-bottom:5px;">
                             <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="width:100%; font-size:0.7rem; margin-bottom:10px;">
-                            <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
-                            <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
+                            <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama || ''}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
+                            <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan || ''}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
                             <button class="action-btn delete" style="width:100%;" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">X Hapus</button>
                         </div>`;
                     });
@@ -330,13 +350,13 @@
         // --- RENDER DOKUMENTASI (FOTO) ---
         function renderDokumentasi() {
             const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
-            db.dokumentasi.forEach((d, i) => {
+            (db.dokumentasi || []).forEach((d, i) => {
                 cont.innerHTML += `<div class="glass-card" style="padding:15px;">
-                    <img src="${d.foto}" style="width:100%; max-height:150px; object-fit:contain; background:#111; margin-bottom:10px;">
+                    <img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:#111; margin-bottom:10px;">
                     <input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;">
-                    <input type="text" class="neo-input" value="${d.judul}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value">
-                    <input type="date" class="neo-input" value="${d.tanggal}" oninput="db.dokumentasi[${i}].tanggal=this.value">
-                    <textarea class="neo-input" placeholder="Deskripsi Singkat" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi}</textarea>
+                    <input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value">
+                    <input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value">
+                    <textarea class="neo-input" placeholder="Deskripsi Singkat" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea>
                     <button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button>
                 </div>`;
             });
@@ -346,11 +366,11 @@
         // --- RENDER KALENDER ---
         function renderKalender() {
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
-            db.kalender.forEach((k, i) => {
+            (db.kalender || []).forEach((k, i) => {
                 cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                    <input type="date" class="neo-input" value="${k.tanggal}" oninput="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;">
-                    <input type="text" class="neo-input" value="${k.nama}" placeholder="Nama Kegiatan" oninput="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;">
-                    <input type="text" class="neo-input" placeholder="Penyelenggara (Dept)" value="${k.dept}" oninput="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;">
+                    <input type="date" class="neo-input" value="${k.tanggal || ''}" oninput="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;">
+                    <input type="text" class="neo-input" value="${k.nama || ''}" placeholder="Nama Kegiatan" oninput="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;">
+                    <input type="text" class="neo-input" placeholder="Penyelenggara (Dept)" value="${k.dept || ''}" oninput="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;">
                     <button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">X</button>
                 </div>`;
             });
@@ -360,16 +380,43 @@
         // --- RENDER PROKER ---
         function renderProker() {
             const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
-            db.proker.forEach((p, i) => {
+            (db.proker || []).forEach((p, i) => {
                 cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:3px solid var(--accent-neon);">
-                    <input type="text" class="neo-input" value="${p.dept}" oninput="db.proker[${i}].dept=this.value" style="font-weight:bold;">
-                    <textarea class="neo-input" rows="4" oninput="db.proker[${i}].list = this.value.split('\\n')">${p.list.join('\n')}</textarea>
+                    <input type="text" class="neo-input" value="${p.dept || ''}" oninput="db.proker[${i}].dept=this.value" style="font-weight:bold;">
+                    <textarea class="neo-input" rows="4" oninput="db.proker[${i}].list = this.value.split('\\n')">${(p.list || []).join('\n')}</textarea>
                     <small style="color:var(--text-muted); display:block; margin-bottom:10px;">*Pisahkan list dengan ENTER</small>
                     <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Dept Ini</button>
                 </div>`;
             });
         }
         function tambahProkerDept() { db.proker.push({dept:"Nama Departemen", list:["Proker 1"]}); renderProker(); }
+
+        // --- RENDER TEAM CREDITS ---
+        function renderTeam() {
+            const cont = document.getElementById('cmsTeam'); cont.innerHTML = '';
+            (db.team || []).forEach((cat, i) => {
+                let html = `<div class="glass-card" style="margin-bottom:10px; border-left:4px solid #3b82f6;">
+                    <input type="text" class="neo-input" value="${cat.category || ''}" placeholder="Kategori (Misal: FullStack Development)" oninput="db.team[${i}].category=this.value" style="font-size:1.1rem; font-weight:bold; color:#3b82f6;">
+                    <button class="action-btn delete" onclick="db.team.splice(${i},1); renderTeam();" style="margin-bottom:15px;">Hapus Kategori Ini</button>
+                    <div class="grid-3">`;
+
+                (cat.members || []).forEach((m, j) => {
+                     html += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px; border:1px solid var(--glass-border);">
+                        <img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block; border:2px solid #3b82f6;">
+                        <input type="file" accept="image/*" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="width:100%; font-size:0.7rem; margin-bottom:10px;">
+                        <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px; font-size:0.85rem;">
+                        <input type="text" class="neo-input" placeholder="Link Instagram (https://...)" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px; font-size:0.85rem;">
+                        <button class="action-btn delete" style="width:100%; padding:5px;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X Hapus</button>
+                     </div>`;
+                });
+
+                html += `</div>
+                <button class="action-btn view" style="margin-top:15px;" onclick="if(!db.team[${i}].members) db.team[${i}].members=[]; db.team[${i}].members.push({nama:'', foto:'/img/bemfkgumi.png', ig:''}); renderTeam();">+ Tambah Member</button>
+                </div>`;
+                cont.innerHTML += html;
+            });
+        }
+        function tambahKategoriTeam() { if(!db.team) db.team = []; db.team.push({category: "Kategori Baru", members: []}); renderTeam(); }
 
         // --- TABEL INTERAKSI ---
         function renderTabel() {
