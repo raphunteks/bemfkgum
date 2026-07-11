@@ -4,7 +4,7 @@
     <div class="logo-container">
       <a href="/" style="text-decoration: none; display: flex; align-items: center;">
         <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" style="height: 45px; display: inline-block; vertical-align: middle; filter: drop-shadow(0 0 5px rgba(0,255,128,0.5));">
-        <span style="font-weight: 900; letter-spacing: 1px; margin-left: 10px; color: var(--text-light); font-size: 1.2rem;">BEM FKG UMI</span>
+        <span id="headerDynamicText" style="font-weight: 900; letter-spacing: 1px; margin-left: 10px; color: var(--text-light); font-size: 1.2rem;">BEM KBMFKG UMI</span>
       </a>
     </div>
     
@@ -18,7 +18,7 @@
       
       <!-- Nav Item: Tentang -->
       <div class="nav-item" onclick="this.classList.toggle('mobile-expand')">
-        <span style="color: var(--text-light); font-weight: 500;">Tentang &#9662;</span>
+        <span style="color: var(--text-light); font-weight: 500; cursor:pointer;">Tentang &#9662;</span>
         <div class="mega-menu">
           <a href="/tentang#visimisi">Visi & Misi</a>
           <a href="/tentang#struktur">Struktur Organisasi</a>
@@ -28,7 +28,7 @@
       
       <!-- Nav Item: Informasi -->
       <div class="nav-item" onclick="this.classList.toggle('mobile-expand')">
-        <span style="color: var(--text-light); font-weight: 500;">Informasi &#9662;</span>
+        <span style="color: var(--text-light); font-weight: 500; cursor:pointer;">Informasi &#9662;</span>
         <div class="mega-menu">
           <a href="/informasi#proker">Program Kerja</a>
           <a href="/informasi#kalender">Kalender Proker</a>
@@ -47,6 +47,19 @@
   document.getElementById('mobileMenuBtn').addEventListener('click', function() {
       const nav = document.getElementById('navLinks');
       nav.classList.toggle('active');
-      this.innerHTML = nav.classList.contains('active') ? '&#10005;' : '&#9776;'; // Ganti icon ke (X)
+      this.innerHTML = nav.classList.contains('active') ? '&#10005;' : '&#9776;';
+  });
+
+  // Fetch Header Settings Global
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        let apiUrl = '/api/content';
+        if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemfkgumi.vercel.app/api/content';
+        const req = await fetch(apiUrl);
+        const res = await req.json();
+        if(res.settings && res.settings.headerText) {
+            document.getElementById('headerDynamicText').innerText = res.settings.headerText;
+        }
+    } catch (e) { console.log("Header fallback local used"); }
   });
 </script>
