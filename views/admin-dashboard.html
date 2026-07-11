@@ -30,12 +30,13 @@
             </div>
             <nav class="admin-nav" id="adminNav">
                 <button class="active" onclick="switchSection('dashboard', this)"><span>📊</span> Overview</button>
-                <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur (Org)</button>
-                <button onclick="switchSection('proker', this)"><span>📋</span> Manajemen Program Kerja</button>
+                <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur</button>
+                <button onclick="switchSection('proker', this)"><span>📋</span> Program Kerja</button>
                 <button onclick="switchSection('kalender', this)"><span>📅</span> Agenda Kalender</button>
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
-                <button onclick="logoutAdmin()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
+                <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Manajemen Header & Footer</button>
+                <button onclick="location.reload()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
             </nav>
         </aside>
 
@@ -125,6 +126,47 @@
                 </div>
             </section>
 
+            <!-- 7. PENGATURAN HEADER & FOOTER -->
+            <section id="sec-pengaturan" class="admin-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <h2>Manajemen Header & Footer</h2>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('settings')">💾 Simpan Pengaturan</button>
+                </div>
+                
+                <div class="glass-card" style="margin-bottom: 20px;">
+                    <h3 style="color:var(--accent-neon); margin-bottom:15px;">Pengaturan Teks</h3>
+                    <label style="color:var(--text-muted); font-size: 0.85rem;">Teks Header (Nama BEM)</label>
+                    <input type="text" id="setHeaderText" class="neo-input" placeholder="BEM KBMFKG UMI" oninput="db.settings.headerText = this.value">
+                    
+                    <label style="color:var(--text-muted); font-size: 0.85rem;">Slogan Footer</label>
+                    <input type="text" id="setFooterSlogan" class="neo-input" placeholder="Kabinet Ananta Anardhaya" oninput="db.settings.footerSlogan = this.value">
+                    
+                    <label style="color:var(--text-muted); font-size: 0.85rem;">Alamat Footer</label>
+                    <textarea id="setFooterAlamat" class="neo-input" rows="2" oninput="db.settings.footerAlamat = this.value"></textarea>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="color:var(--accent-neon); margin-bottom:15px;">Pengaturan Logo Footer (3 Logo)</h3>
+                    <div class="grid-3">
+                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; text-align:center;">
+                            <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 1 (Kiri)</label>
+                            <img id="prevLogo1" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
+                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo1', renderPengaturan)" style="width:100%; font-size:0.8rem;">
+                        </div>
+                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; text-align:center;">
+                            <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 2 (Tengah)</label>
+                            <img id="prevLogo2" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
+                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo2', renderPengaturan)" style="width:100%; font-size:0.8rem;">
+                        </div>
+                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; text-align:center;">
+                            <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 3 (Kanan)</label>
+                            <img id="prevLogo3" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
+                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo3', renderPengaturan)" style="width:100%; font-size:0.8rem;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
@@ -142,29 +184,8 @@
     <script>
         // MOCK DATA JIKA API OFFLINE (Biar Admin Panel gak kosong di Canvas)
         const FALLBACK_ADMIN_ORG = { visi: "Visi Default", pimpinan: [{jabatan: "Ketua BEM", nama: "Ailan", foto: "/img/bemfkgumi.png"}], departemen: [{nama: "Dept. Test", anggota: []}] };
-        let db = { org: FALLBACK_ADMIN_ORG, proker: [], kalender: [], dokumentasi: [], interaksi: {aspirasi:[], pesan:[]} };
+        let db = { org: FALLBACK_ADMIN_ORG, proker: [], kalender: [], dokumentasi: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
         let aspirasiData = []; let pesanData = [];
-
-        // ================= AUTO LOGIN LOGIC =================
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('axa_admin_token');
-            if (token) {
-                // Jika token ada, lewati halaman login dan langsung buka dashboard
-                document.getElementById('loginGate').style.display = 'none';
-                const dash = document.getElementById('dashboardContent');
-                dash.style.display = 'flex';
-                dash.style.opacity = '1';
-                dash.style.filter = 'none';
-                loadAllData();
-            }
-        });
-
-        // Logika fungsi untuk membersihkan memori saat Logout
-        function logoutAdmin() {
-            localStorage.removeItem('axa_admin_token');
-            showToast("Anda telah Logout.");
-            setTimeout(() => location.reload(), 1000);
-        }
 
         async function login() {
             const u = document.getElementById('adminUser').value; const p = document.getElementById('adminPass').value;
@@ -216,6 +237,7 @@
                 if(req.ok) {
                     const data = await req.json();
                     if(data.org && data.org.pimpinan) db.org = data.org;
+                    if(data.settings) db.settings = data.settings;
                     db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || [];
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
@@ -223,23 +245,35 @@
             renderSemuaCMS();
         }
 
-        function renderSemuaCMS() { renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); }
+        function renderSemuaCMS() { renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); }
+
+        function renderPengaturan() {
+            if(db.settings) {
+                document.getElementById('setHeaderText').value = db.settings.headerText || "";
+                document.getElementById('setFooterSlogan').value = db.settings.footerSlogan || "";
+                document.getElementById('setFooterAlamat').value = db.settings.footerAlamat || "";
+                document.getElementById('prevLogo1').src = db.settings.logo1 || "/img/bemfkgumi.png";
+                document.getElementById('prevLogo2').src = db.settings.logo2 || "/img/bemfkgumi.png";
+                document.getElementById('prevLogo3').src = db.settings.logo3 || "/img/bemfkgumi.png";
+            }
+        }
 
         async function saveData(type) {
+            if(type === 'org') db.org.visi = document.getElementById('editVisi').value;
             try {
                 let apiUrl = `/api/content/${type}`;
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemfkgumi.vercel.app/api/content/${type}`;
                 const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) });
-                if(req.ok) showToast("✅ Data Tersimpan ke Database Redis!"); else throw new Error();
-            } catch(e) { showToast("⚠️ Gagal menyimpan ke Database Vercel."); }
+                if(req.ok) showToast(`✅ Data Tersimpan ke Database!`); else throw new Error();
+            } catch(e) { showToast("⚠️ Gagal menyimpan data."); }
         }
 
         // --- RENDER ORG CMS ---
         function renderOrg() {
             document.getElementById('editVisi').value = db.org.visi || '';
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
+            
             db.org.pimpinan.forEach((p, i) => {
-                // FIXED: Replace onchange with oninput to sync DOM instantly
                 pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
                     <img src="${p.foto}" style="height:60px; object-fit:contain; background:#000; border-radius:5px; margin-bottom:10px;">
                     <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:5px;">Ubah Foto Pimpinan:</div>
