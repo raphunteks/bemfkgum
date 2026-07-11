@@ -16,12 +16,16 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
-// INISIASI UPSTASH REDIS DENGAN KREDENSIAL ASLI USER
+// ================= INISIASI UPSTASH REDIS (SUPER UPGRADE ENV) =================
+// Membaca dari Environment Variables bawaan Upstash Vercel Integration
+const redisUrl = process.env.KV_REST_API_URL || 'https://merry-hedgehog-35658.upstash.io';
+const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E0ODZkOTJlNTYwNzBjMzMyNWQxZHAyMzU2NTg';
+
 let redis = null;
 try {
     redis = new Redis({ 
-        url: 'https://merry-hedgehog-35658.upstash.io', 
-        token: 'AYtKAAIncDIzYmQyNWM4YTM2Y2E0ODZkOTJlNTYwNzBjMzMyNWQxZHAyMzU2NTg' 
+        url: redisUrl, 
+        token: redisToken 
     });
     console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi.");
 } catch (error) {
@@ -68,6 +72,7 @@ app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
+        // Ambil dari Redis (Upstash otomatis mengembalikan Object jika tersimpan sebagai JSON)
         let org = await redis.get('Org_Structure');
         let proker = await redis.get('Proker_Data');
         let kalender = await redis.get('Kalender_Data');
@@ -75,13 +80,14 @@ app.get('/api/content', async (req, res) => {
 
         res.status(200).json({ 
             success: true, 
-            org: org ? JSON.parse(org) : defaultOrg,
-            proker: proker ? JSON.parse(proker) : [],
-            kalender: kalender ? JSON.parse(kalender) : [],
-            dokumentasi: dokumentasi ? JSON.parse(dokumentasi) : []
+            // Proteksi Parsing: Jika Upstash mengembalikan string, parse. Jika object, gunakan langsung.
+            org: org ? (typeof org === 'string' ? JSON.parse(org) : org) : defaultOrg,
+            proker: proker ? (typeof proker === 'string' ? JSON.parse(proker) : proker) : [],
+            kalender: kalender ? (typeof kalender === 'string' ? JSON.parse(kalender) : kalender) : [],
+            dokumentasi: dokumentasi ? (typeof dokumentasi === 'string' ? JSON.parse(dokumentasi) : dokumentasi) : []
         });
     } catch (error) {
-        // FALLBACK: JIKA REDIS MATI, TETAP KIRIM DATA SEED AGAR FRONTEND TIDAK ERROR
+        // FALLBACK AMAN
         res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [] });
     }
 });
@@ -90,15 +96,16 @@ app.post('/api/content/:type', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const type = req.params.type;
-        const payload = JSON.stringify(req.body);
+        const payload = req.body; // Biarkan sebagai Objek! Biar Redis/Upstash otomatis menangani serialisasinya.
         
         if (type === 'org') await redis.set('Org_Structure', payload);
         else if (type === 'proker') await redis.set('Proker_Data', payload);
         else if (type === 'kalender') await redis.set('Kalender_Data', payload);
         else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
 
-        res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui!` });
+        res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ success: false, message: 'Gagal menyimpan data ke Redis.' });
     }
 });
@@ -109,8 +116,11 @@ app.get('/api/interactions', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const aspirasi = await redis.hgetall('Aspirations') || {};
         const pesan = await redis.hgetall('Messages') || {};
-        const parsedAspirasi = Object.values(aspirasi).map(item => JSON.parse(item));
-        const parsedPesan = Object.values(pesan).map(item => JSON.parse(item));
+        
+        // Parse Hash values jika masih berupa string
+        const parsedAspirasi = Object.values(aspirasi).map(item => typeof item === 'string' ? JSON.parse(item) : item);
+        const parsedPesan = Object.values(pesan).map(item => typeof item === 'string' ? JSON.parse(item) : item);
+        
         res.status(200).json({ success: true, aspirasi: parsedAspirasi, pesan: parsedPesan });
     } catch (error) {
         res.status(200).json({ success: false, aspirasi: [], pesan: [] });
