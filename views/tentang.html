@@ -31,7 +31,7 @@
             <div class="glass-card">
                 <h2 style="font-size: 1.5rem; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">Misi Kami</h2>
                 <ul id="listMisi" style="list-style: none; display: flex; flex-direction: column; gap: 15px; padding-left: 10px;">
-                    <!-- JS Injeksi -->
+                    <li style="color: var(--text-muted);">Memuat misi organisasi...</li>
                 </ul>
             </div>
         </section>
@@ -44,7 +44,10 @@
             
             <h3 style="text-align:center; font-size: 1.8rem; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase;">Pimpinan Inti BEM</h3>
             <div class="grid-4" id="containerPimpinan" style="margin-bottom: 80px;">
-                <div style="text-align:center; grid-column: span 4;">Memuat pimpinan dari database...</div>
+                <div style="text-align:center; grid-column: span 4; padding: 30px;">
+                    <div style="width: 40px; height: 40px; border: 4px solid var(--accent-neon); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+                    Memuat pimpinan dari database...
+                </div>
             </div>
 
             <div id="containerDepartemen">
@@ -55,32 +58,53 @@
     <%- include('partials/footer.html') %>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+        // Data Fallback (Identik dengan di server.js) untuk anti-crash render
+        const FALLBACK_ORG_DATA = {
+            visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
+            misi: [
+                "Menampung dan menyalurkan aspirasi mahasiswa secara transparan dan aktif.",
+                "Mendorong dan memfasilitasi pengembangan prestasi akademik dan non-akademik mahasiswa.",
+                "Mengintegrasikan nilai-nilai islami dalam program kerja dan kegiatan organisasi.",
+                "Membangun lingkungan kampus yang harmonis, berakhlak mulia, dan berdaya saing.",
+                "Meningkatkan kapasitas dan kualitas kader melalui pendidikan dan pelatihan berprinsip islami."
+            ],
+            pimpinan: [
+                { jabatan: "Ketua BEM KBMFKG UMI", nama: "Ailan Alif Wajdi Daya", foto: "/img/bemfkgumi.png" },
+                { jabatan: "Wakil Ketua BEM KBMFKG UMI", nama: "Akram Husain", foto: "/img/bemfkgumi.png" },
+                { jabatan: "Sekretaris BEM KBMFKG UMI", nama: "Dian Sancika Rizky. S", foto: "/img/bemfkgumi.png" },
+                { jabatan: "Bendahara BEM KBMFKG UMI", nama: "Nurul Amelia Limbu. S", foto: "/img/bemfkgumi.png" }
+            ],
+            departemen: [
+                { nama: "Dept. Character of Building", anggota: [{jabatan: "Koordinator", nama: "Muh. Ersa Aditya", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Denta Ahmad Arkana M", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muhammad Rizky", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Salsabila Putri M", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Absabrina Aulia R", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Faida Shaima Nawal", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Science Education and Research", anggota: [{jabatan: "Koordinator", nama: "Muh. Alif Perdana Putra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fatahillah Fadhillah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fini", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Annisa Rshikhah Afsa", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Rekha Al-Syam", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Farah Luthfiyyah", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Islamic", anggota: [{jabatan: "Koordinator", nama: "Maysar Ma'ruf", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ahmad Syafii", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ramadani Qurrata Ayunin", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Salwa Nariyah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nayla Dwi Ramadhani", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nayla Dzakiyah N.S", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Sekretariat", anggota: [{jabatan: "Koordinator", nama: "Febrio Arya Pradana", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Muhammad Dwiansyah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Nabila Azzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Raidah Hanisah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Wilda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Rima Aulia", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Treasure", anggota: [{jabatan: "Koordinator", nama: "Putri Amaliah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Jiyaad Taqi Rozan", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Aliyah Restu Pratiwi A", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fardah Naisa", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Israwati Amanda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nayla", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Art and Sport", anggota: [{jabatan: "Koordinator", nama: "Ilham Subhan Rafikal", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fajak Ryamizard Kasvari", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "M. Raihan Prayoga Amirul", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Annesa Fatimah Azzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Azizah Umaimah Arif", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nadira Ramadhani", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Dedication Humanity", anggota: [{jabatan: "Koordinator", nama: "Moh. Rayyan Ghazali", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Yusuf Wahyuni", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Darul Rizkyansyah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Situ Aisyah Rahmat", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Wisma Rahfah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nurul Alifiyah Arrahma A", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Study and Strategy", anggota: [{jabatan: "Koordinator", nama: "Irfan Maulana Irwan", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Saiful S", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Putra Istiqamah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Hildan Nilan Cahaya", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zilfy Rukmana Tutu", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ilmi Ramadhani", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Information and Communication", anggota: [{jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zahwa Alzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Novita Widyantari", foto: "/img/bemfkgumi.png"}] }
+            ]
+        };
+
+        // Fungsi Render Utama
+        function renderTentangUI(orgData) {
+            // Render Visi
+            document.getElementById('teksVisi').innerText = `"${orgData.visi}"`;
             
-            try {
-                // Gunakan URL Absolut agar tidak error saat di Canvas
-                let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                    apiUrl = 'https://bemfkgumi.vercel.app/api/content';
-                }
-                const req = await fetch(apiUrl);
-                const res = await req.json();
-                const orgData = res.org;
+            // Render Misi
+            const ulMisi = document.getElementById('listMisi');
+            ulMisi.innerHTML = '';
+            if(orgData.misi && orgData.misi.length > 0) {
+                orgData.misi.forEach(m => {
+                    ulMisi.innerHTML += `<li style="display:flex; gap:15px; align-items:flex-start;"><span style="color:var(--accent-neon); font-size:1.2rem;">&#10004;</span> <span style="font-size: 1.1rem; line-height: 1.5; color: var(--text-muted);">${m}</span></li>`;
+                });
+            }
 
-                // Visi & Misi
-                document.getElementById('teksVisi').innerText = `"${orgData.visi}"`;
-                const ulMisi = document.getElementById('listMisi');
-                ulMisi.innerHTML = '';
-                if(orgData.misi) {
-                    orgData.misi.forEach(m => {
-                        ulMisi.innerHTML += `<li style="display:flex; gap:15px; align-items:flex-start;"><span style="color:var(--accent-neon); font-size:1.2rem;">&#10004;</span> <span style="font-size: 1.1rem; line-height: 1.5; color: var(--text-muted);">${m}</span></li>`;
-                    });
-                }
-
-                // Pimpinan Inti
-                const pimContainer = document.getElementById('containerPimpinan');
-                pimContainer.innerHTML = '';
+            // Render Pimpinan Inti
+            const pimContainer = document.getElementById('containerPimpinan');
+            pimContainer.innerHTML = '';
+            if(orgData.pimpinan) {
                 orgData.pimpinan.forEach(pim => {
                     const pic = pim.foto || '/img/bemfkgumi.png';
                     pimContainer.innerHTML += `
@@ -91,19 +115,21 @@
                         </div>
                     `;
                 });
+            }
 
-                // Departemen & Anggota
-                const depContainer = document.getElementById('containerDepartemen');
-                depContainer.innerHTML = '';
+            // Render Departemen & Anggota
+            const depContainer = document.getElementById('containerDepartemen');
+            depContainer.innerHTML = '';
+            if(orgData.departemen) {
                 orgData.departemen.forEach(dep => {
                     let anggotaHTML = '';
                     if(dep.anggota) {
                         dep.anggota.forEach(ang => {
                             const angPic = ang.foto || '/img/bemfkgumi.png';
                             anggotaHTML += `
-                                <div class="leader-card" style="padding: 20px 10px;">
-                                    <div class="leader-photo" style="width: 80px; height: 80px; border-width: 2px; background-image: url('${angPic}');"></div>
-                                    <h4 style="font-size: 1rem; margin-bottom: 5px;">${ang.nama}</h4>
+                                <div class="leader-card" style="padding: 25px 15px;">
+                                    <div class="leader-photo" style="width: 80px; height: 80px; border-width: 2px; background-image: url('${angPic}'); margin-bottom: 15px;"></div>
+                                    <h4 style="font-size: 1rem; margin-bottom: 5px; color: var(--text-light);">${ang.nama}</h4>
                                     <p style="color: var(--text-muted); font-size: 0.8rem;">${ang.jabatan}</p>
                                 </div>
                             `;
@@ -116,8 +142,36 @@
                         </div>
                     `;
                 });
+            }
+        }
 
-            } catch (err) { console.warn("Sistem berjalan dalam mode statis UI.", err); }
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Trigger Reveal Animation
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            
+            try {
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemfkgumi.vercel.app/api/content';
+                }
+                
+                const req = await fetch(apiUrl);
+                if (!req.ok) throw new Error("API Gagal / Belum Terkoneksi");
+                
+                const res = await req.json();
+                
+                // Cek apakah data dari database kosong atau null
+                if (res.org && res.org.pimpinan && res.org.pimpinan.length > 0) {
+                    renderTentangUI(res.org); // Render data dari Vercel/Redis Asli
+                } else {
+                    throw new Error("Data Redis Kosong, pakai Fallback");
+                }
+
+            } catch (err) { 
+                console.warn("⚠️ Mode Simulasi Aktif / Database Offline. Merender Data Seed Lokal.", err.message);
+                // INILAH KUNCI ANTI-STUCK: Langsung render data lokal jika koneksi ke backend gagal
+                renderTentangUI(FALLBACK_ORG_DATA);
+            }
         });
     </script>
 </body>
