@@ -16,7 +16,7 @@
             </div>
             
             <div class="nav-item" onclick="toggleMobileMenu(this)">
-                <a href="javascript:void(0)">Tentang ▾</a>
+                <a href="/tentang" style="cursor: pointer;">Tentang ▾</a>
                 <div class="mega-menu">
                     <a href="/tentang#visimisi">Visi & Misi</a>
                     <a href="/tentang#struktur">Struktur Kepengurusan</a>
@@ -25,7 +25,7 @@
             </div>
             
             <div class="nav-item" onclick="toggleMobileMenu(this)">
-                <a href="javascript:void(0)">Informasi ▾</a>
+                <a href="/informasi" style="cursor: pointer;">Informasi ▾</a>
                 <div class="mega-menu">
                     <a href="/informasi#proker">Program Kerja</a>
                     <a href="/informasi#kalender">Kalender Proker</a>
@@ -49,11 +49,25 @@
         }
     }
 
-    // Smart Script: Mendeteksi Hash URL (#proker, #kalender, dll) lalu mengaktifkan fungsi switchTab otomatis
+    // Smart Script: Mendeteksi Hash URL (#proker, #struktur, dll)
     function handleHashNavigation() {
         const hash = window.location.hash.substring(1);
-        if (hash && typeof switchTab === 'function') {
-            switchTab(hash);
+        if (hash) {
+            // 1. Logika untuk halaman Informasi (Berpindah Tab)
+            if (typeof switchTab === 'function') {
+                const targetTab = document.getElementById(hash);
+                if (targetTab && targetTab.classList.contains('tab-content')) {
+                    switchTab(hash);
+                }
+            }
+            
+            // 2. Logika untuk halaman Tentang (Scroll ke Section)
+            const section = document.getElementById(hash);
+            if (section && !section.classList.contains('tab-content')) {
+                setTimeout(() => {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
             
             // Tutup menu mobile jika sedang terbuka setelah klik
             if(window.innerWidth <= 768) {
@@ -62,7 +76,7 @@
         }
     }
 
-    // Jalankan saat halaman pertama dimuat & saat hash URL berubah (klik dari Header)
+    // Jalankan saat halaman dimuat & saat hash berubah (klik dari Header ke halaman yang sama)
     document.addEventListener('DOMContentLoaded', handleHashNavigation);
     window.addEventListener('hashchange', handleHashNavigation);
 </script>
