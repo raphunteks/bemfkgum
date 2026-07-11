@@ -119,6 +119,43 @@
             </div>
         </section>
 
+        <!-- SUPER NEW: FILOSOFI LOGO & WARNA DI INDEX.HTML (Cover Flow & Interactive Pills) -->
+        <section class="container" style="padding: 100px 20px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px;">
+            <div class="reveal" style="text-align: center; margin-bottom: 40px;">
+                <h2 style="font-size: 3rem; font-weight: 900;">Makna <span style="color: var(--accent-neon);">Filosofi Logo</span></h2>
+                <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
+            </div>
+
+            <!-- Carousel UI Logo -->
+            <div class="filosofi-slider-wrapper reveal">
+                <button class="slider-nav-btn prev" onclick="scrollSlider(-300)">❮</button>
+                <div class="filosofi-slider-track" id="indexLogoSlider">
+                    <!-- Inject via JS -->
+                </div>
+                <button class="slider-nav-btn next" onclick="scrollSlider(300)">❯</button>
+            </div>
+
+            <!-- Interactive UI Warna -->
+            <div class="warna-ui-container reveal" style="margin-top: 100px;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="font-size: 3rem; font-weight: 900;">Filosofi <span style="color: var(--accent-neon);">Warna</span></h2>
+                    <p style="color: var(--text-muted); margin-top: 10px;">Palet warna merepresentasikan keteguhan, kreativitas, dan keterbukaan dalam merajut gerakan mahasiswa yang kolaboratif.</p>
+                </div>
+
+                <div class="warna-pills-wrapper" id="indexWarnaPills">
+                    <!-- Inject via JS -->
+                </div>
+
+                <div class="warna-detail-box" id="indexWarnaDetail">
+                    <!-- Detail Warna Aktif -->
+                    <div class="warna-detail-swatch" style="background: transparent;"></div>
+                    <div class="warna-detail-text">
+                        <h3 style="color: var(--text-muted);">Pilih salah satu warna di atas</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- UPGRADE: QUOTE BESAR KABINET (ADAPTASI GAMBAR 4) -->
         <section class="big-quote-section reveal">
             <div class="quote-marks left">"</div>
@@ -138,6 +175,33 @@
     <%- include('partials/footer.html') %>
 
     <script>
+        // Data Fallback Filosofi untuk Index
+        const FALLBACK_FILOSOFI = {
+            logo: [
+                { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
+                { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri." },
+                { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar." },
+                { elemen: "Molar", arti: "Gigi yang paling sering digunakan.", makna: "Kuat menghadapi masalah-masalah." }
+            ],
+            warna: [
+                { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
+                { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
+                { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian dan kesucian." }
+            ]
+        };
+
+        // Fungsi Smart Generator SVG Icon 
+        function getSvgIcon(elemen) {
+            const el = elemen.toLowerCase();
+            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
+            if(el.includes('ular')) return `<svg viewBox="0 0 24 24"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; 
+            if(el.includes('molar')) return `<svg viewBox="0 0 24 24"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
+            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
+            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21z"/></svg>`;
+            return `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
+        }
+
         // Animasi Scroll
         document.addEventListener('DOMContentLoaded', () => {
             const reveals = document.querySelectorAll('.reveal');
@@ -172,7 +236,62 @@
             }, 300);
         }
 
+        // Logika Slider Logo Filosofi
+        function scrollSlider(amount) {
+            const track = document.getElementById('indexLogoSlider');
+            track.scrollBy({ left: amount, behavior: 'smooth' });
+        }
+
+        function initSliderLogic() {
+            const track = document.getElementById('indexLogoSlider');
+            const cards = document.querySelectorAll('.filosofi-slide-card');
+            
+            track.addEventListener('scroll', () => {
+                let centerPoint = track.scrollLeft + (track.clientWidth / 2);
+                let activeIndex = 0;
+                let minDistance = Infinity;
+
+                cards.forEach((card, index) => {
+                    // Cari jarak kartu ke tengah layar
+                    let cardCenter = card.offsetLeft + (card.clientWidth / 2);
+                    let distance = Math.abs(centerPoint - cardCenter);
+                    if(distance < minDistance) {
+                        minDistance = distance;
+                        activeIndex = index;
+                    }
+                });
+
+                // Terapkan efek active
+                cards.forEach(c => c.classList.remove('active'));
+                if(cards[activeIndex]) cards[activeIndex].classList.add('active');
+            });
+        }
+
+        // Logika Pilih Warna Interaktif
+        let globalWarnaData = [];
+        function selectWarna(index, btnElement) {
+            document.querySelectorAll('.warna-pill').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            const data = globalWarnaData[index];
+            const detailBox = document.getElementById('indexWarnaDetail');
+            
+            detailBox.classList.remove('show');
+            setTimeout(() => {
+                detailBox.innerHTML = `
+                    <div class="warna-detail-swatch" style="background-color: ${data.hex};"></div>
+                    <div class="warna-detail-text">
+                        <h3>${data.warna} <span>${data.hex}</span></h3>
+                        <p>${data.makna}</p>
+                    </div>
+                `;
+                detailBox.classList.add('show');
+            }, 300);
+        }
+
         async function fetchDataBeranda() {
+            let dataFilosofi = FALLBACK_FILOSOFI; // default fallback
+
             try {
                 let apiUrl = '/api/content';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") {
@@ -202,23 +321,53 @@
                         sidebar.innerHTML = '';
                         
                         globalMisiData.forEach((misi, idx) => {
-                            // Membuat list point secara dinamis (Poin 1, Poin 2, dst)
                             sidebar.innerHTML += `
                                 <button class="misi-tab-btn ${idx === 0 ? 'active' : ''}" onclick="openMisiTab(${idx}, this)">
                                     Pilar Misi Ke-${idx + 1} <span>&rarr;</span>
                                 </button>
                             `;
                         });
-                        
-                        // Trigger klik pertama untuk mengisi konten
-                        if(document.querySelector('.misi-tab-btn')) {
-                            document.querySelector('.misi-tab-btn').click();
-                        }
+                        if(document.querySelector('.misi-tab-btn')) document.querySelector('.misi-tab-btn').click();
                     }
                 }
+
+                if (res.filosofi && res.filosofi.logo && res.filosofi.logo.length > 0) {
+                    dataFilosofi = res.filosofi;
+                }
             } catch (err) { 
-                console.log("Menggunakan data statis / gagal memuat API."); 
+                console.log("Menggunakan data statis untuk Beranda."); 
             }
+
+            // Render Filosofi Logo Slider
+            const track = document.getElementById('indexLogoSlider');
+            track.innerHTML = '';
+            dataFilosofi.logo.forEach((item, idx) => {
+                // Card pertama otomatis active
+                track.innerHTML += `
+                    <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
+                        <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
+                        <h3>${item.elemen}</h3>
+                        <p class="filo-arti">${item.arti}</p>
+                        <p class="filo-makna">${item.makna}</p>
+                    </div>
+                `;
+            });
+            initSliderLogic(); // Inisiasi efek zoom di slider
+            
+            // Render Filosofi Warna Pills
+            globalWarnaData = dataFilosofi.warna;
+            const pillsCont = document.getElementById('indexWarnaPills');
+            pillsCont.innerHTML = '';
+            globalWarnaData.forEach((item, idx) => {
+                pillsCont.innerHTML += `
+                    <div class="warna-pill" onclick="selectWarna(${idx}, this)">
+                        <div class="warna-pill-dot" style="background-color: ${item.hex};"></div>
+                        ${item.warna}
+                    </div>
+                `;
+            });
+            // Auto click warna pertama
+            if(document.querySelector('.warna-pill')) document.querySelector('.warna-pill').click();
         }
     </script>
 </body>
