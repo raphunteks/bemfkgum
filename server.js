@@ -61,6 +61,15 @@ const defaultOrg = {
     ]
 };
 
+const defaultSettings = {
+    headerText: "BEM KBMFKG UMI",
+    footerSlogan: "Kabinet Ananta Anardhaya",
+    footerAlamat: "Jl. Pajonga Dg. Ngalle No. 27 A, Pa'batong, Kec. Mamajang, Kota Makassar, Sulawesi Selatan",
+    logo1: "/img/bemfkgumi.png",
+    logo2: "/img/bemfkgumi.png",
+    logo3: "/img/bemfkgumi.png"
+};
+
 // ================= ROUTES FRONTEND =================
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
@@ -72,20 +81,39 @@ app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        // Ambil dari Redis (Upstash otomatis mengembalikan Object jika tersimpan sebagai JSON)
         let org = await redis.get('Org_Structure');
         let proker = await redis.get('Proker_Data');
         let kalender = await redis.get('Kalender_Data');
         let dokumentasi = await redis.get('Dokumentasi_Data');
+        let settings = await redis.get('Settings_Data');
 
         res.status(200).json({ 
             success: true, 
-            // Proteksi Parsing: Jika Upstash mengembalikan string, parse. Jika object, gunakan langsung.
             org: org ? (typeof org === 'string' ? JSON.parse(org) : org) : defaultOrg,
             proker: proker ? (typeof proker === 'string' ? JSON.parse(proker) : proker) : [],
             kalender: kalender ? (typeof kalender === 'string' ? JSON.parse(kalender) : kalender) : [],
-            dokumentasi: dokumentasi ? (typeof dokumentasi === 'string' ? JSON.parse(dokumentasi) : dokumentasi) : []
+            dokumentasi: dokumentasi ? (typeof dokumentasi === 'string' ? JSON.parse(dokumentasi) : dokumentasi) : [],
+            settings: settings ? (typeof settings === 'string' ? JSON.parse(settings) : settings) : defaultSettings
         });
+    } catch (error) {
+        // FALLBACK: JIKA REDIS MATI, TETAP KIRIM DATA SEED AGAR FRONTEND TIDAK ERROR
+        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings });
+    }
+});
+
+app.post('/api/content/:type', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const type = req.params.type;
+        const payload = JSON.stringify(req.body);
+        
+        if (type === 'org') await redis.set('Org_Structure', payload);
+        else if (type === 'proker') await redis.set('Proker_Data', payload);
+        else if (type === 'kalender') await redis.set('Kalender_Data', payload);
+        else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
+        else if (type === 'settings') await redis.set('Settings_Data', payload);
+
+        res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui!` });
     } catch (error) {
         // FALLBACK AMAN
         res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [] });
