@@ -1,32 +1,52 @@
 <!-- FILE: views/partials/header.html -->
 <header>
   <nav>
-    <div class="logo">
-      <!-- [FILE LOGO TELAH DISEDIAKAN DI REPO] -->
-      <img src="/img/axalogo.png" alt="Logo BEM" style="height: 40px; display: inline-block; vertical-align: middle;">
-      <span style="font-weight: 900; letter-spacing: 1px; margin-left: 10px;">BEM FKG UMI</span>
+    <div class="logo-container">
+      <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+        <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" style="height: 45px; display: inline-block; vertical-align: middle; filter: drop-shadow(0 0 5px rgba(0,255,128,0.5));">
+        <span style="font-weight: 900; letter-spacing: 1px; margin-left: 10px; color: var(--text-light); font-size: 1.2rem;">BEM FKG UMI</span>
+      </a>
     </div>
-    <div class="nav-links">
+    
+    <!-- Mobile Hamburger Button -->
+    <div class="menu-toggle" id="mobileMenuBtn" aria-label="Menu" role="button">
+        &#9776;
+    </div>
+
+    <div class="nav-links" id="navLinks">
       <a href="/">Beranda</a>
-      <div class="nav-item" style="position: relative; padding-bottom:10px;">
-        <a href="/tentang">Tentang &#9662;</a>
-        <div class="mega-menu glass-card" style="border-radius: 0 0 20px 20px;">
+      
+      <!-- Nav Item: Tentang -->
+      <div class="nav-item" onclick="this.classList.toggle('mobile-expand')">
+        <span style="color: var(--text-light); font-weight: 500;">Tentang &#9662;</span>
+        <div class="mega-menu">
           <a href="/tentang#visimisi">Visi & Misi</a>
           <a href="/tentang#struktur">Struktur Organisasi</a>
-          <a href="/tentang#sejarah">Sejarah</a>
+          <a href="/tentang#sejarah">Sejarah Kepengurusan</a>
         </div>
       </div>
-      <div class="nav-item" style="position: relative; padding-bottom:10px;">
-        <a href="/informasi">Informasi &#9662;</a>
-        <div class="mega-menu glass-card" style="border-radius: 0 0 20px 20px;">
+      
+      <!-- Nav Item: Informasi -->
+      <div class="nav-item" onclick="this.classList.toggle('mobile-expand')">
+        <span style="color: var(--text-light); font-weight: 500;">Informasi &#9662;</span>
+        <div class="mega-menu">
           <a href="/informasi#proker">Program Kerja</a>
-          <a href="/informasi#galeri">Dokumentasi</a>
-          <a href="/informasi#plasma">PLASMA (Aspirasi)</a>
+          <a href="/informasi#kalender">Kalender Proker</a>
+          <a href="/informasi#galeri">Dokumentasi Kegiatan</a>
+          <a href="/informasi#plasma" style="color: var(--accent-neon);">PLASMA (Aspirasi)</a>
         </div>
       </div>
-      <a href="/narahubung">Hubungi Kami</a>
+      
+      <a href="/narahubung" class="holo-btn" style="padding: 8px 18px; border-radius: 20px; font-size: 0.9rem;">Hubungi Kami</a>
     </div>
   </nav>
 </header>
 
-
+<script>
+  // Logika Hamburger Menu Mobile-Friendly
+  document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+      const nav = document.getElementById('navLinks');
+      nav.classList.toggle('active');
+      this.innerHTML = nav.classList.contains('active') ? '&#10005;' : '&#9776;'; // Ganti icon ke (X)
+  });
+</script>
