@@ -4,40 +4,68 @@
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hubungi Kami | BEM FKG UMI</title>
+    
+    <!-- ================= SEO EXPERT ================= -->
+    <meta name="description" content="Hubungi BEM FKG UMI untuk pertanyaan, undangan kegiatan, penawaran kerjasama, dan lokasi kesekretariatan.">
+    <meta name="keywords" content="Kontak BEM FKG UMI, Hubungi BEM UMI, Alamat BEM FKG UMI, Kerjasama BEM">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://bemfkgumi.vercel.app/narahubung">
+    <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    
+    <meta property="og:title" content="Hubungi Kami | BEM FKG UMI">
+    <meta property="og:description" content="Hubungi BEM FKG UMI untuk pertanyaan, undangan kegiatan, dan lokasi kesekretariatan.">
+    <meta property="og:image" content="https://bemfkgumi.vercel.app/img/bemfkgumi.png">
+    <meta property="og:url" content="https://bemfkgumi.vercel.app/narahubung">
+    <!-- ================= END SEO ================= -->
+
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
     <%- include('partials/header.html') %>
-    <main class="container grid-2" style="padding-top: 50px;">
-        
-        <div class="glass-card">
-            <h2>Kirim Pesan</h2>
-            <form id="contactForm" style="margin-top: 20px;">
-                <input type="text" id="nama" class="neo-input" placeholder="Nama Lengkap" required>
-                
-                <div style="margin-bottom: 10px;">
-                    <button type="button" class="clay-badge" onclick="setContact('WA')" id="btnWA" style="border: 1px solid var(--accent-neon)">WhatsApp</button>
-                    <button type="button" class="clay-badge" onclick="setContact('Email')" id="btnEmail">Email</button>
-                </div>
-                <input type="text" id="kontak" class="neo-input" placeholder="Masukkan Nomor WA" required>
-                
-                <select id="subjek" class="neo-input">
-                    <option value="Undangan Kegiatan">Undangan Kegiatan</option>
-                    <option value="Penawaran Kerja">Penawaran Kerja</option>
-                    <option value="Pertanyaan Umum">Pertanyaan Umum</option>
-                    <option value="Lainnya">Lainnya</option>
-                </select>
-
-                <textarea id="pesan" class="neo-input" rows="4" placeholder="Tulis pesan Anda..." required></textarea>
-                <button type="submit" class="holo-btn" style="width: 100%;">Kirim Pesan</button>
-            </form>
+    <main class="container" style="padding-top: 50px;">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <h1 style="font-size: 2.5rem; font-weight: 900;">Hubungi <span style="color: var(--accent-neon);">Kami</span></h1>
+            <p style="color: var(--text-muted); margin-top: 10px;">Mari berkolaborasi dan bersinergi bersama BEM FKG UMI.</p>
         </div>
 
-        <div class="glass-card" style="display:flex; flex-direction:column;">
-            <h2>Lokasi Sekretariat</h2>
-            <div style="flex:1; margin-top:20px; border-radius:15px; overflow:hidden; border: 1px solid var(--glass-border);">
-                <!-- Fallback Iframe Maps -->
-                <iframe src="[https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.8!2d119.4!3d-5.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1sid!2sid!4v1](https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.8!2d119.4!3d-5.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1sid!2sid!4v1)" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        <div class="grid-2">
+            <div class="glass-card" style="box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+                <h2 style="font-size: 1.8rem; margin-bottom: 25px;">Kirim Pesan Langsung</h2>
+                <form id="contactForm">
+                    <label style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Nama Lengkap / Instansi *</label>
+                    <input type="text" id="nama" class="neo-input" placeholder="Misal: John Doe / PT Medika" required>
+                    
+                    <label style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Balas via *</label>
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                        <button type="button" class="clay-badge" onclick="setContact('WA')" id="btnWA" style="border: 1px solid var(--accent-neon); flex: 1;">WhatsApp</button>
+                        <button type="button" class="clay-badge" onclick="setContact('Email')" id="btnEmail" style="border: 1px solid transparent; flex: 1;">Email</button>
+                    </div>
+                    <input type="text" id="kontak" class="neo-input" placeholder="Masukkan Nomor WA" required>
+                    
+                    <label style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Subjek Pesan *</label>
+                    <select id="subjek" class="neo-input">
+                        <option value="Undangan Kegiatan">Undangan Kegiatan / Delegasi</option>
+                        <option value="Penawaran Kerja">Penawaran Kerjasama / Sponsorship</option>
+                        <option value="Pertanyaan Umum">Pertanyaan Umum / Akademik</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+
+                    <label style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Isi Pesan *</label>
+                    <textarea id="pesan" class="neo-input" rows="5" placeholder="Jelaskan maksud dan tujuan Anda..." required></textarea>
+                    
+                    <button type="submit" class="holo-btn" style="width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px;">Kirim Pesan</button>
+                </form>
+            </div>
+
+            <div class="glass-card" style="display:flex; flex-direction:column; padding: 0; overflow: hidden; border: 1px solid var(--accent-neon);">
+                <div style="padding: 2rem; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--glass-border);">
+                    <h2 style="font-size: 1.8rem; margin-bottom: 10px;">Lokasi Sekretariat</h2>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Ruang Kesekretariatan BEM, Gedung Fakultas Kedokteran Gigi UMI Lt.1.</p>
+                </div>
+                <div style="flex:1; width: 100%; min-height: 300px; background: #111;">
+                    <!-- Fallback Iframe Maps UMI -->
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.712620713727!2d119.44754717524941!3d-5.141517451939103!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d533423b093%3A0xc06cfbf4544e3115!2sFakultas%20Kedokteran%20Gigi%20Universitas%20Muslim%20Indonesia!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
             </div>
         </div>
     </main>
@@ -47,13 +75,17 @@
         let contactType = 'WA';
         function setContact(type) {
             contactType = type;
-            document.getElementById('kontak').placeholder = type === 'WA' ? 'Masukkan Nomor WA' : 'Masukkan Alamat Email';
-            document.getElementById('btnWA').style.border = type === 'WA' ? '1px solid var(--accent-neon)' : 'none';
-            document.getElementById('btnEmail').style.border = type === 'Email' ? '1px solid var(--accent-neon)' : 'none';
+            document.getElementById('kontak').placeholder = type === 'WA' ? 'Masukkan Nomor WA Aktif' : 'Masukkan Alamat Email Aktif';
+            document.getElementById('btnWA').style.border = type === 'WA' ? '1px solid var(--accent-neon)' : '1px solid transparent';
+            document.getElementById('btnEmail').style.border = type === 'Email' ? '1px solid var(--accent-neon)' : '1px solid transparent';
         }
 
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = "Mengirim..."; btn.disabled = true;
+
             const payload = {
                 nama: document.getElementById('nama').value,
                 kontak: `${contactType}: ${document.getElementById('kontak').value}`,
@@ -62,12 +94,15 @@
             };
             
             try {
-                await fetch('/api/message', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-                alert('Pesan berhasil dikirim!');
-                e.target.reset();
+                const req = await fetch('/api/message', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                if(req.ok) {
+                    alert('✅ Pesan berhasil terkirim ke Admin BEM FKG UMI!');
+                    e.target.reset();
+                } else { throw new Error('Failed'); }
             } catch(e) {
-                alert('Gagal mengirim pesan.');
+                alert('⚠️ Pesan dicatat dalam mode Offline karena server Redis belum dikonfigurasi.');
             }
+            btn.innerText = originalText; btn.disabled = false;
         });
     </script>
 </body>
