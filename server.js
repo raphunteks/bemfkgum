@@ -71,15 +71,47 @@ const defaultSettings = {
     logo3: "/img/bemfkgumi.png"
 };
 
+// NEW: Default Tim Developer Sesuai Request
+const defaultTeam = [
+    { 
+        category: "FullStack Development", 
+        members: [ 
+            { nama: "drg. M. Aksa Arsyad, S.KG", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/axaaxyz_01" } 
+        ] 
+    },
+    { 
+        category: "Backend Development", 
+        members: [ 
+            { nama: "Silvy Ananda", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/oenandaa" }, 
+            { nama: "Muh. Sauqi Zahran. B", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/sauqizhran" } 
+        ] 
+    },
+    { 
+        category: "Frontend Development", 
+        members: [ 
+            { nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/daegalfauzaaa" }, 
+            { nama: "Zahwa Alzahra Djohan", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zahwadjohan" } 
+        ] 
+    },
+    { 
+        category: "UI/UX Design (CSS)", 
+        members: [ 
+            { nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zanetazahraa" }, 
+            { nama: "Novita Widyantari", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/novvwdyn__" } 
+        ] 
+    }
+];
+
+
 // ================= ROUTES FRONTEND =================
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
 app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
+app.get('/ourteam', (req, res) => res.render('ourteam')); // NEW ROUTE
 
 // ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
-// Fungsi ini memastikan server TIDAK AKAN crash jika data Redis corrupt
 const safeParse = (data, fallbackData) => {
     if (!data) return fallbackData;
     try {
@@ -99,6 +131,7 @@ app.get('/api/content', async (req, res) => {
         let kalender = await redis.get('Kalender_Data');
         let dokumentasi = await redis.get('Dokumentasi_Data');
         let settings = await redis.get('Settings_Data');
+        let team = await redis.get('Team_Data'); // NEW GET
 
         res.status(200).json({ 
             success: true, 
@@ -106,15 +139,16 @@ app.get('/api/content', async (req, res) => {
             proker: safeParse(proker, []),
             kalender: safeParse(kalender, []),
             dokumentasi: safeParse(dokumentasi, []),
-            settings: safeParse(settings, defaultSettings)
+            settings: safeParse(settings, defaultSettings),
+            team: safeParse(team, defaultTeam) // NEW SEND
         });
     } catch (error) {
         // FALLBACK AMAN: Tetap mengirim data statis agar halaman TIDAK BLANK
-        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings });
+        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam });
     }
 });
 
-// BUG FIX: Menggabungkan 2 route app.post yang sebelumnya duplikat/bertumpuk
+// BUG FIX: Menggabungkan route app.post dan memproteksinya dengan JSON.stringify
 app.post('/api/content/:type', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -128,6 +162,7 @@ app.post('/api/content/:type', async (req, res) => {
         else if (type === 'kalender') await redis.set('Kalender_Data', payload);
         else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
         else if (type === 'settings') await redis.set('Settings_Data', payload);
+        else if (type === 'team') await redis.set('Team_Data', payload); // NEW POST
         else return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
