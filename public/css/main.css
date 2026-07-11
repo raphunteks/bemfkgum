@@ -129,20 +129,31 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .menu-toggle { display: none; cursor: pointer; z-index: 1001; }
 
 /* ================= FOOTER ================= */
-.custom-footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 30px; }
-.footer-credit-link { color: var(--text-muted); text-decoration: none; transition: 0.3s; font-weight: 500; }
-.footer-credit-link:hover { color: var(--accent-neon); text-shadow: 0 0 10px var(--accent-glow); }
+.custom-footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 30px;
+}
+.footer-credit-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: 0.3s;
+  font-weight: 500;
+}
+.footer-credit-link:hover {
+  color: var(--accent-neon);
+  text-shadow: 0 0 10px var(--accent-glow);
+}
 
-/* ================= SCROLL TO TOP BUTTON (NEW) ================= */
+/* ================= SCROLL TO TOP BUTTON ================= */
 .scroll-to-top {
   position: fixed;
   bottom: 40px;
   right: 40px;
-  width: 55px;
-  height: 55px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(15, 25, 45, 0.9) 0%, rgba(5, 10, 20, 0.95) 100%);
-  border: 2px solid var(--accent-neon);
+  background-color: #ea869a; /* Warna Pink Pastel */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -152,8 +163,8 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   visibility: hidden;
   transform: translateY(20px) scale(0.9);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,229,255,0.2);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 20px rgba(234, 134, 154, 0.4);
+  border: none;
 }
 .scroll-to-top.show {
   opacity: 1;
@@ -161,19 +172,38 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   transform: translateY(0) scale(1);
 }
 .scroll-to-top:hover {
-  background: var(--accent-neon);
-  box-shadow: 0 0 20px var(--accent-neon), 0 0 40px var(--accent-glow);
+  background-color: #d67085;
   transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 25px rgba(234, 134, 154, 0.6);
 }
 .scroll-to-top svg {
-  width: 24px;
-  height: 24px;
-  fill: var(--accent-neon);
+  width: 32px;
+  height: 32px;
+  fill: #ffffff;
   transition: 0.3s;
 }
-.scroll-to-top:hover svg {
-  fill: var(--bg-dark);
-}
+
+/* ================= FILOSOFI LOGO & WARNA ================= */
+.filosofi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+.filosofi-card { background: linear-gradient(145deg, rgba(20, 30, 55, 0.5), rgba(5, 10, 20, 0.7)); border: 1px solid rgba(255,255,255,0.05); border-radius: 25px; padding: 40px 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); backdrop-filter: blur(15px); transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;}
+.filosofi-card::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 50%; height: 3px; background: var(--accent-neon); border-radius: 0 0 10px 10px; opacity: 0; transition: 0.4s; }
+.filosofi-card:hover { transform: translateY(-10px); border-color: rgba(0,229,255,0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 20px rgba(0,229,255,0.1); }
+.filosofi-card:hover::before { opacity: 1; width: 100%; }
+.filo-icon-box { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,229,255,0.3); box-shadow: inset 0 0 15px rgba(0,229,255,0.2); transition: 0.4s; }
+.filo-icon-box svg { width: 40px; height: 40px; fill: var(--accent-neon); filter: drop-shadow(0 0 5px var(--accent-glow)); transition: 0.4s; }
+.filosofi-card:hover .filo-icon-box { background: var(--accent-neon); box-shadow: 0 0 25px var(--accent-neon); transform: scale(1.1) rotate(5deg); }
+.filosofi-card:hover .filo-icon-box svg { fill: var(--bg-dark); filter: none; }
+.filosofi-card h3 { font-size: 1.5rem; color: white; margin-bottom: 15px; font-weight: 800; letter-spacing: 1px; }
+.filo-arti { color: var(--accent-neon); font-size: 0.95rem; margin-bottom: 10px; font-weight: 500; }
+.filo-makna { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+.warna-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+.warna-card { display: flex; align-items: center; gap: 20px; background: rgba(10, 15, 30, 0.6); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+.warna-card:hover { transform: translateX(10px); border-color: rgba(255,255,255,0.2); background: rgba(15, 25, 45, 0.8); }
+.warna-swatch { width: 60px; height: 60px; border-radius: 15px; flex-shrink: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+.warna-card:hover .warna-swatch { transform: scale(1.1) rotate(-5deg); }
+.warna-info h3 { color: white; font-size: 1.2rem; margin-bottom: 5px; }
+.warna-info p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
 
 /* ================= TIMELINE SEJARAH CSS ================= */
 .timeline { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
@@ -234,14 +264,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .misi-tab-btn:hover { background: rgba(255,255,255,0.05); color: white; }
 .misi-tab-btn.active { background: rgba(0,229,255,0.08); border-color: var(--accent-neon); color: white; border-left: 5px solid var(--accent-neon); font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 .misi-content-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 25px; padding: 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: center; min-height: 250px; }
-
-/* BIG QUOTE SECTION */
-.big-quote-section { background: radial-gradient(circle at center, rgba(15,25,45,0.8) 0%, var(--bg-dark) 70%); padding: 120px 20px; text-align: center; position: relative; border-top: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02); }
-.big-quote-text { font-size: 2.5rem; line-height: 1.5; font-style: italic; max-width: 1000px; margin: 0 auto 40px; color: var(--text-light); }
-.big-quote-text span { color: var(--accent-neon); font-weight: 700; font-style: normal;}
-.quote-marks { position: absolute; font-size: 15rem; color: rgba(255,255,255,0.03); font-family: serif; line-height: 1; z-index: -1; }
-.quote-marks.left { top: 20px; left: 5%; }
-.quote-marks.right { bottom: -40px; right: 5%; transform: rotate(180deg); }
 
 /* TENTANG KAMI & STRUKTUR */
 .leader-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-top: 3px solid var(--accent-neon); border-radius: 25px; padding: 35px 20px; text-align: center; transition: 0.4s ease; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
@@ -346,6 +368,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .timeline-item::after, .timeline-item.right::after { left: 21px; }
   
   /* Responsive Scroll To Top */
-  .scroll-to-top { bottom: 25px; right: 25px; width: 45px; height: 45px; }
-  .scroll-to-top svg { width: 20px; height: 20px; }
+  .scroll-to-top { bottom: 25px; right: 25px; width: 50px; height: 50px; }
+  .scroll-to-top svg { width: 26px; height: 26px; }
 }
