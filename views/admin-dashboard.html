@@ -3,120 +3,199 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Admin CMS | BEM</title>
+    <title>Enterprise Admin CMS | BEM KBMFKG UMI</title>
     <meta name="robots" content="noindex, nofollow, noarchive">
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    
+    <!-- MURNI PANGGIL DARI MAIN.CSS -->
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
     
-    <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:9999; display:flex; justify-content:center; align-items:center; transition: opacity 0.5s;">
-        <div class="glass-card" style="width: 100%; max-width: 400px; text-align:center;">
+    <!-- Full-Screen Login Overlay -->
+    <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:9999; display:flex; justify-content:center; align-items:center; padding: 20px; transition: opacity 0.5s;">
+        <div class="glass-card" style="width: 100%; max-width: 400px; text-align:center; border: 1px solid var(--accent-neon);">
             <img src="/img/bemfkgumi.png" alt="Logo" style="height: 60px; margin-bottom: 15px;">
             <h2>Portal Admin</h2>
-            <input type="text" id="adminUser" class="neo-input" placeholder="Username" style="margin-top:20px;">
-            <input type="password" id="adminPass" class="neo-input" placeholder="Password">
-            <button class="holo-btn" onclick="login()" style="width:100%;">Akses Sistem</button>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Sistem Manajemen Database Organisasi</p>
+            <input type="text" id="adminUser" class="neo-input" placeholder="Username (bemfkgumi2026)">
+            <input type="password" id="adminPass" class="neo-input" placeholder="Password (bemfkgumi999)">
+            <button class="holo-btn" onclick="login()" style="width:100%; margin-top: 10px;">Akses Sistem</button>
+            <div id="loginError" style="color: #ff4d4d; margin-top: 15px; font-size: 0.9rem; display: none;">Kredensial tidak valid.</div>
         </div>
     </div>
 
-    <div class="admin-layout" id="dashboardContent" style="display: none; opacity: 0;">
+    <!-- Main Dashboard Layout -->
+    <div class="admin-layout" id="dashboardContent">
+        
         <aside class="admin-sidebar glass-card" style="border-radius: 0;">
-            <h3 style="color: var(--accent-neon); margin-bottom: 30px;">CMS BEM FKG UMI</h3>
-            <nav class="admin-nav">
-                <button class="active" onclick="switchSection('dashboard', this)">Overview</button>
-                <button onclick="switchSection('org', this)">1. Struktur Organisasi</button>
-                <button onclick="switchSection('proker', this)">2. Program Kerja</button>
-                <button onclick="switchSection('kalender', this)">3. Kalender Proker</button>
-                <button onclick="switchSection('dok', this)">4. Dokumentasi</button>
-                <button onclick="switchSection('pesan', this)">5. Interaksi Masuk</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="/img/bemfkgumi.png" style="height: 40px;">
+                <h3 style="color: var(--text-light); font-size: 1.1rem;">BEM Admin</h3>
+            </div>
+            <nav class="admin-nav" id="adminNav">
+                <button class="active" onclick="switchSection('dashboard', this)"><span>📊</span> Overview</button>
+                <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur (Org)</button>
+                <button onclick="switchSection('proker', this)"><span>📋</span> Manajemen Program Kerja</button>
+                <button onclick="switchSection('kalender', this)"><span>📅</span> Agenda Kalender</button>
+                <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
+                <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
+                <button onclick="location.reload()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
             </nav>
         </aside>
 
         <main class="admin-main">
-            <!-- 1. DASHBOARD -->
+            <!-- DASHBOARD OVERVIEW -->
             <section id="sec-dashboard" class="admin-section active">
-                <h2>Selamat Datang, Admin.</h2><p>Pilih menu di samping untuk mengelola konten database Redis.</p>
+                <h2 style="margin-bottom: 5px;">Dashboard</h2>
+                <div class="grid-3" style="margin-top: 20px;">
+                    <div class="glass-card stat-card">
+                        <h3>Total Aspirasi</h3>
+                        <div class="value" id="statAspirasi">0</div>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <h3>Pesan Masuk</h3>
+                        <div class="value" id="statPesan" style="color: #00d2ff;">0</div>
+                    </div>
+                </div>
             </section>
 
-            <!-- 2. STRUKTUR ORG -->
-            <section id="sec-org" class="admin-section">
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                    <h2>Manajemen Struktur Kepengurusan</h2>
-                    <button class="holo-btn" onclick="saveData('org')">Simpan Ke Database</button>
+            <!-- CMS: MANAJEMEN STRUKTUR KEPENGURUSAN -->
+            <section id="sec-profil" class="admin-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap:10px;">
+                    <h2>Manajemen Struktur Kabinet</h2>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org')">💾 Simpan Ke Database Redis</button>
                 </div>
                 
-                <label>Visi Kabinet</label>
-                <textarea id="editVisi" class="neo-input" rows="3"></textarea>
-                
-                <h3>Pimpinan Inti BEM</h3>
-                <div id="cmsPimpinan" style="display:grid; gap:15px; grid-template-columns:1fr 1fr;"></div>
-                <button class="action-btn view" onclick="tambahPimpinan()" style="margin: 10px 0 30px;">+ Tambah Pimpinan</button>
+                <div class="glass-card" style="margin-bottom: 20px;">
+                    <label class="form-label" style="color:var(--accent-neon);">Visi Kabinet</label>
+                    <textarea id="editVisi" class="neo-input" rows="3"></textarea>
+                </div>
 
-                <h3>Departemen & Anggota</h3>
-                <div id="cmsDepartemen" style="display:grid; gap:20px;"></div>
-                <button class="action-btn view" onclick="tambahDepartemen()" style="margin-top: 10px;">+ Tambah Departemen</button>
+                <!-- CMS Pimpinan -->
+                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Pimpinan Inti BEM</h3>
+                <div id="cmsPimpinan" class="pimpinan-grid"></div>
+                <button class="holo-btn" onclick="tambahPimpinan()" style="margin-top:15px; background: transparent; padding: 5px 15px; font-size: 0.8rem;">+ Tambah Pimpinan</button>
+
+                <!-- CMS Departemen -->
+                <h3 style="margin: 40px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Daftar Departemen</h3>
+                <div id="cmsDepartemen" style="display: flex; flex-direction: column; gap: 15px;"></div>
+                <button class="holo-btn" onclick="tambahDepartemen()" style="margin-top:15px; background: transparent; padding: 5px 15px; font-size: 0.8rem;">+ Tambah Departemen Baru</button>
             </section>
 
-            <!-- 3. PROKER -->
+            <!-- CMS: PROKER -->
             <section id="sec-proker" class="admin-section">
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                     <h2>Manajemen Program Kerja</h2>
-                    <button class="holo-btn" onclick="saveData('proker')">Simpan Ke Database</button>
+                    <button class="holo-btn" onclick="saveData('proker')" style="padding: 8px 15px; font-size: 0.8rem;">💾 Simpan Proker</button>
                 </div>
                 <div id="cmsProker"></div>
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 10px;">+ Tambah Departemen Proker</button>
             </section>
 
-            <!-- 4. KALENDER -->
+            <!-- CMS: KALENDER -->
             <section id="sec-kalender" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
                     <h2>Manajemen Agenda Kalender</h2>
-                    <button class="holo-btn" onclick="saveData('kalender')">Simpan Ke Database</button>
+                    <button class="holo-btn" onclick="saveData('kalender')" style="padding: 8px 15px; font-size: 0.8rem;">💾 Simpan Agenda</button>
                 </div>
                 <div id="cmsKalender"></div>
                 <button class="action-btn view" onclick="tambahAgenda()" style="margin-top: 10px;">+ Tambah Agenda Baru</button>
             </section>
 
-            <!-- 5. DOKUMENTASI -->
+            <!-- CMS: DOKUMENTASI -->
             <section id="sec-dok" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                    <h2>Manajemen Dokumentasi (Galeri)</h2>
-                    <button class="holo-btn" onclick="saveData('dokumentasi')">Simpan Ke Database</button>
+                    <h2>Galeri Dokumentasi</h2>
+                    <button class="holo-btn" onclick="saveData('dokumentasi')" style="padding: 8px 15px; font-size: 0.8rem;">💾 Simpan Dokumentasi</button>
                 </div>
                 <div id="cmsDokumentasi" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
-            <!-- 6. PESAN -->
-            <section id="sec-pesan" class="admin-section">
-                <h2>Aspirasi & Pesan Masuk</h2>
-                <div id="tableInteractions">Tabel Load...</div>
-            </section>
+            <!-- CMS: INTERAKSI (ASPIRASI & PESAN) -->
+            <section id="sec-aspirasi" class="admin-section">
+                <h2>Aspirasi (PLASMA) & Pesan Narahubung</h2>
+                <div class="table-responsive" style="margin-top:20px; margin-bottom: 40px;">
+                    <h3 style="padding: 15px; background: rgba(0,0,0,0.5);">Aspirasi PLASMA Masuk</h3>
+                    <table class="admin-table">
+                        <thead><tr><th>ID</th><th>Kategori</th><th>Judul</th><th>Aksi</th></tr></thead>
+                        <tbody id="tableBodyAspirasi"></tbody>
+                    </table>
+                </div>
 
+                <div class="table-responsive">
+                    <h3 style="padding: 15px; background: rgba(0,0,0,0.5);">Pesan Narahubung Masuk</h3>
+                    <table class="admin-table">
+                        <thead><tr><th>Pengirim</th><th>Subjek</th><th>Waktu</th><th>Aksi</th></tr></thead>
+                        <tbody id="tableBodyPesan"></tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
 
-    <!-- Script Base64 Image Uploader -->
+    <!-- Modal Detail View Interaksi -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content-box">
+            <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">X</button>
+            <h2 id="modalTitle" style="margin-bottom: 15px; color: var(--accent-neon);">Detail Data</h2>
+            <div id="modalContent" style="color: var(--text-light); line-height: 1.6; font-size: 0.95rem;"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="globalToast">Notifikasi</div>
+
     <script>
-        let db = { org: {}, proker: [], kalender: [], dokumentasi: [], interaksi: {aspirasi:[], pesan:[]} };
+        // STATE UTAMA
+        let aspirasiData = [];
+        let pesanData = [];
+        let db = { org: { visi:"", pimpinan:[], departemen:[] }, proker: [], kalender: [], dokumentasi: [] };
 
         async function login() {
-            const res = await fetch('/api/admin/auth', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: document.getElementById('adminUser').value, password: document.getElementById('adminPass').value}) });
-            const data = await res.json();
-            if(data.success) {
-                document.getElementById('loginGate').style.opacity = '0';
-                setTimeout(() => { document.getElementById('loginGate').style.display = 'none'; document.getElementById('dashboardContent').style.display = 'flex'; document.getElementById('dashboardContent').style.opacity = '1'; loadAllData(); }, 500);
-            } else { alert("Kredensial Salah"); }
+            const u = document.getElementById('adminUser').value;
+            const p = document.getElementById('adminPass').value;
+            const btn = document.querySelector('#loginGate button');
+            btn.innerText = "Memverifikasi..."; btn.disabled = true;
+
+            try {
+                let apiUrl = '/api/admin/auth';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemfkgumi.vercel.app/api/admin/auth';
+                
+                const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
+                const data = await res.json();
+                if(data.success) { unlockDashboard(); } else throw new Error();
+            } catch(e) {
+                // Fallback khusus untuk simulasi di Canvas Preview
+                if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') {
+                    showToast("Simulasi Canvas: API Offline. Mode Lokal Aktif.");
+                    unlockDashboard();
+                } else {
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            }
+            btn.innerText = "Akses Sistem"; btn.disabled = false;
         }
 
-        function switchSection(id, btn) {
-            document.querySelectorAll('.admin-section').forEach(e => e.classList.remove('active'));
-            document.querySelectorAll('.admin-nav button').forEach(e => e.classList.remove('active'));
-            document.getElementById('sec-' + id).classList.add('active'); btn.classList.add('active');
+        function unlockDashboard() {
+            document.getElementById('loginGate').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loginGate').style.display = 'none';
+                const dash = document.getElementById('dashboardContent');
+                dash.style.display = 'flex'; void dash.offsetWidth; 
+                dash.style.opacity = '1';
+                initDashboard();
+            }, 500);
         }
 
-        // --- IMAGE TO BASE64 HELPER ---
+        function switchSection(sectionId, btnElem) {
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-nav button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('sec-' + sectionId).classList.add('active');
+            btnElem.classList.add('active');
+        }
+
+        // ================= IMAGE TO BASE64 HELPER =================
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -126,114 +205,198 @@
             });
         }
 
-        async function handleImageUpload(inputElem, objToUpdate, keyName, renderFn) {
-            const file = inputElem.files[0];
+        async function handleImgUpload(input, obj, key, renderFunc) {
+            const file = input.files[0];
             if(file) {
-                const base64 = await fileToBase64(file);
-                objToUpdate[keyName] = base64;
-                alert("Gambar berhasil di-load. Jangan lupa klik Simpan Ke Database.");
-                renderFn();
+                const b64 = await fileToBase64(file);
+                obj[key] = b64;
+                showToast("Gambar ter-load (Base64). Jangan lupa klik Simpan Ke Database.");
+                renderFunc();
             }
         }
 
-        // --- CORE LOAD & RENDER ---
-        async function loadAllData() {
-            const req = await fetch('/api/content');
-            const data = await req.json();
-            db.org = data.org; db.proker = data.proker; db.kalender = data.kalender; db.dokumentasi = data.dokumentasi;
-            renderOrg(); renderProker(); renderKalender(); renderDokumentasi();
-            
-            // Fetch Interactions
-            const reqInt = await fetch('/api/interactions');
-            const intData = await reqInt.json();
-            db.interaksi = intData;
-            document.getElementById('tableInteractions').innerHTML = `<h3>Total Pesan: ${intData.pesan.length}</h3><h3>Total Aspirasi: ${intData.aspirasi.length}</h3>`;
+        // ================= INIT & FETCH SEMUA DATA REDIS =================
+        async function initDashboard() {
+            try {
+                let apiUrl = '/api/content';
+                let apiInt = '/api/interactions';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemfkgumi.vercel.app/api/content';
+                    apiInt = 'https://bemfkgumi.vercel.app/api/interactions';
+                }
+
+                const resOrg = await fetch(apiUrl);
+                const dataOrg = await resOrg.json();
+                if(dataOrg.success) {
+                    db.org = dataOrg.org; db.proker = dataOrg.proker || [];
+                    db.kalender = dataOrg.kalender || []; db.dokumentasi = dataOrg.dokumentasi || [];
+                }
+
+                const resInt = await fetch(apiInt);
+                const dataInt = await resInt.json();
+                if(dataInt.success) { aspirasiData = dataInt.aspirasi; pesanData = dataInt.pesan; }
+
+                renderSemuaCMS();
+            } catch (err) {
+                showToast("⚠️ API Error. Menggunakan state lokal.");
+                renderSemuaCMS(); // Akan render state kosong/dummy local
+            }
+        }
+
+        function renderSemuaCMS() {
+            renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel();
         }
 
         async function saveData(type) {
             if(type === 'org') db.org.visi = document.getElementById('editVisi').value;
-            const req = await fetch(`/api/content/${type}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) });
-            if(req.ok) alert("Data Tersimpan ke Database Redis!");
+            
+            try {
+                let apiUrl = `/api/content/${type}`;
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemfkgumi.vercel.app/api/content/${type}`;
+                
+                const req = await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(db[type]) });
+                if(req.ok) showToast(`✅ Data ${type} Berhasil Disimpan ke Redis!`);
+            } catch(e) { showToast("⚠️ Gagal menyimpan. Mungkin limit Base64 di Vercel atau Canvas mode."); }
         }
 
-        // --- RENDER ORG ---
+        // ================= RENDER STRUKTUR ORG =================
         function renderOrg() {
             document.getElementById('editVisi').value = db.org.visi || '';
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
-            db.org.pimpinan.forEach((p, i) => {
-                pCont.innerHTML += `<div class="glass-card" style="padding:15px;">
-                    <img src="${p.foto}" style="height:50px; background:#000;">
-                    <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px; font-size:0.8rem;">
-                    <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan}" onchange="db.org.pimpinan[${i}].jabatan=this.value">
-                    <input type="text" class="neo-input" placeholder="Nama" value="${p.nama}" onchange="db.org.pimpinan[${i}].nama=this.value">
-                    <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus</button>
-                </div>`;
-            });
-
-            const dCont = document.getElementById('cmsDepartemen'); dCont.innerHTML = '';
-            db.org.departemen.forEach((d, i) => {
-                let html = `<div class="glass-card" style="border-top:2px solid var(--accent-neon); padding:15px;">
-                    <input type="text" class="neo-input" value="${d.nama}" onchange="db.org.departemen[${i}].nama=this.value">
-                    <button class="action-btn view" onclick="db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:''}); renderOrg();">+ Anggota</button>
-                    <div style="margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">`;
-                d.anggota.forEach((a, j) => {
-                    html += `<div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:5px;">
-                        <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="width:100%; font-size:0.7rem;">
-                        <input type="text" class="neo-input" value="${a.nama}" onchange="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:5px;">
-                        <input type="text" class="neo-input" value="${a.jabatan}" onchange="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:5px;">
-                        <button class="action-btn delete" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">X</button>
+            
+            if(db.org.pimpinan) {
+                db.org.pimpinan.forEach((p, i) => {
+                    pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left: 3px solid var(--accent-neon);">
+                        <img src="${p.foto}" style="height:50px; border-radius:5px; background:#000; object-fit:cover; margin-bottom:10px; border:1px solid var(--glass-border);">
+                        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:5px;">Ubah Foto:</div>
+                        <input type="file" accept="image/*" onchange="handleImgUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="font-size:0.8rem; margin-bottom:10px; width: 100%;">
+                        <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan}" onchange="db.org.pimpinan[${i}].jabatan=this.value">
+                        <input type="text" class="neo-input" placeholder="Nama" value="${p.nama}" onchange="db.org.pimpinan[${i}].nama=this.value">
+                        <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus</button>
                     </div>`;
                 });
-                dCont.innerHTML += html + `</div></div>`;
-            });
-        }
-        function tambahPimpinan() { db.org.pimpinan.push({jabatan:"", nama:"", angkatan:"", foto:"/img/bemfkgumi.png"}); renderOrg(); }
-        function tambahDepartemen() { db.org.departemen.push({nama:"Nama Dept", anggota:[]}); renderOrg(); }
+            }
 
-        // --- RENDER DOKUMENTASI (FOTO) ---
-        function renderDokumentasi() {
-            const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
-            db.dokumentasi.forEach((d, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px;">
-                    <img src="${d.foto}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom:10px;">
-                    <input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)">
-                    <input type="text" class="neo-input" value="${d.judul}" onchange="db.dokumentasi[${i}].judul=this.value">
-                    <input type="date" class="neo-input" value="${d.tanggal}" onchange="db.dokumentasi[${i}].tanggal=this.value">
-                    <textarea class="neo-input" onchange="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi}</textarea>
-                    <button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button>
+            const dCont = document.getElementById('cmsDepartemen'); dCont.innerHTML = '';
+            if(db.org.departemen) {
+                db.org.departemen.forEach((d, i) => {
+                    let html = `<div class="glass-card" style="border-top:2px solid var(--accent-neon); padding:20px;">
+                        <input type="text" class="neo-input" value="${d.nama}" placeholder="Nama Departemen" onchange="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; font-size:1.1rem; color:var(--accent-neon);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                            <button class="action-btn view" onclick="db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:''}); renderOrg();">+ Tambah Anggota</button>
+                            <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Seluruh Dept Ini</button>
+                        </div>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">`;
+                    
+                    if(d.anggota) {
+                        d.anggota.forEach((a, j) => {
+                            html += `<div style="background:rgba(0,0,0,0.4); padding:15px; border-radius:10px; border: 1px solid var(--glass-border);">
+                                <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:#111; border-radius:5px; margin-bottom:5px;">
+                                <input type="file" accept="image/*" onchange="handleImgUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="font-size:0.7rem; width:100%; margin-bottom:10px;">
+                                <input type="text" class="neo-input" value="${a.nama}" placeholder="Nama Anggota" onchange="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px; font-size:0.9rem;">
+                                <input type="text" class="neo-input" value="${a.jabatan}" placeholder="Jabatan" onchange="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px; font-size:0.9rem;">
+                                <button class="action-btn delete" style="width:100%;" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">Hapus Anggota</button>
+                            </div>`;
+                        });
+                    }
+                    dCont.innerHTML += html + `</div></div>`;
+                });
+            }
+        }
+        function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan Baru", nama:"", foto:"/img/bemfkgumi.png"}); renderOrg(); }
+        function tambahDepartemen() { db.org.departemen.push({nama:"Nama Departemen Baru", anggota:[]}); renderOrg(); }
+
+        // ================= RENDER PROKER =================
+        function renderProker() {
+            const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
+            db.proker.forEach((p, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:3px solid var(--accent-neon);">
+                    <input type="text" class="neo-input" value="${p.dept}" onchange="db.proker[${i}].dept=this.value" style="font-weight:bold;">
+                    <textarea class="neo-input" rows="4" onchange="db.proker[${i}].list = this.value.split('\\n')">${p.list.join('\n')}</textarea>
+                    <small style="color:var(--text-muted); display:block; margin-bottom:10px;">*Pisahkan daftar proker dengan menekan ENTER</small>
+                    <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Departemen Proker Ini</button>
                 </div>`;
             });
         }
-        function tambahDokumentasi() { db.dokumentasi.push({judul:"Kegiatan Baru", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
+        function tambahProkerDept() { db.proker.push({dept:"Dept Baru", list:["Proker 1"]}); renderProker(); }
 
-        // --- RENDER KALENDER ---
+        // ================= RENDER KALENDER =================
         function renderKalender() {
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
             db.kalender.forEach((k, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:10px; display:flex; gap:10px; align-items:center;">
-                    <input type="date" class="neo-input" value="${k.tanggal}" onchange="db.kalender[${i}].tanggal=this.value" style="margin:0;">
-                    <input type="text" class="neo-input" value="${k.nama}" onchange="db.kalender[${i}].nama=this.value" style="margin:0;">
-                    <input type="text" class="neo-input" placeholder="Penyelenggara (Dept)" value="${k.dept}" onchange="db.kalender[${i}].dept=this.value" style="margin:0;">
-                    <button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">X</button>
+                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <input type="date" class="neo-input" value="${k.tanggal}" onchange="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;">
+                    <input type="text" class="neo-input" value="${k.nama}" placeholder="Nama Kegiatan" onchange="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;">
+                    <input type="text" class="neo-input" placeholder="Penyelenggara (Dept)" value="${k.dept}" onchange="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;">
+                    <button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">Hapus</button>
                 </div>`;
             });
         }
         function tambahAgenda() { db.kalender.push({nama:"Agenda Baru", tanggal:"", dept:""}); renderKalender(); }
 
-        // --- RENDER PROKER ---
-        function renderProker() {
-            const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
-            db.proker.forEach((p, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px;">
-                    <input type="text" class="neo-input" value="${p.dept}" onchange="db.proker[${i}].dept=this.value">
-                    <textarea class="neo-input" rows="4" onchange="db.proker[${i}].list = this.value.split('\\n')">${p.list.join('\n')}</textarea>
-                    <small style="color:var(--text-muted); display:block; margin-bottom:10px;">*Pisahkan list dengan ENTER (Baris Baru)</small>
-                    <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Dept Ini</button>
+        // ================= RENDER DOKUMENTASI =================
+        function renderDokumentasi() {
+            const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
+            db.dokumentasi.forEach((d, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px;">
+                    <img src="${d.foto}" style="width:100%; height:150px; object-fit:cover; margin-bottom:10px; border-radius:10px;">
+                    <input type="file" accept="image/*" onchange="handleImgUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;">
+                    <input type="text" class="neo-input" placeholder="Judul Dokumentasi" value="${d.judul}" onchange="db.dokumentasi[${i}].judul=this.value">
+                    <input type="date" class="neo-input" value="${d.tanggal}" onchange="db.dokumentasi[${i}].tanggal=this.value">
+                    <textarea class="neo-input" placeholder="Deskripsi Singkat" onchange="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi}</textarea>
+                    <button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus Dokumentasi</button>
                 </div>`;
             });
         }
-        function tambahProkerDept() { db.proker.push({dept:"Nama Departemen", list:["Proker 1"]}); renderProker(); }
+        function tambahDokumentasi() { db.dokumentasi.push({judul:"", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
 
+        // ================= RENDER INTERAKSI TABEL =================
+        function renderTabel() {
+            document.getElementById('statAspirasi').innerText = aspirasiData.length;
+            document.getElementById('statPesan').innerText = pesanData.length;
+
+            const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
+            aspirasiData.forEach(item => {
+                tbodyA.innerHTML += `<tr><td>${item.id}</td><td>${item.kategori}</td><td><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`;
+            });
+
+            const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = '';
+            pesanData.forEach(item => {
+                tbodyP.innerHTML += `<tr><td><strong>${item.nama}</strong></td><td>${item.subjek}</td><td>${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`;
+            });
+        }
+
+        async function deleteData(type, id) {
+            if(confirm('Yakin ingin menghapus interaksi ini dari database?')) {
+                try {
+                    let apiUrl = '/api/delete-interaction';
+                    if(window.location.protocol === 'blob:') apiUrl = 'https://bemfkgumi.vercel.app/api/delete-interaction';
+                    
+                    await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) });
+                    
+                    if(type==='aspirasi') aspirasiData = aspirasiData.filter(x => x.id !== id);
+                    else pesanData = pesanData.filter(x => x.id !== id);
+                    
+                    renderTabel(); showToast('✅ Data interaksi dihapus.');
+                } catch(e) { showToast('⚠️ Gagal menghapus (Mode Simulasi)'); }
+            }
+        }
+
+        function viewAspirasi(id) {
+            const data = aspirasiData.find(x => x.id === id); if(!data) return;
+            document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id;
+            document.getElementById('modalContent').innerHTML = `<p><span style="color:var(--text-muted);">Judul:</span><br><strong>${data.judul}</strong></p><p><span style="color:var(--text-muted);">Kategori / Jenis:</span><br>${data.kategori} / ${data.jenis}</p><p><span style="color:var(--text-muted);">Isi Aspirasi:</span><br><div style="background:rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-top:5px;">${data.isi}</div></p>`;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function viewPesan(id) {
+            const data = pesanData.find(x => x.id === id); if(!data) return;
+            document.getElementById('modalTitle').innerText = "Pesan Masuk";
+            document.getElementById('modalContent').innerHTML = `<p><span style="color:var(--text-muted);">Dari:</span> <strong>${data.nama}</strong></p><p><span style="color:var(--text-muted);">Kontak Balasan:</span> ${data.kontak}</p><p><span style="color:var(--text-muted);">Subjek:</span> ${data.subjek}</p><p style="margin-top: 15px;"><span style="color:var(--text-muted);">Isi Pesan:</span><br><div style="background:rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-top:5px;">${data.pesan}</div></p>`;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
     </script>
 </body>
 </html>
