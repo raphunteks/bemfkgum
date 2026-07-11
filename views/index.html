@@ -119,24 +119,29 @@
             </div>
         </section>
 
-        <!-- SUPER NEW: FILOSOFI LOGO & WARNA DI INDEX.HTML (Cover Flow & Interactive Pills) -->
-        <section class="container" style="padding: 100px 20px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px;">
+        <!-- NEW SUPER UI: FILOSOFI LOGO & WARNA DI INDEX.HTML -->
+        <section id="filosofi" class="container" style="padding: 100px 20px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px;">
+            
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
                 <h2 style="font-size: 3rem; font-weight: 900;">Makna <span style="color: var(--accent-neon);">Filosofi Logo</span></h2>
                 <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
             </div>
 
-            <!-- Carousel UI Logo -->
+            <!-- Carousel Cover Flow UI Logo -->
             <div class="filosofi-slider-wrapper reveal">
-                <button class="slider-nav-btn prev" onclick="scrollSlider(-300)">❮</button>
+                <button class="slider-nav-btn prev" onclick="scrollSlider(-340)">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                </button>
                 <div class="filosofi-slider-track" id="indexLogoSlider">
                     <!-- Inject via JS -->
                 </div>
-                <button class="slider-nav-btn next" onclick="scrollSlider(300)">❯</button>
+                <button class="slider-nav-btn next" onclick="scrollSlider(340)">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
             </div>
 
-            <!-- Interactive UI Warna -->
-            <div class="warna-ui-container reveal" style="margin-top: 100px;">
+            <!-- Interactive Pills UI Warna -->
+            <div class="warna-ui-container reveal" style="margin-top: 120px;">
                 <div style="text-align: center; margin-bottom: 40px;">
                     <h2 style="font-size: 3rem; font-weight: 900;">Filosofi <span style="color: var(--accent-neon);">Warna</span></h2>
                     <p style="color: var(--text-muted); margin-top: 10px;">Palet warna merepresentasikan keteguhan, kreativitas, dan keterbukaan dalam merajut gerakan mahasiswa yang kolaboratif.</p>
@@ -150,14 +155,15 @@
                     <!-- Detail Warna Aktif -->
                     <div class="warna-detail-swatch" style="background: transparent;"></div>
                     <div class="warna-detail-text">
-                        <h3 style="color: var(--text-muted);">Pilih salah satu warna di atas</h3>
+                        <h3 style="color: var(--text-muted);">Memuat palet warna...</h3>
+                        <p></p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- UPGRADE: QUOTE BESAR KABINET (ADAPTASI GAMBAR 4) -->
-        <section class="big-quote-section reveal">
+        <!-- UPGRADE: QUOTE BESAR KABINET -->
+        <section class="big-quote-section reveal" style="margin-top: 50px;">
             <div class="quote-marks left">"</div>
             <div class="quote-marks right">"</div>
             <div class="container">
@@ -236,7 +242,7 @@
             }, 300);
         }
 
-        // Logika Slider Logo Filosofi
+        // Logika Slider Logo Filosofi (Cover Flow Effect)
         function scrollSlider(amount) {
             const track = document.getElementById('indexLogoSlider');
             track.scrollBy({ left: amount, behavior: 'smooth' });
@@ -252,8 +258,8 @@
                 let minDistance = Infinity;
 
                 cards.forEach((card, index) => {
-                    // Cari jarak kartu ke tengah layar
-                    let cardCenter = card.offsetLeft + (card.clientWidth / 2);
+                    // Cari jarak tengah kartu ke tengah layar
+                    let cardCenter = card.offsetLeft + (card.clientWidth / 2) - track.offsetLeft;
                     let distance = Math.abs(centerPoint - cardCenter);
                     if(distance < minDistance) {
                         minDistance = distance;
@@ -261,13 +267,13 @@
                     }
                 });
 
-                // Terapkan efek active
+                // Terapkan class active ke kartu yang paling tengah
                 cards.forEach(c => c.classList.remove('active'));
                 if(cards[activeIndex]) cards[activeIndex].classList.add('active');
             });
         }
 
-        // Logika Pilih Warna Interaktif
+        // Logika Pilih Warna Interaktif (Pills System)
         let globalWarnaData = [];
         function selectWarna(index, btnElement) {
             document.querySelectorAll('.warna-pill').forEach(b => b.classList.remove('active'));
@@ -279,7 +285,7 @@
             detailBox.classList.remove('show');
             setTimeout(() => {
                 detailBox.innerHTML = `
-                    <div class="warna-detail-swatch" style="background-color: ${data.hex};"></div>
+                    <div class="warna-detail-swatch" style="background-color: ${data.hex}; border-color: ${data.hex === '#ffffff' ? '#e2e8f0' : 'transparent'};"></div>
                     <div class="warna-detail-text">
                         <h3>${data.warna} <span>${data.hex}</span></h3>
                         <p>${data.makna}</p>
@@ -290,7 +296,7 @@
         }
 
         async function fetchDataBeranda() {
-            let dataFilosofi = FALLBACK_FILOSOFI; // default fallback
+            let dataFilosofi = FALLBACK_FILOSOFI;
 
             try {
                 let apiUrl = '/api/content';
@@ -301,7 +307,6 @@
                 const res = await req.json();
                 
                 if (res.org) {
-                    // 1. Set Nama Ketua dari Database Pimpinan
                     if(res.org.pimpinan && res.org.pimpinan.length > 0) {
                         const ketua = res.org.pimpinan[0];
                         document.getElementById('namaKetuaSambutan').innerText = ketua.nama;
@@ -309,12 +314,10 @@
                         if(ketua.foto) document.getElementById('imgSambutanLogo').src = ketua.foto;
                     }
 
-                    // 2. Set Visi
                     if(res.org.visi) {
                         document.getElementById('teksVisiIndex').innerText = `"${res.org.visi}"`;
                     }
 
-                    // 3. Set Misi Interaktif
                     if(res.org.misi && res.org.misi.length > 0) {
                         globalMisiData = res.org.misi;
                         const sidebar = document.getElementById('misiSidebarIndex');
@@ -338,21 +341,25 @@
                 console.log("Menggunakan data statis untuk Beranda."); 
             }
 
-            // Render Filosofi Logo Slider
+            // Render Filosofi Logo Slider (Cover Flow)
             const track = document.getElementById('indexLogoSlider');
             track.innerHTML = '';
             dataFilosofi.logo.forEach((item, idx) => {
-                // Card pertama otomatis active
+                // Beri Spacer di awal agar kartu pertama bisa berada di tengah layar
                 track.innerHTML += `
                     <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
                         <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
                         <h3>${item.elemen}</h3>
-                        <p class="filo-arti">${item.arti}</p>
-                        <p class="filo-makna">${item.makna}</p>
+                        <p class="filo-arti"><strong>Arti:</strong> ${item.arti}</p>
+                        <p class="filo-makna"><strong>Makna:</strong> ${item.makna}</p>
                     </div>
                 `;
             });
-            initSliderLogic(); // Inisiasi efek zoom di slider
+            // Spacer di akhir agar kartu terakhir bisa ke tengah
+            track.innerHTML += `<div style="flex: 0 0 10vw;"></div>`;
+
+            // Inisiasi Logika Deteksi Tengah (Intersection)
+            initSliderLogic();
             
             // Render Filosofi Warna Pills
             globalWarnaData = dataFilosofi.warna;
@@ -361,13 +368,18 @@
             globalWarnaData.forEach((item, idx) => {
                 pillsCont.innerHTML += `
                     <div class="warna-pill" onclick="selectWarna(${idx}, this)">
-                        <div class="warna-pill-dot" style="background-color: ${item.hex};"></div>
+                        <div class="warna-pill-dot" style="background-color: ${item.hex}; border: 1px solid rgba(255,255,255,0.2);"></div>
                         ${item.warna}
                     </div>
                 `;
             });
-            // Auto click warna pertama
-            if(document.querySelector('.warna-pill')) document.querySelector('.warna-pill').click();
+            
+            // Auto click warna pertama setelah selesai di-render
+            setTimeout(() => {
+                if(document.querySelector('.warna-pill')) {
+                    document.querySelector('.warna-pill').click();
+                }
+            }, 100);
         }
     </script>
 </body>
