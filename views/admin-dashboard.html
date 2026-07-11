@@ -3,47 +3,110 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | BEM FKG UMI</title>
+    <title>Sistem Dashboard Admin | BEM FKG UMI</title>
+    
+    <!-- ================= SEO EXPERT (PRIVATE AREA) ================= -->
+    <!-- WAJIB No-Index karena ini adalah halaman rahasia admin -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <!-- ========================================================== -->
+
     <link rel="stylesheet" href="/css/main.css">
+    <style>
+        .admin-list { margin-top: 15px; color: var(--text-light); list-style: none; padding: 0; }
+        .admin-list li {
+            padding: 15px; background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--glass-border);
+            border-radius: 10px; margin-bottom: 10px; font-size: 0.95rem; line-height: 1.5;
+        }
+        .admin-badge {
+            background: rgba(0, 255, 128, 0.2); color: var(--accent-neon);
+            padding: 2px 8px; border-radius: 5px; font-size: 0.8rem; margin-right: 5px;
+        }
+    </style>
 </head>
-<body>
-    <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:999; display:flex; justify-content:center; align-items:center;">
-        <div class="glass-card" style="width: 100%; max-width: 400px; text-align:center;">
-            <h2>Admin Login</h2>
-            <input type="text" id="adminUser" class="neo-input" placeholder="Username" style="margin-top:20px;">
-            <input type="password" id="adminPass" class="neo-input" placeholder="Password">
-            <button class="holo-btn" onclick="login()" style="width:100%;">Masuk</button>
+<body style="background: #050505;"> <!-- Darker background for admin panel -->
+    
+    <!-- Full-Screen Login Overlay -->
+    <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:9999; display:flex; justify-content:center; align-items:center; padding: 20px;">
+        <div class="glass-card" style="width: 100%; max-width: 450px; text-align:center; border: 1px solid var(--accent-neon);">
+            <img src="/img/bemfkgumi.png" alt="Logo" style="height: 60px; margin-bottom: 15px;">
+            <h2 style="margin-bottom: 5px;">Portal Admin</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Gunakan Kredensial Vercel Env Anda</p>
+            
+            <input type="text" id="adminUser" class="neo-input" placeholder="Username (bemfkgumi2026)">
+            <input type="password" id="adminPass" class="neo-input" placeholder="Password (bemfkgumi999)" onkeypress="if(event.key === 'Enter') login()">
+            
+            <button class="holo-btn" onclick="login()" style="width:100%; margin-top: 10px;">Akses Sistem</button>
+            <div id="loginError" style="color: #ff4d4d; margin-top: 15px; font-size: 0.9rem; display: none;">Kredensial tidak valid.</div>
         </div>
     </div>
 
-    <main class="container" style="padding-top: 20px; filter: blur(10px);" id="dashboardContent">
-        <h1 style="color: var(--accent-neon);">Dashboard Admin</h1>
+    <!-- Main Dashboard Content (Hidden/Blurred by default) -->
+    <main class="container" style="padding-top: 30px; filter: blur(20px); transition: filter 0.5s ease;" id="dashboardContent">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h1 style="color: var(--accent-neon); font-size: 2rem;">Admin Center</h1>
+                <p style="color: var(--text-muted);">Platform Manajemen Data Organisasi BEM FKG UMI</p>
+            </div>
+            <button class="holo-btn" onclick="location.reload()" style="background: transparent; padding: 8px 15px; border-color: #ff4d4d; color: #ff4d4d; box-shadow: none;">Logout System</button>
+        </div>
+        
         <div class="grid-2" style="margin-top: 30px;">
-            <div class="glass-card">
-                <h3>Aspirasi Masuk (PLASMA)</h3>
-                <!-- Dummy List Fallback -->
-                <ul style="margin-top:15px; color: var(--text-muted); list-style:none;">
-                    <li style="padding:10px; border-bottom:1px solid var(--glass-border);">[ASP-123] Fasilitas AC (Saran)</li>
-                    <li style="padding:10px; border-bottom:1px solid var(--glass-border);">[ASP-124] UKT (Kritik)</li>
+            
+            <!-- Panel Aspirasi PLASMA -->
+            <div class="glass-card" style="border-top: 3px solid var(--accent-neon);">
+                <h3 style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 1.5rem;">📣</span> Aspirasi Masuk (PLASMA)</h3>
+                
+                <ul class="admin-list">
+                    <li>
+                        <span class="admin-badge">Saran</span> <strong>Perbaikan Fasilitas AC</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">[ASP-1700100] • Kategori: Fasilitas Kampus</span><br>
+                        "AC di ruang kuliah lantai 2 sering bocor, tolong sampaikan ke pihak dekanat."
+                    </li>
+                    <li>
+                        <span class="admin-badge" style="background: rgba(255,77,77,0.2); color: #ff4d4d;">Kritik</span> <strong>Transparansi Keuangan</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">[ASP-1700105] • Kategori: Organisasi</span><br>
+                        "Mohon LPJ kegiatan selalu di-publish di mading digital web ini."
+                    </li>
+                </ul>
+                <button class="neo-input" style="background: transparent; color: var(--accent-neon); text-align: center; border-style: dashed; cursor: pointer; margin-bottom: 0;">Muat Aspirasi Lainnya...</button>
+            </div>
+
+            <!-- Panel Pesan Narahubung -->
+            <div class="glass-card" style="border-top: 3px solid #00a8ff;">
+                <h3 style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 1.5rem;">✉️</span> Pesan Narahubung</h3>
+                
+                <ul class="admin-list">
+                    <li>
+                        <strong>[Undangan Kegiatan]</strong> - BEM Universitas Hasanuddin<br>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">WA: 08123456789 • 2 Jam yang lalu</span><br>
+                        "Kami mengundang delegasi BEM FKG UMI dalam LKMM Nasional..."
+                    </li>
+                    <li>
+                        <strong>[Penawaran Kerja]</strong> - PT Medika Persada<br>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Email: hr@medika.com • 1 Hari yang lalu</span><br>
+                        "Pengajuan sponsorship untuk kegiatan Baksos bulan depan..."
+                    </li>
                 </ul>
             </div>
-            <div class="glass-card">
-                <h3>Pesan Masuk (Narahubung)</h3>
-                <!-- Dummy List Fallback -->
-                <ul style="margin-top:15px; color: var(--text-muted); list-style:none;">
-                    <li style="padding:10px; border-bottom:1px solid var(--glass-border);">[MSG-001] Undangan Webinar</li>
-                </ul>
-            </div>
+            
         </div>
     </main>
 
     <script>
-        // Simulasi Auth & Penghilangan Glass Blur
+        // Simulasi Auth & Penghilangan Glass Blur yang lebih aman
         async function login() {
             const u = document.getElementById('adminUser').value;
             const p = document.getElementById('adminPass').value;
+            const btn = document.querySelector('#loginGate button');
+            const err = document.getElementById('loginError');
             
+            btn.innerText = "Memverifikasi...";
+            btn.disabled = true;
+            err.style.display = 'none';
+
             try {
+                // Endpoint ini memanggil logika fallback/Vercel di server.js
                 const res = await fetch('/api/admin/auth', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -52,15 +115,21 @@
                 const data = await res.json();
                 
                 if(data.success) {
-                    document.getElementById('loginGate').style.display = 'none';
-                    document.getElementById('dashboardContent').style.filter = 'none';
-                    // Di real-app, simpan token ke localStorage & fetch data asli dari Redis.
+                    document.getElementById('loginGate').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loginGate').style.display = 'none';
+                        document.getElementById('dashboardContent').style.filter = 'none';
+                    }, 500); // Smooth transisi buka gembok admin
                 } else {
-                    alert('Kredensial Salah!');
+                    throw new Error('Kredensial Salah');
                 }
             } catch(e) {
-                alert('Server Error. Pastikan env terkonfigurasi.');
+                err.innerText = "Akses Ditolak: Kredensial tidak valid.";
+                err.style.display = 'block';
             }
+            
+            btn.innerText = "Akses Sistem";
+            btn.disabled = false;
         }
     </script>
 </body>
