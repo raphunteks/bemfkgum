@@ -1,0 +1,136 @@
+/* FILE: public/css/main.css */
+@import url('[https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap)');
+
+:root {
+  --bg-dark: #0a0a0a;
+  --accent-neon: #00ff80;
+  --accent-glow: rgba(0, 255, 128, 0.5);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-light: #f0f0f0;
+  --text-muted: #a0a0a0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background Blob Animation */
+body::before, body::after {
+  content: '';
+  position: fixed;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  z-index: -1;
+  filter: blur(60px);
+  animation: blobBounce 15s infinite alternate ease-in-out;
+}
+body::before { top: -100px; left: -100px; }
+body::after { bottom: -100px; right: -100px; animation-duration: 20s; animation-direction: alternate-reverse; }
+
+@keyframes blobBounce {
+  0% { transform: translate(0, 0) scale(1); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+  34% { transform: translate(50px, 50px) scale(1.1); border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+  67% { transform: translate(-50px, 100px) scale(0.9); border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+  100% { transform: translate(0, 0) scale(1); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+}
+
+/* Glassmorphism */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+.glass-card:hover { transform: translateY(-5px); border-color: var(--accent-neon); box-shadow: 0 10px 40px rgba(0, 255, 128, 0.15); }
+
+/* Claymorphism */
+.clay-badge {
+  background: rgba(25, 25, 25, 0.8);
+  border-radius: 20px;
+  padding: 10px 20px;
+  box-shadow: 8px 8px 16px rgba(0,0,0,0.6), inset -4px -4px 8px rgba(0, 0, 0, 0.4), inset 4px 4px 8px rgba(255, 255, 255, 0.05);
+  display: inline-block;
+  font-weight: bold;
+}
+
+/* Holographic UI Button */
+.holo-btn {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%, rgba(0, 255, 128, 0.2) 100%);
+  border: 1px solid var(--accent-neon);
+  color: var(--accent-neon);
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 0 10px var(--accent-glow);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-decoration: none;
+  display: inline-block;
+}
+.holo-btn:hover {
+  background: var(--accent-neon);
+  color: var(--bg-dark);
+  box-shadow: 0 0 20px var(--accent-neon), 0 0 40px var(--accent-glow);
+}
+
+/* Forms */
+.neo-input {
+  width: 100%;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 12px 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  transition: 0.3s;
+}
+.neo-input:focus { outline: none; border-color: var(--accent-neon); box-shadow: 0 0 15px rgba(0,255,128,0.2); }
+select.neo-input option { background: var(--bg-dark); color: white; }
+
+/* Layout Utilities */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; flex: 1; }
+.hero-section { min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+
+/* Timeline (Sejarah) */
+.timeline { border-left: 2px solid var(--accent-neon); padding-left: 30px; margin: 40px 0; position: relative; }
+.timeline-item { margin-bottom: 30px; position: relative; }
+.timeline-item::before {
+  content: ''; position: absolute; left: -37px; top: 0; width: 12px; height: 12px;
+  background: var(--bg-dark); border: 2px solid var(--accent-neon); border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-neon);
+}
+
+/* Header & Footer */
+header {
+  background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px);
+  position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass-border);
+}
+nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1200px; margin: 0 auto; }
+.nav-links { display: flex; gap: 20px; }
+.nav-links a { color: var(--text-light); text-decoration: none; font-weight: 500; transition: 0.3s; }
+.nav-links a:hover { color: var(--accent-neon); }
+.mega-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(16px); padding: 20px; border-bottom: 1px solid var(--accent-neon); }
+.nav-item:hover .mega-menu { display: flex; gap: 20px; justify-content: center; }
+
+footer { background: rgba(0,0,0,0.5); border-top: 1px solid var(--glass-border); padding: 40px 0; margin-top: 50px; }
+
+/* Responsive */
+@media(max-width: 768px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .nav-links { display: none; /* In real app, add hamburger menu JS */ }
+}

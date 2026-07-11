@@ -1,0 +1,74 @@
+<!-- FILE: views/narahubung.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hubungi Kami | BEM FKG UMI</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <%- include('partials/header.html') %>
+    <main class="container grid-2" style="padding-top: 50px;">
+        
+        <div class="glass-card">
+            <h2>Kirim Pesan</h2>
+            <form id="contactForm" style="margin-top: 20px;">
+                <input type="text" id="nama" class="neo-input" placeholder="Nama Lengkap" required>
+                
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="clay-badge" onclick="setContact('WA')" id="btnWA" style="border: 1px solid var(--accent-neon)">WhatsApp</button>
+                    <button type="button" class="clay-badge" onclick="setContact('Email')" id="btnEmail">Email</button>
+                </div>
+                <input type="text" id="kontak" class="neo-input" placeholder="Masukkan Nomor WA" required>
+                
+                <select id="subjek" class="neo-input">
+                    <option value="Undangan Kegiatan">Undangan Kegiatan</option>
+                    <option value="Penawaran Kerja">Penawaran Kerja</option>
+                    <option value="Pertanyaan Umum">Pertanyaan Umum</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+
+                <textarea id="pesan" class="neo-input" rows="4" placeholder="Tulis pesan Anda..." required></textarea>
+                <button type="submit" class="holo-btn" style="width: 100%;">Kirim Pesan</button>
+            </form>
+        </div>
+
+        <div class="glass-card" style="display:flex; flex-direction:column;">
+            <h2>Lokasi Sekretariat</h2>
+            <div style="flex:1; margin-top:20px; border-radius:15px; overflow:hidden; border: 1px solid var(--glass-border);">
+                <!-- Fallback Iframe Maps -->
+                <iframe src="[https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.8!2d119.4!3d-5.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1sid!2sid!4v1](https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.8!2d119.4!3d-5.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1sid!2sid!4v1)" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </main>
+    <%- include('partials/footer.html') %>
+
+    <script>
+        let contactType = 'WA';
+        function setContact(type) {
+            contactType = type;
+            document.getElementById('kontak').placeholder = type === 'WA' ? 'Masukkan Nomor WA' : 'Masukkan Alamat Email';
+            document.getElementById('btnWA').style.border = type === 'WA' ? '1px solid var(--accent-neon)' : 'none';
+            document.getElementById('btnEmail').style.border = type === 'Email' ? '1px solid var(--accent-neon)' : 'none';
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                nama: document.getElementById('nama').value,
+                kontak: `${contactType}: ${document.getElementById('kontak').value}`,
+                subjek: document.getElementById('subjek').value,
+                pesan: document.getElementById('pesan').value
+            };
+            
+            try {
+                await fetch('/api/message', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                alert('Pesan berhasil dikirim!');
+                e.target.reset();
+            } catch(e) {
+                alert('Gagal mengirim pesan.');
+            }
+        });
+    </script>
+</body>
+</html>

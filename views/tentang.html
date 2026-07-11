@@ -1,0 +1,56 @@
+<!-- FILE: views/tentang.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang Kami | BEM FKG UMI</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <%- include('partials/header.html') %>
+    <main class="container" style="padding-top: 50px;">
+        
+        <section id="visimisi" class="glass-card" style="margin-bottom: 60px; text-align: center;">
+            <h2 style="color: var(--accent-neon);">Visi Kami</h2>
+            <p style="font-size: 1.5rem; font-style: italic; margin: 20px 0;">"Terwujudnya BEM FKG UMI sebagai episentrum sinergi dalam merajut asa bagi seluruh mahasiswa."</p>
+        </section>
+
+        <section id="struktur" style="margin-bottom: 60px;">
+            <h2 style="text-align: center; margin-bottom: 40px;">Struktur Organisasi</h2>
+            <div class="grid-2">
+                <div class="glass-card" style="text-align: center;">
+                    <div class="clay-badge" style="margin-bottom:10px;">Presiden BEM</div>
+                    <h3>Sanditya Saputra</h3>
+                </div>
+                <div class="glass-card" style="text-align: center;">
+                    <div class="clay-badge" style="margin-bottom:10px;">Wakil Presiden</div>
+                    <h3>Azizah Najda</h3>
+                </div>
+            </div>
+            <h3 style="text-align:center; margin: 40px 0 20px;">9 Departemen Utama</h3>
+            <div class="grid-3">
+                <!-- Data Dummy Fallback -->
+                <div class="glass-card"><h4>Dept. Character of Building</h4></div>
+                <div class="glass-card"><h4>Dept. Science Education & Research</h4></div>
+                <div class="glass-card"><h4>Dept. Islamic</h4></div>
+                <!-- Tambahkan departemen lain sesuai list -->
+            </div>
+        </section>
+
+        <section id="sejarah" style="margin-bottom: 60px;">
+            <h2>Sejarah Kepengurusan</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3 style="color: var(--accent-neon);">2026 - Kabinet Merajut Asa</h3>
+                    <p>Fokus pada digitalisasi layanan mahasiswa dan inovasi riset gigi.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 style="color: var(--accent-neon);">2025 - Kabinet Kausa Cipta</h3>
+                    <p>Restrukturisasi organisasi dan penguatan pondasi internal.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer.html') %>
+</body>
+</html>

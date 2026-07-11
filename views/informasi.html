@@ -1,0 +1,91 @@
+<!-- FILE: views/informasi.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informasi & Plasma | BEM FKG UMI</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <%- include('partials/header.html') %>
+    <main class="container" style="padding-top: 50px;">
+        
+        <section id="plasma" class="glass-card" style="max-width: 700px; margin: 0 auto;">
+            <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 10px;">P.L.A.S.M.A</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted);">Pengumpulan Aspirasi Mahasiswa BEM FKG UMI</p>
+            
+            <form id="plasmaForm">
+                <label>Judul Aspirasi *</label>
+                <input type="text" id="judul" class="neo-input" placeholder="Misal: Perbaikan AC Ruang Kuliah" required>
+                
+                <label>Kategori *</label>
+                <select id="kategori" class="neo-input" required>
+                    <option value="" disabled selected>Pilih Kategori</option>
+                    <option value="Akademik">Akademik</option>
+                    <option value="Fasilitas Kampus">Fasilitas Kampus</option>
+                    <option value="Keuangan/UKT">Keuangan / UKT</option>
+                    <option value="Organisasi">Organisasi</option>
+                    <option value="Pelayanan Kampus">Pelayanan Kampus</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+
+                <label>Jenis Aspirasi *</label>
+                <div style="display:flex; gap:10px; margin-bottom: 15px;">
+                    <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Saran" checked> Saran</label>
+                    <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Pengaduan"> Pengaduan</label>
+                    <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Kritik"> Kritik</label>
+                </div>
+
+                <label>Isi Aspirasi *</label>
+                <textarea id="isi" class="neo-input" rows="4" placeholder="Ceritakan detail aspirasi Anda..." required></textarea>
+
+                <label>Bukti Pendukung (Opsional)</label>
+                <input type="file" id="file" class="neo-input">
+
+                <label style="display: flex; gap:10px; align-items:center; margin: 20px 0;">
+                    <input type="checkbox" id="setuju" required>
+                    <span style="font-size:0.9rem;">Saya bersedia dihubungi untuk klarifikasi lebih lanjut.</span>
+                </label>
+
+                <button type="submit" class="holo-btn" style="width: 100%; text-align: center;">Kirim Aspirasi</button>
+            </form>
+            <div id="plasmaResult" style="margin-top:20px; text-align:center; color: var(--accent-neon); display:none;"></div>
+        </section>
+    </main>
+    <%- include('partials/footer.html') %>
+
+    <script>
+        document.getElementById('plasmaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerText = "Mengirim...";
+            
+            // Ekstraksi ke primitif
+            const payload = {
+                judul: document.getElementById('judul').value,
+                kategori: document.getElementById('kategori').value,
+                jenis: document.querySelector('input[name="jenis"]:checked').value,
+                isi: document.getElementById('isi').value,
+                setuju: document.getElementById('setuju').checked
+            };
+
+            try {
+                const res = await fetch('/api/plasma', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                document.getElementById('plasmaResult').innerText = data.message;
+                document.getElementById('plasmaResult').style.display = 'block';
+                e.target.reset();
+            } catch(err) {
+                document.getElementById('plasmaResult').innerText = "Gagal terhubung ke server.";
+                document.getElementById('plasmaResult').style.color = "red";
+                document.getElementById('plasmaResult').style.display = 'block';
+            }
+            btn.innerText = "Kirim Aspirasi";
+        });
+    </script>
+</body>
+</html>

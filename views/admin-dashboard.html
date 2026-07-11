@@ -1,0 +1,67 @@
+<!-- FILE: views/admin-dashboard.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | BEM FKG UMI</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:999; display:flex; justify-content:center; align-items:center;">
+        <div class="glass-card" style="width: 100%; max-width: 400px; text-align:center;">
+            <h2>Admin Login</h2>
+            <input type="text" id="adminUser" class="neo-input" placeholder="Username" style="margin-top:20px;">
+            <input type="password" id="adminPass" class="neo-input" placeholder="Password">
+            <button class="holo-btn" onclick="login()" style="width:100%;">Masuk</button>
+        </div>
+    </div>
+
+    <main class="container" style="padding-top: 20px; filter: blur(10px);" id="dashboardContent">
+        <h1 style="color: var(--accent-neon);">Dashboard Admin</h1>
+        <div class="grid-2" style="margin-top: 30px;">
+            <div class="glass-card">
+                <h3>Aspirasi Masuk (PLASMA)</h3>
+                <!-- Dummy List Fallback -->
+                <ul style="margin-top:15px; color: var(--text-muted); list-style:none;">
+                    <li style="padding:10px; border-bottom:1px solid var(--glass-border);">[ASP-123] Fasilitas AC (Saran)</li>
+                    <li style="padding:10px; border-bottom:1px solid var(--glass-border);">[ASP-124] UKT (Kritik)</li>
+                </ul>
+            </div>
+            <div class="glass-card">
+                <h3>Pesan Masuk (Narahubung)</h3>
+                <!-- Dummy List Fallback -->
+                <ul style="margin-top:15px; color: var(--text-muted); list-style:none;">
+                    <li style="padding:10px; border-bottom:1px solid var(--glass-border);">[MSG-001] Undangan Webinar</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simulasi Auth & Penghilangan Glass Blur
+        async function login() {
+            const u = document.getElementById('adminUser').value;
+            const p = document.getElementById('adminPass').value;
+            
+            try {
+                const res = await fetch('/api/admin/auth', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username: u, password: p})
+                });
+                const data = await res.json();
+                
+                if(data.success) {
+                    document.getElementById('loginGate').style.display = 'none';
+                    document.getElementById('dashboardContent').style.filter = 'none';
+                    // Di real-app, simpan token ke localStorage & fetch data asli dari Redis.
+                } else {
+                    alert('Kredensial Salah!');
+                }
+            } catch(e) {
+                alert('Server Error. Pastikan env terkonfigurasi.');
+            }
+        }
+    </script>
+</body>
+</html>

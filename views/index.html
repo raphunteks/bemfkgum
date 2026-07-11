@@ -1,0 +1,45 @@
+<!-- FILE: views/index.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda | BEM FKG UMI</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <%- include('partials/header.html') %>
+
+    <main class="container">
+        <section class="hero-section">
+            <div class="glass-card" style="max-width: 800px; margin: 0 auto; animation: slideUp 1s ease;">
+                <div class="clay-badge" style="margin-bottom: 20px;">Periode 2026-2027</div>
+                <h1 style="font-size: 3rem; margin-bottom: 20px; font-weight: 900;">Kabinet <span style="color: var(--accent-neon);">Merajut Asa</span></h1>
+                <p style="font-size: 1.2rem; margin-bottom: 30px; color: var(--text-muted);">Terwujudnya BEM FKG UMI sebagai episentrum sinergi dalam merajut asa bagi IKM UMI.</p>
+                <a href="/tentang" class="holo-btn">Kenali Kami Lebih Jauh</a>
+            </div>
+        </section>
+        
+        <section style="margin: 100px 0;">
+            <h2 style="text-align: center; margin-bottom: 40px;">Program <span style="color: var(--accent-neon);">Unggulan</span></h2>
+            <div class="grid-3">
+                <!-- Data Dummy Fallback -->
+                <div class="glass-card">
+                    <h3>Bakti Sosial Gigi</h3>
+                    <p class="text-muted" style="margin-top: 10px;">Pengabdian masyarakat di desa tertinggal untuk edukasi kesehatan gigi.</p>
+                </div>
+                <div class="glass-card">
+                    <h3>FKG UMI Scientific Fair</h3>
+                    <p class="text-muted" style="margin-top: 10px;">Kompetisi riset tingkat nasional antar mahasiswa Kedokteran Gigi.</p>
+                </div>
+                <div class="glass-card">
+                    <h3>Islamic Dental Camp</h3>
+                    <p class="text-muted" style="margin-top: 10px;">Pembinaan karakter Islami berbalut camping ilmiah.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer.html') %>
+</body>
+</html>
