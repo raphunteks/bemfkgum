@@ -1,51 +1,70 @@
 <!-- FILE: views/partials/footer.html -->
 <footer>
-    <div class="container" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-        
-        <!-- Dinamis 3 Logo -->
-        <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 25px; background: rgba(255,255,255,0.02); padding: 15px 30px; border-radius: 40px; border: 1px solid var(--glass-border);">
-            <img id="footerLogo1" src="/img/bemfkgumi.png" alt="Logo 1" style="height: 50px; filter: drop-shadow(0 0 10px rgba(0,229,255,0.3)); object-fit: contain;">
-            <img id="footerLogo2" src="/img/bemfkgumi.png" alt="Logo 2" style="height: 50px; filter: drop-shadow(0 0 10px rgba(0,229,255,0.3)); object-fit: contain;">
-            <img id="footerLogo3" src="/img/bemfkgumi.png" alt="Logo 3" style="height: 50px; filter: drop-shadow(0 0 10px rgba(0,229,255,0.3)); object-fit: contain;">
-        </div>
-
-        <!-- Dinamis Slogan & Alamat -->
-        <h3 style="color: var(--text-light); font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; letter-spacing: 1px;" id="footerSloganText">
-            Kabinet Ananta Anardhaya
-        </h3>
-        <p style="color: var(--text-muted); max-width: 600px; line-height: 1.6; margin-bottom: 30px; font-size: 0.95rem;" id="footerAlamatText">
-            Jl. Pajonga Dg. Ngalle No. 27 A, Pa'batong, Kec. Mamajang, Kota Makassar, Sulawesi Selatan
-        </p>
-
-        <!-- Social Media & Copyright -->
-        <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 30px;">
-            <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: var(--accent-neon); text-decoration: none; transition: 0.3s;">IG</a>
-            <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: var(--accent-neon); text-decoration: none; transition: 0.3s;">YT</a>
-            <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: var(--accent-neon); text-decoration: none; transition: 0.3s;">TK</a>
-        </div>
-        
-        <div style="border-top: 1px solid rgba(255,255,255,0.05); width: 100%; padding-top: 20px; font-size: 0.85rem; color: var(--text-muted);">
-            &copy; 2026 BEM KBMFKG UMI. All Rights Reserved.<br>
-            <span style="font-size: 0.75rem; opacity: 0.5;">Developed by Dept. Information and Communication</span>
-        </div>
+  <div class="container grid-3">
+    
+    <!-- Kolom 1: Profil (3 Logo, Slogan, Alamat Dinamis Terhubung DB) -->
+    <div>
+      <div class="footer-logo" style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
+          <img id="footerLogo1" src="/img/bemfkgumi.png" alt="Logo 1" style="height: 45px; filter: drop-shadow(0 0 8px rgba(0,229,255,0.3)); object-fit: contain;">
+          <img id="footerLogo2" src="/img/bemfkgumi.png" alt="Logo 2" style="height: 45px; filter: drop-shadow(0 0 8px rgba(0,229,255,0.3)); object-fit: contain;">
+          <img id="footerLogo3" src="/img/bemfkgumi.png" alt="Logo 3" style="height: 45px; filter: drop-shadow(0 0 8px rgba(0,229,255,0.3)); object-fit: contain;">
+      </div>
+      
+      <h3 style="color: var(--accent-neon); font-size: 1.3rem; margin-bottom: 5px;">BEM KBMFKG UMI</h3>
+      
+      <!-- ID footerSloganText untuk diubah via Admin -->
+      <p id="footerSloganText" style="color: var(--text-light); font-weight: bold; margin-bottom: 15px;">Kabinet Ananta Anardhaya</p>
+      
+      <p style="color: var(--text-muted); font-size: 0.9rem; display: flex; align-items: flex-start; gap: 8px;">
+          <span style="color: var(--accent-neon);">&#128205;</span>
+          <!-- ID footerAlamatText untuk diubah via Admin -->
+          <span id="footerAlamatText">Jl. Pajonga Dg. Ngalle No. 27 A, Pa'batong, Kec. Mamajang, Kota Makassar, Sulawesi Selatan</span>
+      </p>
     </div>
+    
+    <!-- Kolom 2: Navigasi (Sesuai Script Original) -->
+    <div>
+      <h3 style="margin-bottom: 15px; border-bottom: 2px solid var(--accent-neon); display: inline-block; padding-bottom: 5px;">Navigasi</h3>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
+        <li><a href="/" style="color: var(--text-muted); text-decoration:none; transition: 0.3s;" onmouseover="this.style.color='var(--accent-neon)'" onmouseout="this.style.color='var(--text-muted)'">Beranda</a></li>
+        <li><a href="/tentang" style="color: var(--text-muted); text-decoration:none; transition: 0.3s;" onmouseover="this.style.color='var(--accent-neon)'" onmouseout="this.style.color='var(--text-muted)'">Tentang Kabinet & Sejarah</a></li>
+        <li><a href="/informasi" style="color: var(--text-muted); text-decoration:none; transition: 0.3s;" onmouseover="this.style.color='var(--accent-neon)'" onmouseout="this.style.color='var(--text-muted)'">Pusat Informasi & Galeri</a></li>
+        <li><a href="/informasi#plasma" style="color: var(--accent-neon); text-decoration:none; font-weight: bold;">Salurkan Aspirasi (PLASMA)</a></li>
+      </ul>
+    </div>
+    
+    <!-- Kolom 3: Pusat Bantuan (Sesuai Script Original) -->
+    <div>
+      <h3 style="margin-bottom: 15px; border-bottom: 2px solid var(--accent-neon); display: inline-block; padding-bottom: 5px;">Pusat Bantuan</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Punya pertanyaan terkait birokrasi kampus atau penawaran kerjasama?</p>
+      <a href="/narahubung" class="holo-btn" style="width: 100%;">Hubungi Kami Sekarang</a>
+    </div>
+  </div>
+  
+  <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem;">
+    &copy; 2026 BEM KBMFKG UMI. Developed with Axa Xyz Architecture.
+  </div>
 </footer>
 
 <script>
-  // Fetch Footer Settings Global
   document.addEventListener('DOMContentLoaded', async () => {
     try {
         let apiUrl = '/api/content';
         if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemfkgumi.vercel.app/api/content';
+        
         const req = await fetch(apiUrl);
         const res = await req.json();
+        
         if(res.settings) {
+            // Timpa teks bawaan HTML dengan data dari Redis Database
             if(res.settings.footerSlogan) document.getElementById('footerSloganText').innerText = res.settings.footerSlogan;
             if(res.settings.footerAlamat) document.getElementById('footerAlamatText').innerText = res.settings.footerAlamat;
             if(res.settings.logo1) document.getElementById('footerLogo1').src = res.settings.logo1;
             if(res.settings.logo2) document.getElementById('footerLogo2').src = res.settings.logo2;
             if(res.settings.logo3) document.getElementById('footerLogo3').src = res.settings.logo3;
         }
-    } catch (e) { console.log("Footer fallback local used"); }
+    } catch (e) { 
+        console.log("Footer fallback local data used (Offline Mode)"); 
+    }
   });
 </script>
