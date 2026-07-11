@@ -4,332 +4,122 @@
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tentang Kabinet | BEM FKG UMI</title>
-    
-    <!-- ================= SEO EXPERT ================= -->
-    <meta name="description" content="Kenali identitas, Visi, Misi, Struktur Organisasi, dan Sejarah Kepengurusan Kabinet Merajut Asa BEM FKG UMI.">
-    <meta name="keywords" content="Struktur BEM FKG UMI, Sejarah BEM UMI, Visi Misi BEM FKG, Kabinet Merajut Asa, Sanditya Saputra, Azizah Najda">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="BEM FKG UMI">
-    <link rel="canonical" href="https://bemfkgumi.vercel.app/tentang">
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Tentang Kabinet | BEM FKG UMI">
-    <meta property="og:description" content="Kenali identitas, Visi, Misi, Struktur Organisasi, dan Sejarah Kabinet Merajut Asa BEM FKG UMI.">
-    <meta property="og:image" content="https://bemfkgumi.vercel.app/img/bemfkgumi.png">
-    <meta property="og:url" content="https://bemfkgumi.vercel.app/tentang">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Tentang Kabinet | BEM FKG UMI">
-    <meta property="twitter:description" content="Kenali identitas, Visi, Misi, Struktur Organisasi, dan Sejarah Kabinet Merajut Asa BEM FKG UMI.">
-
-    <!-- JSON-LD Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "AboutPage",
-      "mainEntity": {
-        "@type": "Organization",
-        "name": "BEM FKG UMI",
-        "description": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia."
-      }
-    }
-    </script>
-    <!-- ================= END SEO ================= -->
-
+    <!-- MURNI PANGGIL DARI MAIN.CSS -->
     <link rel="stylesheet" href="/css/main.css">
-    
-    <style>
-        /* Animasi Reveal saat Scroll */
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        /* Custom Styles for Profile Cards (Pimpinan) */
-        .leader-card {
-            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-top: 3px solid var(--accent-neon);
-            border-radius: 25px; padding: 40px 20px; text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); transition: transform 0.4s ease;
-        }
-        .leader-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,255,128,0.15); }
-        
-        .leader-photo {
-            width: 150px; height: 150px; margin: 0 auto 20px; border-radius: 50%;
-            background: #1a1a1a; border: 3px dashed var(--accent-neon);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 25px rgba(0,255,128,0.2); position: relative;
-        }
-        .leader-photo::after {
-            content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
-            border-radius: 50%; border: 1px solid rgba(0,255,128,0.3); animation: spin 10s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Custom Styles for Department Grid */
-        .dept-card {
-            background: rgba(20,20,20,0.6); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.05); border-radius: 20px;
-            padding: 25px; transition: all 0.3s ease; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-        }
-        .dept-card:hover {
-            background: rgba(0,255,128,0.05); border-color: var(--accent-neon);
-            transform: scale(1.02); box-shadow: inset 0 0 20px rgba(0,255,128,0.1);
-        }
-        .dept-icon {
-            width: 60px; height: 60px; background: rgba(0,0,0,0.5); border-radius: 15px;
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
-            margin-bottom: 15px; border: 1px solid var(--glass-border); color: var(--accent-neon);
-        }
-
-        /* Interactive Timeline (Sejarah) */
-        .history-timeline {
-            position: relative; max-width: 800px; margin: 0 auto; padding: 40px 0;
-        }
-        .history-timeline::after {
-            content: ''; position: absolute; width: 4px; background: rgba(0,255,128,0.2);
-            top: 0; bottom: 0; left: 50%; margin-left: -2px; border-radius: 2px;
-        }
-        .timeline-container {
-            padding: 10px 40px; position: relative; background-color: inherit; width: 50%;
-        }
-        .timeline-container.left { left: 0; }
-        .timeline-container.right { left: 50%; }
-        
-        .timeline-container::after {
-            content: ''; position: absolute; width: 20px; height: 20px;
-            background-color: var(--bg-dark); border: 4px solid var(--accent-neon);
-            border-radius: 50%; z-index: 1; top: 25px;
-            box-shadow: 0 0 15px var(--accent-neon);
-        }
-        .left::after { right: -10px; }
-        .right::after { left: -10px; }
-        
-        .timeline-content {
-            padding: 20px 30px; background: var(--glass-bg); backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); border-radius: 20px; position: relative;
-        }
-
-        @media screen and (max-width: 768px) {
-            .history-timeline::after { left: 31px; }
-            .timeline-container { width: 100%; padding-left: 70px; padding-right: 25px; }
-            .timeline-container.right { left: 0; }
-            .left::after, .right::after { left: 21px; }
-        }
-    </style>
 </head>
 <body>
     <%- include('partials/header.html') %>
     <main class="container" style="padding-top: 60px; padding-bottom: 60px;">
         
-        <!-- Header Page -->
         <div class="reveal" style="text-align: center; margin-bottom: 70px;">
             <div class="clay-badge" style="margin-bottom: 15px;">PROFIL ORGANISASI</div>
             <h1 style="font-size: 3rem; font-weight: 900;">Tentang <span style="color: var(--accent-neon);">Kabinet</span></h1>
-            <p style="color: var(--text-muted); margin-top: 15px; font-size: 1.1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-                Mengenal lebih dekat identitas, struktur penggerak, dan rekam jejak perjuangan BEM FKG UMI.
-            </p>
         </div>
 
-        <!-- Section Visi & Misi -->
         <section id="visimisi" class="reveal" style="margin-bottom: 100px;">
             <div class="glass-card" style="text-align: center; position: relative; overflow: hidden; padding: 60px 30px;">
-                <!-- Glowing Background Blob inside card -->
-                <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(0,255,128,0.05) 0%, transparent 50%); z-index: -1;"></div>
-                
                 <h2 style="color: var(--accent-neon); font-size: 2.2rem; margin-bottom: 20px;">Visi Kami</h2>
                 <div style="font-size: 3rem; color: rgba(255,255,255,0.1); position: absolute; top: 30px; left: 50%; transform: translateX(-50%);">&#10077;</div>
-                <p style="font-size: 1.8rem; font-style: italic; margin: 30px auto; line-height: 1.6; font-weight: 300; max-width: 900px; position: relative; z-index: 1;">
-                    "Terwujudnya BEM FKG UMI sebagai episentrum sinergi dalam merajut asa bagi seluruh mahasiswa menuju keunggulan akademis dan akhlakul karimah."
+                <p id="teksVisi" style="font-size: 1.8rem; font-style: italic; margin: 30px auto; line-height: 1.6; font-weight: 300; max-width: 900px;">
+                    Loading Visi Organisasi...
                 </p>
             </div>
-            
-            <h2 style="text-align: center; font-size: 2.2rem; margin: 60px 0 40px;">Misi <span style="color: var(--accent-neon);">Kami</span></h2>
-            <div class="grid-3">
-                <div class="glass-card" style="padding: 25px;">
-                    <h3 style="color: var(--accent-neon); margin-bottom: 10px; font-size: 1.2rem;">01. Inklusivitas & Sinergi</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Membangun lingkungan kampus yang inklusif dan mensinergikan seluruh elemen mahasiswa FKG UMI.</p>
-                </div>
-                <div class="glass-card" style="padding: 25px;">
-                    <h3 style="color: var(--accent-neon); margin-bottom: 10px; font-size: 1.2rem;">02. Optimalisasi Pelayanan</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Mengoptimalkan pelayanan advokasi dan fasilitas kesejahteraan bagi mahasiswa secara transparan.</p>
-                </div>
-                <div class="glass-card" style="padding: 25px;">
-                    <h3 style="color: var(--accent-neon); margin-bottom: 10px; font-size: 1.2rem;">03. Inovasi Riset</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Mendorong iklim keilmuan dan riset kedokteran gigi yang adaptif terhadap kemajuan teknologi.</p>
-                </div>
-            </div>
         </section>
 
-        <!-- Section Struktur Pimpinan -->
+        <!-- STRUKTUR DINAMIS DARI DATABASE -->
         <section id="struktur" class="reveal" style="margin-bottom: 100px;">
             <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.5rem;">Struktur <span style="color: var(--accent-neon);">Kabinet</span></h2>
-                <p style="color: var(--text-muted); margin-top: 10px;">PIMPINAN KABINET MERAJUT ASA</p>
+                <h2 style="font-size: 2.5rem;">Struktur <span style="color: var(--accent-neon);">Pimpinan</span></h2>
             </div>
             
-            <div class="grid-2" style="max-width: 800px; margin: 0 auto;">
-                <div class="leader-card">
-                    <div class="leader-photo">
-                        <!-- Placeholder Foto (Tidak ada src gambar external) -->
-                        <span style="color: var(--text-muted); font-size: 0.8rem;">[Foto Presiden]</span>
-                    </div>
-                    <div class="clay-badge" style="margin-bottom:15px; background: rgba(0,255,128,0.15); color: var(--accent-neon);">Presiden BEM</div>
-                    <h3 style="font-size: 1.8rem; margin-bottom: 5px;">Sanditya Saputra</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">FKG UMI Angkatan 2023</p>
-                </div>
-                <div class="leader-card">
-                    <div class="leader-photo">
-                        <span style="color: var(--text-muted); font-size: 0.8rem;">[Foto Wapres]</span>
-                    </div>
-                    <div class="clay-badge" style="margin-bottom:15px; background: rgba(0,255,128,0.15); color: var(--accent-neon);">Wakil Presiden</div>
-                    <h3 style="font-size: 1.8rem; margin-bottom: 5px;">Azizah Najda</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">FKG UMI Angkatan 2023</p>
-                </div>
+            <div class="grid-2" style="max-width: 800px; margin: 0 auto;" id="containerPimpinan">
+                <!-- Injeksi JS -->
+                <div style="text-align:center; grid-column: span 2;">Memuat data dari database Upstash...</div>
             </div>
         </section>
 
-        <!-- Section 9 Departemen -->
+        <!-- 9 DEPARTEMEN DINAMIS -->
         <section class="reveal" style="margin-bottom: 100px;">
-            <h3 style="text-align:center; margin-bottom: 40px; font-size: 2rem;">9 Departemen <span style="color: var(--accent-neon);">Penggerak</span></h3>
-            <div class="grid-3">
-                <div class="dept-card">
-                    <div class="dept-icon">👥</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Character of Building</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Pengembangan kaderisasi, SDM, dan kepemimpinan mahasiswa.</p>
-                </div>
-                <div class="dept-card">
-                    <div class="dept-icon">🔬</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Science & Research</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Fasilitator akademik, KTI, dan lomba keilmuan kedokteran gigi.</p>
-                </div>
-                <div class="dept-card">
-                    <div class="dept-icon">🕌</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Islamic</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Kerohanian, syiar Islam, dan kajian bioetika Islami di kampus.</p>
-                </div>
-                <div class="dept-card">
-                    <div class="dept-icon">📝</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Sekretariat</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Administrasi, persuratan, dan manajemen inventaris BEM.</p>
-                </div>
-                <div class="dept-card">
-                    <div class="dept-icon">💰</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Treasure</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Pengelolaan keuangan, kas, dan dental supply store mahasiswa.</p>
-                </div>
-                <div class="dept-card">
-                    <div class="dept-icon">🎨</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Art and Sport</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Pewadahan minat bakat seni dan olahraga mahasiswa FKG.</p>
-                </div>
-                <div class="dept-card">
-                    <div class="dept-icon">🤝</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Dedication Humanity</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Bakti sosial, desa binaan, dan tanggap darurat bencana.</p>
-                </div>
-                <div class="dept-card">
-                    <div class="dept-icon">⚖️</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Study & Strategy</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Kajian isu kesehatan nasional dan advokasi kebijakan kampus.</p>
-                </div>
-                <div class="dept-card">
-                    <div class="dept-icon">📱</div>
-                    <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">Dept. Info & Communication</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Manajemen media sosial, publikasi, dan website resmi BEM.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section Sejarah Kepengurusan -->
-        <section id="sejarah" class="reveal">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.5rem;">Sejarah <span style="color: var(--accent-neon);">BEM FKG UMI</span></h2>
-                <p style="color: var(--text-muted); margin-top: 10px;">Rekam jejak kepengurusan sebagai bentuk estafet perjuangan mahasiswa.</p>
-            </div>
-            
-            <div class="history-timeline">
-                <!-- Timeline 2026 -->
-                <div class="timeline-container left reveal">
-                    <div class="timeline-content">
-                        <div class="clay-badge" style="margin-bottom:10px; font-size: 0.8rem; background: rgba(0,255,128,0.2);">2026 - 2027</div>
-                        <h3 style="color: var(--text-light); font-size: 1.4rem;">Kabinet Merajut Asa</h3>
-                        <p style="color: var(--text-muted); margin-top: 10px; font-size: 0.95rem; line-height: 1.6;">
-                            Berfokus pada digitalisasi layanan terpadu (PLASMA), sinergitas seluruh elemen mahasiswa, dan mendorong inovasi riset kedokteran gigi di era Society 5.0.
-                        </p>
-                        <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                            <p style="font-size: 0.85rem; color: var(--text-muted);"><strong>Presiden:</strong> Sanditya Saputra</p>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);"><strong>Wapres:</strong> Azizah Najda</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Timeline 2025 -->
-                <div class="timeline-container right reveal">
-                    <div class="timeline-content">
-                        <div class="clay-badge" style="margin-bottom:10px; font-size: 0.8rem;">2025 - 2026</div>
-                        <h3 style="color: var(--text-light); font-size: 1.4rem;">Kabinet Kausa Cipta</h3>
-                        <p style="color: var(--text-muted); margin-top: 10px; font-size: 0.95rem; line-height: 1.6;">
-                            Berhasil melakukan restrukturisasi organisasi secara komprehensif pasca-pandemi dan menguatkan pondasi internal lembaga kemahasiswaan.
-                        </p>
-                        <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                            <p style="font-size: 0.85rem; color: var(--text-muted);"><strong>Presiden:</strong> Azza Febra</p>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);"><strong>Wapres:</strong> [Data Arsip]</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Timeline 2024 -->
-                <div class="timeline-container left reveal">
-                    <div class="timeline-content">
-                        <div class="clay-badge" style="margin-bottom:10px; font-size: 0.8rem;">2024 - 2025</div>
-                        <h3 style="color: var(--text-light); font-size: 1.4rem;">Kabinet Nawasena</h3>
-                        <p style="color: var(--text-muted); margin-top: 10px; font-size: 0.95rem; line-height: 1.6;">
-                            Fokus pada pemulihan aktivitas luring kemahasiswaan dan sukses menyelenggarakan perhelatan akbar PORSENI FKG UMI skala regional.
-                        </p>
-                        <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                            <p style="font-size: 0.85rem; color: var(--text-muted);"><strong>Presiden:</strong> [Data Arsip]</p>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);"><strong>Wapres:</strong> [Data Arsip]</p>
-                        </div>
-                    </div>
-                </div>
+            <h3 style="text-align:center; margin-bottom: 40px; font-size: 2rem;">Departemen <span style="color: var(--accent-neon);">Penggerak</span></h3>
+            <div class="grid-3" id="containerDepartemen">
+                <!-- Injeksi JS -->
             </div>
         </section>
     </main>
     <%- include('partials/footer.html') %>
 
-    <!-- ================= JAVASCRIPT ANIMATION ================= -->
     <script>
-        // Logika Intersection Observer untuk memicu animasi masuk (Fade/Slide Up) saat di-scroll
+        // Animasi
         document.addEventListener('DOMContentLoaded', () => {
             const reveals = document.querySelectorAll('.reveal');
-
-            const revealOnScroll = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target); // Unobserve agar animasi hanya berjalan 1x
-                    }
-                });
-            }, {
-                root: null,
-                threshold: 0.15, // Memicu animasi ketika 15% elemen terlihat di layar
-                rootMargin: "0px 0px -50px 0px"
-            });
-
-            reveals.forEach(reveal => {
-                revealOnScroll.observe(reveal);
-            });
+            const observer = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); }); });
+            reveals.forEach(el => observer.observe(el));
+            setTimeout(() => { if(document.querySelector('.reveal')) document.querySelector('.reveal').classList.add('active'); }, 100);
             
-            // Pemicu manual untuk elemen teratas agar langsung muncul
-            setTimeout(() => {
-                const firstElements = document.querySelectorAll('.reveal');
-                if(firstElements.length > 0) firstElements[0].classList.add('active');
-                if(firstElements.length > 1) firstElements[1].classList.add('active');
-            }, 100);
+            // FETCH DATA DARI DATABASE REDIS PADA SAAT PAGE LOAD
+            loadOrgData();
         });
+
+        async function loadOrgData() {
+            try {
+                const req = await fetch('/api/org');
+                const res = await req.json();
+                
+                // DATA DEFAULT JIKA DATABASE MASIH KOSONG
+                let orgData = {
+                    visi: "Terwujudnya BEM FKG UMI sebagai episentrum sinergi dalam merajut asa bagi seluruh mahasiswa menuju keunggulan akademis dan akhlakul karimah.",
+                    pimpinan: [
+                        { jabatan: "Presiden BEM", nama: "Sanditya Saputra", angkatan: "2023", foto: "" },
+                        { jabatan: "Wakil Presiden", nama: "Azizah Najda", angkatan: "2023", foto: "" }
+                    ],
+                    departemen: [
+                        { nama: "Character of Building", deskripsi: "Pengembangan kaderisasi dan SDM.", ikon: "👥" }
+                    ]
+                };
+
+                if(res.success && res.data) {
+                    orgData = JSON.parse(res.data);
+                }
+
+                // RENDER VISI
+                document.getElementById('teksVisi').innerText = `"${orgData.visi}"`;
+
+                // RENDER PIMPINAN
+                const pimContainer = document.getElementById('containerPimpinan');
+                pimContainer.innerHTML = '';
+                orgData.pimpinan.forEach(pim => {
+                    const bgStyle = pim.foto ? `background-image: url('${pim.foto}');` : '';
+                    pimContainer.innerHTML += `
+                        <div class="leader-card">
+                            <div class="leader-photo" style="${bgStyle}">
+                                ${!pim.foto ? `<span style="color: var(--text-muted); font-size: 0.8rem;">[Foto]</span>` : ''}
+                            </div>
+                            <div class="clay-badge" style="margin-bottom:15px; background: rgba(0,255,128,0.15); color: var(--accent-neon);">${pim.jabatan}</div>
+                            <h3 style="font-size: 1.8rem; margin-bottom: 5px;">${pim.nama}</h3>
+                            <p style="color: var(--text-muted); font-size: 0.9rem;">FKG UMI ${pim.angkatan}</p>
+                        </div>
+                    `;
+                });
+
+                // RENDER DEPARTEMEN
+                const depContainer = document.getElementById('containerDepartemen');
+                depContainer.innerHTML = '';
+                orgData.departemen.forEach(dep => {
+                    depContainer.innerHTML += `
+                        <div class="dept-card">
+                            <div class="dept-icon">${dep.ikon || '🏢'}</div>
+                            <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">${dep.nama}</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">${dep.deskripsi}</p>
+                        </div>
+                    `;
+                });
+
+            } catch (err) {
+                console.warn("Gagal render data dinamis.", err);
+            }
+        }
     </script>
 </body>
 </html>
