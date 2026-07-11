@@ -36,7 +36,7 @@
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
                 <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Manajemen Header & Footer</button>
-                <button onclick="location.reload()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
+                <button onclick="logout()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
             </nav>
         </aside>
 
@@ -186,6 +186,24 @@
         const FALLBACK_ADMIN_ORG = { visi: "Visi Default", pimpinan: [{jabatan: "Ketua BEM", nama: "Ailan", foto: "/img/bemfkgumi.png"}], departemen: [{nama: "Dept. Test", anggota: []}] };
         let db = { org: FALLBACK_ADMIN_ORG, proker: [], kalender: [], dokumentasi: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
         let aspirasiData = []; let pesanData = [];
+
+        // FITUR AUTO-LOGIN
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('axa_admin_token');
+            if (token) {
+                // Auto-login jika token ditemukan di local storage
+                document.getElementById('loginGate').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'flex';
+                document.getElementById('dashboardContent').style.opacity = '1';
+                loadAllData();
+            }
+        });
+
+        // FITUR LOGOUT (Hapus Token)
+        function logout() {
+            localStorage.removeItem('axa_admin_token');
+            location.reload();
+        }
 
         async function login() {
             const u = document.getElementById('adminUser').value; const p = document.getElementById('adminPass').value;
