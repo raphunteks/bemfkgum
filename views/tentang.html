@@ -55,7 +55,7 @@
             </div>
         </section>
 
-        <!-- NEW: SEJARAH KEPENGURUSAN (TIMELINE) -->
+        <!-- SEJARAH KEPENGURUSAN (TIMELINE) -->
         <section class="reveal" style="margin-bottom: 100px;">
             <div style="text-align: center; margin-bottom: 50px;">
                 <h2 style="font-size: 2.8rem;">Sejarah <span style="color: var(--accent-neon);">Kepengurusan</span></h2>
@@ -88,10 +88,20 @@
             departemen: []
         };
 
-        // Data Fallback Sejarah
+        // Data Fallback Sejarah (REVISI BIG UPGRADE DATA KABINET)
         const FALLBACK_SEJARAH = [
-            { tahun: "2025-2026", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
-            { tahun: "2023-2024", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" }
+            { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
+            { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" },
+            { tahun: "2023-2024", kabinet: "Kabinet Satya Bimantara", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" },
+            { tahun: "2023", kabinet: "Kabinet Aswara Karya", logo: "/img/bemfkgumi.png", ketua: "Aditya Dwianugrah Wiratman, S.KG", wakil: "Nur. Muhammad Syafaat, S.KG" },
+            { tahun: "2022", kabinet: "Kabinet Dedikasi Karsa", logo: "/img/bemfkgumi.png", ketua: "drg. Amhadn Syarief", wakil: "Marwati Sumardi, S.KG" },
+            { tahun: "2021", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Fahri Muhammad", wakil: "drg. Ayus Lestari" },
+            { tahun: "2020", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muhammad Ajis", wakil: "drg. Andriani T" },
+            { tahun: "2018-2019", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Sulaihi Ramadhan", wakil: "drg. Sri Devi" },
+            { tahun: "2017-2018", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Faisal Ramadhan", wakil: "drg, Satria Nur Fathanah" },
+            { tahun: "2016-2017", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Zulfahmi Duwila", wakil: "drg. Abd. Rahman Abdal Basri Makassau" },
+            { tahun: "2015-2016", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Rizky Adipratama Yusuf", wakil: "drg. Muhammad Hidayatullah" },
+            { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
         ];
 
         // Fungsi Render Utama
@@ -155,7 +165,7 @@
             const container = document.getElementById('containerSejarah');
             container.innerHTML = '';
 
-            // Pastikan diurutkan dari tahun terbaru ke terlama
+            // Pastikan diurutkan dari tahun terbaru ke terlama (berdasarkan awal tahun)
             const sortedData = sejarahData.sort((a, b) => parseInt(b.tahun) - parseInt(a.tahun));
 
             sortedData.forEach((item, index) => {
