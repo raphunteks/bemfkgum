@@ -101,6 +101,21 @@ const defaultTeam = [
     }
 ];
 
+// NEW: Data Seed Sejarah Kepengurusan
+const defaultSejarah = [
+    { tahun: "2025-2026", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
+    { tahun: "2023-2024", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" },
+    { tahun: "2023", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Aditya Dwianugrah Wiratman, S.KG", wakil: "Nur. Muhammad Syafaat, S.KG" },
+    { tahun: "2022", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Amhadn Syarief", wakil: "Marwati Sumardi, S.KG" },
+    { tahun: "2021", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Fahri Muhammad", wakil: "drg. Ayus Lestari" },
+    { tahun: "2020", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muhammad Ajis", wakil: "drg. Andriani T" },
+    { tahun: "2018-2019", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Sulaihi Ramadhan", wakil: "drg. Sri Devi" },
+    { tahun: "2017-2018", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Faisal Ramadhan", wakil: "drg, Satria Nur Fathanah" },
+    { tahun: "2016-2017", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Zulfahmi Duwila", wakil: "drg. Abd. Rahman Abdal Basri Makassau" },
+    { tahun: "2015-2016", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Rizky Adipratama Yusuf", wakil: "drg. Muhammad Hidayatullah" },
+    { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
+];
+
 // ================= ROUTES FRONTEND =================
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
@@ -130,10 +145,11 @@ app.get('/api/content', async (req, res) => {
         let dokumentasi = await redis.get('Dokumentasi_Data');
         let settings = await redis.get('Settings_Data');
         let team = await redis.get('Team_Data');
+        let sejarah = await redis.get('Sejarah_Data'); // NEW GET
 
         let parsedOrg = safeParse(org, defaultOrg);
         
-        // BUG FIX: Auto Restore Misi jika terhapus dari Database
+        // Auto Restore Misi jika terhapus dari Database
         if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) {
             parsedOrg.misi = defaultOrg.misi;
         }
@@ -145,10 +161,11 @@ app.get('/api/content', async (req, res) => {
             kalender: safeParse(kalender, []),
             dokumentasi: safeParse(dokumentasi, []),
             settings: safeParse(settings, defaultSettings),
-            team: safeParse(team, defaultTeam) 
+            team: safeParse(team, defaultTeam),
+            sejarah: safeParse(sejarah, defaultSejarah) // NEW SEND
         });
     } catch (error) {
-        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam });
+        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah });
     }
 });
 
@@ -166,6 +183,7 @@ app.post('/api/content/:type', async (req, res) => {
         else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
         else if (type === 'settings') await redis.set('Settings_Data', payload);
         else if (type === 'team') await redis.set('Team_Data', payload);
+        else if (type === 'sejarah') await redis.set('Sejarah_Data', payload); // NEW POST
         else return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
