@@ -20,10 +20,10 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* Scroll Behavior halus untuk fitur Anchor URL / Hash */
+/* ================= SMART ROUTING SMOOTH SCROLL ================= */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 100px; /* Offset dari sticky header */
+  scroll-padding-top: 100px; /* Offset dari sticky header agar navigasi pas ke Section */
 }
 
 /* Proteksi z-index agar blob animation tidak menghalangi klik pada elemen */
@@ -74,7 +74,8 @@ body::after {
 }
 
 /* ================= SUPER UI ELEMENTS (Glass, Clay, Holo, Neu) ================= */
-/* 1. Ultra Glassmorphism Card (Lebih aesthetic dengan inner shadow & gradient) */
+
+/* 1. Ultra Glassmorphism Card (Inner shadow + Aesthetic Gradient) */
 .glass-card { 
   background: linear-gradient(145deg, rgba(15, 25, 45, 0.6), rgba(5, 10, 20, 0.8)); 
   backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
@@ -84,7 +85,7 @@ body::after {
 }
 .glass-card:hover { transform: translateY(-8px); border-color: var(--accent-neon); box-shadow: 0 20px 50px var(--accent-glow); }
 
-/* 2. Enhanced Claymorphism Badge (Efek 3D Nyata / Skeuomorphic) */
+/* 2. Enhanced Claymorphism Badge (Efek 3D Realistis / Skeuomorphic) */
 .clay-badge { 
   background: #0b1329; color: var(--accent-neon); border-radius: 30px; padding: 10px 22px; 
   box-shadow: 6px 6px 12px rgba(0,0,0,0.8), -6px -6px 12px rgba(255,255,255,0.04), inset 2px 2px 4px rgba(255,255,255,0.08), inset -2px -2px 4px rgba(0,0,0,0.4); 
@@ -92,7 +93,7 @@ body::after {
 }
 .clay-badge:hover { color: #fff; text-shadow: 0 0 10px var(--accent-neon); }
 
-/* 3. Holographic UI Button (Lebih dinamis dan glowing) */
+/* 3. Holographic UI Button (Dinamic Glowing Edge) */
 .holo-btn { 
   background: linear-gradient(135deg, rgba(0,229,255,0.1) 0%, rgba(0,102,255,0.3) 50%, rgba(0,229,255,0.1) 100%); 
   background-size: 200% auto; animation: holoFlow 3s infinite linear;
@@ -128,9 +129,21 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .menu-toggle { display: none; cursor: pointer; z-index: 1001; }
 
 /* ================= FOOTER ================= */
-.custom-footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 30px; }
-.footer-credit-link { color: var(--text-muted); text-decoration: none; transition: 0.3s; font-weight: 500; }
-.footer-credit-link:hover { color: var(--accent-neon); text-shadow: 0 0 10px var(--accent-glow); }
+.custom-footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 30px;
+}
+.footer-credit-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: 0.3s;
+  font-weight: 500;
+}
+.footer-credit-link:hover {
+  color: var(--accent-neon);
+  text-shadow: 0 0 10px var(--accent-glow);
+}
 
 /* ================= TIMELINE SEJARAH CSS ================= */
 .timeline { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
