@@ -16,7 +16,6 @@
             <h1 style="font-size: 3.5rem; font-weight: 900;">Visi & Misi <br><span class="script-font" style="font-size: 1.2em; display:block; margin-top:10px;">Ananta Anardhaya</span></h1>
         </div>
 
-        <!-- NEW ID: visimisi -->
         <!-- VISI -->
         <section id="visimisi" class="reveal" style="margin-bottom: 50px;">
             <div class="glass-card" style="text-align: center; padding: 50px 30px;">
@@ -37,7 +36,27 @@
             </div>
         </section>
 
-        <!-- NEW ID: struktur -->
+        <!-- NEW: MAKNA FILOSOFI LOGO & WARNA -->
+        <section id="filosofi" class="reveal" style="margin-bottom: 100px;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 2.8rem;">Filosofi <span style="color: var(--accent-neon);">Logo</span></h2>
+                <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo BEM KBMFKG UMI memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
+            </div>
+            
+            <div class="filosofi-grid" id="containerFilosofiLogo">
+                <!-- JS Inject Logo Items -->
+            </div>
+
+            <div style="text-align: center; margin-top: 80px; margin-bottom: 40px;">
+                <h2 style="font-size: 2.8rem;">Filosofi <span style="color: var(--accent-neon);">Warna</span></h2>
+                <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Enam macam warna, mengandung arti 6 rukun Iman yang menjadi pondasi dasar organisasi.</p>
+            </div>
+
+            <div class="warna-grid" id="containerFilosofiWarna">
+                <!-- JS Inject Warna Items -->
+            </div>
+        </section>
+
         <!-- STRUKTUR KEPENGURUSAN -->
         <section id="struktur" class="reveal" style="margin-bottom: 100px;">
             <div style="text-align: center; margin-bottom: 50px;">
@@ -57,7 +76,6 @@
             </div>
         </section>
 
-        <!-- NEW ID: sejarah -->
         <!-- SEJARAH KEPENGURUSAN (TIMELINE) -->
         <section id="sejarah" class="reveal" style="margin-bottom: 100px;">
             <div style="text-align: center; margin-bottom: 50px;">
@@ -74,42 +92,78 @@
     <%- include('partials/footer.html') %>
 
     <script>
-        // Data Fallback Organisasi
-        const FALLBACK_ORG_DATA = {
-            visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
-            misi: [
-                "Menampung dan menyalurkan aspirasi mahasiswa secara transparan dan aktif.",
-                "Mendorong dan memfasilitasi pengembangan prestasi akademik dan non-akademik mahasiswa.",
-                "Mengintegrasikan nilai-nilai islami dalam program kerja dan kegiatan organisasi.",
-                "Membangun lingkungan kampus yang harmonis, berakhlak mulia, dan berdaya saing.",
-                "Meningkatkan kapasitas dan kualitas kader melalui pendidikan dan pelatihan berprinsip islami."
+        const FALLBACK_ORG_DATA = { visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI...", misi: ["Menampung dan menyalurkan aspirasi...", "Mendorong prestasi..."], pimpinan: [], departemen: [] };
+        const FALLBACK_SEJARAH = [{ tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" }];
+        
+        // BIG UPGRADE: Data Default Filosofi
+        const FALLBACK_FILOSOFI = {
+            logo: [
+                { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
+                { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati, serta berperan sebagai penopang." },
+                { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar, dan taring sebagai jati diri kekuatan mahasiswa." },
+                { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah." },
+                { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Mahasiswa FKG UMI bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun berada." },
+                { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Mewujudkan visi Persatuan Dokter Gigi Indonesia (PDGI)." },
+                { elemen: "Angka 2014", arti: "Tahun Berdiri.", makna: "KBMFKG-UMI didirikan pada tahun 2014 sebagai tonggak awal pergerakan." }
             ],
-            pimpinan: [
-                { jabatan: "Ketua BEM KBMFKG UMI", nama: "Ailan Alif Wajdi Daya", foto: "/img/bemfkgumi.png" },
-                { jabatan: "Wakil Ketua BEM KBMFKG UMI", nama: "Akram Husain", foto: "/img/bemfkgumi.png" }
-            ],
-            departemen: []
+            warna: [
+                { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
+                { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
+                { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian dan kesucian." },
+                { warna: "Kuning", hex: "#f59e0b", makna: "Melambangkan kedewasaan, kemuliaan, dan kelestarian." },
+                { warna: "Merah", hex: "#ef4444", makna: "Melambangkan keadilan, keberanian, dan tanggung jawab." },
+                { warna: "Hitam", hex: "#111827", makna: "Melambangkan kejujuran dan keilmuan." }
+            ]
         };
 
-        // Data Fallback Sejarah
-        const FALLBACK_SEJARAH = [
-            { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
-            { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" },
-            { tahun: "2023-2024", kabinet: "Kabinet Satya Bimantara", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" },
-            { tahun: "2023", kabinet: "Kabinet Aswara Karya", logo: "/img/bemfkgumi.png", ketua: "Aditya Dwianugrah Wiratman, S.KG", wakil: "Nur. Muhammad Syafaat, S.KG" },
-            { tahun: "2022", kabinet: "Kabinet Dedikasi Karsa", logo: "/img/bemfkgumi.png", ketua: "drg. Amhadn Syarief", wakil: "Marwati Sumardi, S.KG" },
-            { tahun: "2021", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Fahri Muhammad", wakil: "drg. Ayus Lestari" },
-            { tahun: "2020", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muhammad Ajis", wakil: "drg. Andriani T" },
-            { tahun: "2018-2019", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Sulaihi Ramadhan", wakil: "drg. Sri Devi" },
-            { tahun: "2017-2018", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Faisal Ramadhan", wakil: "drg, Satria Nur Fathanah" },
-            { tahun: "2016-2017", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Zulfahmi Duwila", wakil: "drg. Abd. Rahman Abdal Basri Makassau" },
-            { tahun: "2015-2016", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Rizky Adipratama Yusuf", wakil: "drg. Muhammad Hidayatullah" },
-            { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
-        ];
+        // Fungsi Smart Generator SVG Icon berdasarkan nama Elemen
+        function getSvgIcon(elemen) {
+            const el = elemen.toLowerCase();
+            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
+            if(el.includes('ular')) return `<svg viewBox="0 0 24 24"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; // Abstraksi medis
+            if(el.includes('molar')) return `<svg viewBox="0 0 24 24"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; // Abstraksi Gigi
+            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
+            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21z"/></svg>`;
+            return `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`; // Default Info Icon
+        }
 
-        // Fungsi Render Utama
+        // Fungsi Render Filosofi
+        function renderFilosofiUI(filData) {
+            const logoCont = document.getElementById('containerFilosofiLogo');
+            logoCont.innerHTML = '';
+            if(filData.logo && filData.logo.length > 0) {
+                filData.logo.forEach((item, i) => {
+                    logoCont.innerHTML += `
+                        <div class="filosofi-card reveal active" style="transition-delay: ${i*0.05}s">
+                            <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
+                            <h3>${item.elemen}</h3>
+                            <p class="filo-arti"><strong>Arti:</strong> ${item.arti}</p>
+                            <p class="filo-makna"><strong>Makna:</strong> ${item.makna}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            const warnaCont = document.getElementById('containerFilosofiWarna');
+            warnaCont.innerHTML = '';
+            if(filData.warna && filData.warna.length > 0) {
+                filData.warna.forEach((item, i) => {
+                    const textColor = item.hex === '#ffffff' ? '#000' : '#fff';
+                    warnaCont.innerHTML += `
+                        <div class="warna-card reveal active" style="transition-delay: ${i*0.05}s">
+                            <div class="warna-swatch" style="background-color: ${item.hex};"></div>
+                            <div class="warna-info">
+                                <h3>Warna ${item.warna}</h3>
+                                <p>${item.makna}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
         function renderTentangUI(orgData) {
-            // Render Visi & Misi
             document.getElementById('teksVisi').innerText = `"${orgData.visi}"`;
             const ulMisi = document.getElementById('listMisi');
             ulMisi.innerHTML = '';
@@ -119,7 +173,6 @@
                 });
             }
 
-            // Render Pimpinan Inti
             const pimContainer = document.getElementById('containerPimpinan');
             pimContainer.innerHTML = '';
             if(orgData.pimpinan) {
@@ -135,7 +188,6 @@
                 });
             }
 
-            // Render Departemen & Anggota
             const depContainer = document.getElementById('containerDepartemen');
             depContainer.innerHTML = '';
             if(orgData.departemen) {
@@ -163,19 +215,15 @@
             }
         }
 
-        // Fungsi Render Sejarah Kepengurusan (Timeline)
         function renderSejarahUI(sejarahData) {
             const container = document.getElementById('containerSejarah');
             container.innerHTML = '';
-
-            // Pastikan diurutkan dari tahun terbaru ke terlama (berdasarkan awal tahun)
             const sortedData = sejarahData.sort((a, b) => parseInt(b.tahun) - parseInt(a.tahun));
 
             sortedData.forEach((item, index) => {
                 const isRight = index % 2 !== 0 ? 'right' : 'left';
                 const logo = item.logo || '/img/bemfkgumi.png';
 
-                // BIG REVISI: Mengubah 'Presiden' menjadi 'Ketua'
                 container.innerHTML += `
                     <div class="timeline-item ${isRight} reveal active" style="transition-delay: ${index * 0.1}s">
                         <div class="timeline-content">
@@ -199,35 +247,30 @@
             
             try {
                 let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                    apiUrl = 'https://bemfkgumi.vercel.app/api/content';
-                }
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemfkgumi.vercel.app/api/content'; }
                 
                 const req = await fetch(apiUrl);
-                if (!req.ok) throw new Error("API Gagal / Belum Terkoneksi");
+                if (!req.ok) throw new Error("API Gagal");
                 const res = await req.json();
                 
-                if (res.org && res.org.pimpinan && res.org.pimpinan.length > 0) {
-                    renderTentangUI(res.org);
-                } else { throw new Error("Data Org Kosong"); }
-
-                if (res.sejarah && res.sejarah.length > 0) {
-                    renderSejarahUI(res.sejarah);
-                } else { throw new Error("Data Sejarah Kosong"); }
-
-                // Pastikan langsung meloncat ke Hash URL jika tersedia (Fix Routing)
-                setTimeout(() => {
-                    if (window.location.hash) {
-                        const target = document.querySelector(window.location.hash);
-                        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                }, 500);
+                if (res.org) renderTentangUI(res.org); else throw new Error();
+                if (res.sejarah) renderSejarahUI(res.sejarah); else throw new Error();
+                if (res.filosofi) renderFilosofiUI(res.filosofi); else throw new Error();
 
             } catch (err) { 
-                console.warn("⚠️ Mode Simulasi Aktif. Merender Data Seed Lokal.", err.message);
+                console.warn("⚠️ Mode Simulasi. Data lokal dimuat.");
                 renderTentangUI(FALLBACK_ORG_DATA);
                 renderSejarahUI(FALLBACK_SEJARAH);
+                renderFilosofiUI(FALLBACK_FILOSOFI);
             }
+
+            // Execute Hash Navigation untuk scrolling halus
+            setTimeout(() => {
+                if (window.location.hash) {
+                    const target = document.querySelector(window.location.hash);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 500);
         });
     </script>
 </body>
