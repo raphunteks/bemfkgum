@@ -215,6 +215,14 @@
                     renderSejarahUI(res.sejarah);
                 } else { throw new Error("Data Sejarah Kosong"); }
 
+                // Pastikan langsung meloncat ke Hash URL jika tersedia (Fix Routing)
+                setTimeout(() => {
+                    if (window.location.hash) {
+                        const target = document.querySelector(window.location.hash);
+                        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 500);
+
             } catch (err) { 
                 console.warn("⚠️ Mode Simulasi Aktif. Merender Data Seed Lokal.", err.message);
                 renderTentangUI(FALLBACK_ORG_DATA);
