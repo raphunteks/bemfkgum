@@ -8,7 +8,7 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
-// Tingkatkan limit JSON untuk menerima upload Base64 Gambar
+// Tingkatkan limit untuk Base64 Image Upload
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -17,7 +17,7 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
-// INISIASI UPSTASH REDIS DENGAN KREDENSIAL ASLI USER
+// INISIASI UPSTASH REDIS DENGAN KREDENSIAL ASLI
 let redis = null;
 try {
     redis = new Redis({ 
@@ -29,9 +29,9 @@ try {
     console.error("⚠️ Peringatan: Redis gagal inisiasi.", error.message);
 }
 
-// ================= DATA SEED (DEFAULT JIKA DB KOSONG) =================
+// ================= DATA SEED: STRUKTUR KABINET LENGKAP =================
 const defaultOrg = {
-    visi: "MENJADIKAN BEMKBMFKG-UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
+    visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
     misi: [
         "Menampung dan menyalurkan aspirasi mahasiswa secara transparan dan aktif.",
         "Mendorong dan memfasilitasi pengembangan prestasi akademik dan non-akademik mahasiswa.",
@@ -72,18 +72,16 @@ app.get('/api/content', async (req, res) => {
         let proker = await redis.get('Proker_Data');
         let kalender = await redis.get('Kalender_Data');
         let dokumentasi = await redis.get('Dokumentasi_Data');
-        let settings = await redis.get('Site_Settings');
 
         res.status(200).json({ 
             success: true, 
             org: org ? JSON.parse(org) : defaultOrg,
             proker: proker ? JSON.parse(proker) : [],
             kalender: kalender ? JSON.parse(kalender) : [],
-            dokumentasi: dokumentasi ? JSON.parse(dokumentasi) : [],
-            settings: settings ? JSON.parse(settings) : { logo: '/img/bemfkgumi.png', alamat: 'Jl. Urip Sumoharjo', slogan: 'Sinergi untuk Kedokteran Gigi yang Lebih Baik' }
+            dokumentasi: dokumentasi ? JSON.parse(dokumentasi) : []
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal mengambil data dari database.' });
+        res.status(500).json({ success: false, message: 'Gagal mengambil data dari database.', fallback: defaultOrg });
     }
 });
 
@@ -96,7 +94,6 @@ app.post('/api/content/:type', async (req, res) => {
         else if (type === 'proker') await redis.set('Proker_Data', payload);
         else if (type === 'kalender') await redis.set('Kalender_Data', payload);
         else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
-        else if (type === 'settings') await redis.set('Site_Settings', payload);
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui!` });
     } catch (error) {
