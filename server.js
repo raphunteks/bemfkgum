@@ -10,6 +10,8 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Memastikan file statis bisa diakses langsung oleh Express (Berguna jika Vercel.json melempar route kemari)
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.engine('html', require('ejs').renderFile);
@@ -17,7 +19,6 @@ app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
 // ================= INISIASI UPSTASH REDIS (SUPER UPGRADE ENV) =================
-// Membaca dari Environment Variables bawaan Upstash Vercel Integration
 const redisUrl = process.env.KV_REST_API_URL || 'https://merry-hedgehog-35658.upstash.io';
 const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E0ODZkOTJlNTYwNzBjMzMyNWQxZHAyMzU2NTg';
 
@@ -77,6 +78,18 @@ app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 
+// ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
+// Fungsi ini memastikan server TIDAK AKAN crash jika data Redis corrupt
+const safeParse = (data, fallbackData) => {
+    if (!data) return fallbackData;
+    try {
+        return typeof data === 'string' ? JSON.parse(data) : data;
+    } catch (error) {
+        console.error("⚠️ Data terdeteksi korup, menggunakan fallback data.");
+        return fallbackData;
+    }
+};
+
 // ================= API ENDPOINTS: MANAJEMEN KONTEN (CMS) =================
 app.get('/api/content', async (req, res) => {
     try {
@@ -89,54 +102,41 @@ app.get('/api/content', async (req, res) => {
 
         res.status(200).json({ 
             success: true, 
-            org: org ? (typeof org === 'string' ? JSON.parse(org) : org) : defaultOrg,
-            proker: proker ? (typeof proker === 'string' ? JSON.parse(proker) : proker) : [],
-            kalender: kalender ? (typeof kalender === 'string' ? JSON.parse(kalender) : kalender) : [],
-            dokumentasi: dokumentasi ? (typeof dokumentasi === 'string' ? JSON.parse(dokumentasi) : dokumentasi) : [],
-            settings: settings ? (typeof settings === 'string' ? JSON.parse(settings) : settings) : defaultSettings
+            org: safeParse(org, defaultOrg),
+            proker: safeParse(proker, []),
+            kalender: safeParse(kalender, []),
+            dokumentasi: safeParse(dokumentasi, []),
+            settings: safeParse(settings, defaultSettings)
         });
     } catch (error) {
-        // FALLBACK: JIKA REDIS MATI, TETAP KIRIM DATA SEED AGAR FRONTEND TIDAK ERROR
+        // FALLBACK AMAN: Tetap mengirim data statis agar halaman TIDAK BLANK
         res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings });
     }
 });
 
+// BUG FIX: Menggabungkan 2 route app.post yang sebelumnya duplikat/bertumpuk
 app.post('/api/content/:type', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const type = req.params.type;
-        const payload = JSON.stringify(req.body);
+        
+        // Selalu ubah ke String sebelum dilempar ke Redis untuk mencegah bug serialisasi Object
+        const payload = JSON.stringify(req.body); 
         
         if (type === 'org') await redis.set('Org_Structure', payload);
         else if (type === 'proker') await redis.set('Proker_Data', payload);
         else if (type === 'kalender') await redis.set('Kalender_Data', payload);
         else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
         else if (type === 'settings') await redis.set('Settings_Data', payload);
-
-        res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui!` });
-    } catch (error) {
-        // FALLBACK AMAN
-        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [] });
-    }
-});
-
-app.post('/api/content/:type', async (req, res) => {
-    try {
-        if(!redis) throw new Error("Redis Offline");
-        const type = req.params.type;
-        const payload = req.body; // Biarkan sebagai Objek! Biar Redis/Upstash otomatis menangani serialisasinya.
-        
-        if (type === 'org') await redis.set('Org_Structure', payload);
-        else if (type === 'proker') await redis.set('Proker_Data', payload);
-        else if (type === 'kalender') await redis.set('Kalender_Data', payload);
-        else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
+        else return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
     } catch (error) {
-        console.error(error);
+        console.error("Gagal simpan:", error);
         res.status(500).json({ success: false, message: 'Gagal menyimpan data ke Redis.' });
     }
 });
+
 
 // ================= API ENDPOINTS: TRANSAKSIONAL =================
 app.get('/api/interactions', async (req, res) => {
@@ -145,9 +145,9 @@ app.get('/api/interactions', async (req, res) => {
         const aspirasi = await redis.hgetall('Aspirations') || {};
         const pesan = await redis.hgetall('Messages') || {};
         
-        // Parse Hash values jika masih berupa string
-        const parsedAspirasi = Object.values(aspirasi).map(item => typeof item === 'string' ? JSON.parse(item) : item);
-        const parsedPesan = Object.values(pesan).map(item => typeof item === 'string' ? JSON.parse(item) : item);
+        // Parse Hash values dengan perlindungan Anti-Crash (Safe Parse Map)
+        const parsedAspirasi = Object.values(aspirasi).map(item => safeParse(item, {}));
+        const parsedPesan = Object.values(pesan).map(item => safeParse(item, {}));
         
         res.status(200).json({ success: true, aspirasi: parsedAspirasi, pesan: parsedPesan });
     } catch (error) {
@@ -186,7 +186,12 @@ app.post('/api/delete-interaction', async (req, res) => {
 
 app.post('/api/admin/auth', (req, res) => {
   const { username, password } = req.body;
-  if (username === process.env.ADMIN_USER && password === process.env.ADMIN_PASS) {
+  
+  // BUG FIX: Proteksi jika ENV belum di-setting di Vercel, selalu pastikan ada Fallback login
+  const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
+  const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
+
+  if (username === validUser && password === validPass) {
     res.status(200).json({ success: true, token: 'AXA-XYZ-SECURE-TOKEN' });
   } else {
     res.status(401).json({ success: false, message: 'Kredensial salah!' });
