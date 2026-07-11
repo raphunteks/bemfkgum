@@ -129,20 +129,50 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .menu-toggle { display: none; cursor: pointer; z-index: 1001; }
 
 /* ================= FOOTER ================= */
-.custom-footer-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 30px;
+.custom-footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 30px; }
+.footer-credit-link { color: var(--text-muted); text-decoration: none; transition: 0.3s; font-weight: 500; }
+.footer-credit-link:hover { color: var(--accent-neon); text-shadow: 0 0 10px var(--accent-glow); }
+
+/* ================= SCROLL TO TOP BUTTON (NEW) ================= */
+.scroll-to-top {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(15, 25, 45, 0.9) 0%, rgba(5, 10, 20, 0.95) 100%);
+  border: 2px solid var(--accent-neon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.9);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,229,255,0.2);
+  backdrop-filter: blur(10px);
 }
-.footer-credit-link {
-  color: var(--text-muted);
-  text-decoration: none;
+.scroll-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+.scroll-to-top:hover {
+  background: var(--accent-neon);
+  box-shadow: 0 0 20px var(--accent-neon), 0 0 40px var(--accent-glow);
+  transform: translateY(-5px) scale(1.05);
+}
+.scroll-to-top svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--accent-neon);
   transition: 0.3s;
-  font-weight: 500;
 }
-.footer-credit-link:hover {
-  color: var(--accent-neon);
-  text-shadow: 0 0 10px var(--accent-glow);
+.scroll-to-top:hover svg {
+  fill: var(--bg-dark);
 }
 
 /* ================= TIMELINE SEJARAH CSS ================= */
@@ -314,4 +344,8 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .timeline-item { width: 100%; padding-left: 70px; padding-right: 0; }
   .timeline-item.right { left: 0; }
   .timeline-item::after, .timeline-item.right::after { left: 21px; }
+  
+  /* Responsive Scroll To Top */
+  .scroll-to-top { bottom: 25px; right: 25px; width: 45px; height: 45px; }
+  .scroll-to-top svg { width: 20px; height: 20px; }
 }
