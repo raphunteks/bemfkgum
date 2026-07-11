@@ -16,8 +16,9 @@
             <h1 style="font-size: 3.5rem; font-weight: 900;">Visi & Misi <br><span class="script-font" style="font-size: 1.2em; display:block; margin-top:10px;">Ananta Anardhaya</span></h1>
         </div>
 
+        <!-- NEW ID: visimisi -->
         <!-- VISI -->
-        <section class="reveal" style="margin-bottom: 50px;">
+        <section id="visimisi" class="reveal" style="margin-bottom: 50px;">
             <div class="glass-card" style="text-align: center; padding: 50px 30px;">
                 <h2 style="color: var(--accent-neon); font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">Visi Kami</h2>
                 <p id="teksVisi" style="font-size: 1.5rem; font-style: italic; line-height: 1.6; font-weight: 500; color: var(--text-light); max-width: 900px; margin: 0 auto;">
@@ -36,8 +37,9 @@
             </div>
         </section>
 
+        <!-- NEW ID: struktur -->
         <!-- STRUKTUR KEPENGURUSAN -->
-        <section class="reveal" style="margin-bottom: 100px;">
+        <section id="struktur" class="reveal" style="margin-bottom: 100px;">
             <div style="text-align: center; margin-bottom: 50px;">
                 <h2 style="font-size: 2.8rem;">Struktur <span style="color: var(--accent-neon);">Kepengurusan</span></h2>
             </div>
@@ -55,8 +57,9 @@
             </div>
         </section>
 
+        <!-- NEW ID: sejarah -->
         <!-- SEJARAH KEPENGURUSAN (TIMELINE) -->
-        <section class="reveal" style="margin-bottom: 100px;">
+        <section id="sejarah" class="reveal" style="margin-bottom: 100px;">
             <div style="text-align: center; margin-bottom: 50px;">
                 <h2 style="font-size: 2.8rem;">Sejarah <span style="color: var(--accent-neon);">Kepengurusan</span></h2>
                 <p style="color: var(--text-muted); margin-top: 10px;">Rekam jejak kepemimpinan BEM KBMFKG UMI dari masa ke masa.</p>
@@ -88,7 +91,7 @@
             departemen: []
         };
 
-        // Data Fallback Sejarah (REVISI BIG UPGRADE DATA KABINET)
+        // Data Fallback Sejarah
         const FALLBACK_SEJARAH = [
             { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
             { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" },
@@ -172,6 +175,7 @@
                 const isRight = index % 2 !== 0 ? 'right' : 'left';
                 const logo = item.logo || '/img/bemfkgumi.png';
 
+                // BIG REVISI: Mengubah 'Presiden' menjadi 'Ketua'
                 container.innerHTML += `
                     <div class="timeline-item ${isRight} reveal active" style="transition-delay: ${index * 0.1}s">
                         <div class="timeline-content">
@@ -180,7 +184,7 @@
                             <div class="timeline-body">
                                 <img src="${logo}" alt="${item.kabinet}" class="timeline-logo">
                                 <div class="timeline-leaders">
-                                    <p><span>Presiden</span>: <strong>${item.ketua}</strong></p>
+                                    <p><span>Ketua</span>: <strong>${item.ketua}</strong></p>
                                     <p><span>Wakil</span>: <strong>${item.wakil}</strong></p>
                                 </div>
                             </div>
