@@ -6,15 +6,12 @@
     <title>Enterprise Admin CMS | BEM KBMFKG UMI</title>
     <meta name="robots" content="noindex, nofollow, noarchive">
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
-    
-    <!-- MURNI PANGGIL DARI MAIN.CSS -->
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
     
-    <!-- Full-Screen Login Overlay -->
-    <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:9999; display:flex; justify-content:center; align-items:center; padding: 20px; transition: opacity 0.5s;">
-        <div class="glass-card" style="width: 100%; max-width: 400px; text-align:center; border: 1px solid var(--accent-neon);">
+    <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:9999; display:flex; justify-content:center; align-items:center; transition: opacity 0.5s;">
+        <div class="glass-card" style="width: 100%; max-width: 400px; text-align:center;">
             <img src="/img/bemfkgumi.png" alt="Logo" style="height: 60px; margin-bottom: 15px;">
             <h2>Portal Admin</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Sistem Manajemen Database Organisasi</p>
@@ -25,9 +22,7 @@
         </div>
     </div>
 
-    <!-- Main Dashboard Layout -->
-    <div class="admin-layout" id="dashboardContent">
-        
+    <div class="admin-layout" id="dashboardContent" style="display: none; opacity: 0;">
         <aside class="admin-sidebar glass-card" style="border-radius: 0;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <img src="/img/bemfkgumi.png" style="height: 40px;">
@@ -35,8 +30,8 @@
             </div>
             <nav class="admin-nav" id="adminNav">
                 <button class="active" onclick="switchSection('dashboard', this)"><span>📊</span> Overview</button>
-                <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur (Org)</button>
-                <button onclick="switchSection('proker', this)"><span>📋</span> Manajemen Program Kerja</button>
+                <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur</button>
+                <button onclick="switchSection('proker', this)"><span>📋</span> Program Kerja</button>
                 <button onclick="switchSection('kalender', this)"><span>📅</span> Agenda Kalender</button>
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
@@ -45,7 +40,7 @@
         </aside>
 
         <main class="admin-main">
-            <!-- DASHBOARD OVERVIEW -->
+            <!-- 1. DASHBOARD -->
             <section id="sec-dashboard" class="admin-section active">
                 <h2 style="margin-bottom: 5px;">Dashboard</h2>
                 <div class="grid-3" style="margin-top: 20px;">
@@ -55,67 +50,63 @@
                     </div>
                     <div class="glass-card stat-card">
                         <h3>Pesan Masuk</h3>
-                        <div class="value" id="statPesan" style="color: #00d2ff;">0</div>
+                        <div class="value" id="statPesan" style="color: var(--accent-neon);">0</div>
                     </div>
                 </div>
             </section>
 
-            <!-- CMS: MANAJEMEN STRUKTUR KEPENGURUSAN -->
+            <!-- 2. STRUKTUR ORG -->
             <section id="sec-profil" class="admin-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Struktur Kabinet</h2>
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <h2>Manajemen Struktur Kepengurusan</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org')">💾 Simpan Ke Database Redis</button>
                 </div>
                 
-                <div class="glass-card" style="margin-bottom: 20px;">
-                    <label class="form-label" style="color:var(--accent-neon);">Visi Kabinet</label>
-                    <textarea id="editVisi" class="neo-input" rows="3"></textarea>
-                </div>
-
-                <!-- CMS Pimpinan -->
+                <label style="color:var(--accent-neon);">Visi Kabinet</label>
+                <textarea id="editVisi" class="neo-input" rows="3"></textarea>
+                
                 <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Pimpinan Inti BEM</h3>
                 <div id="cmsPimpinan" class="pimpinan-grid"></div>
-                <button class="holo-btn" onclick="tambahPimpinan()" style="margin-top:15px; background: transparent; padding: 5px 15px; font-size: 0.8rem;">+ Tambah Pimpinan</button>
+                <button class="action-btn view" onclick="tambahPimpinan()" style="margin: 10px 0 30px;">+ Tambah Pimpinan</button>
 
-                <!-- CMS Departemen -->
-                <h3 style="margin: 40px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Daftar Departemen</h3>
-                <div id="cmsDepartemen" style="display: flex; flex-direction: column; gap: 15px;"></div>
-                <button class="holo-btn" onclick="tambahDepartemen()" style="margin-top:15px; background: transparent; padding: 5px 15px; font-size: 0.8rem;">+ Tambah Departemen Baru</button>
+                <h3 style="margin: 40px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Daftar Departemen & Anggota</h3>
+                <div id="cmsDepartemen" style="display:grid; gap:20px;"></div>
+                <button class="action-btn view" onclick="tambahDepartemen()" style="margin-top: 10px;">+ Tambah Departemen Baru</button>
             </section>
 
-            <!-- CMS: PROKER -->
+            <!-- 3. PROKER -->
             <section id="sec-proker" class="admin-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Program Kerja</h2>
-                    <button class="holo-btn" onclick="saveData('proker')" style="padding: 8px 15px; font-size: 0.8rem;">💾 Simpan Proker</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Proker</button>
                 </div>
                 <div id="cmsProker"></div>
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 10px;">+ Tambah Departemen Proker</button>
             </section>
 
-            <!-- CMS: KALENDER -->
+            <!-- 4. KALENDER -->
             <section id="sec-kalender" class="admin-section">
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Agenda Kalender</h2>
-                    <button class="holo-btn" onclick="saveData('kalender')" style="padding: 8px 15px; font-size: 0.8rem;">💾 Simpan Agenda</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kalender')">💾 Simpan Agenda</button>
                 </div>
                 <div id="cmsKalender"></div>
                 <button class="action-btn view" onclick="tambahAgenda()" style="margin-top: 10px;">+ Tambah Agenda Baru</button>
             </section>
 
-            <!-- CMS: DOKUMENTASI -->
+            <!-- 5. DOKUMENTASI -->
             <section id="sec-dok" class="admin-section">
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Galeri Dokumentasi</h2>
-                    <button class="holo-btn" onclick="saveData('dokumentasi')" style="padding: 8px 15px; font-size: 0.8rem;">💾 Simpan Dokumentasi</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('dokumentasi')">💾 Simpan Dokumentasi</button>
                 </div>
                 <div id="cmsDokumentasi" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
-            <!-- CMS: INTERAKSI (ASPIRASI & PESAN) -->
+            <!-- 6. PESAN -->
             <section id="sec-aspirasi" class="admin-section">
-                <h2>Aspirasi (PLASMA) & Pesan Narahubung</h2>
+                <h2>Aspirasi & Pesan Masuk</h2>
                 <div class="table-responsive" style="margin-top:20px; margin-bottom: 40px;">
                     <h3 style="padding: 15px; background: rgba(0,0,0,0.5);">Aspirasi PLASMA Masuk</h3>
                     <table class="admin-table">
@@ -132,12 +123,13 @@
                     </table>
                 </div>
             </section>
+
         </main>
     </div>
 
-    <!-- Modal Detail View Interaksi -->
+    <!-- Modal View Detail -->
     <div class="modal-overlay" id="detailModal">
-        <div class="modal-content-box">
+        <div class="modal-content-box" style="padding: 30px;">
             <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">X</button>
             <h2 id="modalTitle" style="margin-bottom: 15px; color: var(--accent-neon);">Detail Data</h2>
             <div id="modalContent" style="color: var(--text-light); line-height: 1.6; font-size: 0.95rem;"></div>
@@ -147,180 +139,130 @@
     <div class="toast" id="globalToast">Notifikasi</div>
 
     <script>
-        // STATE UTAMA
-        let aspirasiData = [];
-        let pesanData = [];
-        let db = { org: { visi:"", pimpinan:[], departemen:[] }, proker: [], kalender: [], dokumentasi: [] };
+        // MOCK DATA JIKA API OFFLINE (Biar Admin Panel gak kosong di Canvas)
+        const FALLBACK_ADMIN_ORG = { visi: "Visi Default", pimpinan: [{jabatan: "Ketua BEM", nama: "Ailan", foto: "/img/bemfkgumi.png"}], departemen: [{nama: "Dept. Test", anggota: []}] };
+        let db = { org: FALLBACK_ADMIN_ORG, proker: [], kalender: [], dokumentasi: [], interaksi: {aspirasi:[], pesan:[]} };
+        let aspirasiData = []; let pesanData = [];
 
         async function login() {
-            const u = document.getElementById('adminUser').value;
-            const p = document.getElementById('adminPass').value;
-            const btn = document.querySelector('#loginGate button');
-            btn.innerText = "Memverifikasi..."; btn.disabled = true;
+            const u = document.getElementById('adminUser').value; const p = document.getElementById('adminPass').value;
+            const btn = document.querySelector('#loginGate button'); btn.innerText = "Memverifikasi..."; btn.disabled = true;
 
             try {
                 let apiUrl = '/api/admin/auth';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemfkgumi.vercel.app/api/admin/auth';
-                
                 const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
                 const data = await res.json();
                 if(data.success) { unlockDashboard(); } else throw new Error();
             } catch(e) {
-                // Fallback khusus untuk simulasi di Canvas Preview
-                if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') {
-                    showToast("Simulasi Canvas: API Offline. Mode Lokal Aktif.");
-                    unlockDashboard();
-                } else {
-                    document.getElementById('loginError').style.display = 'block';
-                }
+                if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { showToast("Simulasi Canvas Aktif."); unlockDashboard(); } 
+                else { document.getElementById('loginError').style.display = 'block'; }
             }
             btn.innerText = "Akses Sistem"; btn.disabled = false;
         }
 
         function unlockDashboard() {
             document.getElementById('loginGate').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loginGate').style.display = 'none';
-                const dash = document.getElementById('dashboardContent');
-                dash.style.display = 'flex'; void dash.offsetWidth; 
-                dash.style.opacity = '1';
-                initDashboard();
-            }, 500);
+            setTimeout(() => { document.getElementById('loginGate').style.display = 'none'; document.getElementById('dashboardContent').style.display = 'flex'; document.getElementById('dashboardContent').style.opacity = '1'; loadAllData(); }, 500);
         }
 
-        function switchSection(sectionId, btnElem) {
-            document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.admin-nav button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('sec-' + sectionId).classList.add('active');
-            btnElem.classList.add('active');
+        function switchSection(id, btn) {
+            document.querySelectorAll('.admin-section').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.admin-nav button').forEach(e => e.classList.remove('active'));
+            document.getElementById('sec-' + id).classList.add('active'); btn.classList.add('active');
         }
 
-        // ================= IMAGE TO BASE64 HELPER =================
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
+        function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
+        async function handleImageUpload(inputElem, objToUpdate, keyName, renderFn) {
+            const file = inputElem.files[0];
+            if(file) { const base64 = await fileToBase64(file); objToUpdate[keyName] = base64; showToast("Gambar berhasil dimuat! Klik Simpan ke Database."); renderFn(); }
         }
 
-        async function handleImgUpload(input, obj, key, renderFunc) {
-            const file = input.files[0];
-            if(file) {
-                const b64 = await fileToBase64(file);
-                obj[key] = b64;
-                showToast("Gambar ter-load (Base64). Jangan lupa klik Simpan Ke Database.");
-                renderFunc();
-            }
-        }
-
-        // ================= INIT & FETCH SEMUA DATA REDIS =================
-        async function initDashboard() {
+        async function loadAllData() {
             try {
-                let apiUrl = '/api/content';
-                let apiInt = '/api/interactions';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                    apiUrl = 'https://bemfkgumi.vercel.app/api/content';
-                    apiInt = 'https://bemfkgumi.vercel.app/api/interactions';
+                let apiUrl = '/api/content'; let apiInt = '/api/interactions';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemfkgumi.vercel.app/api/content'; apiInt = 'https://bemfkgumi.vercel.app/api/interactions'; }
+
+                const req = await fetch(apiUrl);
+                if(req.ok) {
+                    const data = await req.json();
+                    if(data.org && data.org.pimpinan) db.org = data.org;
+                    db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || [];
                 }
-
-                const resOrg = await fetch(apiUrl);
-                const dataOrg = await resOrg.json();
-                if(dataOrg.success) {
-                    db.org = dataOrg.org; db.proker = dataOrg.proker || [];
-                    db.kalender = dataOrg.kalender || []; db.dokumentasi = dataOrg.dokumentasi || [];
-                }
-
-                const resInt = await fetch(apiInt);
-                const dataInt = await resInt.json();
-                if(dataInt.success) { aspirasiData = dataInt.aspirasi; pesanData = dataInt.pesan; }
-
-                renderSemuaCMS();
-            } catch (err) {
-                showToast("⚠️ API Error. Menggunakan state lokal.");
-                renderSemuaCMS(); // Akan render state kosong/dummy local
-            }
+                const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
+            } catch(err) { showToast("⚠️ Memuat data Offline/Simulasi."); }
+            renderSemuaCMS();
         }
 
-        function renderSemuaCMS() {
-            renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel();
-        }
+        function renderSemuaCMS() { renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); }
 
         async function saveData(type) {
             if(type === 'org') db.org.visi = document.getElementById('editVisi').value;
-            
             try {
                 let apiUrl = `/api/content/${type}`;
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemfkgumi.vercel.app/api/content/${type}`;
-                
-                const req = await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(db[type]) });
-                if(req.ok) showToast(`✅ Data ${type} Berhasil Disimpan ke Redis!`);
-            } catch(e) { showToast("⚠️ Gagal menyimpan. Mungkin limit Base64 di Vercel atau Canvas mode."); }
+                const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) });
+                if(req.ok) showToast("✅ Data Tersimpan ke Database Redis!"); else throw new Error();
+            } catch(e) { showToast("⚠️ Gagal menyimpan ke Database Vercel."); }
         }
 
-        // ================= RENDER STRUKTUR ORG =================
+        // --- RENDER ORG CMS ---
         function renderOrg() {
             document.getElementById('editVisi').value = db.org.visi || '';
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
-            
-            if(db.org.pimpinan) {
-                db.org.pimpinan.forEach((p, i) => {
-                    pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left: 3px solid var(--accent-neon);">
-                        <img src="${p.foto}" style="height:50px; border-radius:5px; background:#000; object-fit:cover; margin-bottom:10px; border:1px solid var(--glass-border);">
-                        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:5px;">Ubah Foto:</div>
-                        <input type="file" accept="image/*" onchange="handleImgUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="font-size:0.8rem; margin-bottom:10px; width: 100%;">
-                        <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan}" onchange="db.org.pimpinan[${i}].jabatan=this.value">
-                        <input type="text" class="neo-input" placeholder="Nama" value="${p.nama}" onchange="db.org.pimpinan[${i}].nama=this.value">
-                        <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus</button>
-                    </div>`;
-                });
-            }
+            db.org.pimpinan.forEach((p, i) => {
+                pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
+                    <img src="${p.foto}" style="height:60px; object-fit:contain; background:#000; border-radius:5px; margin-bottom:10px;">
+                    <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:5px;">Ubah Foto Pimpinan:</div>
+                    <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px; width:100%; font-size:0.8rem;">
+                    <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan}" onchange="db.org.pimpinan[${i}].jabatan=this.value">
+                    <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama}" onchange="db.org.pimpinan[${i}].nama=this.value">
+                    <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus Pimpinan</button>
+                </div>`;
+            });
 
             const dCont = document.getElementById('cmsDepartemen'); dCont.innerHTML = '';
-            if(db.org.departemen) {
-                db.org.departemen.forEach((d, i) => {
-                    let html = `<div class="glass-card" style="border-top:2px solid var(--accent-neon); padding:20px;">
-                        <input type="text" class="neo-input" value="${d.nama}" placeholder="Nama Departemen" onchange="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; font-size:1.1rem; color:var(--accent-neon);">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <button class="action-btn view" onclick="db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:''}); renderOrg();">+ Tambah Anggota</button>
-                            <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Seluruh Dept Ini</button>
-                        </div>
-                        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">`;
-                    
-                    if(d.anggota) {
-                        d.anggota.forEach((a, j) => {
-                            html += `<div style="background:rgba(0,0,0,0.4); padding:15px; border-radius:10px; border: 1px solid var(--glass-border);">
-                                <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:#111; border-radius:5px; margin-bottom:5px;">
-                                <input type="file" accept="image/*" onchange="handleImgUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="font-size:0.7rem; width:100%; margin-bottom:10px;">
-                                <input type="text" class="neo-input" value="${a.nama}" placeholder="Nama Anggota" onchange="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px; font-size:0.9rem;">
-                                <input type="text" class="neo-input" value="${a.jabatan}" placeholder="Jabatan" onchange="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px; font-size:0.9rem;">
-                                <button class="action-btn delete" style="width:100%;" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">Hapus Anggota</button>
-                            </div>`;
-                        });
-                    }
-                    dCont.innerHTML += html + `</div></div>`;
-                });
-            }
+            db.org.departemen.forEach((d, i) => {
+                let html = `<div class="glass-card" style="border-top:2px solid var(--accent-neon); padding:15px;">
+                    <input type="text" class="neo-input" value="${d.nama}" placeholder="Nama Departemen" onchange="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; color:var(--accent-neon);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                        <button class="action-btn view" onclick="db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:'/img/bemfkgumi.png'}); renderOrg();">+ Anggota</button>
+                        <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Departemen</button>
+                    </div><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">`;
+                if(d.anggota) {
+                    d.anggota.forEach((a, j) => {
+                        html += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px; border: 1px solid var(--glass-border);">
+                            <img src="${a.foto}" style="width:100%; height:80px; object-fit:contain; background:#111; border-radius:5px; margin-bottom:5px;">
+                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="width:100%; font-size:0.7rem; margin-bottom:10px;">
+                            <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama}" onchange="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
+                            <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan}" onchange="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
+                            <button class="action-btn delete" style="width:100%;" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">X Hapus</button>
+                        </div>`;
+                    });
+                }
+                dCont.innerHTML += html + `</div></div>`;
+            });
         }
-        function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan Baru", nama:"", foto:"/img/bemfkgumi.png"}); renderOrg(); }
-        function tambahDepartemen() { db.org.departemen.push({nama:"Nama Departemen Baru", anggota:[]}); renderOrg(); }
+        function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
+        function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
 
-        // ================= RENDER PROKER =================
-        function renderProker() {
-            const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
-            db.proker.forEach((p, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:3px solid var(--accent-neon);">
-                    <input type="text" class="neo-input" value="${p.dept}" onchange="db.proker[${i}].dept=this.value" style="font-weight:bold;">
-                    <textarea class="neo-input" rows="4" onchange="db.proker[${i}].list = this.value.split('\\n')">${p.list.join('\n')}</textarea>
-                    <small style="color:var(--text-muted); display:block; margin-bottom:10px;">*Pisahkan daftar proker dengan menekan ENTER</small>
-                    <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Departemen Proker Ini</button>
+        // --- RENDER DOKUMENTASI (FOTO) ---
+        function renderDokumentasi() {
+            const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
+            db.dokumentasi.forEach((d, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px;">
+                    <img src="${d.foto}" style="width:100%; max-height:150px; object-fit:contain; background:#111; margin-bottom:10px;">
+                    <input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;">
+                    <input type="text" class="neo-input" value="${d.judul}" placeholder="Judul" onchange="db.dokumentasi[${i}].judul=this.value">
+                    <input type="date" class="neo-input" value="${d.tanggal}" onchange="db.dokumentasi[${i}].tanggal=this.value">
+                    <textarea class="neo-input" placeholder="Deskripsi Singkat" onchange="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi}</textarea>
+                    <button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button>
                 </div>`;
             });
         }
-        function tambahProkerDept() { db.proker.push({dept:"Dept Baru", list:["Proker 1"]}); renderProker(); }
+        function tambahDokumentasi() { db.dokumentasi.push({judul:"Judul", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
 
-        // ================= RENDER KALENDER =================
+        // --- RENDER KALENDER ---
         function renderKalender() {
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
             db.kalender.forEach((k, i) => {
@@ -328,74 +270,46 @@
                     <input type="date" class="neo-input" value="${k.tanggal}" onchange="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;">
                     <input type="text" class="neo-input" value="${k.nama}" placeholder="Nama Kegiatan" onchange="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;">
                     <input type="text" class="neo-input" placeholder="Penyelenggara (Dept)" value="${k.dept}" onchange="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;">
-                    <button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">Hapus</button>
+                    <button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">X</button>
                 </div>`;
             });
         }
         function tambahAgenda() { db.kalender.push({nama:"Agenda Baru", tanggal:"", dept:""}); renderKalender(); }
 
-        // ================= RENDER DOKUMENTASI =================
-        function renderDokumentasi() {
-            const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
-            db.dokumentasi.forEach((d, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px;">
-                    <img src="${d.foto}" style="width:100%; height:150px; object-fit:cover; margin-bottom:10px; border-radius:10px;">
-                    <input type="file" accept="image/*" onchange="handleImgUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;">
-                    <input type="text" class="neo-input" placeholder="Judul Dokumentasi" value="${d.judul}" onchange="db.dokumentasi[${i}].judul=this.value">
-                    <input type="date" class="neo-input" value="${d.tanggal}" onchange="db.dokumentasi[${i}].tanggal=this.value">
-                    <textarea class="neo-input" placeholder="Deskripsi Singkat" onchange="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi}</textarea>
-                    <button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus Dokumentasi</button>
+        // --- RENDER PROKER ---
+        function renderProker() {
+            const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
+            db.proker.forEach((p, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:3px solid var(--accent-neon);">
+                    <input type="text" class="neo-input" value="${p.dept}" onchange="db.proker[${i}].dept=this.value" style="font-weight:bold;">
+                    <textarea class="neo-input" rows="4" onchange="db.proker[${i}].list = this.value.split('\\n')">${p.list.join('\n')}</textarea>
+                    <small style="color:var(--text-muted); display:block; margin-bottom:10px;">*Pisahkan list dengan ENTER</small>
+                    <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Dept Ini</button>
                 </div>`;
             });
         }
-        function tambahDokumentasi() { db.dokumentasi.push({judul:"", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
+        function tambahProkerDept() { db.proker.push({dept:"Nama Departemen", list:["Proker 1"]}); renderProker(); }
 
-        // ================= RENDER INTERAKSI TABEL =================
+        // --- TABEL INTERAKSI ---
         function renderTabel() {
-            document.getElementById('statAspirasi').innerText = aspirasiData.length;
-            document.getElementById('statPesan').innerText = pesanData.length;
-
+            document.getElementById('statAspirasi').innerText = aspirasiData.length; document.getElementById('statPesan').innerText = pesanData.length;
             const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
-            aspirasiData.forEach(item => {
-                tbodyA.innerHTML += `<tr><td>${item.id}</td><td>${item.kategori}</td><td><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`;
-            });
-
+            aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td>${item.id}</td><td>${item.kategori}</td><td><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; });
             const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = '';
-            pesanData.forEach(item => {
-                tbodyP.innerHTML += `<tr><td><strong>${item.nama}</strong></td><td>${item.subjek}</td><td>${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`;
-            });
+            pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td><strong>${item.nama}</strong></td><td>${item.subjek}</td><td>${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; });
         }
-
         async function deleteData(type, id) {
-            if(confirm('Yakin ingin menghapus interaksi ini dari database?')) {
+            if(confirm('Yakin ingin menghapus interaksi ini secara permanen?')) {
                 try {
-                    let apiUrl = '/api/delete-interaction';
-                    if(window.location.protocol === 'blob:') apiUrl = 'https://bemfkgumi.vercel.app/api/delete-interaction';
-                    
+                    let apiUrl = '/api/delete-interaction'; if(window.location.protocol === 'blob:') apiUrl = 'https://bemfkgumi.vercel.app/api/delete-interaction';
                     await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) });
-                    
-                    if(type==='aspirasi') aspirasiData = aspirasiData.filter(x => x.id !== id);
-                    else pesanData = pesanData.filter(x => x.id !== id);
-                    
-                    renderTabel(); showToast('✅ Data interaksi dihapus.');
-                } catch(e) { showToast('⚠️ Gagal menghapus (Mode Simulasi)'); }
+                    if(type==='aspirasi') aspirasiData = aspirasiData.filter(x => x.id !== id); else pesanData = pesanData.filter(x => x.id !== id);
+                    renderTabel(); showToast('✅ Data dihapus.');
+                } catch(e) { showToast('⚠️ Gagal menghapus.'); }
             }
         }
-
-        function viewAspirasi(id) {
-            const data = aspirasiData.find(x => x.id === id); if(!data) return;
-            document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id;
-            document.getElementById('modalContent').innerHTML = `<p><span style="color:var(--text-muted);">Judul:</span><br><strong>${data.judul}</strong></p><p><span style="color:var(--text-muted);">Kategori / Jenis:</span><br>${data.kategori} / ${data.jenis}</p><p><span style="color:var(--text-muted);">Isi Aspirasi:</span><br><div style="background:rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-top:5px;">${data.isi}</div></p>`;
-            document.getElementById('detailModal').classList.add('active');
-        }
-
-        function viewPesan(id) {
-            const data = pesanData.find(x => x.id === id); if(!data) return;
-            document.getElementById('modalTitle').innerText = "Pesan Masuk";
-            document.getElementById('modalContent').innerHTML = `<p><span style="color:var(--text-muted);">Dari:</span> <strong>${data.nama}</strong></p><p><span style="color:var(--text-muted);">Kontak Balasan:</span> ${data.kontak}</p><p><span style="color:var(--text-muted);">Subjek:</span> ${data.subjek}</p><p style="margin-top: 15px;"><span style="color:var(--text-muted);">Isi Pesan:</span><br><div style="background:rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-top:5px;">${data.pesan}</div></p>`;
-            document.getElementById('detailModal').classList.add('active');
-        }
-
+        function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><span style="color:var(--text-muted);">Judul:</span><br><strong>${data.judul}</strong></p><p><span style="color:var(--text-muted);">Kategori / Jenis:</span><br>${data.kategori} / ${data.jenis}</p><p><span style="color:var(--text-muted);">Isi Aspirasi:</span><br><div style="background:rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-top:5px;">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
+        function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><span style="color:var(--text-muted);">Dari:</span> <strong>${data.nama}</strong></p><p><span style="color:var(--text-muted);">Kontak Balasan:</span> ${data.kontak}</p><p><span style="color:var(--text-muted);">Subjek:</span> ${data.subjek}</p><p style="margin-top: 15px;"><span style="color:var(--text-muted);">Isi Pesan:</span><br><div style="background:rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-top:5px;">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
         function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
     </script>
 </body>
