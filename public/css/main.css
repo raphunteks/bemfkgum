@@ -183,27 +183,68 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   transition: 0.3s;
 }
 
-/* ================= FILOSOFI LOGO & WARNA ================= */
-.filosofi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
-.filosofi-card { background: linear-gradient(145deg, rgba(20, 30, 55, 0.5), rgba(5, 10, 20, 0.7)); border: 1px solid rgba(255,255,255,0.05); border-radius: 25px; padding: 40px 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); backdrop-filter: blur(15px); transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;}
-.filosofi-card::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 50%; height: 3px; background: var(--accent-neon); border-radius: 0 0 10px 10px; opacity: 0; transition: 0.4s; }
-.filosofi-card:hover { transform: translateY(-10px); border-color: rgba(0,229,255,0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 20px rgba(0,229,255,0.1); }
-.filosofi-card:hover::before { opacity: 1; width: 100%; }
-.filo-icon-box { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,229,255,0.3); box-shadow: inset 0 0 15px rgba(0,229,255,0.2); transition: 0.4s; }
-.filo-icon-box svg { width: 40px; height: 40px; fill: var(--accent-neon); filter: drop-shadow(0 0 5px var(--accent-glow)); transition: 0.4s; }
-.filosofi-card:hover .filo-icon-box { background: var(--accent-neon); box-shadow: 0 0 25px var(--accent-neon); transform: scale(1.1) rotate(5deg); }
-.filosofi-card:hover .filo-icon-box svg { fill: var(--bg-dark); filter: none; }
-.filosofi-card h3 { font-size: 1.5rem; color: white; margin-bottom: 15px; font-weight: 800; letter-spacing: 1px; }
-.filo-arti { color: var(--accent-neon); font-size: 0.95rem; margin-bottom: 10px; font-weight: 500; }
-.filo-makna { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+/* ================= NEW SUPER UI: FILOSOFI LOGO (CAROUSEL COVER FLOW) ================= */
+.filosofi-slider-wrapper { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 40px; overflow: hidden; }
+.filosofi-slider-track { display: flex; gap: 30px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 50px 20vw; -ms-overflow-style: none; scrollbar-width: none; width: 100%; align-items: center; }
+.filosofi-slider-track::-webkit-scrollbar { display: none; }
 
-.warna-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
-.warna-card { display: flex; align-items: center; gap: 20px; background: rgba(10, 15, 30, 0.6); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-.warna-card:hover { transform: translateX(10px); border-color: rgba(255,255,255,0.2); background: rgba(15, 25, 45, 0.8); }
-.warna-swatch { width: 60px; height: 60px; border-radius: 15px; flex-shrink: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
-.warna-card:hover .warna-swatch { transform: scale(1.1) rotate(-5deg); }
-.warna-info h3 { color: white; font-size: 1.2rem; margin-bottom: 5px; }
-.warna-info p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+.filosofi-slide-card { 
+  flex: 0 0 320px; 
+  scroll-snap-align: center; 
+  background: linear-gradient(145deg, rgba(20, 30, 55, 0.6), rgba(5, 10, 20, 0.8)); 
+  border: 1px solid rgba(255,255,255,0.05); 
+  border-radius: 25px; padding: 40px 30px; text-align: center; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(15px); 
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); 
+  opacity: 0.4; transform: scale(0.85); 
+  position: relative; overflow: hidden;
+}
+.filosofi-slide-card::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 50%; height: 3px; background: var(--accent-neon); border-radius: 0 0 10px 10px; opacity: 0; transition: 0.4s; }
+
+/* The Center (Active) Card in the Cover Flow */
+.filosofi-slide-card.active { 
+  opacity: 1; 
+  transform: scale(1.05); 
+  box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 25px rgba(0,229,255,0.15); 
+  border-color: rgba(0,229,255,0.4); 
+  z-index: 2; 
+}
+.filosofi-slide-card.active::before { opacity: 1; width: 100%; }
+
+.filo-icon-box { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,229,255,0.1); transition: 0.4s; }
+.filo-icon-box svg { width: 40px; height: 40px; fill: var(--text-muted); transition: 0.4s; }
+.filosofi-slide-card.active .filo-icon-box { background: rgba(0, 229, 255, 0.15); box-shadow: inset 0 0 20px rgba(0,229,255,0.3), 0 0 20px rgba(0,229,255,0.2); border-color: var(--accent-neon); transform: scale(1.1); }
+.filosofi-slide-card.active .filo-icon-box svg { fill: var(--accent-neon); filter: drop-shadow(0 0 8px var(--accent-glow)); }
+
+.filosofi-slide-card h3 { font-size: 1.5rem; color: var(--text-muted); margin-bottom: 15px; font-weight: 800; letter-spacing: 1px; transition: 0.3s; }
+.filosofi-slide-card.active h3 { color: white; }
+.filo-arti { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 10px; font-weight: 500; transition: 0.3s; }
+.filosofi-slide-card.active .filo-arti { color: var(--accent-neon); }
+.filo-makna { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; opacity: 0.5; transition: 0.3s; }
+.filosofi-slide-card.active .filo-makna { opacity: 1; color: var(--text-light); }
+
+/* Slider Navigation Buttons */
+.slider-nav-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(10,15,30,0.8); border: 1px solid rgba(255,255,255,0.1); color: var(--text-light); cursor: pointer; position: absolute; z-index: 10; display: flex; justify-content: center; align-items: center; transition: 0.3s; backdrop-filter: blur(10px); }
+.slider-nav-btn:hover { background: var(--accent-neon); color: var(--bg-dark); border-color: var(--accent-neon); box-shadow: 0 0 20px var(--accent-glow); transform: scale(1.1); }
+.slider-nav-btn svg { width: 24px; height: 24px; fill: currentColor; }
+.slider-nav-btn.prev { left: 20px; }
+.slider-nav-btn.next { right: 20px; }
+
+/* ================= NEW SUPER UI: FILOSOFI WARNA (INTERACTIVE PILLS) ================= */
+.warna-ui-container { max-width: 900px; margin: 0 auto; padding-top: 20px; }
+.warna-pills-wrapper { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; margin-bottom: 40px; scrollbar-width: none; -ms-overflow-style: none; justify-content: center; }
+.warna-pills-wrapper::-webkit-scrollbar { display: none; }
+.warna-pill { display: flex; align-items: center; gap: 10px; padding: 12px 25px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; color: var(--text-muted); }
+.warna-pill:hover { background: rgba(255,255,255,0.05); color: white; transform: translateY(-3px); }
+.warna-pill.active { background: rgba(0,229,255,0.1); border-color: var(--accent-neon); color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+.warna-pill-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+.warna-detail-box { background: linear-gradient(145deg, rgba(15, 25, 45, 0.8), rgba(5, 10, 20, 0.9)); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 40px; display: flex; gap: 30px; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); backdrop-filter: blur(20px); transition: 0.4s; opacity: 0; transform: translateY(20px); }
+.warna-detail-box.show { opacity: 1; transform: translateY(0); }
+.warna-detail-swatch { width: 100px; height: 100px; border-radius: 25px; flex-shrink: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 2px 10px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: background-color 0.4s; }
+.warna-detail-text h3 { color: white; font-size: 1.8rem; margin-bottom: 5px; display: flex; align-items: center; gap: 15px; }
+.warna-detail-text h3 span { font-size: 1rem; color: var(--text-muted); font-weight: normal; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 8px; }
+.warna-detail-text p { color: var(--text-light); font-size: 1.05rem; line-height: 1.6; }
 
 /* ================= TIMELINE SEJARAH CSS ================= */
 .timeline { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
@@ -370,4 +411,15 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   /* Responsive Scroll To Top */
   .scroll-to-top { bottom: 25px; right: 25px; width: 50px; height: 50px; }
   .scroll-to-top svg { width: 26px; height: 26px; }
+
+  /* Responsive Slider & Pills */
+  .filosofi-slider-track { padding: 40px 10vw; gap: 15px;}
+  .filosofi-slide-card { flex: 0 0 280px; padding: 30px 20px; }
+  .slider-nav-btn { width: 40px; height: 40px; }
+  .slider-nav-btn.prev { left: 10px; }
+  .slider-nav-btn.next { right: 10px; }
+
+  .warna-pills-wrapper { justify-content: flex-start; } /* Allow swipe on mobile */
+  .warna-detail-box { flex-direction: column; text-align: center; padding: 30px 20px; gap: 20px; }
+  .warna-detail-text h3 { justify-content: center; flex-direction: column; gap: 5px; }
 }
