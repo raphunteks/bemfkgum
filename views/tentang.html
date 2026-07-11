@@ -59,7 +59,12 @@
             document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
             
             try {
-                const req = await fetch('/api/content');
+                // Gunakan URL Absolut agar tidak error saat di Canvas
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemfkgumi.vercel.app/api/content';
+                }
+                const req = await fetch(apiUrl);
                 const res = await req.json();
                 const orgData = res.org;
 
@@ -112,7 +117,7 @@
                     `;
                 });
 
-            } catch (err) { console.warn(err); }
+            } catch (err) { console.warn("Sistem berjalan dalam mode statis UI.", err); }
         });
     </script>
 </body>
