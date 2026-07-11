@@ -16,7 +16,7 @@
             <h1 style="font-size: 3rem; font-weight: 900;">Pusat <span style="color: var(--accent-neon);">Informasi</span></h1>
         </div>
 
-        <nav class="tab-nav reveal" style="transition-delay: 0.1s;">
+        <nav class="tab-nav reveal" id="tabNavMenu" style="transition-delay: 0.1s;">
             <button class="tab-btn active" onclick="switchTab('proker')">Program Kerja</button>
             <button class="tab-btn" onclick="switchTab('kalender')">Kalender Proker</button>
             <button class="tab-btn" onclick="switchTab('galeri')">Dokumentasi</button>
@@ -112,17 +112,60 @@
             renderDokumentasi(resData.dokumentasi);
             kalenderData = resData.kalender || [];
             renderCalendar();
+
+            // Eksekusi Hash Tab Navigation ketika halaman pertama kali dimuat
+            handleHashTabOnLoad();
         });
 
+        // SMART ROUTING: Switch Tab secara dinamis berdasarkan navigasi hash URL
         function switchTab(t) {
+            // Hapus status aktif dari semua tombol dan semua konten tab
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            event.currentTarget.classList.add('active'); 
+            
+            // Aktifkan tombol yang sesuai (mendukung pemanggilan otomatis via hash)
+            const targetBtn = document.querySelector(`.tab-btn[onclick="switchTab('${t}')"]`);
+            if(targetBtn) targetBtn.classList.add('active');
+            
+            // Tampilkan bagian konten tab-nya dengan animasi
             const targetSection = document.getElementById(t);
-            targetSection.classList.add('active');
-            targetSection.style.opacity = '0';
-            setTimeout(() => { targetSection.style.opacity = '1'; }, 50);
+            if(targetSection) {
+                targetSection.classList.add('active');
+                targetSection.style.opacity = '0';
+                setTimeout(() => { targetSection.style.opacity = '1'; }, 50);
+
+                // Sinkronisasikan Hash URL jika tidak sesuai
+                if(window.location.hash !== '#' + t) {
+                    history.pushState(null, null, '#' + t);
+                }
+            }
         }
+
+        // Logic memantau hash URL
+        function handleHashTabOnLoad() {
+            const hash = window.location.hash.substring(1);
+            const validTabs = ['proker', 'kalender', 'galeri', 'plasma'];
+            if (hash && validTabs.includes(hash)) {
+                switchTab(hash);
+                // Scroll halus sedikit ke bawah agar pas menyorot tab
+                setTimeout(() => {
+                    const navEl = document.getElementById('tabNavMenu');
+                    if (navEl) {
+                        const topPos = navEl.getBoundingClientRect().top + window.scrollY - 100;
+                        window.scrollTo({ top: topPos, behavior: 'smooth' });
+                    }
+                }, 300);
+            }
+        }
+
+        // Event listener saat user klik dari header saat masih ada di dalam halaman yg sama
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.substring(1);
+            const validTabs = ['proker', 'kalender', 'galeri', 'plasma'];
+            if (hash && validTabs.includes(hash)) {
+                switchTab(hash);
+            }
+        });
 
         function renderProker(prokerData) {
             const pCont = document.getElementById('prokerContainer'); pCont.innerHTML = '';
