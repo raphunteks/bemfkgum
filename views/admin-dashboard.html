@@ -31,6 +31,7 @@
             <nav class="admin-nav" id="adminNav">
                 <button class="active" onclick="switchSection('dashboard', this)"><span>📊</span> Overview</button>
                 <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur</button>
+                <button onclick="switchSection('sejarah', this)"><span>🕰️</span> Manajemen Sejarah</button>
                 <button onclick="switchSection('proker', this)"><span>📋</span> Program Kerja</button>
                 <button onclick="switchSection('kalender', this)"><span>📅</span> Agenda Kalender</button>
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
@@ -57,7 +58,7 @@
                 </div>
             </section>
 
-            <!-- 2. STRUKTUR ORG (DENGAN TAMBAHAN MISI KABINET) -->
+            <!-- 2. STRUKTUR ORG -->
             <section id="sec-profil" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Struktur Kepengurusan</h2>
@@ -67,7 +68,6 @@
                 <label style="color:var(--accent-neon);">Visi Kabinet</label>
                 <textarea id="editVisi" class="neo-input" rows="3" oninput="db.org.visi=this.value"></textarea>
                 
-                <!-- NEW: EDITOR MISI KABINET -->
                 <label style="color:var(--accent-neon); margin-top: 15px; display: block;">Misi Kabinet</label>
                 <textarea id="editMisi" class="neo-input" rows="6" placeholder="Masukkan misi, pisahkan tiap poin dengan ENTER..." oninput="db.org.misi=this.value.split('\n')"></textarea>
                 <small style="color:var(--text-muted); display:block; margin-bottom:30px;">*Pisahkan poin misi dengan tombol ENTER. Sistem otomatis membuatnya menjadi daftar per poin.</small>
@@ -81,7 +81,18 @@
                 <button class="action-btn view" onclick="tambahDepartemen()" style="margin-top: 10px;">+ Tambah Departemen Baru</button>
             </section>
 
-            <!-- 3. PROKER -->
+            <!-- NEW: 3. SEJARAH KEPENGURUSAN -->
+            <section id="sec-sejarah" class="admin-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <h2>Manajemen Sejarah Kepengurusan</h2>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('sejarah')">💾 Simpan Sejarah</button>
+                </div>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Daftar kabinet dari masa ke masa yang akan tampil pada Timeline vertikal di halaman Tentang.</p>
+                <div id="cmsSejarah" style="display:flex; flex-direction:column; gap:20px;"></div>
+                <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
+            </section>
+
+            <!-- 4. PROKER -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Program Kerja</h2>
@@ -91,7 +102,7 @@
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 10px;">+ Tambah Departemen Proker</button>
             </section>
 
-            <!-- 4. KALENDER -->
+            <!-- 5. KALENDER -->
             <section id="sec-kalender" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Agenda Kalender</h2>
@@ -101,7 +112,7 @@
                 <button class="action-btn view" onclick="tambahAgenda()" style="margin-top: 10px;">+ Tambah Agenda Baru</button>
             </section>
 
-            <!-- 5. DOKUMENTASI -->
+            <!-- 6. DOKUMENTASI -->
             <section id="sec-dok" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Galeri Dokumentasi</h2>
@@ -111,7 +122,7 @@
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
-            <!-- 6. PESAN -->
+            <!-- 7. PESAN -->
             <section id="sec-aspirasi" class="admin-section">
                 <h2>Aspirasi & Pesan Masuk</h2>
                 <div class="table-responsive" style="margin-top:20px; margin-bottom: 40px;">
@@ -131,7 +142,7 @@
                 </div>
             </section>
 
-            <!-- 7. DEVELOPER TEAM (OUR TEAM) -->
+            <!-- 8. DEVELOPER TEAM (OUR TEAM) -->
             <section id="sec-team" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Developer Team (Credits)</h2>
@@ -142,7 +153,7 @@
                 <button class="action-btn view" onclick="tambahKategoriTeam()" style="margin-top: 15px;">+ Tambah Kategori Role Baru</button>
             </section>
 
-            <!-- 8. PENGATURAN HEADER & FOOTER -->
+            <!-- 9. PENGATURAN HEADER & FOOTER -->
             <section id="sec-pengaturan" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Header & Footer</h2>
@@ -198,12 +209,10 @@
     <div class="toast" id="globalToast">Notifikasi</div>
 
     <script>
-        // MOCK DATA: FALLBACK_ADMIN_ORG telah di-update agar memiliki array misi kosong mencegah undefined
         const FALLBACK_ADMIN_ORG = { visi: "Visi Default", misi: [], pimpinan: [{jabatan: "Ketua BEM", nama: "Ailan", foto: "/img/bemfkgumi.png"}], departemen: [{nama: "Dept. Test", anggota: []}] };
-        let db = { org: FALLBACK_ADMIN_ORG, proker: [], kalender: [], dokumentasi: [], team: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
+        let db = { org: FALLBACK_ADMIN_ORG, sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
         let aspirasiData = []; let pesanData = [];
 
-        // FITUR AUTO-LOGIN
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('axa_admin_token');
             if (token) {
@@ -214,11 +223,7 @@
             }
         });
 
-        // FITUR LOGOUT
-        function logout() {
-            localStorage.removeItem('axa_admin_token');
-            location.reload();
-        }
+        function logout() { localStorage.removeItem('axa_admin_token'); location.reload(); }
 
         async function login() {
             const u = document.getElementById('adminUser').value; const p = document.getElementById('adminPass').value;
@@ -270,16 +275,14 @@
                 if(req.ok) {
                     const data = await req.json();
                     
-                    // FIX BUG: Sekarang array 'misi' ditarik dan diselamatkan ke memori db lokal
                     if(data.org) {
                         db.org.visi = data.org.visi || "";
                         db.org.misi = data.org.misi || []; 
                         db.org.pimpinan = data.org.pimpinan || [];
                         db.org.departemen = data.org.departemen || [];
                     }
-                    if(data.settings) {
-                        db.settings = { ...db.settings, ...data.settings };
-                    }
+                    if(data.settings) db.settings = { ...db.settings, ...data.settings };
+                    db.sejarah = data.sejarah || [];
                     db.proker = data.proker || [];
                     db.kalender = data.kalender || [];
                     db.dokumentasi = data.dokumentasi || [];
@@ -290,7 +293,7 @@
             renderSemuaCMS();
         }
 
-        function renderSemuaCMS() { renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); }
+        function renderSemuaCMS() { renderOrg(); renderSejarah(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); }
 
         function renderPengaturan() {
             if(db.settings) {
@@ -304,7 +307,6 @@
         }
 
         async function saveData(type) {
-            // FIX BUG: Menyimpan Visi dan Misi sebelum dilempar ke Redis
             if(type === 'org') {
                 db.org.visi = document.getElementById('editVisi').value;
                 db.org.misi = document.getElementById('editMisi').value.split('\n').filter(m => m.trim() !== '');
@@ -317,7 +319,7 @@
             } catch(e) { showToast("⚠️ Gagal menyimpan data."); }
         }
 
-        // --- RENDER ORG CMS (SUDAH DIPERBAIKI DENGAN MISI KABINET) ---
+        // --- RENDER ORG CMS ---
         function renderOrg() {
             document.getElementById('editVisi').value = db.org.visi || '';
             document.getElementById('editMisi').value = (db.org.misi || []).join('\n');
@@ -359,6 +361,35 @@
         }
         function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
         function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
+
+        // --- RENDER SEJARAH KEPENGURUSAN ---
+        function renderSejarah() {
+            const cont = document.getElementById('cmsSejarah'); cont.innerHTML = '';
+            (db.sejarah || []).forEach((s, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:15px; align-items:center; border-left:4px solid var(--accent-neon);">
+                    <div style="width: 80px; text-align:center;">
+                        <img src="${s.logo || '/img/bemfkgumi.png'}" style="width:100%; height:60px; object-fit:contain; background:rgba(0,0,0,0.5); padding:5px; border-radius:10px; margin-bottom:5px;">
+                        <input type="file" accept="image/*" onchange="handleImageUpload(this, db.sejarah[${i}], 'logo', renderSejarah)" style="width:100%; font-size:0.6rem;">
+                    </div>
+                    <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" class="neo-input" placeholder="Tahun (e.g. 2025-2026)" value="${s.tahun || ''}" oninput="db.sejarah[${i}].tahun=this.value" style="margin:0; flex:1;">
+                            <input type="text" class="neo-input" placeholder="Nama Kabinet" value="${s.kabinet || ''}" oninput="db.sejarah[${i}].kabinet=this.value" style="margin:0; flex:2;">
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" class="neo-input" placeholder="Nama Ketua/Presiden" value="${s.ketua || ''}" oninput="db.sejarah[${i}].ketua=this.value" style="margin:0; flex:1;">
+                            <input type="text" class="neo-input" placeholder="Nama Wakil" value="${s.wakil || ''}" oninput="db.sejarah[${i}].wakil=this.value" style="margin:0; flex:1;">
+                        </div>
+                    </div>
+                    <button class="action-btn delete" onclick="db.sejarah.splice(${i},1); renderSejarah();">X</button>
+                </div>`;
+            });
+        }
+        function tambahSejarah() { 
+            if(!db.sejarah) db.sejarah = [];
+            db.sejarah.unshift({ tahun: "", kabinet: "Kabinet Baru", logo: "/img/bemfkgumi.png", ketua: "", wakil: "" }); 
+            renderSejarah(); 
+        }
 
         // --- RENDER DOKUMENTASI (FOTO) ---
         function renderDokumentasi() {
