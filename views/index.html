@@ -8,7 +8,7 @@
     
     <!-- ================= SEO & META TAGS EXPERT ================= -->
     <meta name="description" content="Website Resmi Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia (BEM FKG UMI). Temukan informasi program kerja, galeri, dan layanan PLASMA di sini.">
-    <meta name="keywords" content="BEM FKG UMI, BEM Kedokteran Gigi UMI, Mahasiswa FKG UMI, Organisasi Mahasiswa Makassar, Kampus UMI, Kedokteran Gigi, Badan Eksekutif Mahasiswa UMI">
+    <meta name="keywords" content="BEM FKG UMI, BEM Kedokteran Gigi UMI, Mahasiswa FKG UMI, Organisasi Mahasiswa Makassar, Kampus UMI, Kedokteran Gigi, Badan Eksekutif Mahasiswa UMI, Kabinet Merajut Asa">
     <meta name="author" content="BEM FKG UMI">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian">
@@ -18,14 +18,14 @@
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemfkgumi.vercel.app/">
-    <meta property="og:title" content="Beranda | BEM FKG UMI">
-    <meta property="og:description" content="Official Website BEM FKG UMI. Sinergi untuk Kedokteran Gigi yang Lebih Baik.">
+    <meta property="og:title" content="Beranda | BEM FKG UMI Kabinet Merajut Asa">
+    <meta property="og:description" content="Official Website BEM FKG UMI. Sinergi untuk Kedokteran Gigi yang Lebih Baik. Jelajahi program kami!">
     <meta property="og:image" content="https://bemfkgumi.vercel.app/img/bemfkgumi.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://bemfkgumi.vercel.app/">
-    <meta property="twitter:title" content="Beranda | BEM FKG UMI">
+    <meta property="twitter:title" content="Beranda | BEM FKG UMI Kabinet Merajut Asa">
     <meta property="twitter:description" content="Official Website BEM FKG UMI. Sinergi untuk Kedokteran Gigi yang Lebih Baik.">
     <meta property="twitter:image" content="https://bemfkgumi.vercel.app/img/bemfkgumi.png">
 
@@ -35,7 +35,7 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "BEM FKG UMI",
-      "alternateName": "Badan Eksekutif Mahasiswa FKG UMI",
+      "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
       "url": "https://bemfkgumi.vercel.app/",
       "logo": "https://bemfkgumi.vercel.app/img/bemfkgumi.png",
       "address": {
@@ -44,45 +44,211 @@
         "addressLocality": "Makassar",
         "addressRegion": "Sulawesi Selatan",
         "addressCountry": "ID"
-      }
+      },
+      "sameAs": [
+        "https://www.instagram.com/bemfkgumi"
+      ]
     }
     </script>
     <!-- ================= END SEO ================= -->
 
     <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- Google Fonts Khusus untuk Tipografi Latin "Merajut Asa" -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS Khusus Halaman Index untuk interaksi & layout tingkat lanjut */
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        
+        .hero-section {
+            min-height: 90vh; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; text-align: center; position: relative; padding: 0 20px;
+        }
+
+        /* Tipografi Hero sesuai referensi gambar */
+        .script-font {
+            font-family: 'Dancing Script', cursive; color: var(--accent-neon); 
+            font-size: 1.5em; font-weight: 700; text-shadow: 0 0 25px rgba(0,255,128,0.5);
+            display: inline-block; transform: rotate(-2deg); margin-left: 10px;
+        }
+
+        .hero-quote {
+            max-width: 700px; font-size: 1.15rem; line-height: 1.8; color: var(--text-light);
+            margin: 30px auto; font-style: italic; opacity: 0.9;
+        }
+
+        .btn-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        
+        .glass-btn {
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); color: var(--text-light);
+            padding: 12px 28px; border-radius: 30px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; text-decoration: none; display: inline-block;
+        }
+        .glass-btn:hover { background: rgba(255,255,255,0.1); border-color: white; transform: translateY(-3px); }
+
+        /* Sambutan Section Layout */
+        .sambutan-wrapper {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-top: 50px;
+        }
+        
+        .image-card {
+            background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+            border-radius: 30px; padding: 40px; display: flex; justify-content: center; align-items: center;
+            position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); aspect-ratio: 1/1;
+        }
+        
+        .image-card img { width: 70%; filter: drop-shadow(0 0 20px rgba(0,255,128,0.3)); transition: 0.5s ease; }
+        .image-card:hover img { transform: scale(1.05); filter: drop-shadow(0 0 30px rgba(0,255,128,0.6)); }
+
+        .floating-badge {
+            position: absolute; bottom: -20px; right: -20px; background: var(--glass-bg);
+            backdrop-filter: blur(15px); border: 1px solid var(--glass-border);
+            padding: 15px 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; align-items: center; animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float { 
+            0% { transform: translateY(0px); } 
+            50% { transform: translateY(-10px); } 
+            100% { transform: translateY(0px); } 
+        }
+
+        .big-quote-section {
+            padding: 120px 20px; text-align: center; position: relative;
+        }
+        .big-quote-text {
+            font-size: 2.2rem; font-weight: 300; line-height: 1.6; max-width: 1000px; margin: 0 auto;
+        }
+        .big-quote-text strong { color: var(--accent-neon); font-weight: 700; }
+
+        @media (max-width: 768px) {
+            .sambutan-wrapper { grid-template-columns: 1fr; gap: 40px; }
+            .hero-section h1 { font-size: 2.8rem; }
+            .script-font { font-size: 1.3em; display: block; margin-top: 10px; margin-left: 0; }
+            .big-quote-text { font-size: 1.5rem; }
+            .floating-badge { right: 10%; bottom: -15px; }
+        }
+    </style>
 </head>
 <body>
     <%- include('partials/header.html') %>
 
-    <main class="container">
+    <!-- ================= HERO SECTION ================= -->
+    <main>
         <section class="hero-section">
-            <div class="glass-card" style="max-width: 800px; margin: 0 auto; animation: slideUp 1s ease; border: 1px solid var(--accent-neon);">
-                <div class="clay-badge" style="margin-bottom: 25px; letter-spacing: 2px;">PERIODE 2026-2027</div>
-                <h1 style="font-size: 3.2rem; margin-bottom: 20px; font-weight: 900; line-height: 1.2;">Kabinet <span style="color: var(--accent-neon); text-shadow: 0 0 20px rgba(0,255,128,0.5);">Merajut Asa</span></h1>
-                <p style="font-size: 1.2rem; margin-bottom: 35px; color: var(--text-light); opacity: 0.9;">
-                    "Terwujudnya BEM FKG UMI sebagai episentrum sinergi dalam merajut asa bagi IKM UMI."
+            <div class="reveal" style="max-width: 900px; margin: 0 auto;">
+                <div class="clay-badge" style="margin-bottom: 30px; letter-spacing: 2px; font-size: 0.85rem; text-transform: uppercase;">
+                    Official Website BEM FKG UMI
+                </div>
+                
+                <h1 style="font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px;">
+                    Kabinet <span class="script-font">Merajut Asa</span>
+                </h1>
+                
+                <p class="hero-quote">
+                    "Setiap simpul adalah usaha, setiap benang adalah peran. Tidak ada peran yang terlalu kecil, karena satu benang pun menentukan bentuk akhir."<br>
+                    <span style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-top: 15px;">Dirajut Bersama, Digerakkan Bersama.</span>
                 </p>
-                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                    <a href="/tentang" class="holo-btn">Kenali Kami Lebih Jauh</a>
-                    <a href="/informasi#plasma" class="holo-btn" style="background: transparent; border-color: var(--text-muted); color: var(--text-light); box-shadow: none;">Suarakan Aspirasi</a>
+                
+                <div class="btn-group">
+                    <a href="/informasi" class="holo-btn" style="padding: 15px 35px; font-size: 1.1rem;">Program Kami &rarr;</a>
+                    <a href="/tentang" class="glass-btn" style="padding: 15px 35px; font-size: 1.1rem;">Tentang Kami</a>
+                </div>
+            </div>
+            
+            <!-- Scroll Down Indicator -->
+            <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); opacity: 0.5;">
+                <p style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 5px;">SCROLL DOWN</p>
+                <div style="width: 2px; height: 30px; background: linear-gradient(transparent, var(--accent-neon)); margin: 0 auto;"></div>
+            </div>
+        </section>
+
+        <!-- ================= SAMBUTAN PRESIDEN SECTION ================= -->
+        <section class="container" style="padding: 100px 20px;">
+            <div class="sambutan-wrapper reveal">
+                <!-- Left: Image Card -->
+                <div class="image-card">
+                    <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI Besar">
+                    <div class="floating-badge">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px;">PERIODE</span>
+                        <strong style="color: var(--accent-neon); font-size: 1.2rem;">2026 - 2027</strong>
+                    </div>
+                </div>
+                
+                <!-- Right: Text Content -->
+                <div>
+                    <div style="display: inline-block; padding: 5px 15px; border-radius: 20px; background: rgba(0,255,128,0.1); color: var(--accent-neon); font-size: 0.8rem; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px;">
+                        &#9679; SAMBUTAN PRESIDEN MAHASISWA
+                    </div>
+                    
+                    <h2 style="font-size: 3rem; font-weight: 900; line-height: 1.2; margin-bottom: 30px;">
+                        "Bergerak Bersama,<br><span style="color: var(--accent-neon);">Merajut Asa</span>"
+                    </h2>
+                    
+                    <div style="font-size: 3rem; color: rgba(255,255,255,0.1); position: absolute; transform: translate(-30px, -20px);">&#10077;</div>
+                    <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 20px; font-size: 1.05rem;">
+                        Assalamu'alaikum Warahmatullahi Wabarakatuh.<br><br>
+                        Selamat datang di official website BEM FKG UMI. Di era digital ini, kami berkomitmen untuk menjadikan BEM sebagai wadah yang tidak hanya menampung aspirasi, tetapi juga <strong>mewujudkan aksi nyata</strong>.
+                    </p>
+                    <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 40px; font-size: 1.05rem;">
+                        Kabinet Merajut Asa hadir dengan semangat kolaborasi. Kami percaya bahwa setiap mahasiswa FKG UMI memiliki potensi luar biasa. Mari kita satukan langkah, sinergikan pikiran, dan rajut masa depan almamater yang lebih gemilang.
+                    </p>
+                    
+                    <div>
+                        <h3 style="font-size: 1.3rem; margin-bottom: 5px;">Sanditya Saputra</h3>
+                        <p style="color: var(--accent-neon); font-size: 0.9rem;">Presiden Mahasiswa BEM FKG UMI</p>
+                    </div>
                 </div>
             </div>
         </section>
-        
-        <section style="margin: 100px 0;">
-            <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.5rem;">Program <span style="color: var(--accent-neon);">Unggulan</span></h2>
+
+        <!-- ================= BIG QUOTE SECTION ================= -->
+        <section class="big-quote-section container reveal">
+            <div style="font-size: 5rem; color: rgba(255,255,255,0.05); position: absolute; top: 50px; left: 10%;">&#10077;</div>
+            <div style="font-size: 5rem; color: rgba(255,255,255,0.05); position: absolute; bottom: 50px; right: 10%;">&#10078;</div>
+            
+            <p class="big-quote-text">
+                "Kabinet Merajut Asa adalah tentang <strong>merangkai</strong> yang tercerai, <strong>menyatukan</strong> yang berjalan sendiri, dan <strong>mengubah</strong> harapan menjadi kerja bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <strong>merajut perubahan</strong>."
+            </p>
+            
+            <div style="margin-top: 50px; display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 50px; height: 3px; background: var(--accent-neon); margin-bottom: 15px;"></div>
+                <h4 style="letter-spacing: 1px; font-size: 1.1rem;">SANDITYA SAPUTRA</h4>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px;">Presiden Mahasiswa</p>
+            </div>
+        </section>
+
+        <!-- ================= PROGRAM UNGGULAN ================= -->
+        <section class="container" style="padding: 100px 20px;">
+            <div style="text-align: center; margin-bottom: 60px;" class="reveal">
+                <div class="clay-badge" style="margin-bottom: 15px; background: rgba(0,255,128,0.1); color: var(--accent-neon);">AKSI NYATA</div>
+                <h2 style="font-size: 2.5rem; font-weight: 900;">Program <span style="color: var(--accent-neon);">Unggulan</span></h2>
+            </div>
+            
             <div class="grid-3">
-                <div class="glass-card">
+                <div class="glass-card reveal" style="transition-delay: 0.1s;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🦷</div>
                     <h3 style="border-left: 3px solid var(--accent-neon); padding-left: 10px;">Bakti Sosial Gigi</h3>
-                    <p class="text-muted" style="margin-top: 15px; font-size: 0.95rem; line-height: 1.6;">Pengabdian masyarakat di desa tertinggal untuk edukasi kesehatan gigi dan pengobatan dasar secara gratis.</p>
+                    <p class="text-muted" style="margin-top: 15px; font-size: 0.95rem; line-height: 1.6;">
+                        Pengabdian masyarakat di desa tertinggal untuk edukasi kesehatan gigi dan pengobatan dasar secara gratis sebagai wujud tridharma perguruan tinggi.
+                    </p>
                 </div>
-                <div class="glass-card">
+                <div class="glass-card reveal" style="transition-delay: 0.2s;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🔬</div>
                     <h3 style="border-left: 3px solid var(--accent-neon); padding-left: 10px;">Scientific Fair</h3>
-                    <p class="text-muted" style="margin-top: 15px; font-size: 0.95rem; line-height: 1.6;">Kompetisi riset dan karya tulis ilmiah tingkat nasional antar mahasiswa Kedokteran Gigi se-Indonesia.</p>
+                    <p class="text-muted" style="margin-top: 15px; font-size: 0.95rem; line-height: 1.6;">
+                        Kompetisi riset dan karya tulis ilmiah tingkat nasional antar mahasiswa Kedokteran Gigi se-Indonesia untuk melahirkan inovator muda.
+                    </p>
                 </div>
-                <div class="glass-card">
+                <div class="glass-card reveal" style="transition-delay: 0.3s;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🏕️</div>
                     <h3 style="border-left: 3px solid var(--accent-neon); padding-left: 10px;">Islamic Dental Camp</h3>
-                    <p class="text-muted" style="margin-top: 15px; font-size: 0.95rem; line-height: 1.6;">Pembinaan karakter Islami mahasiswa berbalut kegiatan camping alam terbuka dan diskusi ilmiah bioetika.</p>
+                    <p class="text-muted" style="margin-top: 15px; font-size: 0.95rem; line-height: 1.6;">
+                        Pembinaan karakter Islami mahasiswa berbalut kegiatan camping alam terbuka dan diskusi ilmiah mengenai bioetika kedokteran gigi Islami.
+                    </p>
                 </div>
             </div>
         </section>
@@ -90,8 +256,35 @@
 
     <%- include('partials/footer.html') %>
 
-    <style>
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+    <!-- ================= JAVASCRIPT ANIMATION ================= -->
+    <script>
+        // Logika Intersection Observer untuk memicu animasi masuk (Fade/Slide Up) saat elemen terscroll
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const revealOnScroll = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // Opsional: Unobserve setelah animasi berjalan sekali agar performa ringan
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                root: null,
+                threshold: 0.15, // Memicu animasi ketika 15% elemen terlihat di layar
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+            
+            // Pemicu manual untuk section hero agar langsung muncul saat page load
+            setTimeout(() => {
+                document.querySelector('.hero-section .reveal').classList.add('active');
+            }, 100);
+        });
+    </script>
 </body>
 </html>
