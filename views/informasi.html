@@ -1,73 +1,283 @@
-<!-- FILE: views/informasi.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Informasi & Plasma | BEM FKG UMI</title>
     <link rel="stylesheet" href="/css/main.css">
+    <style>
+        /* CSS Khusus Halaman Informasi */
+        .tab-nav {
+            display: flex; gap: 15px; overflow-x: auto; margin-bottom: 40px; padding-bottom: 10px;
+            justify-content: center; scroll-behavior: smooth;
+        }
+        .tab-nav::-webkit-scrollbar { height: 6px; }
+        .tab-nav::-webkit-scrollbar-thumb { background: var(--accent-neon); border-radius: 10px; }
+        
+        .tab-btn {
+            background: rgba(25, 25, 25, 0.8); border: 1px solid var(--glass-border); color: var(--text-muted);
+            padding: 12px 24px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: all 0.3s;
+            white-space: nowrap; box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0, 255, 128, 0.2) 100%);
+            color: var(--accent-neon); border-color: var(--accent-neon); box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .tab-content { display: none; animation: fadeInTab 0.5s ease forwards; }
+        .tab-content.active { display: block; }
+        @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Custom Accordion untuk Proker */
+        details.proker-dept {
+            background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
+            border-radius: 15px; margin-bottom: 15px; overflow: hidden; transition: 0.3s;
+        }
+        details.proker-dept[open] { border-color: var(--accent-neon); box-shadow: 0 5px 20px rgba(0,255,128,0.1); }
+        summary.dept-title {
+            padding: 18px 20px; font-weight: bold; font-size: 1.1rem; cursor: pointer; color: var(--text-light);
+            list-style: none; display: flex; justify-content: space-between; align-items: center;
+        }
+        summary.dept-title::-webkit-details-marker { display: none; }
+        summary.dept-title::after { content: '+'; color: var(--accent-neon); font-size: 1.5rem; transition: 0.3s; }
+        details.proker-dept[open] summary.dept-title::after { content: '-'; transform: rotate(180deg); }
+        .dept-content { padding: 0 20px 20px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px; padding-top: 15px; }
+
+        /* Galeri Grid */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .gallery-card {
+            border-radius: 15px; overflow: hidden; position: relative; aspect-ratio: 4/3;
+            background: var(--glass-bg); border: 1px solid var(--glass-border); cursor: pointer;
+        }
+        .gallery-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; filter: grayscale(50%); }
+        .gallery-card:hover .gallery-img { filter: grayscale(0%); transform: scale(1.05); }
+        .gallery-info {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            transform: translateY(100%); transition: 0.4s ease;
+        }
+        .gallery-card:hover .gallery-info { transform: translateY(0); }
+    </style>
 </head>
 <body>
     <%- include('partials/header.html') %>
-    <main class="container" style="padding-top: 50px;">
-        
-        <section id="plasma" class="glass-card" style="max-width: 700px; margin: 0 auto;">
-            <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 10px;">P.L.A.S.M.A</h2>
-            <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted);">Pengumpulan Aspirasi Mahasiswa BEM FKG UMI</p>
+    
+    <main class="container" style="padding-top: 40px; min-height: 80vh;">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="font-size: 2.5rem; font-weight: 900;">Pusat <span style="color: var(--accent-neon);">Informasi</span></h1>
+            <p style="color: var(--text-muted); margin-top: 10px;">Jelajahi program kerja, dokumentasi, dan sampaikan aspirasi Anda.</p>
+        </div>
+
+        <!-- Sistem Navigasi Tab -->
+        <nav class="tab-nav" id="infoTabs">
+            <button class="tab-btn active" onclick="switchTab('proker')">Program Kerja</button>
+            <button class="tab-btn" onclick="switchTab('kalender')">Kalender</button>
+            <button class="tab-btn" onclick="switchTab('galeri')">Dokumentasi</button>
+            <button class="tab-btn" onclick="switchTab('plasma')">PLASMA (Aspirasi)</button>
+        </nav>
+
+        <!-- TAB 1: PROGRAM KERJA -->
+        <section id="proker" class="tab-content active" style="max-width: 800px; margin: 0 auto;">
+            <h2 style="margin-bottom: 25px; color: var(--accent-neon);">Program Kerja Departemen</h2>
             
-            <form id="plasmaForm">
-                <label>Judul Aspirasi *</label>
-                <input type="text" id="judul" class="neo-input" placeholder="Misal: Perbaikan AC Ruang Kuliah" required>
-                
-                <label>Kategori *</label>
-                <select id="kategori" class="neo-input" required>
-                    <option value="" disabled selected>Pilih Kategori</option>
-                    <option value="Akademik">Akademik</option>
-                    <option value="Fasilitas Kampus">Fasilitas Kampus</option>
-                    <option value="Keuangan/UKT">Keuangan / UKT</option>
-                    <option value="Organisasi">Organisasi</option>
-                    <option value="Pelayanan Kampus">Pelayanan Kampus</option>
-                    <option value="Lainnya">Lainnya</option>
-                </select>
-
-                <label>Jenis Aspirasi *</label>
-                <div style="display:flex; gap:10px; margin-bottom: 15px;">
-                    <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Saran" checked> Saran</label>
-                    <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Pengaduan"> Pengaduan</label>
-                    <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Kritik"> Kritik</label>
+            <details class="proker-dept">
+                <summary class="dept-title">1. Dept. Character of Building</summary>
+                <div class="dept-content">
+                    <ul>
+                        <li style="margin-bottom: 10px;"><strong>LDK (Latihan Dasar Kepemimpinan):</strong> Pembentukan karakter mahasiswa baru FKG.</li>
+                        <li><strong>Upgrading Pengurus:</strong> Peningkatan soft-skill internal kepengurusan BEM.</li>
+                    </ul>
                 </div>
+            </details>
+            
+            <details class="proker-dept">
+                <summary class="dept-title">2. Dept. Science Education & Research</summary>
+                <div class="dept-content">
+                    <ul>
+                        <li style="margin-bottom: 10px;"><strong>Dental Research Club:</strong> Pelatihan penulisan Karya Tulis Ilmiah (KTI) Kedokteran Gigi.</li>
+                        <li><strong>Study Club:</strong> Kelompok belajar rutin menghadapi ujian blok dan OSCE.</li>
+                    </ul>
+                </div>
+            </details>
 
-                <label>Isi Aspirasi *</label>
-                <textarea id="isi" class="neo-input" rows="4" placeholder="Ceritakan detail aspirasi Anda..." required></textarea>
+            <details class="proker-dept">
+                <summary class="dept-title">3. Dept. Islamic</summary>
+                <div class="dept-content">
+                    <ul>
+                        <li style="margin-bottom: 10px;"><strong>Kajian Rutin (KANTIN):</strong> Kajian Islam seputar bioetika kedokteran.</li>
+                        <li><strong>Gema Ramadhan Dokter Gigi:</strong> Rangkaian lomba dan buka bersama IKM FKG UMI.</li>
+                    </ul>
+                </div>
+            </details>
 
-                <label>Bukti Pendukung (Opsional)</label>
-                <input type="file" id="file" class="neo-input">
-
-                <label style="display: flex; gap:10px; align-items:center; margin: 20px 0;">
-                    <input type="checkbox" id="setuju" required>
-                    <span style="font-size:0.9rem;">Saya bersedia dihubungi untuk klarifikasi lebih lanjut.</span>
-                </label>
-
-                <button type="submit" class="holo-btn" style="width: 100%; text-align: center;">Kirim Aspirasi</button>
-            </form>
-            <div id="plasmaResult" style="margin-top:20px; text-align:center; color: var(--accent-neon); display:none;"></div>
+            <details class="proker-dept">
+                <summary class="dept-title">4. Dept. Sekretariat</summary>
+                <div class="dept-content"><p>Manajemen persuratan, inventarisasi barang BEM, dan piket harian sekretariat.</p></div>
+            </details>
+            <details class="proker-dept">
+                <summary class="dept-title">5. Dept. Treasure</summary>
+                <div class="dept-content"><p>Pengelolaan dana kas, penjualan *merchandise* resmi BEM, dan dental *supply store* mahasiswa.</p></div>
+            </details>
+            <details class="proker-dept">
+                <summary class="dept-title">6. Dept. Art & Sport</summary>
+                <div class="dept-content"><p>PORSENI FKG UMI, pembinaan kontingen olahraga/seni, dan pendelegasian lomba nasional.</p></div>
+            </details>
+            <details class="proker-dept">
+                <summary class="dept-title">7. Dept. Dedication Humanity</summary>
+                <div class="dept-content"><p>Bakti Sosial Gigi Gratis, Desa Binaan FKG UMI, dan Tanggap Bencana Darurat.</p></div>
+            </details>
+            <details class="proker-dept">
+                <summary class="dept-title">8. Dept. Study & Strategy</summary>
+                <div class="dept-content"><p>Kajian isu-isu strategis kesehatan gigi nasional, advokasi UKT, dan pengawalan kebijakan fakultas.</p></div>
+            </details>
+            <details class="proker-dept">
+                <summary class="dept-title">9. Dept. Information & Communication</summary>
+                <div class="dept-content"><p>Pengelolaan website, publikasi media sosial, *branding* kabinet, dan majalah dinding digital.</p></div>
+            </details>
         </section>
+
+        <!-- TAB 2: KALENDER PROKER -->
+        <section id="kalender" class="tab-content" style="max-width: 800px; margin: 0 auto;">
+            <h2 style="margin-bottom: 25px; color: var(--accent-neon);">Kalender Kegiatan</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="clay-badge" style="margin-bottom: 10px; font-size:0.8rem;">Agustus 2026</div>
+                    <h3>Penyambutan Mahasiswa Baru & LDK</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">Dept. Character of Building</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="clay-badge" style="margin-bottom: 10px; font-size:0.8rem;">Oktober 2026</div>
+                    <h3>Bakti Sosial Desa Binaan Terpadu</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">Dept. Dedication Humanity</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="clay-badge" style="margin-bottom: 10px; font-size:0.8rem;">Desember 2026</div>
+                    <h3>PORSENI DENTISTRY UMI</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">Dept. Art & Sport</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: DOKUMENTASI (GALERI) -->
+        <section id="galeri" class="tab-content">
+            <h2 style="margin-bottom: 25px; text-align: center; color: var(--accent-neon);">Galeri Kegiatan</h2>
+            <div class="gallery-grid">
+                <!-- Data Dummy Dokumentasi -->
+                <div class="gallery-card">
+                    <!-- Gunakan placeholder abu-abu karena tidak ada external image url -->
+                    <div class="gallery-img" style="background: #2a2a2a; display:flex; align-items:center; justify-content:center;">
+                        [Gambar Bakti Sosial]
+                    </div>
+                    <div class="gallery-info">
+                        <h4 style="color: var(--accent-neon);">Bakti Sosial Pelosok</h4>
+                        <p style="font-size:0.8rem; margin: 5px 0;">Pemeriksaan gigi gratis di Desa X.</p>
+                        <span style="font-size:0.7rem; color: #ccc;">12 Okt 2025</span>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <div class="gallery-img" style="background: #333; display:flex; align-items:center; justify-content:center;">
+                        [Gambar Seminar Ilmiah]
+                    </div>
+                    <div class="gallery-info">
+                        <h4 style="color: var(--accent-neon);">Seminar Nasional</h4>
+                        <p style="font-size:0.8rem; margin: 5px 0;">Update Ilmu Kedokteran Gigi 4.0.</p>
+                        <span style="font-size:0.7rem; color: #ccc;">05 Nov 2025</span>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <div class="gallery-img" style="background: #2a2a2a; display:flex; align-items:center; justify-content:center;">
+                        [Gambar Porseni]
+                    </div>
+                    <div class="gallery-info">
+                        <h4 style="color: var(--accent-neon);">Porseni FKG</h4>
+                        <p style="font-size:0.8rem; margin: 5px 0;">Laga final futsal antar angkatan.</p>
+                        <span style="font-size:0.7rem; color: #ccc;">20 Des 2025</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: PLASMA (ASPIRASI) -->
+        <section id="plasma" class="tab-content">
+            <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
+                <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 10px;">P.L.A.S.M.A</h2>
+                <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted);">Pengumpulan Aspirasi Mahasiswa BEM FKG UMI</p>
+                
+                <form id="plasmaForm">
+                    <label>Judul Aspirasi *</label>
+                    <input type="text" id="judul" class="neo-input" placeholder="Misal: Perbaikan Phantom Lab Skill" required>
+                    
+                    <label>Kategori *</label>
+                    <select id="kategori" class="neo-input" required>
+                        <option value="" disabled selected>Pilih Kategori (Wajib)</option>
+                        <option value="Akademik">Akademik</option>
+                        <option value="Fasilitas Kampus">Fasilitas Kampus</option>
+                        <option value="Keuangan/UKT">Keuangan / UKT</option>
+                        <option value="Organisasi">Organisasi</option>
+                        <option value="Pelayanan Kampus">Pelayanan Kampus</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+
+                    <label>Jenis Aspirasi *</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 15px;">
+                        <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Saran" checked> Saran</label>
+                        <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Pengaduan"> Pengaduan</label>
+                        <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Kritik"> Kritik</label>
+                        <label class="clay-badge" style="cursor:pointer;"><input type="radio" name="jenis" value="Permintaan Informasi"> Permintaan Informasi</label>
+                    </div>
+
+                    <label>Isi Aspirasi *</label>
+                    <textarea id="isi" class="neo-input" rows="4" placeholder="Ceritakan detail aspirasi Anda..." required></textarea>
+
+                    <label>Bukti Pendukung (Opsional)</label>
+                    <input type="file" id="file" class="neo-input" accept="image/*, .pdf">
+
+                    <label style="display: flex; gap:10px; align-items:center; margin: 20px 0; cursor: pointer;">
+                        <input type="checkbox" id="setuju" required style="width: 18px; height: 18px; accent-color: var(--accent-neon);">
+                        <span style="font-size:0.9rem; color: var(--text-light);">Saya bersedia dihubungi oleh pihak Admin BEM FKG UMI apabila diperlukan klarifikasi lebih lanjut.</span>
+                    </label>
+
+                    <button type="submit" class="holo-btn" style="width: 100%; text-align: center; font-size: 1.1rem; padding: 15px;">Kirim Aspirasi ke BEM</button>
+                </form>
+                <div id="plasmaResult" style="margin-top:20px; text-align:center; color: var(--accent-neon); display:none; padding: 10px; background: rgba(0,255,128,0.1); border-radius: 10px;"></div>
+            </div>
+        </section>
+
     </main>
     <%- include('partials/footer.html') %>
 
     <script>
+        // Logika Perpindahan Tab Navigasi tanpa Reload (Vanilla JS)
+        function switchTab(tabId) {
+            // Hapus status active dari semua tombol
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            // Sembunyikan semua konten tab
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Aktifkan tombol yang diklik (menggunakan event.currentTarget untuk fleksibilitas)
+            event.currentTarget.classList.add('active');
+            // Tampilkan konten tab sesuai ID
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Logika Pengiriman Form Plasma (Safe Data Passing - Anti Crash)
         document.getElementById('plasmaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('button');
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = btn.innerText;
             btn.innerText = "Mengirim...";
+            btn.style.opacity = "0.7";
+            btn.disabled = true;
             
-            // Ekstraksi ke primitif
+            // Ekstraksi ke tipe data primitif sebelum dikirim
             const payload = {
-                judul: document.getElementById('judul').value,
-                kategori: document.getElementById('kategori').value,
-                jenis: document.querySelector('input[name="jenis"]:checked').value,
-                isi: document.getElementById('isi').value,
-                setuju: document.getElementById('setuju').checked
+                judul: String(document.getElementById('judul').value),
+                kategori: String(document.getElementById('kategori').value),
+                jenis: String(document.querySelector('input[name="jenis"]:checked').value),
+                isi: String(document.getElementById('isi').value),
+                setuju: Boolean(document.getElementById('setuju').checked)
             };
+
+            const resultBox = document.getElementById('plasmaResult');
 
             try {
                 const res = await fetch('/api/plasma', {
@@ -76,15 +286,29 @@
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
-                document.getElementById('plasmaResult').innerText = data.message;
-                document.getElementById('plasmaResult').style.display = 'block';
-                e.target.reset();
+                
+                if(data.success) {
+                    resultBox.innerText = "✅ " + data.message;
+                    resultBox.style.color = "var(--accent-neon)";
+                    resultBox.style.background = "rgba(0,255,128,0.1)";
+                    e.target.reset(); // Reset form jika sukses
+                } else {
+                    throw new Error(data.message || "Kesalahan Server");
+                }
             } catch(err) {
-                document.getElementById('plasmaResult').innerText = "Gagal terhubung ke server.";
-                document.getElementById('plasmaResult').style.color = "red";
-                document.getElementById('plasmaResult').style.display = 'block';
+                // Penanganan Error / Fallback Mode
+                resultBox.innerText = "⚠️ Gagal terhubung ke server. Mode Offline Aktif, aspirasi dummmy diproses.";
+                resultBox.style.color = "#ff4d4d";
+                resultBox.style.background = "rgba(255,77,77,0.1)";
+                console.error("Fetch Error:", err);
             }
-            btn.innerText = "Kirim Aspirasi";
+            
+            resultBox.style.display = 'block';
+            
+            // Kembalikan tombol ke state awal
+            btn.innerText = originalBtnText;
+            btn.style.opacity = "1";
+            btn.disabled = false;
         });
     </script>
 </body>
