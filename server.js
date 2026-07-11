@@ -11,29 +11,25 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Memastikan file statis bisa diakses langsung oleh Express (Berguna jika Vercel.json melempar route kemari)
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
-// ================= INISIASI UPSTASH REDIS (SUPER UPGRADE ENV) =================
+// ================= INISIASI UPSTASH REDIS =================
 const redisUrl = process.env.KV_REST_API_URL || 'https://merry-hedgehog-35658.upstash.io';
 const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E0ODZkOTJlNTYwNzBjMzMyNWQxZHAyMzU2NTg';
 
 let redis = null;
 try {
-    redis = new Redis({ 
-        url: redisUrl, 
-        token: redisToken 
-    });
+    redis = new Redis({ url: redisUrl, token: redisToken });
     console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi.");
 } catch (error) {
     console.error("⚠️ Peringatan: Redis gagal inisiasi. Backend berjalan di Mode Offline.", error.message);
 }
 
-// ================= DATA SEED (STRUKTUR BEM KBMFKG UMI LENGKAP) =================
+// ================= DATA SEED (DEFAULT) =================
 const defaultOrg = {
     visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
     misi: [
@@ -72,36 +68,12 @@ const defaultSettings = {
 };
 
 const defaultTeam = [
-    { 
-        category: "FullStack Development", 
-        members: [ 
-            { nama: "drg. M. Aksa Arsyad, S.KG", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/axaaxyz_01" } 
-        ] 
-    },
-    { 
-        category: "Backend Development", 
-        members: [ 
-            { nama: "Silvy Ananda", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/oenandaa" }, 
-            { nama: "Muh. Sauqi Zahran. B", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/sauqizhran" } 
-        ] 
-    },
-    { 
-        category: "Frontend Development", 
-        members: [ 
-            { nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/daegalfauzaaa" }, 
-            { nama: "Zahwa Alzahra Djohan", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zahwadjohan" } 
-        ] 
-    },
-    { 
-        category: "UI/UX Design (CSS)", 
-        members: [ 
-            { nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zanetazahraa" }, 
-            { nama: "Novita Widyantari", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/novvwdyn__" } 
-        ] 
-    }
+    { category: "FullStack Development", members: [ { nama: "drg. M. Aksa Arsyad, S.KG", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/axaaxyz_01" } ] },
+    { category: "Backend Development", members: [ { nama: "Silvy Ananda", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/oenandaa" }, { nama: "Muh. Sauqi Zahran. B", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/sauqizhran" } ] },
+    { category: "Frontend Development", members: [ { nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/daegalfauzaaa" }, { nama: "Zahwa Alzahra Djohan", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zahwadjohan" } ] },
+    { category: "UI/UX Design (CSS)", members: [ { nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zanetazahraa" }, { nama: "Novita Widyantari", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/novvwdyn__" } ] }
 ];
 
-// REVISI BIG UPGRADE DATA KABINET: Disusun dari yang terbaru hingga terlama
 const defaultSejarah = [
     { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
     { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" },
@@ -116,6 +88,27 @@ const defaultSejarah = [
     { tahun: "2015-2016", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Rizky Adipratama Yusuf", wakil: "drg. Muhammad Hidayatullah" },
     { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
 ];
+
+// NEW SUPER UPGRADE: Data Filosofi Default
+const defaultFilosofi = {
+    logo: [
+        { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
+        { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati, serta berperan sebagai penopang." },
+        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar, dan taring sebagai jati diri kekuatan mahasiswa." },
+        { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah." },
+        { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Mahasiswa FKG UMI bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun berada." },
+        { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Mewujudkan visi Persatuan Dokter Gigi Indonesia (PDGI)." },
+        { elemen: "Angka 2014", arti: "Tahun Berdiri.", makna: "KBMFKG-UMI didirikan pada tahun 2014 sebagai tonggak awal pergerakan." }
+    ],
+    warna: [
+        { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
+        { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
+        { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian dan kesucian." },
+        { warna: "Kuning", hex: "#f59e0b", makna: "Melambangkan kedewasaan, kemuliaan, dan kelestarian." },
+        { warna: "Merah", hex: "#ef4444", makna: "Melambangkan keadilan, keberanian, dan tanggung jawab." },
+        { warna: "Hitam", hex: "#111827", makna: "Melambangkan kejujuran dan keilmuan." }
+    ]
+};
 
 // ================= ROUTES FRONTEND =================
 app.get('/', (req, res) => res.render('index'));
@@ -146,11 +139,10 @@ app.get('/api/content', async (req, res) => {
         let dokumentasi = await redis.get('Dokumentasi_Data');
         let settings = await redis.get('Settings_Data');
         let team = await redis.get('Team_Data');
-        let sejarah = await redis.get('Sejarah_Data'); // NEW GET
+        let sejarah = await redis.get('Sejarah_Data');
+        let filosofi = await redis.get('Filosofi_Data'); // NEW GET
 
         let parsedOrg = safeParse(org, defaultOrg);
-        
-        // Auto Restore Misi jika terhapus dari Database
         if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) {
             parsedOrg.misi = defaultOrg.misi;
         }
@@ -163,10 +155,11 @@ app.get('/api/content', async (req, res) => {
             dokumentasi: safeParse(dokumentasi, []),
             settings: safeParse(settings, defaultSettings),
             team: safeParse(team, defaultTeam),
-            sejarah: safeParse(sejarah, defaultSejarah) // NEW SEND
+            sejarah: safeParse(sejarah, defaultSejarah),
+            filosofi: safeParse(filosofi, defaultFilosofi) // NEW SEND
         });
     } catch (error) {
-        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah });
+        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi });
     }
 });
 
@@ -174,8 +167,6 @@ app.post('/api/content/:type', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const type = req.params.type;
-        
-        // Selalu ubah ke String sebelum dilempar ke Redis untuk mencegah bug serialisasi Object
         const payload = JSON.stringify(req.body); 
         
         if (type === 'org') await redis.set('Org_Structure', payload);
@@ -184,7 +175,8 @@ app.post('/api/content/:type', async (req, res) => {
         else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
         else if (type === 'settings') await redis.set('Settings_Data', payload);
         else if (type === 'team') await redis.set('Team_Data', payload);
-        else if (type === 'sejarah') await redis.set('Sejarah_Data', payload); // NEW POST
+        else if (type === 'sejarah') await redis.set('Sejarah_Data', payload);
+        else if (type === 'filosofi') await redis.set('Filosofi_Data', payload); // NEW POST
         else return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
@@ -193,7 +185,6 @@ app.post('/api/content/:type', async (req, res) => {
         res.status(500).json({ success: false, message: 'Gagal menyimpan data ke Redis.' });
     }
 });
-
 
 // ================= API ENDPOINTS: TRANSAKSIONAL =================
 app.get('/api/interactions', async (req, res) => {
@@ -242,7 +233,6 @@ app.post('/api/delete-interaction', async (req, res) => {
 
 app.post('/api/admin/auth', (req, res) => {
   const { username, password } = req.body;
-  
   const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
   const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
 
