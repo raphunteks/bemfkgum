@@ -48,10 +48,36 @@
   </div>
 </footer>
 
+<!-- NEW: TOMBOL SCROLL TO TOP -->
+<div class="scroll-to-top" id="scrollToTopBtn" onclick="scrollToTop()">
+    <!-- SVG Panah Atas yang Elegan -->
+    <svg viewBox="0 0 24 24"><path d="M13 7.828V20h-2V7.828l-5.364 5.364-1.414-1.414L12 4l7.778 7.778-1.414 1.414L13 7.828z"/></svg>
+</div>
+
 <script>
   // Script Dinamis Tahun
   document.getElementById('currentYear').innerText = new Date().getFullYear();
 
+  // Script Scroll to Top Hovering Button
+  const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+  
+  window.addEventListener('scroll', () => {
+      // Tombol otomatis muncul setelah user scroll 300px ke bawah
+      if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+          scrollToTopBtn.classList.add("show");
+      } else {
+          scrollToTopBtn.classList.remove("show");
+      }
+  });
+
+  function scrollToTop() {
+      window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+      });
+  }
+
+  // Load Pengaturan Dinamis Footer (Data Redis)
   document.addEventListener('DOMContentLoaded', async () => {
     try {
         let apiUrl = '/api/content';
