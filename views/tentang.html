@@ -3,10 +3,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Kabinet | BEM FKG UMI</title>
+    <title>Tentang Kabinet | BEM KBMFKG UMI</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
-    
-    <!-- MURNI PANGGIL DARI MAIN.CSS -->
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -15,111 +13,107 @@
         
         <div class="reveal" style="text-align: center; margin-bottom: 70px;">
             <div class="clay-badge" style="margin-bottom: 15px;">PROFIL ORGANISASI</div>
-            <h1 style="font-size: 3rem; font-weight: 900;">Tentang <span style="color: var(--accent-neon);">Kabinet</span></h1>
+            <h1 style="font-size: 3.5rem; font-weight: 900;">Visi & Misi <br><span class="script-font" style="font-size: 1.2em; display:block; margin-top:10px;">Ananta Anardhaya</span></h1>
         </div>
 
-        <section id="visimisi" class="reveal" style="margin-bottom: 100px;">
-            <div class="glass-card" style="text-align: center; position: relative; overflow: hidden; padding: 60px 30px;">
-                <h2 style="color: var(--accent-neon); font-size: 2.2rem; margin-bottom: 20px;">Visi Kami</h2>
-                <div style="font-size: 3rem; color: rgba(255,255,255,0.1); position: absolute; top: 30px; left: 50%; transform: translateX(-50%);">&#10077;</div>
-                <p id="teksVisi" style="font-size: 1.8rem; font-style: italic; margin: 30px auto; line-height: 1.6; font-weight: 300; max-width: 900px;">
-                    Loading Visi Organisasi...
+        <!-- VISI -->
+        <section class="reveal" style="margin-bottom: 50px;">
+            <div class="glass-card" style="text-align: center; padding: 50px 30px;">
+                <h2 style="color: var(--accent-neon); font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">Visi Kami</h2>
+                <p id="teksVisi" style="font-size: 1.5rem; font-style: italic; line-height: 1.6; font-weight: 500; color: var(--text-light); max-width: 900px; margin: 0 auto;">
+                    Memuat data visi...
                 </p>
             </div>
         </section>
 
-        <!-- STRUKTUR DINAMIS DARI DATABASE -->
-        <section id="struktur" class="reveal" style="margin-bottom: 100px;">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.5rem;">Struktur <span style="color: var(--accent-neon);">Pimpinan</span></h2>
-            </div>
-            
-            <div class="grid-2" style="max-width: 800px; margin: 0 auto;" id="containerPimpinan">
-                <!-- Injeksi JS -->
-                <div style="text-align:center; grid-column: span 2;">Memuat data dari database Upstash...</div>
+        <!-- MISI -->
+        <section class="reveal" style="margin-bottom: 100px;">
+            <div class="glass-card">
+                <h2 style="font-size: 1.5rem; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">Misi Kami</h2>
+                <ul id="listMisi" style="list-style: none; display: flex; flex-direction: column; gap: 15px; padding-left: 10px;">
+                    <!-- JS Injeksi -->
+                </ul>
             </div>
         </section>
 
-        <!-- 9 DEPARTEMEN DINAMIS -->
+        <!-- STRUKTUR KEPENGURUSAN -->
         <section class="reveal" style="margin-bottom: 100px;">
-            <h3 style="text-align:center; margin-bottom: 40px; font-size: 2rem;">Departemen <span style="color: var(--accent-neon);">Penggerak</span></h3>
-            <div class="grid-3" id="containerDepartemen">
-                <!-- Injeksi JS -->
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 2.8rem;">Struktur <span style="color: var(--accent-neon);">Kepengurusan</span></h2>
+            </div>
+            
+            <h3 style="text-align:center; font-size: 1.8rem; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase;">Pimpinan Inti BEM</h3>
+            <div class="grid-4" id="containerPimpinan" style="margin-bottom: 80px;">
+                <div style="text-align:center; grid-column: span 4;">Memuat pimpinan dari database...</div>
+            </div>
+
+            <div id="containerDepartemen">
+                <!-- JS Injeksi Grid Per Departemen -->
             </div>
         </section>
     </main>
     <%- include('partials/footer.html') %>
 
     <script>
-        // Animasi
-        document.addEventListener('DOMContentLoaded', () => {
-            const reveals = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); }); });
-            reveals.forEach(el => observer.observe(el));
-            setTimeout(() => { if(document.querySelector('.reveal')) document.querySelector('.reveal').classList.add('active'); }, 100);
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
             
-            // FETCH DATA DARI DATABASE REDIS PADA SAAT PAGE LOAD
-            loadOrgData();
-        });
-
-        async function loadOrgData() {
             try {
-                const req = await fetch('/api/org');
+                const req = await fetch('/api/content');
                 const res = await req.json();
-                
-                // DATA DEFAULT JIKA DATABASE MASIH KOSONG
-                let orgData = {
-                    visi: "Terwujudnya BEM FKG UMI sebagai episentrum sinergi dalam merajut asa bagi seluruh mahasiswa menuju keunggulan akademis dan akhlakul karimah.",
-                    pimpinan: [
-                        { jabatan: "Presiden BEM", nama: "Sanditya Saputra", angkatan: "2023", foto: "" },
-                        { jabatan: "Wakil Presiden", nama: "Azizah Najda", angkatan: "2023", foto: "" }
-                    ],
-                    departemen: [
-                        { nama: "Character of Building", deskripsi: "Pengembangan kaderisasi dan SDM.", ikon: "👥" }
-                    ]
-                };
+                const orgData = res.org;
 
-                if(res.success && res.data) {
-                    orgData = JSON.parse(res.data);
+                // Visi & Misi
+                document.getElementById('teksVisi').innerText = `"${orgData.visi}"`;
+                const ulMisi = document.getElementById('listMisi');
+                ulMisi.innerHTML = '';
+                if(orgData.misi) {
+                    orgData.misi.forEach(m => {
+                        ulMisi.innerHTML += `<li style="display:flex; gap:15px; align-items:flex-start;"><span style="color:var(--accent-neon); font-size:1.2rem;">&#10004;</span> <span style="font-size: 1.1rem; line-height: 1.5; color: var(--text-muted);">${m}</span></li>`;
+                    });
                 }
 
-                // RENDER VISI
-                document.getElementById('teksVisi').innerText = `"${orgData.visi}"`;
-
-                // RENDER PIMPINAN
+                // Pimpinan Inti
                 const pimContainer = document.getElementById('containerPimpinan');
                 pimContainer.innerHTML = '';
                 orgData.pimpinan.forEach(pim => {
-                    const bgStyle = pim.foto ? `background-image: url('${pim.foto}');` : '';
+                    const pic = pim.foto || '/img/bemfkgumi.png';
                     pimContainer.innerHTML += `
                         <div class="leader-card">
-                            <div class="leader-photo" style="${bgStyle}">
-                                ${!pim.foto ? `<span style="color: var(--text-muted); font-size: 0.8rem;">[Foto]</span>` : ''}
-                            </div>
-                            <div class="clay-badge" style="margin-bottom:15px; background: rgba(0,255,128,0.15); color: var(--accent-neon);">${pim.jabatan}</div>
-                            <h3 style="font-size: 1.8rem; margin-bottom: 5px;">${pim.nama}</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;">FKG UMI ${pim.angkatan}</p>
+                            <div class="leader-photo" style="background-image: url('${pic}');"></div>
+                            <h3 style="font-size: 1.2rem; margin-bottom: 5px;">${pim.nama}</h3>
+                            <p style="color: var(--accent-neon); font-size: 0.85rem; font-weight:bold;">${pim.jabatan}</p>
                         </div>
                     `;
                 });
 
-                // RENDER DEPARTEMEN
+                // Departemen & Anggota
                 const depContainer = document.getElementById('containerDepartemen');
                 depContainer.innerHTML = '';
                 orgData.departemen.forEach(dep => {
+                    let anggotaHTML = '';
+                    if(dep.anggota) {
+                        dep.anggota.forEach(ang => {
+                            const angPic = ang.foto || '/img/bemfkgumi.png';
+                            anggotaHTML += `
+                                <div class="leader-card" style="padding: 20px 10px;">
+                                    <div class="leader-photo" style="width: 80px; height: 80px; border-width: 2px; background-image: url('${angPic}');"></div>
+                                    <h4 style="font-size: 1rem; margin-bottom: 5px;">${ang.nama}</h4>
+                                    <p style="color: var(--text-muted); font-size: 0.8rem;">${ang.jabatan}</p>
+                                </div>
+                            `;
+                        });
+                    }
                     depContainer.innerHTML += `
-                        <div class="dept-card">
-                            <div class="dept-icon">${dep.ikon || '🏢'}</div>
-                            <h4 style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px;">${dep.nama}</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">${dep.deskripsi}</p>
+                        <div class="dept-container reveal active">
+                            <h3 class="dept-header">${dep.nama}</h3>
+                            <div class="grid-4">${anggotaHTML}</div>
                         </div>
                     `;
                 });
 
-            } catch (err) {
-                console.warn("Gagal render data dinamis.", err);
-            }
-        }
+            } catch (err) { console.warn(err); }
+        });
     </script>
 </body>
 </html>
