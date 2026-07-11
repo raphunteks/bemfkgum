@@ -91,23 +91,22 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .nav-item:hover .mega-menu { display: flex; }
 .menu-toggle { display: none; font-size: 1.8rem; color: var(--accent-neon); cursor: pointer; z-index: 1001; }
 
-/* ================= UPGRADE FOOTER RESPONSIVE ================= */
-.modern-footer { background: rgba(5, 10, 20, 0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--glass-border); padding: 50px 0 20px; margin-top: 60px; position: relative; z-index: 100; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
-.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-.footer-brand { display: flex; flex-direction: column; gap: 10px; }
-.footer-brand-header { display: flex; align-items: center; gap: 15px; }
-.footer-brand-header img { width: 55px; height: 55px; object-fit: contain; }
-.footer-brand p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
-.footer-links h4, .footer-social h4 { color: var(--accent-neon); margin-bottom: 20px; font-size: 1.2rem; }
-.footer-links { display: flex; flex-direction: column; gap: 12px; }
-.footer-links a { color: var(--text-muted); text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
-.footer-links a:hover { color: var(--accent-neon); transform: translateX(5px); }
-.social-icons-wrapper { display: flex; gap: 15px; }
-.social-btn-circle { width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: var(--text-light); transition: 0.3s; background: rgba(255,255,255,0.02); }
-.social-btn-circle:hover { background: var(--accent-neon); color: #000; border-color: var(--accent-neon); box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-5px); }
-.footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 25px; text-align: center; }
-.credit-link { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: 0.3s; display: inline-block; font-weight: 500; }
-.credit-link:hover { color: var(--accent-neon); text-shadow: 0 0 10px var(--accent-glow); }
+/* ================= FOOTER ================= */
+.custom-footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 30px;
+}
+.footer-credit-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: 0.3s;
+  font-weight: 500;
+}
+.footer-credit-link:hover {
+  color: var(--accent-neon);
+  text-shadow: 0 0 10px var(--accent-glow);
+}
 
 /* ================= OUR TEAM (DEVELOPER CREDITS) CSS ================= */
 .team-cat-header { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 70px 0 40px; }
@@ -248,7 +247,12 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .floating-badge { right: 5%; bottom: -15px; }
   
   /* Responsive Footer */
-  .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-  .footer-brand-header { justify-content: center; flex-direction: column; }
-  .social-icons-wrapper { justify-content: center; }
+  .custom-footer-grid {
+    grid-template-columns: 1fr 1fr; /* Navigasi & Bantuan sejajar horizontal */
+    gap: 20px;
+  }
+  .custom-footer-grid > div:nth-child(1) {
+    grid-column: 1 / -1; /* Profil BEM tetap full width di atas */
+    margin-bottom: 10px;
+  }
 }
