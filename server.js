@@ -8,7 +8,6 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
-// Tingkatkan limit untuk Base64 Image Upload
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -17,7 +16,7 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
-// INISIASI UPSTASH REDIS DENGAN KREDENSIAL ASLI
+// INISIASI UPSTASH REDIS DENGAN KREDENSIAL ASLI USER
 let redis = null;
 try {
     redis = new Redis({ 
@@ -26,10 +25,10 @@ try {
     });
     console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi.");
 } catch (error) {
-    console.error("⚠️ Peringatan: Redis gagal inisiasi.", error.message);
+    console.error("⚠️ Peringatan: Redis gagal inisiasi. Backend berjalan di Mode Offline.", error.message);
 }
 
-// ================= DATA SEED: STRUKTUR KABINET LENGKAP =================
+// ================= DATA SEED (STRUKTUR BEM KBMFKG UMI LENGKAP) =================
 const defaultOrg = {
     visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
     misi: [
@@ -68,6 +67,7 @@ app.get('/admin', (req, res) => res.render('admin-dashboard'));
 // ================= API ENDPOINTS: MANAJEMEN KONTEN (CMS) =================
 app.get('/api/content', async (req, res) => {
     try {
+        if(!redis) throw new Error("Redis Offline");
         let org = await redis.get('Org_Structure');
         let proker = await redis.get('Proker_Data');
         let kalender = await redis.get('Kalender_Data');
@@ -81,12 +81,14 @@ app.get('/api/content', async (req, res) => {
             dokumentasi: dokumentasi ? JSON.parse(dokumentasi) : []
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal mengambil data dari database.', fallback: defaultOrg });
+        // FALLBACK: JIKA REDIS MATI, TETAP KIRIM DATA SEED AGAR FRONTEND TIDAK ERROR
+        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [] });
     }
 });
 
 app.post('/api/content/:type', async (req, res) => {
     try {
+        if(!redis) throw new Error("Redis Offline");
         const type = req.params.type;
         const payload = JSON.stringify(req.body);
         
@@ -97,20 +99,21 @@ app.post('/api/content/:type', async (req, res) => {
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui!` });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal menyimpan data.' });
+        res.status(500).json({ success: false, message: 'Gagal menyimpan data ke Redis.' });
     }
 });
 
 // ================= API ENDPOINTS: TRANSAKSIONAL =================
 app.get('/api/interactions', async (req, res) => {
     try {
+        if(!redis) throw new Error("Redis Offline");
         const aspirasi = await redis.hgetall('Aspirations') || {};
         const pesan = await redis.hgetall('Messages') || {};
         const parsedAspirasi = Object.values(aspirasi).map(item => JSON.parse(item));
         const parsedPesan = Object.values(pesan).map(item => JSON.parse(item));
         res.status(200).json({ success: true, aspirasi: parsedAspirasi, pesan: parsedPesan });
     } catch (error) {
-        res.status(500).json({ success: false });
+        res.status(200).json({ success: false, aspirasi: [], pesan: [] });
     }
 });
 
@@ -137,8 +140,8 @@ app.post('/api/message', async (req, res) => {
 app.post('/api/delete-interaction', async (req, res) => {
     try {
         const { type, id } = req.body;
-        if(type === 'aspirasi') await redis.hdel('Aspirations', id);
-        if(type === 'pesan') await redis.hdel('Messages', id);
+        if(type === 'aspirasi' && redis) await redis.hdel('Aspirations', id);
+        if(type === 'pesan' && redis) await redis.hdel('Messages', id);
         res.status(200).json({ success: true });
     } catch (error) { res.status(500).json({ success: false }); }
 });
@@ -153,4 +156,4 @@ app.post('/api/admin/auth', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server BEM FKG UMI berjalan di port ${PORT}`));
+app.listen(PORT, () => console.log(`Server BEM KBMFKG UMI berjalan di port ${PORT}`));
