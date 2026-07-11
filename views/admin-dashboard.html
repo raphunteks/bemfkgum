@@ -30,12 +30,12 @@
             </div>
             <nav class="admin-nav" id="adminNav">
                 <button class="active" onclick="switchSection('dashboard', this)"><span>📊</span> Overview</button>
-                <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur</button>
-                <button onclick="switchSection('proker', this)"><span>📋</span> Program Kerja</button>
+                <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur (Org)</button>
+                <button onclick="switchSection('proker', this)"><span>📋</span> Manajemen Program Kerja</button>
                 <button onclick="switchSection('kalender', this)"><span>📅</span> Agenda Kalender</button>
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
-                <button onclick="location.reload()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
+                <button onclick="logoutAdmin()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
             </nav>
         </aside>
 
@@ -145,6 +145,27 @@
         let db = { org: FALLBACK_ADMIN_ORG, proker: [], kalender: [], dokumentasi: [], interaksi: {aspirasi:[], pesan:[]} };
         let aspirasiData = []; let pesanData = [];
 
+        // ================= AUTO LOGIN LOGIC =================
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('axa_admin_token');
+            if (token) {
+                // Jika token ada, lewati halaman login dan langsung buka dashboard
+                document.getElementById('loginGate').style.display = 'none';
+                const dash = document.getElementById('dashboardContent');
+                dash.style.display = 'flex';
+                dash.style.opacity = '1';
+                dash.style.filter = 'none';
+                loadAllData();
+            }
+        });
+
+        // Logika fungsi untuk membersihkan memori saat Logout
+        function logoutAdmin() {
+            localStorage.removeItem('axa_admin_token');
+            showToast("Anda telah Logout.");
+            setTimeout(() => location.reload(), 1000);
+        }
+
         async function login() {
             const u = document.getElementById('adminUser').value; const p = document.getElementById('adminPass').value;
             const btn = document.querySelector('#loginGate button'); btn.innerText = "Memverifikasi..."; btn.disabled = true;
@@ -154,9 +175,16 @@
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemfkgumi.vercel.app/api/admin/auth';
                 const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
                 const data = await res.json();
-                if(data.success) { unlockDashboard(); } else throw new Error();
+                if(data.success) { 
+                    localStorage.setItem('axa_admin_token', data.token); // SIMPAN TOKEN KE LOCAL STORAGE
+                    unlockDashboard(); 
+                } else throw new Error();
             } catch(e) {
-                if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { showToast("Simulasi Canvas Aktif."); unlockDashboard(); } 
+                if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
+                    localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); // Mode Simulasi Canvas
+                    showToast("Simulasi Canvas Aktif."); 
+                    unlockDashboard(); 
+                } 
                 else { document.getElementById('loginError').style.display = 'block'; }
             }
             btn.innerText = "Akses Sistem"; btn.disabled = false;
