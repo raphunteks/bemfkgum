@@ -11,25 +11,29 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// Memastikan file statis bisa diakses langsung oleh Express (Berguna jika Vercel.json melempar route kemari)
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
-// ================= INISIASI UPSTASH REDIS =================
+// ================= INISIASI UPSTASH REDIS (SUPER UPGRADE ENV) =================
 const redisUrl = process.env.KV_REST_API_URL || 'https://merry-hedgehog-35658.upstash.io';
 const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E0ODZkOTJlNTYwNzBjMzMyNWQxZHAyMzU2NTg';
 
 let redis = null;
 try {
-    redis = new Redis({ url: redisUrl, token: redisToken });
+    redis = new Redis({ 
+        url: redisUrl, 
+        token: redisToken 
+    });
     console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi.");
 } catch (error) {
     console.error("⚠️ Peringatan: Redis gagal inisiasi. Backend berjalan di Mode Offline.", error.message);
 }
 
-// ================= DATA SEED (DEFAULT) =================
+// ================= DATA SEED (STRUKTUR BEM KBMFKG UMI LENGKAP) =================
 const defaultOrg = {
     visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
     misi: [
@@ -89,21 +93,49 @@ const defaultSejarah = [
     { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
 ];
 
-// NEW SUPER UPGRADE: Data Filosofi Default
+// REVISI BIG UPGRADE: Data Database Filosofi Sesuai Teks Lengkap Terbaru
 const defaultFilosofi = {
     logo: [
-        { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
-        { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati, serta berperan sebagai penopang." },
-        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar, dan taring sebagai jati diri kekuatan mahasiswa." },
-        { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah." },
-        { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Mahasiswa FKG UMI bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun berada." },
-        { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Mewujudkan visi Persatuan Dokter Gigi Indonesia (PDGI)." },
-        { elemen: "Angka 2014", arti: "Tahun Berdiri.", makna: "KBMFKG-UMI didirikan pada tahun 2014 sebagai tonggak awal pergerakan." }
+        { 
+            elemen: "Bulan Bintang", 
+            arti: "Merupakan lambang keislaman.", 
+            makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." 
+        },
+        { 
+            elemen: "Tongkat", 
+            arti: "Merupakan lambang Aesculapius.", 
+            makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." 
+        },
+        { 
+            elemen: "Ular", 
+            arti: "Merupakan lambang kesehatan.", 
+            makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan dosis salah ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." 
+        },
+        { 
+            elemen: "Molar", 
+            arti: "Gigi yang paling sering digunakan dan paling kuat.", 
+            makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah yang ada." 
+        },
+        { 
+            elemen: "Perahu Phinisi", 
+            arti: "Merupakan lambang khas asli Sulawesi Selatan.", 
+            makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." 
+        },
+        { 
+            elemen: "Segitiga", 
+            arti: "Segitiga sama kaki terbalik berwarna ungu.", 
+            makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." 
+        },
+        { 
+            elemen: "Angka 2014", 
+            arti: "Tahun Berdirinya Organisasi.", 
+            makna: "KBMFKG-UMI didirikan pada tahun 2014." 
+        }
     ],
     warna: [
         { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
         { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
-        { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian dan kesucian." },
+        { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian." },
         { warna: "Kuning", hex: "#f59e0b", makna: "Melambangkan kedewasaan, kemuliaan, dan kelestarian." },
         { warna: "Merah", hex: "#ef4444", makna: "Melambangkan keadilan, keberanian, dan tanggung jawab." },
         { warna: "Hitam", hex: "#111827", makna: "Melambangkan kejujuran dan keilmuan." }
@@ -143,6 +175,8 @@ app.get('/api/content', async (req, res) => {
         let filosofi = await redis.get('Filosofi_Data'); // NEW GET
 
         let parsedOrg = safeParse(org, defaultOrg);
+        
+        // Auto Restore Misi jika terhapus dari Database
         if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) {
             parsedOrg.misi = defaultOrg.misi;
         }
@@ -167,6 +201,8 @@ app.post('/api/content/:type', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const type = req.params.type;
+        
+        // Selalu ubah ke String sebelum dilempar ke Redis untuk mencegah bug serialisasi Object
         const payload = JSON.stringify(req.body); 
         
         if (type === 'org') await redis.set('Org_Structure', payload);
@@ -185,6 +221,7 @@ app.post('/api/content/:type', async (req, res) => {
         res.status(500).json({ success: false, message: 'Gagal menyimpan data ke Redis.' });
     }
 });
+
 
 // ================= API ENDPOINTS: TRANSAKSIONAL =================
 app.get('/api/interactions', async (req, res) => {
@@ -233,6 +270,7 @@ app.post('/api/delete-interaction', async (req, res) => {
 
 app.post('/api/admin/auth', (req, res) => {
   const { username, password } = req.body;
+  
   const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
   const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
 
