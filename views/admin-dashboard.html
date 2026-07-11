@@ -7,6 +7,48 @@
     <meta name="robots" content="noindex, nofollow, noarchive">
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
+    <style>
+        /* Tombol Scroll to Top Custom (Sesuai Referensi Gambar) */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #ea869a; /* Warna Pink Pastel sesuai gambar */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.9);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 10px 20px rgba(234, 134, 154, 0.4);
+            border: none;
+        }
+        .scroll-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .scroll-to-top:hover {
+            background-color: #d67085;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(234, 134, 154, 0.6);
+        }
+        .scroll-to-top svg {
+            width: 32px;
+            height: 32px;
+            fill: #ffffff;
+        }
+        @media(max-width: 768px) {
+            .scroll-to-top { bottom: 25px; right: 25px; width: 50px; height: 50px; }
+            .scroll-to-top svg { width: 26px; height: 26px; }
+        }
+    </style>
 </head>
 <body>
     
@@ -31,13 +73,14 @@
             <nav class="admin-nav" id="adminNav">
                 <button class="active" onclick="switchSection('dashboard', this)"><span>📊</span> Overview</button>
                 <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur</button>
+                <button onclick="switchSection('filosofi', this)"><span>🎨</span> Filosofi Logo & Warna</button>
                 <button onclick="switchSection('sejarah', this)"><span>🕰️</span> Manajemen Sejarah</button>
                 <button onclick="switchSection('proker', this)"><span>📋</span> Program Kerja</button>
                 <button onclick="switchSection('kalender', this)"><span>📅</span> Agenda Kalender</button>
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span>🧑‍💻</span> Developer Team</button>
-                <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Manajemen Header & Footer</button>
+                <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Header & Footer</button>
                 <button onclick="logout()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
             </nav>
         </aside>
@@ -70,7 +113,6 @@
                 
                 <label style="color:var(--accent-neon); margin-top: 15px; display: block;">Misi Kabinet</label>
                 <textarea id="editMisi" class="neo-input" rows="6" placeholder="Masukkan misi, pisahkan tiap poin dengan ENTER..." oninput="db.org.misi=this.value.split('\n')"></textarea>
-                <small style="color:var(--text-muted); display:block; margin-bottom:30px;">*Pisahkan poin misi dengan tombol ENTER. Sistem otomatis membuatnya menjadi daftar per poin.</small>
                 
                 <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Pimpinan Inti BEM</h3>
                 <div id="cmsPimpinan" class="pimpinan-grid"></div>
@@ -81,18 +123,33 @@
                 <button class="action-btn view" onclick="tambahDepartemen()" style="margin-top: 10px;">+ Tambah Departemen Baru</button>
             </section>
 
-            <!-- 3. SEJARAH KEPENGURUSAN -->
+            <!-- 3. FILOSOFI LOGO & WARNA -->
+            <section id="sec-filosofi" class="admin-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <h2>Manajemen Filosofi Logo & Warna</h2>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('filosofi')">💾 Simpan Filosofi</button>
+                </div>
+                
+                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Filosofi Logo</h3>
+                <div id="cmsFiloLogo" style="display:flex; flex-direction:column; gap:15px;"></div>
+                <button class="action-btn view" onclick="tambahFiloLogo()" style="margin: 10px 0 30px;">+ Tambah Elemen Logo</button>
+
+                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Filosofi Warna</h3>
+                <div id="cmsFiloWarna" style="display:flex; flex-direction:column; gap:15px;"></div>
+                <button class="action-btn view" onclick="tambahFiloWarna()" style="margin-top: 10px;">+ Tambah Filosofi Warna</button>
+            </section>
+
+            <!-- 4. SEJARAH KEPENGURUSAN -->
             <section id="sec-sejarah" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Sejarah Kepengurusan</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('sejarah')">💾 Simpan Sejarah</button>
                 </div>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Daftar kabinet dari masa ke masa yang akan tampil pada Timeline vertikal di halaman Tentang.</p>
                 <div id="cmsSejarah" style="display:flex; flex-direction:column; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
             </section>
 
-            <!-- 4. PROKER -->
+            <!-- 5. PROKER -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Program Kerja</h2>
@@ -102,7 +159,7 @@
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 10px;">+ Tambah Departemen Proker</button>
             </section>
 
-            <!-- 5. KALENDER -->
+            <!-- 6. KALENDER -->
             <section id="sec-kalender" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Agenda Kalender</h2>
@@ -112,7 +169,7 @@
                 <button class="action-btn view" onclick="tambahAgenda()" style="margin-top: 10px;">+ Tambah Agenda Baru</button>
             </section>
 
-            <!-- 6. DOKUMENTASI -->
+            <!-- 7. DOKUMENTASI -->
             <section id="sec-dok" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Galeri Dokumentasi</h2>
@@ -122,7 +179,7 @@
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
-            <!-- 7. PESAN -->
+            <!-- 8. PESAN -->
             <section id="sec-aspirasi" class="admin-section">
                 <h2>Aspirasi & Pesan Masuk</h2>
                 <div class="table-responsive" style="margin-top:20px; margin-bottom: 40px;">
@@ -142,7 +199,7 @@
                 </div>
             </section>
 
-            <!-- 8. DEVELOPER TEAM (OUR TEAM) -->
+            <!-- 9. DEVELOPER TEAM (OUR TEAM) -->
             <section id="sec-team" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Developer Team (Credits)</h2>
@@ -153,7 +210,7 @@
                 <button class="action-btn view" onclick="tambahKategoriTeam()" style="margin-top: 15px;">+ Tambah Kategori Role Baru</button>
             </section>
 
-            <!-- 9. PENGATURAN HEADER & FOOTER -->
+            <!-- 10. PENGATURAN HEADER & FOOTER -->
             <section id="sec-pengaturan" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Header & Footer</h2>
@@ -164,10 +221,8 @@
                     <h3 style="color:var(--accent-neon); margin-bottom:15px;">Pengaturan Teks</h3>
                     <label style="color:var(--text-muted); font-size: 0.85rem;">Teks Header (Nama BEM)</label>
                     <input type="text" id="setHeaderText" class="neo-input" placeholder="BEM KBMFKG UMI" oninput="db.settings.headerText = this.value">
-                    
                     <label style="color:var(--text-muted); font-size: 0.85rem;">Slogan Footer</label>
                     <input type="text" id="setFooterSlogan" class="neo-input" placeholder="Kabinet Ananta Anardhaya" oninput="db.settings.footerSlogan = this.value">
-                    
                     <label style="color:var(--text-muted); font-size: 0.85rem;">Alamat Footer</label>
                     <textarea id="setFooterAlamat" class="neo-input" rows="2" oninput="db.settings.footerAlamat = this.value"></textarea>
                 </div>
@@ -208,49 +263,32 @@
 
     <div class="toast" id="globalToast">Notifikasi</div>
 
-    <!-- NEW: TOMBOL SCROLL TO TOP ADMIN -->
-    <div class="scroll-to-top" id="scrollToTopBtnAdmin" onclick="scrollToTopAdmin()">
-        <svg viewBox="0 0 24 24"><path d="M13 7.828V20h-2V7.828l-5.364 5.364-1.414-1.414L12 4l7.778 7.778-1.414 1.414L13 7.828z"/></svg>
-    </div>
+    <!-- NEW: TOMBOL SCROLL TO TOP ADMIN (Desain Sesuai Request Warna Pink Pastel) -->
+    <button class="scroll-to-top" id="scrollToTopBtnAdmin" onclick="scrollToTopAdmin()" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24"><path d="M13 5.828V17h-2V5.828L5.636 11.192 4.222 9.778 12 2l7.778 7.778-1.414 1.414L13 5.828zM4 19h16v2H4v-2z"/></svg>
+    </button>
 
     <script>
-        // MOCK DATA: Fallback dengan data Seed Sejarah yang komprehensif
-        const FALLBACK_ADMIN_ORG = { visi: "Visi Default", misi: [], pimpinan: [{jabatan: "Ketua BEM", nama: "Ailan", foto: "/img/bemfkgumi.png"}], departemen: [{nama: "Dept. Test", anggota: []}] };
-        const FALLBACK_SEJARAH = [
-            { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
-            { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" },
-            { tahun: "2023-2024", kabinet: "Kabinet Satya Bimantara", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" },
-            { tahun: "2023", kabinet: "Kabinet Aswara Karya", logo: "/img/bemfkgumi.png", ketua: "Aditya Dwianugrah Wiratman, S.KG", wakil: "Nur. Muhammad Syafaat, S.KG" },
-            { tahun: "2022", kabinet: "Kabinet Dedikasi Karsa", logo: "/img/bemfkgumi.png", ketua: "drg. Amhadn Syarief", wakil: "Marwati Sumardi, S.KG" },
-            { tahun: "2021", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Fahri Muhammad", wakil: "drg. Ayus Lestari" },
-            { tahun: "2020", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muhammad Ajis", wakil: "drg. Andriani T" },
-            { tahun: "2018-2019", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Sulaihi Ramadhan", wakil: "drg. Sri Devi" },
-            { tahun: "2017-2018", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Faisal Ramadhan", wakil: "drg, Satria Nur Fathanah" },
-            { tahun: "2016-2017", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Zulfahmi Duwila", wakil: "drg. Abd. Rahman Abdal Basri Makassau" },
-            { tahun: "2015-2016", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Rizky Adipratama Yusuf", wakil: "drg. Muhammad Hidayatullah" },
-            { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
-        ];
-        
-        let db = { org: FALLBACK_ADMIN_ORG, sejarah: FALLBACK_SEJARAH, proker: [], kalender: [], dokumentasi: [], team: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
+        const FALLBACK_ADMIN_ORG = { visi: "", misi: [], pimpinan: [], departemen: [] };
+        let db = { org: FALLBACK_ADMIN_ORG, filosofi: { logo: [], warna: [] }, sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
         let aspirasiData = []; let pesanData = [];
 
         // FITUR SCROLL TO TOP UNTUK ADMIN PANE
         const scrollToTopBtnAdmin = document.getElementById("scrollToTopBtnAdmin");
         const adminMainArea = document.querySelector(".admin-main");
-
-        adminMainArea.addEventListener('scroll', () => {
+        
+        adminMainArea.addEventListener('scroll', () => { 
             if (adminMainArea.scrollTop > 300) {
-                scrollToTopBtnAdmin.classList.add("show");
+                scrollToTopBtnAdmin.classList.add("show"); 
             } else {
-                scrollToTopBtnAdmin.classList.remove("show");
+                scrollToTopBtnAdmin.classList.remove("show"); 
             }
         });
-
-        function scrollToTopAdmin() {
-            adminMainArea.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        function scrollToTopAdmin() { 
+            adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); 
         }
 
-        // FITUR AUTO-LOGIN
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('axa_admin_token');
             if (token) {
@@ -272,16 +310,9 @@
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemfkgumi.vercel.app/api/admin/auth';
                 const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
                 const data = await res.json();
-                if(data.success) { 
-                    localStorage.setItem('axa_admin_token', data.token);
-                    unlockDashboard(); 
-                } else throw new Error();
+                if(data.success) { localStorage.setItem('axa_admin_token', data.token); unlockDashboard(); } else throw new Error();
             } catch(e) {
-                if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
-                    localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN');
-                    showToast("Simulasi Canvas Aktif."); 
-                    unlockDashboard(); 
-                } 
+                if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); showToast("Simulasi Canvas Aktif."); unlockDashboard(); } 
                 else { document.getElementById('loginError').style.display = 'block'; }
             }
             btn.innerText = "Akses Sistem"; btn.disabled = false;
@@ -296,13 +327,13 @@
             document.querySelectorAll('.admin-section').forEach(e => e.classList.remove('active'));
             document.querySelectorAll('.admin-nav button').forEach(e => e.classList.remove('active'));
             document.getElementById('sec-' + id).classList.add('active'); btn.classList.add('active');
-            adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); // Otomatis scroll ke atas saat ganti menu di admin
+            adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); // Otomatis scroll ke atas saat ganti menu
         }
 
         function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
         async function handleImageUpload(inputElem, objToUpdate, keyName, renderFn) {
             const file = inputElem.files[0];
-            if(file) { const base64 = await fileToBase64(file); objToUpdate[keyName] = base64; showToast("Gambar berhasil dimuat! Klik Simpan ke Database."); renderFn(); }
+            if(file) { const base64 = await fileToBase64(file); objToUpdate[keyName] = base64; showToast("Gambar dimuat! Klik Simpan."); renderFn(); }
         }
 
         async function loadAllData() {
@@ -313,26 +344,17 @@
                 const req = await fetch(apiUrl);
                 if(req.ok) {
                     const data = await req.json();
-                    
-                    if(data.org) {
-                        db.org.visi = data.org.visi || "";
-                        db.org.misi = data.org.misi || []; 
-                        db.org.pimpinan = data.org.pimpinan || [];
-                        db.org.departemen = data.org.departemen || [];
-                    }
+                    if(data.org) { db.org.visi = data.org.visi || ""; db.org.misi = data.org.misi || []; db.org.pimpinan = data.org.pimpinan || []; db.org.departemen = data.org.departemen || []; }
+                    if(data.filosofi) { db.filosofi = data.filosofi; }
                     if(data.settings) db.settings = { ...db.settings, ...data.settings };
-                    db.sejarah = data.sejarah || [];
-                    db.proker = data.proker || [];
-                    db.kalender = data.kalender || [];
-                    db.dokumentasi = data.dokumentasi || [];
-                    db.team = data.team || [];
+                    db.sejarah = data.sejarah || []; db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || []; db.team = data.team || [];
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
-            } catch(err) { showToast("⚠️ Memuat data Offline/Simulasi."); }
+            } catch(err) { showToast("⚠️ Memuat data Offline."); }
             renderSemuaCMS();
         }
 
-        function renderSemuaCMS() { renderOrg(); renderSejarah(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); }
+        function renderSemuaCMS() { renderOrg(); renderFilosofi(); renderSejarah(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); }
 
         function renderPengaturan() {
             if(db.settings) {
@@ -354,25 +376,21 @@
                 let apiUrl = `/api/content/${type}`;
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemfkgumi.vercel.app/api/content/${type}`;
                 const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) });
-                if(req.ok) showToast(`✅ Data Tersimpan ke Database!`); else throw new Error();
-            } catch(e) { showToast("⚠️ Gagal menyimpan data."); }
+                if(req.ok) showToast(`✅ Data Tersimpan!`); else throw new Error();
+            } catch(e) { showToast("⚠️ Gagal menyimpan."); }
         }
 
-        // --- RENDER ORG CMS ---
         function renderOrg() {
             document.getElementById('editVisi').value = db.org.visi || '';
             document.getElementById('editMisi').value = (db.org.misi || []).join('\n');
-            
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
-            
             (db.org.pimpinan || []).forEach((p, i) => {
                 pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
                     <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:#000; border-radius:5px; margin-bottom:10px;">
-                    <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:5px;">Ubah Foto Pimpinan:</div>
                     <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px; width:100%; font-size:0.8rem;">
                     <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan || ''}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
                     <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama || ''}" oninput="db.org.pimpinan[${i}].nama=this.value">
-                    <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus Pimpinan</button>
+                    <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus</button>
                 </div>`;
             });
 
@@ -382,7 +400,7 @@
                     <input type="text" class="neo-input" value="${d.nama || ''}" placeholder="Nama Departemen" oninput="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; color:var(--accent-neon);">
                     <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
                         <button class="action-btn view" onclick="if(!db.org.departemen[${i}].anggota) db.org.departemen[${i}].anggota=[]; db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:'/img/bemfkgumi.png'}); renderOrg();">+ Anggota</button>
-                        <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Departemen</button>
+                        <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Dept</button>
                     </div><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">`;
                 if(d.anggota) {
                     d.anggota.forEach((a, j) => {
@@ -401,7 +419,37 @@
         function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
         function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
 
-        // --- RENDER SEJARAH KEPENGURUSAN ---
+        // --- RENDER FILOSOFI (NEW) ---
+        function renderFilosofi() {
+            const logoCont = document.getElementById('cmsFiloLogo'); logoCont.innerHTML = '';
+            (db.filosofi.logo || []).forEach((el, i) => {
+                logoCont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:10px; border-left:3px solid #10b981;">
+                    <div style="flex:1;">
+                        <input type="text" class="neo-input" value="${el.elemen}" placeholder="Nama Elemen (Cth: Bintang)" oninput="db.filosofi.logo[${i}].elemen=this.value">
+                        <input type="text" class="neo-input" value="${el.arti}" placeholder="Arti Elemen" oninput="db.filosofi.logo[${i}].arti=this.value">
+                        <textarea class="neo-input" rows="2" placeholder="Makna Filosofis" oninput="db.filosofi.logo[${i}].makna=this.value">${el.makna}</textarea>
+                    </div>
+                    <button class="action-btn delete" onclick="db.filosofi.logo.splice(${i},1); renderFilosofi();">X</button>
+                </div>`;
+            });
+            const warnaCont = document.getElementById('cmsFiloWarna'); warnaCont.innerHTML = '';
+            (db.filosofi.warna || []).forEach((w, i) => {
+                warnaCont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:10px; border-left:3px solid ${w.hex};">
+                    <div style="flex:1;">
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" class="neo-input" value="${w.warna}" placeholder="Nama Warna (Cth: Hijau)" oninput="db.filosofi.warna[${i}].warna=this.value" style="flex:2;">
+                            <input type="color" value="${w.hex}" oninput="db.filosofi.warna[${i}].hex=this.value" style="flex:1; height:45px; border:none; cursor:pointer;">
+                        </div>
+                        <textarea class="neo-input" rows="2" placeholder="Makna Warna" oninput="db.filosofi.warna[${i}].makna=this.value">${w.makna}</textarea>
+                    </div>
+                    <button class="action-btn delete" onclick="db.filosofi.warna.splice(${i},1); renderFilosofi();">X</button>
+                </div>`;
+            });
+        }
+        function tambahFiloLogo() { if(!db.filosofi.logo) db.filosofi.logo = []; db.filosofi.logo.push({elemen:"Elemen Baru", arti:"", makna:""}); renderFilosofi(); }
+        function tambahFiloWarna() { if(!db.filosofi.warna) db.filosofi.warna = []; db.filosofi.warna.push({warna:"Warna Baru", hex:"#ffffff", makna:""}); renderFilosofi(); }
+
+        // --- RENDER SEJARAH ---
         function renderSejarah() {
             const cont = document.getElementById('cmsSejarah'); cont.innerHTML = '';
             (db.sejarah || []).forEach((s, i) => {
@@ -424,78 +472,35 @@
                 </div>`;
             });
         }
-        function tambahSejarah() { 
-            if(!db.sejarah) db.sejarah = [];
-            db.sejarah.unshift({ tahun: "", kabinet: "Kabinet Baru", logo: "/img/bemfkgumi.png", ketua: "", wakil: "" }); 
-            renderSejarah(); 
-        }
+        function tambahSejarah() { if(!db.sejarah) db.sejarah = []; db.sejarah.unshift({ tahun: "", kabinet: "Kabinet Baru", logo: "/img/bemfkgumi.png", ketua: "", wakil: "" }); renderSejarah(); }
 
-        // --- RENDER DOKUMENTASI (FOTO) ---
+        // --- RENDER DOKUMENTASI, KALENDER, PROKER, TEAM ---
         function renderDokumentasi() {
             const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
             (db.dokumentasi || []).forEach((d, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px;">
-                    <img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:#111; margin-bottom:10px;">
-                    <input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;">
-                    <input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value">
-                    <input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value">
-                    <textarea class="neo-input" placeholder="Deskripsi Singkat" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea>
-                    <button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button>
-                </div>`;
+                cont.innerHTML += `<div class="glass-card" style="padding:15px;"><img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:#111; margin-bottom:10px;"><input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;"><input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value"><input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value"><textarea class="neo-input" placeholder="Deskripsi" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea><button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button></div>`;
             });
         }
         function tambahDokumentasi() { db.dokumentasi.push({judul:"Judul", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
 
-        // --- RENDER KALENDER ---
         function renderKalender() {
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
-            (db.kalender || []).forEach((k, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                    <input type="date" class="neo-input" value="${k.tanggal || ''}" oninput="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;">
-                    <input type="text" class="neo-input" value="${k.nama || ''}" placeholder="Nama Kegiatan" oninput="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;">
-                    <input type="text" class="neo-input" placeholder="Penyelenggara (Dept)" value="${k.dept || ''}" oninput="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;">
-                    <button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">X</button>
-                </div>`;
-            });
+            (db.kalender || []).forEach((k, i) => { cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;"><input type="date" class="neo-input" value="${k.tanggal || ''}" oninput="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;"><input type="text" class="neo-input" value="${k.nama || ''}" placeholder="Kegiatan" oninput="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;"><input type="text" class="neo-input" placeholder="Dept" value="${k.dept || ''}" oninput="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;"><button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">X</button></div>`; });
         }
         function tambahAgenda() { db.kalender.push({nama:"Agenda Baru", tanggal:"", dept:""}); renderKalender(); }
 
-        // --- RENDER PROKER ---
         function renderProker() {
             const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
-            (db.proker || []).forEach((p, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:3px solid var(--accent-neon);">
-                    <input type="text" class="neo-input" value="${p.dept || ''}" oninput="db.proker[${i}].dept=this.value" style="font-weight:bold;">
-                    <textarea class="neo-input" rows="4" oninput="db.proker[${i}].list = this.value.split('\\n')">${(p.list || []).join('\n')}</textarea>
-                    <small style="color:var(--text-muted); display:block; margin-bottom:10px;">*Pisahkan list dengan ENTER</small>
-                    <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Dept Ini</button>
-                </div>`;
-            });
+            (db.proker || []).forEach((p, i) => { cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:3px solid var(--accent-neon);"><input type="text" class="neo-input" value="${p.dept || ''}" oninput="db.proker[${i}].dept=this.value" style="font-weight:bold;"><textarea class="neo-input" rows="4" oninput="db.proker[${i}].list = this.value.split('\\n')">${(p.list || []).join('\n')}</textarea><button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Dept</button></div>`; });
         }
-        function tambahProkerDept() { db.proker.push({dept:"Nama Departemen", list:["Proker 1"]}); renderProker(); }
+        function tambahProkerDept() { db.proker.push({dept:"Departemen Baru", list:["Proker 1"]}); renderProker(); }
 
-        // --- RENDER TEAM CREDITS ---
         function renderTeam() {
             const cont = document.getElementById('cmsTeam'); cont.innerHTML = '';
             (db.team || []).forEach((cat, i) => {
-                let html = `<div class="glass-card" style="margin-bottom:10px; border-left:4px solid #3b82f6;">
-                    <input type="text" class="neo-input" value="${cat.category || ''}" placeholder="Kategori (Misal: FullStack Development)" oninput="db.team[${i}].category=this.value" style="font-size:1.1rem; font-weight:bold; color:#3b82f6;">
-                    <button class="action-btn delete" onclick="db.team.splice(${i},1); renderTeam();" style="margin-bottom:15px;">Hapus Kategori Ini</button>
-                    <div class="grid-3">`;
-
-                (cat.members || []).forEach((m, j) => {
-                     html += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px; border:1px solid var(--glass-border);">
-                        <img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block; border:2px solid #3b82f6;">
-                        <input type="file" accept="image/*" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="width:100%; font-size:0.7rem; margin-bottom:10px;">
-                        <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px; font-size:0.85rem;">
-                        <input type="text" class="neo-input" placeholder="Link Instagram (https://...)" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px; font-size:0.85rem;">
-                        <button class="action-btn delete" style="width:100%; padding:5px;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X Hapus</button>
-                     </div>`;
-                });
-
-                html += `</div>
-                <button class="action-btn view" style="margin-top:15px;" onclick="if(!db.team[${i}].members) db.team[${i}].members=[]; db.team[${i}].members.push({nama:'', foto:'/img/bemfkgumi.png', ig:''}); renderTeam();">+ Tambah Member</button>
-                </div>`;
+                let html = `<div class="glass-card" style="margin-bottom:10px; border-left:4px solid #3b82f6;"><input type="text" class="neo-input" value="${cat.category || ''}" placeholder="Kategori" oninput="db.team[${i}].category=this.value" style="font-weight:bold; color:#3b82f6;"><button class="action-btn delete" onclick="db.team.splice(${i},1); renderTeam();" style="margin-bottom:15px;">Hapus Kategori</button><div class="grid-3">`;
+                (cat.members || []).forEach((m, j) => { html += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px;"><img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block;"><input type="file" accept="image/*" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="width:100%; font-size:0.7rem; margin-bottom:10px;"><input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px;"><input type="text" class="neo-input" placeholder="Link Instagram" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px;"><button class="action-btn delete" style="width:100%;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X</button></div>`; });
+                html += `</div><button class="action-btn view" style="margin-top:15px;" onclick="if(!db.team[${i}].members) db.team[${i}].members=[]; db.team[${i}].members.push({nama:'', foto:'/img/bemfkgumi.png', ig:''}); renderTeam();">+ Tambah Member</button></div>`;
                 cont.innerHTML += html;
             });
         }
@@ -510,7 +515,7 @@
             pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td><strong>${item.nama}</strong></td><td>${item.subjek}</td><td>${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; });
         }
         async function deleteData(type, id) {
-            if(confirm('Yakin ingin menghapus interaksi ini secara permanen?')) {
+            if(confirm('Yakin ingin menghapus?')) {
                 try {
                     let apiUrl = '/api/delete-interaction'; if(window.location.protocol === 'blob:') apiUrl = 'https://bemfkgumi.vercel.app/api/delete-interaction';
                     await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) });
