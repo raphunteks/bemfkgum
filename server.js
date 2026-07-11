@@ -101,12 +101,13 @@ const defaultTeam = [
     }
 ];
 
-// NEW: Data Seed Sejarah Kepengurusan
+// REVISI BIG UPGRADE DATA KABINET: Disusun dari yang terbaru hingga terlama
 const defaultSejarah = [
-    { tahun: "2025-2026", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
-    { tahun: "2023-2024", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" },
-    { tahun: "2023", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Aditya Dwianugrah Wiratman, S.KG", wakil: "Nur. Muhammad Syafaat, S.KG" },
-    { tahun: "2022", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "Amhadn Syarief", wakil: "Marwati Sumardi, S.KG" },
+    { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
+    { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" },
+    { tahun: "2023-2024", kabinet: "Kabinet Satya Bimantara", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" },
+    { tahun: "2023", kabinet: "Kabinet Aswara Karya", logo: "/img/bemfkgumi.png", ketua: "Aditya Dwianugrah Wiratman, S.KG", wakil: "Nur. Muhammad Syafaat, S.KG" },
+    { tahun: "2022", kabinet: "Kabinet Dedikasi Karsa", logo: "/img/bemfkgumi.png", ketua: "drg. Amhadn Syarief", wakil: "Marwati Sumardi, S.KG" },
     { tahun: "2021", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Fahri Muhammad", wakil: "drg. Ayus Lestari" },
     { tahun: "2020", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muhammad Ajis", wakil: "drg. Andriani T" },
     { tahun: "2018-2019", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Sulaihi Ramadhan", wakil: "drg. Sri Devi" },
