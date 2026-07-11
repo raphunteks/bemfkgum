@@ -63,7 +63,8 @@
                 </div>
                 
                 <label style="color:var(--accent-neon);">Visi Kabinet</label>
-                <textarea id="editVisi" class="neo-input" rows="3"></textarea>
+                <!-- FIXED: Changed onchange to oninput so it updates state dynamically immediately -->
+                <textarea id="editVisi" class="neo-input" rows="3" oninput="db.org.visi=this.value"></textarea>
                 
                 <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Pimpinan Inti BEM</h3>
                 <div id="cmsPimpinan" class="pimpinan-grid"></div>
@@ -197,7 +198,6 @@
         function renderSemuaCMS() { renderOrg(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); }
 
         async function saveData(type) {
-            if(type === 'org') db.org.visi = document.getElementById('editVisi').value;
             try {
                 let apiUrl = `/api/content/${type}`;
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemfkgumi.vercel.app/api/content/${type}`;
@@ -211,12 +211,13 @@
             document.getElementById('editVisi').value = db.org.visi || '';
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
             db.org.pimpinan.forEach((p, i) => {
+                // FIXED: Replace onchange with oninput to sync DOM instantly
                 pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
                     <img src="${p.foto}" style="height:60px; object-fit:contain; background:#000; border-radius:5px; margin-bottom:10px;">
                     <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:5px;">Ubah Foto Pimpinan:</div>
                     <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px; width:100%; font-size:0.8rem;">
-                    <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan}" onchange="db.org.pimpinan[${i}].jabatan=this.value">
-                    <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama}" onchange="db.org.pimpinan[${i}].nama=this.value">
+                    <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
+                    <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama}" oninput="db.org.pimpinan[${i}].nama=this.value">
                     <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus Pimpinan</button>
                 </div>`;
             });
@@ -224,7 +225,7 @@
             const dCont = document.getElementById('cmsDepartemen'); dCont.innerHTML = '';
             db.org.departemen.forEach((d, i) => {
                 let html = `<div class="glass-card" style="border-top:2px solid var(--accent-neon); padding:15px;">
-                    <input type="text" class="neo-input" value="${d.nama}" placeholder="Nama Departemen" onchange="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; color:var(--accent-neon);">
+                    <input type="text" class="neo-input" value="${d.nama}" placeholder="Nama Departemen" oninput="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; color:var(--accent-neon);">
                     <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
                         <button class="action-btn view" onclick="db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:'/img/bemfkgumi.png'}); renderOrg();">+ Anggota</button>
                         <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Departemen</button>
@@ -234,8 +235,8 @@
                         html += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px; border: 1px solid var(--glass-border);">
                             <img src="${a.foto}" style="width:100%; height:80px; object-fit:contain; background:#111; border-radius:5px; margin-bottom:5px;">
                             <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="width:100%; font-size:0.7rem; margin-bottom:10px;">
-                            <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama}" onchange="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
-                            <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan}" onchange="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
+                            <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
+                            <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
                             <button class="action-btn delete" style="width:100%;" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">X Hapus</button>
                         </div>`;
                     });
@@ -253,9 +254,9 @@
                 cont.innerHTML += `<div class="glass-card" style="padding:15px;">
                     <img src="${d.foto}" style="width:100%; max-height:150px; object-fit:contain; background:#111; margin-bottom:10px;">
                     <input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;">
-                    <input type="text" class="neo-input" value="${d.judul}" placeholder="Judul" onchange="db.dokumentasi[${i}].judul=this.value">
-                    <input type="date" class="neo-input" value="${d.tanggal}" onchange="db.dokumentasi[${i}].tanggal=this.value">
-                    <textarea class="neo-input" placeholder="Deskripsi Singkat" onchange="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi}</textarea>
+                    <input type="text" class="neo-input" value="${d.judul}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value">
+                    <input type="date" class="neo-input" value="${d.tanggal}" oninput="db.dokumentasi[${i}].tanggal=this.value">
+                    <textarea class="neo-input" placeholder="Deskripsi Singkat" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi}</textarea>
                     <button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button>
                 </div>`;
             });
@@ -267,9 +268,9 @@
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
             db.kalender.forEach((k, i) => {
                 cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                    <input type="date" class="neo-input" value="${k.tanggal}" onchange="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;">
-                    <input type="text" class="neo-input" value="${k.nama}" placeholder="Nama Kegiatan" onchange="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;">
-                    <input type="text" class="neo-input" placeholder="Penyelenggara (Dept)" value="${k.dept}" onchange="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;">
+                    <input type="date" class="neo-input" value="${k.tanggal}" oninput="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;">
+                    <input type="text" class="neo-input" value="${k.nama}" placeholder="Nama Kegiatan" oninput="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;">
+                    <input type="text" class="neo-input" placeholder="Penyelenggara (Dept)" value="${k.dept}" oninput="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;">
                     <button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">X</button>
                 </div>`;
             });
@@ -281,8 +282,8 @@
             const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
             db.proker.forEach((p, i) => {
                 cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:3px solid var(--accent-neon);">
-                    <input type="text" class="neo-input" value="${p.dept}" onchange="db.proker[${i}].dept=this.value" style="font-weight:bold;">
-                    <textarea class="neo-input" rows="4" onchange="db.proker[${i}].list = this.value.split('\\n')">${p.list.join('\n')}</textarea>
+                    <input type="text" class="neo-input" value="${p.dept}" oninput="db.proker[${i}].dept=this.value" style="font-weight:bold;">
+                    <textarea class="neo-input" rows="4" oninput="db.proker[${i}].list = this.value.split('\\n')">${p.list.join('\n')}</textarea>
                     <small style="color:var(--text-muted); display:block; margin-bottom:10px;">*Pisahkan list dengan ENTER</small>
                     <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Dept Ini</button>
                 </div>`;
