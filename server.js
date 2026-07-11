@@ -37,11 +37,11 @@ try {
 const defaultOrg = {
     visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
     misi: [
-        "Menampung dan menyalurkan aspirasi mahasiswa secara transparan dan aktif.",
-        "Mendorong dan memfasilitasi pengembangan prestasi akademik dan non-akademik mahasiswa.",
-        "Mengintegrasikan nilai-nilai islami dalam program kerja dan kegiatan organisasi.",
-        "Membangun lingkungan kampus yang harmonis, berakhlak mulia, dan berdaya saing.",
-        "Meningkatkan kapasitas dan kualitas kader melalui pendidikan dan pelatihan berprinsip islami."
+        "MENAMPUNG DAN MENYALURKAN ASPIRASI MAHASISWA SECARA TRANSPARAN DAN AKTIF.",
+        "MENDORONG DAN MEMFASILITASI PENGEMBANGAN PRESTASI AKADEMIK DAN NON-AKADEMIK MAHASISWA.",
+        "MENGINTEGRASIKAN NILAI-NILAI ISLAMI DALAM PROGRAM KERJA DAN KEGIATAN ORGANISASI.",
+        "MEMBANGUN LINGKUNGAN KAMPUS YANG HARMONIS, BERAKHLAK MULIA, DAN BERDAYA SAING.",
+        "MENINGKATKAN KAPASITAS DAN KUALITAS KADER MELALUI PENDIDIKAN DAN PELATIHAN BERPRINSIP ISLAMI."
     ],
     pimpinan: [
         { jabatan: "Ketua BEM KBMFKG UMI", nama: "Ailan Alif Wajdi Daya", foto: "/img/bemfkgumi.png" },
@@ -71,7 +71,6 @@ const defaultSettings = {
     logo3: "/img/bemfkgumi.png"
 };
 
-// NEW: Default Tim Developer Sesuai Request
 const defaultTeam = [
     { 
         category: "FullStack Development", 
@@ -102,14 +101,13 @@ const defaultTeam = [
     }
 ];
 
-
 // ================= ROUTES FRONTEND =================
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
 app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
-app.get('/ourteam', (req, res) => res.render('ourteam')); // NEW ROUTE
+app.get('/ourteam', (req, res) => res.render('ourteam'));
 
 // ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
 const safeParse = (data, fallbackData) => {
@@ -131,24 +129,29 @@ app.get('/api/content', async (req, res) => {
         let kalender = await redis.get('Kalender_Data');
         let dokumentasi = await redis.get('Dokumentasi_Data');
         let settings = await redis.get('Settings_Data');
-        let team = await redis.get('Team_Data'); // NEW GET
+        let team = await redis.get('Team_Data');
+
+        let parsedOrg = safeParse(org, defaultOrg);
+        
+        // BUG FIX: Auto Restore Misi jika terhapus dari Database
+        if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) {
+            parsedOrg.misi = defaultOrg.misi;
+        }
 
         res.status(200).json({ 
             success: true, 
-            org: safeParse(org, defaultOrg),
+            org: parsedOrg,
             proker: safeParse(proker, []),
             kalender: safeParse(kalender, []),
             dokumentasi: safeParse(dokumentasi, []),
             settings: safeParse(settings, defaultSettings),
-            team: safeParse(team, defaultTeam) // NEW SEND
+            team: safeParse(team, defaultTeam) 
         });
     } catch (error) {
-        // FALLBACK AMAN: Tetap mengirim data statis agar halaman TIDAK BLANK
         res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam });
     }
 });
 
-// BUG FIX: Menggabungkan route app.post dan memproteksinya dengan JSON.stringify
 app.post('/api/content/:type', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -162,7 +165,7 @@ app.post('/api/content/:type', async (req, res) => {
         else if (type === 'kalender') await redis.set('Kalender_Data', payload);
         else if (type === 'dokumentasi') await redis.set('Dokumentasi_Data', payload);
         else if (type === 'settings') await redis.set('Settings_Data', payload);
-        else if (type === 'team') await redis.set('Team_Data', payload); // NEW POST
+        else if (type === 'team') await redis.set('Team_Data', payload);
         else return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
@@ -180,7 +183,6 @@ app.get('/api/interactions', async (req, res) => {
         const aspirasi = await redis.hgetall('Aspirations') || {};
         const pesan = await redis.hgetall('Messages') || {};
         
-        // Parse Hash values dengan perlindungan Anti-Crash (Safe Parse Map)
         const parsedAspirasi = Object.values(aspirasi).map(item => safeParse(item, {}));
         const parsedPesan = Object.values(pesan).map(item => safeParse(item, {}));
         
@@ -222,7 +224,6 @@ app.post('/api/delete-interaction', async (req, res) => {
 app.post('/api/admin/auth', (req, res) => {
   const { username, password } = req.body;
   
-  // BUG FIX: Proteksi jika ENV belum di-setting di Vercel, selalu pastikan ada Fallback login
   const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
   const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
 
