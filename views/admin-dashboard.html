@@ -39,11 +39,11 @@
                 <button onclick="switchSection('filosofi', this)"><span>🎨</span> Filosofi Logo & Warna</button>
                 <button onclick="switchSection('sejarah', this)"><span>🕰️</span> Manajemen Sejarah</button>
                 <button onclick="switchSection('proker', this)"><span>📋</span> Program Kerja</button>
-                <button onclick="switchSection('kalender', this)"><span>📅</span> Agenda Kalender</button>
+                <!-- NEW MENUS KALENDER & DETAIL PROKER -->
+                <button onclick="switchSection('kalender', this)" style="color: #10b981;"><span>📅</span> Kalender & Detail Proker</button>
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span>🧑‍💻</span> Developer Team</button>
-                <!-- NEW MENUS FOR SETTINGS & CONTACT -->
                 <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span>📞</span> Manajemen Narahubung</button>
                 <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Header & Footer</button>
                 
@@ -71,10 +71,9 @@
             <section id="sec-profil" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Struktur Kepengurusan</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org')">💾 Simpan Ke Database Redis</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org')">💾 Simpan Ke Database</button>
                 </div>
-                
-                <!-- NEW BIG UPGRADE: INPUT ARTI KABINET (CRUD) -->
+
                 <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
                     <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Arti Nama Kabinet</h3>
                     <div class="grid-2">
@@ -92,9 +91,9 @@
                         </div>
                     </div>
                     <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 10px;">Kesimpulan Makna (Gabungan)</label>
-                    <textarea id="editKesimpulan" class="neo-input" rows="3" placeholder="Dapat diartikan sebagai perjuangan yang tak terbatas..." oninput="db.org.artiKabinet.kesimpulan=this.value"></textarea>
+                    <textarea id="editKesimpulan" class="neo-input" rows="3" placeholder="Dapat diartikan sebagai perjuangan..." oninput="db.org.artiKabinet.kesimpulan=this.value"></textarea>
                 </div>
-
+                
                 <label style="color:var(--accent-neon);">Visi Kabinet</label>
                 <textarea id="editVisi" class="neo-input" rows="3" oninput="db.org.visi=this.value"></textarea>
                 
@@ -108,6 +107,16 @@
                 <h3 style="margin: 40px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Daftar Departemen & Anggota</h3>
                 <div id="cmsDepartemen" style="display:grid; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahDepartemen()" style="margin-top: 10px;">+ Tambah Departemen Baru</button>
+            </section>
+
+            <!-- ================= BIG UPGRADE: KALENDER & DETAIL PROKER ================= -->
+            <section id="sec-kalender" class="admin-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <h2>Manajemen Agenda Kalender & Detail Proker</h2>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kalender')">💾 Simpan Semua Agenda</button>
+                </div>
+                <div id="cmsKalender" style="display:flex; flex-direction:column; gap:25px;"></div>
+                <button class="action-btn view" onclick="tambahAgenda()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem;">+ Tambah Agenda Baru</button>
             </section>
 
             <!-- 3. FILOSOFI LOGO & WARNA -->
@@ -139,21 +148,11 @@
             <!-- 5. PROKER -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Program Kerja</h2>
+                    <h2>Manajemen Program Kerja List</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Proker</button>
                 </div>
                 <div id="cmsProker"></div>
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 10px;">+ Tambah Departemen Proker</button>
-            </section>
-
-            <!-- 6. KALENDER -->
-            <section id="sec-kalender" class="admin-section">
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Agenda Kalender</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kalender')">💾 Simpan Agenda</button>
-                </div>
-                <div id="cmsKalender"></div>
-                <button class="action-btn view" onclick="tambahAgenda()" style="margin-top: 10px;">+ Tambah Agenda Baru</button>
             </section>
 
             <!-- 7. DOKUMENTASI -->
@@ -197,7 +196,7 @@
                 <button class="action-btn view" onclick="tambahKategoriTeam()" style="margin-top: 15px;">+ Tambah Kategori Role Baru</button>
             </section>
 
-            <!-- 10. NEW: MANAJEMEN NARAHUBUNG -->
+            <!-- 10. MANAJEMEN NARAHUBUNG -->
             <section id="sec-kontak" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Narahubung & Lokasi</h2>
@@ -290,7 +289,6 @@
             artiKabinet: { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" }
         };
         
-        // NEW db structure included `kontak`
         let db = { 
             org: FALLBACK_ADMIN_ORG, 
             filosofi: { logo: [], warna: [] }, 
@@ -374,7 +372,7 @@
                     }
                     if(data.filosofi) { db.filosofi = data.filosofi; }
                     if(data.settings) db.settings = { ...db.settings, ...data.settings };
-                    if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak }; // Fetch Kontak
+                    if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak };
                     db.sejarah = data.sejarah || []; db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || []; db.team = data.team || [];
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
@@ -422,7 +420,6 @@
         }
 
         function renderOrg() {
-            // Render Arti Kabinet
             if(!db.org.artiKabinet) db.org.artiKabinet = { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" };
             document.getElementById('editKata1').value = db.org.artiKabinet.kata1 || '';
             document.getElementById('editArti1').value = db.org.artiKabinet.arti1 || '';
@@ -467,6 +464,110 @@
         }
         function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
         function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
+
+        // ================= BIG UPGRADE: RENDER KALENDER / PROKER DETAIL CMS =================
+        function renderKalender() {
+            const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
+            (db.kalender || []).forEach((k, i) => { 
+                
+                // Render Kepanitiaan Sub-Tables
+                let htmlPanitia = '';
+                if(k.kepanitiaan) {
+                    k.kepanitiaan.forEach((div, divIdx) => {
+                        htmlPanitia += `
+                        <div style="background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); margin-bottom:10px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                <input type="text" class="neo-input" style="margin:0; padding:5px; font-weight:bold; color:var(--text-light); border:none; background:transparent;" value="${div.namaDivisi}" oninput="db.kalender[${i}].kepanitiaan[${divIdx}].namaDivisi=this.value" placeholder="Nama Divisi">
+                                <div>
+                                    <button class="action-btn view" onclick="tambahPanitiaAnggota(${i}, ${divIdx})" style="padding:4px 8px; font-size:0.7rem;">+ Anggota</button>
+                                    <button class="action-btn delete" onclick="db.kalender[${i}].kepanitiaan.splice(${divIdx},1); renderKalender();" style="padding:4px 8px; font-size:0.7rem;">Hapus Div</button>
+                                </div>
+                            </div>
+                            <div style="padding-left:10px;">
+                            ${(div.anggota || []).map((ang, angIdx) => `
+                                <div style="display:flex; gap:10px; margin-bottom:5px;">
+                                    <input type="text" class="neo-input" style="margin:0; padding:5px; font-size:0.85rem;" value="${ang.nama}" placeholder="Nama" oninput="db.kalender[${i}].kepanitiaan[${divIdx}].anggota[${angIdx}].nama=this.value">
+                                    <input type="text" class="neo-input" style="margin:0; padding:5px; font-size:0.85rem;" value="${ang.jabatan}" placeholder="Jabatan" oninput="db.kalender[${i}].kepanitiaan[${divIdx}].anggota[${angIdx}].jabatan=this.value">
+                                    <button class="action-btn delete" onclick="db.kalender[${i}].kepanitiaan[${divIdx}].anggota.splice(${angIdx},1); renderKalender();" style="padding:4px 8px;">X</button>
+                                </div>
+                            `).join('')}
+                            </div>
+                        </div>`;
+                    });
+                }
+
+                cont.innerHTML += `
+                <div class="glass-card" style="padding:25px; border-left:4px solid #10b981; position:relative;">
+                    <button class="action-btn delete" onclick="if(confirm('Hapus Agenda ini?')) { db.kalender.splice(${i},1); renderKalender(); }" style="position:absolute; top:20px; right:20px;">Hapus Agenda</button>
+                    
+                    <h3 style="color:#10b981; margin-bottom:15px;">Informasi Dasar Agenda</h3>
+                    <div class="grid-2" style="margin-bottom:15px;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Nama Kegiatan</label>
+                            <input type="text" class="neo-input" value="${k.nama || ''}" oninput="db.kalender[${i}].nama=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Dept / Kementerian Pelaksana</label>
+                            <input type="text" class="neo-input" value="${k.dept || ''}" oninput="db.kalender[${i}].dept=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Tanggal Mulai</label>
+                            <input type="date" class="neo-input" value="${k.tglMulai || ''}" oninput="db.kalender[${i}].tglMulai=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Tanggal Selesai (Opsional)</label>
+                            <input type="date" class="neo-input" value="${k.tglSelesai || ''}" oninput="db.kalender[${i}].tglSelesai=this.value">
+                        </div>
+                    </div>
+                    
+                    <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Lengkap Kegiatan</label>
+                    <textarea class="neo-input" rows="4" placeholder="Tuliskan deskripsi..." oninput="db.kalender[${i}].deskripsi=this.value">${k.deskripsi || ''}</textarea>
+
+                    <h3 style="color:#3b82f6; margin-top:20px; margin-bottom:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">Detail Pendaftaran & Lokasi</h3>
+                    <div class="grid-2">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Lokasi</label>
+                            <input type="text" class="neo-input" value="${k.lokasi || ''}" oninput="db.kalender[${i}].lokasi=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Target Peserta</label>
+                            <input type="text" class="neo-input" value="${k.targetPeserta || ''}" oninput="db.kalender[${i}].targetPeserta=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Status Pendaftaran</label>
+                            <select class="neo-input" onchange="db.kalender[${i}].statusDaftar=this.value">
+                                <option value="Tutup" ${k.statusDaftar==='Tutup'?'selected':''}>Belum Dibuka / Tutup</option>
+                                <option value="Buka" ${k.statusDaftar==='Buka'?'selected':''}>Telah Dibuka</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Link Pendaftaran</label>
+                            <input type="text" class="neo-input" value="${k.linkDaftar || ''}" placeholder="https://..." oninput="db.kalender[${i}].linkDaftar=this.value">
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; align-items:start;">
+                        <div>
+                            <h3 style="color:var(--accent-neon); margin-bottom:10px;">Banner Proker</h3>
+                            <img src="${k.banner || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px;">
+                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.kalender[${i}], 'banner', renderKalender)" style="font-size:0.8rem;">
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <h3 style="color:var(--accent-neon);">Kepanitiaan</h3>
+                                <button class="action-btn view" onclick="tambahPanitiaDivisi(${i})">+ Divisi Baru</button>
+                            </div>
+                            <div style="max-height: 250px; overflow-y:auto; padding-right:5px;">
+                                ${htmlPanitia}
+                            </div>
+                        </div>
+                    </div>
+                </div>`; 
+            });
+        }
+        function tambahAgenda() { db.kalender.push({id: "evt-"+Date.now(), nama:"Agenda Baru", dept:"", tglMulai:"", tglSelesai:"", deskripsi:"", lokasi:"", targetPeserta:"", statusDaftar:"Tutup", linkDaftar:"", banner:"", kepanitiaan:[]}); renderKalender(); }
+        function tambahPanitiaDivisi(kIdx) { if(!db.kalender[kIdx].kepanitiaan) db.kalender[kIdx].kepanitiaan = []; db.kalender[kIdx].kepanitiaan.push({namaDivisi:"Divisi Baru", anggota:[]}); renderKalender(); }
+        function tambahPanitiaAnggota(kIdx, divIdx) { db.kalender[kIdx].kepanitiaan[divIdx].anggota.push({nama:"", jabatan:""}); renderKalender(); }
 
         // --- RENDER FILOSOFI ---
         function renderFilosofi() {
@@ -523,7 +624,7 @@
         }
         function tambahSejarah() { if(!db.sejarah) db.sejarah = []; db.sejarah.unshift({ tahun: "", kabinet: "Kabinet Baru", logo: "/img/bemfkgumi.png", ketua: "", wakil: "" }); renderSejarah(); }
 
-        // --- RENDER DOKUMENTASI, KALENDER, PROKER, TEAM ---
+        // --- RENDER DOKUMENTASI, PROKER, TEAM ---
         function renderDokumentasi() {
             const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
             (db.dokumentasi || []).forEach((d, i) => {
@@ -531,12 +632,6 @@
             });
         }
         function tambahDokumentasi() { db.dokumentasi.push({judul:"Judul", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
-
-        function renderKalender() {
-            const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
-            (db.kalender || []).forEach((k, i) => { cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;"><input type="date" class="neo-input" value="${k.tanggal || ''}" oninput="db.kalender[${i}].tanggal=this.value" style="margin:0; flex:1;"><input type="text" class="neo-input" value="${k.nama || ''}" placeholder="Kegiatan" oninput="db.kalender[${i}].nama=this.value" style="margin:0; flex:2;"><input type="text" class="neo-input" placeholder="Dept" value="${k.dept || ''}" oninput="db.kalender[${i}].dept=this.value" style="margin:0; flex:1;"><button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();">X</button></div>`; });
-        }
-        function tambahAgenda() { db.kalender.push({nama:"Agenda Baru", tanggal:"", dept:""}); renderKalender(); }
 
         function renderProker() {
             const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
@@ -573,8 +668,8 @@
                 } catch(e) { showToast('⚠️ Gagal menghapus.'); }
             }
         }
-        function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><span style="color:var(--text-muted);">Judul:</span><br><strong>${data.judul}</strong></p><p><span style="color:var(--text-muted);">Kategori / Jenis:</span><br>${data.kategori} / ${data.jenis}</p><p><span style="color:var(--text-muted);">Isi Aspirasi:</span><br><div style="background:rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-top:5px;">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
-        function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><span style="color:var(--text-muted);">Dari:</span> <strong>${data.nama}</strong></p><p><span style="color:var(--text-muted);">Kontak Balasan:</span> ${data.kontak}</p><p><span style="color:var(--text-muted);">Subjek:</span> ${data.subjek}</p><p style="margin-top: 15px;"><span style="color:var(--text-muted);">Isi Pesan:</span><br><div style="background:rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-top:5px;">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
+        function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:rgba(255,255,255,0.05); padding:15px; margin-top:5px; border-radius:5px;">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
+        function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><strong>Dari:</strong> ${data.nama} (${data.kontak})</p><p><strong>Subjek:</strong> ${data.subjek}</p><p><strong>Isi:</strong><br><div style="background:rgba(255,255,255,0.05); padding:15px; margin-top:5px; border-radius:5px;">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
         function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
     </script>
 </body>
