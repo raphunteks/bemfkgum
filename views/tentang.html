@@ -59,6 +59,23 @@
         <div class="reveal" style="text-align: center; margin-bottom: 70px;">
             <div class="clay-badge" style="margin-bottom: 15px;">PROFIL ORGANISASI</div>
             <h1 style="font-size: 3.5rem; font-weight: 900;">Visi & Misi <br><span class="script-font" style="font-size: 1.2em; display:block; margin-top:10px;">Ananta Anardhaya</span></h1>
+            
+            <!-- DIPINDAHKAN DARI INDEX KE TENTANG KAMI -->
+            <div id="uiArtiKabinet" class="arti-kabinet-wrapper" style="display: none; margin-top: 40px;">
+                <div class="arti-grid">
+                    <div class="arti-item">
+                        <strong id="uiKata1">ANANTA</strong>
+                        <span id="uiArti1">Semangat perjuangan tanpa batas</span>
+                    </div>
+                    <div class="arti-item">
+                        <strong id="uiKata2">ANARDHAYA</strong>
+                        <span id="uiArti2">Sesuatu yang abadi</span>
+                    </div>
+                </div>
+                <div class="arti-conclusion">
+                    <strong id="uiKataGabung">ANANTA ANARDHAYA:</strong> <span id="uiKesimpulan">Dapat diartikan sebagai perjuangan yang tak terbatas dan tidak rusak/hancur, menggambarkan sesuatu yang abadi, kekal, dan tidak terhalang oleh waktu.</span>
+                </div>
+            </div>
         </div>
 
         <!-- VISI -->
@@ -215,6 +232,17 @@
         }
 
         function renderTentangUI(orgData) {
+            // Populate Arti Kabinet dari Database
+            if(orgData.artiKabinet && orgData.artiKabinet.kata1) {
+                document.getElementById('uiKata1').innerText = orgData.artiKabinet.kata1;
+                document.getElementById('uiArti1').innerText = orgData.artiKabinet.arti1;
+                document.getElementById('uiKata2').innerText = orgData.artiKabinet.kata2;
+                document.getElementById('uiArti2').innerText = orgData.artiKabinet.arti2;
+                document.getElementById('uiKataGabung').innerText = `${orgData.artiKabinet.kata1} ${orgData.artiKabinet.kata2}:`;
+                document.getElementById('uiKesimpulan').innerText = orgData.artiKabinet.kesimpulan;
+                document.getElementById('uiArtiKabinet').style.display = 'block';
+            }
+
             document.getElementById('teksVisi').innerText = `"${orgData.visi}"`;
             const ulMisi = document.getElementById('listMisi');
             ulMisi.innerHTML = '';
