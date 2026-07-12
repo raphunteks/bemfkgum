@@ -8,7 +8,7 @@
     <meta name="description" content="Sistem Manajemen Database dan Konten Internal BEM KBMFKG UMI. Restricted Access.">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     
-    <!-- SUPER UPGRADE: Relative Path Asset Routing (Anti-Server Down) -->
+    <!-- SUPER UPGRADE: Relative Path Asset Routing (Server-Independent) -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
@@ -43,7 +43,10 @@
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span>🧑‍💻</span> Developer Team</button>
+                <!-- NEW MENUS FOR SETTINGS & CONTACT -->
+                <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span>📞</span> Manajemen Narahubung</button>
                 <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Header & Footer</button>
+                
                 <button onclick="logout()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
             </nav>
         </aside>
@@ -173,7 +176,37 @@
                 <button class="action-btn view" onclick="tambahKategoriTeam()" style="margin-top: 15px;">+ Tambah Kategori Role Baru</button>
             </section>
 
-            <!-- 10. PENGATURAN HEADER & FOOTER -->
+            <!-- 10. NEW: MANAJEMEN NARAHUBUNG -->
+            <section id="sec-kontak" class="admin-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <h2>Manajemen Narahubung & Lokasi</h2>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kontak')">💾 Simpan Info Kontak</button>
+                </div>
+                
+                <div class="glass-card" style="margin-bottom: 20px;">
+                    <h3 style="color:#10b981; margin-bottom:15px;">Informasi Kontak BEM</h3>
+                    
+                    <label style="color:var(--text-muted); font-size: 0.85rem;">Alamat Sekretariat Utama</label>
+                    <textarea id="setKontakAlamat" class="neo-input" rows="3" placeholder="Jl. Pajonga..." oninput="db.kontak.alamat = this.value"></textarea>
+                    
+                    <label style="color:var(--text-muted); font-size: 0.85rem;">Email Resmi Instansi</label>
+                    <input type="text" id="setKontakEmail" class="neo-input" placeholder="admin@bemkbmfkgumi.com" oninput="db.kontak.email = this.value">
+                    
+                    <label style="color:var(--text-muted); font-size: 0.85rem;">Nomor WhatsApp Humas / Admin</label>
+                    <input type="text" id="setKontakWA" class="neo-input" placeholder="+62 813-4879-1099" oninput="db.kontak.wa = this.value">
+
+                    <label style="color:var(--text-muted); font-size: 0.85rem;">Nama Penanggung Jawab WA (Opsional)</label>
+                    <input type="text" id="setKontakWAName" class="neo-input" placeholder="Silvyananda" oninput="db.kontak.waName = this.value">
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="color:#10b981; margin-bottom:15px;">Embed Google Maps Iframe</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px;">Paste kode HTML `&lt;iframe src="..."&gt;` dari Google Maps di sini.</p>
+                    <textarea id="setKontakMaps" class="neo-input" rows="6" oninput="db.kontak.mapsIframe = this.value"></textarea>
+                </div>
+            </section>
+
+            <!-- 11. PENGATURAN HEADER & FOOTER -->
             <section id="sec-pengaturan" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Header & Footer</h2>
@@ -226,31 +259,32 @@
 
     <div class="toast" id="globalToast">Notifikasi</div>
 
-    <!-- NEW: TOMBOL SCROLL TO TOP ADMIN (Desain Sesuai Request Warna Pink Pastel) -->
     <button class="scroll-to-top" id="scrollToTopBtnAdmin" onclick="scrollToTopAdmin()" aria-label="Scroll to top">
         <svg viewBox="0 0 24 24"><path d="M13 5.828V17h-2V5.828L5.636 11.192 4.222 9.778 12 2l7.778 7.778-1.414 1.414L13 5.828zM4 19h16v2H4v-2z"/></svg>
     </button>
 
     <script>
         const FALLBACK_ADMIN_ORG = { visi: "", misi: [], pimpinan: [], departemen: [] };
-        let db = { org: FALLBACK_ADMIN_ORG, filosofi: { logo: [], warna: [] }, sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
+        
+        // NEW db structure included `kontak`
+        let db = { 
+            org: FALLBACK_ADMIN_ORG, 
+            filosofi: { logo: [], warna: [] }, 
+            sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], 
+            kontak: { alamat: "", email: "", wa: "", waName: "", mapsIframe: "" },
+            settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, 
+            interaksi: {aspirasi:[], pesan:[]} 
+        };
+        
         let aspirasiData = []; let pesanData = [];
 
-        // FITUR SCROLL TO TOP UNTUK ADMIN PANE
         const scrollToTopBtnAdmin = document.getElementById("scrollToTopBtnAdmin");
         const adminMainArea = document.querySelector(".admin-main");
         
         adminMainArea.addEventListener('scroll', () => { 
-            if (adminMainArea.scrollTop > 300) {
-                scrollToTopBtnAdmin.classList.add("show"); 
-            } else {
-                scrollToTopBtnAdmin.classList.remove("show"); 
-            }
+            if (adminMainArea.scrollTop > 300) { scrollToTopBtnAdmin.classList.add("show"); } else { scrollToTopBtnAdmin.classList.remove("show"); }
         });
-        
-        function scrollToTopAdmin() { 
-            adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); 
-        }
+        function scrollToTopAdmin() { adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('axa_admin_token');
@@ -290,7 +324,7 @@
             document.querySelectorAll('.admin-section').forEach(e => e.classList.remove('active'));
             document.querySelectorAll('.admin-nav button').forEach(e => e.classList.remove('active'));
             document.getElementById('sec-' + id).classList.add('active'); btn.classList.add('active');
-            adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); // Otomatis scroll ke atas saat ganti menu
+            adminMainArea.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
@@ -310,6 +344,7 @@
                     if(data.org) { db.org.visi = data.org.visi || ""; db.org.misi = data.org.misi || []; db.org.pimpinan = data.org.pimpinan || []; db.org.departemen = data.org.departemen || []; }
                     if(data.filosofi) { db.filosofi = data.filosofi; }
                     if(data.settings) db.settings = { ...db.settings, ...data.settings };
+                    if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak }; // Fetch Kontak
                     db.sejarah = data.sejarah || []; db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || []; db.team = data.team || [];
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
@@ -317,7 +352,20 @@
             renderSemuaCMS();
         }
 
-        function renderSemuaCMS() { renderOrg(); renderFilosofi(); renderSejarah(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); }
+        function renderSemuaCMS() { 
+            renderOrg(); renderFilosofi(); renderSejarah(); renderProker(); renderKalender(); 
+            renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); renderKontak(); 
+        }
+
+        function renderKontak() {
+            if(db.kontak) {
+                document.getElementById('setKontakAlamat').value = db.kontak.alamat || "";
+                document.getElementById('setKontakEmail').value = db.kontak.email || "";
+                document.getElementById('setKontakWA').value = db.kontak.wa || "";
+                document.getElementById('setKontakWAName').value = db.kontak.waName || "";
+                document.getElementById('setKontakMaps').value = db.kontak.mapsIframe || "";
+            }
+        }
 
         function renderPengaturan() {
             if(db.settings) {
@@ -382,7 +430,7 @@
         function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
         function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
 
-        // --- RENDER FILOSOFI (NEW) ---
+        // --- RENDER FILOSOFI ---
         function renderFilosofi() {
             const logoCont = document.getElementById('cmsFiloLogo'); logoCont.innerHTML = '';
             (db.filosofi.logo || []).forEach((el, i) => {
