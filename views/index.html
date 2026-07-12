@@ -9,21 +9,21 @@
     <meta name="keywords" content="BEM FKG UMI, BEM KBMFKG UMI, Fakultas Kedokteran Gigi UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia, Makassar, Kabinet Ananta Anardhaya">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://bemfkgumi.vercel.app/">
+    <link rel="canonical" href="https://bemkbmfkgumi.com/">
     
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://bemfkgumi.vercel.app/">
+    <meta property="og:url" content="https://bemkbmfkgumi.com/">
     <meta property="og:title" content="Beranda | Official Website BEM KBMFKG UMI">
     <meta property="og:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
-    <meta property="og:image" content="https://bemfkgumi.vercel.app/img/bemfkgumi.png">
+    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://bemfkgumi.vercel.app/">
+    <meta property="twitter:url" content="https://bemkbmfkgumi.com/">
     <meta property="twitter:title" content="Beranda | Official Website BEM KBMFKG UMI">
     <meta property="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
-    <meta property="twitter:image" content="https://bemfkgumi.vercel.app/img/bemfkgumi.png">
+    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
     <!-- JSON-LD Schema.org -->
     <script type="application/ld+json">
@@ -31,8 +31,8 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "BEM KBMFKG UMI",
-      "url": "https://bemfkgumi.vercel.app/",
-      "logo": "https://bemfkgumi.vercel.app/img/bemfkgumi.png",
+      "url": "https://bemkbmfkgumi.com/",
+      "logo": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
       "description": "Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.",
       "address": {
         "@type": "PostalAddress",
@@ -43,11 +43,11 @@
     }
     </script>
 
-    <!-- SUPER UPGRADE: Absolute Path Asset Routing (Server-Independent) -->
+    <!-- SUPER UPGRADE: Absolute Path Asset Routing dengan Trik Cache Busting -->
     <link rel="shortcut icon" href="/favicon.ico?v=2">
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png?v=2">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png?v=2">
-    <link rel="stylesheet" href="https://bemfkgumi.vercel.app/css/main.css">
+    <link rel="stylesheet" href="https://bemkbmfkgumi.com/css/main.css">
 </head>
 <body>
     <%- include('partials/header.html') %>
@@ -342,7 +342,7 @@
             try {
                 let apiUrl = '/api/content';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                    apiUrl = 'https://bemfkgumi.vercel.app/api/content';
+                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
                 }
                 const req = await fetch(apiUrl);
                 const res = await req.json();
