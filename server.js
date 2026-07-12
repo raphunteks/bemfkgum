@@ -51,6 +51,14 @@ const defaultOrg = {
         "MEMBANGUN LINGKUNGAN KAMPUS YANG HARMONIS, BERAKHLAK MULIA, DAN BERDAYA SAING.",
         "MENINGKATKAN KAPASITAS DAN KUALITAS KADER MELALUI PENDIDIKAN DAN PELATIHAN BERPRINSIP ISLAMI."
     ],
+    // NEW BIG UPGRADE: Data Arti Kabinet (Editable Database)
+    artiKabinet: {
+        kata1: "ANANTA",
+        arti1: "SEMANGAT PERJUANGAN TANPA BATAS",
+        kata2: "ANARDHAYA",
+        arti2: "SESUATU YANG ABADI",
+        kesimpulan: "DAPAT DIARTIKAN SEBAGAI PERJUANGAN YANG TAK TERBATAS DAN TIDAK RUSAK/HANCUR, MENGGAMBARKAN SESUATU YANG ABADI, KEKAL, DAN TIDAK TERHALANG OLEH WAKTU."
+    },
     pimpinan: [
         { jabatan: "Ketua BEM KBMFKG UMI", nama: "Ailan Alif Wajdi Daya", foto: "/img/bemfkgumi.png" },
         { jabatan: "Wakil Ketua BEM KBMFKG UMI", nama: "Akram Husain", foto: "/img/bemfkgumi.png" },
@@ -198,9 +206,12 @@ app.get('/api/content', async (req, res) => {
 
         let parsedOrg = safeParse(org, defaultOrg);
         
-        // Auto Restore Misi jika terhapus dari Database
+        // Auto Restore Misi & Arti Kabinet jika terhapus dari Database
         if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) {
             parsedOrg.misi = defaultOrg.misi;
+        }
+        if (!parsedOrg.artiKabinet) {
+            parsedOrg.artiKabinet = defaultOrg.artiKabinet;
         }
 
         res.status(200).json({ 
