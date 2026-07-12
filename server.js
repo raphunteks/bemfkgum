@@ -150,6 +150,15 @@ const defaultFilosofi = {
     ]
 };
 
+// ================= NEW: DATABASE NARAHUBUNG (KONTAK RESMI) =================
+const defaultKontak = {
+    alamat: "Jl. Pajonga Dg. Ngalle No. 27 A, Pa'batong, Kec. Mamajang, Kota Makassar, Sulawesi Selatan",
+    email: "admin@bemkbmfkgumi.com",
+    wa: "+62 813-4879-1099",
+    waName: "Silvyananda",
+    mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
+};
+
 // ================= ROUTES FRONTEND =================
 // SUPER UPGRADE: Tangkap request root favicon dari Bot/Browser otomatis (contoh: Undici Vercel Bot)
 app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
@@ -184,7 +193,8 @@ app.get('/api/content', async (req, res) => {
         let settings = await redis.get('Settings_Data');
         let team = await redis.get('Team_Data');
         let sejarah = await redis.get('Sejarah_Data');
-        let filosofi = await redis.get('Filosofi_Data'); // NEW GET
+        let filosofi = await redis.get('Filosofi_Data'); 
+        let kontak = await redis.get('Kontak_Data'); // NEW GET UNTUK NARAHUBUNG
 
         let parsedOrg = safeParse(org, defaultOrg);
         
@@ -202,10 +212,11 @@ app.get('/api/content', async (req, res) => {
             settings: safeParse(settings, defaultSettings),
             team: safeParse(team, defaultTeam),
             sejarah: safeParse(sejarah, defaultSejarah),
-            filosofi: safeParse(filosofi, defaultFilosofi) // NEW SEND
+            filosofi: safeParse(filosofi, defaultFilosofi),
+            kontak: safeParse(kontak, defaultKontak) // NEW SEND UNTUK NARAHUBUNG
         });
     } catch (error) {
-        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi });
+        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi, kontak: defaultKontak });
     }
 });
 
@@ -224,7 +235,8 @@ app.post('/api/content/:type', async (req, res) => {
         else if (type === 'settings') await redis.set('Settings_Data', payload);
         else if (type === 'team') await redis.set('Team_Data', payload);
         else if (type === 'sejarah') await redis.set('Sejarah_Data', payload);
-        else if (type === 'filosofi') await redis.set('Filosofi_Data', payload); // NEW POST
+        else if (type === 'filosofi') await redis.set('Filosofi_Data', payload); 
+        else if (type === 'kontak') await redis.set('Kontak_Data', payload); // NEW POST UNTUK NARAHUBUNG
         else return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
@@ -233,7 +245,6 @@ app.post('/api/content/:type', async (req, res) => {
         res.status(500).json({ success: false, message: 'Gagal menyimpan data ke Redis.' });
     }
 });
-
 
 // ================= API ENDPOINTS: TRANSAKSIONAL =================
 app.get('/api/interactions', async (req, res) => {
