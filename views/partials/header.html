@@ -1,42 +1,42 @@
 <!-- FILE: views/partials/header.html -->
 <header>
-    <nav>
-        <a href="/" class="logo-container" style="text-decoration: none;">
-            <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" style="height: 45px; filter: drop-shadow(0 0 12px rgba(0,229,255,0.6));">
+    <nav itemscope itemtype="https://schema.org/SiteNavigationElement" aria-label="Main Navigation">
+        <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI" style="text-decoration: none;">
+            <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="logo" style="height: 45px; filter: drop-shadow(0 0 12px rgba(0,229,255,0.6));">
             <span style="font-weight: 900; font-size: 1.3rem; letter-spacing: 1px; color: white; text-shadow: 0 0 10px rgba(0,229,255,0.3);">BEM KBMFKG UMI</span>
         </a>
         
-        <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
-            <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-        </div>
+        <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" onclick="document.querySelector('.nav-links').classList.toggle('active')" style="background:none; border:none; padding:0; cursor:pointer;">
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
         
-        <div class="nav-links">
-            <div class="nav-item">
-                <a href="/">Beranda</a>
+        <div class="nav-links" role="menubar">
+            <div class="nav-item" itemprop="name" role="none">
+                <a href="/" itemprop="url" role="menuitem">Beranda</a>
             </div>
             
-            <div class="nav-item" onclick="toggleMobileMenu(this)">
-                <a href="/tentang" style="cursor: pointer;">Tentang ▾</a>
-                <div class="mega-menu">
-                    <a href="/tentang#visimisi">Visi & Misi</a>
-                    <a href="/tentang#filosofi">Filosofi Logo & Warna</a>
-                    <a href="/tentang#struktur">Struktur Kepengurusan</a>
-                    <a href="/tentang#sejarah">Sejarah Kepengurusan</a>
+            <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
+                <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true">Tentang ▾</a>
+                <div class="mega-menu" role="menu">
+                    <a href="/tentang#visimisi" itemprop="url" role="menuitem">Visi & Misi</a>
+                    <a href="/tentang#filosofi" itemprop="url" role="menuitem">Filosofi Logo & Warna</a>
+                    <a href="/tentang#struktur" itemprop="url" role="menuitem">Struktur Kepengurusan</a>
+                    <a href="/tentang#sejarah" itemprop="url" role="menuitem">Sejarah Kepengurusan</a>
                 </div>
             </div>
             
-            <div class="nav-item" onclick="toggleMobileMenu(this)">
-                <a href="/informasi" style="cursor: pointer;">Informasi ▾</a>
-                <div class="mega-menu">
-                    <a href="/informasi#proker">Program Kerja</a>
-                    <a href="/informasi#kalender">Kalender Proker</a>
-                    <a href="/informasi#galeri">Dokumentasi Kegiatan</a>
-                    <a href="/informasi#plasma">PLASMA (Aspirasi)</a>
+            <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
+                <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true">Informasi ▾</a>
+                <div class="mega-menu" role="menu">
+                    <a href="/informasi#proker" itemprop="url" role="menuitem">Program Kerja</a>
+                    <a href="/informasi#kalender" itemprop="url" role="menuitem">Kalender Proker</a>
+                    <a href="/informasi#galeri" itemprop="url" role="menuitem">Dokumentasi Kegiatan</a>
+                    <a href="/informasi#plasma" itemprop="url" role="menuitem">PLASMA (Aspirasi)</a>
                 </div>
             </div>
             
-            <div class="nav-item" style="margin-left: 10px;">
-                <a href="/narahubung" class="holo-btn" style="padding: 10px 25px; font-size: 0.95rem; width: 100%;">Hubungi Kami</a>
+            <div class="nav-item" style="margin-left: 10px;" itemprop="name" role="none">
+                <a href="/narahubung" class="holo-btn" itemprop="url" role="menuitem" style="padding: 10px 25px; font-size: 0.95rem; width: 100%;">Hubungi Kami</a>
             </div>
         </div>
     </nav>
