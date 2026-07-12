@@ -71,23 +71,6 @@
                     <span style="font-size: 0.95rem; color: var(--accent-neon); display: block; margin-top: 15px; font-weight: bold; letter-spacing: 1px;">Dirajut Bersama, Digerakkan Bersama.</span>
                 </p>
                 
-                <!-- NEW BIG UPGRADE: ARTI KABINET UI (Injeksi DB) -->
-                <div id="uiArtiKabinet" class="arti-kabinet-wrapper reveal" style="display: none; margin-top: 40px;">
-                    <div class="arti-grid">
-                        <div class="arti-item">
-                            <strong id="uiKata1">ANANTA</strong>
-                            <span id="uiArti1">Semangat perjuangan tanpa batas</span>
-                        </div>
-                        <div class="arti-item">
-                            <strong id="uiKata2">ANARDHAYA</strong>
-                            <span id="uiArti2">Sesuatu yang abadi</span>
-                        </div>
-                    </div>
-                    <div class="arti-conclusion">
-                        <strong id="uiKataGabung">ANANTA ANARDHAYA:</strong> <span id="uiKesimpulan">Dapat diartikan sebagai perjuangan yang tak terbatas dan tidak rusak/hancur, menggambarkan sesuatu yang abadi, kekal, dan tidak terhalang oleh waktu.</span>
-                    </div>
-                </div>
-
                 <div class="btn-group" style="margin-top: 40px;">
                     <a href="/informasi" class="holo-btn" style="padding: 15px 35px; font-size: 1.1rem;">Program Kami &rarr;</a>
                     <a href="/tentang" class="glass-btn" style="padding: 15px 35px; font-size: 1.1rem;">Tentang Kami</a>
@@ -373,17 +356,6 @@
                 const res = await req.json();
                 
                 if (res.org) {
-                    // Populate Arti Kabinet dari Database
-                    if(res.org.artiKabinet && res.org.artiKabinet.kata1) {
-                        document.getElementById('uiKata1').innerText = res.org.artiKabinet.kata1;
-                        document.getElementById('uiArti1').innerText = res.org.artiKabinet.arti1;
-                        document.getElementById('uiKata2').innerText = res.org.artiKabinet.kata2;
-                        document.getElementById('uiArti2').innerText = res.org.artiKabinet.arti2;
-                        document.getElementById('uiKataGabung').innerText = `${res.org.artiKabinet.kata1} ${res.org.artiKabinet.kata2}:`;
-                        document.getElementById('uiKesimpulan').innerText = res.org.artiKabinet.kesimpulan;
-                        document.getElementById('uiArtiKabinet').style.display = 'block';
-                    }
-
                     if(res.org.pimpinan && res.org.pimpinan.length > 0) {
                         const ketua = res.org.pimpinan[0];
                         document.getElementById('namaKetuaSambutan').innerText = ketua.nama;
