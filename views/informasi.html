@@ -6,10 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI</title>
     
-    <meta name="description" content="Akses cepat untuk program kerja, kalender kegiatan, galeri dokumentasi, dan layanan PLASMA BEM KBMFKG UMI.">
-    <meta name="robots" content="index, follow">
+    <!-- ================= SEO EXPERT ================= -->
+    <meta name="description" content="Akses cepat untuk program kerja, kalender kegiatan, galeri dokumentasi, dan layanan PLASMA (Penyaluran Aspirasi Mahasiswa) resmi dari BEM KBMFKG UMI.">
+    <meta name="keywords" content="Informasi BEM FKG UMI, Proker BEM FKG, Kalender BEM FKG UMI, Aspirasi Mahasiswa FKG UMI, PLASMA BEM FKG">
+    <meta name="author" content="BEM KBMFKG UMI">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://bemkbmfkgumi.com/informasi">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bemkbmfkgumi.com/informasi">
+    <meta property="og:title" content="Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI">
+    <meta property="og:description" content="Akses program kerja, kalender kegiatan, galeri dokumentasi, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
+    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bemkbmfkgumi.com/informasi">
+    <meta property="twitter:title" content="Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI">
+    <meta property="twitter:description" content="Akses program kerja, kalender kegiatan, galeri dokumentasi, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
+    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+
+    <!-- JSON-LD Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Pusat Informasi & Layanan PLASMA",
+      "url": "https://bemkbmfkgumi.com/informasi",
+      "description": "Layanan publik, informasi program kerja, kalender, dan sistem aspirasi mahasiswa BEM KBMFKG UMI."
+    }
+    </script>
+    <!-- ================= END SEO ================= -->
+
+    <!-- SUPER UPGRADE: Relative Path Asset Routing (Anti-Server Down) -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -33,22 +65,24 @@
             <div id="prokerContainer"><div style="text-align:center;">Mensinkronisasi data program kerja...</div></div>
         </section>
 
-        <!-- TAB 2: KALENDER & PROKER DETAIL -->
+        <!-- TAB 2: KALENDER & PROKER DETAIL (SUPER BIG UPGRADE) -->
         <section id="kalender" class="tab-content">
             <div class="calendar-wrapper">
-                <div class="glass-card" style="padding: 30px; border-top: 4px solid var(--accent-neon);">
+                <!-- Sisi Kiri: Grid Kalender -->
+                <div class="glass-card" style="padding: 30px; border-top: 4px solid var(--accent-neon); align-self: start;">
                     <div class="calendar-header" style="margin-bottom: 30px;">
-                        <button class="action-btn" onclick="gantiBulan(-1)" style="font-size: 1.2rem; padding: 5px 15px;">&larr;</button>
+                        <button class="action-btn" onclick="gantiBulan(-1)" style="font-size: 1.2rem; padding: 5px 15px; border-radius: 10px;">&larr;</button>
                         <span id="namaBulanTahun" style="font-size: 1.5rem; letter-spacing: 2px;">JULI 2026</span>
-                        <button class="action-btn" onclick="gantiBulan(1)" style="font-size: 1.2rem; padding: 5px 15px;">&rarr;</button>
+                        <button class="action-btn" onclick="gantiBulan(1)" style="font-size: 1.2rem; padding: 5px 15px; border-radius: 10px;">&rarr;</button>
                     </div>
                     <div class="calendar-grid" id="calGrid" style="gap: 15px;"></div>
                 </div>
                 
+                <!-- Sisi Kanan: Daftar Agenda -->
                 <div class="agenda-list" style="background: rgba(10, 25, 40, 0.6); padding: 30px; border-top: 4px solid var(--accent-neon);">
-                    <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;" id="agendaSubtitle">DAFTAR AGENDA BULAN INI</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;" id="agendaSubtitle">DAFTAR AGENDA</div>
                     <h3 style="border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 20px; font-size: 1.5rem;" id="agendaTglFormat">
-                        Semua Agenda
+                        Semua Agenda Bulan Ini
                     </h3>
                     <div id="agendaContent">
                         <div style="text-align:center;">Memuat agenda...</div>
@@ -64,45 +98,46 @@
 
         <!-- TAB 4: PLASMA (ASPIRASI) -->
         <section id="plasma" class="tab-content">
-            <div class="glass-card" style="max-width: 700px; margin: 0 auto; border-top: 3px solid var(--accent-neon);">
-                <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 30px;">P.L.A.S.M.A</h2>
+            <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-top: 3px solid var(--accent-neon);">
+                <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 10px; font-size: 2.5rem;">P.L.A.S.M.A</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Pusat Layanan Aspirasi Mahasiswa</p>
                 <form id="plasmaForm">
-                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Judul Aspirasi <span style="color:#ef4444">*</span></label>
+                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Judul Aspirasi <span style="color:#ef4444">*</span></label>
                     <input type="text" id="judul" class="neo-input" placeholder="Tuliskan judul singkat aspirasi Anda..." required>
             
-                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Kategori Aspirasi <span style="color:#ef4444">*</span></label>
+                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Kategori Aspirasi <span style="color:#ef4444">*</span></label>
                     <select id="kategori" class="neo-input" required>
-                        <option value="" disabled selected>Pilih Kategori</option>
-                        <option value="Akademik">Akademik</option>
-                        <option value="Fasilitas Kampus">Fasilitas Kampus</option>
-                        <option value="Keuangan/UKT">Keuangan/UKT</option>
-                        <option value="Organisasi">Organisasi</option>
-                        <option value="Pelayanan Kampus">Pelayanan Kampus</option>
-                        <option value="Lainnya">Lainnya</option>
+                        <option value="" disabled selected>1. Pilih kategori</option>
+                        <option value="Akademik">2. Akademik</option>
+                        <option value="Fasilitas Kampus">3. Fasilitas Kampus</option>
+                        <option value="Keuangan/UKT">4. Keuangan/UKT</option>
+                        <option value="Organisasi">5. Organisasi</option>
+                        <option value="Pelayanan Kampus">6. Pelayanan Kampus</option>
+                        <option value="Lainnya">7. Lainnya</option>
                     </select>
             
-                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Jenis Aspirasi <span style="color:#ef4444">*</span></label>
+                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 12px; display: block; font-weight: bold;">Jenis Aspirasi <span style="color:#ef4444">*</span></label>
                     <div style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap: wrap;">
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> Saran</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> Pengaduan</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Kritik"> Kritik</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> Permintaan Info</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> 1. Saran</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> 2. Pengaduan</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Kritik"> 3. Kritik</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> 4. Permintaan Informasi</label>
                     </div>
             
-                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Isi Aspirasi <span style="color:#ef4444">*</span></label>
-                    <textarea id="isi" class="neo-input" rows="5" placeholder="Ceritakan detail aspirasi Anda di sini..." required></textarea>
+                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Isi Aspirasi <span style="color:#ef4444">*</span></label>
+                    <textarea id="isi" class="neo-input" rows="6" placeholder="Ceritakan detail aspirasi Anda di sini..." required></textarea>
             
-                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Bukti Pendukung <span style="color:var(--text-muted); font-weight:normal;">(Opsional - JPG/PNG/PDF)</span></label>
-                    <input type="file" id="bukti" class="neo-input" accept="image/*,.pdf" style="padding: 10px; color: var(--text-muted);">
+                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Bukti Pendukung <span style="color:var(--text-muted); font-weight:normal;">(Opsional - JPG/PNG/PDF)</span></label>
+                    <input type="file" id="bukti" class="neo-input" accept="image/*,.pdf" style="padding: 12px; color: var(--text-muted); cursor: pointer;">
             
-                    <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border-left: 3px solid var(--accent-neon);">
-                        <input type="checkbox" id="setuju" required style="width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent-neon); cursor: pointer;">
-                        <label for="setuju" style="color: var(--text-light); font-size: 0.9rem; line-height: 1.5; cursor: pointer;">Saya bersedia dihubungi oleh pihak Admin BEM FKG UMI apabila diperlukan klarifikasi lebih lanjut mengenai aspirasi ini <span style="color:#ef4444">*</span></label>
+                    <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 18px; border-radius: 12px; border-left: 4px solid var(--accent-neon);">
+                        <input type="checkbox" id="setuju" required style="width: 22px; height: 22px; margin-top: 2px; accent-color: var(--accent-neon); cursor: pointer;">
+                        <label for="setuju" style="color: var(--text-light); font-size: 0.95rem; line-height: 1.6; cursor: pointer;">Saya bersedia dihubungi oleh pihak Admin BEM FKG UMI apabila diperlukan klarifikasi lebih lanjut mengenai aspirasi ini <span style="color:#ef4444">*</span></label>
                     </div>
             
-                    <button type="submit" class="holo-btn" style="width: 100%;">Kirim Aspirasi</button>
+                    <button type="submit" class="holo-btn" style="width: 100%; font-size: 1.1rem; padding: 16px;">Kirim Aspirasi</button>
                 </form>
-                <div id="plasmaResult" style="margin-top:20px; text-align:center; display:none; padding:10px; border-radius:10px;"></div>
+                <div id="plasmaResult" style="margin-top:20px; text-align:center; display:none; padding:15px; border-radius:10px; font-weight: bold;"></div>
             </div>
         </section>
 
@@ -165,7 +200,7 @@
 
                 if(window.location.hash !== '#' + t) { history.pushState(null, null, '#' + t); }
                 
-                // Reset calendar selection when entering calendar tab to show full month
+                // Jika masuk ke tab kalender, otomatis tampilkan semua proker di bulan tsb
                 if(t === 'kalender') { renderCalendar(); tampilkanAgendaSebulan(); }
             }
         }
@@ -241,7 +276,7 @@
                     const eStart = new Date(ev.tglMulai);
                     const eEnd = ev.tglSelesai ? new Date(ev.tglSelesai) : eStart;
                     const checkDate = new Date(year, month, d);
-                    // Hilangkan jam untuk komparasi
+                    // Hilangkan jam untuk komparasi hari
                     eStart.setHours(0,0,0,0); eEnd.setHours(0,0,0,0); checkDate.setHours(0,0,0,0);
                     return checkDate >= eStart && checkDate <= eEnd;
                 });
@@ -263,21 +298,24 @@
             const today = new Date(); today.setHours(0,0,0,0);
             const s = new Date(startStr); s.setHours(0,0,0,0);
             const e = endStr ? new Date(endStr) : s; e.setHours(0,0,0,0);
-            if(today >= s && today <= e) return { text: "SEDANG BERLANGSUNG", class: "badge-blue" };
-            if(today < s) return { text: "SEGERA HADIR", class: "badge-neon" };
-            return { text: "SELESAI DILAKSANAKAN", class: "badge-gray" };
+            if(today >= s && today <= e) return { text: "PROKER SEDANG BERLANGSUNG", class: "badge-berlangsung" };
+            if(today < s) return { text: "PROKER SEGERA HADIR", class: "badge-segera" };
+            return { text: "SELESAI DILAKSANAKAN", class: "badge-selesai" };
         }
 
         function tampilkanAgendaSebulan() {
             document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('active'));
             const year = curDate.getFullYear(); const month = curDate.getMonth();
             document.getElementById('agendaSubtitle').innerText = "DAFTAR AGENDA BULAN INI";
-            document.getElementById('agendaTglFormat').innerHTML = `<span style="color:var(--text-light)">Semua Agenda ${monthNames[month]} ${year}</span>`;
+            document.getElementById('agendaTglFormat').innerHTML = `<span style="font-size: 1.2rem; display:block; color: var(--text-light); margin-bottom: 5px;">${monthNames[month]} ${year}</span>`;
             
             const events = kalenderData.filter(ev => { 
                 if(!ev.tglMulai) return false; 
                 const s = new Date(ev.tglMulai); const e = ev.tglSelesai ? new Date(ev.tglSelesai) : s;
-                return (s.getMonth() === month && s.getFullYear() === year) || (e.getMonth() === month && e.getFullYear() === year) || (s <= new Date(year, month, 1) && e >= new Date(year, month+1, 0));
+                // Cek jika kegiatan berada / bersinggungan di bulan yang sedang aktif di kalender
+                const startBulanAktif = new Date(year, month, 1);
+                const endBulanAktif = new Date(year, month + 1, 0);
+                return (s <= endBulanAktif && e >= startBulanAktif);
             });
             renderAgendaList(events);
         }
@@ -288,7 +326,7 @@
             if(targetElem) targetElem.classList.add('active');
 
             const checkDate = new Date(y, m, d); checkDate.setHours(0,0,0,0);
-            document.getElementById('agendaSubtitle').innerText = "AGENDA PADA TANGGAL";
+            document.getElementById('agendaSubtitle').innerText = "DAFTAR AGENDA";
             document.getElementById('agendaTglFormat').innerHTML = `<span style="font-size: 1rem; display:block; color: var(--text-muted); margin-bottom: 5px;">${dayNames[checkDate.getDay()]},</span> ${d} ${monthNames[m]} ${y}`;
             
             const events = kalenderData.filter(ev => { 
@@ -303,23 +341,24 @@
         function renderAgendaList(events) {
             const cont = document.getElementById('agendaContent'); cont.innerHTML = '';
             if(events.length > 0) {
-                // Sort events by start date
+                // Urutkan agenda berdasarkan tanggal mulai terdekat
                 events.sort((a,b) => new Date(a.tglMulai) - new Date(b.tglMulai));
                 events.forEach(e => { 
                     const status = getAgendaStatus(e.tglMulai, e.tglSelesai);
                     cont.innerHTML += `
-                    <div class="agenda-item" style="background: rgba(0, 210, 255, 0.05); border-left: 4px solid var(--accent-neon); padding: 20px; border-radius: 10px; margin-bottom: 15px; display:flex; flex-direction:column;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
-                            <span class="${status.class}" style="font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing:1px;">${status.text}</span>
-                            <span style="font-size:0.8rem; color:var(--text-muted);"><svg viewBox="0 0 24 24" style="width:12px; fill:currentColor; vertical-align:-2px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg> ${formatTglRange(e.tglMulai, e.tglSelesai)}</span>
+                    <div class="agenda-card">
+                        <div class="agenda-card-header">
+                            <span class="${status.class}">${status.text}</span>
                         </div>
-                        <h4 style="color:var(--text-light); margin: 5px 0 10px; font-size: 1.3rem;">${e.nama}</h4>
-                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 20px;">🏢 ${e.dept}</p>
-                        <a href="/proker-detail?id=${e.id}" class="glass-btn" style="text-align:center; padding: 10px; font-size:0.9rem; margin-top:auto;">Detail Kegiatan &rarr;</a>
+                        <h4 style="color:var(--text-light); margin: 0 0 5px; font-size: 1.3rem;">${e.nama}</h4>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 15px;"><svg viewBox="0 0 24 24" style="width:14px; fill:currentColor; vertical-align:-2px; margin-right:4px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg> ${formatTglRange(e.tglMulai, e.tglSelesai)}</p>
+                        <p style="font-size:0.9rem; color:var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">🏢 ${e.dept}</p>
+                        
+                        <a href="/proker-detail?id=${e.id}" class="agenda-btn">Detail Kegiatan &rarr;</a>
                     </div>`; 
                 });
             } else { 
-                cont.innerHTML = `<div style="text-align:center; padding: 40px 0; opacity: 0.5;">📭 Tidak ada agenda pada waktu ini.</div>`; 
+                cont.innerHTML = `<div style="text-align:center; padding: 40px 0; color: var(--text-muted);">📭 Tidak ada agenda pada waktu ini.</div>`; 
             }
         }
 
@@ -363,7 +402,7 @@
                 resultDiv.style.display = 'block';
                 if(res.success) {
                     resultDiv.style.background = 'rgba(16, 185, 129, 0.2)'; resultDiv.style.color = '#10b981';
-                    resultDiv.innerText = "✅ Aspirasi berhasil dikirim!";
+                    resultDiv.innerHTML = "<strong>✅ Aspirasi berhasil dikirim!</strong><br><span style='font-size:0.9rem; font-weight:normal;'>Terima kasih telah berkontribusi untuk kebaikan BEM KBMFKG UMI.</span>";
                     document.getElementById('plasmaForm').reset();
                 } else { throw new Error(); }
             } catch (error) {
