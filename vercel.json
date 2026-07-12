@@ -8,6 +8,13 @@
   ],
   "routes": [
     {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/public/(.*)",
+      "dest": "/public/$1"
+    },
+    {
       "src": "/favicon.ico",
       "dest": "/public/img/bemfkgumi.png"
     },
