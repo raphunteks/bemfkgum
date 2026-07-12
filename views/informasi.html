@@ -39,7 +39,6 @@
     </script>
     <!-- ================= END SEO ================= -->
 
-    <!-- SUPER UPGRADE: Relative Path Asset Routing (Anti-Server Down) -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
@@ -101,6 +100,7 @@
             <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-top: 3px solid var(--accent-neon);">
                 <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 10px; font-size: 2.5rem;">P.L.A.S.M.A</h2>
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Pusat Layanan Aspirasi Mahasiswa</p>
+                
                 <form id="plasmaForm">
                     <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Judul Aspirasi <span style="color:#ef4444">*</span></label>
                     <input type="text" id="judul" class="neo-input" placeholder="Tuliskan judul singkat aspirasi Anda..." required>
@@ -121,7 +121,7 @@
                         <label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> 1. Saran</label>
                         <label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> 2. Pengaduan</label>
                         <label class="clay-badge"><input type="radio" name="jenis" value="Kritik"> 3. Kritik</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> 4. Permintaan Informasi</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> 4. Permintaan Info</label>
                     </div>
             
                     <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Isi Aspirasi <span style="color:#ef4444">*</span></label>
@@ -143,7 +143,7 @@
 
     </main>
 
-    <!-- Modal Dokumentasi Galeri -->
+    <!-- Modal Pop-up Dokumentasi -->
     <div class="modal-overlay" id="docModal">
         <div class="modal-content-box" style="padding: 0; overflow: hidden;">
             <button class="modal-close" onclick="document.getElementById('docModal').classList.remove('active')">X</button>
@@ -182,9 +182,11 @@
             kalenderData = resData.kalender || [];
             renderCalendar();
 
+            // Eksekusi Hash Tab Navigation ketika halaman pertama kali dimuat
             handleHashTabOnLoad();
         });
 
+        // SMART ROUTING: Switch Tab secara dinamis berdasarkan navigasi hash URL
         function switchTab(t) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -205,11 +207,13 @@
             }
         }
 
+        // Logic memantau hash URL
         function handleHashTabOnLoad() {
             const hash = window.location.hash.substring(1);
             const validTabs = ['proker', 'kalender', 'galeri', 'plasma'];
             if (hash && validTabs.includes(hash)) {
                 switchTab(hash);
+                // Scroll halus sedikit ke bawah agar pas menyorot tab
                 setTimeout(() => {
                     const navEl = document.getElementById('tabNavMenu');
                     if (navEl) { window.scrollTo({ top: navEl.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' }); }
@@ -217,6 +221,7 @@
             }
         }
 
+        // Event listener saat user klik dari header saat masih ada di dalam halaman yg sama
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.substring(1);
             const validTabs = ['proker', 'kalender', 'galeri', 'plasma'];
@@ -245,6 +250,7 @@
         }
 
         function formatTgl(tglStr) { if(!tglStr) return ''; const d = new Date(tglStr); if(isNaN(d)) return tglStr; return `${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`; }
+        
         function openDoc(idx) {
             const d = window.globalDocData[idx];
             document.getElementById('docImg').src = d.foto || '/img/bemfkgumi.png';
@@ -254,11 +260,7 @@
             document.getElementById('docModal').classList.add('active');
         }
 
-        function gantiBulan(dir) { 
-            curDate.setMonth(curDate.getMonth() + dir); 
-            renderCalendar(); 
-            tampilkanAgendaSebulan(); 
-        }
+        function gantiBulan(dir) { curDate.setMonth(curDate.getMonth() + dir); renderCalendar(); tampilkanAgendaSebulan(); }
         
         function renderCalendar() {
             const year = curDate.getFullYear(); const month = curDate.getMonth();
@@ -288,6 +290,7 @@
 
         // ================= BIG UPGRADE: AGENDA RANGE & BADGES =================
         function formatTglRange(startStr, endStr) {
+            if(!startStr) return "-";
             const s = new Date(startStr); const e = endStr ? new Date(endStr) : s;
             if(s.getTime() === e.getTime()) return `${s.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
             if(s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) return `${s.getDate()} - ${e.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
@@ -295,6 +298,7 @@
         }
 
         function getAgendaStatus(startStr, endStr) {
+            if(!startStr) return { text: "INFO", class: "badge-gray" };
             const today = new Date(); today.setHours(0,0,0,0);
             const s = new Date(startStr); s.setHours(0,0,0,0);
             const e = endStr ? new Date(endStr) : s; e.setHours(0,0,0,0);
@@ -326,7 +330,7 @@
             if(targetElem) targetElem.classList.add('active');
 
             const checkDate = new Date(y, m, d); checkDate.setHours(0,0,0,0);
-            document.getElementById('agendaSubtitle').innerText = "DAFTAR AGENDA";
+            document.getElementById('agendaSubtitle').innerText = "DAFTAR AGENDA PADA TANGGAL";
             document.getElementById('agendaTglFormat').innerHTML = `<span style="font-size: 1rem; display:block; color: var(--text-muted); margin-bottom: 5px;">${dayNames[checkDate.getDay()]},</span> ${d} ${monthNames[m]} ${y}`;
             
             const events = kalenderData.filter(ev => { 
@@ -402,7 +406,7 @@
                 resultDiv.style.display = 'block';
                 if(res.success) {
                     resultDiv.style.background = 'rgba(16, 185, 129, 0.2)'; resultDiv.style.color = '#10b981';
-                    resultDiv.innerHTML = "<strong>✅ Aspirasi berhasil dikirim!</strong><br><span style='font-size:0.9rem; font-weight:normal;'>Terima kasih telah berkontribusi untuk kebaikan BEM KBMFKG UMI.</span>";
+                    resultDiv.innerHTML = "<strong>✅ Aspirasi berhasil dikirim!</strong><br><span style='font-size:0.9rem; font-weight:normal; color:var(--text-light);'>Terima kasih telah berkontribusi untuk kebaikan BEM KBMFKG UMI.</span>";
                     document.getElementById('plasmaForm').reset();
                 } else { throw new Error(); }
             } catch (error) {
