@@ -6,42 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT ================= -->
-    <meta name="description" content="Akses cepat untuk program kerja, kalender kegiatan, galeri dokumentasi, dan layanan PLASMA (Penyaluran Aspirasi Mahasiswa) resmi dari BEM KBMFKG UMI.">
-    <meta name="keywords" content="Informasi BEM FKG UMI, Proker BEM FKG, Kalender BEM FKG UMI, Aspirasi Mahasiswa FKG UMI, PLASMA BEM FKG">
-    <meta name="author" content="BEM KBMFKG UMI">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="description" content="Akses cepat untuk program kerja, kalender kegiatan, galeri dokumentasi, dan layanan PLASMA BEM KBMFKG UMI.">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://bemkbmfkgumi.com/informasi">
-    
-    <!-- Open Graph / Facebook / WhatsApp -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://bemkbmfkgumi.com/informasi">
-    <meta property="og:title" content="Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI">
-    <meta property="og:description" content="Akses program kerja, kalender kegiatan, galeri dokumentasi, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
-    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://bemkbmfkgumi.com/informasi">
-    <meta property="twitter:title" content="Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI">
-    <meta property="twitter:description" content="Akses program kerja, kalender kegiatan, galeri dokumentasi, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
-    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
-
-    <!-- JSON-LD Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Pusat Informasi & Layanan PLASMA",
-      "url": "https://bemkbmfkgumi.com/informasi",
-      "description": "Layanan publik, informasi program kerja, kalender, dan sistem aspirasi mahasiswa BEM KBMFKG UMI."
-    }
-    </script>
-    <!-- ================= END SEO ================= -->
-
-    <!-- SUPER UPGRADE: Relative Path Asset Routing (Anti-Server Down) -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
-    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -65,7 +33,7 @@
             <div id="prokerContainer"><div style="text-align:center;">Mensinkronisasi data program kerja...</div></div>
         </section>
 
-        <!-- TAB 2: KALENDER -->
+        <!-- TAB 2: KALENDER & PROKER DETAIL -->
         <section id="kalender" class="tab-content">
             <div class="calendar-wrapper">
                 <div class="glass-card" style="padding: 30px; border-top: 4px solid var(--accent-neon);">
@@ -78,12 +46,12 @@
                 </div>
                 
                 <div class="agenda-list" style="background: rgba(10, 25, 40, 0.6); padding: 30px; border-top: 4px solid var(--accent-neon);">
-                    <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Daftar Agenda</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;" id="agendaSubtitle">DAFTAR AGENDA BULAN INI</div>
                     <h3 style="border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 20px; font-size: 1.5rem;" id="agendaTglFormat">
-                        Pilih Tanggal
+                        Semua Agenda
                     </h3>
                     <div id="agendaContent">
-                        <p style="color: var(--text-muted);">Silakan klik salah satu tanggal pada kalender untuk melihat detail kegiatan.</p>
+                        <div style="text-align:center;">Memuat agenda...</div>
                     </div>
                 </div>
             </div>
@@ -94,32 +62,31 @@
             <div class="gallery-grid" id="galleryContainer"></div>
         </section>
 
-        <!-- TAB 4: PLASMA (ASPIRASI) NEW UPGRADE UI -->
+        <!-- TAB 4: PLASMA (ASPIRASI) -->
         <section id="plasma" class="tab-content">
             <div class="glass-card" style="max-width: 700px; margin: 0 auto; border-top: 3px solid var(--accent-neon);">
                 <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 30px;">P.L.A.S.M.A</h2>
                 <form id="plasmaForm">
-                    
                     <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Judul Aspirasi <span style="color:#ef4444">*</span></label>
                     <input type="text" id="judul" class="neo-input" placeholder="Tuliskan judul singkat aspirasi Anda..." required>
             
                     <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Kategori Aspirasi <span style="color:#ef4444">*</span></label>
                     <select id="kategori" class="neo-input" required>
-                        <option value="" disabled selected>1. Pilih Kategori</option>
-                        <option value="Akademik">2. Akademik</option>
-                        <option value="Fasilitas Kampus">3. Fasilitas Kampus</option>
-                        <option value="Keuangan/UKT">4. Keuangan/UKT</option>
-                        <option value="Organisasi">5. Organisasi</option>
-                        <option value="Pelayanan Kampus">6. Pelayanan Kampus</option>
-                        <option value="Lainnya">7. Lainnya</option>
+                        <option value="" disabled selected>Pilih Kategori</option>
+                        <option value="Akademik">Akademik</option>
+                        <option value="Fasilitas Kampus">Fasilitas Kampus</option>
+                        <option value="Keuangan/UKT">Keuangan/UKT</option>
+                        <option value="Organisasi">Organisasi</option>
+                        <option value="Pelayanan Kampus">Pelayanan Kampus</option>
+                        <option value="Lainnya">Lainnya</option>
                     </select>
             
                     <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Jenis Aspirasi <span style="color:#ef4444">*</span></label>
                     <div style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap: wrap;">
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> 1. Saran</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> 2. Pengaduan</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Kritik"> 3. Kritik</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> 4. Permintaan Info</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> Saran</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> Pengaduan</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Kritik"> Kritik</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> Permintaan Info</label>
                     </div>
             
                     <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Isi Aspirasi <span style="color:#ef4444">*</span></label>
@@ -141,7 +108,7 @@
 
     </main>
 
-    <!-- Modal Pop-up Dokumentasi -->
+    <!-- Modal Dokumentasi Galeri -->
     <div class="modal-overlay" id="docModal">
         <div class="modal-content-box" style="padding: 0; overflow: hidden;">
             <button class="modal-close" onclick="document.getElementById('docModal').classList.remove('active')">X</button>
@@ -180,58 +147,45 @@
             kalenderData = resData.kalender || [];
             renderCalendar();
 
-            // Eksekusi Hash Tab Navigation ketika halaman pertama kali dimuat
             handleHashTabOnLoad();
         });
 
-        // SMART ROUTING: Switch Tab secara dinamis berdasarkan navigasi hash URL
         function switchTab(t) {
-            // Hapus status aktif dari semua tombol dan semua konten tab
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
-            // Aktifkan tombol yang sesuai (mendukung pemanggilan otomatis via hash)
             const targetBtn = document.querySelector(`.tab-btn[onclick="switchTab('${t}')"]`);
             if(targetBtn) targetBtn.classList.add('active');
             
-            // Tampilkan bagian konten tab-nya dengan animasi
             const targetSection = document.getElementById(t);
             if(targetSection) {
                 targetSection.classList.add('active');
                 targetSection.style.opacity = '0';
                 setTimeout(() => { targetSection.style.opacity = '1'; }, 50);
 
-                // Sinkronisasikan Hash URL jika tidak sesuai
-                if(window.location.hash !== '#' + t) {
-                    history.pushState(null, null, '#' + t);
-                }
+                if(window.location.hash !== '#' + t) { history.pushState(null, null, '#' + t); }
+                
+                // Reset calendar selection when entering calendar tab to show full month
+                if(t === 'kalender') { renderCalendar(); tampilkanAgendaSebulan(); }
             }
         }
 
-        // Logic memantau hash URL
         function handleHashTabOnLoad() {
             const hash = window.location.hash.substring(1);
             const validTabs = ['proker', 'kalender', 'galeri', 'plasma'];
             if (hash && validTabs.includes(hash)) {
                 switchTab(hash);
-                // Scroll halus sedikit ke bawah agar pas menyorot tab
                 setTimeout(() => {
                     const navEl = document.getElementById('tabNavMenu');
-                    if (navEl) {
-                        const topPos = navEl.getBoundingClientRect().top + window.scrollY - 100;
-                        window.scrollTo({ top: topPos, behavior: 'smooth' });
-                    }
+                    if (navEl) { window.scrollTo({ top: navEl.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' }); }
                 }, 300);
             }
         }
 
-        // Event listener saat user klik dari header saat masih ada di dalam halaman yg sama
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.substring(1);
             const validTabs = ['proker', 'kalender', 'galeri', 'plasma'];
-            if (hash && validTabs.includes(hash)) {
-                switchTab(hash);
-            }
+            if (hash && validTabs.includes(hash)) { switchTab(hash); }
         });
 
         function renderProker(prokerData) {
@@ -256,7 +210,6 @@
         }
 
         function formatTgl(tglStr) { if(!tglStr) return ''; const d = new Date(tglStr); if(isNaN(d)) return tglStr; return `${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`; }
-
         function openDoc(idx) {
             const d = window.globalDocData[idx];
             document.getElementById('docImg').src = d.foto || '/img/bemfkgumi.png';
@@ -266,7 +219,11 @@
             document.getElementById('docModal').classList.add('active');
         }
 
-        function gantiBulan(dir) { curDate.setMonth(curDate.getMonth() + dir); renderCalendar(); }
+        function gantiBulan(dir) { 
+            curDate.setMonth(curDate.getMonth() + dir); 
+            renderCalendar(); 
+            tampilkanAgendaSebulan(); 
+        }
         
         function renderCalendar() {
             const year = curDate.getFullYear(); const month = curDate.getMonth();
@@ -279,12 +236,50 @@
             for(let i=0; i<firstDay; i++) gridHTML += `<div></div>`;
             
             for(let d=1; d<=daysInMonth; d++) {
-                const isEvent = kalenderData.some(ev => { if(!ev.tanggal) return false; const eDate = new Date(ev.tanggal); return eDate.getDate() === d && eDate.getMonth() === month && eDate.getFullYear() === year; });
+                const isEvent = kalenderData.some(ev => { 
+                    if(!ev.tglMulai) return false; 
+                    const eStart = new Date(ev.tglMulai);
+                    const eEnd = ev.tglSelesai ? new Date(ev.tglSelesai) : eStart;
+                    const checkDate = new Date(year, month, d);
+                    // Hilangkan jam untuk komparasi
+                    eStart.setHours(0,0,0,0); eEnd.setHours(0,0,0,0); checkDate.setHours(0,0,0,0);
+                    return checkDate >= eStart && checkDate <= eEnd;
+                });
+                
                 gridHTML += `<div class="calendar-day ${isEvent ? 'has-event' : ''}" onclick="pilihTanggal(${d}, ${month}, ${year}, this)" id="day-${d}">${d}</div>`;
             }
             document.getElementById('calGrid').innerHTML = gridHTML;
-            const today = new Date();
-            if(today.getMonth() === month && today.getFullYear() === year) { pilihTanggal(today.getDate(), month, year); } else { pilihTanggal(1, month, year); }
+        }
+
+        // ================= BIG UPGRADE: AGENDA RANGE & BADGES =================
+        function formatTglRange(startStr, endStr) {
+            const s = new Date(startStr); const e = endStr ? new Date(endStr) : s;
+            if(s.getTime() === e.getTime()) return `${s.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
+            if(s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) return `${s.getDate()} - ${e.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
+            return `${s.getDate()} ${monthNames[s.getMonth()]} - ${e.getDate()} ${monthNames[e.getMonth()]} ${s.getFullYear()}`;
+        }
+
+        function getAgendaStatus(startStr, endStr) {
+            const today = new Date(); today.setHours(0,0,0,0);
+            const s = new Date(startStr); s.setHours(0,0,0,0);
+            const e = endStr ? new Date(endStr) : s; e.setHours(0,0,0,0);
+            if(today >= s && today <= e) return { text: "SEDANG BERLANGSUNG", class: "badge-blue" };
+            if(today < s) return { text: "SEGERA HADIR", class: "badge-neon" };
+            return { text: "SELESAI DILAKSANAKAN", class: "badge-gray" };
+        }
+
+        function tampilkanAgendaSebulan() {
+            document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('active'));
+            const year = curDate.getFullYear(); const month = curDate.getMonth();
+            document.getElementById('agendaSubtitle').innerText = "DAFTAR AGENDA BULAN INI";
+            document.getElementById('agendaTglFormat').innerHTML = `<span style="color:var(--text-light)">Semua Agenda ${monthNames[month]} ${year}</span>`;
+            
+            const events = kalenderData.filter(ev => { 
+                if(!ev.tglMulai) return false; 
+                const s = new Date(ev.tglMulai); const e = ev.tglSelesai ? new Date(ev.tglSelesai) : s;
+                return (s.getMonth() === month && s.getFullYear() === year) || (e.getMonth() === month && e.getFullYear() === year) || (s <= new Date(year, month, 1) && e >= new Date(year, month+1, 0));
+            });
+            renderAgendaList(events);
         }
 
         function pilihTanggal(d, m, y, elem) {
@@ -292,18 +287,43 @@
             const targetElem = elem || document.getElementById(`day-${d}`);
             if(targetElem) targetElem.classList.add('active');
 
-            const dateObj = new Date(y, m, d);
-            document.getElementById('agendaTglFormat').innerHTML = `<span style="font-size: 1rem; display:block; color: var(--text-muted); margin-bottom: 5px;">${dayNames[dateObj.getDay()]},</span> ${d} ${monthNames[m]} ${y}`;
+            const checkDate = new Date(y, m, d); checkDate.setHours(0,0,0,0);
+            document.getElementById('agendaSubtitle').innerText = "AGENDA PADA TANGGAL";
+            document.getElementById('agendaTglFormat').innerHTML = `<span style="font-size: 1rem; display:block; color: var(--text-muted); margin-bottom: 5px;">${dayNames[checkDate.getDay()]},</span> ${d} ${monthNames[m]} ${y}`;
             
-            const events = kalenderData.filter(ev => { if(!ev.tanggal) return false; const eDate = new Date(ev.tanggal); return eDate.getDate() === d && eDate.getMonth() === m && eDate.getFullYear() === y; });
-            const cont = document.getElementById('agendaContent'); cont.innerHTML = '';
-            
-            if(events.length > 0) {
-                events.forEach(e => { cont.innerHTML += `<div class="agenda-item" style="background: rgba(0, 210, 255, 0.05); border-left: 4px solid var(--accent-neon); padding: 20px; border-radius: 10px; margin-bottom: 15px;"><span style="background: var(--accent-neon); color: var(--bg-dark); font-size: 0.7rem; padding: 3px 8px; border-radius: 20px; font-weight: bold; margin-bottom: 10px; display: inline-block;">AGENDA BEM</span><h4 style="color:var(--text-light); margin: 5px 0 10px; font-size: 1.2rem;">${e.nama}</h4><p style="font-size:0.85rem; color:var(--text-muted);">🏢 ${e.dept}</p></div>`; });
-            } else { cont.innerHTML = `<div style="text-align:center; padding: 40px 0; opacity: 0.5;">📭 Tidak ada agenda.</div>`; }
+            const events = kalenderData.filter(ev => { 
+                if(!ev.tglMulai) return false; 
+                const s = new Date(ev.tglMulai); s.setHours(0,0,0,0);
+                const e = ev.tglSelesai ? new Date(ev.tglSelesai) : s; e.setHours(0,0,0,0);
+                return checkDate >= s && checkDate <= e; 
+            });
+            renderAgendaList(events);
         }
 
-        // ====== NEW UPGRADE: PENGIRIMAN DATA FORM PLASMA ======
+        function renderAgendaList(events) {
+            const cont = document.getElementById('agendaContent'); cont.innerHTML = '';
+            if(events.length > 0) {
+                // Sort events by start date
+                events.sort((a,b) => new Date(a.tglMulai) - new Date(b.tglMulai));
+                events.forEach(e => { 
+                    const status = getAgendaStatus(e.tglMulai, e.tglSelesai);
+                    cont.innerHTML += `
+                    <div class="agenda-item" style="background: rgba(0, 210, 255, 0.05); border-left: 4px solid var(--accent-neon); padding: 20px; border-radius: 10px; margin-bottom: 15px; display:flex; flex-direction:column;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+                            <span class="${status.class}" style="font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing:1px;">${status.text}</span>
+                            <span style="font-size:0.8rem; color:var(--text-muted);"><svg viewBox="0 0 24 24" style="width:12px; fill:currentColor; vertical-align:-2px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg> ${formatTglRange(e.tglMulai, e.tglSelesai)}</span>
+                        </div>
+                        <h4 style="color:var(--text-light); margin: 5px 0 10px; font-size: 1.3rem;">${e.nama}</h4>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 20px;">🏢 ${e.dept}</p>
+                        <a href="/proker-detail?id=${e.id}" class="glass-btn" style="text-align:center; padding: 10px; font-size:0.9rem; margin-top:auto;">Detail Kegiatan &rarr;</a>
+                    </div>`; 
+                });
+            } else { 
+                cont.innerHTML = `<div style="text-align:center; padding: 40px 0; opacity: 0.5;">📭 Tidak ada agenda pada waktu ini.</div>`; 
+            }
+        }
+
+        // ====== PENGIRIMAN DATA FORM PLASMA ======
         document.getElementById('plasmaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
@@ -313,9 +333,7 @@
             const kategori = document.getElementById('kategori').value;
             const jenis = document.querySelector('input[name="jenis"]:checked').value;
             const isi = document.getElementById('isi').value;
-            const setuju = document.getElementById('setuju').checked;
             
-            // Konversi file jika opsional Bukti Pendukung diisi
             let buktiBase64 = null;
             const fileInput = document.getElementById('bukti');
             if(fileInput.files.length > 0) {
@@ -323,38 +341,35 @@
                 reader.readAsDataURL(fileInput.files[0]);
                 reader.onload = async () => {
                     buktiBase64 = reader.result;
-                    await kirimDataPlasma(judul, kategori, jenis, isi, setuju, buktiBase64, btn);
+                    await kirimDataPlasma(judul, kategori, jenis, isi, buktiBase64, btn);
                 }
             } else {
-                await kirimDataPlasma(judul, kategori, jenis, isi, setuju, buktiBase64, btn);
+                await kirimDataPlasma(judul, kategori, jenis, isi, buktiBase64, btn);
             }
         });
 
-        async function kirimDataPlasma(judul, kategori, jenis, isi, setuju, bukti, btn) {
+        async function kirimDataPlasma(judul, kategori, jenis, isi, bukti, btn) {
             try {
                 let apiUrl = '/api/plasma';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/plasma';
                 
                 const req = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ judul, kategori, jenis, isi, setuju, bukti })
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ judul, kategori, jenis, isi, bukti })
                 });
                 const res = await req.json();
                 
                 const resultDiv = document.getElementById('plasmaResult');
                 resultDiv.style.display = 'block';
                 if(res.success) {
-                    resultDiv.style.background = 'rgba(16, 185, 129, 0.2)';
-                    resultDiv.style.color = '#10b981';
+                    resultDiv.style.background = 'rgba(16, 185, 129, 0.2)'; resultDiv.style.color = '#10b981';
                     resultDiv.innerText = "✅ Aspirasi berhasil dikirim!";
                     document.getElementById('plasmaForm').reset();
                 } else { throw new Error(); }
             } catch (error) {
                 const resultDiv = document.getElementById('plasmaResult');
                 resultDiv.style.display = 'block';
-                resultDiv.style.background = 'rgba(239, 68, 68, 0.2)';
-                resultDiv.style.color = '#ef4444';
+                resultDiv.style.background = 'rgba(239, 68, 68, 0.2)'; resultDiv.style.color = '#ef4444';
                 resultDiv.innerText = "⚠️ Gagal mengirim aspirasi. Coba lagi.";
             }
             btn.innerText = "Kirim Aspirasi"; btn.disabled = false;
