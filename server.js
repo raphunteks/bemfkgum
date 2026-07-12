@@ -11,8 +11,16 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Memastikan file statis bisa diakses langsung oleh Express (Berguna jika Vercel.json melempar route kemari)
+// ================= STATIC FILES & VERCEL ROUTING FIX =================
+// Memastikan file statis bisa diakses langsung oleh Express (Default)
 app.use(express.static(path.join(__dirname, 'public')));
+
+// SUPER UPGRADE: Sinkronisasi mutlak dengan vercel.json routing
+// Menangkap rewrite internal dari Vercel agar CSS dan Gambar tidak BLANK (404)
+app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/css', express.static(path.join(__dirname, 'public/css')));
+app.use('/img', express.static(path.join(__dirname, 'public/img')));
+app.use('/js', express.static(path.join(__dirname, 'public/js')));
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
