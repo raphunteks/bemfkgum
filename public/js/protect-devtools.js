@@ -1,3 +1,5 @@
+// FILE: public/js/protect-devtools.js
+
 // Blokir klik kanan (context menu)
 document.addEventListener('contextmenu', function (e) {
   e.preventDefault();
