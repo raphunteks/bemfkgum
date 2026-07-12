@@ -1,9 +1,11 @@
-<!-- FILE: views/narahubung.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hubungi Kami | BEM KBMFKG UMI</title>
+    
+    <!-- PROTECT DEVTOOLS -->
+    <script src="/js/protect-devtools.js"></script>
     
     <!-- ================= SEO EXPERT ================= -->
     <meta name="description" content="Hubungi BEM FKG UMI untuk pertanyaan akademik, undangan kegiatan, penawaran kerjasama, atau kunjungi sekretariat kami di Makassar.">
@@ -12,7 +14,7 @@
     <meta name="author" content="BEM KBMFKG UMI">
     <link rel="canonical" href="https://bemkbmfkgumi.com/narahubung">
     
-    <!-- SUPER UPGRADE: Relative Path Favicon & Stylesheet agar kebal Vercel DNS Issues -->
+    <!-- Favicon & Stylesheet -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
@@ -107,7 +109,6 @@
         </div>
 
         <div class="grid-2">
-            
             <!-- LEFT: FORM KONTAK -->
             <div class="glass-card reveal" style="box-shadow: 0 15px 40px rgba(0,0,0,0.5); border-top: 3px solid var(--accent-neon);">
                 <h2 style="font-size: 1.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
@@ -124,7 +125,6 @@
                         <button type="button" class="clay-badge" onclick="setContact('Email')" id="btnEmail" style="border: 1px solid transparent; flex: 1; text-align: center; cursor: pointer; transition: 0.3s;">Email</button>
                     </div>
                     
-                    <!-- Dinamis berdasarkan pilihan -->
                     <input type="text" id="kontak" class="neo-input" placeholder="Masukkan Nomor WA Aktif Anda" required>
                     
                     <label class="form-label">Subjek Pesan *</label>
@@ -135,7 +135,6 @@
                         <option value="Pertanyaan Umum">Pertanyaan Umum / Akademik</option>
                         <option value="Lainnya">Lainnya (Ketik Manual)</option>
                     </select>
-                    <!-- Input manual yang disembunyikan secara default -->
                     <input type="text" id="subjekManual" class="neo-input" placeholder="Ketik subjek spesifik..." style="display: none; border-color: var(--accent-neon);">
 
                     <label class="form-label">Dokumen Pendukung (Opsional)</label>
@@ -147,14 +146,11 @@
                     <button type="submit" class="holo-btn" style="width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 15px; letter-spacing: 1px;">Kirim Pesan Sekarang</button>
                 </form>
                 
-                <!-- Toast Notification Box (Lokal) -->
                 <div id="formResult" style="margin-top:20px; text-align:center; display:none; padding: 15px; border-radius: 10px; font-weight: bold;"></div>
             </div>
 
-            <!-- RIGHT: INFO & MAPS (TERHUBUNG KE DATABASE ADMIN) -->
+            <!-- RIGHT: INFO & MAPS -->
             <div class="reveal" style="display:flex; flex-direction:column; gap: 30px;">
-                
-                <!-- Info Cards -->
                 <div class="glass-card" style="padding: 30px;">
                     <h2 style="font-size: 1.5rem; margin-bottom: 25px;">Informasi Kontak Resmi</h2>
                     
@@ -162,9 +158,7 @@
                         <div class="info-icon">📍</div>
                         <div>
                             <h4 style="color: var(--text-light); margin-bottom: 5px;">Sekretariat Utama</h4>
-                            <p id="kontakAlamat" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
-                                Memuat alamat dari database...
-                            </p>
+                            <p id="kontakAlamat" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Memuat alamat dari database...</p>
                         </div>
                     </div>
 
@@ -185,12 +179,10 @@
                             <a id="kontakWALink" href="#" target="_blank" class="smart-link">
                                 <span id="kontakWA">Memuat nomor...</span> <span id="kontakWAName" style="color: var(--text-muted); font-weight: normal; font-size: 0.8rem;"></span>
                             </a>
-                            <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 5px;">*Klik nomor di atas untuk langsung terhubung ke WhatsApp Admin</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Iframe Google Maps terintegrasi dengan desain -->
                 <div class="glass-card" style="padding: 0; overflow: hidden; border: 1px solid var(--accent-neon); display: flex; flex-direction: column; flex: 1; min-height: 350px;">
                     <div style="background: rgba(0,0,0,0.6); padding: 15px 20px; border-bottom: 1px solid var(--glass-border);">
                         <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
@@ -198,178 +190,89 @@
                         </h3>
                     </div>
                     <div id="kontakMapContainer" style="flex:1; width: 100%; background: #111;">
-                        <!-- Maps Inject via JS -->
                         <div style="padding: 20px; text-align: center; color: var(--text-muted);">Memuat Peta Interaktif...</div>
                     </div>
                 </div>
-                
             </div>
         </div>
     </main>
     <%- include('partials/footer.html') %>
 
-    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        // --- 0. Sinkronisasi Data Narahubung dari Database ---
         async function fetchKontakData() {
             try {
                 let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
-                }
                 const req = await fetch(apiUrl);
                 const res = await req.json();
-                
                 if(res.kontak) {
                     const k = res.kontak;
-                    // Alamat
                     document.getElementById('kontakAlamat').innerText = k.alamat;
-                    
-                    // Email
                     document.getElementById('kontakEmail').innerText = k.email;
                     document.getElementById('kontakEmailLink').href = `mailto:${k.email}`;
-                    
-                    // WhatsApp Smart Link Generation
                     document.getElementById('kontakWA').innerText = k.wa;
                     document.getElementById('kontakWAName').innerText = k.waName ? `(${k.waName})` : '';
-                    
-                    // Membersihkan nomor WA dari spasi/karakter khusus agar bisa jadi link (628...)
                     const cleanWa = k.wa.replace(/\D/g, ''); 
                     document.getElementById('kontakWALink').href = `https://wa.me/${cleanWa}`;
-                    
-                    // Map Iframe (Wajib set width/height 100% via CSS override agar responsif)
                     const mapContainer = document.getElementById('kontakMapContainer');
                     mapContainer.innerHTML = k.mapsIframe;
                     const iframe = mapContainer.querySelector('iframe');
-                    if(iframe) {
-                        iframe.style.width = "100%";
-                        iframe.style.height = "100%";
-                    }
+                    if(iframe) { iframe.style.width = "100%"; iframe.style.height = "100%"; }
                 }
-            } catch(e) {
-                console.warn("API Gagal dimuat, menggunakan template offline.");
-            }
+            } catch(e) { console.warn("API Gagal dimuat"); }
         }
 
-        // --- 1. Animasi Scroll Reveal & Inisiasi Awal ---
         document.addEventListener('DOMContentLoaded', () => {
-            fetchKontakData(); // Panggil Data Database
-
+            fetchKontakData();
             const reveals = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries, obs) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        obs.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
-
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+            }, { threshold: 0.1 });
             reveals.forEach(el => observer.observe(el));
-            
-            // Pemicu instan untuk header
-            setTimeout(() => {
-                const header = document.querySelector('.reveal');
-                if(header) header.classList.add('active');
-            }, 100);
         });
 
-        // --- 2. Logika UI Form (Toggle WA/Email) ---
         let contactType = 'WA';
         function setContact(type) {
             contactType = type;
             const inputKontak = document.getElementById('kontak');
-            
-            // Ubah Placeholder & Tipe input
             inputKontak.placeholder = type === 'WA' ? 'Masukkan Nomor WA Aktif Anda' : 'Masukkan Alamat Email Aktif';
             inputKontak.type = type === 'Email' ? 'email' : 'text';
-            
-            // Ubah Styling Tombol Toggle (Claymorphism UI)
             document.getElementById('btnWA').style.border = type === 'WA' ? '1px solid var(--accent-neon)' : '1px solid transparent';
-            document.getElementById('btnWA').style.background = type === 'WA' ? 'rgba(0,255,128,0.1)' : 'rgba(25, 25, 25, 0.8)';
-            
             document.getElementById('btnEmail').style.border = type === 'Email' ? '1px solid var(--accent-neon)' : '1px solid transparent';
-            document.getElementById('btnEmail').style.background = type === 'Email' ? 'rgba(0,255,128,0.1)' : 'rgba(25, 25, 25, 0.8)';
         }
 
-        // --- 3. Logika Smart Subject (Manual Input) ---
         function toggleManualSubject() {
             const select = document.getElementById('subjekSelect');
             const manualInput = document.getElementById('subjekManual');
-            
-            if(select.value === 'Lainnya') {
-                manualInput.style.display = 'block';
-                manualInput.setAttribute('required', 'true');
-            } else {
-                manualInput.style.display = 'none';
-                manualInput.removeAttribute('required');
-                manualInput.value = '';
-            }
+            if(select.value === 'Lainnya') { manualInput.style.display = 'block'; manualInput.setAttribute('required', 'true'); }
+            else { manualInput.style.display = 'none'; manualInput.removeAttribute('required'); }
         }
 
-        // --- 4. Penanganan Submit & Anti-Crash Passing ---
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const btn = e.target.querySelector('button[type="submit"]');
             const resultBox = document.getElementById('formResult');
-            const originalText = btn.innerText;
+            btn.innerText = "Mengirim..."; btn.disabled = true;
             
-            btn.innerText = "Mengirim..."; 
-            btn.disabled = true;
-            btn.style.opacity = "0.7";
-            resultBox.style.display = "none";
-
-            // Ekstraksi nilai Subjek (Dropdown vs Manual)
-            const selectVal = document.getElementById('subjekSelect').value;
-            const finalSubject = selectVal === 'Lainnya' ? document.getElementById('subjekManual').value : selectVal;
-
-            // Safe Data Passing: Ekstraksi murni ke tipe primitif (String)
+            const finalSubject = document.getElementById('subjekSelect').value === 'Lainnya' ? document.getElementById('subjekManual').value : document.getElementById('subjekSelect').value;
             const payload = {
-                nama: String(document.getElementById('nama').value),
-                kontak: String(`${contactType}: ${document.getElementById('kontak').value}`),
-                subjek: String(finalSubject),
-                pesan: String(document.getElementById('pesan').value)
-                // Catatan: Upload file di-skip payloadnya untuk mode simulasi ini karena batas limit Upstash Free tier
+                nama: document.getElementById('nama').value,
+                kontak: `${contactType}: ${document.getElementById('kontak').value}`,
+                subjek: finalSubject,
+                pesan: document.getElementById('pesan').value
             };
             
             try {
-                let apiUrl = '/api/message';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                    apiUrl = 'https://bemkbmfkgumi.com/api/message';
-                }
-
-                const req = await fetch(apiUrl, { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify(payload) 
-                });
-                
-                const resData = await req.json();
-
-                if(req.ok && resData.success) {
-                    resultBox.innerHTML = '✅ <strong>Sukses!</strong> Pesan Anda berhasil dikirim ke sistem admin BEM FKG UMI.';
-                    resultBox.style.color = 'var(--accent-neon)';
-                    resultBox.style.background = 'rgba(0,255,128,0.1)';
-                    resultBox.style.border = '1px solid var(--accent-neon)';
-                    e.target.reset(); // Kosongkan form
-                    toggleManualSubject(); // Reset subjek state
-                } else { 
-                    throw new Error(resData.message || 'Gagal tersimpan'); 
+                const req = await fetch('/api/message', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                if(req.ok) {
+                    resultBox.innerHTML = '✅ Sukses! Pesan berhasil dikirim.';
+                    resultBox.style.display = "block";
+                    e.target.reset();
                 }
             } catch(error) {
-                // FALLBACK MODE: Tampilkan error namun beri kesan aplikasi tidak crash
-                console.warn("API Offline / Redis Down. Simulasi Form Berjalan.");
-                resultBox.innerHTML = '⚠️ <strong>Mode Offline Aktif</strong><br>Koneksi server gagal, namun pesan Anda tetap tercatat dalam *cache* peramban.';
-                resultBox.style.color = '#ffb142';
-                resultBox.style.background = 'rgba(255,177,66,0.1)';
-                resultBox.style.border = '1px solid #ffb142';
+                resultBox.innerHTML = '⚠️ Gagal mengirim pesan.';
+                resultBox.style.display = "block";
             }
-            
-            resultBox.style.display = "block";
-            btn.innerText = originalText; 
-            btn.disabled = false;
-            btn.style.opacity = "1";
+            btn.innerText = "Kirim Pesan Sekarang"; btn.disabled = false;
         });
     </script>
 </body>
