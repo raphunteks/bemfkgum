@@ -1,0 +1,204 @@
+<!-- FILE: views/proker-detail.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Program Kerja | BEM KBMFKG UMI</title>
+    <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <%- include('partials/header.html') %>
+    
+    <main class="container" style="padding-top: 40px; min-height: 80vh; padding-bottom: 80px;">
+        
+        <!-- BREADCRUMB -->
+        <div style="margin-bottom: 20px; font-size: 0.9rem; color: var(--text-muted);">
+            <a href="/informasi#kalender" style="color: var(--accent-neon); text-decoration: none;">Program Kerja</a> 
+            <span style="margin: 0 10px;">&gt;</span> 
+            <span id="bcTitle">Memuat...</span>
+        </div>
+
+        <div id="loaderData" style="text-align: center; padding: 100px 0; color: var(--accent-neon);">
+            <div style="width: 50px; height: 50px; border: 4px solid var(--accent-neon); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            Menarik Data Kegiatan...
+        </div>
+
+        <!-- LAYOUT UTAMA: KIRI KONTEN, KANAN SIDEBAR INFO -->
+        <div class="proker-detail-grid" id="mainDetailContent" style="display: none;">
+            
+            <!-- KONTEN KIRI -->
+            <div class="proker-main-col">
+                <!-- BANNER -->
+                <div class="proker-banner-wrapper glass-card reveal active" style="padding:0; overflow:hidden; margin-bottom:30px; position:relative;">
+                    <img id="detailBanner" src="/img/bemfkgumi.png" style="width:100%; aspect-ratio:21/9; object-fit:cover; display:block;">
+                    <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); padding:40px 30px 20px;">
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <span class="badge-blue" style="font-size:0.7rem; font-weight:bold; padding:4px 10px; border-radius:10px;">PROGRAM KERJA</span>
+                            <span id="detailBadgeStatus" class="badge-neon" style="font-size:0.7rem; font-weight:bold; padding:4px 10px; border-radius:10px;">BERLANGSUNG</span>
+                        </div>
+                        <h1 id="detailTitle" style="font-size:2.5rem; font-weight:900; color:white; line-height:1.2;">Nama Kegiatan</h1>
+                        <p id="detailDept" style="color:var(--text-muted); margin-top:10px; font-size:0.95rem;">Kementerian/Departemen</p>
+                    </div>
+                </div>
+
+                <!-- DESKRIPSI -->
+                <div class="glass-card reveal active" style="margin-bottom: 30px; border-left: 4px solid #3b82f6;">
+                    <h3 style="font-size: 1.4rem; color: #3b82f6; margin-bottom: 20px;">Deskripsi Kegiatan</h3>
+                    <div id="detailDesc" style="color: var(--text-light); line-height: 1.8; font-size: 1rem; white-space: pre-wrap;">
+                        Memuat deskripsi...
+                    </div>
+                </div>
+
+                <!-- KONTRIBUTOR / KEPANITIAAN -->
+                <div class="glass-card reveal active" style="margin-bottom: 30px; border-left: 4px solid #10b981;">
+                    <h3 style="font-size: 1.4rem; color: #10b981; margin-bottom: 20px;">Kontributor Kegiatan</h3>
+                    <div id="detailKepanitiaan">
+                        <!-- JS Injected Tables -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SIDEBAR KANAN -->
+            <div class="proker-sidebar-col">
+                <div class="glass-card reveal active" style="position: sticky; top: 100px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">Informasi Detail</h3>
+                    
+                    <div class="info-block" style="margin-bottom: 20px;">
+                        <span style="color:var(--text-muted); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;">📍 Lokasi</span>
+                        <strong id="detailLokasi" style="color:white; font-size:1.05rem;">-</strong>
+                    </div>
+
+                    <div class="info-block" style="margin-bottom: 20px;">
+                        <span style="color:var(--text-muted); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;">🕒 Waktu Pelaksanaan</span>
+                        <strong id="detailWaktu" style="color:var(--accent-neon); font-size:1.05rem;">-</strong>
+                    </div>
+
+                    <div class="info-block" style="margin-bottom: 30px;">
+                        <span style="color:var(--text-muted); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;">👥 Target Peserta</span>
+                        <strong id="detailTarget" style="color:white; font-size:1.05rem;">-</strong>
+                    </div>
+
+                    <div id="daftarContainer" style="margin-top: 30px;">
+                        <a id="btnDaftar" href="#" target="_blank" class="holo-btn" style="width:100%; text-align:center; padding:15px;">Pendaftaran Belum Dibuka</a>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 10px;">*Tombol aktif jika pendaftaran telah dibuka.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <%- include('partials/footer.html') %>
+
+    <script>
+        const monthNames = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"];
+        
+        function formatTglRange(startStr, endStr) {
+            if(!startStr) return "-";
+            const s = new Date(startStr); const e = endStr ? new Date(endStr) : s;
+            if(s.getTime() === e.getTime()) return `${s.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
+            if(s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) return `${s.getDate()} - ${e.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
+            return `${s.getDate()} ${monthNames[s.getMonth()]} - ${e.getDate()} ${monthNames[e.getMonth()]} ${s.getFullYear()}`;
+        }
+
+        function getAgendaStatus(startStr, endStr) {
+            if(!startStr) return { text: "INFO", class: "badge-gray" };
+            const today = new Date(); today.setHours(0,0,0,0);
+            const s = new Date(startStr); s.setHours(0,0,0,0);
+            const e = endStr ? new Date(endStr) : s; e.setHours(0,0,0,0);
+            if(today >= s && today <= e) return { text: "SEDANG BERLANGSUNG", class: "badge-blue" };
+            if(today < s) return { text: "SEGERA HADIR", class: "badge-neon" };
+            return { text: "SELESAI DILAKSANAKAN", class: "badge-gray" };
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get('id');
+
+            if(!eventId) {
+                document.getElementById('loaderData').innerHTML = "⚠️ ID Kegiatan tidak ditemukan.";
+                return;
+            }
+
+            try {
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                
+                const req = await fetch(apiUrl);
+                if(!req.ok) throw new Error();
+                const res = await req.json();
+
+                const eventData = res.kalender.find(ev => ev.id === eventId);
+                if(!eventData) throw new Error("Kegiatan tidak ditemukan");
+
+                // Populate UI
+                document.getElementById('bcTitle').innerText = eventData.nama || "Detail";
+                document.getElementById('detailTitle').innerText = eventData.nama || "Tanpa Judul";
+                document.getElementById('detailDept').innerText = eventData.dept || "-";
+                document.getElementById('detailDesc').innerText = eventData.deskripsi || "Tidak ada deskripsi tersedia.";
+                document.getElementById('detailLokasi').innerText = eventData.lokasi || "-";
+                document.getElementById('detailWaktu').innerText = formatTglRange(eventData.tglMulai, eventData.tglSelesai);
+                document.getElementById('detailTarget').innerText = eventData.targetPeserta || "-";
+                
+                if(eventData.banner) document.getElementById('detailBanner').src = eventData.banner;
+
+                // Status Badge
+                const statusInfo = getAgendaStatus(eventData.tglMulai, eventData.tglSelesai);
+                const badgeEl = document.getElementById('detailBadgeStatus');
+                badgeEl.innerText = statusInfo.text;
+                badgeEl.className = statusInfo.class; // Will apply custom CSS classes
+                
+                // Button Daftar
+                const btn = document.getElementById('btnDaftar');
+                if(eventData.statusDaftar && eventData.statusDaftar.toLowerCase() === 'buka') {
+                    btn.innerText = "Daftar Sekarang";
+                    btn.href = eventData.linkDaftar || "#";
+                    btn.classList.add('active-daftar');
+                } else {
+                    btn.innerText = "Pendaftaran Belum Dibuka";
+                    btn.href = "javascript:void(0)";
+                    btn.style.background = "rgba(255,255,255,0.1)";
+                    btn.style.color = "var(--text-muted)";
+                    btn.style.boxShadow = "none";
+                    btn.style.borderColor = "transparent";
+                    btn.style.cursor = "not-allowed";
+                }
+
+                // Render Kepanitiaan Tables
+                const panitiaCont = document.getElementById('detailKepanitiaan');
+                panitiaCont.innerHTML = '';
+                if(eventData.kepanitiaan && eventData.kepanitiaan.length > 0) {
+                    eventData.kepanitiaan.forEach(divisi => {
+                        let rowsHtml = '';
+                        if(divisi.anggota) {
+                            divisi.anggota.forEach(ang => {
+                                rowsHtml += `<tr><td style="font-weight:bold; color:var(--text-light); width:60%;">${ang.nama}</td><td style="color:var(--text-muted);">${ang.jabatan}</td></tr>`;
+                            });
+                        }
+                        panitiaCont.innerHTML += `
+                            <div style="margin-bottom: 25px;">
+                                <h4 style="color:white; margin-bottom:10px; font-size:1.1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">${divisi.namaDivisi}</h4>
+                                <table class="panitia-table">
+                                    <thead><tr><th>NAMA</th><th>SEBAGAI</th></tr></thead>
+                                    <tbody>${rowsHtml}</tbody>
+                                </table>
+                            </div>
+                        `;
+                    });
+                } else {
+                    panitiaCont.innerHTML = "<p style='color:var(--text-muted);'>Informasi struktur kepanitiaan belum dipublikasikan.</p>";
+                }
+
+                document.getElementById('loaderData').style.display = 'none';
+                document.getElementById('mainDetailContent').style.display = 'grid';
+
+            } catch (e) {
+                document.getElementById('loaderData').innerHTML = "⚠️ Gagal memuat data kegiatan atau kegiatan tidak ditemukan.";
+            }
+        });
+    </script>
+</body>
+</html>
