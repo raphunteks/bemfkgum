@@ -51,7 +51,6 @@ const defaultOrg = {
         "MEMBANGUN LINGKUNGAN KAMPUS YANG HARMONIS, BERAKHLAK MULIA, DAN BERDAYA SAING.",
         "MENINGKATKAN KAPASITAS DAN KUALITAS KADER MELALUI PENDIDIKAN DAN PELATIHAN BERPRINSIP ISLAMI."
     ],
-    // NEW BIG UPGRADE: Data Arti Kabinet (Editable Database)
     artiKabinet: {
         kata1: "ANANTA",
         arti1: "SEMANGAT PERJUANGAN TANPA BATAS",
@@ -109,44 +108,15 @@ const defaultSejarah = [
     { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
 ];
 
-// REVISI BIG UPGRADE: Data Database Filosofi Sesuai Teks Lengkap Terbaru
 const defaultFilosofi = {
     logo: [
-        { 
-            elemen: "Bulan Bintang", 
-            arti: "Merupakan lambang keislaman.", 
-            makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." 
-        },
-        { 
-            elemen: "Tongkat", 
-            arti: "Merupakan lambang Aesculapius.", 
-            makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." 
-        },
-        { 
-            elemen: "Ular", 
-            arti: "Merupakan lambang kesehatan.", 
-            makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan dosis salah ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." 
-        },
-        { 
-            elemen: "Molar", 
-            arti: "Gigi yang paling sering digunakan dan paling kuat.", 
-            makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah yang ada." 
-        },
-        { 
-            elemen: "Perahu Phinisi", 
-            arti: "Merupakan lambang khas asli Sulawesi Selatan.", 
-            makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." 
-        },
-        { 
-            elemen: "Segitiga", 
-            arti: "Segitiga sama kaki terbalik berwarna ungu.", 
-            makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." 
-        },
-        { 
-            elemen: "Angka 2014", 
-            arti: "Tahun Berdirinya Organisasi.", 
-            makna: "KBMFKG-UMI didirikan pada tahun 2014." 
-        }
+        { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
+        { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." },
+        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan dosis salah ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
+        { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah yang ada." },
+        { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." },
+        { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." },
+        { elemen: "Angka 2014", arti: "Tahun Berdirinya Organisasi.", makna: "KBMFKG-UMI didirikan pada tahun 2014." }
     ],
     warna: [
         { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
@@ -158,7 +128,6 @@ const defaultFilosofi = {
     ]
 };
 
-// ================= NEW: DATABASE NARAHUBUNG (KONTAK RESMI) =================
 const defaultKontak = {
     alamat: "Jl. Pajonga Dg. Ngalle No. 27 A, Pa'batong, Kec. Mamajang, Kota Makassar, Sulawesi Selatan",
     email: "admin@bemkbmfkgumi.com",
@@ -167,8 +136,42 @@ const defaultKontak = {
     mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
 
+// ================= BIG UPGRADE: STRUKTUR DATA KALENDER (DETAIL PROKER) =================
+const defaultKalender = [
+    {
+        id: "evt-123456",
+        nama: "UMI Amal Senyuman (UAS) Vol. IV",
+        dept: "Dept. of Dedication Humanity",
+        tglMulai: "2026-07-24",
+        tglSelesai: "2026-07-26",
+        banner: "/img/bemfkgumi.png",
+        deskripsi: "WELCOME TO UAS VOL. IV\n\nSaatnya membawa nama himpunan menuju arena pengabdian terbesar di FKG UMI! Kegiatan ini merupakan wujud nyata Tridharma Perguruan Tinggi yang menjunjung tinggi nilai kemanusiaan dan kepedulian sosial.",
+        lokasi: "Desa Binaan FKG UMI",
+        targetPeserta: "Seluruh Mahasiswa FKG UMI",
+        statusDaftar: "Buka",
+        linkDaftar: "https://bit.ly/DaftarUASVol4",
+        kepanitiaan: [
+            {
+                namaDivisi: "Inti Kegiatan",
+                anggota: [
+                    { nama: "Fajri", jabatan: "Steering Committee" },
+                    { nama: "Rizky", jabatan: "Ketua Panitia" },
+                    { nama: "Dian", jabatan: "Sekretaris" },
+                    { nama: "Amelia", jabatan: "Bendahara" }
+                ]
+            },
+            {
+                namaDivisi: "Divisi Acara",
+                anggota: [
+                    { nama: "Syauqi", jabatan: "Koordinator" },
+                    { nama: "Ananda", jabatan: "Anggota" }
+                ]
+            }
+        ]
+    }
+];
+
 // ================= ROUTES FRONTEND =================
-// SUPER UPGRADE: Tangkap request root favicon dari Bot/Browser otomatis (contoh: Undici Vercel Bot)
 app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 
@@ -178,6 +181,7 @@ app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
+app.get('/proker-detail', (req, res) => res.render('proker-detail')); // NEW UPGRADE: RUTE DETAIL PROKER
 
 // ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
 const safeParse = (data, fallbackData) => {
@@ -202,7 +206,7 @@ app.get('/api/content', async (req, res) => {
         let team = await redis.get('Team_Data');
         let sejarah = await redis.get('Sejarah_Data');
         let filosofi = await redis.get('Filosofi_Data'); 
-        let kontak = await redis.get('Kontak_Data'); // NEW GET UNTUK NARAHUBUNG
+        let kontak = await redis.get('Kontak_Data');
 
         let parsedOrg = safeParse(org, defaultOrg);
         
@@ -218,16 +222,16 @@ app.get('/api/content', async (req, res) => {
             success: true, 
             org: parsedOrg,
             proker: safeParse(proker, []),
-            kalender: safeParse(kalender, []),
+            kalender: safeParse(kalender, defaultKalender), // NEW UPGRADE: Support Struktur Kalender Baru
             dokumentasi: safeParse(dokumentasi, []),
             settings: safeParse(settings, defaultSettings),
             team: safeParse(team, defaultTeam),
             sejarah: safeParse(sejarah, defaultSejarah),
             filosofi: safeParse(filosofi, defaultFilosofi),
-            kontak: safeParse(kontak, defaultKontak) // NEW SEND UNTUK NARAHUBUNG
+            kontak: safeParse(kontak, defaultKontak)
         });
     } catch (error) {
-        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: [], dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi, kontak: defaultKontak });
+        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: defaultKalender, dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi, kontak: defaultKontak });
     }
 });
 
@@ -236,7 +240,6 @@ app.post('/api/content/:type', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const type = req.params.type;
         
-        // Selalu ubah ke String sebelum dilempar ke Redis untuk mencegah bug serialisasi Object
         const payload = JSON.stringify(req.body); 
         
         if (type === 'org') await redis.set('Org_Structure', payload);
@@ -247,7 +250,7 @@ app.post('/api/content/:type', async (req, res) => {
         else if (type === 'team') await redis.set('Team_Data', payload);
         else if (type === 'sejarah') await redis.set('Sejarah_Data', payload);
         else if (type === 'filosofi') await redis.set('Filosofi_Data', payload); 
-        else if (type === 'kontak') await redis.set('Kontak_Data', payload); // NEW POST UNTUK NARAHUBUNG
+        else if (type === 'kontak') await redis.set('Kontak_Data', payload);
         else return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
@@ -273,11 +276,12 @@ app.get('/api/interactions', async (req, res) => {
     }
 });
 
+// NEW BIG UPGRADE: API PLASMA SUPPORT BUKTI
 app.post('/api/plasma', async (req, res) => {
   try {
-    const { judul, kategori, jenis, isi, setuju } = req.body;
+    const { judul, kategori, jenis, isi, bukti } = req.body; // Setuju tidak disimpan, bukti ditambahkan
     const id = `ASP-${Date.now()}`;
-    const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), timestamp: new Date().toISOString() };
+    const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
     if (redis) await redis.hset('Aspirations', { [id]: JSON.stringify(payload) });
     res.status(200).json({ success: true, message: 'Aspirasi berhasil dikirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
