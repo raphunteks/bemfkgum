@@ -74,6 +74,27 @@
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org')">💾 Simpan Ke Database Redis</button>
                 </div>
                 
+                <!-- NEW BIG UPGRADE: INPUT ARTI KABINET (CRUD) -->
+                <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
+                    <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Arti Nama Kabinet</h3>
+                    <div class="grid-2">
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Suku Kata 1</label>
+                            <input type="text" id="editKata1" class="neo-input" placeholder="Contoh: ANANTA" oninput="db.org.artiKabinet.kata1=this.value">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Arti Suku Kata 1</label>
+                            <input type="text" id="editArti1" class="neo-input" placeholder="Semangat perjuangan tanpa batas" oninput="db.org.artiKabinet.arti1=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Suku Kata 2</label>
+                            <input type="text" id="editKata2" class="neo-input" placeholder="Contoh: ANARDHAYA" oninput="db.org.artiKabinet.kata2=this.value">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Arti Suku Kata 2</label>
+                            <input type="text" id="editArti2" class="neo-input" placeholder="Sesuatu yang abadi" oninput="db.org.artiKabinet.arti2=this.value">
+                        </div>
+                    </div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 10px;">Kesimpulan Makna (Gabungan)</label>
+                    <textarea id="editKesimpulan" class="neo-input" rows="3" placeholder="Dapat diartikan sebagai perjuangan yang tak terbatas..." oninput="db.org.artiKabinet.kesimpulan=this.value"></textarea>
+                </div>
+
                 <label style="color:var(--accent-neon);">Visi Kabinet</label>
                 <textarea id="editVisi" class="neo-input" rows="3" oninput="db.org.visi=this.value"></textarea>
                 
@@ -264,7 +285,10 @@
     </button>
 
     <script>
-        const FALLBACK_ADMIN_ORG = { visi: "", misi: [], pimpinan: [], departemen: [] };
+        const FALLBACK_ADMIN_ORG = { 
+            visi: "", misi: [], pimpinan: [], departemen: [],
+            artiKabinet: { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" }
+        };
         
         // NEW db structure included `kontak`
         let db = { 
@@ -341,7 +365,13 @@
                 const req = await fetch(apiUrl);
                 if(req.ok) {
                     const data = await req.json();
-                    if(data.org) { db.org.visi = data.org.visi || ""; db.org.misi = data.org.misi || []; db.org.pimpinan = data.org.pimpinan || []; db.org.departemen = data.org.departemen || []; }
+                    if(data.org) { 
+                        db.org.visi = data.org.visi || ""; 
+                        db.org.misi = data.org.misi || []; 
+                        db.org.pimpinan = data.org.pimpinan || []; 
+                        db.org.departemen = data.org.departemen || []; 
+                        db.org.artiKabinet = data.org.artiKabinet || { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" };
+                    }
                     if(data.filosofi) { db.filosofi = data.filosofi; }
                     if(data.settings) db.settings = { ...db.settings, ...data.settings };
                     if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak }; // Fetch Kontak
@@ -392,6 +422,14 @@
         }
 
         function renderOrg() {
+            // Render Arti Kabinet
+            if(!db.org.artiKabinet) db.org.artiKabinet = { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" };
+            document.getElementById('editKata1').value = db.org.artiKabinet.kata1 || '';
+            document.getElementById('editArti1').value = db.org.artiKabinet.arti1 || '';
+            document.getElementById('editKata2').value = db.org.artiKabinet.kata2 || '';
+            document.getElementById('editArti2').value = db.org.artiKabinet.arti2 || '';
+            document.getElementById('editKesimpulan').value = db.org.artiKabinet.kesimpulan || '';
+
             document.getElementById('editVisi').value = db.org.visi || '';
             document.getElementById('editMisi').value = (db.org.misi || []).join('\n');
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
