@@ -5,7 +5,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Program Kerja | BEM KBMFKG UMI</title>
+    
+    <!-- ================= SEO EXPERT (DYNAMIC READY) ================= -->
+    <meta name="description" content="Detail lengkap informasi program kerja dan agenda kegiatan dari BEM KBMFKG UMI. Dapatkan update jadwal, lokasi, dan pendaftaran kegiatan mahasiswa.">
+    <meta name="keywords" content="Program Kerja BEM FKG UMI, Agenda BEM FKG, Event FKG UMI, Mahasiswa FKG UMI, Kegiatan Mahasiswa Makassar, Pendaftaran BEM FKG">
+    <meta name="author" content="BEM KBMFKG UMI">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://bemkbmfkgumi.com/proker-detail">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://bemkbmfkgumi.com/proker-detail">
+    <meta property="og:title" content="Detail Program Kerja | BEM KBMFKG UMI">
+    <meta property="og:description" content="Detail lengkap informasi program kerja dan agenda kegiatan dari BEM KBMFKG UMI.">
+    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bemkbmfkgumi.com/proker-detail">
+    <meta property="twitter:title" content="Detail Program Kerja | BEM KBMFKG UMI">
+    <meta property="twitter:description" content="Detail lengkap informasi program kerja dan agenda kegiatan dari BEM KBMFKG UMI.">
+    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+
+    <!-- JSON-LD Schema.org (Event Base) -->
+    <script type="application/ld+json" id="structuredData">
+    {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      "name": "Program Kerja BEM KBMFKG UMI",
+      "description": "Informasi detail kegiatan dan program kerja organisasi.",
+      "url": "https://bemkbmfkgumi.com/proker-detail",
+      "organizer": {
+        "@type": "Organization",
+        "name": "BEM KBMFKG UMI",
+        "url": "https://bemkbmfkgumi.com",
+        "logo": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+      }
+    }
+    </script>
+    <!-- ================= END SEO ================= -->
+
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -163,6 +205,51 @@
                 const eventData = res.kalender.find(ev => ev.id === eventId);
                 if(!eventData) throw new Error("Kegiatan tidak ditemukan");
 
+                // =========================================================
+                // SUPER UPGRADE SEO DYNAMIC INJECTION
+                // Script ini memastikan crawler/search engine dan fitur Share Sosmed
+                // mendapatkan judul & metadata spesifik per kegiatan.
+                // =========================================================
+                const pageTitle = `${eventData.nama} - Program Kerja | BEM KBMFKG UMI`;
+                document.title = pageTitle;
+                
+                // Set Meta Description (Truncate if too long)
+                const descText = eventData.deskripsi ? (eventData.deskripsi.substring(0, 155) + '...') : `Informasi detail kegiatan ${eventData.nama} oleh BEM KBMFKG UMI.`;
+                const pageUrl = `https://bemkbmfkgumi.com/proker-detail?id=${eventId}`;
+                const imgUrl = eventData.banner ? (eventData.banner.startsWith('http') ? eventData.banner : `https://bemkbmfkgumi.com${eventData.banner}`) : 'https://bemkbmfkgumi.com/img/bemfkgumi.png';
+
+                document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
+                document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
+                
+                // Open Graph Tags
+                document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
+                document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
+                document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
+                document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
+                
+                // Twitter Cards
+                document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
+                document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
+                document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
+                document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
+
+                // JSON-LD Schema.org Update
+                const schemaScript = document.getElementById('structuredData');
+                if (schemaScript) {
+                    const schema = JSON.parse(schemaScript.innerHTML);
+                    schema.name = eventData.nama;
+                    schema.description = descText;
+                    schema.url = pageUrl;
+                    if(eventData.tglMulai) schema.startDate = eventData.tglMulai;
+                    if(eventData.tglSelesai) schema.endDate = eventData.tglSelesai;
+                    if(eventData.lokasi) {
+                        schema.location = { "@type": "Place", "name": eventData.lokasi, "address": eventData.lokasi };
+                    }
+                    if(eventData.banner) schema.image = imgUrl;
+                    schemaScript.innerHTML = JSON.stringify(schema);
+                }
+                // ==================== END SEO DYNAMIC ====================
+
                 // Populate UI
                 document.getElementById('bcTitle').innerText = eventData.nama || "Detail Kegiatan";
                 document.getElementById('detailTitle').innerText = eventData.nama || "Tanpa Judul";
@@ -180,7 +267,7 @@
                 badgeEl.innerText = statusInfo.text;
                 badgeEl.className = statusInfo.class; 
                 
-                // SUPER UPGRADE: Button Daftar Logic Fix
+                // Button Daftar Logic Fix
                 const btn = document.getElementById('btnDaftar');
                 if(eventData.statusDaftar && eventData.statusDaftar.toLowerCase() === 'buka') {
                     btn.innerHTML = "✨ Daftar Sekarang &rarr;";
