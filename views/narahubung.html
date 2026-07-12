@@ -3,26 +3,30 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hubungi Kami | BEM FKG UMI</title>
+    <title>Hubungi Kami | BEM KBMFKG UMI</title>
     
     <!-- ================= SEO EXPERT ================= -->
     <meta name="description" content="Hubungi BEM FKG UMI untuk pertanyaan akademik, undangan kegiatan, penawaran kerjasama, atau kunjungi sekretariat kami di Makassar.">
     <meta name="keywords" content="Kontak BEM FKG UMI, Hubungi BEM UMI, Alamat BEM FKG UMI, Kerjasama BEM, Narahubung BEM UMI">
     <meta name="robots" content="index, follow">
-    <meta name="author" content="BEM FKG UMI">
-    <link rel="canonical" href="https://bemfkgumi.vercel.app/narahubung">
+    <meta name="author" content="BEM KBMFKG UMI">
+    <link rel="canonical" href="https://bemkbmfkgumi.com/narahubung">
+    
+    <!-- SUPER UPGRADE: Relative Path Favicon & Stylesheet agar kebal Vercel DNS Issues -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
+    <link rel="stylesheet" href="/css/main.css">
     
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Hubungi Kami | BEM FKG UMI">
+    <meta property="og:title" content="Hubungi Kami | BEM KBMFKG UMI">
     <meta property="og:description" content="Mari bersinergi! Hubungi BEM FKG UMI untuk pertanyaan, undangan, dan kerjasama.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:url" content="https://bemkbmfkgumi.com/narahubung">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Hubungi Kami | BEM FKG UMI">
+    <meta property="twitter:title" content="Hubungi Kami | BEM KBMFKG UMI">
     <meta property="twitter:description" content="Mari bersinergi! Hubungi BEM FKG UMI untuk pertanyaan, undangan, dan kerjasama.">
 
     <!-- JSON-LD Schema.org -->
@@ -32,11 +36,11 @@
       "@type": "ContactPage",
       "mainEntity": {
         "@type": "Organization",
-        "name": "BEM FKG UMI",
+        "name": "BEM KBMFKG UMI",
         "contactPoint": {
           "@type": "ContactPoint",
           "contactType": "customer service",
-          "email": "bemfkgumi@gmail.com",
+          "email": "admin@bemkbmfkgumi.com",
           "areaServed": "ID",
           "availableLanguage": "Indonesian"
         }
@@ -45,7 +49,6 @@
     </script>
     <!-- ================= END SEO ================= -->
 
-    <link rel="stylesheet" href="/css/main.css">
     <style>
         /* Animasi Scroll Reveal */
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -81,6 +84,13 @@
             display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
             color: var(--accent-neon); border: 1px solid var(--glass-border); flex-shrink: 0;
         }
+
+        /* Clickable Link Fixes */
+        .smart-link {
+            color: var(--accent-neon); font-size: 0.95rem; text-decoration: none; 
+            font-weight: 600; display: inline-block; transition: 0.3s;
+        }
+        .smart-link:hover { text-shadow: 0 0 10px var(--accent-glow); text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -141,7 +151,7 @@
                 <div id="formResult" style="margin-top:20px; text-align:center; display:none; padding: 15px; border-radius: 10px; font-weight: bold;"></div>
             </div>
 
-            <!-- RIGHT: INFO & MAPS -->
+            <!-- RIGHT: INFO & MAPS (TERHUBUNG KE DATABASE ADMIN) -->
             <div class="reveal" style="display:flex; flex-direction:column; gap: 30px;">
                 
                 <!-- Info Cards -->
@@ -152,9 +162,8 @@
                         <div class="info-icon">📍</div>
                         <div>
                             <h4 style="color: var(--text-light); margin-bottom: 5px;">Sekretariat Utama</h4>
-                            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
-                                Ruang Kesekretariatan BEM, Gedung Fakultas Kedokteran Gigi Universitas Muslim Indonesia Lt.1.<br>
-                                Jl. Urip Sumoharjo Km. 05, Makassar.
+                            <p id="kontakAlamat" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+                                Memuat alamat dari database...
                             </p>
                         </div>
                     </div>
@@ -163,7 +172,9 @@
                         <div class="info-icon">📧</div>
                         <div>
                             <h4 style="color: var(--text-light); margin-bottom: 5px;">Email Resmi</h4>
-                            <p style="color: var(--accent-neon); font-size: 0.9rem;">bemfkgumi@gmail.com</p>
+                            <a id="kontakEmailLink" href="mailto:admin@bemkbmfkgumi.com" class="smart-link">
+                                <span id="kontakEmail">Memuat email...</span>
+                            </a>
                         </div>
                     </div>
 
@@ -171,7 +182,10 @@
                         <div class="info-icon">📱</div>
                         <div>
                             <h4 style="color: var(--text-light); margin-bottom: 5px;">Humas (WhatsApp)</h4>
-                            <p style="color: var(--accent-neon); font-size: 0.9rem;">+62 812-3456-7890 (Dir. Hubungan Luar)</p>
+                            <a id="kontakWALink" href="#" target="_blank" class="smart-link">
+                                <span id="kontakWA">Memuat nomor...</span> <span id="kontakWAName" style="color: var(--text-muted); font-weight: normal; font-size: 0.8rem;"></span>
+                            </a>
+                            <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 5px;">*Klik nomor di atas untuk langsung terhubung ke WhatsApp Admin</p>
                         </div>
                     </div>
                 </div>
@@ -183,8 +197,9 @@
                             <span style="color: var(--accent-neon);">🗺️</span> Peta Lokasi Kampus
                         </h3>
                     </div>
-                    <div style="flex:1; width: 100%; background: #111;">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.636902152056!2d119.41528749999998!3d-5.161979199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783844392103!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    <div id="kontakMapContainer" style="flex:1; width: 100%; background: #111;">
+                        <!-- Maps Inject via JS -->
+                        <div style="padding: 20px; text-align: center; color: var(--text-muted);">Memuat Peta Interaktif...</div>
                     </div>
                 </div>
                 
@@ -195,8 +210,51 @@
 
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        // --- 1. Animasi Scroll Reveal ---
+        // --- 0. Sinkronisasi Data Narahubung dari Database ---
+        async function fetchKontakData() {
+            try {
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                }
+                const req = await fetch(apiUrl);
+                const res = await req.json();
+                
+                if(res.kontak) {
+                    const k = res.kontak;
+                    // Alamat
+                    document.getElementById('kontakAlamat').innerText = k.alamat;
+                    
+                    // Email
+                    document.getElementById('kontakEmail').innerText = k.email;
+                    document.getElementById('kontakEmailLink').href = `mailto:${k.email}`;
+                    
+                    // WhatsApp Smart Link Generation
+                    document.getElementById('kontakWA').innerText = k.wa;
+                    document.getElementById('kontakWAName').innerText = k.waName ? `(${k.waName})` : '';
+                    
+                    // Membersihkan nomor WA dari spasi/karakter khusus agar bisa jadi link (628...)
+                    const cleanWa = k.wa.replace(/\D/g, ''); 
+                    document.getElementById('kontakWALink').href = `https://wa.me/${cleanWa}`;
+                    
+                    // Map Iframe (Wajib set width/height 100% via CSS override agar responsif)
+                    const mapContainer = document.getElementById('kontakMapContainer');
+                    mapContainer.innerHTML = k.mapsIframe;
+                    const iframe = mapContainer.querySelector('iframe');
+                    if(iframe) {
+                        iframe.style.width = "100%";
+                        iframe.style.height = "100%";
+                    }
+                }
+            } catch(e) {
+                console.warn("API Gagal dimuat, menggunakan template offline.");
+            }
+        }
+
+        // --- 1. Animasi Scroll Reveal & Inisiasi Awal ---
         document.addEventListener('DOMContentLoaded', () => {
+            fetchKontakData(); // Panggil Data Database
+
             const reveals = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => {
@@ -276,7 +334,12 @@
             };
             
             try {
-                const req = await fetch('/api/message', { 
+                let apiUrl = '/api/message';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/message';
+                }
+
+                const req = await fetch(apiUrl, { 
                     method: 'POST', 
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify(payload) 
