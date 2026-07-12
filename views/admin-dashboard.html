@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="/favicon.ico?v=2">
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png?v=2">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png?v=2">
-    <link rel="stylesheet" href="https://bemfkgumi.vercel.app/css/main.css">
+    <link rel="stylesheet" href="https://bemkbmfkgumi.com/css/main.css">
 </head>
 <body>
     
@@ -271,7 +271,7 @@
 
             try {
                 let apiUrl = '/api/admin/auth';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemfkgumi.vercel.app/api/admin/auth';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/admin/auth';
                 const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
                 const data = await res.json();
                 if(data.success) { localStorage.setItem('axa_admin_token', data.token); unlockDashboard(); } else throw new Error();
@@ -303,7 +303,7 @@
         async function loadAllData() {
             try {
                 let apiUrl = '/api/content'; let apiInt = '/api/interactions';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemfkgumi.vercel.app/api/content'; apiInt = 'https://bemfkgumi.vercel.app/api/interactions'; }
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemkbmfkgumi.com/api/content'; apiInt = 'https://bemkbmfkgumi.com/api/interactions'; }
 
                 const req = await fetch(apiUrl);
                 if(req.ok) {
@@ -338,7 +338,7 @@
             }
             try {
                 let apiUrl = `/api/content/${type}`;
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemfkgumi.vercel.app/api/content/${type}`;
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com/api/content/${type}`;
                 const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) });
                 if(req.ok) showToast(`✅ Data Tersimpan!`); else throw new Error();
             } catch(e) { showToast("⚠️ Gagal menyimpan."); }
@@ -481,7 +481,7 @@
         async function deleteData(type, id) {
             if(confirm('Yakin ingin menghapus?')) {
                 try {
-                    let apiUrl = '/api/delete-interaction'; if(window.location.protocol === 'blob:') apiUrl = 'https://bemfkgumi.vercel.app/api/delete-interaction';
+                    let apiUrl = '/api/delete-interaction'; if(window.location.protocol === 'blob:') apiUrl = 'https://bemkbmfkgumi.com/api/delete-interaction';
                     await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) });
                     if(type==='aspirasi') aspirasiData = aspirasiData.filter(x => x.id !== id); else pesanData = pesanData.filter(x => x.id !== id);
                     renderTabel(); showToast('✅ Data dihapus.');
