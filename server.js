@@ -151,6 +151,10 @@ const defaultFilosofi = {
 };
 
 // ================= ROUTES FRONTEND =================
+// SUPER UPGRADE: Tangkap request root favicon dari Bot/Browser otomatis (contoh: Undici Vercel Bot)
+app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
+app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
+
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
 app.get('/informasi', (req, res) => res.render('informasi'));
