@@ -1,11 +1,17 @@
-<!-- FILE: views/ourteam.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Developer Team | BEM KBMFKG UMI</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
+    <style>
+        /* Tambahan style untuk memastikan loading spinner tampil dengan baik */
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
 </head>
 <body>
     <%- include('partials/header.html') %>
@@ -29,8 +35,8 @@
 
     <%- include('partials/footer.html') %>
 
+    <!-- Skrip Logic Aplikasi -->
     <script>
-        // Fallback sama dengan yang di server.js (Berjaga-jaga saat API delay)
         const FALLBACK_TEAM = [
             { category: "FullStack Development", members: [ { nama: "drg. M. Aksa Arsyad, S.KG", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/axaaxyz_01" } ] },
             { category: "Backend Development", members: [ { nama: "Silvy Ananda", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/oenandaa" }, { nama: "Muh. Sauqi Zahran. B", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/sauqizhran" } ] },
@@ -64,9 +70,7 @@
             cont.innerHTML = '';
 
             teamData.forEach((cat, index) => {
-                // Tunda animasi per kategori
                 const delay = index * 0.2;
-                
                 let html = `
                     <div class="team-cat-header reveal active" style="animation-delay: ${delay}s">
                         <div class="team-cat-icon">
@@ -101,10 +105,13 @@
                     });
                 }
                 
-                html += `</div>`; // Close grid
+                html += `</div>`;
                 cont.innerHTML += html;
             });
         }
     </script>
+
+    <!-- Upgrade: Integrasi sistem proteksi devtools -->
+    <script src="/js/protect-devtools.js"></script>
 </body>
 </html>
