@@ -94,15 +94,45 @@
             <div class="gallery-grid" id="galleryContainer"></div>
         </section>
 
-        <!-- TAB 4: PLASMA (ASPIRASI) -->
+        <!-- TAB 4: PLASMA (ASPIRASI) NEW UPGRADE UI -->
         <section id="plasma" class="tab-content">
             <div class="glass-card" style="max-width: 700px; margin: 0 auto; border-top: 3px solid var(--accent-neon);">
                 <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 30px;">P.L.A.S.M.A</h2>
                 <form id="plasmaForm">
-                    <input type="text" id="judul" class="neo-input" placeholder="Judul Aspirasi" required>
-                    <select id="kategori" class="neo-input" required><option value="" disabled selected>Pilih Kategori</option><option value="Akademik">Akademik</option><option value="Fasilitas">Fasilitas</option><option value="Lainnya">Lainnya</option></select>
-                    <div style="margin-bottom: 15px; display:flex; gap:10px;"><label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> Saran</label><label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> Pengaduan</label></div>
-                    <textarea id="isi" class="neo-input" rows="4" placeholder="Isi Aspirasi..." required></textarea>
+                    
+                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Judul Aspirasi <span style="color:#ef4444">*</span></label>
+                    <input type="text" id="judul" class="neo-input" placeholder="Tuliskan judul singkat aspirasi Anda..." required>
+            
+                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Kategori Aspirasi <span style="color:#ef4444">*</span></label>
+                    <select id="kategori" class="neo-input" required>
+                        <option value="" disabled selected>1. Pilih Kategori</option>
+                        <option value="Akademik">2. Akademik</option>
+                        <option value="Fasilitas Kampus">3. Fasilitas Kampus</option>
+                        <option value="Keuangan/UKT">4. Keuangan/UKT</option>
+                        <option value="Organisasi">5. Organisasi</option>
+                        <option value="Pelayanan Kampus">6. Pelayanan Kampus</option>
+                        <option value="Lainnya">7. Lainnya</option>
+                    </select>
+            
+                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Jenis Aspirasi <span style="color:#ef4444">*</span></label>
+                    <div style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap: wrap;">
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> 1. Saran</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> 2. Pengaduan</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Kritik"> 3. Kritik</label>
+                        <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> 4. Permintaan Info</label>
+                    </div>
+            
+                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Isi Aspirasi <span style="color:#ef4444">*</span></label>
+                    <textarea id="isi" class="neo-input" rows="5" placeholder="Ceritakan detail aspirasi Anda di sini..." required></textarea>
+            
+                    <label style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; display: block; font-weight: bold;">Bukti Pendukung <span style="color:var(--text-muted); font-weight:normal;">(Opsional - JPG/PNG/PDF)</span></label>
+                    <input type="file" id="bukti" class="neo-input" accept="image/*,.pdf" style="padding: 10px; color: var(--text-muted);">
+            
+                    <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border-left: 3px solid var(--accent-neon);">
+                        <input type="checkbox" id="setuju" required style="width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent-neon); cursor: pointer;">
+                        <label for="setuju" style="color: var(--text-light); font-size: 0.9rem; line-height: 1.5; cursor: pointer;">Saya bersedia dihubungi oleh pihak Admin BEM FKG UMI apabila diperlukan klarifikasi lebih lanjut mengenai aspirasi ini <span style="color:#ef4444">*</span></label>
+                    </div>
+            
                     <button type="submit" class="holo-btn" style="width: 100%;">Kirim Aspirasi</button>
                 </form>
                 <div id="plasmaResult" style="margin-top:20px; text-align:center; display:none; padding:10px; border-radius:10px;"></div>
@@ -271,6 +301,63 @@
             if(events.length > 0) {
                 events.forEach(e => { cont.innerHTML += `<div class="agenda-item" style="background: rgba(0, 210, 255, 0.05); border-left: 4px solid var(--accent-neon); padding: 20px; border-radius: 10px; margin-bottom: 15px;"><span style="background: var(--accent-neon); color: var(--bg-dark); font-size: 0.7rem; padding: 3px 8px; border-radius: 20px; font-weight: bold; margin-bottom: 10px; display: inline-block;">AGENDA BEM</span><h4 style="color:var(--text-light); margin: 5px 0 10px; font-size: 1.2rem;">${e.nama}</h4><p style="font-size:0.85rem; color:var(--text-muted);">🏢 ${e.dept}</p></div>`; });
             } else { cont.innerHTML = `<div style="text-align:center; padding: 40px 0; opacity: 0.5;">📭 Tidak ada agenda.</div>`; }
+        }
+
+        // ====== NEW UPGRADE: PENGIRIMAN DATA FORM PLASMA ======
+        document.getElementById('plasmaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerText = "Mengirim..."; btn.disabled = true;
+
+            const judul = document.getElementById('judul').value;
+            const kategori = document.getElementById('kategori').value;
+            const jenis = document.querySelector('input[name="jenis"]:checked').value;
+            const isi = document.getElementById('isi').value;
+            const setuju = document.getElementById('setuju').checked;
+            
+            // Konversi file jika opsional Bukti Pendukung diisi
+            let buktiBase64 = null;
+            const fileInput = document.getElementById('bukti');
+            if(fileInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.readAsDataURL(fileInput.files[0]);
+                reader.onload = async () => {
+                    buktiBase64 = reader.result;
+                    await kirimDataPlasma(judul, kategori, jenis, isi, setuju, buktiBase64, btn);
+                }
+            } else {
+                await kirimDataPlasma(judul, kategori, jenis, isi, setuju, buktiBase64, btn);
+            }
+        });
+
+        async function kirimDataPlasma(judul, kategori, jenis, isi, setuju, bukti, btn) {
+            try {
+                let apiUrl = '/api/plasma';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/plasma';
+                
+                const req = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ judul, kategori, jenis, isi, setuju, bukti })
+                });
+                const res = await req.json();
+                
+                const resultDiv = document.getElementById('plasmaResult');
+                resultDiv.style.display = 'block';
+                if(res.success) {
+                    resultDiv.style.background = 'rgba(16, 185, 129, 0.2)';
+                    resultDiv.style.color = '#10b981';
+                    resultDiv.innerText = "✅ Aspirasi berhasil dikirim!";
+                    document.getElementById('plasmaForm').reset();
+                } else { throw new Error(); }
+            } catch (error) {
+                const resultDiv = document.getElementById('plasmaResult');
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+                resultDiv.style.color = '#ef4444';
+                resultDiv.innerText = "⚠️ Gagal mengirim aspirasi. Coba lagi.";
+            }
+            btn.innerText = "Kirim Aspirasi"; btn.disabled = false;
         }
     </script>
 </body>
