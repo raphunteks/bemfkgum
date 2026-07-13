@@ -136,10 +136,11 @@ const defaultKontak = {
     mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
 
-// ================= BIG UPGRADE: STRUKTUR DATA KALENDER (DETAIL PROKER) =================
+// ================= BIG UPGRADE: STRUKTUR DATA KALENDER DENGAN SLUG =================
 const defaultKalender = [
     {
-        id: "evt-123456",
+        id: "umi-amal-senyuman-uas-vol-iv", // Disinkronkan dengan slug
+        slug: "umi-amal-senyuman-uas-vol-iv",
         nama: "UMI Amal Senyuman (UAS) Vol. IV",
         dept: "Dept. of Dedication Humanity",
         tglMulai: "2026-07-24",
@@ -181,7 +182,10 @@ app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
-app.get('/proker-detail', (req, res) => res.render('proker-detail')); // NEW UPGRADE: RUTE DETAIL PROKER
+
+// SUPER BIG UPGRADE: RUTE DYNAMIC SEO URL PROKER DETAIL (/proker-detail/slug-kegiatan)
+app.get('/proker-detail', (req, res) => res.render('proker-detail')); // Fallback old ?id= route
+app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail')); // New Custom Link route
 
 // ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
 const safeParse = (data, fallbackData) => {
@@ -210,7 +214,6 @@ app.get('/api/content', async (req, res) => {
 
         let parsedOrg = safeParse(org, defaultOrg);
         
-        // Auto Restore Misi & Arti Kabinet jika terhapus dari Database
         if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) {
             parsedOrg.misi = defaultOrg.misi;
         }
@@ -222,7 +225,7 @@ app.get('/api/content', async (req, res) => {
             success: true, 
             org: parsedOrg,
             proker: safeParse(proker, []),
-            kalender: safeParse(kalender, defaultKalender), // NEW UPGRADE: Support Struktur Kalender Baru
+            kalender: safeParse(kalender, defaultKalender),
             dokumentasi: safeParse(dokumentasi, []),
             settings: safeParse(settings, defaultSettings),
             team: safeParse(team, defaultTeam),
@@ -240,7 +243,27 @@ app.post('/api/content/:type', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const type = req.params.type;
         
-        const payload = JSON.stringify(req.body); 
+        let bodyData = req.body; 
+        
+        // SUPER BIG UPGRADE: Auto-Generate & Sanitize Slug Kalender (SEO URL)
+        if (type === 'kalender' && Array.isArray(bodyData)) {
+            bodyData.forEach(evt => {
+                let textToSlug = evt.slug && evt.slug.trim() !== '' ? evt.slug : (evt.nama || evt.id);
+                let safeSlug = textToSlug.toString().toLowerCase()
+                    .replace(/\s+/g, '-')           // Replace spasi menjadi -
+                    .replace(/[^\w\-]+/g, '')       // Hapus special chars
+                    .replace(/\-\-+/g, '-')         // Hapus multiple dash
+                    .replace(/^-+/, '')             // Trim depan
+                    .replace(/-+$/, '');            // Trim belakang
+                
+                evt.slug = safeSlug;
+                
+                // MENGGANTI ID menjadi Slug agar semua komponen frontend otomatis link ke URL Path yg Estetik
+                evt.id = safeSlug; 
+            });
+        }
+
+        const payload = JSON.stringify(bodyData); 
         
         if (type === 'org') await redis.set('Org_Structure', payload);
         else if (type === 'proker') await redis.set('Proker_Data', payload);
@@ -276,10 +299,9 @@ app.get('/api/interactions', async (req, res) => {
     }
 });
 
-// NEW BIG UPGRADE: API PLASMA SUPPORT BUKTI
 app.post('/api/plasma', async (req, res) => {
   try {
-    const { judul, kategori, jenis, isi, bukti } = req.body; // Setuju tidak disimpan, bukti ditambahkan
+    const { judul, kategori, jenis, isi, bukti } = req.body;
     const id = `ASP-${Date.now()}`;
     const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
     if (redis) await redis.hset('Aspirations', { [id]: JSON.stringify(payload) });
