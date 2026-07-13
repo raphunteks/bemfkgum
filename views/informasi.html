@@ -6,19 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT ================= -->
+    <!-- ================= SEO GOLD STANDARD GSC ================= -->
     <meta name="description" content="Akses cepat untuk program kerja, kalender kegiatan, galeri dokumentasi, dan layanan PLASMA (Penyaluran Aspirasi Mahasiswa) resmi dari BEM KBMFKG UMI.">
     <meta name="keywords" content="Informasi BEM FKG UMI, Proker BEM FKG, Kalender BEM FKG UMI, Aspirasi Mahasiswa FKG UMI, PLASMA BEM FKG">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://bemkbmfkgumi.com/informasi">
     
+    <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Preload CSS Utama untuk mempercepat FCP -->
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/main.css">
+    
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemkbmfkgumi.com/informasi">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
     <meta property="og:title" content="Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI">
     <meta property="og:description" content="Akses program kerja, kalender kegiatan, galeri dokumentasi, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -27,21 +38,37 @@
     <meta property="twitter:description" content="Akses program kerja, kalender kegiatan, galeri dokumentasi, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- JSON-LD Schema.org -->
+    <!-- ADVANCED JSON-LD Schema.org (CollectionPage, Breadcrumb) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Pusat Informasi & Layanan PLASMA",
-      "url": "https://bemkbmfkgumi.com/informasi",
-      "description": "Layanan publik, informasi program kerja, kalender, dan sistem aspirasi mahasiswa BEM KBMFKG UMI."
-    }
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Pusat Informasi & Layanan PLASMA",
+        "url": "https://bemkbmfkgumi.com/informasi",
+        "description": "Layanan publik, informasi program kerja, kalender, dan sistem aspirasi mahasiswa BEM KBMFKG UMI."
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Beranda",
+          "item": "https://bemkbmfkgumi.com/"
+        },{
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Pusat Informasi",
+          "item": "https://bemkbmfkgumi.com/informasi"
+        }]
+      }
+    ]
     </script>
     <!-- ================= END SEO ================= -->
 
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
-    <link rel="stylesheet" href="/css/main.css">
     
     <!-- SCRIPT PROTECT DEVTOOLS & RIGHT CLICK -->
     <script src="/js/protect-devtools.js"></script>
@@ -55,29 +82,29 @@
             <h1 style="font-size: 3rem; font-weight: 900;">Pusat <span style="color: var(--accent-neon);">Informasi</span></h1>
         </div>
 
-        <nav class="tab-nav reveal" id="tabNavMenu" style="transition-delay: 0.1s;">
-            <button class="tab-btn active" onclick="switchTab('proker')">Program Kerja</button>
-            <button class="tab-btn" onclick="switchTab('kalender')">Kalender Proker</button>
+        <nav class="tab-nav reveal" id="tabNavMenu" style="transition-delay: 0.1s;" role="tablist">
+            <button class="tab-btn active" onclick="switchTab('proker')" role="tab" aria-selected="true">Program Kerja</button>
+            <button class="tab-btn" onclick="switchTab('kalender')" role="tab" aria-selected="false">Kalender Proker</button>
             <!-- SUPER UPGRADE: Tab Timeline Baru Ditambahkan -->
-            <button class="tab-btn" onclick="switchTab('timeline')">Timeline Proker</button>
-            <button class="tab-btn" onclick="switchTab('galeri')">Dokumentasi</button>
-            <button class="tab-btn" onclick="switchTab('plasma')">PLASMA (Aspirasi)</button>
+            <button class="tab-btn" onclick="switchTab('timeline')" role="tab" aria-selected="false">Timeline Proker</button>
+            <button class="tab-btn" onclick="switchTab('galeri')" role="tab" aria-selected="false">Dokumentasi</button>
+            <button class="tab-btn" onclick="switchTab('plasma')" role="tab" aria-selected="false">PLASMA (Aspirasi)</button>
         </nav>
 
         <!-- TAB 1: PROKER -->
-        <section id="proker" class="tab-content active" style="max-width: 900px; margin: 0 auto;">
+        <section id="proker" class="tab-content active" style="max-width: 900px; margin: 0 auto;" role="tabpanel">
             <div id="prokerContainer"><div style="text-align:center;">Mensinkronisasi data program kerja...</div></div>
         </section>
 
         <!-- TAB 2: KALENDER & PROKER DETAIL -->
-        <section id="kalender" class="tab-content">
+        <section id="kalender" class="tab-content" role="tabpanel">
             <div class="calendar-wrapper">
                 <!-- Sisi Kiri: Grid Kalender -->
                 <div class="glass-card" style="padding: 30px; border-top: 4px solid var(--accent-neon); align-self: start;">
                     <div class="calendar-header" style="margin-bottom: 30px;">
-                        <button class="action-btn" onclick="gantiBulan(-1)" style="font-size: 1.2rem; padding: 5px 15px; border-radius: 10px;">&larr;</button>
+                        <button class="action-btn" onclick="gantiBulan(-1)" style="font-size: 1.2rem; padding: 5px 15px; border-radius: 10px;" aria-label="Bulan sebelumnya">&larr;</button>
                         <span id="namaBulanTahun" style="font-size: 1.5rem; letter-spacing: 2px;">JULI 2026</span>
-                        <button class="action-btn" onclick="gantiBulan(1)" style="font-size: 1.2rem; padding: 5px 15px; border-radius: 10px;">&rarr;</button>
+                        <button class="action-btn" onclick="gantiBulan(1)" style="font-size: 1.2rem; padding: 5px 15px; border-radius: 10px;" aria-label="Bulan selanjutnya">&rarr;</button>
                     </div>
                     <div class="calendar-grid" id="calGrid" style="gap: 15px;"></div>
                 </div>
@@ -88,7 +115,7 @@
                     <h3 style="border-bottom: 1px solid var(--border-light); padding-bottom: 15px; margin-bottom: 20px; font-size: 1.5rem;" id="agendaTglFormat">
                         Semua Agenda Bulan Ini
                     </h3>
-                    <div id="agendaContent">
+                    <div id="agendaContent" aria-live="polite">
                         <div style="text-align:center;">Memuat agenda...</div>
                     </div>
                 </div>
@@ -96,7 +123,7 @@
         </section>
 
         <!-- TAB BARU: TIMELINE PROKER VERTICAL (UNIKOM STYLE) -->
-        <section id="timeline" class="tab-content">
+        <section id="timeline" class="tab-content" role="tabpanel">
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
                 <h2 style="font-size: 2.5rem; color: var(--text-light);">Timeline <span style="color: var(--accent-neon);">Program Kerja</span></h2>
                 <p style="color: var(--text-muted); margin-top: 10px;">Perjalanan program kerja dan agenda BEM selama satu periode kepengurusan.</p>
@@ -109,21 +136,22 @@
         </section>
 
         <!-- TAB 3: DOKUMENTASI (GALERI) -->
-        <section id="galeri" class="tab-content">
+        <section id="galeri" class="tab-content" role="tabpanel">
             <div class="gallery-grid" id="galleryContainer"></div>
         </section>
 
         <!-- TAB 4: PLASMA (ASPIRASI) -->
-        <section id="plasma" class="tab-content">
+        <!-- FIX AKSESIBILITAS: Penambahan atribut `for` pada label yang menghubungkan langsung ke id input -->
+        <section id="plasma" class="tab-content" role="tabpanel">
             <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-top: 3px solid var(--accent-neon);">
                 <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 10px; font-size: 2.5rem;">P.L.A.S.M.A</h2>
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Pusat Layanan Aspirasi Mahasiswa</p>
                 
                 <form id="plasmaForm">
-                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Judul Aspirasi <span style="color:#ef4444">*</span></label>
+                    <label for="judul" style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Judul Aspirasi <span style="color:#ef4444">*</span></label>
                     <input type="text" id="judul" class="neo-input" placeholder="Tuliskan judul singkat aspirasi Anda..." required>
             
-                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Kategori Aspirasi <span style="color:#ef4444">*</span></label>
+                    <label for="kategori" style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Kategori Aspirasi <span style="color:#ef4444">*</span></label>
                     <select id="kategori" class="neo-input" required>
                         <option value="" disabled selected>1. Pilih kategori</option>
                         <option value="Akademik">2. Akademik</option>
@@ -134,18 +162,20 @@
                         <option value="Lainnya">7. Lainnya</option>
                     </select>
             
-                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 12px; display: block; font-weight: bold;">Jenis Aspirasi <span style="color:#ef4444">*</span></label>
-                    <div style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap: wrap;">
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> 1. Saran</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> 2. Pengaduan</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Kritik"> 3. Kritik</label>
-                        <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> 4. Permintaan Info</label>
-                    </div>
+                    <fieldset style="border:none; padding:0; margin-bottom: 20px;">
+                        <legend style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 12px; display: block; font-weight: bold;">Jenis Aspirasi <span style="color:#ef4444">*</span></legend>
+                        <div style="display:flex; gap:10px; flex-wrap: wrap;">
+                            <label class="clay-badge"><input type="radio" name="jenis" value="Saran" checked> 1. Saran</label>
+                            <label class="clay-badge"><input type="radio" name="jenis" value="Pengaduan"> 2. Pengaduan</label>
+                            <label class="clay-badge"><input type="radio" name="jenis" value="Kritik"> 3. Kritik</label>
+                            <label class="clay-badge"><input type="radio" name="jenis" value="Permintaan Informasi"> 4. Permintaan Info</label>
+                        </div>
+                    </fieldset>
             
-                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Isi Aspirasi <span style="color:#ef4444">*</span></label>
+                    <label for="isi" style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Isi Aspirasi <span style="color:#ef4444">*</span></label>
                     <textarea id="isi" class="neo-input" rows="6" placeholder="Ceritakan detail aspirasi Anda di sini..." required></textarea>
             
-                    <label style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Bukti Pendukung <span style="color:var(--text-muted); font-weight:normal;">(Opsional - JPG/PNG/PDF)</span></label>
+                    <label for="bukti" style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 8px; display: block; font-weight: bold;">Bukti Pendukung <span style="color:var(--text-muted); font-weight:normal;">(Opsional - JPG/PNG/PDF)</span></label>
                     <input type="file" id="bukti" class="neo-input" accept="image/*,.pdf" style="padding: 12px; color: var(--text-muted); cursor: pointer;">
             
                     <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 30px; background: var(--bg-dark-overlay); padding: 18px; border-radius: 12px; border-left: 4px solid var(--accent-neon);">
@@ -155,18 +185,19 @@
             
                     <button type="submit" class="holo-btn" style="width: 100%; font-size: 1.1rem; padding: 16px;">Kirim Aspirasi</button>
                 </form>
-                <div id="plasmaResult" style="margin-top:20px; text-align:center; display:none; padding:15px; border-radius:10px; font-weight: bold;"></div>
+                <div id="plasmaResult" style="margin-top:20px; text-align:center; display:none; padding:15px; border-radius:10px; font-weight: bold;" aria-live="polite"></div>
             </div>
         </section>
 
     </main>
 
     <!-- Modal Pop-up Dokumentasi -->
-    <div class="modal-overlay" id="docModal">
+    <div class="modal-overlay" id="docModal" role="dialog" aria-modal="true" aria-labelledby="docTitle">
         <div class="modal-content-box" style="padding: 0; overflow: hidden;">
-            <button class="modal-close" onclick="document.getElementById('docModal').classList.remove('active')">X</button>
+            <button class="modal-close" onclick="document.getElementById('docModal').classList.remove('active')" aria-label="Tutup Galeri">X</button>
             <div style="width: 100%; max-height: 400px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg-dark-heavy);">
-                <img id="docImg" src="" style="width:100%; object-fit: contain; max-height: 400px;">
+                <!-- FIX CLS -->
+                <img id="docImg" src="" style="width:100%; object-fit: contain; max-height: 400px;" alt="Dokumentasi" width="650" height="400" loading="lazy">
             </div>
             <div style="padding: 30px;">
                 <h2 id="docTitle" style="color: var(--accent-neon); margin-bottom: 5px;">Judul Kegiatan</h2>
@@ -208,11 +239,17 @@
 
         // SMART ROUTING: Switch Tab secara dinamis berdasarkan navigasi hash URL
         function switchTab(t) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
             const targetBtn = document.querySelector(`.tab-btn[onclick="switchTab('${t}')"]`);
-            if(targetBtn) targetBtn.classList.add('active');
+            if(targetBtn) {
+                targetBtn.classList.add('active');
+                targetBtn.setAttribute('aria-selected', 'true');
+            }
             
             const targetSection = document.getElementById(t);
             if(targetSection) {
@@ -251,7 +288,7 @@
             const pCont = document.getElementById('prokerContainer'); pCont.innerHTML = '';
             if(prokerData && prokerData.length > 0) {
                 prokerData.forEach(p => {
-                    let listHtml = p.list.map(l => `<li style="margin-bottom:12px; display:flex; gap:10px;"><span style="color:var(--accent-neon);">✔️</span> <span>${l}</span></li>`).join('');
+                    let listHtml = p.list.map(l => `<li style="margin-bottom:12px; display:flex; gap:10px;"><span style="color:var(--accent-neon);" aria-hidden="true">✔️</span> <span>${l}</span></li>`).join('');
                     pCont.innerHTML += `<div class="glass-card" style="margin-bottom: 25px; padding: 30px; border-left: 4px solid var(--accent-neon);"><h3 style="color: var(--text-light); margin-bottom:15px; font-size: 1.4rem;">${p.dept}</h3><ul style="list-style:none; padding-left:0; color: var(--text-muted);">${listHtml}</ul></div>`;
                 });
             } else { pCont.innerHTML = `<div style="text-align:center; color: var(--text-muted);">Data program kerja belum dipublikasikan Admin.</div>`; }
@@ -263,7 +300,8 @@
                 window.globalDocData = docData; 
                 docData.forEach((d, i) => {
                     const fallbackImg = d.foto ? d.foto : '/img/bemfkgumi.png';
-                    gCont.innerHTML += `<div class="gallery-card" onclick="openDoc(${i})"><div style="width: 100%; height: 100%; background: var(--bg-dark-overlay); display:flex; align-items:center; justify-content:center;"><img src="${fallbackImg}" class="gallery-img"></div><div class="gallery-info" style="background: linear-gradient(to top, var(--bg-dark-heavy), transparent);"><h4 style="color: var(--accent-neon);">${d.judul}</h4><span style="font-size:0.85rem; color: var(--text-muted);">${formatTgl(d.tanggal)}</span></div></div>`;
+                    // FIX CLS: add loading="lazy" for gallery grid
+                    gCont.innerHTML += `<div class="gallery-card" onclick="openDoc(${i})"><div style="width: 100%; height: 100%; background: var(--bg-dark-overlay); display:flex; align-items:center; justify-content:center;"><img src="${fallbackImg}" class="gallery-img" alt="${d.judul}" loading="lazy" width="300" height="225"></div><div class="gallery-info" style="background: linear-gradient(to top, var(--bg-dark-heavy), transparent);"><h4 style="color: var(--accent-neon);">${d.judul}</h4><span style="font-size:0.85rem; color: var(--text-muted);">${formatTgl(d.tanggal)}</span></div></div>`;
                 });
             } else { gCont.innerHTML = `<div style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Belum ada dokumentasi.</div>`; }
         }
@@ -301,7 +339,7 @@
                     return checkDate >= eStart && checkDate <= eEnd;
                 });
                 
-                gridHTML += `<div class="calendar-day ${isEvent ? 'has-event' : ''}" onclick="pilihTanggal(${d}, ${month}, ${year}, this)" id="day-${d}">${d}</div>`;
+                gridHTML += `<div class="calendar-day ${isEvent ? 'has-event' : ''}" onclick="pilihTanggal(${d}, ${month}, ${year}, this)" id="day-${d}" role="button" tabindex="0">${d}</div>`;
             }
             document.getElementById('calGrid').innerHTML = gridHTML;
         }
@@ -373,10 +411,10 @@
                             <span class="${status.class}">${status.text}</span>
                         </div>
                         <h4 style="color:var(--text-light); margin: 0 0 5px; font-size: 1.3rem;">${e.nama}</h4>
-                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 15px;"><svg viewBox="0 0 24 24" style="width:14px; fill:currentColor; vertical-align:-2px; margin-right:4px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg> ${formatTglRange(e.tglMulai, e.tglSelesai)}</p>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 15px;"><svg viewBox="0 0 24 24" style="width:14px; fill:currentColor; vertical-align:-2px; margin-right:4px;" aria-hidden="true"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg> ${formatTglRange(e.tglMulai, e.tglSelesai)}</p>
                         <p style="font-size:0.9rem; color:var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 10px;">🏢 ${e.dept}</p>
                         
-                        <a href="/proker-detail/${e.slug || e.id}" class="agenda-btn">Detail Kegiatan &rarr;</a>
+                        <a href="/proker-detail/${e.slug || e.id}" class="agenda-btn" aria-label="Lihat detail program kerja ${e.nama}">Detail Kegiatan &rarr;</a>
                     </div>`; 
                 });
             } else { 
@@ -411,28 +449,29 @@
                 if(status.text.includes("BERLANGSUNG")) badgeStyle = "background: #2563eb; color: #ffffff; border: 1px solid #60a5fa;";
                 else if(status.text.includes("HADIR")) badgeStyle = "background: var(--accent-neon); color: #000000; border: 1px solid var(--accent-glow);";
 
+                // FIX CLS: Add width height and lazy loading to timeline banner images
                 cont.innerHTML += `
                     <div class="v-timeline-item reveal active" style="transition-delay: ${idx * 0.15}s">
                         <div class="v-timeline-dot"></div>
                         <div class="v-timeline-card">
                             <div class="v-tl-banner">
                                 <div class="v-tl-badge" style="${badgeStyle}">${status.text}</div>
-                                <img src="${bannerImg}" alt="${e.nama}">
+                                <img src="${bannerImg}" alt="Banner ${e.nama}" width="400" height="170" loading="lazy">
                             </div>
                             <div class="v-tl-meta">
                                 <span style="color: var(--accent-neon);">${e.dept || 'BEM KBMFKG UMI'}</span>
-                                <span style="color: var(--border-light);">•</span>
+                                <span style="color: var(--border-light);" aria-hidden="true">•</span>
                                 <span>${formatWaktu}</span>
                             </div>
                             <h3 class="v-tl-title">${e.nama}</h3>
                             <p class="v-tl-desc">🔥 ${shortDesc}</p>
-                            <a href="/proker-detail/${e.slug || e.id}" class="v-tl-btn">Lihat Detail &rarr;</a>
+                            <a href="/proker-detail/${e.slug || e.id}" class="v-tl-btn" aria-label="Lihat detail timeline ${e.nama}">Lihat Detail &rarr;</a>
                         </div>
                     </div>
                 `;
             });
             // Float Clearfix
-            cont.innerHTML += `<div style="clear:both;"></div>`;
+            cont.innerHTML += `<div style="clear:both;" aria-hidden="true"></div>`;
         }
 
         // ====== PENGIRIMAN DATA FORM PLASMA ======
