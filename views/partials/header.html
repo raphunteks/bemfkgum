@@ -1,9 +1,21 @@
+<!-- FILE: views/partials/header.html -->
 <header>
     <nav itemscope itemtype="https://schema.org/SiteNavigationElement" aria-label="Main Navigation">
         <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI" style="text-decoration: none;">
-            <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="logo" style="height: 45px; filter: drop-shadow(0 0 12px rgba(0,229,255,0.6));">
-            <span style="font-weight: 900; font-size: 1.3rem; letter-spacing: 1px; color: white; text-shadow: 0 0 10px rgba(0,229,255,0.3);">BEM KBMFKG UMI</span>
+            <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="logo" style="height: 45px; filter: drop-shadow(0 0 12px var(--accent-glow));">
+            <span style="font-weight: 900; font-size: 1.3rem; letter-spacing: 1px; color: var(--text-light); text-shadow: 0 0 10px var(--accent-glow);">BEM KBMFKG UMI</span>
         </a>
+        
+        <!-- THEME TOGGLE SWITCH (Light/Dark Mode) -->
+        <div class="theme-toggle-container" style="display: flex; align-items: center; gap: 8px; margin-left: auto; margin-right: 20px;">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));">
+                <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <label class="theme-switch" aria-label="Toggle Dark Mode">
+                <input type="checkbox" id="checkboxTheme">
+                <span class="theme-slider"></span>
+            </label>
+        </div>
         
         <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" onclick="document.querySelector('.nav-links').classList.toggle('active')" style="background:none; border:none; padding:0; cursor:pointer;">
             <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
@@ -42,44 +54,30 @@
 </header>
 
 <script>
-    // Fitur toggle menu dropdown khusus tampilan Mobile
     function toggleMobileMenu(element) {
         if(window.innerWidth <= 768) {
             element.classList.toggle('mobile-expand');
         }
     }
 
-    // Smart Script: Mendeteksi Hash URL (#proker, #struktur, #filosofi dll)
     function handleHashNavigation() {
         const hash = window.location.hash.substring(1);
         if (hash) {
-            // 1. Logika untuk halaman Informasi (Berpindah Tab)
             if (typeof switchTab === 'function') {
                 const targetTab = document.getElementById(hash);
                 if (targetTab && targetTab.classList.contains('tab-content')) {
                     switchTab(hash);
                 }
             }
-            
-            // 2. Logika untuk halaman Tentang (Scroll ke Section)
             const section = document.getElementById(hash);
             if (section && !section.classList.contains('tab-content')) {
-                setTimeout(() => {
-                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
+                setTimeout(() => { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
             }
-            
-            // Tutup menu mobile jika sedang terbuka setelah klik
             if(window.innerWidth <= 768) {
                 document.querySelector('.nav-links').classList.remove('active');
             }
         }
     }
-
-    // Jalankan saat halaman dimuat & saat hash berubah (klik dari Header ke halaman yang sama)
     document.addEventListener('DOMContentLoaded', handleHashNavigation);
     window.addEventListener('hashchange', handleHashNavigation);
 </script>
-
-<!-- Upgrade: Integrasi sistem proteksi devtools -->
-<script src="/js/protect-devtools.js"></script>
