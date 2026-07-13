@@ -1,0 +1,11 @@
+# Gold Standard - Mengizinkan semua Googlebot untuk crawling
+User-agent: *
+Allow: /
+
+# Mencegah crawling pada area yang tidak penting atau endpoint API internal
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*?*
+
+# Memandu Googlebot langsung ke Sitemap XML
+Sitemap: https://bemkbmfkgumi.com/sitemap.xml
