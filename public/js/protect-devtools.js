@@ -1,5 +1,40 @@
 // FILE: public/js/protect-devtools.js
 
+// ================= THEME ENGINE (LIGHT/DARK MODE) =================
+// Menjalankan inisialisasi tema sebelum DOM dirender (Mencegah FOUC/Berkedip)
+(function() {
+    const savedTheme = localStorage.getItem('axa_theme');
+    // Jika tidak ada data tersimpan, default akan menggunakan LIGHT MODE (Putih)
+    if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+})();
+
+// Fungsi Toggle Tema (Dipanggil oleh Tombol Switch)
+function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('axa_theme', 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('axa_theme', 'dark');
+    }
+}
+
+// Sinkronisasi status checkbox toggle saat halaman sudah selesai dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    const themeCheckbox = document.getElementById('checkboxTheme');
+    if (themeCheckbox) {
+        themeCheckbox.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+        themeCheckbox.addEventListener('change', toggleTheme);
+    }
+});
+
+
+// ================= SECURITY ENGINE (PROTECT DEVTOOLS) =================
 // Blokir klik kanan (context menu)
 document.addEventListener('contextmenu', function (e) {
   e.preventDefault();
