@@ -361,7 +361,7 @@
                         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 15px;"><svg viewBox="0 0 24 24" style="width:14px; fill:currentColor; vertical-align:-2px; margin-right:4px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg> ${formatTglRange(e.tglMulai, e.tglSelesai)}</p>
                         <p style="font-size:0.9rem; color:var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">🏢 ${e.dept}</p>
                         
-                        <a href="/proker-detail?id=${e.id}" class="agenda-btn">Detail Kegiatan &rarr;</a>
+                        <a href="/proker-detail/${e.slug || e.id}" class="agenda-btn">Detail Kegiatan &rarr;</a>
                     </div>`; 
                 });
             } else { 
