@@ -5,18 +5,21 @@
     <div class="loader-content">
         <img src="/img/bemfkgumi.png" alt="Logo" class="loader-logo">
         <h1 class="loader-title">BEM</h1>
+        <!-- Aksen warna emas/soft yellow ala referensi UI untuk memberikan kesan eksklusif -->
         <h2 class="loader-subtitle">KBMFKG UMI</h2>
         
-        <div class="loader-divider"></div>
-        
         <div class="loader-meta" id="loader-meta-text">
-            <span id="loader-periode" style="font-weight: 500;">MEMUAT PERIODE...</span><br>
-            <span id="loader-kabinet" style="color: #ffffff; font-weight: 900; font-size: 1.1rem; display: inline-block; margin-top: 8px;">SINKRONISASI DATABASE...</span>
+            <span id="loader-periode">PERIODE 2025 - 2026</span>
         </div>
         
-        <div class="loader-divider"></div>
+        <!-- UI Garis Pemisah (Divider) ala BEM FEB UI -->
+        <div class="loader-divider-wrapper">
+            <div class="loader-line"></div>
+            <span id="loader-kabinet" class="loader-kabinet">MEMUAT DATABASE...</span>
+            <div class="loader-line"></div>
+        </div>
         
-        <div class="loader-percent"><span id="loader-count">0</span>%</div>
+        <div class="loader-percent"><span id="loader-count">90</span>%</div>
     </div>
 </div>
 
@@ -28,18 +31,19 @@
         const kabinetEl = document.getElementById('loader-kabinet');
         const loader = document.getElementById('global-loader');
         
-        let count = 0;
-        let target = 90;
+        // Langsung mulai di 90% sesuai request agar lebih cepat dan elegan
+        let count = 90;
+        countEl.innerText = count;
         
-        // Animasi angka melaju cepat ke 90%
-        const counterInterval = setInterval(() => {
-            if(count < target) { 
+        // Simulasi berjalan realtime perlahan dari 90% ke 98% sambil menunggu database
+        let slowCrawl = setInterval(() => {
+            if(count < 98) { 
                 count++; 
                 countEl.innerText = count; 
             }
-        }, 15);
+        }, 500); // Naik 1% setiap 0.5 detik
 
-        // Fetch data sejarah untuk nama Kabinet & Periode terbaru (Tanpa memberatkan halaman utama)
+        // Fetch data sejarah untuk nama Kabinet & Periode terbaru
         let apiUrl = '/api/content';
         if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
         
@@ -47,9 +51,9 @@
         .then(r => r.json())
         .then(res => {
             if(res.sejarah && res.sejarah.length > 0) {
-                // Ambil index 0 (asumsi CMS sudah mengurutkannya dari yang terbaru)
+                // Ambil index 0 (Data terbaru)
                 const current = res.sejarah[0]; 
-                periodeEl.innerText = "PERIODE " + current.tahun;
+                periodeEl.innerText = current.tahun;
                 kabinetEl.innerText = current.kabinet.toUpperCase();
             } else {
                 throw new Error("No Data");
@@ -57,30 +61,29 @@
         })
         .catch(() => {
             // Fallback Cepat jika API lambat
-            periodeEl.innerText = "PERIODE 2025 - 2026";
+            periodeEl.innerText = "2025 - 2026";
             kabinetEl.innerText = "KABINET ANANTA ANARDHAYA";
         });
 
-        // Trigger selesainya Loading Screen saat seluruh asset halaman (gambar, css) selesai di-load
+        // Trigger selesainya Loading Screen saat seluruh asset halaman selesai di-load
         window.addEventListener('load', () => {
-            clearInterval(counterInterval);
+            clearInterval(slowCrawl); // Hentikan rayapan lambat
             
-            let finishCount = parseInt(countEl.innerText);
-            // Animasi halus dari 90% ke 100%
+            // Lari kencang sisa persennya menuju 100%
             const finishInterval = setInterval(() => {
-                if(finishCount < 100) {
-                    finishCount++;
-                    countEl.innerText = finishCount;
+                if(count < 100) {
+                    count++;
+                    countEl.innerText = count;
                 } else {
                     clearInterval(finishInterval);
-                    // Beri jeda sejenak di 100% sebelum memudar
+                    // Beri jeda sejenak di 100% agar user sempat melihat angka 100%
                     setTimeout(() => {
                         loader.classList.add('hidden');
-                        // Hapus dari DOM agar tidak memberatkan browser
+                        // Hapus dari DOM agar tidak memberatkan memori browser
                         setTimeout(() => loader.remove(), 800); 
-                    }, 400);
+                    }, 300);
                 }
-            }, 10);
+            }, 15); // Kecepatan super kilat
         });
     })();
 </script>
