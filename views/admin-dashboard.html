@@ -8,7 +8,6 @@
     <meta name="description" content="Sistem Manajemen Database dan Konten Internal BEM KBMFKG UMI. Restricted Access.">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     
-    <!-- SUPER UPGRADE: Relative Path Asset Routing (Server-Independent) -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
@@ -42,14 +41,12 @@
                 <button onclick="switchSection('filosofi', this)"><span>🎨</span> Filosofi Logo & Warna</button>
                 <button onclick="switchSection('sejarah', this)"><span>🕰️</span> Manajemen Sejarah</button>
                 <button onclick="switchSection('proker', this)"><span>📋</span> Program Kerja</button>
-                <!-- NEW MENUS KALENDER & DETAIL PROKER -->
                 <button onclick="switchSection('kalender', this)" style="color: #10b981;"><span>📅</span> Kalender & Detail Proker</button>
                 <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span>🧑‍💻</span> Developer Team</button>
                 <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span>📞</span> Manajemen Narahubung</button>
                 <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Header & Footer</button>
-                
                 <button onclick="logout()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
             </nav>
         </aside>
@@ -148,7 +145,7 @@
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 10px;">+ Tambah Departemen Proker</button>
             </section>
 
-            <!-- ================= BIG UPGRADE: KALENDER & DETAIL PROKER ================= -->
+            <!-- ================= BIG UPGRADE: KALENDER DENGAN CUSTOM SLUG ================= -->
             <section id="sec-kalender" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Agenda Kalender & Detail Proker</h2>
@@ -188,7 +185,7 @@
                 </div>
             </section>
 
-            <!-- 9. DEVELOPER TEAM (OUR TEAM) -->
+            <!-- 9. DEVELOPER TEAM -->
             <section id="sec-team" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2>Manajemen Developer Team (Credits)</h2>
@@ -208,7 +205,6 @@
                 
                 <div class="glass-card" style="margin-bottom: 20px;">
                     <h3 style="color:#10b981; margin-bottom:15px;">Informasi Kontak BEM</h3>
-                    
                     <label style="color:var(--text-muted); font-size: 0.85rem;">Alamat Sekretariat Utama</label>
                     <textarea id="setKontakAlamat" class="neo-input" rows="3" placeholder="Jl. Pajonga..." oninput="db.kontak.alamat = this.value"></textarea>
                     
@@ -473,7 +469,6 @@
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
             (db.kalender || []).forEach((k, i) => { 
                 
-                // Render Kepanitiaan Sub-Tables
                 let htmlPanitia = '';
                 if(k.kepanitiaan) {
                     k.kepanitiaan.forEach((div, divIdx) => {
@@ -504,6 +499,7 @@
                     <button class="action-btn delete" onclick="if(confirm('Hapus Agenda ini?')) { db.kalender.splice(${i},1); renderKalender(); }" style="position:absolute; top:20px; right:20px;">Hapus Agenda</button>
                     
                     <h3 style="color:#10b981; margin-bottom:15px;">Informasi Dasar Agenda</h3>
+                    
                     <div class="grid-2" style="margin-bottom:15px;">
                         <div>
                             <label style="font-size:0.8rem; color:var(--text-muted);">Nama Kegiatan</label>
@@ -523,6 +519,13 @@
                         </div>
                     </div>
                     
+                    <!-- NEW SUPER UPGRADE: Custom Link Slug URL -->
+                    <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
+                        <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">Custom Link / Slug (Opsional - SEO URL)</label>
+                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${k.slug || ''}" placeholder="contoh: umi-amal-senyuman-vol-3" oninput="db.kalender[${i}].slug=this.value">
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">*Biarkan kosong agar sistem otomatis membuat link dari Nama Kegiatan secara rapi.</p>
+                    </div>
+
                     <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Lengkap Kegiatan</label>
                     <textarea class="neo-input" rows="4" placeholder="Tuliskan deskripsi..." oninput="db.kalender[${i}].deskripsi=this.value">${k.deskripsi || ''}</textarea>
 
@@ -568,7 +571,10 @@
                 </div>`; 
             });
         }
-        function tambahAgenda() { db.kalender.push({id: "evt-"+Date.now(), nama:"Agenda Baru", dept:"", tglMulai:"", tglSelesai:"", deskripsi:"", lokasi:"", targetPeserta:"", statusDaftar:"Tutup", linkDaftar:"", banner:"", kepanitiaan:[]}); renderKalender(); }
+        
+        // UPGRADE: Tambahkan struktur Slug pada default Push
+        function tambahAgenda() { db.kalender.push({id: "evt-"+Date.now(), slug: "", nama:"Agenda Baru", dept:"", tglMulai:"", tglSelesai:"", deskripsi:"", lokasi:"", targetPeserta:"", statusDaftar:"Tutup", linkDaftar:"", banner:"", kepanitiaan:[]}); renderKalender(); }
+        
         function tambahPanitiaDivisi(kIdx) { if(!db.kalender[kIdx].kepanitiaan) db.kalender[kIdx].kepanitiaan = []; db.kalender[kIdx].kepanitiaan.push({namaDivisi:"Divisi Baru", anggota:[]}); renderKalender(); }
         function tambahPanitiaAnggota(kIdx, divIdx) { db.kalender[kIdx].kepanitiaan[divIdx].anggota.push({nama:"", jabatan:""}); renderKalender(); }
 
