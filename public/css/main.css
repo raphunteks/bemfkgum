@@ -226,9 +226,45 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .nav-item:hover .mega-menu { display: flex; opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 .menu-toggle { display: none; cursor: pointer; z-index: 1001; }
 
-/* ================= FOOTER ================= */
-.custom-footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 30px; }
-.footer-credit-link { color: var(--text-muted); text-decoration: none; transition: color 0.3s, text-shadow 0.3s; font-weight: 500; }
+/* ================= BIG UPGRADE: FOOTER UI LAYOUT ================= */
+.footer-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 30px;
+  padding: 50px;
+  margin: 0 20px 40px 20px;
+  box-shadow: 0 20px 40px var(--card-shadow);
+  backdrop-filter: blur(20px);
+  transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+
+.custom-footer-grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 40px; align-items: start; }
+
+.footer-col h3 { color: var(--text-light); font-size: 1.2rem; margin-bottom: 20px; font-weight: 700; letter-spacing: 0.5px; transition: color 0.4s; }
+.footer-links { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.footer-links li a { color: var(--text-muted); text-decoration: none; transition: 0.3s; font-size: 0.95rem; font-weight: 500; display: inline-block; }
+.footer-links li a:hover { color: var(--accent-neon); transform: translateX(5px); }
+
+/* Center Align Brand */
+.footer-center { display: flex; flex-direction: column; align-items: center; text-align: center; border-left: 1px solid var(--border-light); border-right: 1px solid var(--border-light); padding: 0 20px; transition: border-color 0.4s; }
+.footer-brand { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+.footer-brand img { height: 60px; max-width: 100%; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: filter 0.4s; }
+.footer-brand-text h2 { font-size: 1.5rem; color: var(--text-light); font-weight: 900; letter-spacing: 1px; margin-bottom: 2px; transition: color 0.4s; }
+.footer-brand-text p { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: color 0.4s; }
+
+/* Social Icons */
+.footer-socials { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.social-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-dark-overlay); border: 1px solid var(--border-light); display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+.social-circle svg { width: 18px; height: 18px; fill: currentColor; transition: 0.3s; }
+.social-circle:hover { background: var(--accent-neon); color: var(--btn-text-active); border-color: var(--accent-neon); transform: translateY(-5px); box-shadow: 0 10px 20px var(--accent-glow); }
+
+/* Right Contact List */
+.footer-contact-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 15px; }
+.footer-contact-list li { display: flex; align-items: flex-start; gap: 12px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; transition: color 0.4s; }
+.footer-contact-list li svg { width: 20px; height: 20px; stroke: var(--accent-neon); flex-shrink: 0; margin-top: 2px; transition: stroke 0.4s; }
+
+.footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-light); text-align: center; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; transition: border-color 0.4s, color 0.4s; }
+.footer-credit-link { color: var(--text-muted); text-decoration: none; transition: 0.3s; }
 .footer-credit-link:hover { color: var(--accent-neon); text-shadow: 0 0 10px var(--accent-glow); }
 
 /* ================= SCROLL TO TOP ================= */
@@ -255,15 +291,13 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .filo-makna { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; transition: color 0.3s; }
 .filosofi-card:hover .filo-makna { color: var(--text-light); }
 
-/* SUPER UPGRADE: Filosofi Warna Layout Adjustment */
-.warna-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 40px; }
-.warna-card { display: flex; align-items: center; gap: 20px; background: transparent; border-bottom: 1px solid var(--border-light); padding: 15px 0; transition: transform 0.3s, background-color 0.4s, border-color 0.4s; }
-.warna-card:hover { transform: translateX(10px); }
-.warna-swatch { width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 5px 15px var(--card-shadow), inset 0 2px 5px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s; }
+.warna-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 40px; }
+.warna-card { display: flex; align-items: center; gap: 20px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); transition: transform 0.3s, background-color 0.4s, border-color 0.4s; box-shadow: 0 10px 20px var(--card-shadow); }
+.warna-card:hover { transform: translateX(10px); border-color: var(--glass-border); background: var(--card-bg); box-shadow: 0 15px 30px var(--card-shadow); }
+.warna-swatch { width: 60px; height: 60px; border-radius: 15px; flex-shrink: 0; box-shadow: 0 5px 15px var(--card-shadow), inset 0 2px 5px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s; }
 .warna-card:hover .warna-swatch { transform: scale(1.1) rotate(-5deg); }
-.warna-info { flex: 1; display: flex; align-items: flex-start; flex-direction: column;}
-.warna-info h3 { color: var(--text-light); font-size: 1.1rem; margin-bottom: 2px; transition: color 0.4s; }
-.warna-info p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; transition: color 0.4s; }
+.warna-info h3 { color: var(--text-light); font-size: 1.2rem; margin-bottom: 5px; transition: color 0.4s; }
+.warna-info p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; transition: color 0.4s; }
 
 /* ================= FILOSOFI LOGO (CAROUSEL) ================= */
 .filosofi-slider-wrapper { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 40px; overflow: hidden; }
@@ -284,21 +318,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .slider-nav-btn svg { width: 24px; height: 24px; fill: currentColor; }
 .slider-nav-btn.prev { left: 20px; }
 .slider-nav-btn.next { right: 20px; }
-
-/* ================= FILOSOFI WARNA (PILLS) ================= */
-.warna-ui-container { max-width: 900px; margin: 0 auto; padding-top: 20px; }
-.warna-pills-wrapper { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; margin-bottom: 40px; scrollbar-width: none; -ms-overflow-style: none; justify-content: center; }
-.warna-pills-wrapper::-webkit-scrollbar { display: none; }
-.warna-pill { display: flex; align-items: center; gap: 10px; padding: 12px 25px; background: var(--bg-dark-overlay); border: 1px solid var(--border-light); border-radius: 30px; cursor: pointer; white-space: nowrap; transition: background-color 0.3s, color 0.3s, transform 0.3s, border-color 0.3s, box-shadow 0.3s; font-weight: 600; color: var(--text-muted); }
-.warna-pill:hover { background: var(--bg-dark-heavy); color: var(--text-light); transform: translateY(-3px); box-shadow: 0 5px 15px var(--card-shadow); }
-.warna-pill.active { background: var(--bg-dark-overlay); border-color: var(--accent-neon); color: var(--text-light); box-shadow: 0 10px 20px var(--card-shadow); }
-.warna-pill-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 2px 5px var(--card-shadow); }
-.warna-detail-box { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 25px; padding: 40px; display: flex; gap: 30px; align-items: center; box-shadow: 0 20px 40px var(--card-shadow); backdrop-filter: blur(20px); transition: transform 0.4s ease, opacity 0.4s ease, background-color 0.4s ease, border-color 0.4s ease; opacity: 0; transform: translateY(20px); }
-.warna-detail-box.show { opacity: 1; transform: translateY(0); }
-.warna-detail-swatch { width: 100px; height: 100px; border-radius: 25px; flex-shrink: 0; box-shadow: 0 10px 25px var(--card-shadow), inset 0 2px 10px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: background-color 0.4s; }
-.warna-detail-text h3 { color: var(--text-light); font-size: 1.8rem; margin-bottom: 5px; display: flex; align-items: center; gap: 15px; transition: color 0.4s; }
-.warna-detail-text h3 span { font-size: 1rem; color: var(--text-muted); font-weight: normal; background: var(--bg-dark-overlay); padding: 4px 10px; border-radius: 8px; transition: background-color 0.4s, color 0.4s;}
-.warna-detail-text p { color: var(--text-light); font-size: 1.05rem; line-height: 1.6; transition: color 0.4s;}
 
 /* ================= TIMELINE SEJARAH ================= */
 .timeline { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
@@ -615,6 +634,47 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .v-tl-btn::before { content:''; position: absolute; top:0; left:0; width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-neon), #0077ff); z-index: -1; transition: width 0.4s ease; }
 .v-tl-btn:hover { color: #ffffff; border-color: transparent; box-shadow: 0 5px 20px var(--accent-glow); transform: translateY(-3px); }
 .v-tl-btn:hover::before { width: 100%; }
+
+/* ================= BIG UPGRADE: FOOTER UI LAYOUT ================= */
+.footer-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 30px;
+  padding: 50px;
+  margin: 0 20px 40px 20px;
+  box-shadow: 0 20px 40px var(--card-shadow);
+  backdrop-filter: blur(20px);
+  transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+
+.custom-footer-grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 40px; align-items: start; }
+
+.footer-col h3 { color: var(--text-light); font-size: 1.2rem; margin-bottom: 20px; font-weight: 700; letter-spacing: 0.5px; transition: color 0.4s; }
+.footer-links { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.footer-links li a { color: var(--text-muted); text-decoration: none; transition: 0.3s; font-size: 0.95rem; font-weight: 500; display: inline-block; }
+.footer-links li a:hover { color: var(--accent-neon); transform: translateX(5px); }
+
+/* Center Align Brand */
+.footer-center { display: flex; flex-direction: column; align-items: center; text-align: center; border-left: 1px solid var(--border-light); border-right: 1px solid var(--border-light); padding: 0 20px; transition: border-color 0.4s; }
+.footer-brand { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+.footer-brand img { height: 60px; max-width: 100%; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: filter 0.4s; }
+.footer-brand-text h2 { font-size: 1.5rem; color: var(--text-light); font-weight: 900; letter-spacing: 1px; margin-bottom: 2px; transition: color 0.4s; }
+.footer-brand-text p { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: color 0.4s; }
+
+/* Social Icons */
+.footer-socials { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.social-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-dark-overlay); border: 1px solid var(--border-light); display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+.social-circle svg { width: 18px; height: 18px; fill: currentColor; transition: 0.3s; }
+.social-circle:hover { background: var(--accent-neon); color: var(--btn-text-active); border-color: var(--accent-neon); transform: translateY(-5px); box-shadow: 0 10px 20px var(--accent-glow); }
+
+/* Right Contact List */
+.footer-contact-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 15px; }
+.footer-contact-list li { display: flex; align-items: flex-start; gap: 12px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; transition: color 0.4s; }
+.footer-contact-list li svg { width: 20px; height: 20px; stroke: var(--accent-neon); flex-shrink: 0; margin-top: 2px; transition: stroke 0.4s; }
+
+.footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-light); text-align: center; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; transition: border-color 0.4s, color 0.4s; }
+.footer-credit-link { color: var(--text-muted); text-decoration: none; transition: 0.3s; }
+.footer-credit-link:hover { color: var(--accent-neon); text-shadow: 0 0 10px var(--accent-glow); }
 
 /* SUPER UPGRADE: Filosofi Warna Detail Adjustment */
 .warna-detail-box {
