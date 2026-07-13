@@ -1,13 +1,13 @@
 <!-- FILE: views/partials/footer.html -->
-<footer style="background: rgba(2, 5, 12, 0.8); border-top: 1px solid var(--glass-border); padding: 50px 0 30px; margin-top: 50px; position: relative; z-index: 100;">
+<footer style="background: var(--bg-dark-heavy); border-top: 1px solid var(--glass-border); padding: 50px 0 30px; margin-top: 50px; position: relative; z-index: 100; transition: background 0.4s;">
   <div class="container custom-footer-grid">
     
     <!-- Kolom 1: Profil (3 Logo, Slogan, Alamat Dinamis Terhubung DB) -->
     <div>
       <div class="footer-logo" style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
-          <img id="footerLogo1" src="/img/bemfkgumi.png" alt="Logo 1" style="height: 45px; filter: drop-shadow(0 0 8px rgba(0,229,255,0.3)); object-fit: contain;">
-          <img id="footerLogo2" src="/img/bemfkgumi.png" alt="Logo 2" style="height: 45px; filter: drop-shadow(0 0 8px rgba(0,229,255,0.3)); object-fit: contain;">
-          <img id="footerLogo3" src="/img/bemfkgumi.png" alt="Logo 3" style="height: 45px; filter: drop-shadow(0 0 8px rgba(0,229,255,0.3)); object-fit: contain;">
+          <img id="footerLogo1" src="/img/bemfkgumi.png" alt="Logo 1" style="height: 45px; filter: drop-shadow(0 0 8px var(--accent-glow)); object-fit: contain;">
+          <img id="footerLogo2" src="/img/bemfkgumi.png" alt="Logo 2" style="height: 45px; filter: drop-shadow(0 0 8px var(--accent-glow)); object-fit: contain;">
+          <img id="footerLogo3" src="/img/bemfkgumi.png" alt="Logo 3" style="height: 45px; filter: drop-shadow(0 0 8px var(--accent-glow)); object-fit: contain;">
       </div>
       
       <h3 style="color: var(--accent-neon); font-size: 1.3rem; margin-bottom: 5px;">BEM KBMFKG UMI</h3>
@@ -99,5 +99,3 @@
     }
   });
 </script>
-<!-- Upgrade: Integrasi sistem proteksi devtools -->
-<script src="/js/protect-devtools.js"></script>
