@@ -200,7 +200,12 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const eventId = urlParams.get('id');
+            
+            // SUPER UPGRADE: Deteksi ID dari Query (?id=) ATAU Slug dari URL Path (/proker-detail/slug)
+            let eventId = window.location.pathname.split('/').pop();
+            if (!eventId || eventId === 'proker-detail') {
+                eventId = urlParams.get('id');
+            }
 
             if(!eventId) {
                 document.getElementById('loaderData').innerHTML = "⚠️ ID Kegiatan tidak ditemukan.";
@@ -215,7 +220,8 @@
                 if(!req.ok) throw new Error();
                 const res = await req.json();
 
-                const eventData = res.kalender.find(ev => ev.id === eventId);
+                // Cek berdasarkan ID atau Slug
+                const eventData = res.kalender.find(ev => ev.id === eventId || ev.slug === eventId);
                 if(!eventData) throw new Error("Kegiatan tidak ditemukan");
 
                 // =========================================================
