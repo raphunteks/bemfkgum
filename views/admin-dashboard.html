@@ -14,6 +14,39 @@
     
     <!-- SCRIPT PROTECT DEVTOOLS & RIGHT CLICK -->
     <script src="/js/protect-devtools.js"></script>
+
+    <!-- SUPER UPGRADE: Custom File Input Styling for Admin -->
+    <style>
+        .custom-file-input {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 6px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: inset 2px 2px 5px var(--card-shadow);
+        }
+        .custom-file-input:hover {
+            border-color: #3b82f6;
+        }
+        .custom-file-input::file-selector-button {
+            background: #3b82f6;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-right: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .custom-file-input::file-selector-button:hover {
+            background: #2563eb;
+        }
+    </style>
 </head>
 <body>
     
@@ -23,7 +56,6 @@
             <h2 style="color: var(--text-light);">Portal Admin</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Sistem Manajemen Database Organisasi</p>
             
-            <!-- SUPER UPGRADE: Hapus Privasi Placeholder -->
             <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin">
             <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin">
             
@@ -251,17 +283,17 @@
                         <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 1 (Kiri)</label>
                             <img id="prevLogo1" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
-                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo1', renderPengaturan)" style="width:100%; font-size:0.8rem;">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.settings, 'logo1', renderPengaturan)">
                         </div>
                         <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 2 (Tengah)</label>
                             <img id="prevLogo2" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
-                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo2', renderPengaturan)" style="width:100%; font-size:0.8rem;">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.settings, 'logo2', renderPengaturan)">
                         </div>
                         <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 3 (Kanan)</label>
                             <img id="prevLogo3" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
-                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo3', renderPengaturan)" style="width:100%; font-size:0.8rem;">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.settings, 'logo3', renderPengaturan)">
                         </div>
                     </div>
                 </div>
@@ -435,7 +467,7 @@
             (db.org.pimpinan || []).forEach((p, i) => {
                 pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
                     <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:10px;">
-                    <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px; width:100%; font-size:0.8rem;">
+                    <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px;">
                     <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan || ''}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
                     <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama || ''}" oninput="db.org.pimpinan[${i}].nama=this.value">
                     <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus</button>
@@ -454,7 +486,7 @@
                     d.anggota.forEach((a, j) => {
                         html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px; border: 1px solid var(--border-light);">
                             <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:5px;">
-                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="width:100%; font-size:0.7rem; margin-bottom:10px;">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="margin-bottom:10px;">
                             <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama || ''}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
                             <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan || ''}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
                             <button class="action-btn delete" style="width:100%;" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">X Hapus</button>
@@ -522,7 +554,6 @@
                         </div>
                     </div>
                     
-                    <!-- NEW SUPER UPGRADE: Custom Link Slug URL -->
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
                         <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">Custom Link / Slug (Opsional - SEO URL)</label>
                         <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${k.slug || ''}" placeholder="contoh: umi-amal-senyuman-vol-3" oninput="db.kalender[${i}].slug=this.value">
@@ -555,18 +586,25 @@
                         </div>
                     </div>
 
-                    <div class="grid-2" style="margin-top:20px; border-top:1px solid var(--border-light); padding-top:15px; align-items:start;">
-                        <div>
-                            <h3 style="color:var(--accent-neon); margin-bottom:10px;">Banner Proker</h3>
-                            <img src="${k.banner || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px; background: var(--bg-dark-heavy);">
-                            <input type="file" accept="image/*" onchange="handleImageUpload(this, db.kalender[${i}], 'banner', renderKalender)" style="font-size:0.8rem;">
+                    <div style="margin-top:20px; border-top:1px solid var(--border-light); padding-top:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px;">
+                            <h3 style="color:var(--accent-neon);">Banner Proker</h3>
+                            <button class="action-btn view" onclick="tambahPanitiaDivisi(${i})">+ Tambah Divisi Kepanitiaan</button>
                         </div>
-                        <div>
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                <h3 style="color:var(--accent-neon);">Kepanitiaan</h3>
-                                <button class="action-btn view" onclick="tambahPanitiaDivisi(${i})">+ Divisi Baru</button>
+                        
+                        <div class="grid-2" style="align-items:start;">
+                            <!-- SUPER UPGRADE: Banner Preview proporsional 3:1 -->
+                            <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px dashed var(--border-light);">
+                                <div style="margin-bottom: 15px;">
+                                    <p style="color: #3b82f6; font-size: 0.85rem; font-weight: bold; margin-bottom: 4px;">💡 Rekomendasi Ukuran: 1200 x 400 pixel (Rasio 3:1)</p>
+                                    <p style="color: var(--text-muted); font-size: 0.75rem; line-height: 1.4; margin: 0;">Agar tampilan presisi dan tidak terpotong pada halaman Detail Proker.</p>
+                                </div>
+                                <img src="${k.banner || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:3/1; object-fit:cover; border-radius:12px; margin-bottom:15px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); box-shadow: 0 5px 15px var(--card-shadow);">
+                                <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.kalender[${i}], 'banner', renderKalender)">
                             </div>
-                            <div style="max-height: 250px; overflow-y:auto; padding-right:5px;">
+                            
+                            <!-- Daftar Kepanitiaan -->
+                            <div style="max-height: 280px; overflow-y:auto; padding-right:5px;">
                                 ${htmlPanitia}
                             </div>
                         </div>
@@ -616,7 +654,7 @@
                 cont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:15px; align-items:center; border-left:4px solid var(--accent-neon);">
                     <div style="width: 80px; text-align:center;">
                         <img src="${s.logo || '/img/bemfkgumi.png'}" style="width:100%; height:60px; object-fit:contain; background:var(--bg-dark-overlay); padding:5px; border-radius:10px; margin-bottom:5px;">
-                        <input type="file" accept="image/*" onchange="handleImageUpload(this, db.sejarah[${i}], 'logo', renderSejarah)" style="width:100%; font-size:0.6rem;">
+                        <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.sejarah[${i}], 'logo', renderSejarah)">
                     </div>
                     <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
                         <div style="display:flex; gap:10px;">
@@ -638,7 +676,7 @@
         function renderDokumentasi() {
             const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
             (db.dokumentasi || []).forEach((d, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px;"><img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:var(--bg-dark-overlay); margin-bottom:10px;"><input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;"><input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value"><input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value"><textarea class="neo-input" placeholder="Deskripsi" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea><button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button></div>`;
+                cont.innerHTML += `<div class="glass-card" style="padding:15px;"><img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:var(--bg-dark-overlay); margin-bottom:10px;"><input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px;"><input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value"><input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value"><textarea class="neo-input" placeholder="Deskripsi" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea><button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button></div>`;
             });
         }
         function tambahDokumentasi() { db.dokumentasi.push({judul:"Judul", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
@@ -653,7 +691,7 @@
             const cont = document.getElementById('cmsTeam'); cont.innerHTML = '';
             (db.team || []).forEach((cat, i) => {
                 let html = `<div class="glass-card" style="margin-bottom:10px; border-left:4px solid #3b82f6;"><input type="text" class="neo-input" value="${cat.category || ''}" placeholder="Kategori" oninput="db.team[${i}].category=this.value" style="font-weight:bold; color:#3b82f6;"><button class="action-btn delete" onclick="db.team.splice(${i},1); renderTeam();" style="margin-bottom:15px;">Hapus Kategori</button><div class="grid-3">`;
-                (cat.members || []).forEach((m, j) => { html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px;"><img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block;"><input type="file" accept="image/*" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="width:100%; font-size:0.7rem; margin-bottom:10px;"><input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px;"><input type="text" class="neo-input" placeholder="Link Instagram" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px;"><button class="action-btn delete" style="width:100%;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X</button></div>`; });
+                (cat.members || []).forEach((m, j) => { html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px;"><img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block;"><input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="margin-bottom:10px;"><input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px;"><input type="text" class="neo-input" placeholder="Link Instagram" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px;"><button class="action-btn delete" style="width:100%;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X</button></div>`; });
                 html += `</div><button class="action-btn view" style="margin-top:15px;" onclick="if(!db.team[${i}].members) db.team[${i}].members=[]; db.team[${i}].members.push({nama:'', foto:'/img/bemfkgumi.png', ig:''}); renderTeam();">+ Tambah Member</button></div>`;
                 cont.innerHTML += html;
             });
