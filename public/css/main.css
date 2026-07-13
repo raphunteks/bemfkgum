@@ -4,13 +4,14 @@
 
 :root {
   /* ================= LIGHT MODE VARIABLES (SOFT, BRIGHT & TECHNICAL) ================= */
-  --bg-dark: #f8fafc; 
-  --text-light: #0f172a; 
+  --bg-dark: #f8fafc; /* Background putih bersih/soft pastel */
+  --text-light: #0f172a; /* Warna teks digelapkan sedikit agar kontras maksimal */
   --text-muted: #475569;
-  --accent-neon: #0284c7; 
+  --accent-neon: #0284c7; /* Biru terang elegan */
   --accent-glow: rgba(2, 132, 199, 0.25);
   
-  --grid-line-main: rgba(2, 132, 199, 0.08); 
+  /* Variabel Pola Grid Latar */
+  --grid-line-main: rgba(2, 132, 199, 0.08); /* Garis biru blueprint yang kentara */
   --grid-line-sub: rgba(2, 132, 199, 0.03);
   
   --event-dot: #0284c7;
@@ -53,30 +54,31 @@
 
 [data-theme="dark"] {
   /* ================= DARK MODE VARIABLES (SOFT DEEP BLUE) ================= */
-  --bg-dark: #0b132b; 
-  --text-light: #f8fafc; 
+  --bg-dark: #0b132b; /* SUPER UPGRADE: Midnight Blue, Sangat elegan dan nyaman di mata */
+  --text-light: #f8fafc; /* Putih sedikit di-soft-kan agar tidak silau */
   --text-muted: #94a3b8;
   --accent-neon: #00e5ff;
-  --accent-glow: rgba(0, 229, 255, 0.45); 
+  --accent-glow: rgba(0, 229, 255, 0.45); /* Glow lebih ditekankan di latar biru */
   
+  /* Variabel Pola Grid Dark Mode menyatu dengan biru */
   --grid-line-main: rgba(255, 255, 255, 0.04); 
   --grid-line-sub: rgba(255, 255, 255, 0.015);
   
   --event-dot: #00e5ff;
   --event-dot-glow: rgba(0, 229, 255, 0.7);
 
-  --glass-bg: rgba(18, 28, 51, 0.5); 
+  --glass-bg: rgba(18, 28, 51, 0.5); /* Blue-tinted glass */
   --glass-border: rgba(0, 229, 255, 0.25);
-  --card-bg: linear-gradient(145deg, rgba(20, 32, 58, 0.75), rgba(11, 19, 43, 0.9)); 
+  --card-bg: linear-gradient(145deg, rgba(20, 32, 58, 0.75), rgba(11, 19, 43, 0.9)); /* Deep blue cards */
   --card-shadow: rgba(0, 0, 0, 0.4);
   
-  --badge-bg: #121e3d; 
+  --badge-bg: #121e3d; /* Soft navy badge */
   --clay-shadow-1: rgba(0,0,0,0.6);
   --clay-shadow-2: rgba(255,255,255,0.03);
   --clay-shadow-in-1: rgba(255,255,255,0.05);
   --clay-shadow-in-2: rgba(0,0,0,0.3);
 
-  --header-bg: rgba(11, 19, 43, 0.85); 
+  --header-bg: rgba(11, 19, 43, 0.85); /* Solid blue-slate header */
   --menu-bg: rgba(14, 23, 50, 0.98);
   
   --input-bg: rgba(0, 0, 0, 0.25);
@@ -86,10 +88,10 @@
   --agenda-list-bg: linear-gradient(145deg, rgba(16, 26, 48, 0.8), rgba(11, 19, 43, 0.95));
   --agenda-card-bg: rgba(20, 32, 58, 0.6);
   
-  --border-light: rgba(255, 255, 255, 0.06); 
+  --border-light: rgba(255, 255, 255, 0.06); /* Border putih kebiruan samar */
   --bg-overlay: rgba(11, 19, 43, 0.9);
   --bg-dark-overlay: rgba(255, 255, 255, 0.04); 
-  --bg-dark-heavy: #101a36; 
+  --bg-dark-heavy: #101a36; /* Solid dark blue untuk elemen berat seperti footer */
   --shadow-text: rgba(255, 255, 255, 0.2);
   
   --blob-1: rgba(0, 229, 255, 0.18);
@@ -113,30 +115,27 @@ html { scroll-behavior: smooth; scroll-padding-top: 100px; }
 /* ================= SUPER UPGRADE: GLOBAL LOADING SCREEN (CINEMATIC) ================= */
 #global-loader {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #040814; /* Dibuat solid gelap absolut untuk fokus teaterikal */
+    background: rgba(4, 8, 20, 0.98); /* Sangat gelap untuk kesan eksklusif */
     z-index: 999999; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    transition: opacity 0.8s ease, visibility 0.8s ease;
+    transition: opacity 0.8s ease, visibility 0.8s ease, backdrop-filter 0.8s;
+    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
 }
-#global-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+#global-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; backdrop-filter: blur(0); }
 .loader-content { text-align: center; display: flex; flex-direction: column; align-items: center; width: 100%; padding: 0 20px; }
 
-.loader-logo { width: 90px; height: 90px; margin-bottom: 25px; object-fit: contain; animation: slideUpFade 1s ease forwards; opacity: 0; transform: translateY(20px); filter: drop-shadow(0 0 10px rgba(0,229,255,0.3)); }
-.loader-title { font-size: 3rem; font-weight: 900; letter-spacing: 8px; margin-bottom: 5px; color: #ffffff; opacity: 0; animation: slideUpFade 1s ease 0.2s forwards; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-
-/* Aksen Gold Soft ala BEM FEB UI */
-.loader-subtitle { font-size: 1.8rem; font-weight: 600; color: #fde047; letter-spacing: 5px; margin-bottom: 30px; opacity: 0; animation: slideUpFade 1s ease 0.4s forwards; }
-
-.loader-meta { font-size: 1rem; letter-spacing: 5px; color: #cbd5e1; text-transform: uppercase; margin-bottom: 15px; opacity: 0; animation: slideUpFade 1s ease 0.6s forwards; }
-
-/* Divider Flex ala BEM FEB UI */
+.loader-logo { width: 100px; height: 100px; margin-bottom: 25px; object-fit: contain; animation: slideUpFade 1s ease forwards, pulseGlow 2s infinite alternate 1s; opacity: 0; transform: translateY(20px); filter: drop-shadow(0 0 10px rgba(0,229,255,0.3)); }
+.loader-title { font-size: 3.5rem; font-weight: 900; letter-spacing: 6px; margin-bottom: 5px; color: #ffffff; opacity: 0; animation: slideUpFade 1s ease 0.2s forwards; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.loader-subtitle { font-size: 1.6rem; font-weight: 600; color: #fde047; letter-spacing: 4px; margin-bottom: 30px; opacity: 0; animation: slideUpFade 1s ease 0.4s forwards; }
 .loader-divider-wrapper { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 550px; gap: 20px; margin-bottom: 30px; opacity: 0; animation: slideUpFade 1s ease 0.8s forwards; }
 .loader-line { flex: 1; height: 1px; background: rgba(255,255,255,0.2); }
 .loader-kabinet { color: #94a3b8; font-weight: 500; font-size: 1rem; letter-spacing: 5px; text-transform: uppercase; white-space: nowrap;}
-
-.loader-percent { font-size: 1.3rem; font-weight: 400; color: #ffffff; font-family: monospace; opacity: 0; animation: slideUpFade 1s ease 1s forwards; letter-spacing: 2px;}
+.loader-meta { font-size: 1rem; letter-spacing: 3px; color: #cbd5e1; text-transform: uppercase; margin-bottom: 15px; opacity: 0; animation: slideUpFade 1s ease 0.6s forwards; }
+.loader-percent { font-size: 2rem; font-weight: 700; color: #00e5ff; font-family: monospace; opacity: 0; animation: slideUpFade 1s ease 1s forwards; text-shadow: 0 0 20px rgba(0,229,255,0.6); letter-spacing: 2px;}
 
 @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+@keyframes expandLine { to { opacity: 1; width: 100%; max-width: 300px; } }
+@keyframes pulseGlow { from { filter: drop-shadow(0 0 10px rgba(0,229,255,0.3)); transform: scale(1); } to { filter: drop-shadow(0 0 30px rgba(0,229,255,0.8)); transform: scale(1.05); } }
 
 /* ================= BACKGROUND GRID & BLOB ANIMATION ================= */
 body { 
@@ -147,7 +146,7 @@ body {
   min-height: 100vh; 
   display: flex; 
   flex-direction: column; 
-  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out; 
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; 
   will-change: background-color, color;
   
   background-image: 
@@ -259,7 +258,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .filosofi-card:hover .filo-makna { color: var(--text-light); }
 
 .warna-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 40px; }
-.warna-card { display: flex; align-items: center; gap: 20px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); transition: transform 0.3s, background-color 0.4s, border-color 0.4s; box-shadow: 0 10px 20px var(--card-shadow); }
+.warna-card { display: flex; align-items: center; gap: 20px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); transition: transform 0.3s, background-color 0.4s, border-color 0.4s, box-shadow 0.3s; box-shadow: 0 10px 20px var(--card-shadow); }
 .warna-card:hover { transform: translateX(10px); border-color: var(--glass-border); background: var(--card-bg); box-shadow: 0 15px 30px var(--card-shadow); }
 .warna-swatch { width: 60px; height: 60px; border-radius: 15px; flex-shrink: 0; box-shadow: 0 5px 15px var(--card-shadow), inset 0 2px 5px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s; }
 .warna-card:hover .warna-swatch { transform: scale(1.1) rotate(-5deg); }
@@ -285,21 +284,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .slider-nav-btn svg { width: 24px; height: 24px; fill: currentColor; }
 .slider-nav-btn.prev { left: 20px; }
 .slider-nav-btn.next { right: 20px; }
-
-/* ================= FILOSOFI WARNA (PILLS) ================= */
-.warna-ui-container { max-width: 900px; margin: 0 auto; padding-top: 20px; }
-.warna-pills-wrapper { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; margin-bottom: 40px; scrollbar-width: none; -ms-overflow-style: none; justify-content: center; }
-.warna-pills-wrapper::-webkit-scrollbar { display: none; }
-.warna-pill { display: flex; align-items: center; gap: 10px; padding: 12px 25px; background: var(--bg-dark-overlay); border: 1px solid var(--border-light); border-radius: 30px; cursor: pointer; white-space: nowrap; transition: background-color 0.3s, color 0.3s, transform 0.3s, border-color 0.3s, box-shadow 0.3s; font-weight: 600; color: var(--text-muted); }
-.warna-pill:hover { background: var(--bg-dark-heavy); color: var(--text-light); transform: translateY(-3px); box-shadow: 0 5px 15px var(--card-shadow); }
-.warna-pill.active { background: var(--bg-dark-overlay); border-color: var(--accent-neon); color: var(--text-light); box-shadow: 0 10px 20px var(--card-shadow); }
-.warna-pill-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 2px 5px var(--card-shadow); }
-.warna-detail-box { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 25px; padding: 40px; display: flex; gap: 30px; align-items: center; box-shadow: 0 20px 40px var(--card-shadow); backdrop-filter: blur(20px); transition: transform 0.4s ease, opacity 0.4s ease, background-color 0.4s ease, border-color 0.4s ease; opacity: 0; transform: translateY(20px); }
-.warna-detail-box.show { opacity: 1; transform: translateY(0); }
-.warna-detail-swatch { width: 100px; height: 100px; border-radius: 25px; flex-shrink: 0; box-shadow: 0 10px 25px var(--card-shadow), inset 0 2px 10px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: background-color 0.4s; }
-.warna-detail-text h3 { color: var(--text-light); font-size: 1.8rem; margin-bottom: 5px; display: flex; align-items: center; gap: 15px; transition: color 0.4s; }
-.warna-detail-text h3 span { font-size: 1rem; color: var(--text-muted); font-weight: normal; background: var(--bg-dark-overlay); padding: 4px 10px; border-radius: 8px; transition: background-color 0.4s, color 0.4s;}
-.warna-detail-text p { color: var(--text-light); font-size: 1.05rem; line-height: 1.6; transition: color 0.4s;}
 
 /* ================= TIMELINE SEJARAH ================= */
 .timeline { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
@@ -335,7 +319,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .team-name { font-size: 1.3rem; font-weight: 700; color: var(--text-light); margin-bottom: 8px; transition: color 0.4s; }
 .team-role { color: #3b82f6; font-size: 0.95rem; font-weight: 600; margin-bottom: 5px; }
 .team-dept { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 25px; transition: color 0.4s; }
-.team-social-box { display: flex; justify-content: center; gap: 15px; border-top: 1px solid var(--border-light); padding: 20px; transition: border-color 0.4s; }
+.team-social-box { display: flex; justify-content: center; gap: 15px; border-top: 1px solid var(--border-light); padding-top: 20px; transition: border-color 0.4s; }
 .team-social-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-dark-overlay); display: flex; align-items: center; justify-content: center; transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s, border-color 0.3s; border: 1px solid transparent; }
 .team-social-icon svg { width: 18px; height: 18px; fill: var(--text-light); transition: fill 0.3s; }
 .team-social-icon:hover { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-color: transparent; transform: scale(1.15); box-shadow: 0 5px 15px rgba(220, 39, 67, 0.4); }
@@ -527,7 +511,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .ic-waktu { color: var(--accent-neon); background: var(--bg-dark-overlay); border-color: var(--accent-glow); }
 .ic-target { color: #8b5cf6; background: rgba(167, 139, 250, 0.1); border-color: rgba(167, 139, 250, 0.2); }
 
-.detail-section-title { font-size: 1.6rem; color: var(--text-light); margin-bottom: 25px; padding-left: 18px; border-left: 5px solid #3b82f6; font-weight: 800; letter-spacing: 0.5px; transition: color 0.4s; }
+.detail-section-title { font-size: 1.6rem; color: var(--text-light); margin-bottom: 25px; padding: 18px; border-left: 5px solid #3b82f6; font-weight: 800; letter-spacing: 0.5px; transition: color 0.4s; }
 .detail-section-title.green { border-left-color: #10b981; }
 .detail-info-label { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600; transition: color 0.4s; }
 
@@ -581,6 +565,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .pimpinan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
 .toast { position: fixed; bottom: -100px; right: 25px; background: var(--accent-neon); color: var(--btn-text-active); padding: 18px 30px; border-radius: 12px; font-weight: 800; z-index: 9999; transition: bottom 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 10px 30px var(--accent-glow); font-size: 1.05rem; }
 .toast.show { bottom: 25px; }
+
 
 /* ================= SUPER UPGRADE: TIMELINE PROKER VERTICAL ================= */
 .v-timeline-container { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
