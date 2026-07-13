@@ -106,7 +106,30 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 html { scroll-behavior: smooth; scroll-padding-top: 100px; }
 
-/* ================= BACKGROUND GRID & BLOB ANIMATION (OPTIMIZED FOR SPEED) ================= */
+/* ================= SUPER UPGRADE: GLOBAL LOADING SCREEN (CINEMATIC) ================= */
+#global-loader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(4, 8, 20, 0.98); /* Sangat gelap untuk kesan eksklusif */
+    z-index: 999999; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease, backdrop-filter 0.8s;
+    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+}
+#global-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; backdrop-filter: blur(0); }
+.loader-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
+
+.loader-logo { width: 100px; height: 100px; margin-bottom: 25px; object-fit: contain; animation: slideUpFade 1s ease forwards, pulseGlow 2s infinite alternate 1s; opacity: 0; transform: translateY(20px); filter: drop-shadow(0 0 10px rgba(0,229,255,0.3)); }
+.loader-title { font-size: 3.5rem; font-weight: 900; letter-spacing: 6px; margin-bottom: 5px; color: #ffffff; opacity: 0; animation: slideUpFade 1s ease 0.2s forwards; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.loader-subtitle { font-size: 1.6rem; font-weight: 600; color: #00e5ff; letter-spacing: 4px; margin-bottom: 30px; opacity: 0; animation: slideUpFade 1s ease 0.4s forwards; }
+.loader-divider { width: 0%; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); margin: 0 auto 30px; opacity: 0; animation: expandLine 1s ease 0.6s forwards; }
+.loader-meta { font-size: 1rem; letter-spacing: 3px; color: #94a3b8; text-transform: uppercase; margin-bottom: 30px; line-height: 1.8; opacity: 0; animation: slideUpFade 1s ease 0.8s forwards; }
+.loader-percent { font-size: 2rem; font-weight: 700; color: #00e5ff; font-family: monospace; opacity: 0; animation: slideUpFade 1s ease 1s forwards; text-shadow: 0 0 20px rgba(0,229,255,0.6); }
+
+@keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+@keyframes expandLine { to { opacity: 1; width: 100%; max-width: 300px; } }
+@keyframes pulseGlow { from { filter: drop-shadow(0 0 10px rgba(0,229,255,0.3)); transform: scale(1); } to { filter: drop-shadow(0 0 30px rgba(0,229,255,0.8)); transform: scale(1.05); } }
+
+/* ================= BACKGROUND GRID & BLOB ANIMATION ================= */
 body { 
   background-color: var(--bg-dark); 
   color: var(--text-light); 
@@ -116,11 +139,9 @@ body {
   display: flex; 
   flex-direction: column; 
   
-  /* GPU Acceleration untuk pergantian warna instan tanpa delay */
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; 
   will-change: background-color, color;
   
-  /* DUAL LAYER GRID (100px untuk utama, 20px untuk subdivisi) */
   background-image: 
     linear-gradient(var(--grid-line-main) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-line-main) 1px, transparent 1px),
@@ -135,7 +156,7 @@ body::before, body::after {
   content: ''; position: fixed; width: 45vw; height: 45vw; min-width: 350px; min-height: 350px; z-index: -1; 
   filter: blur(100px); animation: blobBounce 20s infinite alternate ease-in-out; pointer-events: none; 
   transition: background 0.5s ease;
-  will-change: transform, border-radius; /* Hardware Acceleration for Blobs */
+  will-change: transform, border-radius; 
 }
 body::before { top: -10%; left: -10%; background: radial-gradient(circle, var(--blob-1) 0%, transparent 65%); }
 body::after { bottom: -10%; right: -10%; animation-duration: 25s; animation-direction: alternate-reverse; background: radial-gradient(circle, var(--blob-2) 0%, transparent 65%); }
@@ -229,14 +250,14 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .filosofi-card:hover .filo-makna { color: var(--text-light); }
 
 .warna-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 40px; }
-.warna-card { display: flex; align-items: center; gap: 20px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); transition: transform 0.3s, background-color 0.4s, border-color 0.4s; box-shadow: 0 10px 20px var(--card-shadow); }
-.warna-card:hover { transform: translateX(10px); border-color: var(--glass-border); background: var(--card-bg); }
+.warna-card { display: flex; align-items: center; gap: 20px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); transition: transform 0.3s, background-color 0.4s, border-color 0.4s, box-shadow 0.3s; box-shadow: 0 10px 20px var(--card-shadow); }
+.warna-card:hover { transform: translateX(10px); border-color: var(--glass-border); background: var(--card-bg); box-shadow: 0 15px 30px var(--card-shadow); }
 .warna-swatch { width: 60px; height: 60px; border-radius: 15px; flex-shrink: 0; box-shadow: 0 5px 15px var(--card-shadow), inset 0 2px 5px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s; }
 .warna-card:hover .warna-swatch { transform: scale(1.1) rotate(-5deg); }
 .warna-info h3 { color: var(--text-light); font-size: 1.2rem; margin-bottom: 5px; transition: color 0.4s; }
 .warna-info p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; transition: color 0.4s; }
 
-/* ================= FILOSOFI LOGO (CAROUSEL COVER FLOW UTK INDEX.HTML) ================= */
+/* ================= FILOSOFI LOGO (CAROUSEL) ================= */
 .filosofi-slider-wrapper { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 40px; overflow: hidden; }
 .filosofi-slider-track { display: flex; gap: 30px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 50px 20vw; -ms-overflow-style: none; scrollbar-width: none; width: 100%; align-items: center; }
 .filosofi-slider-track::-webkit-scrollbar { display: none; }
@@ -256,7 +277,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .slider-nav-btn.prev { left: 20px; }
 .slider-nav-btn.next { right: 20px; }
 
-/* ================= FILOSOFI WARNA (INTERACTIVE PILLS) ================= */
+/* ================= FILOSOFI WARNA (PILLS) ================= */
 .warna-ui-container { max-width: 900px; margin: 0 auto; padding-top: 20px; }
 .warna-pills-wrapper { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; margin-bottom: 40px; scrollbar-width: none; -ms-overflow-style: none; justify-content: center; }
 .warna-pills-wrapper::-webkit-scrollbar { display: none; }
@@ -271,7 +292,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .warna-detail-text h3 span { font-size: 1rem; color: var(--text-muted); font-weight: normal; background: var(--bg-dark-overlay); padding: 4px 10px; border-radius: 8px; transition: background-color 0.4s, color 0.4s;}
 .warna-detail-text p { color: var(--text-light); font-size: 1.05rem; line-height: 1.6; transition: color 0.4s;}
 
-/* ================= TIMELINE SEJARAH CSS ================= */
+/* ================= TIMELINE SEJARAH ================= */
 .timeline { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
 .timeline::after { content: ''; position: absolute; width: 4px; background: linear-gradient(to bottom, transparent, var(--accent-neon), #0066ff, transparent); top: 0; bottom: 0; left: 50%; margin-left: -2px; border-radius: 2px; box-shadow: 0 0 10px var(--accent-neon); }
 .timeline-item { padding: 10px 40px; position: relative; background-color: transparent; width: 50%; }
@@ -290,7 +311,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .timeline-leaders p { margin: 5px 0; font-size: 0.95rem; color: var(--text-light); transition: color 0.4s; }
 .timeline-leaders span { color: var(--text-muted); font-size: 0.8rem; display: inline-block; width: 60px; text-transform: uppercase; font-weight: bold; transition: color 0.4s;}
 
-/* ================= OUR TEAM (DEVELOPER CREDITS) CSS ================= */
+/* ================= OUR TEAM (CREDITS) ================= */
 .team-cat-header { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 70px 0 40px; }
 .team-cat-icon { background: var(--bg-dark-overlay); border: 1px solid var(--accent-neon); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px var(--accent-glow); transition: background-color 0.4s, border-color 0.4s; }
 .team-cat-icon svg { width: 28px; height: 28px; fill: var(--accent-neon); }
@@ -311,7 +332,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .team-social-icon:hover { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-color: transparent; transform: scale(1.15); box-shadow: 0 5px 15px rgba(220, 39, 67, 0.4); }
 .team-social-icon:hover svg { fill: #ffffff; }
 
-/* ================= INDEX / BERANDA & TENTANG CSS ================= */
+/* ================= INDEX / BERANDA & TENTANG ================= */
 .hero-section { min-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; padding: 0 20px; }
 .script-font { font-family: 'Dancing Script', cursive; color: var(--accent-neon); font-size: 1.6em; font-weight: 700; text-shadow: 0 0 25px var(--accent-glow); display: inline-block; transform: rotate(-3deg); margin-left: 10px; }
 .btn-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
@@ -370,13 +391,12 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .tab-content { display: none; animation: fadeInTab 0.5s ease forwards; } .tab-content.active { display: block; }
 @keyframes fadeInTab { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ================= BIG UPGRADE: CALENDAR & AGENDA UI ================= */
+/* ================= CALENDAR & AGENDA UI ================= */
 .calendar-wrapper { display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 40px; align-items: stretch; }
 .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-size: 1.4rem; font-weight: 800; color: var(--accent-neon); text-shadow: 0 0 10px var(--accent-glow); letter-spacing: 1px; }
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; text-align: center; }
 .calendar-day-name { font-size: 0.85rem; color: var(--text-muted); padding-bottom: 12px; border-bottom: 1px solid var(--border-light); font-weight: 700; letter-spacing: 0.5px; transition: color 0.4s, border-color 0.4s; }
 
-/* SUPER BIG UPGRADE: Kalibrasi Tanda Kalender (Anti-Hilang) & Contrast Minimalist */
 .calendar-day { 
   padding: 16px 5px; border-radius: 14px; 
   background: var(--calendar-day); 
@@ -389,7 +409,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .calendar-day:hover { transform: translateY(-4px) scale(1.05); background: var(--calendar-day-hover); border-color: var(--accent-glow); box-shadow: 0 8px 20px var(--accent-glow); z-index: 2; color: var(--text-light); }
 .calendar-day.active { background: linear-gradient(135deg, var(--accent-neon), #0077ff); color: #ffffff; font-weight: 900; box-shadow: 0 10px 25px var(--accent-glow); border: none; }
 
-/* TITIK AGENDA MENYALA TERANG & Z-INDEX ABSOLUTE */
 .calendar-day.has-event::after { 
   content: ''; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); 
   width: 8px; height: 8px; background: var(--event-dot); border-radius: 50%; 
@@ -411,7 +430,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 
 .agenda-list { background: var(--agenda-list-bg); backdrop-filter: blur(20px); padding: 30px; border-radius: 20px; border: 1px solid var(--border-light); border-top: 4px solid var(--accent-neon); min-height: 400px; box-shadow: -10px 0 30px var(--card-shadow), inset 1px 1px 2px var(--border-light); transition: background 0.4s, border-color 0.4s, box-shadow 0.4s; }
 
-/* AGENDA CARDS & BADGES */
 .agenda-card {
   background: var(--agenda-card-bg);
   backdrop-filter: blur(10px);
@@ -430,7 +448,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .agenda-card:hover::before { opacity: 1; }
 .agenda-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 
-/* ADJUSTMENT UNTUK TEXT WARNA TERTENTU DI LIGHT MODE SUPAYA STAND OUT */
 .badge-berlangsung { background: rgba(59, 130, 246, 0.15); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.3); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; letter-spacing: 1px; }
 [data-theme="dark"] .badge-berlangsung { color: #60a5fa; text-shadow: 0 0 8px rgba(59,130,246,0.6); }
 
@@ -451,7 +468,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .agenda-btn:hover { color: #ffffff; border-color: transparent; box-shadow: 0 0 20px var(--accent-glow); }
 .agenda-btn:hover::before { width: 100%; }
 
-/* ================= BIG UPGRADE: PROKER DETAIL UI ================= */
+/* ================= PROKER DETAIL UI ================= */
 .proker-detail-grid { display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start; }
 
 .proker-banner-wrapper { 
@@ -486,12 +503,10 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
     transition: background 0.4s;
 }
 
-/* BADGE DETAIL PROKER */
 .detail-header-badge { background: var(--bg-dark-overlay); border: 1px solid var(--accent-glow); color: var(--accent-neon); padding: 6px 14px; border-radius: 30px; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; box-shadow: 0 0 15px var(--accent-glow); text-shadow: 0 0 8px var(--accent-glow); transition: background-color 0.4s, border-color 0.4s; }
 .detail-header-badge.blue { background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.4); color: #2563eb; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
 [data-theme="dark"] .detail-header-badge.blue { color: #60a5fa; text-shadow: 0 0 8px rgba(59, 130, 246, 0.5); }
 
-/* INFO ROW SIDEBAR */
 .info-block { background: var(--bg-dark-overlay); padding: 18px 20px; border-radius: 16px; border-left: 3px solid var(--border-light); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.4s, border-color 0.4s, box-shadow 0.4s; }
 .info-block:hover { background: var(--bg-dark-heavy); border-color: var(--accent-neon); transform: translateX(5px); box-shadow: 0 5px 15px var(--card-shadow); }
 .info-row { display: flex; align-items: center; gap: 15px; background: var(--bg-dark-heavy); padding: 16px; border-radius: 16px; margin-bottom: 16px; border: 1px solid var(--border-light); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.4s, border-color 0.4s, box-shadow 0.4s; box-shadow: inset 2px 2px 5px var(--card-shadow); }
@@ -503,12 +518,10 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .ic-waktu { color: var(--accent-neon); background: var(--bg-dark-overlay); border-color: var(--accent-glow); }
 .ic-target { color: #8b5cf6; background: rgba(167, 139, 250, 0.1); border-color: rgba(167, 139, 250, 0.2); }
 
-/* DESKRIPSI SECTION TITLE */
 .detail-section-title { font-size: 1.6rem; color: var(--text-light); margin-bottom: 25px; padding-left: 18px; border-left: 5px solid #3b82f6; font-weight: 800; letter-spacing: 0.5px; transition: color 0.4s; }
 .detail-section-title.green { border-left-color: #10b981; }
 .detail-info-label { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600; transition: color 0.4s; }
 
-/* PANITIA BOX & TABLE */
 .panitia-box { background: var(--bg-dark-heavy); border: 1px solid var(--border-light); border-radius: 18px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 0 20px var(--card-shadow); transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s; }
 .panitia-title { color: var(--text-light); font-size: 1.15rem; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px dashed var(--border-light); display: flex; align-items: center; gap: 10px; transition: color 0.4s, border-color 0.4s; }
 .panitia-title::before { content: '❖'; color: #10b981; font-size: 1rem; }
@@ -519,12 +532,11 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .panitia-table td:last-child { border-right: 1px solid var(--border-light); border-radius: 0 12px 12px 0; }
 .panitia-table tr:hover td { background: var(--calendar-day-hover); color: var(--text-light); }
 
-/* Active Daftar Button Effect */
 .active-daftar { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); color: #ffffff !important; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
 .active-daftar:hover { box-shadow: 0 15px 35px rgba(16, 185, 129, 0.6); transform: translateY(-3px) scale(1.02); }
 
 
-/* GALLERY & MODAL */
+/* ================= GALLERY & MODAL ================= */
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
 .gallery-card { border-radius: 20px; overflow: hidden; position: relative; aspect-ratio: 4/3; background: var(--bg-dark-heavy); border: 1px solid var(--glass-border); cursor: pointer; box-shadow: 0 10px 30px var(--card-shadow); transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s; }
 .gallery-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.6s; opacity: 0.9; }
@@ -561,20 +573,15 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .toast { position: fixed; bottom: -100px; right: 25px; background: var(--accent-neon); color: var(--btn-text-active); padding: 18px 30px; border-radius: 12px; font-weight: 800; z-index: 9999; transition: bottom 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 10px 30px var(--accent-glow); font-size: 1.05rem; }
 .toast.show { bottom: 25px; }
 
-
-/* SUPER BIG UPGRADE: TIMELINE PROKER VERTICAL (UNIKOM STYLE) */
+/* SUPER BIG UPGRADE: TIMELINE PROKER VERTICAL */
 .v-timeline-container { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
-/* Clearfix agar container background/line tidak runtuh */
 .v-timeline-container::after { content: ''; display: table; clear: both; }
-/* Garis tengah presisi matematis (bukan transform) */
 .v-timeline-container::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background: var(--border-light); transition: background-color 0.4s; z-index: 1; }
 
 .v-timeline-item { position: relative; width: 50%; padding: 20px 40px; clear: both; }
 .v-timeline-item:nth-child(odd) { float: left; }
-/* Hapus left: 50% yang merusak tata letak float right */
 .v-timeline-item:nth-child(even) { float: right; }
 
-/* Dot presisi: Lebar 20px, radius 10px. Geser tepat 10px */
 .v-timeline-dot { position: absolute; top: 40px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg-dark); border: 4px solid var(--accent-neon); z-index: 3; box-shadow: 0 0 10px var(--accent-glow); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.4s, border-color 0.4s, box-shadow 0.4s; box-sizing: border-box; }
 .v-timeline-item:nth-child(odd) .v-timeline-dot { right: -10px; left: auto; }
 .v-timeline-item:nth-child(even) .v-timeline-dot { left: -10px; right: auto; }
@@ -610,14 +617,12 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .calendar-wrapper { grid-template-columns: 1fr; gap: 25px; }
   .menu-toggle { display: block; }
   
-  /* Responsive Scale Grid Background */
   body { background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px; }
   
   .arti-grid { grid-template-columns: 1fr; gap: 15px; }
   .arti-item { padding: 12px 15px; }
   .floating-logo { width: 130px; height: 130px; }
   
-  /* SUPER UPGRADE: Smooth Menu Mobile */
   .nav-links { position: fixed; top: 0; right: -100%; width: 80vw; height: 100vh; background: var(--bg-dark-heavy); backdrop-filter: blur(30px); flex-direction: column; padding-top: 100px; padding-left: 30px; align-items: flex-start; border-left: 1px solid var(--border-light); transition: background-color 0.4s, border-color 0.4s, right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
   .nav-links.active { right: 0; box-shadow: -15px 0 40px var(--card-shadow); }
   .nav-item { width: 100%; }
@@ -625,7 +630,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .nav-item:hover .mega-menu { display: none; }
   .nav-item.mobile-expand .mega-menu { display: flex; position: static; transform: none; box-shadow: none; border: none; border-left: 2px solid var(--accent-neon); background: transparent; padding: 10px 0 10px 20px; opacity: 1; visibility: visible; }
   
-  /* Responsive Admin */
   .admin-layout { flex-direction: column; }
   .admin-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--glass-border); padding: 15px 20px; }
   .admin-nav { flex-direction: row; overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-top: 15px; }
@@ -634,7 +638,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .pimpinan-grid { grid-template-columns: 1fr; }
   .admin-main { padding: 20px; }
   
-  /* Responsive Beranda Adjustments */
   .hero-section h1 { font-size: 2.8rem !important; }
   .script-font { font-size: 1.3em; display: block; margin-top: 10px; margin-left: 0; }
   .sambutan-wrapper { grid-template-columns: 1fr; gap: 40px; }
@@ -642,21 +645,17 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .misi-interactive-wrapper { grid-template-columns: 1fr; }
   .big-quote-text { font-size: 1.6rem; }
   
-  /* Responsive Footer */
   .custom-footer-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
   .custom-footer-grid > div:nth-child(1) { grid-column: 1 / -1; margin-bottom: 10px; }
 
-  /* Responsive Timeline Sejarah */
   .timeline::after { left: 31px; }
   .timeline-item { width: 100%; padding-left: 70px; padding-right: 0; }
   .timeline-item.right { left: 0; }
   .timeline-item::after, .timeline-item.right::after { left: 21px; }
   
-  /* Responsive Scroll To Top */
   .scroll-to-top { bottom: 25px; right: 25px; width: 50px; height: 50px; }
   .scroll-to-top svg { width: 26px; height: 26px; }
 
-  /* Responsive Slider & Pills */
   .filosofi-slider-track { padding: 40px 10vw; gap: 15px;}
   .filosofi-slide-card { flex: 0 0 280px; padding: 30px 20px; }
   .slider-nav-btn { width: 40px; height: 40px; }
@@ -667,7 +666,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .warna-detail-box { flex-direction: column; text-align: center; padding: 30px 20px; gap: 20px; }
   .warna-detail-text h3 { justify-content: center; flex-direction: column; gap: 5px; }
 
-  /* Responsive Banner Proker Detail */
   .proker-banner-img { height: 250px; }
   .proker-banner-overlay { padding: 40px 20px 20px; }
   #detailTitle { font-size: 2rem !important; }
@@ -678,7 +676,6 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .v-timeline-item:nth-child(even) { left: auto; }
   .v-timeline-item:nth-child(odd) .v-timeline-dot,
   .v-timeline-item:nth-child(even) .v-timeline-dot {
-      left: 14px; /* 24px (garis vertikal) - 10px (radius dot) = 14px (Presisi di tengah garis) */
-      right: auto;
+      left: 14px; right: auto;
   }
 }
