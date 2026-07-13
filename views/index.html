@@ -93,14 +93,14 @@
                         <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">📅</div>
                         <div>
                             <div style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px;">PERIODE</div>
-                            <strong style="color: white; font-size: 1rem;">2025 - 2026</strong>
+                            <strong style="color: var(--text-light); font-size: 1rem;">2025 - 2026</strong>
                         </div>
                     </div>
                 </div>
                 
                 <!-- BOX KANAN (TEKS) -->
                 <div class="sambutan-text-box">
-                    <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.2; margin-bottom: 30px; color: white;">
+                    <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.2; margin-bottom: 30px; color: var(--text-light);">
                         "Bergerak Bersama,<br><span style="color: var(--accent-neon);">Merajut Asa"</span>
                     </h2>
                     
@@ -113,8 +113,8 @@
                         Kabinet Ananta Anardhaya hadir dengan semangat kolaborasi tiada batas. Kami percaya bahwa setiap mahasiswa FKG UMI memiliki potensi luar biasa. Mari kita satukan langkah, sinergikan pikiran, dan rajut masa depan almamater yang lebih gemilang.
                     </p>
                     
-                    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px;">
-                        <h3 id="namaKetuaSambutan" style="font-size: 1.5rem; margin-bottom: 5px; color: white;">Memuat Nama...</h3>
+                    <div style="border-top: 1px solid var(--border-light); padding-top: 25px;">
+                        <h3 id="namaKetuaSambutan" style="font-size: 1.5rem; margin-bottom: 5px; color: var(--text-light);">Memuat Nama...</h3>
                         <p style="color: var(--text-muted); font-size: 0.95rem;">Ketua BEM KBMFKG UMI</p>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
             <!-- VISI BOX (GAMBAR 2) -->
             <div class="visi-box-modern reveal">
                 <h3 style="color: var(--accent-neon); font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 25px;">VISI KAMI</h3>
-                <p id="teksVisiIndex" style="font-size: 1.6rem; font-style: italic; line-height: 1.6; font-weight: 500; color: var(--text-light); max-width: 900px; margin: 0 auto;">
+                <p id="teksVisiIndex" style="font-size: 1.6rem; font-style: italic; line-height: 1.6; font-weight: 500; color: var(--text-light); max-width: 900px; margin: 0 auto; text-shadow: 0 0 15px var(--shadow-text);">
                     "Memuat rumusan visi dari database..."
                 </p>
             </div>
@@ -152,7 +152,7 @@
                 <!-- Kanan: Konten Detail -->
                 <div class="misi-content-box" id="misiContentIndex">
                     <div style="display:inline-block; background:rgba(0,229,255,0.1); color:var(--accent-neon); padding:5px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold; margin-bottom:15px; width:max-content;" id="misiDetailBadge">POIN MISI 1</div>
-                    <h3 style="font-size: 1.8rem; margin-bottom: 20px; color: white;" id="misiDetailTitle">Silakan Pilih Misi</h3>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 20px; color: var(--text-light);" id="misiDetailTitle">Silakan Pilih Misi</h3>
                     <div style="width: 50px; height: 4px; background: var(--accent-neon); border-radius: 2px; margin-bottom: 20px;"></div>
                     <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.1rem;" id="misiDetailDesc">
                         Klik salah satu poin di sebelah kiri untuk melihat deskripsi lengkap misi.
@@ -162,7 +162,7 @@
         </section>
 
         <!-- NEW SUPER UI: FILOSOFI LOGO & WARNA DI INDEX.HTML -->
-        <section id="filosofi" class="container" style="padding: 100px 20px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px;">
+        <section id="filosofi" class="container" style="padding: 100px 20px; border-top: 1px solid var(--border-light); margin-top: 50px;">
             
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
                 <h2 style="font-size: 3rem; font-weight: 900;">Makna <span style="color: var(--accent-neon);">Filosofi Logo</span></h2>
@@ -219,7 +219,7 @@
                     Kabinet Ananta Anardhaya adalah tentang <span>merangkai</span> yang tercerai, <span>menyatukan</span> yang berjalan sendiri, dan <span>mengubah</span> harapan menjadi kerja bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <span>merajut perubahan</span>.
                 </p>
                 <div style="width: 60px; height: 3px; background: var(--accent-neon); margin: 0 auto 30px; border-radius: 2px;"></div>
-                <h4 style="font-size: 1.3rem; letter-spacing: 2px; color: white; text-transform: uppercase;" id="namaKetuaQuote">Memuat Nama...</h4>
+                <h4 style="font-size: 1.3rem; letter-spacing: 2px; color: var(--text-light); text-transform: uppercase;" id="namaKetuaQuote">Memuat Nama...</h4>
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Ketua BEM KBMFKG UMI</p>
             </div>
         </section>
@@ -250,13 +250,13 @@
         // Fungsi Smart Generator SVG Icon 
         function getSvgIcon(elemen) {
             const el = elemen.toLowerCase();
-            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
-            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
-            if(el.includes('ular')) return `<svg viewBox="0 0 24 24"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; 
-            if(el.includes('molar')) return `<svg viewBox="0 0 24 24"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
-            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
-            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21z"/></svg>`;
-            return `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
+            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
+            if(el.includes('ular')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; 
+            if(el.includes('molar')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
+            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
+            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21z"/></svg>`;
+            return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
         }
 
         // Animasi Scroll
@@ -336,7 +336,7 @@
             detailBox.classList.remove('show');
             setTimeout(() => {
                 detailBox.innerHTML = `
-                    <div class="warna-detail-swatch" style="background-color: ${data.hex}; border-color: ${data.hex === '#ffffff' ? '#e2e8f0' : 'transparent'};"></div>
+                    <div class="warna-detail-swatch" style="background-color: ${data.hex}; border-color: ${data.hex === '#ffffff' ? 'var(--border-light)' : 'transparent'};"></div>
                     <div class="warna-detail-text">
                         <h3>${data.warna} <span>${data.hex}</span></h3>
                         <p>${data.makna}</p>
