@@ -19,7 +19,8 @@
             <div class="loader-line"></div>
         </div>
         
-        <div class="loader-percent"><span id="loader-count">90</span>%</div>
+        <!-- SUPER UPGRADE: Mulai dari 80% agar efek loading lebih terasa profesional -->
+        <div class="loader-percent"><span id="loader-count">80</span>%</div>
     </div>
 </div>
 
@@ -31,17 +32,17 @@
         const kabinetEl = document.getElementById('loader-kabinet');
         const loader = document.getElementById('global-loader');
         
-        // Langsung mulai di 90% sesuai request agar lebih cepat dan elegan
-        let count = 90;
+        // Langsung mulai di 80% sesuai request agar lebih logis dan profesional
+        let count = 80;
         countEl.innerText = count;
         
-        // Simulasi berjalan realtime perlahan dari 90% ke 98% sambil menunggu database
+        // Simulasi berjalan realtime perlahan dari 80% ke 98% sambil menunggu database
         let slowCrawl = setInterval(() => {
             if(count < 98) { 
                 count++; 
                 countEl.innerText = count; 
             }
-        }, 500); // Naik 1% setiap 0.5 detik
+        }, 300); // Naik 1% setiap 0.3 detik (Tepat waktu & natural)
 
         // Fetch data sejarah untuk nama Kabinet & Periode terbaru
         let apiUrl = '/api/content';
@@ -65,25 +66,25 @@
             kabinetEl.innerText = "KABINET ANANTA ANARDHAYA";
         });
 
-        // Trigger selesainya Loading Screen saat seluruh asset halaman selesai di-load
+        // Trigger selesainya Loading Screen saat seluruh asset & database selesai dirender
         window.addEventListener('load', () => {
             clearInterval(slowCrawl); // Hentikan rayapan lambat
             
-            // Lari kencang sisa persennya menuju 100%
+            // Lari kencang sisa persennya menuju 100% secara smooth
             const finishInterval = setInterval(() => {
                 if(count < 100) {
                     count++;
                     countEl.innerText = count;
                 } else {
                     clearInterval(finishInterval);
-                    // Beri jeda sejenak di 100% agar user sempat melihat angka 100%
+                    // Beri jeda sejenak di 100% agar user sempat melihat angka penuh
                     setTimeout(() => {
                         loader.classList.add('hidden');
                         // Hapus dari DOM agar tidak memberatkan memori browser
                         setTimeout(() => loader.remove(), 800); 
                     }, 300);
                 }
-            }, 15); // Kecepatan super kilat
+            }, 15); // Kecepatan super kilat 15ms
         });
     })();
 </script>
