@@ -7,7 +7,7 @@
     <title>Tentang Kami | Profil & Sejarah BEM KBMFKG UMI</title>
     
     <!-- ================= SEO EXPERT ================= -->
-    <meta name="description" content="Kenali lebih dekat profil organisasi, visi misi, makna filosofi logo, struktur kepengurusan kabinet, serta sejarah pergerakan BEM KBMFKG UMI dari masa ke masa.">
+    <meta name="description" content="Kenali lebih dekat profil organisasi, visi misi, struktur kepengurusan kabinet, makna filosofi logo, serta sejarah pergerakan BEM KBMFKG UMI dari masa ke masa.">
     <meta name="keywords" content="Profil BEM FKG UMI, Sejarah BEM KBMFKG, Visi Misi BEM FKG UMI, Struktur Organisasi BEM FKG, Kabinet Ananta Anardhaya">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -34,7 +34,7 @@
       "@type": "AboutPage",
       "name": "Tentang BEM KBMFKG UMI",
       "url": "https://bemkbmfkgumi.com/tentang",
-      "description": "Profil, Visi Misi, Filosofi, Struktur, dan Sejarah BEM KBMFKG UMI.",
+      "description": "Profil, Visi Misi, Struktur, Filosofi, dan Sejarah BEM KBMFKG UMI.",
       "publisher": {
         "@type": "Organization",
         "name": "BEM KBMFKG UMI",
@@ -80,6 +80,7 @@
             </div>
         </div>
 
+        <!-- ================= 1. VISI & MISI ================= -->
         <!-- VISI -->
         <section id="visimisi" class="reveal" style="margin-bottom: 50px;">
             <div class="glass-card" style="text-align: center; padding: 50px 30px;">
@@ -100,7 +101,27 @@
             </div>
         </section>
 
-        <!-- NEW: MAKNA FILOSOFI LOGO & WARNA -->
+        <!-- ================= 2. STRUKTUR KEPENGURUSAN ================= -->
+        <section id="struktur" class="reveal" style="margin-bottom: 100px;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 2.8rem; color: var(--text-light);">Struktur <span style="color: var(--accent-neon);">Kepengurusan</span></h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Para penggerak yang mendedikasikan diri untuk kemajuan FKG UMI.</p>
+            </div>
+            
+            <h3 style="text-align:center; font-size: 1.8rem; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-light);">Pimpinan Inti BEM</h3>
+            <div class="grid-4" id="containerPimpinan" style="margin-bottom: 80px;">
+                <div style="text-align:center; grid-column: span 4; padding: 30px;">
+                    <div style="width: 40px; height: 40px; border: 4px solid var(--accent-neon); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+                    <span style="color: var(--text-muted);">Memuat pimpinan dari database...</span>
+                </div>
+            </div>
+
+            <div id="containerDepartemen">
+                <!-- JS Injeksi Grid Per Departemen -->
+            </div>
+        </section>
+
+        <!-- ================= 3. MAKNA FILOSOFI LOGO & WARNA ================= -->
         <section id="filosofi" class="reveal" style="margin-bottom: 100px;">
             <div style="text-align: center; margin-bottom: 50px;">
                 <h2 style="font-size: 2.8rem; color: var(--text-light);">Filosofi <span style="color: var(--accent-neon);">Logo</span></h2>
@@ -126,26 +147,7 @@
             </div>
         </section>
 
-        <!-- STRUKTUR KEPENGURUSAN -->
-        <section id="struktur" class="reveal" style="margin-bottom: 100px;">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="font-size: 2.8rem; color: var(--text-light);">Struktur <span style="color: var(--accent-neon);">Kepengurusan</span></h2>
-            </div>
-            
-            <h3 style="text-align:center; font-size: 1.8rem; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-light);">Pimpinan Inti BEM</h3>
-            <div class="grid-4" id="containerPimpinan" style="margin-bottom: 80px;">
-                <div style="text-align:center; grid-column: span 4; padding: 30px;">
-                    <div style="width: 40px; height: 40px; border: 4px solid var(--accent-neon); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-                    <span style="color: var(--text-muted);">Memuat pimpinan dari database...</span>
-                </div>
-            </div>
-
-            <div id="containerDepartemen">
-                <!-- JS Injeksi Grid Per Departemen -->
-            </div>
-        </section>
-
-        <!-- SEJARAH KEPENGURUSAN (TIMELINE) -->
+        <!-- ================= 4. SEJARAH KEPENGURUSAN (TIMELINE) ================= -->
         <section id="sejarah" class="reveal" style="margin-bottom: 100px;">
             <div style="text-align: center; margin-bottom: 50px;">
                 <h2 style="font-size: 2.8rem; color: var(--text-light);">Sejarah <span style="color: var(--accent-neon);">Kepengurusan</span></h2>
@@ -157,6 +159,7 @@
                 <div style="text-align:center; color: var(--text-muted);">Mensinkronisasi rekam jejak...</div>
             </div>
         </section>
+
     </main>
     <%- include('partials/footer.html') %>
 
@@ -332,15 +335,16 @@
                 if (!req.ok) throw new Error("API Gagal");
                 const res = await req.json();
                 
+                // Eksekusi Render secara berurutan sesuai alur vertikal HTML
                 if (res.org) renderTentangUI(res.org); else throw new Error();
-                if (res.sejarah) renderSejarahUI(res.sejarah); else throw new Error();
                 if (res.filosofi) renderFilosofiUI(res.filosofi); else throw new Error();
+                if (res.sejarah) renderSejarahUI(res.sejarah); else throw new Error();
 
             } catch (err) { 
                 console.warn("⚠️ Mode Simulasi. Data lokal dimuat.");
                 renderTentangUI(FALLBACK_ORG_DATA);
-                renderSejarahUI(FALLBACK_SEJARAH);
                 renderFilosofiUI(FALLBACK_FILOSOFI);
+                renderSejarahUI(FALLBACK_SEJARAH);
             }
 
             // Execute Hash Navigation untuk scrolling halus
