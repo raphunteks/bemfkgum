@@ -5,19 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beranda | Official Website BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT ================= -->
+    <!-- ================= SEO GOLD STANDARD GSC ================= -->
+    <!-- TAMPILAN GSC: Masukkan kode verifikasi HTML dari Google Search Console di sini -->
+    <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
+    
     <meta name="description" content="Website resmi Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia (BEM KBMFKG UMI). Wadah pergerakan, kolaborasi, dan penyaluran aspirasi mahasiswa.">
     <meta name="keywords" content="BEM FKG UMI, BEM KBMFKG UMI, Fakultas Kedokteran Gigi UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia, Makassar, Kabinet Ananta Anardhaya">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://bemkbmfkgumi.com/">
     
+    <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Preload CSS Utama untuk mempercepat FCP -->
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/main.css">
+    
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemkbmfkgumi.com/">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
     <meta property="og:title" content="Beranda | Official Website BEM KBMFKG UMI">
     <meta property="og:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -26,29 +40,51 @@
     <meta property="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- JSON-LD Schema.org -->
+    <!-- ADVANCED JSON-LD Schema.org (WebSite, Organization, Breadcrumb) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "BEM KBMFKG UMI",
-      "url": "https://bemkbmfkgumi.com/",
-      "logo": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
-      "description": "Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Makassar",
-        "addressRegion": "Sulawesi Selatan",
-        "addressCountry": "ID"
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "BEM KBMFKG UMI",
+        "alternateName": "BEM FKG UMI",
+        "url": "https://bemkbmfkgumi.com/",
+        "description": "Website Resmi Badan Eksekutif Mahasiswa FKG UMI."
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "BEM KBMFKG UMI",
+        "url": "https://bemkbmfkgumi.com/",
+        "logo": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+        "image": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+        "description": "Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Makassar",
+          "addressRegion": "Sulawesi Selatan",
+          "addressCountry": "ID"
+        },
+        "sameAs": [
+          "https://www.instagram.com/bemkbmfkgumi/"
+        ]
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Beranda",
+          "item": "https://bemkbmfkgumi.com/"
+        }]
       }
-    }
+    ]
     </script>
     <!-- ================= END SEO ================= -->
 
-    <!-- SUPER UPGRADE: Relative Path Asset Routing (Anti-Server Down / Local-Safe) -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
-    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
     <%- include('partials/header.html') %>
@@ -68,7 +104,7 @@
                 
                 <p class="hero-quote" style="font-size: 1.1rem; color: var(--text-light); max-width: 700px; margin: 0 auto;">
                     "Perjuangan yang tak terbatas dan tidak Rusak/Hancur, Menggambarkan sesuatu yang abadi kekal, dan tidak terhalang oleh waktu."<br>
-                    <span style="font-size: 0.95rem; color: var(--accent-neon); display: block; margin-top: 15px; font-weight: bold; letter-spacing: 1px;">Semangat Perjaunagan Tanpa Batas, Sesuatu yang Abadi.</span>
+                    <span style="font-size: 0.95rem; color: var(--accent-neon); display: block; margin-top: 15px; font-weight: bold; letter-spacing: 1px;">Semangat Perjuangan Tanpa Batas, Sesuatu yang Abadi.</span>
                 </p>
                 
                 <div class="btn-group" style="margin-top: 40px;">
@@ -89,9 +125,9 @@
             <div class="sambutan-split reveal">
                 <!-- BOX KIRI (LOGO) -->
                 <div class="sambutan-logo-box">
-                    <img id="imgSambutanLogo" src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI">
+                    <img id="imgSambutanLogo" src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" width="315" height="315" loading="lazy">
                     <div class="badge-periode-modern">
-                        <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">📅</div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;" aria-hidden="true">📅</div>
                         <div>
                             <div style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px;">PERIODE</div>
                             <strong style="color: var(--text-light); font-size: 1rem;">2025 - 2026</strong>
@@ -119,8 +155,8 @@
                             <h3 id="namaKetuaSambutan" style="font-size: 1.5rem; margin-bottom: 5px; color: var(--text-light);">Memuat Nama...</h3>
                             <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Ketua BEM KBMFKG UMI</p>
                         </div>
-                        <a href="/tentang" class="sambutan-arrow-btn" aria-label="Lebih Lanjut">
-                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <a href="/tentang" class="sambutan-arrow-btn" aria-label="Lihat profil lengkap tentang kami">
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <line x1="12" y1="19" x2="12" y2="5"></line>
                                 <polyline points="5 12 12 5 19 12"></polyline>
                             </svg>
@@ -155,11 +191,11 @@
 
             <div class="misi-interactive-wrapper reveal">
                 <!-- Kiri: Daftar Tab -->
-                <div class="misi-sidebar" id="misiSidebarIndex">
+                <div class="misi-sidebar" id="misiSidebarIndex" role="tablist">
                     <!-- JS Mengisi Daftar Misi -->
                 </div>
                 <!-- Kanan: Konten Detail -->
-                <div class="misi-content-box" id="misiContentIndex">
+                <div class="misi-content-box" id="misiContentIndex" role="tabpanel" aria-live="polite">
                     <div style="display:inline-block; background:rgba(0,229,255,0.1); color:var(--accent-neon); padding:5px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold; margin-bottom:15px; width:max-content;" id="misiDetailBadge">POIN MISI 1</div>
                     <h3 style="font-size: 1.8rem; margin-bottom: 20px; color: var(--text-light);" id="misiDetailTitle">Silakan Pilih Misi</h3>
                     <div style="width: 50px; height: 4px; background: var(--accent-neon); border-radius: 2px; margin-bottom: 20px;"></div>
@@ -176,9 +212,8 @@
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
                 <h2 style="font-size: 3rem; font-weight: 900;">Makna <span style="color: var(--accent-neon);">Filosofi Logo</span></h2>
                 
-                <!-- NEW BIG UPGRADE: LOGO ANIMASI MELAYANG -->
                 <div style="margin: 30px auto;">
-                    <img src="/img/bemfkgumi.png" alt="Logo BEM KBMFKG UMI" class="floating-logo">
+                    <img src="/img/bemfkgumi.png" alt="Logo Animasi BEM KBMFKG UMI" class="floating-logo" width="160" height="160" loading="lazy">
                 </div>
 
                 <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
@@ -186,14 +221,14 @@
 
             <!-- Carousel Cover Flow UI Logo -->
             <div class="filosofi-slider-wrapper reveal">
-                <button class="slider-nav-btn prev" onclick="scrollSlider(-340)">
-                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                <button class="slider-nav-btn prev" onclick="scrollSlider(-340)" aria-label="Geser slider logo ke kiri">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
                 </button>
                 <div class="filosofi-slider-track" id="indexLogoSlider">
                     <!-- Inject via JS -->
                 </div>
-                <button class="slider-nav-btn next" onclick="scrollSlider(340)">
-                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                <button class="slider-nav-btn next" onclick="scrollSlider(340)" aria-label="Geser slider logo ke kanan">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
                 </button>
             </div>
 
@@ -204,11 +239,11 @@
                     <p style="color: var(--text-muted); margin-top: 10px;">Palet warna merepresentasikan keteguhan, kreativitas, dan keterbukaan dalam merajut gerakan mahasiswa yang kolaboratif.</p>
                 </div>
 
-                <div class="warna-pills-wrapper" id="indexWarnaPills">
+                <div class="warna-pills-wrapper" id="indexWarnaPills" role="tablist">
                     <!-- Inject via JS -->
                 </div>
 
-                <div class="warna-detail-box" id="indexWarnaDetail">
+                <div class="warna-detail-box" id="indexWarnaDetail" role="tabpanel" aria-live="polite">
                     <!-- Detail Warna Aktif -->
                     <div class="warna-detail-swatch" style="background: transparent;"></div>
                     <div class="warna-detail-text">
@@ -221,8 +256,8 @@
 
         <!-- UPGRADE: QUOTE BESAR KABINET -->
         <section class="big-quote-section reveal" style="margin-top: 50px;">
-            <div class="quote-marks left">"</div>
-            <div class="quote-marks right">"</div>
+            <div class="quote-marks left" aria-hidden="true">"</div>
+            <div class="quote-marks right" aria-hidden="true">"</div>
             <div class="container">
                 <p class="big-quote-text">
                     Kabinet Ananta Anardhaya adalah tentang <span>merangkai</span> yang tercerai, <span>menyatukan</span> yang berjalan sendiri, dan <span>mengubah</span> harapan menjadi kerja bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <span>merajut perubahan</span>.
@@ -259,13 +294,13 @@
         // Fungsi Smart Generator SVG Icon 
         function getSvgIcon(elemen) {
             const el = elemen.toLowerCase();
-            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
-            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
-            if(el.includes('ular')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; 
-            if(el.includes('molar')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
-            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
-            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21z"/></svg>`;
-            return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
+            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
+            if(el.includes('ular')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; 
+            if(el.includes('molar')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
+            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
+            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M1 21h22L12 2 1 21z"/></svg>`;
+            return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
         }
 
         // Animasi Scroll
@@ -284,8 +319,12 @@
         // Logika Tab Misi
         let globalMisiData = [];
         function openMisiTab(index, btnElement) {
-            document.querySelectorAll('.misi-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.misi-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
             btnElement.classList.add('active');
+            btnElement.setAttribute('aria-selected', 'true');
             
             const box = document.getElementById('misiContentIndex');
             box.style.opacity = '0';
@@ -336,8 +375,12 @@
         // Logika Pilih Warna Interaktif (Pills System)
         let globalWarnaData = [];
         function selectWarna(index, btnElement) {
-            document.querySelectorAll('.warna-pill').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.warna-pill').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
             btnElement.classList.add('active');
+            btnElement.setAttribute('aria-selected', 'true');
 
             const data = globalWarnaData[index];
             const detailBox = document.getElementById('indexWarnaDetail');
@@ -384,9 +427,10 @@
                         sidebar.innerHTML = '';
                         
                         globalMisiData.forEach((misi, idx) => {
+                            // FIX AGENTIC ACCESSIBILITY
                             sidebar.innerHTML += `
-                                <button class="misi-tab-btn ${idx === 0 ? 'active' : ''}" onclick="openMisiTab(${idx}, this)">
-                                    Pilar Misi Ke-${idx + 1} <span>&rarr;</span>
+                                <button class="misi-tab-btn ${idx === 0 ? 'active' : ''}" onclick="openMisiTab(${idx}, this)" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
+                                    Pilar Misi Ke-${idx + 1} <span aria-hidden="true">&rarr;</span>
                                 </button>
                             `;
                         });
@@ -416,7 +460,7 @@
                 `;
             });
             // Spacer di akhir agar kartu terakhir bisa ke tengah
-            track.innerHTML += `<div style="flex: 0 0 10vw;"></div>`;
+            track.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
 
             // Inisiasi Logika Deteksi Tengah (Intersection)
             initSliderLogic();
@@ -426,11 +470,12 @@
             const pillsCont = document.getElementById('indexWarnaPills');
             pillsCont.innerHTML = '';
             globalWarnaData.forEach((item, idx) => {
+                // FIX AGENTIC ACCESSIBILITY: Button instead of div for interactive tab
                 pillsCont.innerHTML += `
-                    <div class="warna-pill" onclick="selectWarna(${idx}, this)">
+                    <button class="warna-pill" onclick="selectWarna(${idx}, this)" role="tab" aria-selected="false">
                         <div class="warna-pill-dot" style="background-color: ${item.hex}; border: 1px solid rgba(255,255,255,0.2);"></div>
                         ${item.warna}
-                    </div>
+                    </button>
                 `;
             });
             
