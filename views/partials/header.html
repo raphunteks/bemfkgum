@@ -3,23 +3,28 @@
 <!-- ================= SUPER UPGRADE: GLOBAL LOADING SCREEN (CINEMATIC) ================= -->
 <div id="global-loader">
     <div class="loader-content">
-        <img src="/img/bemfkgumi.png" alt="Logo" class="loader-logo">
+        <!-- 1. Logo BEM -->
+        <img src="/img/bemfkgumi.png" alt="Logo BEM KBMFKG UMI" class="loader-logo">
+        
+        <!-- 2. BEM -->
         <h1 class="loader-title">BEM</h1>
-        <!-- Aksen warna emas/soft yellow ala referensi UI untuk memberikan kesan eksklusif -->
+        
+        <!-- 3. KBMFKG UMI -->
         <h2 class="loader-subtitle">KBMFKG UMI</h2>
         
+        <!-- 4. PERIODE (Otomatis menyesuaikan DB) -->
         <div class="loader-meta" id="loader-meta-text">
-            <span id="loader-periode">PERIODE 2025 - 2026</span>
+            <span id="loader-periode">MEMUAT PERIODE...</span>
         </div>
         
-        <!-- UI Garis Pemisah (Divider) ala BEM FEB UI -->
+        <!-- 5. GARIS PEMISAH & NAMA KABINET -->
         <div class="loader-divider-wrapper">
             <div class="loader-line"></div>
-            <span id="loader-kabinet" class="loader-kabinet">MEMUAT DATABASE...</span>
+            <span id="loader-kabinet" class="loader-kabinet">MEMUAT KABINET...</span>
             <div class="loader-line"></div>
         </div>
         
-        <!-- SUPER UPGRADE: Mulai dari 80% agar efek loading lebih terasa profesional -->
+        <!-- 6. LOADING PERCENT (Mulai dari 80%) -->
         <div class="loader-percent"><span id="loader-count">80</span>%</div>
     </div>
 </div>
@@ -32,7 +37,7 @@
         const kabinetEl = document.getElementById('loader-kabinet');
         const loader = document.getElementById('global-loader');
         
-        // Langsung mulai di 80% sesuai request agar lebih logis dan profesional
+        // Langsung mulai di 80% sesuai request agar lebih cepat dan elegan
         let count = 80;
         countEl.innerText = count;
         
@@ -42,7 +47,7 @@
                 count++; 
                 countEl.innerText = count; 
             }
-        }, 300); // Naik 1% setiap 0.3 detik (Tepat waktu & natural)
+        }, 300); // Naik 1% setiap 0.3 detik
 
         // Fetch data sejarah untuk nama Kabinet & Periode terbaru
         let apiUrl = '/api/content';
@@ -52,9 +57,9 @@
         .then(r => r.json())
         .then(res => {
             if(res.sejarah && res.sejarah.length > 0) {
-                // Ambil index 0 (Data terbaru)
+                // Ambil index 0 (Data sejarah paling terbaru)
                 const current = res.sejarah[0]; 
-                periodeEl.innerText = current.tahun;
+                periodeEl.innerText = "PERIODE " + current.tahun;
                 kabinetEl.innerText = current.kabinet.toUpperCase();
             } else {
                 throw new Error("No Data");
@@ -62,29 +67,29 @@
         })
         .catch(() => {
             // Fallback Cepat jika API lambat
-            periodeEl.innerText = "2025 - 2026";
+            periodeEl.innerText = "PERIODE 2025 - 2026";
             kabinetEl.innerText = "KABINET ANANTA ANARDHAYA";
         });
 
-        // Trigger selesainya Loading Screen saat seluruh asset & database selesai dirender
+        // Trigger selesainya Loading Screen saat seluruh asset halaman selesai di-load
         window.addEventListener('load', () => {
             clearInterval(slowCrawl); // Hentikan rayapan lambat
             
-            // Lari kencang sisa persennya menuju 100% secara smooth
+            // Lari kencang sisa persennya menuju 100%
             const finishInterval = setInterval(() => {
                 if(count < 100) {
                     count++;
                     countEl.innerText = count;
                 } else {
                     clearInterval(finishInterval);
-                    // Beri jeda sejenak di 100% agar user sempat melihat angka penuh
+                    // Beri jeda sejenak di 100% agar user sempat melihat angka 100%
                     setTimeout(() => {
                         loader.classList.add('hidden');
                         // Hapus dari DOM agar tidak memberatkan memori browser
                         setTimeout(() => loader.remove(), 800); 
-                    }, 300);
+                    }, 400);
                 }
-            }, 15); // Kecepatan super kilat 15ms
+            }, 20); // Kecepatan kilat 20ms per angka
         });
     })();
 </script>
