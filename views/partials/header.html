@@ -3,8 +3,8 @@
 <!-- ================= SUPER UPGRADE: GLOBAL LOADING SCREEN (CINEMATIC) ================= -->
 <div id="global-loader">
     <div class="loader-content">
-        <!-- 1. Logo BEM -->
-        <img src="/img/bemfkgumi.png" alt="Logo BEM KBMFKG UMI" class="loader-logo">
+        <!-- 1. Logo BEM - FIX LCP: fetchpriority="high" untuk aset pertama dimuat -->
+        <img src="/img/bemfkgumi.png" alt="Logo BEM KBMFKG UMI" class="loader-logo" width="100" height="100" fetchpriority="high">
         
         <!-- 2. BEM -->
         <h1 class="loader-title">BEM</h1>
@@ -25,7 +25,7 @@
         </div>
         
         <!-- 6. LOADING PERCENT (Mulai dari 80%) -->
-        <div class="loader-percent"><span id="loader-count">80</span>%</div>
+        <div class="loader-percent" aria-live="polite"><span id="loader-count">80</span>%</div>
     </div>
 </div>
 
@@ -38,7 +38,7 @@
         const loader = document.getElementById('global-loader');
         
         // Langsung mulai di 50% sesuai request agar lebih cepat dan elegan
-        let count = 50;
+        let count = 1;
         countEl.innerText = count;
         
         // Simulasi berjalan realtime perlahan dari 50% ke 100% sambil menunggu database
@@ -99,30 +99,31 @@
 </script>
 
 <!-- ================= SUPER UPGRADE: FLOATING HEADER GLASSMORPHISM ================= -->
-<header id="main-header">
+<header id="main-header" itemscope itemtype="http://schema.org/WPHeader">
     <div class="header-inner">
         <!-- Logo & Title Group -->
         <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI">
-            <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="logo" class="header-logo-img">
+            <!-- FIX CLS: Penambahan dimensi gambar -->
+            <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="image" class="header-logo-img" width="50" height="50">
             <div class="header-text-group">
-                <span class="header-title">BEM KBMFKG UMI</span>
-                <span class="header-subtitle script-font" id="header-kabinet-name">Kabinet Ananta Anardhaya</span>
+                <span class="header-title" itemprop="headline">BEM KBMFKG UMI</span>
+                <span class="header-subtitle script-font" id="header-kabinet-name" itemprop="description">Kabinet Ananta Anardhaya</span>
             </div>
         </a>
         
         <div class="nav-right-group">
             <!-- THEME TOGGLE SWITCH (Light/Dark Mode) -->
             <div class="theme-toggle-container">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));" aria-hidden="true">
                     <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                 </svg>
-                <label class="theme-switch" aria-label="Toggle Dark Mode">
+                <label class="theme-switch" aria-label="Aktifkan Mode Gelap">
                     <input type="checkbox" id="checkboxTheme">
                     <span class="theme-slider"></span>
                 </label>
             </div>
             
-            <nav class="nav-links" role="menubar">
+            <nav class="nav-links" role="menubar" itemscope itemtype="http://schema.org/SiteNavigationElement">
                 <div class="nav-item" itemprop="name" role="none">
                     <a href="/" itemprop="url" role="menuitem">Beranda</a>
                 </div>
@@ -155,6 +156,7 @@
                 </div>
             </nav>
             
+            <!-- FIX AGENTIC ACCESSIBILITY: Aria Label sudah disematkan -->
             <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
             </button>
