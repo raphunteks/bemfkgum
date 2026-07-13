@@ -133,8 +133,17 @@
                 <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo BEM KBMFKG UMI memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
             </div>
             
-            <div class="filosofi-grid" id="containerFilosofiLogo">
-                <!-- JS Inject Logo Items -->
+            <!-- SUPER UPGRADE: Ganti Grid Biasa dengan Slider/Carousel Cover Flow Effect -->
+            <div class="filosofi-slider-wrapper reveal">
+                <button class="slider-nav-btn prev" onclick="scrollSlider(-340)">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                </button>
+                <div class="filosofi-slider-track" id="containerFilosofiLogo">
+                    <!-- JS Inject Logo Items -->
+                </div>
+                <button class="slider-nav-btn next" onclick="scrollSlider(340)">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
             </div>
 
             <div style="text-align: center; margin-top: 80px; margin-bottom: 40px;">
@@ -200,14 +209,46 @@
             return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
         }
 
+        // ================= FUNGSI SLIDER LOGIKA COVER FLOW =================
+        function scrollSlider(amount) {
+            const track = document.getElementById('containerFilosofiLogo');
+            if (track) track.scrollBy({ left: amount, behavior: 'smooth' });
+        }
+
+        function initSliderLogic() {
+            const track = document.getElementById('containerFilosofiLogo');
+            const cards = document.querySelectorAll('#containerFilosofiLogo .filosofi-slide-card');
+            
+            if (!track || cards.length === 0) return;
+
+            track.addEventListener('scroll', () => {
+                let centerPoint = track.scrollLeft + (track.clientWidth / 2);
+                let activeIndex = 0;
+                let minDistance = Infinity;
+
+                cards.forEach((card, index) => {
+                    let cardCenter = card.offsetLeft + (card.clientWidth / 2) - track.offsetLeft;
+                    let distance = Math.abs(centerPoint - cardCenter);
+                    if(distance < minDistance) {
+                        minDistance = distance;
+                        activeIndex = index;
+                    }
+                });
+
+                cards.forEach(c => c.classList.remove('active'));
+                if(cards[activeIndex]) cards[activeIndex].classList.add('active');
+            });
+        }
+
         // Fungsi Render Filosofi
         function renderFilosofiUI(filData) {
             const logoCont = document.getElementById('containerFilosofiLogo');
             logoCont.innerHTML = '';
             if(filData.logo && filData.logo.length > 0) {
                 filData.logo.forEach((item, i) => {
+                    // SUPER UPGRADE: Ubah class ke filosofi-slide-card agar jadi Carousel
                     logoCont.innerHTML += `
-                        <div class="filosofi-card reveal active" style="transition-delay: ${i*0.05}s">
+                        <div class="filosofi-slide-card ${i === 0 ? 'active' : ''}">
                             <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
                             <h3>${item.elemen}</h3>
                             <p class="filo-arti"><strong>Arti:</strong> ${item.arti}</p>
@@ -215,6 +256,8 @@
                         </div>
                     `;
                 });
+                // Spacer untuk memastikan kartu terakhir bisa discroll ke tengah
+                logoCont.innerHTML += `<div style="flex: 0 0 10vw;"></div>`;
             }
 
             const warnaCont = document.getElementById('containerFilosofiWarna');
@@ -232,6 +275,11 @@
                     `;
                 });
             }
+
+            // Inisialisasi logika geser setelah item di-render ke DOM
+            setTimeout(() => {
+                initSliderLogic();
+            }, 100);
         }
 
         function renderTentangUI(orgData) {
