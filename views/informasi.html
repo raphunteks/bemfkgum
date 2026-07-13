@@ -58,6 +58,8 @@
         <nav class="tab-nav reveal" id="tabNavMenu" style="transition-delay: 0.1s;">
             <button class="tab-btn active" onclick="switchTab('proker')">Program Kerja</button>
             <button class="tab-btn" onclick="switchTab('kalender')">Kalender Proker</button>
+            <!-- SUPER UPGRADE: Tab Timeline Baru Ditambahkan -->
+            <button class="tab-btn" onclick="switchTab('timeline')">Timeline Proker</button>
             <button class="tab-btn" onclick="switchTab('galeri')">Dokumentasi</button>
             <button class="tab-btn" onclick="switchTab('plasma')">PLASMA (Aspirasi)</button>
         </nav>
@@ -90,6 +92,19 @@
                         <div style="text-align:center;">Memuat agenda...</div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- TAB BARU: TIMELINE PROKER VERTICAL (UNIKOM STYLE) -->
+        <section id="timeline" class="tab-content">
+            <div class="reveal" style="text-align: center; margin-bottom: 40px;">
+                <h2 style="font-size: 2.5rem; color: var(--text-light);">Timeline <span style="color: var(--accent-neon);">Program Kerja</span></h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Perjalanan program kerja dan agenda BEM selama satu periode kepengurusan.</p>
+            </div>
+            
+            <div class="v-timeline-container" id="timelineProkerContainer">
+                <!-- JS Inject Timeline Proker -->
+                <div style="text-align:center; color: var(--text-muted);">Mensinkronisasi data timeline...</div>
             </div>
         </section>
 
@@ -183,7 +198,9 @@
             renderProker(resData.proker);
             renderDokumentasi(resData.dokumentasi);
             kalenderData = resData.kalender || [];
+            
             renderCalendar();
+            renderTimelineProker(); // Panggil fungsi timeline saat inisiasi!
 
             // Eksekusi Hash Tab Navigation ketika halaman pertama kali dimuat
             handleHashTabOnLoad();
@@ -205,15 +222,15 @@
 
                 if(window.location.hash !== '#' + t) { history.pushState(null, null, '#' + t); }
                 
-                // Jika masuk ke tab kalender, otomatis tampilkan semua proker di bulan tsb
+                // Panggil render dan trigger filter untuk Kalender Proker
                 if(t === 'kalender') { renderCalendar(); tampilkanAgendaSebulan(); }
             }
         }
 
-        // Logic memantau hash URL
+        // Logic memantau hash URL ditambahkan tab 'timeline'
         function handleHashTabOnLoad() {
             const hash = window.location.hash.substring(1);
-            const validTabs = ['proker', 'kalender', 'galeri', 'plasma'];
+            const validTabs = ['proker', 'kalender', 'timeline', 'galeri', 'plasma'];
             if (hash && validTabs.includes(hash)) {
                 switchTab(hash);
                 // Scroll halus sedikit ke bawah agar pas menyorot tab
@@ -224,10 +241,9 @@
             }
         }
 
-        // Event listener saat user klik dari header saat masih ada di dalam halaman yg sama
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.substring(1);
-            const validTabs = ['proker', 'kalender', 'galeri', 'plasma'];
+            const validTabs = ['proker', 'kalender', 'timeline', 'galeri', 'plasma'];
             if (hash && validTabs.includes(hash)) { switchTab(hash); }
         });
 
@@ -281,7 +297,6 @@
                     const eStart = new Date(ev.tglMulai);
                     const eEnd = ev.tglSelesai ? new Date(ev.tglSelesai) : eStart;
                     const checkDate = new Date(year, month, d);
-                    // Hilangkan jam untuk komparasi hari
                     eStart.setHours(0,0,0,0); eEnd.setHours(0,0,0,0); checkDate.setHours(0,0,0,0);
                     return checkDate >= eStart && checkDate <= eEnd;
                 });
@@ -319,7 +334,6 @@
             const events = kalenderData.filter(ev => { 
                 if(!ev.tglMulai) return false; 
                 const s = new Date(ev.tglMulai); const e = ev.tglSelesai ? new Date(ev.tglSelesai) : s;
-                // Cek jika kegiatan berada / bersinggungan di bulan yang sedang aktif di kalender
                 const startBulanAktif = new Date(year, month, 1);
                 const endBulanAktif = new Date(year, month + 1, 0);
                 return (s <= endBulanAktif && e >= startBulanAktif);
@@ -348,7 +362,6 @@
         function renderAgendaList(events) {
             const cont = document.getElementById('agendaContent'); cont.innerHTML = '';
             if(events.length > 0) {
-                // Urutkan agenda berdasarkan tanggal mulai terdekat
                 events.sort((a,b) => new Date(a.tglMulai) - new Date(b.tglMulai));
                 events.forEach(e => { 
                     const status = getAgendaStatus(e.tglMulai, e.tglSelesai);
@@ -367,6 +380,57 @@
             } else { 
                 cont.innerHTML = `<div style="text-align:center; padding: 40px 0; color: var(--text-muted);">📭 Tidak ada agenda pada waktu ini.</div>`; 
             }
+        }
+
+        // ================= BIG UPGRADE: FUNGSI RENDER TIMELINE PROKER =================
+        function renderTimelineProker() {
+            const cont = document.getElementById('timelineProkerContainer');
+            cont.innerHTML = '';
+            
+            if(!kalenderData || kalenderData.length === 0) {
+                cont.innerHTML = `<div style="text-align:center; color: var(--text-muted); width:100%; padding: 40px 0;">📭 Belum ada program kerja yang diagendakan.</div>`;
+                return;
+            }
+
+            // Urutkan agenda secara kronologis (dari yang terlama sampai terbaru)
+            const sortedData = [...kalenderData].sort((a,b) => new Date(a.tglMulai) - new Date(b.tglMulai));
+            
+            sortedData.forEach((e, idx) => {
+                const status = getAgendaStatus(e.tglMulai, e.tglSelesai);
+                const formatWaktu = formatTglRange(e.tglMulai, e.tglSelesai);
+                const bannerImg = e.banner || '/img/bemfkgumi.png';
+                
+                // Limitasi deskripsi maksimal ~110 karakter untuk menjaga kerapian grid
+                let shortDesc = e.deskripsi ? e.deskripsi.replace(/\n/g, ' ') : 'Tidak ada deskripsi singkat untuk program kerja ini.';
+                if(shortDesc.length > 110) shortDesc = shortDesc.substring(0, 110) + '...';
+                
+                // Badge Style Adaptive di dalam Card Timeline
+                let badgeStyle = "background: var(--bg-dark-overlay); color: var(--text-light); border: 1px solid var(--border-light);";
+                if(status.text.includes("BERLANGSUNG")) badgeStyle = "background: #2563eb; color: #ffffff; border: 1px solid #60a5fa;";
+                else if(status.text.includes("HADIR")) badgeStyle = "background: var(--accent-neon); color: #000000; border: 1px solid var(--accent-glow);";
+
+                cont.innerHTML += `
+                    <div class="v-timeline-item reveal active" style="transition-delay: ${idx * 0.15}s">
+                        <div class="v-timeline-dot"></div>
+                        <div class="v-timeline-card">
+                            <div class="v-tl-banner">
+                                <div class="v-tl-badge" style="${badgeStyle}">${status.text}</div>
+                                <img src="${bannerImg}" alt="${e.nama}">
+                            </div>
+                            <div class="v-tl-meta">
+                                <span style="color: var(--accent-neon);">${e.dept || 'BEM KBMFKG UMI'}</span>
+                                <span style="color: var(--border-light);">•</span>
+                                <span>${formatWaktu}</span>
+                            </div>
+                            <h3 class="v-tl-title">${e.nama}</h3>
+                            <p class="v-tl-desc">🔥 ${shortDesc}</p>
+                            <a href="/proker-detail/${e.slug || e.id}" class="v-tl-btn">Lihat Detail &rarr;</a>
+                        </div>
+                    </div>
+                `;
+            });
+            // Float Clearfix
+            cont.innerHTML += `<div style="clear:both;"></div>`;
         }
 
         // ====== PENGIRIMAN DATA FORM PLASMA ======
