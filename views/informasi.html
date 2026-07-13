@@ -362,7 +362,9 @@
         function renderAgendaList(events) {
             const cont = document.getElementById('agendaContent'); cont.innerHTML = '';
             if(events.length > 0) {
-                events.sort((a,b) => new Date(a.tglMulai) - new Date(b.tglMulai));
+                // SUPER UPGRADE: Urutkan list agenda dari yang paling terbaru/mendatang
+                events.sort((a,b) => new Date(b.tglMulai) - new Date(a.tglMulai));
+                
                 events.forEach(e => { 
                     const status = getAgendaStatus(e.tglMulai, e.tglSelesai);
                     cont.innerHTML += `
@@ -392,8 +394,8 @@
                 return;
             }
 
-            // Urutkan agenda secara kronologis (dari yang terlama sampai terbaru)
-            const sortedData = [...kalenderData].sort((a,b) => new Date(a.tglMulai) - new Date(b.tglMulai));
+            // SUPER UPGRADE: Urutkan agenda secara kronologis menurun (dari yang terbaru/mendatang ke yang paling lama/berlalu)
+            const sortedData = [...kalenderData].sort((a,b) => new Date(b.tglMulai) - new Date(a.tglMulai));
             
             sortedData.forEach((e, idx) => {
                 const status = getAgendaStatus(e.tglMulai, e.tglSelesai);
