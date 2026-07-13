@@ -61,6 +61,10 @@
                 const current = res.sejarah[0]; 
                 periodeEl.innerText = "PERIODE " + current.tahun;
                 kabinetEl.innerText = current.kabinet.toUpperCase();
+                
+                // SUPER UPGRADE: Update Header Navbar Title dengan Nama Kabinet DB
+                const headerKabinet = document.getElementById('header-kabinet-name');
+                if(headerKabinet) headerKabinet.innerText = current.kabinet;
             } else {
                 throw new Error("No Data");
             }
@@ -94,63 +98,81 @@
     })();
 </script>
 
-<header>
-    <nav itemscope itemtype="https://schema.org/SiteNavigationElement" aria-label="Main Navigation">
-        <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI" style="text-decoration: none;">
-            <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="logo" style="height: 45px; filter: drop-shadow(0 0 12px var(--accent-glow));">
-            <span style="font-weight: 900; font-size: 1.3rem; letter-spacing: 1px; color: var(--text-light); text-shadow: 0 0 10px var(--accent-glow);">BEM KBMFKG UMI</span>
+<!-- ================= SUPER UPGRADE: FLOATING HEADER GLASSMORPHISM ================= -->
+<header id="main-header">
+    <div class="header-inner">
+        <!-- Logo & Title Group -->
+        <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI">
+            <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="logo" class="header-logo-img">
+            <div class="header-text-group">
+                <span class="header-title">BEM KBMFKG UMI</span>
+                <span class="header-subtitle script-font" id="header-kabinet-name">Kabinet Ananta Anardhaya</span>
+            </div>
         </a>
         
-        <!-- THEME TOGGLE SWITCH (Light/Dark Mode) -->
-        <div class="theme-toggle-container" style="display: flex; align-items: center; gap: 8px; margin-left: auto; margin-right: 20px;">
-            <svg viewBox="0 0 24 24" width="22" height="22" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));">
-                <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-            <label class="theme-switch" aria-label="Toggle Dark Mode">
-                <input type="checkbox" id="checkboxTheme">
-                <span class="theme-slider"></span>
-            </label>
-        </div>
-        
-        <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" onclick="document.querySelector('.nav-links').classList.toggle('active')" style="background:none; border:none; padding:0; cursor:pointer;">
-            <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-        </button>
-        
-        <div class="nav-links" role="menubar">
-            <div class="nav-item" itemprop="name" role="none">
-                <a href="/" itemprop="url" role="menuitem">Beranda</a>
+        <div class="nav-right-group">
+            <!-- THEME TOGGLE SWITCH (Light/Dark Mode) -->
+            <div class="theme-toggle-container">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));">
+                    <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <label class="theme-switch" aria-label="Toggle Dark Mode">
+                    <input type="checkbox" id="checkboxTheme">
+                    <span class="theme-slider"></span>
+                </label>
             </div>
             
-            <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
-                <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true">Tentang ▾</a>
-                <div class="mega-menu" role="menu">
-                    <a href="/tentang#visimisi" itemprop="url" role="menuitem">Visi & Misi</a>
-                    <a href="/tentang#struktur" itemprop="url" role="menuitem">Struktur Kepengurusan</a>
-                    <a href="/tentang#filosofi" itemprop="url" role="menuitem">Filosofi Logo & Warna</a>
-                    <a href="/tentang#sejarah-pembentukan" itemprop="url" role="menuitem">Sejarah Terbentuknya KBMFKG UMI</a>
-                    <a href="/tentang#sejarah" itemprop="url" role="menuitem">Timeline Sejarah Kepengurusan</a>
+            <nav class="nav-links" role="menubar">
+                <div class="nav-item" itemprop="name" role="none">
+                    <a href="/" itemprop="url" role="menuitem">Beranda</a>
                 </div>
-            </div>
-            
-            <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
-                <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true">Informasi ▾</a>
-                <div class="mega-menu" role="menu">
-                    <a href="/informasi#proker" itemprop="url" role="menuitem">Program Kerja</a>
-                    <a href="/informasi#kalender" itemprop="url" role="menuitem">Kalender Proker</a>
-                    <a href="/informasi#timeline" itemprop="url" role="menuitem">Timeline Proker</a>
-                    <a href="/informasi#galeri" itemprop="url" role="menuitem">Dokumentasi Kegiatan</a>
-                    <a href="/informasi#plasma" itemprop="url" role="menuitem">PLASMA (Aspirasi)</a>
+                
+                <!-- Navigasi Tentang (Sesuai Urutan Baru) -->
+                <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
+                    <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true">Profil ▾</a>
+                    <div class="mega-menu" role="menu">
+                        <a href="/tentang#visimisi" itemprop="url" role="menuitem">Visi & Misi</a>
+                        <a href="/tentang#struktur" itemprop="url" role="menuitem">Struktur Kepengurusan</a>
+                        <a href="/tentang#filosofi" itemprop="url" role="menuitem">Filosofi Logo & Warna</a>
+                        <a href="/tentang#sejarah-pembentukan" itemprop="url" role="menuitem">Sejarah Pembentukan Organisasi</a>
+                        <a href="/tentang#sejarah" itemprop="url" role="menuitem">Timeline Sejarah Kepengurusan</a>
+                    </div>
                 </div>
-            </div>
+                
+                <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
+                    <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true">Layanan Mahasiswa ▾</a>
+                    <div class="mega-menu" role="menu">
+                        <a href="/informasi#proker" itemprop="url" role="menuitem">Program Kerja</a>
+                        <a href="/informasi#kalender" itemprop="url" role="menuitem">Kalender Proker</a>
+                        <a href="/informasi#timeline" itemprop="url" role="menuitem">Timeline Proker</a>
+                        <a href="/informasi#galeri" itemprop="url" role="menuitem">Dokumentasi Kegiatan</a>
+                        <a href="/informasi#plasma" itemprop="url" role="menuitem">PLASMA (Aspirasi)</a>
+                    </div>
+                </div>
+                
+                <div class="nav-item" style="margin-left: 5px;" itemprop="name" role="none">
+                    <a href="/narahubung" class="holo-btn header-contact-btn" itemprop="url" role="menuitem">Hubungi Kami</a>
+                </div>
+            </nav>
             
-            <div class="nav-item" style="margin-left: 10px;" itemprop="name" role="none">
-                <a href="/narahubung" class="holo-btn" itemprop="url" role="menuitem" style="padding: 10px 25px; font-size: 0.95rem; width: 100%;">Hubungi Kami</a>
-            </div>
+            <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+            </button>
         </div>
-    </nav>
+    </div>
 </header>
 
 <script>
+    // Logika Shrink Header saat di Scroll
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('main-header');
+        if (window.scrollY > 20) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
     function toggleMobileMenu(element) {
         if(window.innerWidth <= 768) {
             element.classList.toggle('mobile-expand');
