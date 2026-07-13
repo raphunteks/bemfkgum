@@ -1,4 +1,90 @@
 <!-- FILE: views/partials/header.html -->
+
+<!-- ================= SUPER UPGRADE: GLOBAL LOADING SCREEN (CINEMATIC) ================= -->
+<div id="global-loader">
+    <div class="loader-content">
+        <img src="/img/bemfkgumi.png" alt="Logo" class="loader-logo">
+        <h1 class="loader-title">BEM</h1>
+        <h2 class="loader-subtitle">KBMFKG UMI</h2>
+        
+        <div class="loader-divider"></div>
+        
+        <div class="loader-meta" id="loader-meta-text">
+            <span id="loader-periode" style="font-weight: 500;">MEMUAT PERIODE...</span><br>
+            <span id="loader-kabinet" style="color: #ffffff; font-weight: 900; font-size: 1.1rem; display: inline-block; margin-top: 8px;">SINKRONISASI DATABASE...</span>
+        </div>
+        
+        <div class="loader-divider"></div>
+        
+        <div class="loader-percent"><span id="loader-count">0</span>%</div>
+    </div>
+</div>
+
+<script>
+    // ================= LOADER ENGINE (Pre-DOM Execution) =================
+    (function() {
+        const countEl = document.getElementById('loader-count');
+        const periodeEl = document.getElementById('loader-periode');
+        const kabinetEl = document.getElementById('loader-kabinet');
+        const loader = document.getElementById('global-loader');
+        
+        let count = 0;
+        let target = 98;
+        
+        // Animasi angka melaju cepat ke 98%
+        const counterInterval = setInterval(() => {
+            if(count < target) { 
+                count++; 
+                countEl.innerText = count; 
+            }
+        }, 15);
+
+        // Fetch data sejarah untuk nama Kabinet & Periode terbaru (Tanpa memberatkan halaman utama)
+        let apiUrl = '/api/content';
+        if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
+        
+        fetch(apiUrl)
+        .then(r => r.json())
+        .then(res => {
+            if(res.sejarah && res.sejarah.length > 0) {
+                // Ambil index 0 (asumsi CMS sudah mengurutkannya dari yang terbaru)
+                const current = res.sejarah[0]; 
+                periodeEl.innerText = "PERIODE " + current.tahun;
+                kabinetEl.innerText = current.kabinet.toUpperCase();
+            } else {
+                throw new Error("No Data");
+            }
+        })
+        .catch(() => {
+            // Fallback Cepat jika API lambat
+            periodeEl.innerText = "PERIODE 2025 - 2026";
+            kabinetEl.innerText = "KABINET ANANTA ANARDHAYA";
+        });
+
+        // Trigger selesainya Loading Screen saat seluruh asset halaman (gambar, css) selesai di-load
+        window.addEventListener('load', () => {
+            clearInterval(counterInterval);
+            
+            let finishCount = parseInt(countEl.innerText);
+            // Animasi halus dari 98% ke 100%
+            const finishInterval = setInterval(() => {
+                if(finishCount < 100) {
+                    finishCount++;
+                    countEl.innerText = finishCount;
+                } else {
+                    clearInterval(finishInterval);
+                    // Beri jeda sejenak di 100% sebelum memudar
+                    setTimeout(() => {
+                        loader.classList.add('hidden');
+                        // Hapus dari DOM agar tidak memberatkan browser
+                        setTimeout(() => loader.remove(), 800); 
+                    }, 400);
+                }
+            }, 10);
+        });
+    })();
+</script>
+
 <header>
     <nav itemscope itemtype="https://schema.org/SiteNavigationElement" aria-label="Main Navigation">
         <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI" style="text-decoration: none;">
@@ -41,7 +127,6 @@
                 <div class="mega-menu" role="menu">
                     <a href="/informasi#proker" itemprop="url" role="menuitem">Program Kerja</a>
                     <a href="/informasi#kalender" itemprop="url" role="menuitem">Kalender Proker</a>
-                    <!-- SUPER UPGRADE: TAB TIMELINE PROKER BARU -->
                     <a href="/informasi#timeline" itemprop="url" role="menuitem">Timeline Proker</a>
                     <a href="/informasi#galeri" itemprop="url" role="menuitem">Dokumentasi Kegiatan</a>
                     <a href="/informasi#plasma" itemprop="url" role="menuitem">PLASMA (Aspirasi)</a>
