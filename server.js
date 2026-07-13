@@ -81,8 +81,8 @@ const defaultSettings = {
     headerText: "BEM KBMFKG UMI",
     footerSlogan: "Kabinet Ananta Anardhaya",
     footerAlamat: "Jl. Pajonga Dg. Ngalle No. 27 A, Pa'batong, Kec. Mamajang, Kota Makassar, Sulawesi Selatan",
-    logo1: "/img/bemfkgumi.png",
-    logo2: "/img/bemfkgumi.png",
+    logo1: "/img/logoumi.png",
+    logo2: "/img/logofkgumi.png",
     logo3: "/img/bemfkgumi.png"
 };
 
