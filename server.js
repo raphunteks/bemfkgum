@@ -184,8 +184,17 @@ app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
 
 // SUPER BIG UPGRADE: RUTE DYNAMIC SEO URL PROKER DETAIL (/proker-detail/slug-kegiatan)
-app.get('/proker-detail', (req, res) => res.render('proker-detail')); // Fallback old ?id= route
-app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail')); // New Custom Link route
+app.get('/proker-detail', (req, res) => {
+    // Jika masih ada pengunjung / klik yang menggunakan ?id=, paksa Redirect (301 Permanent) ke URL SEO yang bersih
+    if (req.query.id) {
+        return res.redirect(301, `/proker-detail/${req.query.id}`);
+    }
+    res.render('proker-detail'); 
+});
+
+app.get('/proker-detail/:slug', (req, res) => {
+    res.render('proker-detail'); 
+});
 
 // ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
 const safeParse = (data, fallbackData) => {
