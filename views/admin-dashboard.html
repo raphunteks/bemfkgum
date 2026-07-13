@@ -20,12 +20,15 @@
     <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:9999; display:flex; justify-content:center; align-items:center; transition: opacity 0.5s;">
         <div class="glass-card" style="width: 100%; max-width: 400px; text-align:center;">
             <img src="/img/bemfkgumi.png" alt="Logo" style="height: 60px; margin-bottom: 15px;">
-            <h2>Portal Admin</h2>
+            <h2 style="color: var(--text-light);">Portal Admin</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Sistem Manajemen Database Organisasi</p>
-            <input type="text" id="adminUser" class="neo-input" placeholder="Username (bemfkgumi2026)">
-            <input type="password" id="adminPass" class="neo-input" placeholder="Password (bemfkgumi999)">
+            
+            <!-- SUPER UPGRADE: Hapus Privasi Placeholder -->
+            <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin">
+            <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin">
+            
             <button class="holo-btn" onclick="login()" style="width:100%; margin-top: 10px;">Akses Sistem</button>
-            <div id="loginError" style="color: #ff4d4d; margin-top: 15px; font-size: 0.9rem; display: none;">Kredensial tidak valid.</div>
+            <div id="loginError" style="color: #ef4444; margin-top: 15px; font-size: 0.9rem; display: none;">Kredensial tidak valid.</div>
         </div>
     </div>
 
@@ -47,22 +50,22 @@
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span>🧑‍💻</span> Developer Team</button>
                 <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span>📞</span> Manajemen Narahubung</button>
                 <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Header & Footer</button>
-                <button onclick="logout()" style="margin-top: 30px; color: #ff4d4d;"><span>🚪</span> Logout</button>
+                <button onclick="logout()" style="margin-top: 30px; color: #ef4444;"><span>🚪</span> Logout</button>
             </nav>
         </aside>
 
         <main class="admin-main">
             <!-- 1. DASHBOARD -->
             <section id="sec-dashboard" class="admin-section active">
-                <h2 style="margin-bottom: 5px;">Dashboard</h2>
+                <h2 style="margin-bottom: 5px; color: var(--text-light);">Dashboard</h2>
                 <div class="grid-3" style="margin-top: 20px;">
                     <div class="glass-card stat-card">
-                        <h3>Total Aspirasi</h3>
-                        <div class="value" id="statAspirasi">0</div>
+                        <h3 style="color: var(--text-muted);">Total Aspirasi</h3>
+                        <div class="value" id="statAspirasi" style="color: var(--text-light); font-size: 2rem; font-weight: bold;">0</div>
                     </div>
                     <div class="glass-card stat-card">
-                        <h3>Pesan Masuk</h3>
-                        <div class="value" id="statPesan" style="color: var(--accent-neon);">0</div>
+                        <h3 style="color: var(--text-muted);">Pesan Masuk</h3>
+                        <div class="value" id="statPesan" style="color: var(--accent-neon); font-size: 2rem; font-weight: bold;">0</div>
                     </div>
                 </div>
             </section>
@@ -70,12 +73,12 @@
             <!-- 2. STRUKTUR ORG -->
             <section id="sec-profil" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Struktur Kepengurusan</h2>
+                    <h2 style="color: var(--text-light);">Manajemen Struktur Kepengurusan</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org')">💾 Simpan Ke Database</button>
                 </div>
 
                 <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
-                    <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Arti Nama Kabinet</h3>
+                    <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px;">Arti Nama Kabinet</h3>
                     <div class="grid-2">
                         <div>
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Suku Kata 1</label>
@@ -100,11 +103,11 @@
                 <label style="color:var(--accent-neon); margin-top: 15px; display: block;">Misi Kabinet</label>
                 <textarea id="editMisi" class="neo-input" rows="6" placeholder="Masukkan misi, pisahkan tiap poin dengan ENTER..." oninput="db.org.misi=this.value.split('\n')"></textarea>
                 
-                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Pimpinan Inti BEM</h3>
+                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--border-light); padding-bottom:10px; color:var(--accent-neon);">Pimpinan Inti BEM</h3>
                 <div id="cmsPimpinan" class="pimpinan-grid"></div>
                 <button class="action-btn view" onclick="tambahPimpinan()" style="margin: 10px 0 30px;">+ Tambah Pimpinan</button>
 
-                <h3 style="margin: 40px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Daftar Departemen & Anggota</h3>
+                <h3 style="margin: 40px 0 15px; border-bottom: 1px solid var(--border-light); padding-bottom:10px; color:var(--accent-neon);">Daftar Departemen & Anggota</h3>
                 <div id="cmsDepartemen" style="display:grid; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahDepartemen()" style="margin-top: 10px;">+ Tambah Departemen Baru</button>
             </section>
@@ -112,15 +115,15 @@
             <!-- 3. FILOSOFI LOGO & WARNA -->
             <section id="sec-filosofi" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Filosofi Logo & Warna</h2>
+                    <h2 style="color: var(--text-light);">Manajemen Filosofi Logo & Warna</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('filosofi')">💾 Simpan Filosofi</button>
                 </div>
                 
-                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Filosofi Logo</h3>
+                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--border-light); padding-bottom:10px; color:var(--accent-neon);">Filosofi Logo</h3>
                 <div id="cmsFiloLogo" style="display:flex; flex-direction:column; gap:15px;"></div>
                 <button class="action-btn view" onclick="tambahFiloLogo()" style="margin: 10px 0 30px;">+ Tambah Elemen Logo</button>
 
-                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px; color:var(--accent-neon);">Filosofi Warna</h3>
+                <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--border-light); padding-bottom:10px; color:var(--accent-neon);">Filosofi Warna</h3>
                 <div id="cmsFiloWarna" style="display:flex; flex-direction:column; gap:15px;"></div>
                 <button class="action-btn view" onclick="tambahFiloWarna()" style="margin-top: 10px;">+ Tambah Filosofi Warna</button>
             </section>
@@ -128,7 +131,7 @@
             <!-- 4. SEJARAH KEPENGURUSAN -->
             <section id="sec-sejarah" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Sejarah Kepengurusan</h2>
+                    <h2 style="color: var(--text-light);">Manajemen Sejarah Kepengurusan</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('sejarah')">💾 Simpan Sejarah</button>
                 </div>
                 <div id="cmsSejarah" style="display:flex; flex-direction:column; gap:20px;"></div>
@@ -138,17 +141,17 @@
             <!-- 5. PROKER -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Program Kerja List</h2>
+                    <h2 style="color: var(--text-light);">Manajemen Program Kerja List</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Proker</button>
                 </div>
                 <div id="cmsProker"></div>
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 10px;">+ Tambah Departemen Proker</button>
             </section>
 
-            <!-- ================= BIG UPGRADE: KALENDER DENGAN CUSTOM SLUG ================= -->
+            <!-- 6. KALENDER DENGAN CUSTOM SLUG -->
             <section id="sec-kalender" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Agenda Kalender & Detail Proker</h2>
+                    <h2 style="color: var(--text-light);">Manajemen Agenda Kalender & Detail Proker</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kalender')">💾 Simpan Semua Agenda</button>
                 </div>
                 <div id="cmsKalender" style="display:flex; flex-direction:column; gap:25px;"></div>
@@ -158,7 +161,7 @@
             <!-- 7. DOKUMENTASI -->
             <section id="sec-dok" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Galeri Dokumentasi</h2>
+                    <h2 style="color: var(--text-light);">Galeri Dokumentasi</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('dokumentasi')">💾 Simpan Dokumentasi</button>
                 </div>
                 <div id="cmsDokumentasi" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;"></div>
@@ -167,9 +170,9 @@
 
             <!-- 8. PESAN -->
             <section id="sec-aspirasi" class="admin-section">
-                <h2>Aspirasi & Pesan Masuk</h2>
+                <h2 style="color: var(--text-light);">Aspirasi & Pesan Masuk</h2>
                 <div class="table-responsive" style="margin-top:20px; margin-bottom: 40px;">
-                    <h3 style="padding: 15px; background: rgba(0,0,0,0.5);">Aspirasi PLASMA Masuk</h3>
+                    <h3 style="padding: 15px; background: var(--bg-dark-overlay); color: var(--accent-neon); border-bottom: 1px solid var(--border-light);">Aspirasi PLASMA Masuk</h3>
                     <table class="admin-table">
                         <thead><tr><th>ID</th><th>Kategori</th><th>Judul</th><th>Aksi</th></tr></thead>
                         <tbody id="tableBodyAspirasi"></tbody>
@@ -177,7 +180,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <h3 style="padding: 15px; background: rgba(0,0,0,0.5);">Pesan Narahubung Masuk</h3>
+                    <h3 style="padding: 15px; background: var(--bg-dark-overlay); color: var(--accent-neon); border-bottom: 1px solid var(--border-light);">Pesan Narahubung Masuk</h3>
                     <table class="admin-table">
                         <thead><tr><th>Pengirim</th><th>Subjek</th><th>Waktu</th><th>Aksi</th></tr></thead>
                         <tbody id="tableBodyPesan"></tbody>
@@ -188,7 +191,7 @@
             <!-- 9. DEVELOPER TEAM -->
             <section id="sec-team" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Developer Team (Credits)</h2>
+                    <h2 style="color: var(--text-light);">Manajemen Developer Team (Credits)</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('team')">💾 Simpan Developer Team</button>
                 </div>
                 <p style="color: var(--text-muted); margin-bottom: 20px;">Sesuaikan struktur credits development untuk halaman /ourteam.</p>
@@ -199,7 +202,7 @@
             <!-- 10. MANAJEMEN NARAHUBUNG -->
             <section id="sec-kontak" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Narahubung & Lokasi</h2>
+                    <h2 style="color: var(--text-light);">Manajemen Narahubung & Lokasi</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kontak')">💾 Simpan Info Kontak</button>
                 </div>
                 
@@ -228,7 +231,7 @@
             <!-- 11. PENGATURAN HEADER & FOOTER -->
             <section id="sec-pengaturan" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2>Manajemen Header & Footer</h2>
+                    <h2 style="color: var(--text-light);">Manajemen Header & Footer</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('settings')">💾 Simpan Pengaturan</button>
                 </div>
                 
@@ -245,17 +248,17 @@
                 <div class="glass-card">
                     <h3 style="color:var(--accent-neon); margin-bottom:15px;">Pengaturan Logo Footer (3 Logo)</h3>
                     <div class="grid-3">
-                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; text-align:center;">
+                        <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 1 (Kiri)</label>
                             <img id="prevLogo1" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
                             <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo1', renderPengaturan)" style="width:100%; font-size:0.8rem;">
                         </div>
-                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; text-align:center;">
+                        <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 2 (Tengah)</label>
                             <img id="prevLogo2" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
                             <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo2', renderPengaturan)" style="width:100%; font-size:0.8rem;">
                         </div>
-                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; text-align:center;">
+                        <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 3 (Kanan)</label>
                             <img id="prevLogo3" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
                             <input type="file" accept="image/*" onchange="handleImageUpload(this, db.settings, 'logo3', renderPengaturan)" style="width:100%; font-size:0.8rem;">
@@ -431,7 +434,7 @@
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
             (db.org.pimpinan || []).forEach((p, i) => {
                 pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
-                    <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:#000; border-radius:5px; margin-bottom:10px;">
+                    <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:10px;">
                     <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px; width:100%; font-size:0.8rem;">
                     <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan || ''}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
                     <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama || ''}" oninput="db.org.pimpinan[${i}].nama=this.value">
@@ -449,8 +452,8 @@
                     </div><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">`;
                 if(d.anggota) {
                     d.anggota.forEach((a, j) => {
-                        html += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px; border: 1px solid var(--glass-border);">
-                            <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:#111; border-radius:5px; margin-bottom:5px;">
+                        html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px; border: 1px solid var(--border-light);">
+                            <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:5px;">
                             <input type="file" accept="image/*" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="width:100%; font-size:0.7rem; margin-bottom:10px;">
                             <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama || ''}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
                             <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan || ''}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
@@ -473,7 +476,7 @@
                 if(k.kepanitiaan) {
                     k.kepanitiaan.forEach((div, divIdx) => {
                         htmlPanitia += `
-                        <div style="background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); margin-bottom:10px;">
+                        <div style="background:var(--bg-dark-overlay); padding:10px; border-radius:10px; border:1px solid var(--border-light); margin-bottom:10px;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                                 <input type="text" class="neo-input" style="margin:0; padding:5px; font-weight:bold; color:var(--text-light); border:none; background:transparent;" value="${div.namaDivisi}" oninput="db.kalender[${i}].kepanitiaan[${divIdx}].namaDivisi=this.value" placeholder="Nama Divisi">
                                 <div>
@@ -529,7 +532,7 @@
                     <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Lengkap Kegiatan</label>
                     <textarea class="neo-input" rows="4" placeholder="Tuliskan deskripsi..." oninput="db.kalender[${i}].deskripsi=this.value">${k.deskripsi || ''}</textarea>
 
-                    <h3 style="color:#3b82f6; margin-top:20px; margin-bottom:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">Detail Pendaftaran & Lokasi</h3>
+                    <h3 style="color:#3b82f6; margin-top:20px; margin-bottom:15px; border-top:1px solid var(--border-light); padding-top:15px;">Detail Pendaftaran & Lokasi</h3>
                     <div class="grid-2">
                         <div>
                             <label style="font-size:0.8rem; color:var(--text-muted);">Lokasi</label>
@@ -552,10 +555,10 @@
                         </div>
                     </div>
 
-                    <div class="grid-2" style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; align-items:start;">
+                    <div class="grid-2" style="margin-top:20px; border-top:1px solid var(--border-light); padding-top:15px; align-items:start;">
                         <div>
                             <h3 style="color:var(--accent-neon); margin-bottom:10px;">Banner Proker</h3>
-                            <img src="${k.banner || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px;">
+                            <img src="${k.banner || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px; background: var(--bg-dark-heavy);">
                             <input type="file" accept="image/*" onchange="handleImageUpload(this, db.kalender[${i}], 'banner', renderKalender)" style="font-size:0.8rem;">
                         </div>
                         <div>
@@ -572,9 +575,7 @@
             });
         }
         
-        // UPGRADE: Tambahkan struktur Slug pada default Push
         function tambahAgenda() { db.kalender.push({id: "evt-"+Date.now(), slug: "", nama:"Agenda Baru", dept:"", tglMulai:"", tglSelesai:"", deskripsi:"", lokasi:"", targetPeserta:"", statusDaftar:"Tutup", linkDaftar:"", banner:"", kepanitiaan:[]}); renderKalender(); }
-        
         function tambahPanitiaDivisi(kIdx) { if(!db.kalender[kIdx].kepanitiaan) db.kalender[kIdx].kepanitiaan = []; db.kalender[kIdx].kepanitiaan.push({namaDivisi:"Divisi Baru", anggota:[]}); renderKalender(); }
         function tambahPanitiaAnggota(kIdx, divIdx) { db.kalender[kIdx].kepanitiaan[divIdx].anggota.push({nama:"", jabatan:""}); renderKalender(); }
 
@@ -614,7 +615,7 @@
             (db.sejarah || []).forEach((s, i) => {
                 cont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:15px; align-items:center; border-left:4px solid var(--accent-neon);">
                     <div style="width: 80px; text-align:center;">
-                        <img src="${s.logo || '/img/bemfkgumi.png'}" style="width:100%; height:60px; object-fit:contain; background:rgba(0,0,0,0.5); padding:5px; border-radius:10px; margin-bottom:5px;">
+                        <img src="${s.logo || '/img/bemfkgumi.png'}" style="width:100%; height:60px; object-fit:contain; background:var(--bg-dark-overlay); padding:5px; border-radius:10px; margin-bottom:5px;">
                         <input type="file" accept="image/*" onchange="handleImageUpload(this, db.sejarah[${i}], 'logo', renderSejarah)" style="width:100%; font-size:0.6rem;">
                     </div>
                     <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
@@ -637,7 +638,7 @@
         function renderDokumentasi() {
             const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
             (db.dokumentasi || []).forEach((d, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px;"><img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:#111; margin-bottom:10px;"><input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;"><input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value"><input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value"><textarea class="neo-input" placeholder="Deskripsi" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea><button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button></div>`;
+                cont.innerHTML += `<div class="glass-card" style="padding:15px;"><img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:var(--bg-dark-overlay); margin-bottom:10px;"><input type="file" accept="image/*" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px; width:100%;"><input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value"><input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value"><textarea class="neo-input" placeholder="Deskripsi" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea><button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button></div>`;
             });
         }
         function tambahDokumentasi() { db.dokumentasi.push({judul:"Judul", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
@@ -652,7 +653,7 @@
             const cont = document.getElementById('cmsTeam'); cont.innerHTML = '';
             (db.team || []).forEach((cat, i) => {
                 let html = `<div class="glass-card" style="margin-bottom:10px; border-left:4px solid #3b82f6;"><input type="text" class="neo-input" value="${cat.category || ''}" placeholder="Kategori" oninput="db.team[${i}].category=this.value" style="font-weight:bold; color:#3b82f6;"><button class="action-btn delete" onclick="db.team.splice(${i},1); renderTeam();" style="margin-bottom:15px;">Hapus Kategori</button><div class="grid-3">`;
-                (cat.members || []).forEach((m, j) => { html += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px;"><img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block;"><input type="file" accept="image/*" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="width:100%; font-size:0.7rem; margin-bottom:10px;"><input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px;"><input type="text" class="neo-input" placeholder="Link Instagram" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px;"><button class="action-btn delete" style="width:100%;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X</button></div>`; });
+                (cat.members || []).forEach((m, j) => { html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px;"><img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block;"><input type="file" accept="image/*" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="width:100%; font-size:0.7rem; margin-bottom:10px;"><input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px;"><input type="text" class="neo-input" placeholder="Link Instagram" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px;"><button class="action-btn delete" style="width:100%;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X</button></div>`; });
                 html += `</div><button class="action-btn view" style="margin-top:15px;" onclick="if(!db.team[${i}].members) db.team[${i}].members=[]; db.team[${i}].members.push({nama:'', foto:'/img/bemfkgumi.png', ig:''}); renderTeam();">+ Tambah Member</button></div>`;
                 cont.innerHTML += html;
             });
@@ -663,9 +664,9 @@
         function renderTabel() {
             document.getElementById('statAspirasi').innerText = aspirasiData.length; document.getElementById('statPesan').innerText = pesanData.length;
             const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
-            aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td>${item.id}</td><td>${item.kategori}</td><td><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; });
+            aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td style="color:var(--text-light);">${item.id}</td><td style="color:var(--text-muted);">${item.kategori}</td><td style="color:var(--text-light);"><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; });
             const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = '';
-            pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td><strong>${item.nama}</strong></td><td>${item.subjek}</td><td>${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; });
+            pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td style="color:var(--text-light);"><strong>${item.nama}</strong></td><td style="color:var(--text-muted);">${item.subjek}</td><td style="color:var(--text-muted);">${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; });
         }
         async function deleteData(type, id) {
             if(confirm('Yakin ingin menghapus?')) {
@@ -677,8 +678,8 @@
                 } catch(e) { showToast('⚠️ Gagal menghapus.'); }
             }
         }
-        function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:rgba(255,255,255,0.05); padding:15px; margin-top:5px; border-radius:5px;">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
-        function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><strong>Dari:</strong> ${data.nama} (${data.kontak})</p><p><strong>Subjek:</strong> ${data.subjek}</p><p><strong>Isi:</strong><br><div style="background:rgba(255,255,255,0.05); padding:15px; margin-top:5px; border-radius:5px;">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
+        function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
+        function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><strong>Dari:</strong> ${data.nama} (${data.kontak})</p><p><strong>Subjek:</strong> ${data.subjek}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
         function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
     </script>
 </body>
