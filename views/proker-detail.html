@@ -58,7 +58,7 @@
     
     <main class="container" style="padding-top: 40px; min-height: 80vh; padding-bottom: 80px;">
         
-        <!-- BREADCRUMB & BACK BUTTON (Aesthetic) -->
+        <!-- BREADCRUMB & BACK BUTTON -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
             <div style="font-size: 0.95rem; color: var(--text-muted); background: rgba(0,0,0,0.5); padding: 10px 22px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
                 <a href="/informasi#kalender" style="color: var(--accent-neon); text-decoration: none; font-weight: 600;">🗓️ Program Kerja</a> 
@@ -77,98 +77,108 @@
             Menarik Data Kegiatan...
         </div>
 
-        <!-- LAYOUT UTAMA: KIRI KONTEN, KANAN SIDEBAR INFO -->
-        <div class="proker-detail-grid" id="mainDetailContent" style="display: none;">
+        <!-- MAIN CONTENT WRAPPER -->
+        <div id="mainDetailContent" style="display: none;">
             
-            <!-- KONTEN KIRI -->
-            <div class="proker-main-col">
-                <!-- BANNER ULTRA MODERN -->
-                <div class="proker-banner-wrapper glass-card reveal active" style="padding:0; overflow:hidden; margin-bottom:35px; position:relative; border: 1px solid rgba(0,229,255,0.2); box-shadow: 0 25px 50px rgba(0,0,0,0.6);">
-                    <img id="detailBanner" src="/img/bemfkgumi.png" style="width:100%; aspect-ratio:21/9; object-fit:cover; display:block;">
-                    <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(4,8,20,0.95) 0%, rgba(4,8,20,0.7) 50%, transparent 100%); padding:50px 35px 25px;">
-                        <div style="display:flex; gap:12px; margin-bottom:15px; flex-wrap: wrap;">
-                            <span class="detail-header-badge blue">PROGRAM KERJA</span>
-                            <span id="detailBadgeStatus" class="detail-header-badge">BERLANGSUNG</span>
-                        </div>
-                        <h1 id="detailTitle" style="font-size:2.8rem; font-weight:900; color:white; line-height:1.2; text-shadow: 0 5px 15px rgba(0,0,0,0.8);">Nama Kegiatan</h1>
-                        <p id="detailDept" style="color:var(--accent-neon); margin-top:12px; font-size:1rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <!-- SUPER UPGRADE: BANNER FULL WIDTH DI ATAS -->
+            <div class="proker-banner-wrapper glass-card reveal active" style="padding:0; overflow:hidden; margin-bottom:40px; position:relative; border: 1px solid rgba(0,229,255,0.2); box-shadow: 0 25px 50px rgba(0,0,0,0.6); width: 100%; border-radius: 30px;">
+                <!-- Fallback aspect ratio via CSS -->
+                <img id="detailBanner" src="/img/bemfkgumi.png" class="proker-banner-img" alt="Banner Kegiatan">
+                
+                <!-- Overlay Gradient untuk Teks -->
+                <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(4,8,20,0.95) 0%, rgba(4,8,20,0.7) 60%, transparent 100%); padding: 60px 40px 30px;">
+                    
+                    <div style="display:flex; gap:12px; margin-bottom:15px; flex-wrap: wrap;">
+                        <span class="detail-header-badge blue">PROGRAM KERJA</span>
+                        <span id="detailBadgeStatus" class="detail-header-badge">BERLANGSUNG</span>
+                    </div>
+                    
+                    <h1 id="detailTitle" style="font-size:3.2rem; font-weight:900; color:white; line-height:1.2; text-shadow: 0 5px 15px rgba(0,0,0,0.8); margin-bottom: 20px;">Nama Kegiatan</h1>
+                    
+                    <div style="display: flex; align-items: center; gap: 25px; flex-wrap: wrap;">
+                        <p id="detailWaktuBanner" style="color:var(--text-light); font-size:1.05rem; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Memuat Waktu...
+                        </p>
+                        <p id="detailDept" style="color:var(--accent-neon); font-size:1.05rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                             Kementerian/Departemen
                         </p>
                     </div>
                 </div>
-
-                <!-- DESKRIPSI -->
-                <div class="glass-card reveal active" style="margin-bottom: 35px; border-left: 4px solid #3b82f6; border-radius: 20px;">
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-                        <div class="info-icon-wrapper" style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: #60a5fa;">📄</div>
-                        <h3 style="font-size: 1.5rem; color: #60a5fa; margin: 0; text-shadow: 0 0 10px rgba(59,130,246,0.3);">Deskripsi Kegiatan</h3>
-                    </div>
-                    <div id="detailDesc" style="color: var(--text-light); line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap; background: rgba(0,0,0,0.3); padding: 25px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.03); box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);">
-                        Memuat deskripsi...
-                    </div>
-                </div>
-
-                <!-- KONTRIBUTOR / KEPANITIAAN -->
-                <div class="glass-card reveal active" style="margin-bottom: 30px; border-left: 4px solid #10b981; border-radius: 20px;">
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-                        <div class="info-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #34d399;">👥</div>
-                        <h3 style="font-size: 1.5rem; color: #34d399; margin: 0; text-shadow: 0 0 10px rgba(16,185,129,0.3);">Kontributor & Kepanitiaan</h3>
-                    </div>
-                    <div id="detailKepanitiaan">
-                        <!-- JS Injected Tables -->
-                    </div>
-                </div>
-
             </div>
 
-            <!-- SIDEBAR KANAN (Sticky Modern) -->
-            <div class="proker-sidebar-col">
-                <div class="glass-card reveal active" style="position: sticky; top: 110px; padding: 30px; border-top: 3px solid var(--accent-neon);">
-                    <h3 style="font-size: 1.3rem; margin-bottom: 25px; color: var(--text-light); display: flex; align-items: center; gap: 10px;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-neon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                        Informasi Detail
-                    </h3>
+            <!-- GRID 2 KOLOM (BAWAH BANNER) -->
+            <div class="proker-detail-grid">
+                
+                <!-- KOLOM KIRI (DESKRIPSI & KONTRIBUTOR) -->
+                <div class="proker-main-col">
                     
-                    <div class="info-row">
-                        <div class="info-icon-wrapper ic-lokasi">📍</div>
-                        <div>
-                            <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom: 3px;">Lokasi</span>
-                            <strong id="detailLokasi" style="color:white; font-size:1.05rem;">-</strong>
+                    <!-- DESKRIPSI -->
+                    <div class="glass-card reveal active" style="margin-bottom: 35px; border-radius: 20px; padding: 40px;">
+                        <h3 class="detail-section-title">Deskripsi Kegiatan</h3>
+                        <div id="detailDesc" style="color: var(--text-light); line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap;">
+                            Memuat deskripsi...
                         </div>
                     </div>
 
-                    <div class="info-row">
-                        <div class="info-icon-wrapper ic-waktu">🕒</div>
-                        <div>
-                            <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom: 3px;">Waktu Pelaksanaan</span>
-                            <strong id="detailWaktu" style="color:var(--accent-neon); font-size:1.05rem; text-shadow: 0 0 8px var(--accent-glow);"> - </strong>
+                    <!-- KONTRIBUTOR / KEPANITIAAN -->
+                    <div class="glass-card reveal active" style="margin-bottom: 30px; border-radius: 20px; padding: 40px;">
+                        <h3 class="detail-section-title green">Kontributor Kegiatan</h3>
+                        <div id="detailKepanitiaan" style="margin-top: 25px;">
+                            <!-- JS Injected Tables -->
                         </div>
                     </div>
 
-                    <div class="info-row">
-                        <div class="info-icon-wrapper ic-target">🎯</div>
-                        <div>
-                            <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom: 3px;">Target Peserta</span>
-                            <strong id="detailTarget" style="color:white; font-size:1.05rem;">-</strong>
-                        </div>
-                    </div>
+                </div>
 
-                    <!-- BUTTON PENDAFTARAN -->
-                    <div id="daftarContainer" style="margin-top: 30px;">
-                        <a id="btnDaftar" href="#" target="_blank" style="width:100%; text-align:center; padding:16px; display: block; border-radius: 12px; font-weight: 600; transition: 0.3s;">Pendaftaran Belum Dibuka</a>
-                        <p id="daftarKeterangan" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 12px;">*Tombol aktif jika pendaftaran telah dibuka.</p>
+                <!-- KOLOM KANAN / SIDEBAR (INFORMASI DETAIL) -->
+                <div class="proker-sidebar-col">
+                    <div class="glass-card reveal active" style="position: sticky; top: 110px; padding: 35px 30px; border-top: 3px solid var(--accent-neon); border-radius: 20px;">
+                        <h3 style="font-size: 1.4rem; margin-bottom: 30px; color: var(--text-light); font-weight: 800;">
+                            Informasi Detail
+                        </h3>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <span class="detail-info-label">LOKASI</span>
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 2px; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <strong id="detailLokasi" style="color:white; font-size:1.05rem; line-height: 1.4;">-</strong>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <span class="detail-info-label">WAKTU PELAKSANAAN</span>
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-neon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <strong id="detailWaktu" style="color:var(--text-light); font-size:1.05rem; line-height: 1.4;"> - </strong>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 35px;">
+                            <span class="detail-info-label">TARGET PESERTA</span>
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 2px; flex-shrink: 0;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                <strong id="detailTarget" style="color:white; font-size:1.05rem; line-height: 1.4;">-</strong>
+                            </div>
+                        </div>
+
+                        <!-- BUTTON PENDAFTARAN -->
+                        <div id="daftarContainer" style="margin-top: 40px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.05);">
+                            <a id="btnDaftar" href="#" target="_blank" style="width:100%; text-align:center; padding:16px; display: block; border-radius: 12px; font-weight: 600; transition: 0.3s;">Pendaftaran Belum Dibuka</a>
+                            <p id="daftarKeterangan" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 12px; line-height: 1.5;">*Tombol aktif jika pengelola membuka formulir pendaftaran.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </main>
 
     <%- include('partials/footer.html') %>
 
     <script>
-        const monthNames = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"];
+        const monthNames = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
         
         function formatTglRange(startStr, endStr) {
             if(!startStr) return "-";
@@ -179,7 +189,7 @@
         }
 
         function getAgendaStatus(startStr, endStr) {
-            if(!startStr) return { text: "INFO", class: "badge-gray" };
+            if(!startStr) return { text: "INFO", class: "detail-header-badge" };
             const today = new Date(); today.setHours(0,0,0,0);
             const s = new Date(startStr); s.setHours(0,0,0,0);
             const e = endStr ? new Date(endStr) : s; e.setHours(0,0,0,0);
@@ -210,13 +220,10 @@
 
                 // =========================================================
                 // SUPER UPGRADE SEO DYNAMIC INJECTION
-                // Script ini memastikan crawler/search engine dan fitur Share Sosmed
-                // mendapatkan judul & metadata spesifik per kegiatan.
                 // =========================================================
                 const pageTitle = `${eventData.nama} - Program Kerja | BEM KBMFKG UMI`;
                 document.title = pageTitle;
                 
-                // Set Meta Description (Truncate if too long)
                 const descText = eventData.deskripsi ? (eventData.deskripsi.substring(0, 155) + '...') : `Informasi detail kegiatan ${eventData.nama} oleh BEM KBMFKG UMI.`;
                 const pageUrl = `https://bemkbmfkgumi.com/proker-detail?id=${eventId}`;
                 const imgUrl = eventData.banner ? (eventData.banner.startsWith('http') ? eventData.banner : `https://bemkbmfkgumi.com${eventData.banner}`) : 'https://bemkbmfkgumi.com/img/bemfkgumi.png';
@@ -224,19 +231,16 @@
                 document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
                 document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
                 
-                // Open Graph Tags
                 document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
                 document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
                 document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
                 document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
                 
-                // Twitter Cards
                 document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
                 document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
                 document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
                 document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
 
-                // JSON-LD Schema.org Update
                 const schemaScript = document.getElementById('structuredData');
                 if (schemaScript) {
                     const schema = JSON.parse(schemaScript.innerHTML);
@@ -256,10 +260,16 @@
                 // Populate UI
                 document.getElementById('bcTitle').innerText = eventData.nama || "Detail Kegiatan";
                 document.getElementById('detailTitle').innerText = eventData.nama || "Tanpa Judul";
+                
+                // Set Departemen & Waktu ke Banner Baru
                 document.getElementById('detailDept').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> ${eventData.dept || "-"}`;
+                const formatWaktu = formatTglRange(eventData.tglMulai, eventData.tglSelesai);
+                document.getElementById('detailWaktuBanner').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${formatWaktu}`;
+                
+                // Sidebar Text
                 document.getElementById('detailDesc').innerText = eventData.deskripsi || "Tidak ada deskripsi tersedia untuk kegiatan ini.";
                 document.getElementById('detailLokasi').innerText = eventData.lokasi || "-";
-                document.getElementById('detailWaktu').innerText = formatTglRange(eventData.tglMulai, eventData.tglSelesai);
+                document.getElementById('detailWaktu').innerText = formatWaktu;
                 document.getElementById('detailTarget').innerText = eventData.targetPeserta || "-";
                 
                 if(eventData.banner) document.getElementById('detailBanner').src = eventData.banner;
@@ -270,24 +280,22 @@
                 badgeEl.innerText = statusInfo.text;
                 badgeEl.className = statusInfo.class; 
                 
-                // Button Daftar Logic Fix
+                // Button Daftar Logic
                 const btn = document.getElementById('btnDaftar');
                 if(eventData.statusDaftar && eventData.statusDaftar.toLowerCase() === 'buka') {
-                    btn.innerHTML = "✨ Daftar Sekarang &rarr;";
+                    btn.innerHTML = "Daftar Sekarang &rarr;";
                     btn.href = eventData.linkDaftar || "#";
-                    // Terapkan style aktif
                     btn.className = "holo-btn active-daftar";
-                    btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; font-size: 1.1rem; border-radius: 12px; cursor: pointer; pointer-events: auto;";
+                    btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; font-size: 1.05rem; border-radius: 12px; cursor: pointer; pointer-events: auto;";
                     btn.removeAttribute('disabled');
                     document.getElementById('daftarKeterangan').innerText = "Pendaftaran sedang berlangsung. Segera daftarkan diri Anda!";
                 } else {
-                    btn.innerHTML = "🔒 Pendaftaran Belum Dibuka";
+                    btn.innerHTML = "Pendaftaran Belum Dibuka";
                     btn.href = "javascript:void(0)";
-                    // Copot class hover dan paksa style disabled dengan css inline agar tidak bisa diklik
                     btn.className = "";
-                    btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.3); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; cursor: not-allowed; pointer-events: none; text-decoration: none; font-weight: 600;";
+                    btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; background: rgba(255,255,255,0.03); color: var(--text-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; cursor: not-allowed; pointer-events: none; text-decoration: none; font-weight: 600;";
                     btn.setAttribute('disabled', 'true');
-                    document.getElementById('daftarKeterangan').innerText = "*Tombol aktif secara otomatis jika pendaftaran telah dibuka.";
+                    document.getElementById('daftarKeterangan').innerText = "*Tombol aktif jika pengelola membuka formulir pendaftaran.";
                 }
 
                 // Render Kepanitiaan Tables
@@ -299,22 +307,21 @@
                         if(divisi.anggota) {
                             divisi.anggota.forEach(ang => {
                                 rowsHtml += `<tr>
-                                    <td style="font-weight:600; color:#fff; width:60%; display:flex; align-items:center; gap:8px;">
-                                        <div style="width:6px; height:6px; border-radius:50%; background:var(--accent-neon);"></div>
+                                    <td style="font-weight:700; color:#fff; width:55%;">
                                         ${ang.nama}
                                     </td>
-                                    <td style="color:var(--text-muted);">${ang.jabatan}</td>
+                                    <td style="color:var(--text-muted); font-size: 0.95rem;">${ang.jabatan}</td>
                                 </tr>`;
                             });
                         }
                         panitiaCont.innerHTML += `
-                            <div class="panitia-box">
-                                <h4 class="panitia-title">${divisi.namaDivisi}</h4>
+                            <div class="panitia-box" style="margin-bottom: 25px;">
+                                <h4 class="panitia-title" style="color:white; font-size:1.15rem; margin-bottom:15px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1);">${divisi.namaDivisi}</h4>
                                 <table class="panitia-table" style="width: 100%; text-align: left; border-collapse: collapse;">
                                     <thead>
                                         <tr>
-                                            <th style="color: rgba(255,255,255,0.4); font-size: 0.8rem; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); text-transform: uppercase;">NAMA</th>
-                                            <th style="color: rgba(255,255,255,0.4); font-size: 0.8rem; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); text-transform: uppercase;">SEBAGAI</th>
+                                            <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">NAMA</th>
+                                            <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">SEBAGAI</th>
                                         </tr>
                                     </thead>
                                     <tbody>${rowsHtml}</tbody>
@@ -323,11 +330,11 @@
                         `;
                     });
                 } else {
-                    panitiaCont.innerHTML = "<div style='text-align:center; padding:30px; background:rgba(0,0,0,0.3); border-radius:15px; border:1px dashed rgba(255,255,255,0.1); color:var(--text-muted);'>Informasi struktur kepanitiaan belum dipublikasikan.</div>";
+                    panitiaCont.innerHTML = "<div style='text-align:left; padding:20px; background:rgba(255,255,255,0.02); border-radius:12px; color:var(--text-muted);'>Struktur kepanitiaan belum dipublikasikan.</div>";
                 }
 
                 document.getElementById('loaderData').style.display = 'none';
-                document.getElementById('mainDetailContent').style.display = 'grid';
+                document.getElementById('mainDetailContent').style.display = 'block'; // Tampilkan Container Utama
 
             } catch (e) {
                 document.getElementById('loaderData').innerHTML = `
