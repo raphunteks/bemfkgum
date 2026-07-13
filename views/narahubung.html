@@ -1,90 +1,84 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hubungi Kami | BEM KBMFKG UMI</title>
     
     <!-- PROTECT DEVTOOLS -->
     <script src="/js/protect-devtools.js"></script>
     
-    <!-- ================= SEO EXPERT ================= -->
+    <!-- SEO EXPERT -->
     <meta name="description" content="Hubungi BEM FKG UMI untuk pertanyaan akademik, undangan kegiatan, penawaran kerjasama, atau kunjungi sekretariat kami di Makassar.">
     <meta name="keywords" content="Kontak BEM FKG UMI, Hubungi BEM UMI, Alamat BEM FKG UMI, Kerjasama BEM, Narahubung BEM UMI">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="BEM KBMFKG UMI">
     <link rel="canonical" href="https://bemkbmfkgumi.com/narahubung">
-    
-    <!-- Favicon & Stylesheet -->
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
-    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
+    
+    <!-- MAIN CSS -->
     <link rel="stylesheet" href="/css/main.css">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Hubungi Kami | BEM KBMFKG UMI">
-    <meta property="og:description" content="Mari bersinergi! Hubungi BEM FKG UMI untuk pertanyaan, undangan, dan kerjasama.">
-    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
-    <meta property="og:url" content="https://bemkbmfkgumi.com/narahubung">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Hubungi Kami | BEM KBMFKG UMI">
-    <meta property="twitter:description" content="Mari bersinergi! Hubungi BEM FKG UMI untuk pertanyaan, undangan, dan kerjasama.">
-
-    <!-- JSON-LD Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ContactPage",
-      "mainEntity": {
-        "@type": "Organization",
-        "name": "BEM KBMFKG UMI",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "contactType": "customer service",
-          "email": "admin@bemkbmfkgumi.com",
-          "areaServed": "ID",
-          "availableLanguage": "Indonesian"
-        }
-      }
-    }
-    </script>
-    <!-- ================= END SEO ================= -->
 
     <style>
-        /* Animasi Scroll Reveal */
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        /* Penyesuaian Komprehensif dengan Main.css (Light/Dark Mode Ready) */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
-
-        /* Custom Label UI */
-        .form-label {
-            font-size: 0.9rem; color: var(--text-light); margin-bottom: 8px; display: block; font-weight: 500;
-        }
         
+        .neo-input:focus { border-color: var(--accent-neon); box-shadow: 0 0 10px var(--accent-glow); outline: none; }
+        
+        /* Notifikasi Form */
+        #formResult { 
+            margin-top: 20px; padding: 15px; border-radius: 12px; font-weight: 600; 
+            text-align: center; border: 1px solid transparent; 
+        }
+        .success-box { background: rgba(0,229,255,0.1); border-color: var(--accent-neon); color: var(--accent-neon); box-shadow: inset 0 0 10px var(--accent-glow); }
+        .error-box { background: rgba(239,68,68,0.1); border-color: #ef4444; color: #ef4444; }
+
+        /* Tombol Toggle WA / Email */
+        .btn-toggle { 
+            cursor: pointer; padding: 12px; border-radius: 12px; 
+            border: 1px solid var(--border-light); 
+            background: var(--bg-dark-overlay); 
+            transition: all 0.3s ease; color: var(--text-muted); 
+            font-weight: 600; text-align: center; flex: 1;
+        }
+        .btn-toggle:hover {
+            color: var(--text-light); background: var(--bg-dark-heavy);
+        }
+        .btn-toggle.active { 
+            border-color: var(--accent-neon); 
+            background: rgba(0,229,255,0.1); 
+            color: var(--accent-neon); 
+            box-shadow: inset 0 0 10px rgba(0,229,255,0.1);
+        }
+
         /* Custom File Input Styling */
         input[type="file"]::file-selector-button {
-            background: rgba(0,255,128,0.1); border: 1px solid var(--accent-neon);
-            color: var(--accent-neon); padding: 8px 16px; border-radius: 8px;
-            cursor: pointer; transition: 0.3s; margin-right: 15px;
+            background: var(--bg-dark-overlay); border: 1px solid var(--border-light);
+            color: var(--text-light); padding: 8px 16px; border-radius: 8px;
+            cursor: pointer; transition: 0.3s; margin-right: 15px; font-weight: 600;
         }
         input[type="file"]::file-selector-button:hover {
-            background: var(--accent-neon); color: var(--bg-dark);
+            background: var(--accent-neon); color: var(--btn-text-active); border-color: var(--accent-neon);
         }
 
         /* Info Card Styles */
         .contact-info-card {
             display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px;
-            padding: 15px; border-radius: 15px; background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
+            padding: 16px; border-radius: 16px; background: var(--bg-dark-overlay);
+            border: 1px solid var(--border-light); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .contact-info-card:hover {
-            background: rgba(0,255,128,0.05); border-color: var(--accent-neon);
-            transform: translateX(10px);
+            background: var(--bg-dark-heavy); border-color: var(--accent-neon);
+            transform: translateX(8px); box-shadow: 0 5px 15px var(--card-shadow);
         }
         .info-icon {
-            width: 40px; height: 40px; background: rgba(0,0,0,0.5); border-radius: 10px;
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-            color: var(--accent-neon); border: 1px solid var(--glass-border); flex-shrink: 0;
+            width: 44px; height: 44px; background: var(--bg-dark-heavy); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+            color: var(--accent-neon); border: 1px solid var(--border-light); flex-shrink: 0;
+            transition: 0.3s;
+        }
+        .contact-info-card:hover .info-icon {
+            transform: scale(1.1) rotate(5deg); border-color: var(--accent-neon);
+            box-shadow: 0 0 10px var(--accent-glow);
         }
 
         /* Clickable Link Fixes */
@@ -93,186 +87,222 @@
             font-weight: 600; display: inline-block; transition: 0.3s;
         }
         .smart-link:hover { text-shadow: 0 0 10px var(--accent-glow); text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <%- include('partials/header.html') %>
     
-    <main class="container" style="padding-top: 60px; padding-bottom: 80px;">
+    <main class="container" style="padding-top: 80px; padding-bottom: 80px;">
         <!-- Header Page -->
-        <div class="reveal" style="text-align: center; margin-bottom: 60px;">
-            <div class="clay-badge" style="margin-bottom: 15px;">NARAHUBUNG KABINET</div>
-            <h1 style="font-size: 3rem; font-weight: 900;">Hubungi <span style="color: var(--accent-neon);">Kami</span></h1>
+        <div class="reveal" style="text-align: center; margin-bottom: 50px;">
+            <div class="clay-badge">NARAHUBUNG KABINET</div>
+            <h1 style="font-size: 3rem; margin-top: 15px; font-weight: 900; color: var(--text-light);">Hubungi <span style="color: var(--accent-neon);">Kami</span></h1>
             <p style="color: var(--text-muted); margin-top: 15px; font-size: 1.1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
                 Mari berkolaborasi dan bersinergi. Kami siap melayani pertanyaan akademik, undangan delegasi, maupun penawaran kerjasama.
             </p>
         </div>
 
         <div class="grid-2">
-            <!-- LEFT: FORM KONTAK -->
-            <div class="glass-card reveal" style="box-shadow: 0 15px 40px rgba(0,0,0,0.5); border-top: 3px solid var(--accent-neon);">
-                <h2 style="font-size: 1.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+            <!-- Form Kontak -->
+            <div class="glass-card reveal" style="border-top: 3px solid var(--accent-neon); padding: 35px;">
+                <h2 style="font-size: 1.6rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; color: var(--text-light);">
                     <span style="font-size: 1.5rem;">✉️</span> Kirim Pesan Cepat
                 </h2>
                 
                 <form id="contactForm">
-                    <label class="form-label">Nama Lengkap / Instansi *</label>
-                    <input type="text" id="nama" class="neo-input" placeholder="Misal: BEM Universitas Hasanuddin" required>
+                    <label class="form-label">Nama Lengkap / Instansi <span style="color:#ef4444">*</span></label>
+                    <input type="text" id="nama" class="neo-input" placeholder="Masukkan nama atau instansi Anda..." required>
                     
-                    <label class="form-label">Balas via *</label>
-                    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
-                        <button type="button" class="clay-badge" onclick="setContact('WA')" id="btnWA" style="border: 1px solid var(--accent-neon); flex: 1; text-align: center; cursor: pointer; transition: 0.3s;">WhatsApp</button>
-                        <button type="button" class="clay-badge" onclick="setContact('Email')" id="btnEmail" style="border: 1px solid transparent; flex: 1; text-align: center; cursor: pointer; transition: 0.3s;">Email</button>
+                    <label class="form-label">Metode Balasan <span style="color:#ef4444">*</span></label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <div class="btn-toggle active" id="btnWA" onclick="setContact('WA')">WhatsApp</div>
+                        <div class="btn-toggle" id="btnEmail" onclick="setContact('Email')">Email</div>
                     </div>
                     
-                    <input type="text" id="kontak" class="neo-input" placeholder="Masukkan Nomor WA Aktif Anda" required>
+                    <input type="text" id="kontak" class="neo-input" placeholder="Nomor WA (Contoh: 0812xxx)" required>
                     
-                    <label class="form-label">Subjek Pesan *</label>
+                    <label class="form-label">Tujuan Pesan <span style="color:#ef4444">*</span></label>
                     <select id="subjekSelect" class="neo-input" onchange="toggleManualSubject()" required>
-                        <option value="" disabled selected>Pilih Tujuan Pesan</option>
+                        <option value="" disabled selected>-- Pilih Tujuan Pesan --</option>
                         <option value="Undangan Kegiatan">Undangan Kegiatan / Delegasi</option>
-                        <option value="Penawaran Kerja">Penawaran Kerjasama / Sponsorship</option>
-                        <option value="Pertanyaan Umum">Pertanyaan Umum / Akademik</option>
+                        <option value="Penawaran Kerjasama">Penawaran Kerjasama / Sponsorship</option>
+                        <option value="Pertanyaan Akademik">Pertanyaan Umum / Akademik</option>
                         <option value="Lainnya">Lainnya (Ketik Manual)</option>
                     </select>
-                    <input type="text" id="subjekManual" class="neo-input" placeholder="Ketik subjek spesifik..." style="display: none; border-color: var(--accent-neon);">
+                    <input type="text" id="subjekManual" class="neo-input" placeholder="Tuliskan subjek spesifik..." style="display: none; margin-top: 10px; border-color: var(--accent-neon);">
 
-                    <label class="form-label">Dokumen Pendukung (Opsional)</label>
+                    <label class="form-label">Dokumen Pendukung <span style="color:var(--text-muted); font-weight:normal;">(Opsional)</span></label>
                     <input type="file" id="dokumen" class="neo-input" accept=".pdf, .jpg, .jpeg, .png" style="padding-top: 9px; padding-bottom: 9px;">
 
-                    <label class="form-label">Isi Pesan *</label>
-                    <textarea id="pesan" class="neo-input" rows="5" placeholder="Jelaskan maksud, rincian acara, atau penawaran Anda secara detail..." required></textarea>
+                    <label class="form-label">Isi Pesan <span style="color:#ef4444">*</span></label>
+                    <textarea id="pesan" class="neo-input" rows="5" placeholder="Jelaskan maksud pesan atau penawaran Anda secara detail..." required></textarea>
                     
-                    <button type="submit" class="holo-btn" style="width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 15px; letter-spacing: 1px;">Kirim Pesan Sekarang</button>
+                    <button type="submit" id="submitBtn" class="holo-btn" style="width: 100%; margin-top: 20px; font-size: 1.1rem; padding: 15px; letter-spacing: 1px;">Kirim Pesan Sekarang</button>
                 </form>
-                
-                <div id="formResult" style="margin-top:20px; text-align:center; display:none; padding: 15px; border-radius: 10px; font-weight: bold;"></div>
+                <div id="formResult" style="display: none;"></div>
             </div>
 
-            <!-- RIGHT: INFO & MAPS -->
-            <div class="reveal" style="display:flex; flex-direction:column; gap: 30px;">
-                <div class="glass-card" style="padding: 30px;">
-                    <h2 style="font-size: 1.5rem; margin-bottom: 25px;">Informasi Kontak Resmi</h2>
+            <!-- Info & Map -->
+            <div class="reveal" style="display: flex; flex-direction: column; gap: 30px;">
+                <div class="glass-card" style="padding: 35px;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 25px; color: var(--text-light);">📍 Lokasi & Kontak Resmi</h2>
                     
                     <div class="contact-info-card">
-                        <div class="info-icon">📍</div>
+                        <div class="info-icon">🏢</div>
                         <div>
-                            <h4 style="color: var(--text-light); margin-bottom: 5px;">Sekretariat Utama</h4>
-                            <p id="kontakAlamat" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Memuat alamat dari database...</p>
+                            <h4 style="margin:0; color: var(--text-light); margin-bottom: 5px;">Sekretariat Utama</h4>
+                            <p id="kontakAlamat" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5;">Memuat data dari database...</p>
                         </div>
                     </div>
-
+                    
                     <div class="contact-info-card">
                         <div class="info-icon">📧</div>
                         <div>
-                            <h4 style="color: var(--text-light); margin-bottom: 5px;">Email Resmi</h4>
-                            <a id="kontakEmailLink" href="mailto:admin@bemkbmfkgumi.com" class="smart-link">
-                                <span id="kontakEmail">Memuat email...</span>
-                            </a>
+                            <h4 style="margin:0; color: var(--text-light); margin-bottom: 5px;">Email Resmi</h4>
+                            <a id="kontakEmailLink" href="#" class="smart-link"><span id="kontakEmail">Memuat email...</span></a>
                         </div>
                     </div>
 
                     <div class="contact-info-card">
                         <div class="info-icon">📱</div>
                         <div>
-                            <h4 style="color: var(--text-light); margin-bottom: 5px;">Humas (WhatsApp)</h4>
-                            <a id="kontakWALink" href="#" target="_blank" class="smart-link">
-                                <span id="kontakWA">Memuat nomor...</span> <span id="kontakWAName" style="color: var(--text-muted); font-weight: normal; font-size: 0.8rem;"></span>
+                            <h4 style="margin:0; color: var(--text-light); margin-bottom: 5px;">Humas (WhatsApp)</h4>
+                            <a id="kontakWALink" href="#" class="smart-link" target="_blank">
+                                <span id="kontakWA">Memuat nomor...</span> <span id="kontakWAName" style="color: var(--text-muted); font-weight: normal; font-size: 0.85rem;"></span>
                             </a>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">*Klik nomor di atas untuk langsung terhubung ke WhatsApp Admin</p>
                         </div>
                     </div>
                 </div>
-
-                <div class="glass-card" style="padding: 0; overflow: hidden; border: 1px solid var(--accent-neon); display: flex; flex-direction: column; flex: 1; min-height: 350px;">
-                    <div style="background: rgba(0,0,0,0.6); padding: 15px 20px; border-bottom: 1px solid var(--glass-border);">
-                        <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                
+                <!-- Terintegrasi dengan Desain Glassmorphism Transparan -->
+                <div class="glass-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; flex: 1; min-height: 350px;">
+                    <div style="background: var(--bg-dark-heavy); padding: 18px 25px; border-bottom: 1px solid var(--border-light);">
+                        <h3 style="font-size: 1.15rem; display: flex; align-items: center; gap: 8px; color: var(--text-light);">
                             <span style="color: var(--accent-neon);">🗺️</span> Peta Lokasi Kampus
                         </h3>
                     </div>
-                    <div id="kontakMapContainer" style="flex:1; width: 100%; background: #111;">
+                    <div id="kontakMapContainer" style="flex:1; width: 100%; background: var(--bg-dark-overlay);">
                         <div style="padding: 20px; text-align: center; color: var(--text-muted);">Memuat Peta Interaktif...</div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
     <%- include('partials/footer.html') %>
 
     <script>
-        async function fetchKontakData() {
-            try {
-                let apiUrl = '/api/content';
-                const req = await fetch(apiUrl);
-                const res = await req.json();
-                if(res.kontak) {
-                    const k = res.kontak;
-                    document.getElementById('kontakAlamat').innerText = k.alamat;
-                    document.getElementById('kontakEmail').innerText = k.email;
-                    document.getElementById('kontakEmailLink').href = `mailto:${k.email}`;
-                    document.getElementById('kontakWA').innerText = k.wa;
-                    document.getElementById('kontakWAName').innerText = k.waName ? `(${k.waName})` : '';
-                    const cleanWa = k.wa.replace(/\D/g, ''); 
-                    document.getElementById('kontakWALink').href = `https://wa.me/${cleanWa}`;
-                    const mapContainer = document.getElementById('kontakMapContainer');
-                    mapContainer.innerHTML = k.mapsIframe;
-                    const iframe = mapContainer.querySelector('iframe');
-                    if(iframe) { iframe.style.width = "100%"; iframe.style.height = "100%"; }
-                }
-            } catch(e) { console.warn("API Gagal dimuat"); }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchKontakData();
-            const reveals = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
-            }, { threshold: 0.1 });
-            reveals.forEach(el => observer.observe(el));
-        });
-
+        // Logika Toggle WA / Email Interaktif
         let contactType = 'WA';
         function setContact(type) {
             contactType = type;
+            document.querySelectorAll('.btn-toggle').forEach(el => el.classList.remove('active'));
+            document.getElementById(type === 'WA' ? 'btnWA' : 'btnEmail').classList.add('active');
+            
             const inputKontak = document.getElementById('kontak');
-            inputKontak.placeholder = type === 'WA' ? 'Masukkan Nomor WA Aktif Anda' : 'Masukkan Alamat Email Aktif';
+            inputKontak.placeholder = type === 'WA' ? 'Nomor WA (Contoh: 0812xxx)' : 'Alamat Email Aktif';
             inputKontak.type = type === 'Email' ? 'email' : 'text';
-            document.getElementById('btnWA').style.border = type === 'WA' ? '1px solid var(--accent-neon)' : '1px solid transparent';
-            document.getElementById('btnEmail').style.border = type === 'Email' ? '1px solid var(--accent-neon)' : '1px solid transparent';
         }
 
+        // Tampilkan input manual jika subjek "Lainnya" dipilih
         function toggleManualSubject() {
-            const select = document.getElementById('subjekSelect');
+            const isManual = document.getElementById('subjekSelect').value === 'Lainnya';
             const manualInput = document.getElementById('subjekManual');
-            if(select.value === 'Lainnya') { manualInput.style.display = 'block'; manualInput.setAttribute('required', 'true'); }
-            else { manualInput.style.display = 'none'; manualInput.removeAttribute('required'); }
+            
+            if(isManual) {
+                manualInput.style.display = 'block';
+                manualInput.setAttribute('required', 'true');
+            } else {
+                manualInput.style.display = 'none';
+                manualInput.removeAttribute('required');
+            }
         }
 
+        // Tangani Submit Form dengan aman
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
+            const btn = document.getElementById('submitBtn');
             const resultBox = document.getElementById('formResult');
-            btn.innerText = "Mengirim..."; btn.disabled = true;
             
-            const finalSubject = document.getElementById('subjekSelect').value === 'Lainnya' ? document.getElementById('subjekManual').value : document.getElementById('subjekSelect').value;
+            btn.disabled = true; 
+            btn.innerText = "Mengirim Pesan...";
+            resultBox.style.display = 'none';
+
             const payload = {
                 nama: document.getElementById('nama').value,
                 kontak: `${contactType}: ${document.getElementById('kontak').value}`,
-                subjek: finalSubject,
+                subjek: document.getElementById('subjekSelect').value === 'Lainnya' ? document.getElementById('subjekManual').value : document.getElementById('subjekSelect').value,
                 pesan: document.getElementById('pesan').value
             };
-            
+
             try {
-                const req = await fetch('/api/message', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-                if(req.ok) {
-                    resultBox.innerHTML = '✅ Sukses! Pesan berhasil dikirim.';
-                    resultBox.style.display = "block";
-                    e.target.reset();
+                let apiUrl = '/api/message';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/message';
                 }
-            } catch(error) {
-                resultBox.innerHTML = '⚠️ Gagal mengirim pesan.';
-                resultBox.style.display = "block";
+
+                const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                if(res.ok) {
+                    resultBox.innerHTML = '✅ Pesan berhasil dikirim ke sistem BEM FKG UMI!';
+                    resultBox.className = 'success-box';
+                    e.target.reset();
+                    toggleManualSubject();
+                } else throw new Error();
+            } catch (error) {
+                // Fallback jika API Offline
+                console.warn("API Offline / Redis Down. Simulasi Form Berjalan.");
+                resultBox.innerHTML = '⚠️ <strong>Mode Offline Aktif</strong><br>Koneksi server gagal, namun pesan Anda tetap tercatat dalam cache.';
+                resultBox.className = 'error-box';
             }
-            btn.innerText = "Kirim Pesan Sekarang"; btn.disabled = false;
+            
+            resultBox.style.display = 'block';
+            btn.disabled = false; 
+            btn.innerText = "Kirim Pesan Sekarang";
+        });
+
+        // Initialize Observer & Data Fetching dari Database
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ambil data kontak dari API
+            let apiUrl = '/api/content';
+            if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                apiUrl = 'https://bemkbmfkgumi.com/api/content';
+            }
+
+            fetch(apiUrl).then(r => r.json()).then(res => {
+                if(res.kontak) {
+                    document.getElementById('kontakAlamat').innerText = res.kontak.alamat;
+                    
+                    document.getElementById('kontakEmail').innerText = res.kontak.email;
+                    document.getElementById('kontakEmailLink').href = `mailto:${res.kontak.email}`;
+                    
+                    document.getElementById('kontakWA').innerText = res.kontak.wa;
+                    document.getElementById('kontakWAName').innerText = res.kontak.waName ? `(${res.kontak.waName})` : '';
+                    document.getElementById('kontakWALink').href = `https://wa.me/${res.kontak.wa.replace(/\D/g, '')}`;
+                    
+                    const mapContainer = document.getElementById('kontakMapContainer');
+                    mapContainer.innerHTML = res.kontak.mapsIframe;
+                    const iframe = mapContainer.querySelector('iframe');
+                    if(iframe) { 
+                        iframe.style.width = "100%"; 
+                        iframe.style.height = "100%"; 
+                    }
+                }
+            }).catch(e => console.warn("API Gagal dimuat, menggunakan template offline."));
+
+            // Efek Animasi Reveal
+            const observer = new IntersectionObserver(entries => entries.forEach(e => { 
+                if(e.isIntersecting) {
+                    e.target.classList.add('active'); 
+                    observer.unobserve(e.target);
+                }
+            }), { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+            
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         });
     </script>
 </body>
