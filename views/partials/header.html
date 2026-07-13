@@ -38,12 +38,12 @@
         const loader = document.getElementById('global-loader');
         
         // Langsung mulai di 80% sesuai request agar lebih cepat dan elegan
-        let count = 80;
+        let count = 1;
         countEl.innerText = count;
         
         // Simulasi berjalan realtime perlahan dari 80% ke 98% sambil menunggu database
         let slowCrawl = setInterval(() => {
-            if(count < 98) { 
+            if(count < 100) { 
                 count++; 
                 countEl.innerText = count; 
             }
