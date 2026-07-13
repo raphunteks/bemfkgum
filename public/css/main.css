@@ -4,7 +4,7 @@
 
 :root {
   /* ================= LIGHT MODE VARIABLES (SOFT & BRIGHT) ================= */
-  --bg-dark: #f8fafc; /* SUPER UPGRADE: Background putih bersih/soft pastel, tidak gelap/kusam */
+  --bg-dark: #f8fafc; /* Background putih bersih/soft pastel */
   --text-light: #0f172a; /* Warna teks digelapkan sedikit agar kontras maksimal */
   --text-muted: #64748b;
   --accent-neon: #0284c7; /* Biru terang elegan */
@@ -38,7 +38,7 @@
   --bg-overlay: rgba(255, 255, 255, 0.9);
   --bg-dark-overlay: rgba(2, 132, 199, 0.06);
   --bg-dark-heavy: #ffffff;
-  --shadow-text: rgba(0, 0, 0, 0.05); /* Teks shadow dihilangkan/dikurangi agar teks Light Mode solid */
+  --shadow-text: rgba(0, 0, 0, 0.05);
   
   --blob-1: rgba(2, 132, 199, 0.12);
   --blob-2: rgba(14, 165, 233, 0.12);
@@ -49,49 +49,49 @@
 }
 
 [data-theme="dark"] {
-  /* ================= DARK MODE VARIABLES ================= */
-  --bg-dark: #040814;
-  --text-light: #ffffff; 
+  /* ================= DARK MODE VARIABLES (SOFT DEEP BLUE) ================= */
+  --bg-dark: #0b132b; /* SUPER UPGRADE: Midnight Blue, Sangat elegan dan nyaman di mata */
+  --text-light: #f8fafc; /* Putih sedikit di-soft-kan agar tidak silau */
   --text-muted: #94a3b8;
   --accent-neon: #00e5ff;
-  --accent-glow: rgba(0, 229, 255, 0.4);
+  --accent-glow: rgba(0, 229, 255, 0.45); /* Glow lebih ditekankan di latar biru */
   
-  /* Variabel Pola Grid Dark Mode */
-  --grid-color: rgba(255, 255, 255, 0.03); 
+  /* Variabel Pola Grid Dark Mode menyatu dengan biru */
+  --grid-color: rgba(255, 255, 255, 0.035); 
   
-  --glass-bg: rgba(15, 25, 45, 0.4);
-  --glass-border: rgba(0, 229, 255, 0.2);
-  --card-bg: linear-gradient(145deg, rgba(15, 25, 45, 0.7), rgba(5, 10, 20, 0.85)); 
-  --card-shadow: rgba(0, 0, 0, 0.6);
+  --glass-bg: rgba(18, 28, 51, 0.5); /* Blue-tinted glass */
+  --glass-border: rgba(0, 229, 255, 0.25);
+  --card-bg: linear-gradient(145deg, rgba(20, 32, 58, 0.75), rgba(11, 19, 43, 0.9)); /* Deep blue cards */
+  --card-shadow: rgba(0, 0, 0, 0.4);
   
-  --badge-bg: #0b1329;
-  --clay-shadow-1: rgba(0,0,0,0.8);
-  --clay-shadow-2: rgba(255,255,255,0.04);
-  --clay-shadow-in-1: rgba(255,255,255,0.08);
-  --clay-shadow-in-2: rgba(0,0,0,0.4);
+  --badge-bg: #121e3d; /* Soft navy badge */
+  --clay-shadow-1: rgba(0,0,0,0.6);
+  --clay-shadow-2: rgba(255,255,255,0.03);
+  --clay-shadow-in-1: rgba(255,255,255,0.05);
+  --clay-shadow-in-2: rgba(0,0,0,0.3);
 
-  --header-bg: rgba(4, 8, 20, 0.75);
-  --menu-bg: rgba(5, 10, 20, 0.95);
+  --header-bg: rgba(11, 19, 43, 0.85); /* Solid blue-slate header */
+  --menu-bg: rgba(14, 23, 50, 0.98);
   
-  --input-bg: rgba(0, 0, 0, 0.4);
-  --calendar-day: rgba(15, 25, 45, 0.7);
-  --calendar-day-hover: rgba(0, 229, 255, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.25);
+  --calendar-day: rgba(20, 32, 58, 0.6);
+  --calendar-day-hover: rgba(0, 229, 255, 0.15);
   
-  --agenda-list-bg: linear-gradient(145deg, rgba(10, 15, 30, 0.7), rgba(5, 10, 20, 0.9));
-  --agenda-card-bg: rgba(15, 25, 45, 0.5);
+  --agenda-list-bg: linear-gradient(145deg, rgba(16, 26, 48, 0.8), rgba(11, 19, 43, 0.95));
+  --agenda-card-bg: rgba(20, 32, 58, 0.6);
   
-  --border-light: rgba(255, 255, 255, 0.05);
-  --bg-overlay: rgba(0, 0, 0, 0.85);
-  --bg-dark-overlay: rgba(255, 255, 255, 0.05); 
-  --bg-dark-heavy: rgba(10, 15, 30, 0.85);
-  --shadow-text: rgba(255, 255, 255, 0.3);
+  --border-light: rgba(255, 255, 255, 0.06); /* Border putih kebiruan samar */
+  --bg-overlay: rgba(11, 19, 43, 0.9);
+  --bg-dark-overlay: rgba(255, 255, 255, 0.04); 
+  --bg-dark-heavy: #101a36; /* Solid dark blue untuk elemen berat seperti footer */
+  --shadow-text: rgba(255, 255, 255, 0.2);
   
-  --blob-1: rgba(0, 229, 255, 0.15);
-  --blob-2: rgba(0, 85, 255, 0.15);
+  --blob-1: rgba(0, 229, 255, 0.18);
+  --blob-2: rgba(0, 85, 255, 0.18);
   
-  --btn-text-active: #000000;
-  --banner-overlay-1: rgba(4, 8, 20, 0.98);
-  --banner-overlay-2: rgba(4, 8, 20, 0.8);
+  --btn-text-active: #0b132b;
+  --banner-overlay-1: rgba(11, 19, 43, 0.98);
+  --banner-overlay-2: rgba(11, 19, 43, 0.8);
 }
 
 /* Base Reset & Smooth Scrolling */
@@ -525,7 +525,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .modal-overlay.active { display: flex; animation: fadeInTab 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
 .modal-content-box { background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 25px; width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; position: relative; padding: 0; z-index: 10001; box-shadow: 0 25px 50px var(--card-shadow); transition: background-color 0.4s, border-color 0.4s; }
 .modal-close { position: absolute; top: 15px; right: 15px; background: var(--bg-dark-overlay); backdrop-filter: blur(5px); border: 1px solid var(--border-light); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 10002; transition: background-color 0.3s, color 0.3s, border-color 0.4s; }
-.modal-close:hover { background: var(--accent-neon); color: #ffffff; }
+.modal-close:hover { background: var(--accent-neon); color: var(--btn-text-active); }
 
 /* ================= ADMIN PANEL CMS ================= */
 .admin-layout { display: flex; min-height: 100vh; background: var(--bg-dark); z-index: 100; position: relative; transition: background-color 0.4s; }
@@ -610,7 +610,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
   .slider-nav-btn.prev { left: 10px; }
   .slider-nav-btn.next { right: 10px; }
 
-  .warna-pills-wrapper { justify-content: flex-start; } 
+  .warna-pills-wrapper { justify-content: flex-start; } /* Allow swipe on mobile */
   .warna-detail-box { flex-direction: column; text-align: center; padding: 30px 20px; gap: 20px; }
   .warna-detail-text h3 { justify-content: center; flex-direction: column; gap: 5px; }
 
