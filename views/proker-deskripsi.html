@@ -1,4 +1,3 @@
-<!-- FILE: views/proker-deskripsi.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Departemen | BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO GOLD STANDARD ================= -->
     <meta name="description" content="Informasi detail mengenai fungsi, program kerja, penanggung jawab, dan koordinator Departemen di BEM KBMFKG UMI.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     
@@ -67,6 +65,11 @@
             margin-top: 8px;
             margin-bottom: 15px;
         }
+        @media(max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr !important; }
+            .proker-banner-img { height: 300px; }
+            .proker-banner-overlay { padding: 40px 20px 20px; }
+        }
     </style>
 </head>
 <body>
@@ -83,6 +86,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            // Ambil SLUG dari URL Path (Cth: /proker-deskripsi/dept-character-of-building)
             const pathParts = window.location.pathname.split('/');
             const slug = pathParts[pathParts.length - 1];
             
@@ -91,11 +95,12 @@
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
                 
                 const req = await fetch(apiUrl);
-                if(!req.ok) throw new Error("Gagal mengambil data");
+                if(!req.ok) throw new Error("Gagal mengambil data API");
                 
                 const res = await req.json();
                 const allProker = res.proker || [];
                 
+                // Cari data berdasarkan ID slug
                 const deptData = allProker.find(p => p.id === slug);
                 
                 if(!deptData) {
@@ -112,19 +117,23 @@
                 renderDetail(deptData);
 
             } catch (err) {
-                document.getElementById('mainContent').innerHTML = `<div style="text-align:center; color: #ef4444; padding:100px;">Terjadi kesalahan sistem.</div>`;
+                console.error(err);
+                document.getElementById('mainContent').innerHTML = `<div style="text-align:center; color: #ef4444; padding:100px;">Terjadi kesalahan sistem gagal menghubungi server Redis.</div>`;
             }
         });
 
         function renderDetail(data) {
             const bgImg = data.bgImage || '/img/bemfkgumi.png';
+            
+            // Generate List Fungsi
             let fungsiHtml = '';
             if(data.fungsi && data.fungsi.length > 0) {
-                fungsiHtml = data.fungsi.map(f => `<li><span style="color:var(--accent-neon);">✔️</span> <span>${f}</span></li>`).join('');
+                fungsiHtml = data.fungsi.map(f => `<li><span style="color:var(--accent-neon);" aria-hidden="true">✔️</span> <span>${f}</span></li>`).join('');
             } else {
                 fungsiHtml = `<li><span style="color:var(--text-muted);">Belum ada data fungsi.</span></li>`;
             }
 
+            // Generate List Program Kerja beserta Detail Anaknya
             let prokerHtml = '';
             if(data.listProker && data.listProker.length > 0) {
                 data.listProker.forEach(pk => {
@@ -132,26 +141,25 @@
                     if(pk.detail && pk.detail.length > 0) {
                         detailHtml = `<ul class="sub-proker">` + pk.detail.map(d => `<li>${d}</li>`).join('') + `</ul>`;
                     }
-                    prokerHtml += `<li><span style="color:var(--accent-neon);">🚀</span> <div><strong>${pk.nama}</strong>${detailHtml}</div></li>`;
+                    prokerHtml += `<li><span style="color:var(--accent-neon);" aria-hidden="true">🚀</span> <div><strong style="color: var(--text-light);">${pk.nama}</strong>${detailHtml}</div></li>`;
                 });
             } else {
                 prokerHtml = `<li><span style="color:var(--text-muted);">Belum ada program kerja yang diinput.</span></li>`;
             }
 
+            // Inject to HTML
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <!-- BAGIAN BANNER -->
                 <div class="proker-banner-wrapper reveal active">
                     <img src="${bgImg}" alt="Banner ${data.dept}" class="proker-banner-img" width="1920" height="1080" fetchpriority="high">
                     <div class="proker-banner-overlay">
                         <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem;">DETAIL DEPARTEMEN</div>
-                        <h1 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">${data.dept}</h1>
-                        <p style="color: #e2e8f0; font-size: 1.1rem; max-width: 800px; margin-top: 10px;">${data.shortDesc || ''}</p>
+                        <h1 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px;">${data.dept}</h1>
+                        <p style="color: #e2e8f0; font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;">${data.shortDesc || ''}</p>
                     </div>
                 </div>
 
-                <div class="grid-2" style="margin-bottom: 40px;">
-                    <!-- BAGIAN KIRI: FUNGSI DAN PROKER -->
+                <div class="grid-2" style="margin-bottom: 40px; grid-template-columns: 1fr 380px; gap: 40px;">
                     <div class="glass-card reveal active" style="transition-delay: 0.1s;">
                         <h2 class="detail-section-title">Fungsi Departemen</h2>
                         <ul class="fungsi-list" style="list-style:none; padding-left:0; margin-bottom: 40px;">
@@ -164,38 +172,37 @@
                         </ul>
                     </div>
 
-                    <!-- BAGIAN KANAN: METADATA & PENANGGUNG JAWAB -->
                     <div class="reveal active" style="transition-delay: 0.2s;">
-                        <div class="glass-card" style="margin-bottom: 30px;">
+                        <div class="glass-card" style="margin-bottom: 30px; padding: 25px;">
                             <h2 class="detail-section-title" style="border-left-color: #10b981; font-size: 1.4rem;">Informasi Pelaksanaan</h2>
                             
-                            <div class="info-row">
-                                <div class="info-icon-wrapper ic-lokasi">📍</div>
+                            <div class="info-row" style="background: var(--bg-dark-heavy); padding: 16px; border-radius: 16px; margin-bottom: 16px; border: 1px solid var(--border-light); display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: #ef4444; background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.2);">📍</div>
                                 <div>
-                                    <span class="detail-info-label">Titik Lokasi Utama</span>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Titik Lokasi Utama</span>
                                     <strong style="color: var(--text-light); font-size: 1.05rem;">${data.lokasi || 'Kondisional'}</strong>
                                 </div>
                             </div>
                             
-                            <div class="info-row">
-                                <div class="info-icon-wrapper ic-waktu">⏱️</div>
+                            <div class="info-row" style="background: var(--bg-dark-heavy); padding: 16px; border-radius: 16px; margin-bottom: 16px; border: 1px solid var(--border-light); display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: var(--accent-neon); background: var(--bg-dark-overlay); border: 1px solid var(--accent-glow);">⏱️</div>
                                 <div>
-                                    <span class="detail-info-label">Target Pelaksanaan</span>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Target Pelaksanaan</span>
                                     <strong style="color: var(--text-light); font-size: 1.05rem;">${data.targetPelaksanaan || 'Sepanjang Periode'}</strong>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="glass-card">
+                        <div class="glass-card" style="padding: 25px;">
                             <h2 class="detail-section-title" style="border-left-color: #8b5cf6; font-size: 1.4rem;">Struktur Pengurus</h2>
                             
                             <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px dashed var(--border-light);">
-                                <span class="detail-info-label">Koordinator Departemen</span>
+                                <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Koordinator Departemen</span>
                                 <strong style="color: var(--accent-neon); font-size: 1.2rem;">${data.koordinator || '-'}</strong>
                             </div>
 
                             <div>
-                                <span class="detail-info-label">Penanggung Jawab Proker / Anggota</span>
+                                <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Anggota / Penanggung Jawab Proker</span>
                                 <p style="color: var(--text-muted); line-height: 1.8; font-weight: 500;">
                                     ${data.penanggungJawab ? data.penanggungJawab.replace(/,/g, '<br>• ') : '-'}
                                 </p>
