@@ -293,15 +293,16 @@
             
             if(prokerData && prokerData.length > 0) {
                 prokerData.forEach(p => {
+                    // SEKARANG MENGGUNAKAN FOTO PENGURUS (900x600) BUKAN BANNER LAGI
                     const bgImg = p.fotoPengurus || '/img/bemfkgumi.png';
                     const desc = p.shortDesc || 'Deskripsi program kerja departemen akan segera diperbarui.';
                     const targetUrl = `/proker-deskripsi/${p.id}`;
 
-                    // SCRIPT MENGIKUTI DESAIN GBR 2 & GBR 3 
+                    // SCRIPT MENGIKUTI DESAIN GBR 2 & GBR 3 (UPDATED DIMENSION)
                     pCont.innerHTML += `
                         <div class="proker-card-apple reveal active" onclick="window.location.href='${targetUrl}'" tabindex="0" role="button" aria-label="Lihat detail program kerja departemen ${p.dept}" onkeydown="if(event.key==='Enter') window.location.href='${targetUrl}'">
-                            <!-- Background Image Latar Kartu (Foto Pengurus) -->
-                            <img src="${bgImg}" alt="Foto Pengurus ${p.dept}" class="pca-bg-img" loading="lazy" width="400" height="500">
+                            <!-- Background Image Latar Kartu (Foto Pengurus 3:2 / 900x600) -->
+                            <img src="${bgImg}" alt="Foto Pengurus ${p.dept}" class="pca-bg-img" loading="lazy" width="900" height="600">
                             <div class="pca-default-overlay"></div>
                             
                             <!-- Default State Content -->
