@@ -293,24 +293,33 @@
             
             if(prokerData && prokerData.length > 0) {
                 prokerData.forEach(p => {
+                    const bgImg = p.bgImage || '/img/bemfkgumi.png';
                     const desc = p.shortDesc || 'Deskripsi program kerja departemen akan segera diperbarui.';
                     const targetUrl = `/proker-deskripsi/${p.id}`;
 
-                    // SCRIPT MENGIKUTI DESAIN GBR 2 & GBR 3 (Dari instruksi sebelumnya)
+                    // SCRIPT MENGIKUTI DESAIN GBR 2 & GBR 3
                     pCont.innerHTML += `
-                        <div class="proker-card-apple reveal active" onclick="window.location.href='${targetUrl}'" tabindex="0" role="button" aria-label="Lihat detail program kerja ${p.dept}" onkeydown="if(event.key==='Enter') window.location.href='${targetUrl}'">
-                            <div class="pca-icon-wrapper">
-                                <img src="/img/bemfkgumi.png" alt="Icon ${p.dept}" class="pca-icon" loading="lazy" width="45" height="45">
-                            </div>
-                            <h3 class="pca-title">${p.dept}</h3>
+                        <div class="proker-card-apple reveal active" onclick="window.location.href='${targetUrl}'" tabindex="0" role="button" aria-label="Lihat detail program kerja departemen ${p.dept}" onkeydown="if(event.key==='Enter') window.location.href='${targetUrl}'">
+                            <!-- Background Image Default -->
+                            <img src="${bgImg}" alt="Banner ${p.dept}" class="pca-bg-img" loading="lazy" width="400" height="500">
+                            <div class="pca-default-overlay"></div>
                             
+                            <!-- Default State Content -->
+                            <div class="pca-default-content">
+                                <div class="pca-icon-wrapper">
+                                    <img src="/img/bemfkgumi.png" alt="Icon ${p.dept}" class="pca-icon" loading="lazy" width="45" height="45">
+                                </div>
+                                <h3 class="pca-title">${p.dept}</h3>
+                            </div>
+                            
+                            <!-- Hover State Content -->
                             <div class="pca-hover-content">
                                 <h3 class="pca-hover-title">${p.dept}</h3>
                                 <p class="pca-hover-desc">${desc}</p>
                                 <div class="pca-btn-wrap">
                                     <span class="pca-btn-text">Detail Proker</span>
                                     <div class="pca-btn-circle">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                                     </div>
                                 </div>
                             </div>
