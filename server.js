@@ -65,49 +65,35 @@ const defaultOrg = {
         { jabatan: "Bendahara BEM KBMFKG UMI", nama: "Nurul Amelia Limbu. S", foto: "/img/bemfkgumi.png" }
     ],
     departemen: [
-        { nama: "Dept. Character of Building", anggota: [{jabatan: "Koordinator", nama: "Muh. Ersa Aditya", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Denta Ahmad Arkana M", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muhammad Rizky", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Salsabila Putri M", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Absabrina Aulia R", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Faida Shaima Nawal", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Science Education and Research", anggota: [{jabatan: "Koordinator", nama: "Muh. Alif Perdana Putra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fatahillah Fadhillah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fini", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Annisa Rshikhah Afsa", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Rekha Al-Syam", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Farah Luthfiyyah", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Islamic", anggota: [{jabatan: "Koordinator", nama: "Maysar Ma'ruf", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ahmad Syafii", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ramadani Qurrata Ayunin", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Salwa Nariyah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nayla Dwi Ramadhani", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nayla Dzakiyah N.S", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Sekretariat", anggota: [{jabatan: "Koordinator", nama: "Febrio Arya Pradana", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Muhammad Dwiansyah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Nabila Azzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Raidah Hanisah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Wilda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Rima Aulia", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Treasure", anggota: [{jabatan: "Koordinator", nama: "Putri Amaliah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Jiyaad Taqi Rozan", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Aliyah Restu Pratiwi A", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fardah Naisa", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Israwati Amanda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nayla", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Art and Sport", anggota: [{jabatan: "Koordinator", nama: "Ilham Subhan Rafikal", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fajak Ryamizard Kasvari", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "M. Raihan Prayoga Amirul", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Annesa Fatimah Azzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Azizah Umaimah Arif", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nadira Ramadhani", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Dedication Humanity", anggota: [{jabatan: "Koordinator", nama: "Moh. Rayyan Ghazali", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Yusuf Wahyuni", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Darul Rizkyansyah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Situ Aisyah Rahmat", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Wisma Rahfah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Nurul Alifiyah Arrahma A", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Study and Strategy", anggota: [{jabatan: "Koordinator", nama: "Irfan Maulana Irwan", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Saiful S", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Putra Istiqamah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Hildan Nilan Cahaya", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zilfy Rukmana Tutu", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ilmi Ramadhani", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Information and Communication", anggota: [{jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zahwa Alzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Novita Widyantari", foto: "/img/bemfkgumi.png"}] }
+        { nama: "Dept. of Information and Communication", anggota: [{jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zahwa Alzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Novita Widyantari", foto: "/img/bemfkgumi.png"}] },
+        { nama: "Dept. of Science Education and Research", anggota: [{jabatan: "Koordinator", nama: "Muh. Alif Perdana Putra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fatahillah Fadhillah", foto: "/img/bemfkgumi.png"}] },
+        { nama: "Dept. of Islamic", anggota: [{jabatan: "Koordinator", nama: "Maysar Ma'ruf", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ahmad Syafii", foto: "/img/bemfkgumi.png"}] },
+        { nama: "Dept. of Sekretariat", anggota: [{jabatan: "Koordinator", nama: "Febrio Arya Pradana", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Muhammad Dwiansyah", foto: "/img/bemfkgumi.png"}] },
+        { nama: "Dept. of Treasure", anggota: [{jabatan: "Koordinator", nama: "Putri Amaliah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Jiyaad Taqi Rozan", foto: "/img/bemfkgumi.png"}] },
+        { nama: "Dept. of Art and Sport", anggota: [{jabatan: "Koordinator", nama: "Ilham Subhan Rafikal", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fajak Ryamizard Kasvari", foto: "/img/bemfkgumi.png"}] },
+        { nama: "Dept. of Dedication Humanity", anggota: [{jabatan: "Koordinator", nama: "Moh. Rayyan Ghazali", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Yusuf Wahyuni", foto: "/img/bemfkgumi.png"}] },
+        { nama: "Dept. of Study and Strategy", anggota: [{jabatan: "Koordinator", nama: "Irfan Maulana Irwan", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Saiful S", foto: "/img/bemfkgumi.png"}] }
     ]
 };
 
-// ================= BIG UPGRADE: DUMMY 9 DEPARTEMEN PROKER UI CARDS =================
+// ================= BIG UPGRADE: DUMMY DEPT INFOCOM =================
 const defaultProker = [
     {
-        id: "dept-character-of-building",
-        dept: "Dept. Character of Building",
+        id: "pubmed",
+        dept: "DEPT. INFOCOM",
         bgImage: "/img/bemfkgumi.png",
-        shortDesc: "Memperkenalkan budaya, membina kader berkarakter kepemimpinan, serta berakhlakul karimah.",
-        lokasi: "Sekretariat BEM & Area Kampus UMI",
+        shortDesc: "PubMed (PublikasiMedia Elektronik & Media Cetak) BukuKBMFKG-UMI",
+        lokasi: "RK 01",
         targetPelaksanaan: "Triwulan I",
-        koordinator: "Muh. Ersa Aditya",
-        penanggungJawab: "Muh. Ersa Aditya, Denta Ahmad Arkana M, Muhammad Rizky, Salsabila Putri M, Absabrina Aulia R, Faida Shaima Nawal",
+        koordinator: "Silvyananda",
+        penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto, Zahwa Alzahra Djohan, Zaneta Zahra Zulaikha, Novita Widyantari",
         fungsi: [
-            "Memperkenalkan budaya yang berlaku dalam ruang lingkup fakultas kedokteran gigi universitas muslim indonesia.",
-            "Membina mahasiswa/i baru menjadi kader yang memiliki karakter dan berjiwa kepemimpinan serta ber-akhlakul karimah yang bercirikan KBMFKG UMI.",
-            "Membina mahasiswa/I untuk meningkatkan kreativitas, solidaritas, dan mengembangkan ilmu pengetahuan melalui proses kaderisasi."
+            "Menginformasikan setiap agenda kegiatan yang akan dilaksanakan oleh lembaga KBMFKG-UMI.",
+            "Mendokumentasi serta menginformasikan kegiatan internal maupun eksternal yang sedang atau telah berlangsung.",
+            "Menyosialisasikan informasi tentang kesehatan khususnya kesehatan gigi dan mulut melalui media cetak dan media sosial."
         ],
-        listProker: [
-            { nama: "1. Sosialisasi:", detail: ["a. Sosialisasi Angkatan", "b. Sosialisasi Kakak Stambuk", "c. Sosialisasi Civitas", "d. Sosialisasi Lembaga KBMFKG-UMI"] },
-            { nama: "2. LDK (Latihan dasar kegawatdaruratan)", detail: [] },
-            { nama: "3. Follow Up", detail: [] },
-            { nama: "4. Malam Silahturahmi dan Bakti Sosial pengukuhan", detail: [] }
-        ]
-    },
-    { id: "dept-science", dept: "Dept. Science Education", bgImage: "/img/bemfkgumi.png", shortDesc: "Mewadahi pengembangan keilmuan dan riset kedokteran gigi.", fungsi: [], listProker: [], koordinator: "Muh. Alif Perdana", penanggungJawab: "-", lokasi: "FKG UMI", targetPelaksanaan: "Sepanjang Periode" },
-    { id: "dept-islamic", dept: "Dept. of Islamic", bgImage: "/img/bemfkgumi.png", shortDesc: "Meningkatkan spiritualitas dan nilai-nilai Islami mahasiswa.", fungsi: [], listProker: [], koordinator: "Maysar Ma'ruf", penanggungJawab: "-", lokasi: "FKG UMI", targetPelaksanaan: "Sepanjang Periode" },
-    { id: "dept-sekretariat", dept: "Dept. of Sekretariat", bgImage: "/img/bemfkgumi.png", shortDesc: "Mengelola seluruh kelengkapan administrasi dan kesekretariatan.", fungsi: [], listProker: [], koordinator: "Febrio Arya Pradana", penanggungJawab: "-", lokasi: "Sekretariat BEM", targetPelaksanaan: "Sepanjang Periode" },
-    { id: "dept-treasure", dept: "Dept. of Treasure", bgImage: "/img/bemfkgumi.png", shortDesc: "Mengelola keuangan dan pendanaan organisasi secara transparan.", fungsi: [], listProker: [], koordinator: "Putri Amaliah", penanggungJawab: "-", lokasi: "FKG UMI", targetPelaksanaan: "Sepanjang Periode" },
-    { id: "dept-art-sport", dept: "Dept. of Art and Sport", bgImage: "/img/bemfkgumi.png", shortDesc: "Wadah penyaluran minat bakat di bidang seni dan olahraga.", fungsi: [], listProker: [], koordinator: "Ilham Subhan Rafikal", penanggungJawab: "-", lokasi: "Kondisional", targetPelaksanaan: "Sepanjang Periode" },
-    { id: "dept-humanity", dept: "Dept. Dedication Humanity", bgImage: "/img/bemfkgumi.png", shortDesc: "Implementasi Tridharma PT di bidang pengabdian masyarakat.", fungsi: [], listProker: [], koordinator: "Moh. Rayyan Ghazali", penanggungJawab: "-", lokasi: "Desa Binaan", targetPelaksanaan: "Triwulan III" },
-    { id: "dept-strategy", dept: "Dept. Study and Strategy", bgImage: "/img/bemfkgumi.png", shortDesc: "Kajian strategis terhadap isu-isu sosial dan kesehatan terkini.", fungsi: [], listProker: [], koordinator: "Irfan Maulana Irwan", penanggungJawab: "-", lokasi: "FKG UMI", targetPelaksanaan: "Sepanjang Periode" },
-    { id: "dept-infocom", dept: "Dept. Info & Communication", bgImage: "/img/bemfkgumi.png", shortDesc: "Pusat media, desain publikasi, dan sistem informasi BEM.", fungsi: [], listProker: [], koordinator: "Silviyananda", penanggungJawab: "-", lokasi: "Online", targetPelaksanaan: "Sepanjang Periode" }
+        listProker: []
+    }
 ];
 
 const defaultSettings = {
@@ -129,35 +115,17 @@ const defaultTeam = [
 const defaultSejarah = [
     { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
     { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" },
-    { tahun: "2023-2024", kabinet: "Kabinet Satya Bimantara", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" },
-    { tahun: "2023", kabinet: "Kabinet Aswara Karya", logo: "/img/bemfkgumi.png", ketua: "Aditya Dwianugrah Wiratman, S.KG", wakil: "Nur. Muhammad Syafaat, S.KG" },
-    { tahun: "2022", kabinet: "Kabinet Dedikasi Karsa", logo: "/img/bemfkgumi.png", ketua: "drg. Amdhan Syarief", wakil: "Marwati Sumardi, S.KG" },
-    { tahun: "2021", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Fahri Muhammad", wakil: "drg. Ayu Lestari" },
-    { tahun: "2020", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muhammad Ajis", wakil: "drg. Andriani T" },
-    { tahun: "2018-2019", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Sulaihi Ramadhan", wakil: "drg. Sri Devi" },
-    { tahun: "2017-2018", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Faisal Ramadhan", wakil: "drg, Satria Nur Fathanah" },
-    { tahun: "2016-2017", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Zulfahmi Duwila", wakil: "drg. Abd. Rahman Abdal Basri Makassau" },
-    { tahun: "2015-2016", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Rizky Adipratama Yusuf", wakil: "drg. Muhammad Hidayatullah" },
-    { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
+    { tahun: "2023-2024", kabinet: "Kabinet Satya Bimantara", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" }
 ];
 
 const defaultFilosofi = {
     logo: [
         { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
-        { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." },
-        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan dosis salah ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
-        { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah yang ada." },
-        { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." },
-        { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." },
-        { elemen: "Angka 2014", arti: "Tahun Berdirinya Organisasi.", makna: "KBMFKG-UMI didirikan pada tahun 2014." }
+        { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati." }
     ],
     warna: [
         { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
-        { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
-        { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian." },
-        { warna: "Kuning", hex: "#f59e0b", makna: "Melambangkan kedewasaan, kemuliaan, dan kelestarian." },
-        { warna: "Merah", hex: "#ef4444", makna: "Melambangkan keadilan, keberanian, dan tanggung jawab." },
-        { warna: "Hitam", hex: "#111827", makna: "Melambangkan kejujuran dan keilmuan." }
+        { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." }
     ]
 };
 
@@ -169,40 +137,7 @@ const defaultKontak = {
     mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
 
-const defaultKalender = [
-    {
-        id: "umi-amal-senyuman-uas-vol-iv", // Disinkronkan dengan slug
-        slug: "umi-amal-senyuman-uas-vol-iv",
-        nama: "UMI Amal Senyuman (UAS) Vol. IV",
-        dept: "Dept. of Dedication Humanity",
-        tglMulai: "2026-07-24",
-        tglSelesai: "2026-07-26",
-        banner: "/img/bemfkgumi.png",
-        deskripsi: "WELCOME TO UAS VOL. IV\n\nSaatnya membawa nama himpunan menuju arena pengabdian terbesar di FKG UMI! Kegiatan ini merupakan wujud nyata Tridharma Perguruan Tinggi yang menjunjung tinggi nilai kemanusiaan dan kepedulian sosial.",
-        lokasi: "Desa Binaan FKG UMI",
-        targetPeserta: "Seluruh Mahasiswa FKG UMI",
-        statusDaftar: "Buka",
-        linkDaftar: "https://bit.ly/DaftarUASVol4",
-        kepanitiaan: [
-            {
-                namaDivisi: "Inti Kegiatan",
-                anggota: [
-                    { nama: "Fajri", jabatan: "Steering Committee" },
-                    { nama: "Rizky", jabatan: "Ketua Panitia" },
-                    { nama: "Dian", jabatan: "Sekretaris" },
-                    { nama: "Amelia", jabatan: "Bendahara" }
-                ]
-            },
-            {
-                namaDivisi: "Divisi Acara",
-                anggota: [
-                    { nama: "Syauqi", jabatan: "Koordinator" },
-                    { nama: "Ananda", jabatan: "Anggota" }
-                ]
-            }
-        ]
-    }
-];
+const defaultKalender = [];
 
 // ================= ROUTES FRONTEND =================
 app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
@@ -216,7 +151,7 @@ app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
 
 // ================= BIG UPGRADE: RUTE DYNAMIC SEO URL PROKER DESKRIPSI (DEPARTEMEN) & KEGIATAN =================
-// Rute untuk menangani Klik UI Card 9 Departemen
+// Rute untuk menangani Klik UI Card Departemen
 app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
 app.get('/proker-deskripsi/:slug', (req, res) => {
     res.render('proker-deskripsi'); 
@@ -271,7 +206,7 @@ app.get('/api/content', async (req, res) => {
         res.status(200).json({ 
             success: true, 
             org: parsedOrg,
-            proker: safeParse(proker, defaultProker), // Akan memanggil 9 Departemen UI Card
+            proker: safeParse(proker, defaultProker),
             kalender: safeParse(kalender, defaultKalender),
             dokumentasi: safeParse(dokumentasi, []),
             settings: safeParse(settings, defaultSettings),
@@ -297,11 +232,11 @@ app.post('/api/content/:type', async (req, res) => {
             bodyData.forEach(evt => {
                 let textToSlug = evt.slug && evt.slug.trim() !== '' ? evt.slug : (evt.nama || evt.id);
                 let safeSlug = textToSlug.toString().toLowerCase()
-                    .replace(/\s+/g, '-')           // Replace spasi menjadi -
-                    .replace(/[^\w\-]+/g, '')       // Hapus special chars
-                    .replace(/\-\-+/g, '-')         // Hapus multiple dash
-                    .replace(/^-+/, '')             // Trim depan
-                    .replace(/-+$/, '');            // Trim belakang
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]+/g, '')
+                    .replace(/\-\-+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
                 
                 evt.slug = safeSlug;
                 evt.id = safeSlug; 
