@@ -170,17 +170,17 @@
                 <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
             </section>
 
-            <!-- 5. PROKER (DEPARTEMEN) - SUPER BIG UPGRADE -->
+            <!-- 5. PROKER (DEPARTEMEN) - SUPER BIG UPGRADE (SESUAI MOCKUP GAMBAR 2) -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
                         <h2 style="color: var(--text-light);">DESKRIPSI PROGRAM KERJA</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Data Card Departemen</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Data Card Departemen dan Halaman Deskripsi</p>
                     </div>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Departemen</button>
                 </div>
                 <div id="cmsProker" style="display:flex; flex-direction:column; gap:25px;"></div>
-                <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem;">+ Tambah Departemen Baru</button>
+                <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem;">+ Tambah Proker Baru</button>
             </section>
 
             <!-- 6. KALENDER DENGAN CUSTOM SLUG -->
@@ -505,28 +505,14 @@
         function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
         function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
 
-        // ================= BIG UPGRADE: RENDER DEPARTEMEN PROKER (DETAIL) =================
+        // ================= BIG UPGRADE: RENDER DEPARTEMEN PROKER (MENGHAPUS FUNGSI & MENGGANTI MENJADI DESKRIPSI LENGKAP) =================
         function renderProker() {
             const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
             (db.proker || []).forEach((p, i) => {
-                // Ensure arrays exist
-                if(!p.fungsi) p.fungsi = [];
-                if(!p.listProker) p.listProker = [];
+                // Konversi deskripsiLengkap (array) menjadi string untuk textarea
+                if(!p.deskripsiLengkap) p.deskripsiLengkap = [];
+                let deskripsiText = Array.isArray(p.deskripsiLengkap) ? p.deskripsiLengkap.join('\n') : '';
                 
-                let fungsiText = Array.isArray(p.fungsi) ? p.fungsi.join('\n') : '';
-                
-                let listProkerHtml = '';
-                p.listProker.forEach((pk, j) => {
-                    let detailText = Array.isArray(pk.detail) ? pk.detail.join('\n') : '';
-                    listProkerHtml += `
-                        <div style="background:var(--bg-dark-heavy); padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light);">
-                            <input type="text" class="neo-input" placeholder="Nama Proker (Contoh: 1. Sosialisasi)" value="${pk.nama || ''}" oninput="db.proker[${i}].listProker[${j}].nama=this.value" style="font-weight:bold; margin-bottom:10px;">
-                            <textarea class="neo-input" rows="3" placeholder="Detail Anak Proker (Pisahkan dengan Enter jika ada)" oninput="db.proker[${i}].listProker[${j}].detail=this.value.split('\\n').filter(Boolean)">${detailText}</textarea>
-                            <button class="action-btn delete" onclick="db.proker[${i}].listProker.splice(${j},1); renderProker();" style="width:100%;">Hapus Proker Ini</button>
-                        </div>
-                    `;
-                });
-
                 cont.innerHTML += `
                 <div class="glass-card" style="padding:25px; margin-bottom:25px; border-left:4px solid var(--accent-neon); position:relative;">
                     <button class="action-btn delete" onclick="if(confirm('Hapus Departemen ini dari list proker?')) { db.proker.splice(${i},1); renderProker(); }" style="position:absolute; top:20px; right:20px;">Hapus Dept</button>
@@ -553,7 +539,7 @@
                             <div style="display:flex; gap:10px; margin-top:10px;">
                                 <div style="flex:1;">
                                     <label style="font-size:0.8rem; color:var(--text-muted);">Lokasi Utama</label>
-                                    <input type="text" class="neo-input" value="${p.lokasi || ''}" placeholder="Sekretariat BEM" oninput="db.proker[${i}].lokasi=this.value">
+                                    <input type="text" class="neo-input" value="${p.lokasi || ''}" placeholder="RK 01" oninput="db.proker[${i}].lokasi=this.value">
                                 </div>
                                 <div style="flex:1;">
                                     <label style="font-size:0.8rem; color:var(--text-muted);">Target Waktu</label>
@@ -575,18 +561,8 @@
                     </div>
 
                     <div style="margin-bottom:20px;">
-                        <label style="font-size:0.8rem; color:var(--text-muted);">Fungsi Departemen (Pisahkan tiap poin dengan Enter)</label>
-                        <textarea class="neo-input" rows="4" placeholder="Fungsi 1\nFungsi 2..." oninput="db.proker[${i}].fungsi=this.value.split('\\n').filter(Boolean)">${fungsiText}</textarea>
-                    </div>
-
-                    <div style="background:var(--bg-dark-overlay); padding:20px; border-radius:15px; border:1px solid var(--border-light);">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                            <h4 style="color:var(--accent-neon); margin:0;">Daftar Program Kerja (Proker)</h4>
-                            <button class="action-btn view" onclick="tambahItemProker(${i})">+ Tambah Proker</button>
-                        </div>
-                        <div style="max-height:300px; overflow-y:auto; padding-right:10px;">
-                            ${listProkerHtml}
-                        </div>
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Lengkap (Pisahkan tiap poin dengan Enter)</label>
+                        <textarea class="neo-input" rows="5" placeholder="Poin 1\nPoin 2..." oninput="db.proker[${i}].deskripsiLengkap=this.value.split('\\n').filter(Boolean)">${deskripsiText}</textarea>
                     </div>
                 </div>`;
             });
@@ -596,7 +572,7 @@
             db.proker.push({
                 id: "dept-" + Date.now(), dept: "DEPT. BARU", bgImage: "/img/bemfkgumi.png", 
                 shortDesc: "", lokasi: "", targetPelaksanaan: "", koordinator: "", penanggungJawab: "",
-                fungsi: [], listProker: []
+                deskripsiLengkap: []
             }); 
             renderProker(); 
         }
