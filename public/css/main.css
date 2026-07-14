@@ -435,6 +435,7 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 .accordion-content-inner li { margin-bottom: 8px; }
 .accordion-content-inner strong { color: var(--text-light); font-weight: 700; transition: color 0.3s; }
 
+
 /* ================= FILOSOFI LOGO & WARNA ================= */
 .filosofi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
 .filosofi-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 25px; padding: 40px 30px; text-align: center; box-shadow: 0 20px 40px var(--card-shadow); backdrop-filter: blur(15px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease, border-color 0.4s ease, background-color 0.4s ease; position: relative; overflow: hidden;}
@@ -1009,22 +1010,20 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 }
 
 .proker-card-apple {
-    background: var(--card-bg);
-    border: 1px solid var(--border-light);
-    border-radius: 24px;
-    padding: 40px 30px;
     position: relative;
+    border-radius: 24px;
     overflow: hidden;
+    aspect-ratio: 4/5;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 15px 35px var(--card-shadow);
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    aspect-ratio: 3/3.5;
-    cursor: pointer;
-    text-decoration: none;
-    box-shadow: 0 15px 35px var(--card-shadow);
-    backdrop-filter: blur(15px);
+    border: 1px solid var(--border-light);
+    background: var(--bg-dark-heavy); /* Fallback */
 }
 
 .proker-card-apple:hover {
@@ -1033,54 +1032,86 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     border-color: var(--accent-neon);
 }
 
+.pca-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transition: transform 0.6s ease;
+}
+
+.proker-card-apple:hover .pca-bg-img {
+    transform: scale(1.1);
+}
+
+.pca-default-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65); /* Dark overlay */
+    z-index: 2;
+    transition: opacity 0.4s ease;
+}
+
+.proker-card-apple:hover .pca-default-overlay {
+    opacity: 0;
+}
+
+.pca-default-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.proker-card-apple:hover .pca-default-content {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
 .pca-icon-wrapper {
-    width: 80px;
-    height: 80px;
-    background: #fde047; /* Yellow icon background from mockup */
+    width: 75px;
+    height: 75px;
+    background: #fde047; /* Yellow icon background */
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 25px;
-    transition: transform 0.4s ease, opacity 0.4s ease;
-    box-shadow: 0 10px 20px rgba(253, 224, 71, 0.3);
-}
-
-.proker-card-apple:hover .pca-icon-wrapper {
-    transform: scale(0.8);
-    opacity: 0;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
 }
 
 .pca-icon {
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     object-fit: contain;
 }
 
 .pca-title {
-    font-size: 1.4rem;
-    color: var(--text-light);
+    font-size: 1.5rem;
+    color: #ffffff;
     font-weight: 800;
     text-align: center;
     margin: 0;
-    transition: transform 0.4s ease, opacity 0.4s ease;
     line-height: 1.3;
-}
-
-.proker-card-apple:hover .pca-title {
-    transform: translateY(20px);
-    opacity: 0;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.8);
 }
 
 .pca-hover-content {
     position: absolute;
     inset: 0;
-    /* Greenish gradient matching mockup */
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(4, 120, 87, 0.98) 100%);
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
     padding: 40px 30px;
     display: flex;
     flex-direction: column;
     opacity: 0;
+    visibility: hidden;
     transform: translateY(20px);
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     z-index: 10;
@@ -1088,20 +1119,22 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 
 .proker-card-apple:hover .pca-hover-content {
     opacity: 1;
+    visibility: visible;
     transform: translateY(0);
 }
 
 .pca-hover-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     color: #ffffff;
-    font-weight: 800;
+    font-weight: 900;
     margin-bottom: 15px;
     line-height: 1.2;
+    text-transform: uppercase;
 }
 
 .pca-hover-desc {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.95);
     line-height: 1.6;
     margin-bottom: auto;
     display: -webkit-box;
@@ -1120,30 +1153,36 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 .pca-btn-text {
     color: #ffffff;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 1rem;
     border: 1px solid rgba(255,255,255,0.4);
-    padding: 8px 16px;
-    border-radius: 20px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    transition: background 0.3s;
 }
 
 .pca-btn-circle {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     background: #fde047;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #000;
-    font-weight: bold;
-    transition: transform 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .pca-btn-circle svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    stroke: #000000;
+}
+
+.proker-card-apple:hover .pca-btn-text:hover {
+    background: rgba(255,255,255,0.2);
 }
 
 .proker-card-apple:hover .pca-btn-circle {
     transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
