@@ -77,6 +77,39 @@ const defaultOrg = {
     ]
 };
 
+// ================= BIG UPGRADE: DUMMY 9 DEPARTEMEN PROKER UI CARDS =================
+const defaultProker = [
+    {
+        id: "dept-character-of-building",
+        dept: "Dept. Character of Building",
+        bgImage: "/img/bemfkgumi.png",
+        shortDesc: "Memperkenalkan budaya, membina kader berkarakter kepemimpinan, serta berakhlakul karimah.",
+        lokasi: "Sekretariat BEM & Area Kampus UMI",
+        targetPelaksanaan: "Triwulan I",
+        koordinator: "Muh. Ersa Aditya",
+        penanggungJawab: "Muh. Ersa Aditya, Denta Ahmad Arkana M, Muhammad Rizky, Salsabila Putri M, Absabrina Aulia R, Faida Shaima Nawal",
+        fungsi: [
+            "Memperkenalkan budaya yang berlaku dalam ruang lingkup fakultas kedokteran gigi universitas muslim indonesia.",
+            "Membina mahasiswa/i baru menjadi kader yang memiliki karakter dan berjiwa kepemimpinan serta ber-akhlakul karimah yang bercirikan KBMFKG UMI.",
+            "Membina mahasiswa/I untuk meningkatkan kreativitas, solidaritas, dan mengembangkan ilmu pengetahuan melalui proses kaderisasi."
+        ],
+        listProker: [
+            { nama: "1. Sosialisasi:", detail: ["a. Sosialisasi Angkatan", "b. Sosialisasi Kakak Stambuk", "c. Sosialisasi Civitas", "d. Sosialisasi Lembaga KBMFKG-UMI"] },
+            { nama: "2. LDK (Latihan dasar kegawatdaruratan)", detail: [] },
+            { nama: "3. Follow Up", detail: [] },
+            { nama: "4. Malam Silahturahmi dan Bakti Sosial pengukuhan", detail: [] }
+        ]
+    },
+    { id: "dept-science", dept: "Dept. Science Education", bgImage: "/img/bemfkgumi.png", shortDesc: "Mewadahi pengembangan keilmuan dan riset kedokteran gigi.", fungsi: [], listProker: [], koordinator: "Muh. Alif Perdana", penanggungJawab: "-", lokasi: "FKG UMI", targetPelaksanaan: "Sepanjang Periode" },
+    { id: "dept-islamic", dept: "Dept. of Islamic", bgImage: "/img/bemfkgumi.png", shortDesc: "Meningkatkan spiritualitas dan nilai-nilai Islami mahasiswa.", fungsi: [], listProker: [], koordinator: "Maysar Ma'ruf", penanggungJawab: "-", lokasi: "FKG UMI", targetPelaksanaan: "Sepanjang Periode" },
+    { id: "dept-sekretariat", dept: "Dept. of Sekretariat", bgImage: "/img/bemfkgumi.png", shortDesc: "Mengelola seluruh kelengkapan administrasi dan kesekretariatan.", fungsi: [], listProker: [], koordinator: "Febrio Arya Pradana", penanggungJawab: "-", lokasi: "Sekretariat BEM", targetPelaksanaan: "Sepanjang Periode" },
+    { id: "dept-treasure", dept: "Dept. of Treasure", bgImage: "/img/bemfkgumi.png", shortDesc: "Mengelola keuangan dan pendanaan organisasi secara transparan.", fungsi: [], listProker: [], koordinator: "Putri Amaliah", penanggungJawab: "-", lokasi: "FKG UMI", targetPelaksanaan: "Sepanjang Periode" },
+    { id: "dept-art-sport", dept: "Dept. of Art and Sport", bgImage: "/img/bemfkgumi.png", shortDesc: "Wadah penyaluran minat bakat di bidang seni dan olahraga.", fungsi: [], listProker: [], koordinator: "Ilham Subhan Rafikal", penanggungJawab: "-", lokasi: "Kondisional", targetPelaksanaan: "Sepanjang Periode" },
+    { id: "dept-humanity", dept: "Dept. Dedication Humanity", bgImage: "/img/bemfkgumi.png", shortDesc: "Implementasi Tridharma PT di bidang pengabdian masyarakat.", fungsi: [], listProker: [], koordinator: "Moh. Rayyan Ghazali", penanggungJawab: "-", lokasi: "Desa Binaan", targetPelaksanaan: "Triwulan III" },
+    { id: "dept-strategy", dept: "Dept. Study and Strategy", bgImage: "/img/bemfkgumi.png", shortDesc: "Kajian strategis terhadap isu-isu sosial dan kesehatan terkini.", fungsi: [], listProker: [], koordinator: "Irfan Maulana Irwan", penanggungJawab: "-", lokasi: "FKG UMI", targetPelaksanaan: "Sepanjang Periode" },
+    { id: "dept-infocom", dept: "Dept. Info & Communication", bgImage: "/img/bemfkgumi.png", shortDesc: "Pusat media, desain publikasi, dan sistem informasi BEM.", fungsi: [], listProker: [], koordinator: "Silviyananda", penanggungJawab: "-", lokasi: "Online", targetPelaksanaan: "Sepanjang Periode" }
+];
+
 const defaultSettings = {
     headerText: "BEM KBMFKG UMI",
     footerSlogan: "Kabinet Ananta Anardhaya",
@@ -136,7 +169,6 @@ const defaultKontak = {
     mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
 
-// ================= BIG UPGRADE: STRUKTUR DATA KALENDER DENGAN SLUG =================
 const defaultKalender = [
     {
         id: "umi-amal-senyuman-uas-vol-iv", // Disinkronkan dengan slug
@@ -183,9 +215,15 @@ app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
 
-// SUPER BIG UPGRADE: RUTE DYNAMIC SEO URL PROKER DETAIL (/proker-detail/slug-kegiatan)
+// ================= BIG UPGRADE: RUTE DYNAMIC SEO URL PROKER DESKRIPSI (DEPARTEMEN) & KEGIATAN =================
+// Rute untuk menangani Klik UI Card 9 Departemen
+app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
+app.get('/proker-deskripsi/:slug', (req, res) => {
+    res.render('proker-deskripsi'); 
+});
+
+// Rute untuk detail spesifik suatu kegiatan (dari Kalender/Timeline)
 app.get('/proker-detail', (req, res) => {
-    // Jika masih ada pengunjung / klik yang menggunakan ?id=, paksa Redirect (301 Permanent) ke URL SEO yang bersih
     if (req.query.id) {
         return res.redirect(301, `/proker-detail/${req.query.id}`);
     }
@@ -233,7 +271,7 @@ app.get('/api/content', async (req, res) => {
         res.status(200).json({ 
             success: true, 
             org: parsedOrg,
-            proker: safeParse(proker, []),
+            proker: safeParse(proker, defaultProker), // Akan memanggil 9 Departemen UI Card
             kalender: safeParse(kalender, defaultKalender),
             dokumentasi: safeParse(dokumentasi, []),
             settings: safeParse(settings, defaultSettings),
@@ -243,7 +281,7 @@ app.get('/api/content', async (req, res) => {
             kontak: safeParse(kontak, defaultKontak)
         });
     } catch (error) {
-        res.status(200).json({ success: false, org: defaultOrg, proker: [], kalender: defaultKalender, dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi, kontak: defaultKontak });
+        res.status(200).json({ success: false, org: defaultOrg, proker: defaultProker, kalender: defaultKalender, dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi, kontak: defaultKontak });
     }
 });
 
@@ -254,7 +292,7 @@ app.post('/api/content/:type', async (req, res) => {
         
         let bodyData = req.body; 
         
-        // SUPER BIG UPGRADE: Auto-Generate & Sanitize Slug Kalender (SEO URL)
+        // Auto-Generate & Sanitize Slug Kalender (SEO URL)
         if (type === 'kalender' && Array.isArray(bodyData)) {
             bodyData.forEach(evt => {
                 let textToSlug = evt.slug && evt.slug.trim() !== '' ? evt.slug : (evt.nama || evt.id);
@@ -266,8 +304,6 @@ app.post('/api/content/:type', async (req, res) => {
                     .replace(/-+$/, '');            // Trim belakang
                 
                 evt.slug = safeSlug;
-                
-                // MENGGANTI ID menjadi Slug agar semua komponen frontend otomatis link ke URL Path yg Estetik
                 evt.id = safeSlug; 
             });
         }
