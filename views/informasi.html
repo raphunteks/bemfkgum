@@ -1,3 +1,4 @@
+<!-- FILE: views/informasi.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,25 +7,22 @@
     <title>Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI</title>
     
     <!-- ================= SEO GOLD STANDARD GSC ================= -->
-    <!-- VERIFIKASI KEPEMILIKAN GOOGLE SEARCH CONSOLE -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
-    
     <meta name="description" content="Akses cepat untuk program kerja, kalender kegiatan, galeri dokumentasi, dan layanan PLASMA (Penyaluran Aspirasi Mahasiswa) resmi dari BEM KBMFKG UMI.">
     <meta name="keywords" content="Informasi BEM FKG UMI, Proker BEM FKG, Kalender BEM FKG UMI, Aspirasi Mahasiswa FKG UMI, PLASMA BEM FKG">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://bemkbmfkgumi.com/informasi">
     
-    <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts -->
+    <!-- FIX RENDER BLOCKING -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     
-    <!-- Preload CSS Utama untuk mempercepat FCP -->
     <link rel="preload" href="/css/main.css" as="style">
     <link rel="stylesheet" href="/css/main.css">
     
-    <!-- Open Graph / Facebook / WhatsApp -->
+    <!-- Open Graph / Twitter -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemkbmfkgumi.com/informasi">
     <meta property="og:site_name" content="BEM KBMFKG UMI">
@@ -32,15 +30,13 @@
     <meta property="og:description" content="Akses program kerja, kalender kegiatan, galeri dokumentasi, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
-
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://bemkbmfkgumi.com/informasi">
     <meta property="twitter:title" content="Pusat Informasi & Layanan PLASMA | BEM KBMFKG UMI">
     <meta property="twitter:description" content="Akses program kerja, kalender kegiatan, galeri dokumentasi, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (CollectionPage, Breadcrumb) -->
+    <!-- ADVANCED JSON-LD Schema.org -->
     <script type="application/ld+json">
     [
       {
@@ -67,14 +63,10 @@
       }
     ]
     </script>
-    <!-- ================= END SEO ================= -->
 
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
-    
-    <!-- SCRIPT PROTECT DEVTOOLS & RIGHT CLICK -->
     <script src="/js/protect-devtools.js"></script>
-
 </head>
 <body>
     <%- include('partials/header.html') %>
@@ -88,23 +80,21 @@
         <nav class="tab-nav reveal" id="tabNavMenu" style="transition-delay: 0.1s;" role="tablist">
             <button class="tab-btn active" onclick="switchTab('proker')" role="tab" aria-selected="true" aria-label="Lihat Program Kerja Departemen">Program Kerja</button>
             <button class="tab-btn" onclick="switchTab('kalender')" role="tab" aria-selected="false" aria-label="Lihat Kalender Program Kerja">Kalender Proker</button>
-            <!-- SUPER UPGRADE: Tab Timeline Baru Ditambahkan -->
             <button class="tab-btn" onclick="switchTab('timeline')" role="tab" aria-selected="false" aria-label="Lihat Timeline Proker">Timeline Proker</button>
             <button class="tab-btn" onclick="switchTab('galeri')" role="tab" aria-selected="false" aria-label="Lihat Dokumentasi Kegiatan">Dokumentasi</button>
             <button class="tab-btn" onclick="switchTab('plasma')" role="tab" aria-selected="false" aria-label="Form Aspirasi PLASMA">PLASMA (Aspirasi)</button>
         </nav>
 
-        <!-- ================= SUPER UPGRADE: TAB 1 PROKER GLASSMORPHISM ================= -->
+        <!-- ================= SUPER UPGRADE: TAB 1 PROKER (APPLE GLASSMORPHISM) ================= -->
         <section id="proker" class="tab-content active" role="tabpanel">
             <div id="prokerContainer" class="proker-grid-apple">
                 <div style="text-align:center; grid-column: 1/-1; color: var(--text-muted); padding: 50px 0;">Mensinkronisasi data 9 Departemen...</div>
             </div>
         </section>
 
-        <!-- TAB 2: KALENDER & PROKER DETAIL -->
+        <!-- TAB 2: KALENDER -->
         <section id="kalender" class="tab-content" role="tabpanel">
             <div class="calendar-wrapper">
-                <!-- Sisi Kiri: Grid Kalender -->
                 <div class="glass-card" style="padding: 30px; border-top: 4px solid var(--accent-neon); align-self: start;">
                     <div class="calendar-header" style="margin-bottom: 30px;">
                         <button class="action-btn" onclick="gantiBulan(-1)" style="font-size: 1.2rem; padding: 5px 15px; border-radius: 10px;" aria-label="Bulan sebelumnya">&larr;</button>
@@ -114,7 +104,6 @@
                     <div class="calendar-grid" id="calGrid" style="gap: 15px;"></div>
                 </div>
                 
-                <!-- Sisi Kanan: Daftar Agenda -->
                 <div class="agenda-list">
                     <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;" id="agendaSubtitle">DAFTAR AGENDA</div>
                     <h3 style="border-bottom: 1px solid var(--border-light); padding-bottom: 15px; margin-bottom: 20px; font-size: 1.5rem;" id="agendaTglFormat">
@@ -127,7 +116,7 @@
             </div>
         </section>
 
-        <!-- TAB BARU: TIMELINE PROKER VERTICAL (UNIKOM STYLE) -->
+        <!-- TAB 3: TIMELINE PROKER VERTICAL -->
         <section id="timeline" class="tab-content" role="tabpanel">
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
                 <h2 style="font-size: 2.5rem; color: var(--text-light);">Timeline <span style="color: var(--accent-neon);">Program Kerja</span></h2>
@@ -135,18 +124,16 @@
             </div>
             
             <div class="v-timeline-container" id="timelineProkerContainer">
-                <!-- JS Inject Timeline Proker -->
                 <div style="text-align:center; color: var(--text-muted);">Mensinkronisasi data timeline...</div>
             </div>
         </section>
 
-        <!-- TAB 3: DOKUMENTASI (GALERI) -->
+        <!-- TAB 4: DOKUMENTASI (GALERI) -->
         <section id="galeri" class="tab-content" role="tabpanel">
             <div class="gallery-grid" id="galleryContainer"></div>
         </section>
 
-        <!-- TAB 4: PLASMA (ASPIRASI) -->
-        <!-- FIX AKSESIBILITAS: Penambahan atribut `for` pada label yang menghubungkan langsung ke id input -->
+        <!-- TAB 5: PLASMA (ASPIRASI) -->
         <section id="plasma" class="tab-content" role="tabpanel">
             <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-top: 3px solid var(--accent-neon);">
                 <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 10px; font-size: 2.5rem;">P.L.A.S.M.A</h2>
@@ -201,7 +188,6 @@
         <div class="modal-content-box" style="padding: 0; overflow: hidden;">
             <button class="modal-close" onclick="document.getElementById('docModal').classList.remove('active')" aria-label="Tutup Galeri">X</button>
             <div style="width: 100%; max-height: 400px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg-dark-heavy);">
-                <!-- FIX CLS -->
                 <img id="docImg" src="" style="width:100%; object-fit: contain; max-height: 400px;" alt="Dokumentasi" width="650" height="400" loading="lazy">
             </div>
             <div style="padding: 30px;">
@@ -215,6 +201,19 @@
     <%- include('partials/footer.html') %>
 
     <script>
+        // ================= GRACEFUL DEGRADATION: DATA DUMMY JIKA API ERROR =================
+        const FALLBACK_PROKER = [
+            { id: "dept-character-of-building", dept: "Dept. Character of Building", shortDesc: "Memperkenalkan budaya, membina kader berkarakter kepemimpinan, serta berakhlakul karimah." },
+            { id: "dept-science", dept: "Dept. Science Education", shortDesc: "Mewadahi pengembangan keilmuan dan riset kedokteran gigi." },
+            { id: "dept-islamic", dept: "Dept. of Islamic", shortDesc: "Meningkatkan spiritualitas dan nilai-nilai Islami mahasiswa." },
+            { id: "dept-sekretariat", dept: "Dept. of Sekretariat", shortDesc: "Mengelola seluruh kelengkapan administrasi dan kesekretariatan." },
+            { id: "dept-treasure", dept: "Dept. of Treasure", shortDesc: "Mengelola keuangan dan pendanaan organisasi secara transparan." },
+            { id: "dept-art-sport", dept: "Dept. of Art and Sport", shortDesc: "Wadah penyaluran minat bakat di bidang seni dan olahraga." },
+            { id: "dept-humanity", dept: "Dept. Dedication Humanity", shortDesc: "Implementasi Tridharma PT di bidang pengabdian masyarakat." },
+            { id: "dept-strategy", dept: "Dept. Study and Strategy", shortDesc: "Kajian strategis terhadap isu-isu sosial dan kesehatan terkini." },
+            { id: "dept-infocom", dept: "Dept. Info & Communication", shortDesc: "Pusat media, desain publikasi, dan sistem informasi BEM." }
+        ];
+
         let kalenderData = [];
         let curDate = new Date(); 
         const monthNames = ["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"];
@@ -228,12 +227,18 @@
                 let apiUrl = '/api/content';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
                 const req = await fetch(apiUrl);
-                if (req.ok) resData = await req.json();
-            } catch (err) { console.warn("API Error, Mock Data dimuat."); }
+                if (req.ok) {
+                    resData = await req.json();
+                } else {
+                    throw new Error("Fetch Error");
+                }
+            } catch (err) { 
+                console.warn("⚠️ API Error, menggunakan data lokal (Fallback) untuk mencegah layout rusak."); 
+                // Inject dummy fallback if fetch completely fails
+                resData.proker = FALLBACK_PROKER; 
+            }
             
-            // Panggil Render Glassmorphism Proker
             renderProker(resData.proker);
-            
             renderDokumentasi(resData.dokumentasi);
             kalenderData = resData.kalender || [];
             
@@ -285,26 +290,32 @@
             if (hash && validTabs.includes(hash)) { switchTab(hash); }
         });
 
-        // ================= SUPER BIG UPGRADE: RENDER 9 DEPARTEMEN GLASSMORPHISM =================
+        // ================= SUPER BIG UPGRADE: RENDER 9 DEPARTEMEN GLASSMORPHISM (DESAIN APPLE UI) =================
         function renderProker(prokerData) {
             const pCont = document.getElementById('prokerContainer'); 
             pCont.innerHTML = '';
             
             if(prokerData && prokerData.length > 0) {
                 prokerData.forEach(p => {
-                    const bgImg = p.bgImage || '/img/bemfkgumi.png';
                     const desc = p.shortDesc || 'Deskripsi program kerja departemen akan segera diperbarui.';
                     const targetUrl = `/proker-deskripsi/${p.id}`;
 
-                    // FIX AGENTIC ACCESSIBILITY: Penambahan aria-label yang deskriptif dan role button
+                    // SCRIPT MENGIKUTI DESAIN GBR 2 & GBR 3
                     pCont.innerHTML += `
-                        <div class="proker-glass-card reveal active" onclick="window.location.href='${targetUrl}'" tabindex="0" role="button" aria-label="Lihat detail program kerja departemen ${p.dept}" onkeydown="if(event.key==='Enter') window.location.href='${targetUrl}'">
-                            <img src="${bgImg}" alt="Banner ${p.dept}" class="pgc-img" loading="lazy" width="400" height="500">
-                            <div class="pgc-overlay">
-                                <h3 class="pgc-title">${p.dept}</h3>
-                                <div class="pgc-hover-content">
-                                    <p class="pgc-desc">${desc}</p>
-                                    <span class="pgc-btn">Detail Proker &rarr;</span>
+                        <div class="proker-card-apple reveal active" onclick="window.location.href='${targetUrl}'" tabindex="0" role="button" aria-label="Lihat detail program kerja ${p.dept}" onkeydown="if(event.key==='Enter') window.location.href='${targetUrl}'">
+                            <div class="pca-icon-wrapper">
+                                <img src="/img/bemfkgumi.png" alt="Icon ${p.dept}" class="pca-icon" loading="lazy" width="45" height="45">
+                            </div>
+                            <h3 class="pca-title">${p.dept}</h3>
+                            
+                            <div class="pca-hover-content">
+                                <h3 class="pca-hover-title">${p.dept}</h3>
+                                <p class="pca-hover-desc">${desc}</p>
+                                <div class="pca-btn-wrap">
+                                    <span class="pca-btn-text">Detail Proker</span>
+                                    <div class="pca-btn-circle">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -321,7 +332,6 @@
                 window.globalDocData = docData; 
                 docData.forEach((d, i) => {
                     const fallbackImg = d.foto ? d.foto : '/img/bemfkgumi.png';
-                    // FIX CLS: add loading="lazy" for gallery grid
                     gCont.innerHTML += `<div class="gallery-card" onclick="openDoc(${i})"><div style="width: 100%; height: 100%; background: var(--bg-dark-overlay); display:flex; align-items:center; justify-content:center;"><img src="${fallbackImg}" class="gallery-img" alt="${d.judul}" loading="lazy" width="300" height="225"></div><div class="gallery-info" style="background: linear-gradient(to top, var(--bg-dark-heavy), transparent);"><h4 style="color: var(--accent-neon);">${d.judul}</h4><span style="font-size:0.85rem; color: var(--text-muted);">${formatTgl(d.tanggal)}</span></div></div>`;
                 });
             } else { gCont.innerHTML = `<div style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Belum ada dokumentasi.</div>`; }
@@ -432,7 +442,6 @@
                         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 15px;"><svg viewBox="0 0 24 24" style="width:14px; fill:currentColor; vertical-align:-2px; margin-right:4px;" aria-hidden="true"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg> ${formatTglRange(e.tglMulai, e.tglSelesai)}</p>
                         <p style="font-size:0.9rem; color:var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 10px;">🏢 ${e.dept}</p>
                         
-                        <!-- Perubahan link ke URL Kegiatan yang di Handle di Server.js -->
                         <a href="/proker-detail/${e.slug || e.id}" class="agenda-btn" aria-label="Lihat detail program kerja ${e.nama}">Detail Kegiatan &rarr;</a>
                     </div>`; 
                 });
@@ -479,7 +488,6 @@
                             </div>
                             <h3 class="v-tl-title">${e.nama}</h3>
                             <p class="v-tl-desc">🔥 ${shortDesc}</p>
-                            <!-- Perubahan link ke URL Kegiatan -->
                             <a href="/proker-detail/${e.slug || e.id}" class="v-tl-btn" aria-label="Lihat detail timeline ${e.nama}">Lihat Detail &rarr;</a>
                         </div>
                     </div>
