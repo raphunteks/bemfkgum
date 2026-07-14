@@ -87,12 +87,10 @@ const defaultProker = [
         targetPelaksanaan: "Triwulan I",
         koordinator: "Silvyananda",
         penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto, Zahwa Alzahra Djohan, Zaneta Zahra Zulaikha, Novita Widyantari",
-        fungsi: [
-            "Menginformasikan setiap agenda kegiatan yang akan dilaksanakan oleh lembaga KBMFKG-UMI.",
-            "Mendokumentasi serta menginformasikan kegiatan internal maupun eksternal yang sedang atau telah berlangsung.",
+        deskripsiLengkap: [
+            "Menginformasikan setiap agenda kegiatan yang akan dilaksanakan oleh lembaga KBMFKG-UMI. Mendokumentasi serta menginformasikan kegiatan internal maupun eksternal yang sedang atau telah berlangsung.",
             "Menyosialisasikan informasi tentang kesehatan khususnya kesehatan gigi dan mulut melalui media cetak dan media sosial."
-        ],
-        listProker: []
+        ]
     }
 ];
 
