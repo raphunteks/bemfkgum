@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Departemen | BEM KBMFKG UMI</title>
+    <title>Deskripsi Program Kerja | BEM KBMFKG UMI</title>
     
     <!-- ================= SEO GOLD STANDARD ================= -->
-    <meta name="description" content="Informasi detail mengenai fungsi, program kerja, penanggung jawab, dan koordinator Departemen di BEM KBMFKG UMI.">
+    <meta name="description" content="Informasi detail mengenai deskripsi lengkap, penanggung jawab, dan koordinator Departemen di BEM KBMFKG UMI.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     
     <!-- OPTIMASI RENDER BLOCKING (LCP & FCP) -->
@@ -53,21 +53,14 @@
             border-left: 5px solid var(--accent-neon);
             font-weight: 800;
         }
-        .fungsi-list li, .proker-list li {
-            margin-bottom: 12px;
+        .fungsi-list li {
+            margin-bottom: 15px;
             display: flex;
             gap: 15px;
             align-items: flex-start;
             font-size: 1.05rem;
             color: var(--text-muted);
-            line-height: 1.6;
-        }
-        .sub-proker {
-            padding-left: 30px;
-            list-style: circle;
-            color: var(--text-muted);
-            margin-top: 8px;
-            margin-bottom: 15px;
+            line-height: 1.8;
         }
         
         /* Glassmorphism Team Card Styling */
@@ -159,7 +152,7 @@
                     apiUrl = 'https://bemkbmfkgumi.com/api/content';
                 }
                 
-                // Murni mengambil data dari Database Server (Tanpa Array Fallback di HTML)
+                // Murni mengambil data dari Database Server
                 const req = await fetch(apiUrl);
                 if(!req.ok) throw new Error("Gagal mengambil data dari Database API");
                 
@@ -198,26 +191,12 @@
         function renderDetail(data, orgDepartemen) {
             const bgImg = data.bgImage || '/img/bemfkgumi.png';
             
-            // Generate List Fungsi
-            let fungsiHtml = '';
-            if(data.fungsi && data.fungsi.length > 0) {
-                fungsiHtml = data.fungsi.map(f => `<li><span style="color:var(--accent-neon);" aria-hidden="true">✔️</span> <span>${f}</span></li>`).join('');
+            // Generate List Deskripsi Lengkap
+            let deskripsiHtml = '';
+            if(data.deskripsiLengkap && data.deskripsiLengkap.length > 0) {
+                deskripsiHtml = data.deskripsiLengkap.map(f => `<li><span style="color:var(--accent-neon);" aria-hidden="true">✔️</span> <span>${f}</span></li>`).join('');
             } else {
-                fungsiHtml = `<li><span style="color:var(--text-muted);">Belum ada rincian fungsi departemen.</span></li>`;
-            }
-
-            // Generate List Program Kerja beserta Detail Anaknya
-            let prokerHtml = '';
-            if(data.listProker && data.listProker.length > 0) {
-                data.listProker.forEach(pk => {
-                    let detailHtml = '';
-                    if(pk.detail && pk.detail.length > 0) {
-                        detailHtml = `<ul class="sub-proker">` + pk.detail.map(d => `<li>${d}</li>`).join('') + `</ul>`;
-                    }
-                    prokerHtml += `<li><span style="color:var(--accent-neon);" aria-hidden="true">🚀</span> <div><strong style="color: var(--text-light);">${pk.nama}</strong>${detailHtml}</div></li>`;
-                });
-            } else {
-                prokerHtml = `<li><span style="color:var(--text-muted);">Belum ada program kerja yang diinput ke sistem.</span></li>`;
+                deskripsiHtml = `<li><span style="color:var(--text-muted);">Belum ada deskripsi lengkap program kerja.</span></li>`;
             }
 
             // Generate Struktur Pengurus Card UI
@@ -263,23 +242,18 @@
                 <div class="proker-banner-wrapper reveal active">
                     <img src="${bgImg}" alt="Banner ${data.dept}" class="proker-banner-img" width="1920" height="1080" fetchpriority="high">
                     <div class="proker-banner-overlay">
-                        <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem;">DETAIL DEPARTEMEN</div>
+                        <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem;">DESKRIPSI PROGRAM KERJA</div>
                         <h1 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px;">${data.dept}</h1>
                         <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;">${data.shortDesc || ''}</p>
                     </div>
                 </div>
 
                 <div class="grid-2" style="margin-bottom: 40px; grid-template-columns: 1fr 380px; gap: 40px;">
-                    <!-- BAGIAN KIRI: FUNGSI DAN PROKER -->
+                    <!-- BAGIAN KIRI: DESKRIPSI LENGKAP -->
                     <div class="glass-card reveal active" style="transition-delay: 0.1s;">
-                        <h2 class="detail-section-title">Fungsi Departemen</h2>
-                        <ul class="fungsi-list" style="list-style:none; padding-left:0; margin-bottom: 40px;">
-                            ${fungsiHtml}
-                        </ul>
-
-                        <h2 class="detail-section-title" style="border-left-color: #f59e0b;">Program Kerja</h2>
-                        <ul class="proker-list" style="list-style:none; padding-left:0;">
-                            ${prokerHtml}
+                        <h2 class="detail-section-title">Deskripsi Lengkap</h2>
+                        <ul class="fungsi-list" style="list-style:none; padding-left:0; margin-bottom: 0;">
+                            ${deskripsiHtml}
                         </ul>
                     </div>
 
