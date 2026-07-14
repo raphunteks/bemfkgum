@@ -1,14 +1,16 @@
+<!-- FILE: views/proker-deskripsi.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Program Kerja | BEM KBMFKG UMI</title>
+    <title>Detail Departemen | BEM KBMFKG UMI</title>
     
     <!-- ================= SEO GOLD STANDARD ================= -->
-    <meta name="description" content="Informasi detail mengenai pelaksanaan, target, dan kepanitiaan program kerja BEM KBMFKG UMI.">
+    <meta name="description" content="Informasi detail mengenai fungsi, program kerja, penanggung jawab, dan koordinator Departemen di BEM KBMFKG UMI.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     
+    <!-- OPTIMASI RENDER BLOCKING (LCP & FCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
@@ -19,6 +21,7 @@
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <script src="/js/protect-devtools.js"></script>
 
+    <!-- CSS ISOLATED FOR PROKER DESCRIPTION LAYOUT -->
     <style>
         .proker-banner-wrapper {
             border-radius: 25px; 
@@ -50,6 +53,69 @@
             border-left: 5px solid var(--accent-neon);
             font-weight: 800;
         }
+        .fungsi-list li, .proker-list li {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .sub-proker {
+            padding-left: 30px;
+            list-style: circle;
+            color: var(--text-muted);
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+        
+        /* Glassmorphism Team Card Styling */
+        .dept-team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .dept-member-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px var(--card-shadow);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .dept-member-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px var(--accent-glow);
+            border-color: var(--accent-neon);
+        }
+        .dept-member-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--bg-dark);
+            box-shadow: 0 0 0 2px var(--accent-neon);
+            margin-bottom: 15px;
+        }
+        .dept-member-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        .dept-member-role {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Utility Component */
         .info-row {
             display: flex;
             align-items: center;
@@ -59,64 +125,6 @@
             border-radius: 16px;
             margin-bottom: 16px;
             border: 1px solid var(--border-light);
-            box-shadow: inset 2px 2px 5px var(--card-shadow);
-        }
-        .info-icon-wrapper {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            flex-shrink: 0;
-        }
-        .ic-lokasi { color: #ef4444; background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.2); }
-        .ic-waktu { color: var(--accent-neon); background: var(--bg-dark-overlay); border: 1px solid var(--accent-glow); }
-        .ic-target { color: #8b5cf6; background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.2); }
-        
-        .panitia-box {
-            background: var(--bg-dark-heavy);
-            border: 1px solid var(--border-light);
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: inset 0 0 20px var(--card-shadow);
-        }
-        .panitia-title {
-            color: var(--text-light);
-            font-size: 1.15rem;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
-            border-bottom: 1px dashed var(--border-light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-        .panitia-title::before { content: '❖'; color: #10b981; font-size: 1rem; }
-        .panitia-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .panitia-table th { color: var(--text-muted); text-align: left; font-size: 0.85rem; padding: 0 15px 8px; border-bottom: 1px solid var(--border-light); }
-        .panitia-table td { background: var(--bg-dark-overlay); padding: 12px 15px; color: var(--text-light); }
-        .panitia-table td:first-child { border-radius: 12px 0 0 12px; border-left: 1px solid var(--border-light); }
-        .panitia-table td:last-child { border-radius: 0 12px 12px 0; border-right: 1px solid var(--border-light); text-align: right; color: var(--accent-neon); font-weight: bold; font-size: 0.9rem; }
-
-        .active-daftar {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: #ffffff !important;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            display: block;
-            text-decoration: none;
-            font-weight: 800;
-            letter-spacing: 1px;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s ease;
-        }
-        .active-daftar:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.6);
         }
 
         @media(max-width: 900px) {
@@ -130,251 +138,184 @@
     <%- include('partials/header.html') %>
 
     <main class="container" style="padding-top: 30px; min-height: 70vh; padding-bottom: 80px;" id="mainContent">
-        <!-- Area Loading Awal -->
+        <!-- Area Loading Animasi CSS Murni -->
         <div style="text-align:center; padding: 100px 0;">
-            <div style="width: 40px; height: 40px; border: 4px solid var(--accent-neon); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-            <span style="color: var(--text-muted);">Memuat Detail Program Kerja...</span>
+            <div style="width: 40px; height: 40px; border: 4px solid var(--accent-neon); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;" aria-hidden="true"></div>
+            <span style="color: var(--text-muted);" aria-live="polite">Mencari Data Departemen di Server...</span>
         </div>
     </main>
 
     <%- include('partials/footer.html') %>
 
     <script>
-        // ================= BIG UPGRADE: FALLBACK DATA ANTI-CRASH =================
-        const FALLBACK_KALENDER = [
-            {
-                id: "umi-amal-senyuman-uas-vol-iv",
-                slug: "umi-amal-senyuman-uas-vol-iv",
-                nama: "UMI Amal Senyuman (UAS) Vol. IV",
-                dept: "Dept. of Dedication Humanity",
-                tglMulai: "2026-07-24",
-                tglSelesai: "2026-07-26",
-                banner: "/img/bemfkgumi.png",
-                deskripsi: "WELCOME TO UAS VOL. IV\n\nSaatnya membawa nama himpunan menuju arena pengabdian terbesar di FKG UMI! Kegiatan ini merupakan wujud nyata Tridharma Perguruan Tinggi yang menjunjung tinggi nilai kemanusiaan dan kepedulian sosial.",
-                lokasi: "Desa Binaan FKG UMI",
-                targetPeserta: "Seluruh Mahasiswa FKG UMI",
-                statusDaftar: "Buka",
-                linkDaftar: "https://bit.ly/DaftarUASVol4",
-                kepanitiaan: [
-                    {
-                        namaDivisi: "Inti Kegiatan",
-                        anggota: [
-                            { nama: "Fajri", jabatan: "Steering Committee" },
-                            { nama: "Rizky", jabatan: "Ketua Panitia" },
-                            { nama: "Dian", jabatan: "Sekretaris" },
-                            { nama: "Amelia", jabatan: "Bendahara" }
-                        ]
-                    },
-                    {
-                        namaDivisi: "Divisi Acara",
-                        anggota: [
-                            { nama: "Syauqi", jabatan: "Koordinator" },
-                            { nama: "Ananda", jabatan: "Anggota" }
-                        ]
-                    }
-                ]
-            }
-        ];
-
-        const monthNames = ["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"];
-
-        function formatTglRange(startStr, endStr) {
-            if(!startStr) return "-";
-            const s = new Date(startStr); const e = endStr ? new Date(endStr) : s;
-            if(s.getTime() === e.getTime()) return `${s.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
-            if(s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) return `${s.getDate()} - ${e.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
-            return `${s.getDate()} ${monthNames[s.getMonth()]} - ${e.getDate()} ${monthNames[e.getMonth()]} ${s.getFullYear()}`;
-        }
-
-        function getAgendaStatus(startStr, endStr) {
-            if(!startStr) return { text: "INFO", class: "badge-selesai", isBuka: false };
-            const today = new Date(); today.setHours(0,0,0,0);
-            const s = new Date(startStr); s.setHours(0,0,0,0);
-            const e = endStr ? new Date(endStr) : s; e.setHours(0,0,0,0);
-            
-            if(today >= s && today <= e) return { text: "PROKER SEDANG BERLANGSUNG", class: "badge-berlangsung", isBuka: true };
-            if(today < s) return { text: "PROKER SEGERA HADIR", class: "badge-segera", isBuka: true };
-            return { text: "SELESAI DILAKSANAKAN", class: "badge-selesai", isBuka: false };
-        }
-
         document.addEventListener('DOMContentLoaded', async () => {
-            // Ambil SLUG dari URL Path (Cth: /proker-detail/umi-amal-senyuman-uas-vol-iv)
+            // Ambil SLUG dari URL Path (Cth: /proker-deskripsi/pubmed)
             const pathParts = window.location.pathname.split('/');
             const slug = pathParts[pathParts.length - 1];
-            let kalenderData = [];
             
             try {
                 let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                }
                 
+                // Murni mengambil data dari Database Server (Tanpa Array Fallback di HTML)
                 const req = await fetch(apiUrl);
-                if(!req.ok) throw new Error("Gagal mengambil data API");
+                if(!req.ok) throw new Error("Gagal mengambil data dari Database API");
                 
                 const res = await req.json();
-                kalenderData = res.kalender || [];
+                const allProker = res.proker || [];
+                const allOrg = res.org || {};
+                
+                // Pencarian data spesifik berdasarkan SLUG
+                const deptData = allProker.find(p => p.id === slug);
+                
+                if(!deptData) {
+                    showErrorState("404 - Departemen Tidak Ditemukan", "Data departemen atau program kerja tidak tersedia di database. Kemungkinan tautan salah atau data telah dihapus.");
+                    return;
+                }
+                
+                renderDetail(deptData, allOrg.departemen);
 
             } catch (err) {
-                // FIX ERROR FETCH (GBR 1): Jika API gagal dipanggil, gunakan fallback data lokal!
-                console.warn("⚠️ Menggunakan data fallback lokal karena API tidak dapat dijangkau.");
-                kalenderData = FALLBACK_KALENDER;
+                console.error("[FETCH ERROR]:", err);
+                showErrorState("Koneksi Database Gagal", "Terjadi kesalahan saat menghubungi server. Pastikan koneksi internet stabil atau coba beberapa saat lagi.");
             }
-
-            // Cari data berdasarkan ID slug
-            const prokerData = kalenderData.find(p => p.id === slug || p.slug === slug);
-            
-            // Logika Pintar untuk Preview Canvas: Jika URL tidak spesifik menunjuk ke slug proker, render data pertama
-            const isLocalPreview = window.location.protocol === 'blob:' || window.location.origin === "null" || slug === "proker-detail" || slug === "";
-            const finalData = prokerData || (isLocalPreview ? kalenderData[0] : null);
-
-            if(!finalData) {
-                document.getElementById('mainContent').innerHTML = `
-                    <div style="text-align:center; padding: 100px 0;">
-                        <h2 style="font-size: 2rem; color: #ef4444; margin-bottom: 10px;">404 - Program Kerja Tidak Ditemukan</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 30px;">Data kegiatan ini tidak tersedia di database atau telah dihapus.</p>
-                        <a href="/informasi#kalender" class="holo-btn">Lihat Kalender Proker</a>
-                    </div>
-                `;
-                return;
-            }
-            
-            renderDetail(finalData);
         });
 
-        function renderDetail(data) {
-            const bgImg = data.banner || '/img/bemfkgumi.png';
-            const wktPelaksanaan = formatTglRange(data.tglMulai, data.tglSelesai);
-            const statusInfo = getAgendaStatus(data.tglMulai, data.tglSelesai);
+        // ================= FUNGSI RENDER ERROR STATE =================
+        function showErrorState(title, message) {
+            document.getElementById('mainContent').innerHTML = `
+                <div style="text-align:center; padding: 100px 0; animation: fadeInTab 0.5s ease;">
+                    <h2 style="font-size: 2.2rem; color: #ef4444; margin-bottom: 10px;">${title}</h2>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px;">${message}</p>
+                    <a href="/informasi#proker" class="holo-btn">Kembali ke Pusat Informasi</a>
+                </div>
+            `;
+        }
+
+        // ================= FUNGSI RENDER UTAMA UI GLASSMORPHISM =================
+        function renderDetail(data, orgDepartemen) {
+            const bgImg = data.bgImage || '/img/bemfkgumi.png';
             
-            // Konversi new line menjadi tag <br> untuk deskripsi
-            const descHtml = data.deskripsi ? data.deskripsi.replace(/\n/g, '<br>') : 'Belum ada deskripsi untuk kegiatan ini.';
+            // Generate List Fungsi
+            let fungsiHtml = '';
+            if(data.fungsi && data.fungsi.length > 0) {
+                fungsiHtml = data.fungsi.map(f => `<li><span style="color:var(--accent-neon);" aria-hidden="true">✔️</span> <span>${f}</span></li>`).join('');
+            } else {
+                fungsiHtml = `<li><span style="color:var(--text-muted);">Belum ada rincian fungsi departemen.</span></li>`;
+            }
 
-            // Render Kepanitiaan
-            let panitiaHtml = '';
-            if(data.kepanitiaan && data.kepanitiaan.length > 0) {
-                data.kepanitiaan.forEach(divisi => {
-                    let anggotaRows = '';
-                    if(divisi.anggota && divisi.anggota.length > 0) {
-                        divisi.anggota.forEach(ang => {
-                            anggotaRows += `
-                                <tr>
-                                    <td>${ang.nama}</td>
-                                    <td>${ang.jabatan}</td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        anggotaRows = `<tr><td colspan="2" style="text-align:center; color:var(--text-muted);">Data anggota belum diinput</td></tr>`;
+            // Generate List Program Kerja beserta Detail Anaknya
+            let prokerHtml = '';
+            if(data.listProker && data.listProker.length > 0) {
+                data.listProker.forEach(pk => {
+                    let detailHtml = '';
+                    if(pk.detail && pk.detail.length > 0) {
+                        detailHtml = `<ul class="sub-proker">` + pk.detail.map(d => `<li>${d}</li>`).join('') + `</ul>`;
                     }
+                    prokerHtml += `<li><span style="color:var(--accent-neon);" aria-hidden="true">🚀</span> <div><strong style="color: var(--text-light);">${pk.nama}</strong>${detailHtml}</div></li>`;
+                });
+            } else {
+                prokerHtml = `<li><span style="color:var(--text-muted);">Belum ada program kerja yang diinput ke sistem.</span></li>`;
+            }
 
-                    panitiaHtml += `
-                        <div class="panitia-box">
-                            <h4 class="panitia-title">${divisi.namaDivisi}</h4>
-                            <table class="panitia-table">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Pengurus / Mahasiswa</th>
-                                        <th style="text-align:right;">Jabatan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${anggotaRows}
-                                </tbody>
-                            </table>
+            // Generate Struktur Pengurus Card UI
+            let strukturHtml = '';
+            let deptStructure = null;
+            if(orgDepartemen && orgDepartemen.length > 0) {
+               deptStructure = orgDepartemen.find(d => d.nama === data.dept);
+            }
+
+            if (deptStructure && deptStructure.anggota && deptStructure.anggota.length > 0) {
+                strukturHtml = `<div class="dept-team-grid">`;
+                deptStructure.anggota.forEach(ang => {
+                    const angPic = ang.foto || '/img/bemfkgumi.png';
+                    strukturHtml += `
+                        <div class="dept-member-card">
+                            <img src="${angPic}" alt="${ang.nama}" class="dept-member-photo" loading="lazy" width="80" height="80">
+                            <h4 class="dept-member-name">${ang.nama}</h4>
+                            <p class="dept-member-role">${ang.jabatan}</p>
                         </div>
                     `;
                 });
+                strukturHtml += `</div>`;
             } else {
-                panitiaHtml = `<div style="text-align:center; padding:30px; color:var(--text-muted); background:var(--bg-dark-overlay); border-radius:15px;">Struktur kepanitiaan belum dipublikasikan.</div>`;
-            }
-
-            // Render Tombol Pendaftaran
-            let daftarHtml = '';
-            if (statusInfo.isBuka && data.statusDaftar && data.statusDaftar.toLowerCase() === 'buka' && data.linkDaftar) {
-                daftarHtml = `
-                    <div style="margin-top: 30px; border-top: 1px solid var(--border-light); padding-top: 25px;">
-                        <a href="${data.linkDaftar}" target="_blank" rel="noopener noreferrer" class="active-daftar">📝 Daftar Sebagai Peserta / Relawan</a>
+                // Tampilan text fallback jika data foto tidak tersedia di Manajemen Profil
+                strukturHtml = `
+                    <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px dashed var(--border-light);">
+                        <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Koordinator Departemen</span>
+                        <strong style="color: var(--accent-neon); font-size: 1.2rem;">${data.koordinator || '-'}</strong>
                     </div>
-                `;
-            } else if (statusInfo.isBuka) {
-                 daftarHtml = `
-                    <div style="margin-top: 30px; border-top: 1px solid var(--border-light); padding-top: 25px;">
-                        <div style="text-align:center; padding:15px; background:var(--bg-dark-overlay); border:1px solid var(--border-light); border-radius:12px; color:var(--text-muted); font-size:0.95rem;">
-                            Pendaftaran belum dibuka atau tidak diperlukan link eksternal.
-                        </div>
-                    </div>
-                `;
-            } else {
-                daftarHtml = `
-                    <div style="margin-top: 30px; border-top: 1px solid var(--border-light); padding-top: 25px;">
-                        <div style="text-align:center; padding:15px; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.2); border-radius:12px; color:#ef4444; font-size:0.95rem; font-weight:bold;">
-                            🚫 Kegiatan Telah Selesai. Pendaftaran Ditutup.
-                        </div>
+                    <div>
+                        <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Anggota / Penanggung Jawab Proker</span>
+                        <p style="color: var(--text-muted); line-height: 1.8; font-weight: 500;">
+                            ${data.penanggungJawab ? data.penanggungJawab.replace(/,/g, '<br>• ') : '-'}
+                        </p>
                     </div>
                 `;
             }
 
-            // Inject to HTML
+            // Inject Konten Keseluruhan ke DOM
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <!-- BAGIAN BANNER -->
+                <!-- BAGIAN BANNER 1920x1080 (LCP OPTIMIZED) -->
                 <div class="proker-banner-wrapper reveal active">
-                    <img src="${bgImg}" alt="Banner ${data.nama}" class="proker-banner-img" width="1920" height="1080" fetchpriority="high">
+                    <img src="${bgImg}" alt="Banner ${data.dept}" class="proker-banner-img" width="1920" height="1080" fetchpriority="high">
                     <div class="proker-banner-overlay">
-                        <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem;">${data.dept || 'KBMFKG UMI'}</div>
-                        <h1 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px;">${data.nama}</h1>
+                        <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem;">DETAIL DEPARTEMEN</div>
+                        <h1 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px;">${data.dept}</h1>
+                        <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;">${data.shortDesc || ''}</p>
                     </div>
                 </div>
 
-                <div class="grid-2" style="margin-bottom: 40px; grid-template-columns: 1fr 400px; gap: 40px;">
-                    <!-- BAGIAN KIRI: DESKRIPSI DAN KEPANITIAAN -->
-                    <div class="reveal active" style="transition-delay: 0.1s;">
-                        <div class="glass-card" style="margin-bottom: 30px;">
-                            <h2 class="detail-section-title">Deskripsi Kegiatan</h2>
-                            <p style="color: var(--text-light); line-height: 1.8; font-size: 1.05rem;">${descHtml}</p>
-                        </div>
+                <div class="grid-2" style="margin-bottom: 40px; grid-template-columns: 1fr 380px; gap: 40px;">
+                    <!-- BAGIAN KIRI: FUNGSI DAN PROKER -->
+                    <div class="glass-card reveal active" style="transition-delay: 0.1s;">
+                        <h2 class="detail-section-title">Fungsi Departemen</h2>
+                        <ul class="fungsi-list" style="list-style:none; padding-left:0; margin-bottom: 40px;">
+                            ${fungsiHtml}
+                        </ul>
 
-                        <div class="glass-card">
-                            <h2 class="detail-section-title" style="border-left-color: #f59e0b;">Struktur Kepanitiaan</h2>
-                            ${panitiaHtml}
-                        </div>
+                        <h2 class="detail-section-title" style="border-left-color: #f59e0b;">Program Kerja</h2>
+                        <ul class="proker-list" style="list-style:none; padding-left:0;">
+                            ${prokerHtml}
+                        </ul>
                     </div>
 
-                    <!-- BAGIAN KANAN: METADATA & PENDAFTARAN -->
+                    <!-- BAGIAN KANAN: METADATA & PENANGGUNG JAWAB -->
                     <div class="reveal active" style="transition-delay: 0.2s;">
-                        <div class="glass-card" style="position: sticky; top: 120px;">
+                        <div class="glass-card" style="margin-bottom: 30px; padding: 25px; position: sticky; top: 100px;">
                             <h2 class="detail-section-title" style="border-left-color: #10b981; font-size: 1.4rem;">Informasi Pelaksanaan</h2>
                             
                             <div class="info-row">
-                                <div class="info-icon-wrapper ic-lokasi" aria-hidden="true">📍</div>
+                                <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: #ef4444; background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.2);" aria-hidden="true">📍</div>
                                 <div>
-                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Lokasi Kegiatan</span>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; font-weight: 600;">Titik Lokasi Utama</span>
                                     <strong style="color: var(--text-light); font-size: 1.05rem;">${data.lokasi || 'Kondisional'}</strong>
                                 </div>
                             </div>
                             
                             <div class="info-row">
-                                <div class="info-icon-wrapper ic-waktu" aria-hidden="true">⏱️</div>
+                                <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: var(--accent-neon); background: var(--bg-dark-overlay); border: 1px solid var(--accent-glow);" aria-hidden="true">⏱️</div>
                                 <div>
-                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Waktu Pelaksanaan</span>
-                                    <strong style="color: var(--text-light); font-size: 1.05rem;">${wktPelaksanaan}</strong>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; font-weight: 600;">Target Pelaksanaan</span>
+                                    <strong style="color: var(--text-light); font-size: 1.05rem;">${data.targetPelaksanaan || 'Sepanjang Periode'}</strong>
                                 </div>
                             </div>
-
-                            <div class="info-row">
-                                <div class="info-icon-wrapper ic-target" aria-hidden="true">🎯</div>
-                                <div>
-                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Target Peserta</span>
-                                    <strong style="color: var(--text-light); font-size: 1.05rem;">${data.targetPeserta || 'Umum'}</strong>
-                                </div>
-                            </div>
-
-                            ${daftarHtml}
                         </div>
                     </div>
                 </div>
+
+                <!-- KOTAK STRUKTUR PENGURUS BARU (FULL WIDTH DI BAWAH) -->
+                <div class="glass-card reveal active" style="padding: 35px; margin-bottom: 30px; transition-delay: 0.3s;">
+                     <h2 class="detail-section-title" style="border-left-color: #8b5cf6;">Struktur Pengurus Departemen</h2>
+                     <p style="color: var(--text-muted); margin-bottom: 25px;">Para punggawa penggerak program kerja di departemen ini.</p>
+                     ${strukturHtml}
+                </div>
                 
                 <div style="text-align: center; margin-top: 50px;">
-                    <a href="/informasi#kalender" class="glass-btn">← Kembali ke Kalender Proker</a>
+                    <a href="/informasi#proker" class="glass-btn">&larr; Kembali ke Pusat Informasi</a>
                 </div>
             `;
         }
