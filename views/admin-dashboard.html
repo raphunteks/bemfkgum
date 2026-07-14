@@ -527,11 +527,22 @@
                     </div>
 
                     <div class="grid-2" style="align-items:start; margin-bottom:20px;">
-                        <div>
-                            <label style="font-size:0.8rem; color:var(--text-muted);">Banner Horizontal (1920x1080)</label>
-                            <img src="${p.bgImage || '/img/bemfkgumi.png'}" style="width:100%; height:150px; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light);" alt="Banner Dept">
+                        <!-- KOTAK 1: FOTO PENGURUS KHUSUS CARD -->
+                        <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px solid var(--border-light);">
+                            <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold; display:block; margin-bottom:8px;">Foto Pengurus / Cover Card (900x600 px)</label>
+                            <img src="${p.fotoPengurus || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light); background: var(--bg-dark-heavy);" alt="Cover Dept">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.proker[${i}], 'fotoPengurus', renderProker)">
+                        </div>
+
+                        <!-- KOTAK 2: BANNER HEADER KHUSUS DETAIL -->
+                        <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px solid var(--border-light);">
+                            <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold; display:block; margin-bottom:8px;">Banner Header (1920x1080 px)</label>
+                            <img src="${p.bgImage || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light); background: var(--bg-dark-heavy);" alt="Banner Dept">
                             <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.proker[${i}], 'bgImage', renderProker)">
                         </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-bottom:20px;">
                         <div>
                             <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Singkat (Tampil di Card Depan)</label>
                             <textarea class="neo-input" rows="4" placeholder="Deskripsi pendek untuk tampilan awal..." oninput="db.proker[${i}].shortDesc=this.value">${p.shortDesc || ''}</textarea>
@@ -547,14 +558,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="grid-2" style="margin-bottom:20px;">
                         <div>
                             <label style="font-size:0.8rem; color:var(--text-muted);">Nama Koordinator</label>
-                            <input type="text" class="neo-input" value="${p.koordinator || ''}" placeholder="Nama Koordinator" oninput="db.proker[${i}].koordinator=this.value">
-                        </div>
-                        <div>
+                            <input type="text" class="neo-input" value="${p.koordinator || ''}" placeholder="Nama Koordinator" oninput="db.proker[${i}].koordinator=this.value" style="margin-bottom:15px;">
+                            
                             <label style="font-size:0.8rem; color:var(--text-muted);">Anggota / Penanggung Jawab Proker</label>
                             <textarea class="neo-input" rows="2" placeholder="Nama anggota (pisahkan koma)" oninput="db.proker[${i}].penanggungJawab=this.value">${p.penanggungJawab || ''}</textarea>
                         </div>
@@ -570,7 +577,7 @@
 
         function tambahProkerDept() { 
             db.proker.push({
-                id: "dept-" + Date.now(), dept: "DEPT. BARU", bgImage: "/img/bemfkgumi.png", 
+                id: "dept-" + Date.now(), dept: "DEPT. BARU", bgImage: "/img/bemfkgumi.png", fotoPengurus: "/img/bemfkgumi.png",
                 shortDesc: "", lokasi: "", targetPelaksanaan: "", koordinator: "", penanggungJawab: "",
                 deskripsiLengkap: []
             }); 
