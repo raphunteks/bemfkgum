@@ -206,7 +206,7 @@
             {
                 id: "pubmed",
                 dept: "DEPT. INFOCOM",
-                bgImage: "/img/bemfkgumi.png",
+                fotoPengurus: "/img/bemfkgumi.png", 
                 shortDesc: "PubMed (PublikasiMedia Elektronik & Media Cetak) BukuKBMFKG-UMI"
             }
         ];
@@ -286,22 +286,22 @@
             if (hash && validTabs.includes(hash)) { switchTab(hash); }
         });
 
-        // ================= SUPER BIG UPGRADE: RENDER 9 DEPARTEMEN GLASSMORPHISM (DESAIN APPLE UI) =================
+        // ================= SUPER BIG UPGRADE: RENDER DEPARTEMEN GLASSMORPHISM (DESAIN APPLE UI) =================
         function renderProker(prokerData) {
             const pCont = document.getElementById('prokerContainer'); 
             pCont.innerHTML = '';
             
             if(prokerData && prokerData.length > 0) {
                 prokerData.forEach(p => {
-                    const bgImg = p.bgImage || '/img/bemfkgumi.png';
+                    const bgImg = p.fotoPengurus || '/img/bemfkgumi.png';
                     const desc = p.shortDesc || 'Deskripsi program kerja departemen akan segera diperbarui.';
                     const targetUrl = `/proker-deskripsi/${p.id}`;
 
-                    // SCRIPT MENGIKUTI DESAIN GBR 2 & GBR 3
+                    // SCRIPT MENGIKUTI DESAIN GBR 2 & GBR 3 
                     pCont.innerHTML += `
                         <div class="proker-card-apple reveal active" onclick="window.location.href='${targetUrl}'" tabindex="0" role="button" aria-label="Lihat detail program kerja departemen ${p.dept}" onkeydown="if(event.key==='Enter') window.location.href='${targetUrl}'">
-                            <!-- Background Image Default -->
-                            <img src="${bgImg}" alt="Banner ${p.dept}" class="pca-bg-img" loading="lazy" width="400" height="500">
+                            <!-- Background Image Latar Kartu (Foto Pengurus) -->
+                            <img src="${bgImg}" alt="Foto Pengurus ${p.dept}" class="pca-bg-img" loading="lazy" width="400" height="500">
                             <div class="pca-default-overlay"></div>
                             
                             <!-- Default State Content -->
