@@ -56,33 +56,33 @@
             <h2 style="color: var(--text-light);">Portal Admin</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Sistem Manajemen Database Organisasi</p>
             
-            <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin">
-            <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin">
+            <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin" aria-label="Username">
+            <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin" aria-label="Password">
             
             <button class="holo-btn" onclick="login()" style="width:100%; margin-top: 10px;">Akses Sistem</button>
-            <div id="loginError" style="color: #ef4444; margin-top: 15px; font-size: 0.9rem; display: none;">Kredensial tidak valid.</div>
+            <div id="loginError" style="color: #ef4444; margin-top: 15px; font-size: 0.9rem; display: none;" aria-live="polite">Kredensial tidak valid.</div>
         </div>
     </div>
 
     <div class="admin-layout" id="dashboardContent" style="display: none; opacity: 0;">
         <aside class="admin-sidebar glass-card" style="border-radius: 0;">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <img src="/img/bemfkgumi.png" style="height: 40px;">
+                <img src="/img/bemfkgumi.png" style="height: 40px;" alt="Logo Admin">
                 <h3 style="color: var(--text-light); font-size: 1.1rem;">BEM Admin</h3>
             </div>
             <nav class="admin-nav" id="adminNav">
-                <button class="active" onclick="switchSection('dashboard', this)"><span>📊</span> Overview</button>
-                <button onclick="switchSection('profil', this)"><span>🏛️</span> Manajemen Struktur</button>
-                <button onclick="switchSection('filosofi', this)"><span>🎨</span> Filosofi Logo & Warna</button>
-                <button onclick="switchSection('sejarah', this)"><span>🕰️</span> Manajemen Sejarah</button>
-                <button onclick="switchSection('proker', this)"><span>📋</span> Program Kerja</button>
-                <button onclick="switchSection('kalender', this)" style="color: #10b981;"><span>📅</span> Kalender & Detail Proker</button>
-                <button onclick="switchSection('dok', this)"><span>📸</span> Galeri Dokumentasi</button>
-                <button onclick="switchSection('aspirasi', this)"><span>📣</span> Interaksi Masuk</button>
-                <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span>🧑‍💻</span> Developer Team</button>
-                <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span>📞</span> Manajemen Narahubung</button>
-                <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span>⚙️</span> Header & Footer</button>
-                <button onclick="logout()" style="margin-top: 30px; color: #ef4444;"><span>🚪</span> Logout</button>
+                <button class="active" onclick="switchSection('dashboard', this)"><span aria-hidden="true">📊</span> Overview</button>
+                <button onclick="switchSection('profil', this)"><span aria-hidden="true">🏛️</span> Manajemen Struktur</button>
+                <button onclick="switchSection('filosofi', this)"><span aria-hidden="true">🎨</span> Filosofi Logo & Warna</button>
+                <button onclick="switchSection('sejarah', this)"><span aria-hidden="true">🕰️</span> Manajemen Sejarah</button>
+                <button onclick="switchSection('proker', this)"><span aria-hidden="true">📋</span> Program Kerja</button>
+                <button onclick="switchSection('kalender', this)" style="color: #10b981;"><span aria-hidden="true">📅</span> Kalender & Detail Proker</button>
+                <button onclick="switchSection('dok', this)"><span aria-hidden="true">📸</span> Galeri Dokumentasi</button>
+                <button onclick="switchSection('aspirasi', this)"><span aria-hidden="true">📣</span> Interaksi Masuk</button>
+                <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span aria-hidden="true">🧑‍💻</span> Developer Team</button>
+                <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span aria-hidden="true">📞</span> Manajemen Narahubung</button>
+                <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span aria-hidden="true">⚙️</span> Header & Footer</button>
+                <button onclick="logout()" style="margin-top: 30px; color: #ef4444;"><span aria-hidden="true">🚪</span> Logout</button>
             </nav>
         </aside>
 
@@ -170,20 +170,26 @@
                 <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
             </section>
 
-            <!-- 5. PROKER -->
+            <!-- 5. PROKER (DEPARTEMEN) - SUPER BIG UPGRADE -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2 style="color: var(--text-light);">Manajemen Program Kerja List</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Proker</button>
+                    <div>
+                        <h2 style="color: var(--text-light);">Manajemen Program Kerja Departemen</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Konten untuk Card Departemen dan Halaman Deskripsi</p>
+                    </div>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Departemen</button>
                 </div>
-                <div id="cmsProker"></div>
-                <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 10px;">+ Tambah Departemen Proker</button>
+                <div id="cmsProker" style="display:flex; flex-direction:column; gap:25px;"></div>
+                <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem;">+ Tambah Departemen Baru</button>
             </section>
 
             <!-- 6. KALENDER DENGAN CUSTOM SLUG -->
             <section id="sec-kalender" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
-                    <h2 style="color: var(--text-light);">Manajemen Agenda Kalender & Detail Proker</h2>
+                    <div>
+                        <h2 style="color: var(--text-light);">Manajemen Agenda Kalender & Detail Proker</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Untuk Event Kegiatan Spesifik</p>
+                    </div>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kalender')">💾 Simpan Semua Agenda</button>
                 </div>
                 <div id="cmsKalender" style="display:flex; flex-direction:column; gap:25px;"></div>
@@ -282,17 +288,17 @@
                     <div class="grid-3">
                         <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 1 (Kiri)</label>
-                            <img id="prevLogo1" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
+                            <img id="prevLogo1" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;" alt="Logo">
                             <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.settings, 'logo1', renderPengaturan)">
                         </div>
                         <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 2 (Tengah)</label>
-                            <img id="prevLogo2" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
+                            <img id="prevLogo2" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;" alt="Logo">
                             <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.settings, 'logo2', renderPengaturan)">
                         </div>
                         <div style="background: var(--bg-dark-overlay); border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; text-align:center;">
                             <label style="color:var(--text-light); margin-bottom:10px; display:block;">Logo 3 (Kanan)</label>
-                            <img id="prevLogo3" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;">
+                            <img id="prevLogo3" src="/img/bemfkgumi.png" style="height: 60px; margin-bottom: 10px; object-fit:contain;" alt="Logo">
                             <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.settings, 'logo3', renderPengaturan)">
                         </div>
                     </div>
@@ -466,7 +472,7 @@
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
             (db.org.pimpinan || []).forEach((p, i) => {
                 pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
-                    <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:10px;">
+                    <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:10px;" alt="Pimpinan">
                     <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px;">
                     <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan || ''}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
                     <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama || ''}" oninput="db.org.pimpinan[${i}].nama=this.value">
@@ -485,7 +491,7 @@
                 if(d.anggota) {
                     d.anggota.forEach((a, j) => {
                         html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px; border: 1px solid var(--border-light);">
-                            <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:5px;">
+                            <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:5px;" alt="Anggota">
                             <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="margin-bottom:10px;">
                             <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama || ''}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
                             <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan || ''}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
@@ -499,7 +505,109 @@
         function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
         function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
 
-        // ================= BIG UPGRADE: RENDER KALENDER / PROKER DETAIL CMS =================
+        // ================= BIG UPGRADE: RENDER DEPARTEMEN PROKER (DETAIL) =================
+        function renderProker() {
+            const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
+            (db.proker || []).forEach((p, i) => {
+                // Ensure arrays exist
+                if(!p.fungsi) p.fungsi = [];
+                if(!p.listProker) p.listProker = [];
+                
+                let fungsiText = Array.isArray(p.fungsi) ? p.fungsi.join('\n') : '';
+                
+                let listProkerHtml = '';
+                p.listProker.forEach((pk, j) => {
+                    let detailText = Array.isArray(pk.detail) ? pk.detail.join('\n') : '';
+                    listProkerHtml += `
+                        <div style="background:var(--bg-dark-heavy); padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light);">
+                            <input type="text" class="neo-input" placeholder="Nama Proker (Contoh: 1. Sosialisasi)" value="${pk.nama || ''}" oninput="db.proker[${i}].listProker[${j}].nama=this.value" style="font-weight:bold; margin-bottom:10px;">
+                            <textarea class="neo-input" rows="3" placeholder="Detail Anak Proker (Pisahkan dengan Enter jika ada)" oninput="db.proker[${i}].listProker[${j}].detail=this.value.split('\\n').filter(Boolean)">${detailText}</textarea>
+                            <button class="action-btn delete" onclick="db.proker[${i}].listProker.splice(${j},1); renderProker();" style="width:100%;">Hapus Proker Ini</button>
+                        </div>
+                    `;
+                });
+
+                cont.innerHTML += `
+                <div class="glass-card" style="padding:25px; margin-bottom:25px; border-left:4px solid var(--accent-neon); position:relative;">
+                    <button class="action-btn delete" onclick="if(confirm('Hapus Departemen ini dari list proker?')) { db.proker.splice(${i},1); renderProker(); }" style="position:absolute; top:20px; right:20px;">Hapus Dept</button>
+                    
+                    <h3 style="color:var(--text-light); margin-bottom:15px; width:80%;">
+                        <input type="text" class="neo-input" style="font-size:1.2rem; font-weight:bold; color:var(--accent-neon); border:none; background:transparent; padding:0; box-shadow:none;" value="${p.dept || ''}" placeholder="Nama Departemen" oninput="db.proker[${i}].dept=this.value">
+                    </h3>
+                    
+                    <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
+                        <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">ID Slug Departemen (URL)</label>
+                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${p.id || ''}" placeholder="contoh: dept-character-of-building" oninput="db.proker[${i}].id=this.value">
+                    </div>
+
+                    <div class="grid-2" style="align-items:start; margin-bottom:20px;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Banner Horizontal (1920x1080)</label>
+                            <img src="${p.bgImage || '/img/bemfkgumi.png'}" style="width:100%; height:150px; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light);" alt="Banner Dept">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.proker[${i}], 'bgImage', renderProker)">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Singkat (Tampil di Card Depan)</label>
+                            <textarea class="neo-input" rows="4" placeholder="Deskripsi pendek untuk tampilan awal..." oninput="db.proker[${i}].shortDesc=this.value">${p.shortDesc || ''}</textarea>
+                            
+                            <div style="display:flex; gap:10px; margin-top:10px;">
+                                <div style="flex:1;">
+                                    <label style="font-size:0.8rem; color:var(--text-muted);">Lokasi Utama</label>
+                                    <input type="text" class="neo-input" value="${p.lokasi || ''}" placeholder="Sekretariat BEM" oninput="db.proker[${i}].lokasi=this.value">
+                                </div>
+                                <div style="flex:1;">
+                                    <label style="font-size:0.8rem; color:var(--text-muted);">Target Waktu</label>
+                                    <input type="text" class="neo-input" value="${p.targetPelaksanaan || ''}" placeholder="Triwulan I" oninput="db.proker[${i}].targetPelaksanaan=this.value">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-bottom:20px;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Nama Koordinator</label>
+                            <input type="text" class="neo-input" value="${p.koordinator || ''}" placeholder="Nama Koordinator" oninput="db.proker[${i}].koordinator=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Anggota / Penanggung Jawab Proker</label>
+                            <textarea class="neo-input" rows="2" placeholder="Nama anggota (pisahkan koma)" oninput="db.proker[${i}].penanggungJawab=this.value">${p.penanggungJawab || ''}</textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:20px;">
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Fungsi Departemen (Pisahkan tiap poin dengan Enter)</label>
+                        <textarea class="neo-input" rows="4" placeholder="Fungsi 1\nFungsi 2..." oninput="db.proker[${i}].fungsi=this.value.split('\\n').filter(Boolean)">${fungsiText}</textarea>
+                    </div>
+
+                    <div style="background:var(--bg-dark-overlay); padding:20px; border-radius:15px; border:1px solid var(--border-light);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            <h4 style="color:var(--accent-neon); margin:0;">Daftar Program Kerja (Proker)</h4>
+                            <button class="action-btn view" onclick="tambahItemProker(${i})">+ Tambah Proker</button>
+                        </div>
+                        <div style="max-height:300px; overflow-y:auto; padding-right:10px;">
+                            ${listProkerHtml}
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function tambahProkerDept() { 
+            db.proker.push({
+                id: "dept-" + Date.now(), dept: "Departemen Baru", bgImage: "/img/bemfkgumi.png", 
+                shortDesc: "", lokasi: "", targetPelaksanaan: "", koordinator: "", penanggungJawab: "",
+                fungsi: [], listProker: []
+            }); 
+            renderProker(); 
+        }
+
+        function tambahItemProker(i) {
+            if(!db.proker[i].listProker) db.proker[i].listProker = [];
+            db.proker[i].listProker.push({ nama: "Nama Program Kerja Baru", detail: [] });
+            renderProker();
+        }
+
+        // --- RENDER KALENDER / AGENDA CMS ---
         function renderKalender() {
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
             (db.kalender || []).forEach((k, i) => { 
@@ -588,22 +696,19 @@
 
                     <div style="margin-top:20px; border-top:1px solid var(--border-light); padding-top:15px;">
                         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px;">
-                            <h3 style="color:var(--accent-neon);">Banner Proker</h3>
+                            <h3 style="color:var(--accent-neon);">Banner Kegiatan</h3>
                             <button class="action-btn view" onclick="tambahPanitiaDivisi(${i})">+ Tambah Divisi Kepanitiaan</button>
                         </div>
                         
                         <div class="grid-2" style="align-items:start;">
-                            <!-- SUPER UPGRADE: Banner Preview proporsional 3:1 -->
                             <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px dashed var(--border-light);">
                                 <div style="margin-bottom: 15px;">
-                                    <p style="color: #3b82f6; font-size: 0.85rem; font-weight: bold; margin-bottom: 4px;">💡 Rekomendasi Ukuran: 1200 x 400 pixel (Rasio 3:1)</p>
-                                    <p style="color: var(--text-muted); font-size: 0.75rem; line-height: 1.4; margin: 0;">Agar tampilan presisi dan tidak terpotong pada halaman Detail Proker.</p>
+                                    <p style="color: #3b82f6; font-size: 0.85rem; font-weight: bold; margin-bottom: 4px;">💡 Rekomendasi Ukuran: 1200 x 400 pixel</p>
                                 </div>
-                                <img src="${k.banner || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:3/1; object-fit:cover; border-radius:12px; margin-bottom:15px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); box-shadow: 0 5px 15px var(--card-shadow);">
+                                <img src="${k.banner || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:3/1; object-fit:cover; border-radius:12px; margin-bottom:15px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); box-shadow: 0 5px 15px var(--card-shadow);" alt="Banner Kalender">
                                 <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.kalender[${i}], 'banner', renderKalender)">
                             </div>
                             
-                            <!-- Daftar Kepanitiaan -->
                             <div style="max-height: 280px; overflow-y:auto; padding-right:5px;">
                                 ${htmlPanitia}
                             </div>
@@ -636,7 +741,7 @@
                     <div style="flex:1;">
                         <div style="display:flex; gap:10px;">
                             <input type="text" class="neo-input" value="${w.warna}" placeholder="Nama Warna (Cth: Hijau)" oninput="db.filosofi.warna[${i}].warna=this.value" style="flex:2;">
-                            <input type="color" value="${w.hex}" oninput="db.filosofi.warna[${i}].hex=this.value" style="flex:1; height:45px; border:none; cursor:pointer;">
+                            <input type="color" value="${w.hex}" oninput="db.filosofi.warna[${i}].hex=this.value" style="flex:1; height:45px; border:none; cursor:pointer;" aria-label="Pilih Warna">
                         </div>
                         <textarea class="neo-input" rows="2" placeholder="Makna Warna" oninput="db.filosofi.warna[${i}].makna=this.value">${w.makna}</textarea>
                     </div>
@@ -653,7 +758,7 @@
             (db.sejarah || []).forEach((s, i) => {
                 cont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:15px; align-items:center; border-left:4px solid var(--accent-neon);">
                     <div style="width: 80px; text-align:center;">
-                        <img src="${s.logo || '/img/bemfkgumi.png'}" style="width:100%; height:60px; object-fit:contain; background:var(--bg-dark-overlay); padding:5px; border-radius:10px; margin-bottom:5px;">
+                        <img src="${s.logo || '/img/bemfkgumi.png'}" style="width:100%; height:60px; object-fit:contain; background:var(--bg-dark-overlay); padding:5px; border-radius:10px; margin-bottom:5px;" alt="Logo Kabinet">
                         <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.sejarah[${i}], 'logo', renderSejarah)">
                     </div>
                     <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
@@ -672,26 +777,20 @@
         }
         function tambahSejarah() { if(!db.sejarah) db.sejarah = []; db.sejarah.unshift({ tahun: "", kabinet: "Kabinet Baru", logo: "/img/bemfkgumi.png", ketua: "", wakil: "" }); renderSejarah(); }
 
-        // --- RENDER DOKUMENTASI, PROKER, TEAM ---
+        // --- RENDER DOKUMENTASI, TEAM ---
         function renderDokumentasi() {
             const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
             (db.dokumentasi || []).forEach((d, i) => {
-                cont.innerHTML += `<div class="glass-card" style="padding:15px;"><img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:var(--bg-dark-overlay); margin-bottom:10px;"><input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px;"><input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value"><input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value"><textarea class="neo-input" placeholder="Deskripsi" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea><button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button></div>`;
+                cont.innerHTML += `<div class="glass-card" style="padding:15px;"><img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:var(--bg-dark-overlay); margin-bottom:10px;" alt="Dokumentasi"><input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px;"><input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value"><input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value"><textarea class="neo-input" placeholder="Deskripsi" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea><button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button></div>`;
             });
         }
         function tambahDokumentasi() { db.dokumentasi.push({judul:"Judul", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
-
-        function renderProker() {
-            const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
-            (db.proker || []).forEach((p, i) => { cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:3px solid var(--accent-neon);"><input type="text" class="neo-input" value="${p.dept || ''}" oninput="db.proker[${i}].dept=this.value" style="font-weight:bold;"><textarea class="neo-input" rows="4" oninput="db.proker[${i}].list = this.value.split('\\n')">${(p.list || []).join('\n')}</textarea><button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus Dept</button></div>`; });
-        }
-        function tambahProkerDept() { db.proker.push({dept:"Departemen Baru", list:["Proker 1"]}); renderProker(); }
 
         function renderTeam() {
             const cont = document.getElementById('cmsTeam'); cont.innerHTML = '';
             (db.team || []).forEach((cat, i) => {
                 let html = `<div class="glass-card" style="margin-bottom:10px; border-left:4px solid #3b82f6;"><input type="text" class="neo-input" value="${cat.category || ''}" placeholder="Kategori" oninput="db.team[${i}].category=this.value" style="font-weight:bold; color:#3b82f6;"><button class="action-btn delete" onclick="db.team.splice(${i},1); renderTeam();" style="margin-bottom:15px;">Hapus Kategori</button><div class="grid-3">`;
-                (cat.members || []).forEach((m, j) => { html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px;"><img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block;"><input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="margin-bottom:10px;"><input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px;"><input type="text" class="neo-input" placeholder="Link Instagram" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px;"><button class="action-btn delete" style="width:100%;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X</button></div>`; });
+                (cat.members || []).forEach((m, j) => { html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px;"><img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block;" alt="Tim"><input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="margin-bottom:10px;"><input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px;"><input type="text" class="neo-input" placeholder="Link Instagram" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px;"><button class="action-btn delete" style="width:100%;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X</button></div>`; });
                 html += `</div><button class="action-btn view" style="margin-top:15px;" onclick="if(!db.team[${i}].members) db.team[${i}].members=[]; db.team[${i}].members.push({nama:'', foto:'/img/bemfkgumi.png', ig:''}); renderTeam();">+ Tambah Member</button></div>`;
                 cont.innerHTML += html;
             });
