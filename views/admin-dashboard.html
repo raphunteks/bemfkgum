@@ -174,8 +174,8 @@
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
-                        <h2 style="color: var(--text-light);">Manajemen Program Kerja Departemen</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Konten untuk Card Departemen dan Halaman Deskripsi</p>
+                        <h2 style="color: var(--text-light);">DESKRIPSI PROGRAM KERJA</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Data Card Departemen</p>
                     </div>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Departemen</button>
                 </div>
@@ -532,12 +532,12 @@
                     <button class="action-btn delete" onclick="if(confirm('Hapus Departemen ini dari list proker?')) { db.proker.splice(${i},1); renderProker(); }" style="position:absolute; top:20px; right:20px;">Hapus Dept</button>
                     
                     <h3 style="color:var(--text-light); margin-bottom:15px; width:80%;">
-                        <input type="text" class="neo-input" style="font-size:1.2rem; font-weight:bold; color:var(--accent-neon); border:none; background:transparent; padding:0; box-shadow:none;" value="${p.dept || ''}" placeholder="Nama Departemen" oninput="db.proker[${i}].dept=this.value">
+                        <input type="text" class="neo-input" style="font-size:1.2rem; font-weight:bold; color:var(--accent-neon); border:none; background:transparent; padding:0; box-shadow:none; text-transform:uppercase;" value="${p.dept || ''}" placeholder="NAMA DEPARTEMEN" oninput="db.proker[${i}].dept=this.value">
                     </h3>
                     
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
                         <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">ID Slug Departemen (URL)</label>
-                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${p.id || ''}" placeholder="contoh: dept-character-of-building" oninput="db.proker[${i}].id=this.value">
+                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${p.id || ''}" placeholder="contoh: pubmed" oninput="db.proker[${i}].id=this.value">
                     </div>
 
                     <div class="grid-2" style="align-items:start; margin-bottom:20px;">
@@ -594,17 +594,11 @@
 
         function tambahProkerDept() { 
             db.proker.push({
-                id: "dept-" + Date.now(), dept: "Departemen Baru", bgImage: "/img/bemfkgumi.png", 
+                id: "dept-" + Date.now(), dept: "DEPT. BARU", bgImage: "/img/bemfkgumi.png", 
                 shortDesc: "", lokasi: "", targetPelaksanaan: "", koordinator: "", penanggungJawab: "",
                 fungsi: [], listProker: []
             }); 
             renderProker(); 
-        }
-
-        function tambahItemProker(i) {
-            if(!db.proker[i].listProker) db.proker[i].listProker = [];
-            db.proker[i].listProker.push({ nama: "Nama Program Kerja Baru", detail: [] });
-            renderProker();
         }
 
         // --- RENDER KALENDER / AGENDA CMS ---
