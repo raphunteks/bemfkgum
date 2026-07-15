@@ -6,9 +6,7 @@
     <title>Beranda | Official Website BEM KBMFKG UMI</title>
     
     <!-- ================= SEO GOLD STANDARD GSC ================= -->
-    <!-- VERIFIKASI KEPEMILIKAN GOOGLE SEARCH CONSOLE -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
-    
     <meta name="description" content="Website resmi Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia (BEM KBMFKG UMI). Wadah pergerakan, kolaborasi, dan penyaluran aspirasi mahasiswa.">
     <meta name="keywords" content="BEM FKG UMI, BEM KBMFKG UMI, Fakultas Kedokteran Gigi UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia, Makassar, Kabinet Ananta Anardhaya">
     <meta name="author" content="BEM KBMFKG UMI">
@@ -40,7 +38,7 @@
     <meta property="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (WebSite, Organization, Breadcrumb) -->
+    <!-- ADVANCED JSON-LD Schema.org -->
     <script type="application/ld+json">
     [
       {
@@ -81,8 +79,7 @@
       }
     ]
     </script>
-    <!-- ================= END SEO ================= -->
-
+    
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
 </head>
@@ -135,7 +132,7 @@
                     </div>
                 </div>
                 
-                <!-- BOX KANAN (TEKS) - GLASSMORPHISM UI UPGRADE -->
+                <!-- BOX KANAN (TEKS) -->
                 <div class="sambutan-text-box">
                     <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.2; margin-bottom: 30px; color: var(--text-light);">
                         "Bergerak Bersama,<br><span style="color: var(--accent-neon);">Merajut Asa"</span>
@@ -206,7 +203,7 @@
             </div>
         </section>
 
-        <!-- NEW SUPER UI: FILOSOFI LOGO & WARNA DI INDEX.HTML -->
+        <!-- UPGRADE: FILOSOFI LOGO & WARNA DI INDEX.HTML -->
         <section id="filosofi" class="container" style="padding: 100px 20px; border-top: 1px solid var(--border-light); margin-top: 50px;">
             
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
@@ -219,15 +216,18 @@
                 <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
             </div>
 
-            <!-- Carousel Cover Flow UI Logo -->
+            <!-- Carousel Cover Flow UI Logo (PERSIS SEPERTI GAMBAR) -->
             <div class="filosofi-slider-wrapper reveal">
-                <button class="slider-nav-btn prev" onclick="scrollSlider(-340)" aria-label="Geser slider logo ke kiri">
+                <button class="slider-nav-btn prev" onclick="scrollSlider(-350)" aria-label="Geser slider logo ke kiri">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
                 </button>
+                
+                <!-- Trek Slider ini dirender oleh JS di bawah -->
                 <div class="filosofi-slider-track" id="indexLogoSlider">
-                    <!-- Inject via JS -->
+                    <!-- Data Inject -->
                 </div>
-                <button class="slider-nav-btn next" onclick="scrollSlider(340)" aria-label="Geser slider logo ke kanan">
+                
+                <button class="slider-nav-btn next" onclick="scrollSlider(350)" aria-label="Geser slider logo ke kanan">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
                 </button>
             </div>
@@ -244,7 +244,6 @@
                 </div>
 
                 <div class="warna-detail-box" id="indexWarnaDetail" role="tabpanel" aria-live="polite">
-                    <!-- Detail Warna Aktif -->
                     <div class="warna-detail-swatch" style="background: transparent;"></div>
                     <div class="warna-detail-text">
                         <h3 style="color: var(--text-muted);">Memuat palet warna...</h3>
@@ -276,13 +275,16 @@
     <script src="/js/protect-devtools.js"></script>
 
     <script>
-        // Data Fallback Filosofi untuk Index
+        // Data Fallback Filosofi Lengkap
         const FALLBACK_FILOSOFI = {
             logo: [
                 { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
-                { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri." },
-                { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar." },
-                { elemen: "Molar", arti: "Gigi yang paling sering digunakan.", makna: "Kuat menghadapi masalah-masalah." }
+                { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang." },
+                { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu berganti kulit, layaknya kesembuhan dari penyakit. Ular bisa bersifat racun atau penawar." },
+                { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah." },
+                { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Diharapkan seluruh Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun." },
+                { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Diharapkan dari Mahasiswa FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." },
+                { elemen: "Angka 2014", arti: "Tahun Berdirinya KBMFKG UMI.", makna: "Mengingat titik awal pergerakan mahasiswa FKG UMI." }
             ],
             warna: [
                 { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
@@ -300,10 +302,10 @@
             if(el.includes('molar')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
             if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
             if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M1 21h22L12 2 1 21z"/></svg>`;
-            return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
+            return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`;
         }
 
-        // Animasi Scroll
+        // Animasi Scroll Reveal
         document.addEventListener('DOMContentLoaded', () => {
             const reveals = document.querySelectorAll('.reveal');
             const revealOnScroll = new IntersectionObserver((entries, observer) => {
@@ -312,11 +314,9 @@
             reveals.forEach(reveal => revealOnScroll.observe(reveal));
             setTimeout(() => { document.querySelector('.hero-section .reveal').classList.add('active'); }, 100);
             
-            // Ambil Data DB untuk Beranda
             fetchDataBeranda();
         });
 
-        // Logika Tab Misi
         let globalMisiData = [];
         function openMisiTab(index, btnElement) {
             document.querySelectorAll('.misi-tab-btn').forEach(btn => {
@@ -341,23 +341,28 @@
             }, 300);
         }
 
-        // Logika Slider Logo Filosofi (Cover Flow Effect)
         function scrollSlider(amount) {
             const track = document.getElementById('indexLogoSlider');
-            track.scrollBy({ left: amount, behavior: 'smooth' });
+            if(track) track.scrollBy({ left: amount, behavior: 'smooth' });
         }
 
         function initSliderLogic() {
             const track = document.getElementById('indexLogoSlider');
-            const cards = document.querySelectorAll('.filosofi-slide-card');
+            if(!track) return;
             
+            const cards = track.querySelectorAll('.filosofi-slide-card');
+            if(cards.length === 0) return;
+
+            // Trigger the scroll logic manually once to center the first item initially
+            setTimeout(() => track.dispatchEvent(new Event('scroll')), 100);
+
             track.addEventListener('scroll', () => {
                 let centerPoint = track.scrollLeft + (track.clientWidth / 2);
                 let activeIndex = 0;
                 let minDistance = Infinity;
 
                 cards.forEach((card, index) => {
-                    // Cari jarak tengah kartu ke tengah layar
+                    // Cari jarak titik tengah kartu terhadap titik tengah viewport scroll
                     let cardCenter = card.offsetLeft + (card.clientWidth / 2) - track.offsetLeft;
                     let distance = Math.abs(centerPoint - cardCenter);
                     if(distance < minDistance) {
@@ -366,13 +371,12 @@
                     }
                 });
 
-                // Terapkan class active ke kartu yang paling tengah
+                // Terapkan class active ke kartu yang posisinya paling tengah
                 cards.forEach(c => c.classList.remove('active'));
                 if(cards[activeIndex]) cards[activeIndex].classList.add('active');
             });
         }
 
-        // Logika Pilih Warna Interaktif (Pills System)
         let globalWarnaData = [];
         function selectWarna(index, btnElement) {
             document.querySelectorAll('.warna-pill').forEach(b => {
@@ -427,7 +431,6 @@
                         sidebar.innerHTML = '';
                         
                         globalMisiData.forEach((misi, idx) => {
-                            // FIX AGENTIC ACCESSIBILITY
                             sidebar.innerHTML += `
                                 <button class="misi-tab-btn ${idx === 0 ? 'active' : ''}" onclick="openMisiTab(${idx}, this)" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
                                     Pilar Misi Ke-${idx + 1} <span aria-hidden="true">&rarr;</span>
@@ -445,46 +448,53 @@
                 console.log("Menggunakan data statis untuk Beranda."); 
             }
 
-            // Render Filosofi Logo Slider (Cover Flow)
+            // MENGISI KONTEN CAROUSEL LOGO SECARA DINAMIS
             const track = document.getElementById('indexLogoSlider');
-            track.innerHTML = '';
-            dataFilosofi.logo.forEach((item, idx) => {
-                // Beri Spacer di awal agar kartu pertama bisa berada di tengah layar
-                track.innerHTML += `
-                    <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
-                        <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
-                        <h3>${item.elemen}</h3>
-                        <p class="filo-arti"><strong>Arti:</strong> ${item.arti}</p>
-                        <p class="filo-makna"><strong>Makna:</strong> ${item.makna}</p>
-                    </div>
-                `;
-            });
-            // Spacer di akhir agar kartu terakhir bisa ke tengah
-            track.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
+            if(track) {
+                track.innerHTML = '';
+                
+                // PENTING: Tambahkan Spacer kosong di awal agar kartu pertama bisa ditarik persis ke tengah layar
+                track.innerHTML += `<div style="flex: 0 0 calc(50vw - 160px);" aria-hidden="true"></div>`;
 
-            // Inisiasi Logika Deteksi Tengah (Intersection)
-            initSliderLogic();
+                dataFilosofi.logo.forEach((item, idx) => {
+                    track.innerHTML += `
+                        <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
+                            <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
+                            <h3>${item.elemen}</h3>
+                            <p class="filo-arti"><strong>Arti:</strong> ${item.arti}</p>
+                            <p class="filo-makna"><strong>Makna:</strong> ${item.makna}</p>
+                        </div>
+                    `;
+                });
+                
+                // Spacer kosong di akhir agar kartu terakhir bisa ditarik persis ke tengah layar
+                track.innerHTML += `<div style="flex: 0 0 calc(50vw - 160px);" aria-hidden="true"></div>`;
+
+                // Aktifkan logika Intersection / Centering Scroll
+                initSliderLogic();
+            }
             
-            // Render Filosofi Warna Pills
+            // MENGISI KONTEN WARNA PILLS
             globalWarnaData = dataFilosofi.warna;
             const pillsCont = document.getElementById('indexWarnaPills');
-            pillsCont.innerHTML = '';
-            globalWarnaData.forEach((item, idx) => {
-                // FIX AGENTIC ACCESSIBILITY: Button instead of div for interactive tab
-                pillsCont.innerHTML += `
-                    <button class="warna-pill" onclick="selectWarna(${idx}, this)" role="tab" aria-selected="false">
-                        <div class="warna-pill-dot" style="background-color: ${item.hex}; border: 1px solid rgba(255,255,255,0.2);"></div>
-                        ${item.warna}
-                    </button>
-                `;
-            });
-            
-            // Auto click warna pertama setelah selesai di-render
-            setTimeout(() => {
-                if(document.querySelector('.warna-pill')) {
-                    document.querySelector('.warna-pill').click();
-                }
-            }, 100);
+            if(pillsCont) {
+                pillsCont.innerHTML = '';
+                globalWarnaData.forEach((item, idx) => {
+                    pillsCont.innerHTML += `
+                        <button class="warna-pill" onclick="selectWarna(${idx}, this)" role="tab" aria-selected="false">
+                            <div class="warna-pill-dot" style="background-color: ${item.hex}; border: 1px solid rgba(255,255,255,0.2);"></div>
+                            ${item.warna}
+                        </button>
+                    `;
+                });
+                
+                // Auto-klik warna pertama saat dimuat
+                setTimeout(() => {
+                    if(document.querySelector('.warna-pill')) {
+                        document.querySelector('.warna-pill').click();
+                    }
+                }, 100);
+            }
         }
     </script>
 </body>
