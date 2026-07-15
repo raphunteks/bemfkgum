@@ -213,85 +213,128 @@
     <%- include('partials/footer.html') %>
 
     <script>
+        // Data Fallback (Mencegah Error di Preview Canvas / Saat API Mati)
+        const FALLBACK_PROKER_DATA = {
+            id: "pubmed",
+            dept: "DEPT. INFOCOM",
+            bgImage: "/img/bemfkgumi.png",
+            shortDesc: "PubMed (PublikasiMedia Elektronik & Media Cetak) BukuKBMFKG-UMI",
+            lokasi: "Kondisional",
+            targetPelaksanaan: "Sepanjang Periode",
+            koordinator: "Silviyananda",
+            penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto",
+            deskripsiLengkap: [
+                "Menginformasikan setiap agenda kegiatan yang akan dilaksanakan oleh lembaga KBMFKG-UMI. Mendokumentasi serta menginformasikan kegiatan internal maupun eksternal yang sedang atau telah berlangsung.",
+                "Menyosialisasikan informasi tentang kesehatan khususnya kesehatan gigi dan mulut melalui media cetak dan media sosial."
+            ]
+        };
+
+        const FALLBACK_ORG_DEPARTEMEN = [
+            {
+                nama: "DEPT. INFOCOM",
+                anggota: [
+                    {jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png"},
+                    {jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png"},
+                    {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"},
+                    {jabatan: "Anggota", nama: "Zahwa Alzahra", foto: "/img/bemfkgumi.png"},
+                    {jabatan: "Anggota", nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png"},
+                    {jabatan: "Anggota", nama: "Novita Widyantari", foto: "/img/bemfkgumi.png"}
+                ]
+            }
+        ];
+
         document.addEventListener('DOMContentLoaded', async () => {
-            // Ambil SLUG dari URL Path (Cth: /proker-deskripsi/pubmed)
+            const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
+            let apiUrl = isPreview ? 'https://bemkbmfkgumi.com/api/content' : '/api/content';
+            
+            // Ambil SLUG dari URL Path (Cth: /proker-deskripsi/pubmed) atau query parameter di preview
+            const urlParams = new URLSearchParams(window.location.search);
             const pathParts = window.location.pathname.split('/');
-            const slug = pathParts[pathParts.length - 1];
+            let slug = pathParts[pathParts.length - 1];
+            
+            if(!slug || slug === 'proker-deskripsi' || isPreview) {
+                slug = urlParams.get('id') || 'pubmed'; // Fallback aman untuk preview
+            }
+
+            let deptData = null;
+            let allOrgDept = [];
             
             try {
-                let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
-                }
-                
-                // Murni mengambil data dari Database Server
+                // Mencoba mengambil data dari Database Server
                 const req = await fetch(apiUrl);
                 if(!req.ok) throw new Error("Gagal mengambil data dari Database API");
                 
                 const res = await req.json();
                 const allProker = res.proker || [];
-                const allOrg = res.org || {};
+                allOrgDept = (res.org || {}).departemen || [];
                 
                 // Pencarian data spesifik berdasarkan SLUG
-                const deptData = allProker.find(p => p.id === slug);
+                deptData = allProker.find(p => p.id === slug);
                 
-                if(!deptData) {
+                // Jika data tidak ditemukan dan sedang di preview, paksakan fallback
+                if(!deptData && isPreview) {
+                    throw new Error("Preview Mode: Fallback diaktifkan.");
+                } else if(!deptData) {
                     showErrorState("404 - Departemen Tidak Ditemukan", "Data departemen atau program kerja tidak tersedia di database. Kemungkinan tautan salah atau data telah dihapus.");
                     return;
                 }
 
-                // =========================================================
-                // SUPER UPGRADE SEO DYNAMIC INJECTION (OPEN GRAPH & JSON-LD)
-                // =========================================================
-                const pageTitle = `${deptData.dept} - Department Profile | BEM KBMFKG UMI`;
-                document.title = pageTitle;
-                
-                const descText = deptData.shortDesc ? (deptData.shortDesc.substring(0, 155) + '...') : `Informasi detail mengenai program kerja dan struktur kepengurusan dari ${deptData.dept} BEM KBMFKG UMI.`;
-                const pageUrl = `https://bemkbmfkgumi.com/proker-deskripsi/${slug}`;
-                const imgUrl = deptData.bgImage ? (deptData.bgImage.startsWith('http') ? deptData.bgImage : `https://bemkbmfkgumi.com${deptData.bgImage}`) : 'https://bemkbmfkgumi.com/img/bemfkgumi.png';
-
-                document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
-                document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
-                
-                document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
-                document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
-                document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
-                document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
-                
-                document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
-                document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
-                document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
-                document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
-
-                const schemaScript = document.getElementById('structuredData');
-                if (schemaScript) {
-                    const schema = JSON.parse(schemaScript.innerHTML);
-                    
-                    // Update Dynamic AboutPage Schema
-                    const aboutSchema = schema["@graph"].find(item => item["@type"] === "AboutPage");
-                    if (aboutSchema) {
-                        aboutSchema.name = `${deptData.dept} - Department Profile`;
-                        aboutSchema.description = descText;
-                        aboutSchema.url = pageUrl;
-                    }
-
-                    // Update Dynamic Breadcrumb
-                    const breadcrumbSchema = schema["@graph"].find(item => item["@type"] === "BreadcrumbList");
-                    if (breadcrumbSchema && breadcrumbSchema.itemListElement[2]) {
-                        breadcrumbSchema.itemListElement[2].name = deptData.dept;
-                        breadcrumbSchema.itemListElement[2].item = pageUrl;
-                    }
-
-                    schemaScript.innerHTML = JSON.stringify(schema);
-                }
-                // ==================== END SEO DYNAMIC ====================
-                
-                renderDetail(deptData, allOrg.departemen);
-
             } catch (err) {
-                console.error("[FETCH ERROR]:", err);
-                showErrorState("Koneksi Database Gagal", "Terjadi kesalahan saat menghubungi server. Pastikan koneksi internet stabil atau coba beberapa saat lagi.");
+                console.warn("[FETCH/PREVIEW MODE]: Menggunakan data lokal (Fallback).", err.message);
+                // Graceful Degradation: Pastikan aplikasi tidak rusak / error merah di Console
+                deptData = FALLBACK_PROKER_DATA;
+                allOrgDept = FALLBACK_ORG_DEPARTEMEN;
+                slug = FALLBACK_PROKER_DATA.id;
             }
+
+            // =========================================================
+            // SUPER UPGRADE SEO DYNAMIC INJECTION (OPEN GRAPH & JSON-LD)
+            // =========================================================
+            const pageTitle = `${deptData.dept} - Department Profile | BEM KBMFKG UMI`;
+            document.title = pageTitle;
+            
+            const descText = deptData.shortDesc ? (deptData.shortDesc.substring(0, 155) + '...') : `Informasi detail mengenai program kerja dan struktur kepengurusan dari ${deptData.dept} BEM KBMFKG UMI.`;
+            const pageUrl = `https://bemkbmfkgumi.com/proker-deskripsi/${slug}`;
+            const imgUrl = deptData.bgImage ? (deptData.bgImage.startsWith('http') ? deptData.bgImage : `https://bemkbmfkgumi.com${deptData.bgImage}`) : 'https://bemkbmfkgumi.com/img/bemfkgumi.png';
+
+            document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
+            document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
+            
+            document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
+            document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
+            document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
+            document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
+            
+            document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
+            document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
+            document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
+            document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
+
+            const schemaScript = document.getElementById('structuredData');
+            if (schemaScript) {
+                const schema = JSON.parse(schemaScript.innerHTML);
+                
+                // Update Dynamic AboutPage Schema
+                const aboutSchema = schema["@graph"].find(item => item["@type"] === "AboutPage");
+                if (aboutSchema) {
+                    aboutSchema.name = `${deptData.dept} - Department Profile`;
+                    aboutSchema.description = descText;
+                    aboutSchema.url = pageUrl;
+                }
+
+                // Update Dynamic Breadcrumb
+                const breadcrumbSchema = schema["@graph"].find(item => item["@type"] === "BreadcrumbList");
+                if (breadcrumbSchema && breadcrumbSchema.itemListElement[2]) {
+                    breadcrumbSchema.itemListElement[2].name = deptData.dept;
+                    breadcrumbSchema.itemListElement[2].item = pageUrl;
+                }
+
+                schemaScript.innerHTML = JSON.stringify(schema);
+            }
+            // ==================== END SEO DYNAMIC ====================
+            
+            // Render UI Terakhir
+            renderDetail(deptData, allOrgDept);
         });
 
         // ================= FUNGSI RENDER ERROR STATE =================
