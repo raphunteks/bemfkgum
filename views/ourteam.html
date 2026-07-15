@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developer Team | BEM KBMFKG UMI</title>
+    <title>Developer Team & IT Division | BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT 100% UPGRADE ================= -->
-    <meta name="description" content="Kenali sosok dibalik layar pengembangan Sistem Informasi dan Website Resmi BEM KBMFKG UMI. Tim developer dari Fakultas Kedokteran Gigi Universitas Muslim Indonesia.">
-    <meta name="keywords" content="Developer BEM FKG UMI, Tim IT BEM KBMFKG UMI, Programmer FKG UMI, Web Developer Makassar, drg. M. Aksa Arsyad, Pengurus BEM UMI">
+    <!-- ================= SEO EXPERT 100% UPGRADE (DYNAMIC PERSON SCHEMA) ================= -->
+    <meta name="description" content="Meet our Developer Team & IT Division. Kenali sosok dibalik layar pengembangan Sistem Informasi dan Website Resmi BEM KBMFKG UMI. Tim developer profesional dari Fakultas Kedokteran Gigi Universitas Muslim Indonesia.">
+    <meta name="keywords" content="Developer Team BEM FKG UMI, IT Division, Tim IT BEM KBMFKG UMI, Programmer FKG UMI, Web Developer Makassar, drg. M. Aksa Arsyad, Pengurus BEM UMI, Mahasiswa FKG UMI">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://bemkbmfkgumi.com/ourteam">
@@ -15,34 +15,61 @@
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="profile">
     <meta property="og:url" content="https://bemkbmfkgumi.com/ourteam">
-    <meta property="og:title" content="Developer Team | BEM KBMFKG UMI">
-    <meta property="og:description" content="Sosok dibalik layar pengembangan Sistem Informasi BEM KBMFKG UMI. Berkenalan dengan tim hebat dari Fakultas Kedokteran Gigi UMI.">
+    <meta property="og:title" content="Developer Team & IT Division | BEM KBMFKG UMI">
+    <meta property="og:description" content="Meet our Developer Team. Sosok dibalik layar pengembangan Sistem Informasi BEM KBMFKG UMI. Berkenalan dengan tim hebat dari Fakultas Kedokteran Gigi UMI.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:site_name" content="BEM KBMFKG UMI">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://bemkbmfkgumi.com/ourteam">
-    <meta property="twitter:title" content="Developer Team | BEM KBMFKG UMI">
-    <meta property="twitter:description" content="Sosok dibalik layar pengembangan Sistem Informasi BEM KBMFKG UMI. Berkenalan dengan tim hebat dari Fakultas Kedokteran Gigi UMI.">
+    <meta property="twitter:title" content="Developer Team & IT Division | BEM KBMFKG UMI">
+    <meta property="twitter:description" content="Meet our Developer Team. Sosok dibalik layar pengembangan Sistem Informasi BEM KBMFKG UMI. Berkenalan dengan tim hebat dari Fakultas Kedokteran Gigi UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- JSON-LD Schema.org (AboutPage & Organization) -->
-    <script type="application/ld+json">
+    <!-- ADVANCED JSON-LD Schema.org (@graph Enterprise Level for AboutPage & Persons) -->
+    <script type="application/ld+json" id="structuredData">
     {
       "@context": "https://schema.org",
-      "@type": "AboutPage",
-      "name": "Developer Team BEM KBMFKG UMI",
-      "url": "https://bemkbmfkgumi.com/ourteam",
-      "description": "Tim pengembang website dan sistem informasi BEM KBMFKG UMI.",
-      "publisher": {
-        "@type": "Organization",
-        "name": "BEM KBMFKG UMI",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+      "@graph": [
+        {
+          "@type": "AboutPage",
+          "@id": "https://bemkbmfkgumi.com/ourteam/#webpage",
+          "url": "https://bemkbmfkgumi.com/ourteam",
+          "name": "Developer Team & IT Division | BEM KBMFKG UMI",
+          "description": "Tim pengembang website (Web Developer) dan sistem informasi BEM KBMFKG UMI.",
+          "inLanguage": "id-ID",
+          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://bemkbmfkgumi.com/#organization",
+          "name": "BEM KBMFKG UMI",
+          "url": "https://bemkbmfkgumi.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/ourteam/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Developer Team",
+              "item": "https://bemkbmfkgumi.com/ourteam"
+            }
+          ]
         }
-      }
+      ]
     }
     </script>
     <!-- ================= END SEO ================= -->
@@ -89,23 +116,61 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            let finalTeamData = FALLBACK_TEAM;
+
             try {
                 let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemfkgumi.vercel.app/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
                 
                 const req = await fetch(apiUrl);
                 if (!req.ok) throw new Error("API Gagal");
                 const res = await req.json();
                 
                 if (res.team && res.team.length > 0) {
-                    renderTeamUI(res.team);
-                } else {
-                    renderTeamUI(FALLBACK_TEAM);
+                    finalTeamData = res.team;
                 }
             } catch (err) { 
-                console.warn("Memuat mode statis."); 
-                renderTeamUI(FALLBACK_TEAM);
+                console.warn("Memuat mode statis/fallback."); 
             }
+            
+            // 1. Render antarmuka UI
+            renderTeamUI(finalTeamData);
+
+            // 2. ================= SUPER BIG UPGRADE: DYNAMIC PERSON SCHEMA SEO INJECTION =================
+            // Sistem otomatis mendaftarkan masing-masing profil developer ke dalam algoritma Google
+            const schemaScript = document.getElementById('structuredData');
+            if (schemaScript && finalTeamData.length > 0) {
+                try {
+                    const schema = JSON.parse(schemaScript.innerHTML);
+                    let persons = [];
+                    
+                    finalTeamData.forEach(cat => {
+                        if (cat.members) {
+                            cat.members.forEach(m => {
+                                // Pemastian Absolute URL untuk Gambar
+                                const imgUrl = m.foto ? (m.foto.startsWith('http') ? m.foto : `https://bemkbmfkgumi.com${m.foto}`) : 'https://bemkbmfkgumi.com/img/bemfkgumi.png';
+                                const igLink = m.ig && m.ig !== '#' ? m.ig : 'https://bemkbmfkgumi.com/ourteam';
+                                
+                                persons.push({
+                                    "@type": "Person",
+                                    "name": m.nama,
+                                    "jobTitle": `${cat.category} Specialist`,
+                                    "worksFor": { "@id": "https://bemkbmfkgumi.com/#organization" },
+                                    "image": imgUrl,
+                                    "sameAs": [igLink]
+                                });
+                            });
+                        }
+                    });
+
+                    // Injeksi masif semua profil Person ke dalam @graph utama
+                    schema["@graph"].push(...persons);
+                    schemaScript.innerHTML = JSON.stringify(schema);
+                } catch(e) {
+                    console.error("Gagal menginjeksi SEO Person Schema:", e);
+                }
+            }
+            // ==============================================================================================
         });
 
         function renderTeamUI(teamData) {
