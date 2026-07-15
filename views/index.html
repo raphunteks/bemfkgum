@@ -40,8 +40,8 @@
     <meta property="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (WebSite, Organization, Sitelinks) -->
-    <!-- FITUR INI YANG MEMAKSA GOOGLE MEMUNCULKAN SITE NAME & SITELINKS (MENU BAWAH) -->
+    <!-- ADVANCED JSON-LD Schema.org (@graph Enterprise Level) -->
+    <!-- FITUR INI YANG MEMAKSA GOOGLE MEMUNCULKAN SITE NAME, BREADCRUMB & SITELINKS BOX -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -53,7 +53,15 @@
           "name": "BEM KBMFKG UMI",
           "alternateName": ["BEM FKG UMI", "Badan Eksekutif Mahasiswa FKG UMI"],
           "description": "Website resmi Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.",
-          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
+          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" },
+          "potentialAction": [{
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://bemkbmfkgumi.com/informasi?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }]
         },
         {
           "@type": "Organization",
@@ -79,6 +87,18 @@
           "url": "https://bemkbmfkgumi.com/",
           "name": "Beranda | Official Website BEM KBMFKG UMI",
           "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda BEM KBMFKG UMI",
+              "item": "https://bemkbmfkgumi.com/"
+            }
+          ]
         },
         {
           "@type": "ItemList",
