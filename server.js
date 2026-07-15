@@ -76,7 +76,7 @@ const defaultOrg = {
     ]
 };
 
-// ================= BIG UPGRADE: DUMMY DEPT INFOCOM =================
+// ================= BIG UPGRADE: DUMMY DEPT INFOCOM (+ EVENT SEO FIELDS) =================
 const defaultProker = [
     {
         id: "pubmed",
@@ -85,6 +85,10 @@ const defaultProker = [
         shortDesc: "PubMed (PublikasiMedia Elektronik & Media Cetak) BukuKBMFKG-UMI",
         lokasi: "RK 01",
         targetPelaksanaan: "Triwulan I",
+        startDate: "2026-01-01",
+        endDate: "2026-12-31",
+        performer: "Pengurus Dept. Infocom",
+        offers: "Gratis",
         koordinator: "Silvyananda",
         penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto, Zahwa Alzahra Djohan, Zaneta Zahra Zulaikha, Novita Widyantari",
         deskripsiLengkap: [
@@ -153,7 +157,6 @@ const defaultKontak = {
     mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
 
-// ================= BIG UPGRADE: STRUKTUR DATA KALENDER DENGAN SLUG =================
 const defaultKalender = [
     {
         id: "umi-amal-senyuman-uas-vol-iv", // Disinkronkan dengan slug
@@ -200,14 +203,12 @@ app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
 
-// ================= BIG UPGRADE: RUTE DYNAMIC SEO URL PROKER DESKRIPSI (DEPARTEMEN) & KEGIATAN =================
-// Rute untuk menangani Klik UI Card Departemen
+// Rute Dinamis
 app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
 app.get('/proker-deskripsi/:slug', (req, res) => {
     res.render('proker-deskripsi'); 
 });
 
-// Rute untuk detail spesifik suatu kegiatan (dari Kalender/Timeline)
 app.get('/proker-detail', (req, res) => {
     if (req.query.id) {
         return res.redirect(301, `/proker-detail/${req.query.id}`);
