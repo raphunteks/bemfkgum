@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tentang Kami (About Us) | Profil, Visi Misi & Sejarah BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT 100% UPGRADE ================= -->
+    <!-- ================= SEO EXPERT 100% UPGRADE (DYNAMIC READY) ================= -->
     <meta name="description" content="About Us - Kenali lebih dekat profil organisasi, visi misi, struktur kepengurusan kabinet (Organization Structure), makna filosofi logo, serta sejarah (History) pergerakan BEM KBMFKG UMI secara komprehensif.">
     <meta name="keywords" content="Tentang BEM FKG UMI, About Us BEM KBMFKG UMI, Sejarah BEM KBMFKG UMI, Visi Misi BEM FKG UMI, Struktur Organisasi BEM FKG, Organization Profile, History of BEM, Kabinet Ananta Anardhaya, Fakultas Kedokteran Gigi UMI, Universitas Muslim Indonesia Makassar">
     <meta name="author" content="BEM KBMFKG UMI">
@@ -39,7 +39,7 @@
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
     <!-- ADVANCED JSON-LD Schema.org (AboutPage, Organization, Breadcrumb) -->
-    <script type="application/ld+json">
+    <script type="application/ld+json" id="structuredData">
     {
       "@context": "https://schema.org",
       "@graph": [
@@ -124,7 +124,6 @@
         </div>
 
         <!-- ================= 1. VISI & MISI ================= -->
-        <!-- VISI -->
         <section id="visimisi" class="reveal" style="margin-bottom: 50px;">
             <div class="glass-card" style="text-align: center; padding: 50px 30px;">
                 <h2 style="color: var(--accent-neon); font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">Visi Kami</h2>
@@ -177,16 +176,13 @@
                 <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo BEM KBMFKG UMI memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
             </div>
             
-            <!-- SUPER UPGRADE: Ganti Grid Biasa dengan Slider/Carousel Cover Flow Effect -->
             <div class="filosofi-slider-wrapper reveal">
-                <!-- FIX AGENTIC ACCESSIBILITY: Atribut aria-label Wajib Disini! -->
                 <button class="slider-nav-btn prev" onclick="scrollSlider(-340)" aria-label="Geser logo ke sebelumnya">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
                 </button>
                 <div class="filosofi-slider-track" id="containerFilosofiLogo">
                     <!-- JS Inject Logo Items -->
                 </div>
-                <!-- FIX AGENTIC ACCESSIBILITY: Atribut aria-label Wajib Disini! -->
                 <button class="slider-nav-btn next" onclick="scrollSlider(340)" aria-label="Geser logo ke selanjutnya">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
                 </button>
@@ -211,13 +207,11 @@
             </div>
 
             <div class="history-layout">
-                <!-- Bagian A: Latar Belakang -->
                 <div class="history-row">
                     <div class="history-sidebar">
                         <h3>Latar Belakang Terbentuknya</h3>
                     </div>
                     <div class="history-content accordion-group">
-                        <!-- Tambah role dan tabindex untuk aksesibilitas accordion -->
                         <div class="accordion-item">
                             <div class="accordion-header" onclick="toggleAccordion(this)" role="button" tabindex="0" aria-expanded="false">
                                 <h4>1. Kondisi Program Studi</h4>
@@ -258,7 +252,6 @@
                     </div>
                 </div>
 
-                <!-- Bagian B: Sejarah & Perkembangan -->
                 <div class="history-row" style="margin-top: 40px;">
                     <div class="history-sidebar">
                         <h3>Sejarah & Perkembangan<br>KBMFKG UMI</h3>
@@ -356,7 +349,6 @@
             </div>
             
             <div class="timeline" id="containerSejarah">
-                <!-- JS Injeksi Timeline Sejarah -->
                 <div style="text-align:center; color: var(--text-muted);">Mensinkronisasi rekam jejak...</div>
             </div>
         </section>
@@ -365,10 +357,93 @@
     <%- include('partials/footer.html') %>
 
     <script>
+        // ================= BIG UPGRADE: DYNAMIC SEO SECTION OBSERVER =================
+        const sectionSEO = {
+            'visimisi': {
+                title: 'Visi & Misi (Vision & Mission) | BEM KBMFKG UMI',
+                desc: 'Kenali Visi dan Misi (Vision & Mission) yang menjadi arah gerak dan landasan perjuangan Kabinet Ananta Anardhaya BEM KBMFKG UMI.',
+                bcName: 'Visi & Misi'
+            },
+            'struktur': {
+                title: 'Struktur Kepengurusan (Organization Structure) | BEM KBMFKG UMI',
+                desc: 'Profil lengkap pimpinan inti dan struktur kepengurusan departemen (Organization Structure) BEM KBMFKG UMI periode ini.',
+                bcName: 'Struktur Kepengurusan'
+            },
+            'filosofi': {
+                title: 'Filosofi Logo & Warna (Logo Philosophy) | BEM KBMFKG UMI',
+                desc: 'Pelajari makna mendalam dari setiap elemen filosofi logo dan warna (Logo Philosophy) yang menjadi identitas BEM KBMFKG UMI.',
+                bcName: 'Filosofi Logo & Warna'
+            },
+            'sejarah-pembentukan': {
+                title: 'Sejarah Terbentuknya (History of Formation) | BEM KBMFKG UMI',
+                desc: 'Menelusuri jejak awal pergerakan, latar belakang, dan sejarah terbentuknya (History of Formation) Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi UMI.',
+                bcName: 'Sejarah Pembentukan'
+            },
+            'sejarah': {
+                title: 'Timeline Sejarah Kepengurusan (Leadership Timeline) | BEM KBMFKG UMI',
+                desc: 'Rekam jejak kepemimpinan dan timeline sejarah kepengurusan (Leadership Timeline) BEM KBMFKG UMI dari masa ke masa.',
+                bcName: 'Timeline Kepengurusan'
+            }
+        };
+
+        function updateSEO(sectionId) {
+            const seo = sectionSEO[sectionId];
+            if(!seo) return;
+
+            const pageUrl = `https://bemkbmfkgumi.com/tentang#${sectionId}`;
+
+            // Update Meta Tags HTML
+            document.title = seo.title;
+            document.querySelector('meta[name="description"]')?.setAttribute('content', seo.desc);
+            document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
+            
+            document.querySelector('meta[property="og:title"]')?.setAttribute('content', seo.title);
+            document.querySelector('meta[property="og:description"]')?.setAttribute('content', seo.desc);
+            document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
+            
+            document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', seo.title);
+            document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', seo.desc);
+            document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
+
+            // Update JSON-LD Schema.org (@graph format)
+            const schemaScript = document.getElementById('structuredData');
+            if(schemaScript) {
+                try {
+                    const schema = JSON.parse(schemaScript.innerHTML);
+                    const aboutPage = schema["@graph"].find(item => item["@type"] === "AboutPage");
+                    if(aboutPage) {
+                        aboutPage.name = seo.title;
+                        aboutPage.description = seo.desc;
+                        aboutPage.url = pageUrl;
+                    }
+
+                    const breadcrumb = schema["@graph"].find(item => item["@type"] === "BreadcrumbList");
+                    if(breadcrumb && breadcrumb.itemListElement[1]) {
+                        // Tambahkan spesifik seksi sebagai child dari "Tentang Kami" jika mau, atau ganti breadcrumb pos ke-3
+                        if(!breadcrumb.itemListElement[2]) {
+                            breadcrumb.itemListElement.push({
+                                "@type": "ListItem",
+                                "position": 3,
+                                "name": seo.bcName,
+                                "item": pageUrl
+                            });
+                        } else {
+                            breadcrumb.itemListElement[2].name = seo.bcName;
+                            breadcrumb.itemListElement[2].item = pageUrl;
+                        }
+                    }
+                    schemaScript.innerHTML = JSON.stringify(schema);
+                } catch(e) {
+                    console.error("Gagal update Schema JSON-LD:", e);
+                }
+            }
+        }
+
+        // ================= END DYNAMIC SEO =================
+
         const FALLBACK_ORG_DATA = { visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI...", misi: ["Menampung dan menyalurkan aspirasi...", "Mendorong prestasi..."], pimpinan: [], departemen: [] };
         const FALLBACK_SEJARAH = [{ tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" }];
         
-        // BIG UPGRADE: Data Default Filosofi
         const FALLBACK_FILOSOFI = {
             logo: [
                 { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
@@ -389,7 +464,6 @@
             ]
         };
 
-        // Fungsi Smart Generator SVG Icon berdasarkan nama Elemen
         function getSvgIcon(elemen) {
             const el = elemen.toLowerCase();
             if(el.includes('bintang')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
@@ -401,7 +475,6 @@
             return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
         }
 
-        // ================= FUNGSI SLIDER LOGIKA COVER FLOW =================
         function scrollSlider(amount) {
             const track = document.getElementById('containerFilosofiLogo');
             if (track) track.scrollBy({ left: amount, behavior: 'smooth' });
@@ -432,32 +505,27 @@
             });
         }
 
-        // ================= FUNGSI ACCORDION TOGGLE (SEJARAH) =================
         function toggleAccordion(element) {
             const item = element.parentElement;
             const group = item.closest('.accordion-group');
             const isActive = item.classList.contains('active');
             
-            // Tutup semua accordion lain di dalam grup yang sama
             group.querySelectorAll('.accordion-item').forEach(el => {
                 el.classList.remove('active');
                 el.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
             });
             
-            // Buka yang diklik
             if (!isActive) {
                 item.classList.add('active');
                 element.setAttribute('aria-expanded', 'true');
             }
         }
 
-        // Fungsi Render Filosofi
         function renderFilosofiUI(filData) {
             const logoCont = document.getElementById('containerFilosofiLogo');
             logoCont.innerHTML = '';
             if(filData.logo && filData.logo.length > 0) {
                 filData.logo.forEach((item, i) => {
-                    // SUPER UPGRADE: Ubah class ke filosofi-slide-card agar jadi Carousel
                     logoCont.innerHTML += `
                         <div class="filosofi-slide-card ${i === 0 ? 'active' : ''}">
                             <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
@@ -467,7 +535,6 @@
                         </div>
                     `;
                 });
-                // Spacer untuk memastikan kartu terakhir bisa discroll ke tengah
                 logoCont.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
             }
 
@@ -487,14 +554,12 @@
                 });
             }
 
-            // Inisialisasi logika geser setelah item di-render ke DOM
             setTimeout(() => {
                 initSliderLogic();
             }, 100);
         }
 
         function renderTentangUI(orgData) {
-            // Populate Arti Kabinet dari Database
             if(orgData.artiKabinet && orgData.artiKabinet.kata1) {
                 document.getElementById('uiKata1').innerText = orgData.artiKabinet.kata1;
                 document.getElementById('uiArti1').innerText = orgData.artiKabinet.arti1;
@@ -571,7 +636,6 @@
                             <div class="timeline-year">${item.tahun}</div>
                             <h3 class="timeline-title">${item.kabinet}</h3>
                             <div class="timeline-body">
-                                <!-- FIX CLS: Explicit dimensions untuk logo timeline -->
                                 <img src="${logo}" alt="${item.kabinet}" class="timeline-logo" width="75" height="75" loading="lazy">
                                 <div class="timeline-leaders">
                                     <p><span>Ketua</span>: <strong style="color: var(--text-light);">${item.ketua}</strong></p>
@@ -595,7 +659,7 @@
                 if (!req.ok) throw new Error("API Gagal");
                 const res = await req.json();
                 
-                // Eksekusi Render secara berurutan sesuai alur vertikal HTML
+                // Eksekusi Render
                 if (res.org) renderTentangUI(res.org); else throw new Error();
                 if (res.filosofi) renderFilosofiUI(res.filosofi); else throw new Error();
                 if (res.sejarah) renderSejarahUI(res.sejarah); else throw new Error();
@@ -607,11 +671,35 @@
                 renderSejarahUI(FALLBACK_SEJARAH);
             }
 
-            // Execute Hash Navigation untuk scrolling halus
+            // ================= SCROLL TO SEO OBSERVER =================
+            // Sistem deteksi scroll (Intersection Observer) untuk mengubah SEO dinamis
+            const sections = document.querySelectorAll('section[id]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        if (sectionSEO[id]) {
+                            // Update Hash URL tanpa efek loncat (scroll jump)
+                            history.replaceState(null, null, `#${id}`);
+                            // Trigger Update SEO GSC
+                            updateSEO(id);
+                        }
+                    }
+                });
+            }, { threshold: 0.3 }); // Aktif ketika 30% area section terlihat di layar
+
+            sections.forEach(section => observer.observe(section));
+            // ================= END SCROLL TO SEO OBSERVER =================
+
+            // Jika pengguna mengakses langsung via Link Hash (misal: bem.com/tentang#struktur)
             setTimeout(() => {
                 if (window.location.hash) {
-                    const target = document.querySelector(window.location.hash);
-                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const targetId = window.location.hash.substring(1);
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        updateSEO(targetId);
+                    }
                 }
             }, 500);
         });
