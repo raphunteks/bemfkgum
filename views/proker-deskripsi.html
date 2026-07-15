@@ -4,11 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deskripsi Program Kerja | BEM KBMFKG UMI</title>
+    <title>Department Profile | Deskripsi Program Kerja BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO GOLD STANDARD ================= -->
-    <meta name="description" content="Informasi detail mengenai deskripsi lengkap, penanggung jawab, dan koordinator Departemen di BEM KBMFKG UMI.">
+    <!-- ================= SEO EXPERT (DYNAMIC READY) ================= -->
+    <meta name="description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap program kerja, penanggung jawab, dan struktur kepengurusan (Department Structure) di BEM KBMFKG UMI.">
+    <meta name="keywords" content="Deskripsi Program Kerja, Department Profile, Work Programs, Struktur Departemen, Department Structure, BEM FKG UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia">
+    <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://bemkbmfkgumi.com/proker-deskripsi">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://bemkbmfkgumi.com/proker-deskripsi">
+    <meta property="og:title" content="Department Profile & Work Programs | BEM KBMFKG UMI">
+    <meta property="og:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
+    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bemkbmfkgumi.com/proker-deskripsi">
+    <meta property="twitter:title" content="Department Profile & Work Programs | BEM KBMFKG UMI">
+    <meta property="twitter:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
+    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+
+    <!-- ADVANCED JSON-LD Schema.org (@graph Format) -->
+    <script type="application/ld+json" id="structuredData">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "AboutPage",
+          "@id": "https://bemkbmfkgumi.com/proker-deskripsi/#webpage",
+          "name": "Department Profile & Work Programs | BEM KBMFKG UMI",
+          "description": "Informasi detail mengenai deskripsi program kerja dan struktur departemen (Department Structure).",
+          "url": "https://bemkbmfkgumi.com/proker-deskripsi",
+          "inLanguage": "id-ID",
+          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://bemkbmfkgumi.com/#organization",
+          "name": "BEM KBMFKG UMI",
+          "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+          "url": "https://bemkbmfkgumi.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/proker-deskripsi/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Program Kerja (Work Programs)",
+              "item": "https://bemkbmfkgumi.com/informasi#proker"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Deskripsi Departemen",
+              "item": "https://bemkbmfkgumi.com/proker-deskripsi"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+    <!-- ================= END SEO ================= -->
     
     <!-- OPTIMASI RENDER BLOCKING (LCP & FCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -167,6 +239,52 @@
                     showErrorState("404 - Departemen Tidak Ditemukan", "Data departemen atau program kerja tidak tersedia di database. Kemungkinan tautan salah atau data telah dihapus.");
                     return;
                 }
+
+                // =========================================================
+                // SUPER UPGRADE SEO DYNAMIC INJECTION (OPEN GRAPH & JSON-LD)
+                // =========================================================
+                const pageTitle = `${deptData.dept} - Department Profile | BEM KBMFKG UMI`;
+                document.title = pageTitle;
+                
+                const descText = deptData.shortDesc ? (deptData.shortDesc.substring(0, 155) + '...') : `Informasi detail mengenai program kerja dan struktur kepengurusan dari ${deptData.dept} BEM KBMFKG UMI.`;
+                const pageUrl = `https://bemkbmfkgumi.com/proker-deskripsi/${slug}`;
+                const imgUrl = deptData.bgImage ? (deptData.bgImage.startsWith('http') ? deptData.bgImage : `https://bemkbmfkgumi.com${deptData.bgImage}`) : 'https://bemkbmfkgumi.com/img/bemfkgumi.png';
+
+                document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
+                document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
+                
+                document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
+                document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
+                document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
+                document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
+                
+                document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
+                document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
+                document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
+                document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
+
+                const schemaScript = document.getElementById('structuredData');
+                if (schemaScript) {
+                    const schema = JSON.parse(schemaScript.innerHTML);
+                    
+                    // Update Dynamic AboutPage Schema
+                    const aboutSchema = schema["@graph"].find(item => item["@type"] === "AboutPage");
+                    if (aboutSchema) {
+                        aboutSchema.name = `${deptData.dept} - Department Profile`;
+                        aboutSchema.description = descText;
+                        aboutSchema.url = pageUrl;
+                    }
+
+                    // Update Dynamic Breadcrumb
+                    const breadcrumbSchema = schema["@graph"].find(item => item["@type"] === "BreadcrumbList");
+                    if (breadcrumbSchema && breadcrumbSchema.itemListElement[2]) {
+                        breadcrumbSchema.itemListElement[2].name = deptData.dept;
+                        breadcrumbSchema.itemListElement[2].item = pageUrl;
+                    }
+
+                    schemaScript.innerHTML = JSON.stringify(schema);
+                }
+                // ==================== END SEO DYNAMIC ====================
                 
                 renderDetail(deptData, allOrg.departemen);
 
