@@ -6,9 +6,7 @@
     <title>Beranda | Official Website BEM KBMFKG UMI</title>
     
     <!-- ================= SEO GOLD STANDARD GSC ================= -->
-    <!-- VERIFIKASI KEPEMILIKAN GOOGLE SEARCH CONSOLE -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
-    
     <meta name="description" content="Website resmi Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia (BEM KBMFKG UMI). Wadah pergerakan, kolaborasi, dan penyaluran aspirasi mahasiswa.">
     <meta name="keywords" content="BEM FKG UMI, BEM KBMFKG UMI, Fakultas Kedokteran Gigi UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia, Makassar, Kabinet Ananta Anardhaya">
     <meta name="author" content="BEM KBMFKG UMI">
@@ -40,7 +38,7 @@
     <meta property="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (WebSite, Organization, Breadcrumb) -->
+    <!-- ADVANCED JSON-LD Schema.org -->
     <script type="application/ld+json">
     [
       {
@@ -87,18 +85,21 @@
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
 
     <style>
-        /* CSS FIX UNTUK MENCEGAH TEKS BERANTAKAN SEPERTI PADA GAMBAR */
+        /* ==========================================================================
+           RESCUE CSS: MEMAKSA DESAIN UI FILOSOFI LOGO & WARNA TETAP RAPIH (ANTI BERANTAKAN)
+           ========================================================================== */
         
-        /* 1. Desktop Canvas Interactive UI */
-        .canvas-wrapper { position: relative; width: 100%; height: 600px; display: none; margin: 40px auto; max-width: 1200px; }
+        /* 1. Desktop Canvas Interactive UI (Khusus Layar Laptop/PC) */
+        .desktop-filosofi-ui { display: none; }
+        .canvas-wrapper { position: relative; width: 100%; height: 600px; margin: 40px auto; max-width: 1200px; }
         .ui-canvas { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
         .center-logo-wrapper { z-index: 10; padding: 20px; background: rgba(0, 210, 255, 0.05); border-radius: 50%; box-shadow: 0 0 50px rgba(0,210,255,0.1); }
         .logo-container-desktop img { width: 180px; height: auto; animation: floatLogo 4s ease-in-out infinite; }
         
-        /* 2. Glassmorphism Card Style */
+        /* Glassmorphism Card Style untuk Desktop Canvas */
         .ui-card { 
             position: absolute; 
-            background: rgba(255, 255, 255, 0.05) !important; /* Force transparent */
+            background: rgba(15, 23, 42, 0.7) !important; /* Warna dasar gelap transparan */
             backdrop-filter: blur(12px) !important; 
             -webkit-backdrop-filter: blur(12px) !important;
             border: 1px solid rgba(0, 210, 255, 0.2) !important; 
@@ -106,8 +107,9 @@
             border-radius: 12px; 
             width: 280px; 
             color: #e2e8f0; 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, border-color 0.3s;
+            text-align: left;
         }
         .ui-card:hover { transform: translateY(-5px); border-color: rgba(0, 210, 255, 0.6) !important; z-index: 20; }
         .ui-card .card-title { font-weight: 800; color: #00d2ff; margin-bottom: 10px; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;}
@@ -123,17 +125,19 @@
         .pos-molar { top: 5%; right: 5%; }
         .pos-phinisi { top: 35%; right: 2%; }
         .pos-segitiga { bottom: 10%; right: 10%; }
-        .pos-default { bottom: -15%; left: calc(50% - 140px); }
+        .pos-2014 { bottom: -15%; left: calc(50% - 140px); }
+        .pos-default { top: 50%; left: 50%; } /* Fallback pos */
 
-        /* 3. Mobile Slider Fix */
-        .mobile-filosofi-ui { display: flex; }
-        .filosofi-slider-wrapper { position: relative; width: 100%; align-items: center; justify-content: center; overflow: hidden; margin-top: 20px;}
-        .filosofi-slider-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; padding: 20px 0; gap: 20px; width: 100%; }
+        /* 2. Mobile Slider Fix (Cover Flow) */
+        .mobile-filosofi-ui { display: flex; flex-direction: column; align-items: center; }
+        .filosofi-slider-wrapper { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 20px;}
+        .filosofi-slider-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; padding: 20px 0; gap: 20px; width: 100%; align-items: stretch;}
         .filosofi-slider-track::-webkit-scrollbar { display: none; }
+        
         .filosofi-slide-card { 
             scroll-snap-align: center; 
             flex: 0 0 280px; 
-            background: rgba(255,255,255,0.03); 
+            background: rgba(15,23,42,0.8); 
             padding: 25px 20px; 
             border-radius: 16px; 
             border: 1px solid rgba(255,255,255,0.1); 
@@ -146,20 +150,35 @@
         .filosofi-slide-card h3 { font-size: 1.3rem; margin-bottom: 12px; color: #fff; font-weight: bold; display: flex; align-items: center; gap: 10px;}
         .filo-icon-box { display: inline-flex; width: 40px; height: 40px; border-radius: 10px; background: rgba(0,210,255,0.1); color: #00d2ff; align-items: center; justify-content: center; margin-bottom: 15px;}
         .filo-icon-box svg { width: 20px; height: 20px; }
-        .filo-arti, .filo-makna { font-size: 0.9rem; margin-bottom: 8px; line-height: 1.5; }
+        .filo-arti, .filo-makna { font-size: 0.9rem; margin-bottom: 8px; line-height: 1.5; color: #cbd5e1; }
         
-        .slider-nav-btn { position: absolute; z-index: 5; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s; }
-        .slider-nav-btn:hover { background: #00d2ff; color: #000; }
+        .slider-nav-btn { position: absolute; z-index: 5; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s; top: 50%; transform: translateY(-50%); }
+        .slider-nav-btn:hover { background: #00d2ff; color: #000; border-color:#00d2ff;}
         .slider-nav-btn svg { width: 24px; height: 24px; fill: currentColor; }
-        .slider-nav-btn.prev { left: 10px; }
-        .slider-nav-btn.next { right: 10px; }
+        .slider-nav-btn.prev { left: 5px; }
+        .slider-nav-btn.next { right: 5px; }
+
+        /* 3. Interactive Pills UI Warna */
+        .warna-pills-wrapper { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .warna-pill { display: flex; align-items: center; gap: 10px; padding: 10px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; color: #cbd5e1; cursor: pointer; transition: all 0.3s ease; font-weight: 600; font-family: 'Inter', sans-serif;}
+        .warna-pill:hover, .warna-pill.active { background: rgba(0,210,255,0.1); border-color: #00d2ff; color: #fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,210,255,0.2);}
+        .warna-pill-dot { width: 16px; height: 16px; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);}
+        
+        .warna-detail-box { display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 500px; margin: 0 auto; opacity: 0; transform: translateY(20px); transition: all 0.4s ease; }
+        .warna-detail-box.show { opacity: 1; transform: translateY(0); }
+        .warna-detail-swatch { width: 70px; height: 70px; border-radius: 50%; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.1);}
+        .warna-detail-text h3 { font-size: 1.5rem; margin-bottom: 10px; color: #fff; font-weight: bold;}
+        .warna-detail-text h3 span { font-size: 0.9rem; color: #94a3b8; font-weight: normal; margin-left: 5px; text-transform: uppercase;}
+        .warna-detail-text p { color: #cbd5e1; line-height: 1.6; }
 
         @keyframes floatLogo { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
 
-        /* Tampilan Mode Desktop vs Mobile */
+        /* Responsiveness: Pisahkan Desktop vs Mobile */
         @media(min-width: 1024px) {
-            .canvas-wrapper { display: block; }
-            .mobile-filosofi-ui { display: none !important; } /* Sembunyikan slider di laptop */
+            .desktop-filosofi-ui { display: block; }
+            .mobile-filosofi-ui.filosofi-slider-wrapper { display: none !important; }
+            .mobile-filosofi-ui.floating-logo-container { display: none !important; }
+            .slider-nav-btn { display: none !important;} /* Sembunyikan panah slider di Desktop */
         }
     </style>
 </head>
@@ -283,21 +302,21 @@
             </div>
         </section>
 
-        <!-- NEW SUPER UI: FILOSOFI LOGO & WARNA DI INDEX.HTML (FIXED) -->
+        <!-- NEW SUPER UI: FILOSOFI LOGO & WARNA DI INDEX.HTML -->
         <section id="filosofi" class="container" style="padding: 100px 20px; border-top: 1px solid var(--border-light); margin-top: 50px;">
             
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
                 <h2 style="font-size: 3rem; font-weight: 900;">Makna <span style="color: var(--accent-neon);">Filosofi Logo</span></h2>
                 
-                <!-- Animasi Logo Tengah (Hanya Tampil di Mobile/Tablet) -->
-                <div class="mobile-filosofi-ui" style="margin: 30px auto; justify-content: center;">
-                    <img src="/img/bemfkgumi.png" alt="Logo Animasi BEM KBMFKG UMI" class="floating-logo" width="160" height="160" loading="lazy" style="animation: floatLogo 3s infinite ease-in-out;">
+                <!-- Floating Logo Khusus Mobile -->
+                <div class="mobile-filosofi-ui floating-logo-container" style="margin: 30px auto;">
+                    <img src="/img/bemfkgumi.png" alt="Logo Animasi BEM KBMFKG UMI" class="floating-logo" width="160" height="160" loading="lazy" style="animation: floatLogo 4s infinite ease-in-out;">
                 </div>
 
                 <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
             </div>
 
-            <!-- ================= DESKTOP UI CANVAS (LAYAR BESAR) ================= -->
+            <!-- DESKTOP UI CANVAS (SUPER UPGRADE: Dikembalikan agar rapi di Laptop) -->
             <div class="desktop-filosofi-ui reveal canvas-wrapper">
                 <div class="ui-canvas" id="desktopLogoCanvas">
                     <div class="center-logo-wrapper">
@@ -309,7 +328,7 @@
                 </div>
             </div>
 
-            <!-- ================= MOBILE UI SLIDER (CAROUSEL LAYAR KECIL) ================= -->
+            <!-- MOBILE UI SLIDER (Carousel Cover Flow) -->
             <div class="mobile-filosofi-ui filosofi-slider-wrapper reveal">
                 <button class="slider-nav-btn prev" onclick="scrollSlider(-340)" aria-label="Geser slider logo ke kiri">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
@@ -366,16 +385,16 @@
     <script src="/js/protect-devtools.js"></script>
 
     <script>
-        // Data Fallback Filosofi untuk Index (DIPERLENGKAP SESUAI GAMBAR)
+        // Data Fallback Filosofi untuk Index (SUPER UPGRADE: Melengkapi yang hilang)
         const FALLBACK_FILOSOFI = {
             logo: [
                 { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
-                { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati." },
-                { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu berganti kulit, layaknya kesembuhan." },
-                { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Sebagai mahasiswa FKG UMI diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah." },
+                { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri." },
+                { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar." },
+                { elemen: "Molar", arti: "Gigi yang paling sering digunakan.", makna: "Kuat menghadapi masalah-masalah." },
                 { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." },
                 { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." },
-                { elemen: "Angka 2014", arti: "Tahun berdirinya BEM KBMFKG UMI.", makna: "Mengingat titik awal pergerakan." }
+                { elemen: "Angka 2014", arti: "Tahun Berdirinya BEM KBMFKG UMI.", makna: "Mengingat titik awal pergerakan." }
             ],
             warna: [
                 { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
@@ -387,13 +406,13 @@
         // Fungsi Smart Generator SVG Icon 
         function getSvgIcon(elemen) {
             const el = elemen.toLowerCase();
-            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
-            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
-            if(el.includes('ular')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; 
-            if(el.includes('molar')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
-            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
-            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21z"/></svg>`;
-            return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
+            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
+            if(el.includes('ular')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; 
+            if(el.includes('molar')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
+            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
+            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M1 21h22L12 2 1 21z"/></svg>`;
+            return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
         }
 
         // Animasi Scroll
@@ -444,7 +463,7 @@
             const track = document.getElementById('indexLogoSlider');
             const cards = document.querySelectorAll('.filosofi-slide-card');
             
-            if(!track) return;
+            if(!track || cards.length === 0) return;
 
             track.addEventListener('scroll', () => {
                 let centerPoint = track.scrollLeft + (track.clientWidth / 2);
@@ -481,7 +500,7 @@
             detailBox.classList.remove('show');
             setTimeout(() => {
                 detailBox.innerHTML = `
-                    <div class="warna-detail-swatch" style="background-color: ${data.hex}; border-color: ${data.hex === '#ffffff' ? 'var(--border-light)' : 'transparent'};"></div>
+                    <div class="warna-detail-swatch" style="background-color: ${data.hex}; border-color: ${data.hex === '#ffffff' ? 'var(--border-light)' : 'rgba(255,255,255,0.1)'};"></div>
                     <div class="warna-detail-text">
                         <h3>${data.warna} <span>${data.hex}</span></h3>
                         <p>${data.makna}</p>
@@ -537,32 +556,32 @@
                 console.log("Menggunakan data statis untuk Beranda."); 
             }
 
-            // === 1. Render Filosofi Logo (DUA VERSI: DESKTOP CANVAS & MOBILE SLIDER) ===
+            // === 1. Render Filosofi Logo (DUA VERSI: DESKTOP & MOBILE) ===
             const trackMobile = document.getElementById('indexLogoSlider');
             const canvasDesktop = document.getElementById('desktopLogoCanvas');
             
             if (trackMobile) trackMobile.innerHTML = '';
-            if (canvasDesktop) canvasDesktop.querySelectorAll('.ui-card').forEach(el => el.remove()); // Bersihkan card lama
+            if (canvasDesktop) canvasDesktop.querySelectorAll('.ui-card').forEach(el => el.remove());
 
             // Spacer awal untuk slider Mobile
             if(trackMobile) trackMobile.innerHTML += `<div style="flex: 0 0 10px;" aria-hidden="true"></div>`;
 
             dataFilosofi.logo.forEach((item, idx) => {
-                // Generate Mobile Slide Card
+                
+                // 1A. Generate Mobile Slide Card
                 if (trackMobile) {
                     trackMobile.innerHTML += `
                         <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
                             <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
                             <h3>${item.elemen}</h3>
-                            <p class="filo-arti" style="color: var(--accent-neon);"><strong>Arti:</strong> ${item.arti}</p>
-                            <p class="filo-makna" style="color: var(--text-light);"><strong>Makna:</strong> ${item.makna}</p>
+                            <p class="filo-arti"><strong style="color: var(--accent-neon);">Arti:</strong> ${item.arti}</p>
+                            <p class="filo-makna"><strong style="color: var(--text-light);">Makna:</strong> ${item.makna}</p>
                         </div>
                     `;
                 }
 
-                // Generate Desktop Card (Glassmorphism Melayang)
+                // 1B. Generate Desktop Card (Melayang di sekeliling logo)
                 if (canvasDesktop) {
-                    // Deteksi posisi berdasarkan nama elemen
                     let posClass = 'pos-default';
                     const elName = item.elemen.toLowerCase();
                     if(elName.includes('segitiga')) posClass = 'pos-segitiga';
@@ -573,7 +592,6 @@
                     else if(elName.includes('phinisi') || elName.includes('perahu')) posClass = 'pos-phinisi';
                     else if(elName.includes('2014')) posClass = 'pos-2014';
 
-                    // Format Deskripsi
                     let descHTML = '';
                     if(item.makna) {
                         descHTML = `
@@ -584,7 +602,6 @@
                         descHTML = `<div class="card-text">${item.arti}</div>`;
                     }
 
-                    // Injeksi ke Canvas
                     canvasDesktop.innerHTML += `
                         <div class="ui-card ${posClass}">
                             <div class="card-title">${getSvgIcon(item.elemen)} ${item.elemen}</div>
@@ -594,7 +611,7 @@
                 }
             });
             
-            // Spacer Akhir Slider Mobile & Inisiasi
+            // Spacer Akhir Slider Mobile & Inisiasi Cover Flow
             if (trackMobile) {
                 trackMobile.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
                 initSliderLogic();
@@ -608,12 +625,13 @@
                 globalWarnaData.forEach((item, idx) => {
                     pillsCont.innerHTML += `
                         <button class="warna-pill" onclick="selectWarna(${idx}, this)" role="tab" aria-selected="false">
-                            <div class="warna-pill-dot" style="background-color: ${item.hex}; border: 1px solid rgba(255,255,255,0.2);"></div>
+                            <div class="warna-pill-dot" style="background-color: ${item.hex};"></div>
                             ${item.warna}
                         </button>
                     `;
                 });
                 
+                // Auto click warna pertama setelah dirender
                 setTimeout(() => {
                     if(document.querySelector('.warna-pill')) {
                         document.querySelector('.warna-pill').click();
