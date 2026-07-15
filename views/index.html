@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beranda | Official Website BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO GOLD STANDARD GSC ================= -->
+    <!-- ================= SEO GOLD STANDARD GSC (SUPER BIG UPGRADE) ================= -->
     <!-- VERIFIKASI KEPEMILIKAN GOOGLE SEARCH CONSOLE -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
     
@@ -40,46 +40,82 @@
     <meta property="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (WebSite, Organization, Breadcrumb) -->
+    <!-- ADVANCED JSON-LD Schema.org (WebSite, Organization, Sitelinks) -->
+    <!-- FITUR INI YANG MEMAKSA GOOGLE MEMUNCULKAN SITE NAME & SITELINKS (MENU BAWAH) -->
     <script type="application/ld+json">
-    [
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "BEM KBMFKG UMI",
-        "alternateName": "BEM FKG UMI",
-        "url": "https://bemkbmfkgumi.com/",
-        "description": "Website Resmi Badan Eksekutif Mahasiswa FKG UMI."
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "BEM KBMFKG UMI",
-        "url": "https://bemkbmfkgumi.com/",
-        "logo": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
-        "image": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
-        "description": "Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Makassar",
-          "addressRegion": "Sulawesi Selatan",
-          "addressCountry": "ID"
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://bemkbmfkgumi.com/#website",
+          "url": "https://bemkbmfkgumi.com/",
+          "name": "BEM KBMFKG UMI",
+          "alternateName": ["BEM FKG UMI", "Badan Eksekutif Mahasiswa FKG UMI"],
+          "description": "Website resmi Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.",
+          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
         },
-        "sameAs": [
-          "https://www.instagram.com/bemkbmfkgumi/"
-        ]
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Beranda",
-          "item": "https://bemkbmfkgumi.com/"
-        }]
-      }
-    ]
+        {
+          "@type": "Organization",
+          "@id": "https://bemkbmfkgumi.com/#organization",
+          "name": "BEM KBMFKG UMI",
+          "url": "https://bemkbmfkgumi.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+          },
+          "sameAs": [
+            "https://www.instagram.com/bemkbmfkgumi/"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "admin@bemkbmfkgumi.com"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://bemkbmfkgumi.com/#webpage",
+          "url": "https://bemkbmfkgumi.com/",
+          "name": "Beranda | Official Website BEM KBMFKG UMI",
+          "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" }
+        },
+        {
+          "@type": "ItemList",
+          "name": "Site Navigation",
+          "itemListElement": [
+            {
+              "@type": "SiteNavigationElement",
+              "position": 1,
+              "name": "Tentang Kami (About Us)",
+              "description": "Profil, Visi Misi, Sejarah, dan Struktur Organisasi BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/tentang"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 2,
+              "name": "Pusat Informasi (Information Center)",
+              "description": "Akses Program Kerja, Kalender Kegiatan, dan Galeri Dokumentasi.",
+              "url": "https://bemkbmfkgumi.com/informasi"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 3,
+              "name": "Layanan PLASMA",
+              "description": "Pusat Layanan Aspirasi Mahasiswa. Sampaikan saran, aspirasi dan pengaduan Anda.",
+              "url": "https://bemkbmfkgumi.com/informasi#plasma"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 4,
+              "name": "Program Kerja (Work Programs)",
+              "description": "Daftar Program Kerja dan Agenda dari seluruh Kementerian/Departemen BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/informasi#proker"
+            }
+          ]
+        }
+      ]
+    }
     </script>
     <!-- ================= END SEO ================= -->
 
@@ -179,7 +215,7 @@
             <div class="visi-box-modern reveal">
                 <h3 style="color: var(--accent-neon); font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 25px;">VISI KAMI</h3>
                 <p id="teksVisiIndex" style="font-size: 1.6rem; font-style: italic; line-height: 1.6; font-weight: 500; color: var(--text-light); max-width: 900px; margin: 0 auto; text-shadow: 0 0 15px var(--shadow-text);">
-                    "Memuat rumusan visi dari database...."
+                    "Memuat rumusan visi dari database..."
                 </p>
             </div>
 
@@ -212,15 +248,28 @@
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
                 <h2 style="font-size: 3rem; font-weight: 900;">Makna <span style="color: var(--accent-neon);">Filosofi Logo</span></h2>
                 
-                <div style="margin: 30px auto;">
+                <!-- Hanya tampil di Mobile (Slider/Floating logo) -->
+                <div class="mobile-filosofi-ui" style="margin: 30px auto; justify-content: center;">
                     <img src="/img/bemfkgumi.png" alt="Logo Animasi BEM KBMFKG UMI" class="floating-logo" width="160" height="160" loading="lazy">
                 </div>
 
                 <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
             </div>
 
-            <!-- Carousel Cover Flow UI Logo -->
-            <div class="filosofi-slider-wrapper reveal">
+            <!-- DESKTOP UI CANVAS (INTERACTIVE) -->
+            <div class="desktop-filosofi-ui reveal canvas-wrapper">
+                <div class="ui-canvas" id="desktopLogoCanvas">
+                    <div class="center-logo-wrapper">
+                        <div class="logo-container-desktop">
+                            <img src="/img/bemfkgumi.png" alt="Logo KBMFKG UMI" class="logo-img">
+                        </div>
+                    </div>
+                    <!-- UI Cards diinjeksi via JS -->
+                </div>
+            </div>
+
+            <!-- MOBILE UI SLIDER (CAROUSEL) -->
+            <div class="mobile-filosofi-ui filosofi-slider-wrapper reveal">
                 <button class="slider-nav-btn prev" onclick="scrollSlider(-340)" aria-label="Geser slider logo ke kiri">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
                 </button>
@@ -282,7 +331,9 @@
                 { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
                 { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri." },
                 { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar." },
-                { elemen: "Molar", arti: "Gigi yang paling sering digunakan.", makna: "Kuat menghadapi masalah-masalah." }
+                { elemen: "Molar", arti: "Gigi yang paling sering digunakan.", makna: "Kuat menghadapi masalah-masalah." },
+                { elemen: "Perahu Phinisi", arti: "Khas Sulawesi Selatan.", makna: "Mampu bersaing dimanapun." },
+                { elemen: "Angka 2014", arti: "Tahun Berdiri.", makna: "KBMFKG-UMI didirikan tahun 2014." }
             ],
             warna: [
                 { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
@@ -344,20 +395,21 @@
         // Logika Slider Logo Filosofi (Cover Flow Effect)
         function scrollSlider(amount) {
             const track = document.getElementById('indexLogoSlider');
-            track.scrollBy({ left: amount, behavior: 'smooth' });
+            if(track) track.scrollBy({ left: amount, behavior: 'smooth' });
         }
 
         function initSliderLogic() {
             const track = document.getElementById('indexLogoSlider');
             const cards = document.querySelectorAll('.filosofi-slide-card');
             
+            if(!track) return;
+
             track.addEventListener('scroll', () => {
                 let centerPoint = track.scrollLeft + (track.clientWidth / 2);
                 let activeIndex = 0;
                 let minDistance = Infinity;
 
                 cards.forEach((card, index) => {
-                    // Cari jarak tengah kartu ke tengah layar
                     let cardCenter = card.offsetLeft + (card.clientWidth / 2) - track.offsetLeft;
                     let distance = Math.abs(centerPoint - cardCenter);
                     if(distance < minDistance) {
@@ -366,7 +418,6 @@
                     }
                 });
 
-                // Terapkan class active ke kartu yang paling tengah
                 cards.forEach(c => c.classList.remove('active'));
                 if(cards[activeIndex]) cards[activeIndex].classList.add('active');
             });
@@ -427,7 +478,6 @@
                         sidebar.innerHTML = '';
                         
                         globalMisiData.forEach((misi, idx) => {
-                            // FIX AGENTIC ACCESSIBILITY
                             sidebar.innerHTML += `
                                 <button class="misi-tab-btn ${idx === 0 ? 'active' : ''}" onclick="openMisiTab(${idx}, this)" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
                                     Pilar Misi Ke-${idx + 1} <span aria-hidden="true">&rarr;</span>
@@ -445,32 +495,68 @@
                 console.log("Menggunakan data statis untuk Beranda."); 
             }
 
-            // Render Filosofi Logo Slider (Cover Flow)
-            const track = document.getElementById('indexLogoSlider');
-            track.innerHTML = '';
-            dataFilosofi.logo.forEach((item, idx) => {
-                // Beri Spacer di awal agar kartu pertama bisa berada di tengah layar
-                track.innerHTML += `
-                    <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
-                        <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
-                        <h3>${item.elemen}</h3>
-                        <p class="filo-arti"><strong>Arti:</strong> ${item.arti}</p>
-                        <p class="filo-makna"><strong>Makna:</strong> ${item.makna}</p>
-                    </div>
-                `;
-            });
-            // Spacer di akhir agar kartu terakhir bisa ke tengah
-            track.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
+            // Render Filosofi Logo (Desktop Canvas & Mobile Slider)
+            const trackMobile = document.getElementById('indexLogoSlider');
+            const canvasDesktop = document.getElementById('desktopLogoCanvas');
+            
+            if (trackMobile) trackMobile.innerHTML = '';
+            if (canvasDesktop) canvasDesktop.querySelectorAll('.ui-card').forEach(el => el.remove());
 
-            // Inisiasi Logika Deteksi Tengah (Intersection)
-            initSliderLogic();
+            dataFilosofi.logo.forEach((item, idx) => {
+                // Generate Mobile Slide Card
+                if (trackMobile) {
+                    trackMobile.innerHTML += `
+                        <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
+                            <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
+                            <h3>${item.elemen}</h3>
+                            <p class="filo-arti" style="color: var(--accent-neon);"><strong>Arti:</strong> ${item.arti}</p>
+                            <p class="filo-makna" style="color: var(--text-light);"><strong>Makna:</strong> ${item.makna}</p>
+                        </div>
+                    `;
+                }
+
+                // Generate Desktop Card
+                if (canvasDesktop) {
+                    let posClass = 'pos-default';
+                    const elName = item.elemen.toLowerCase();
+                    if(elName.includes('segitiga')) posClass = 'pos-segitiga';
+                    else if(elName.includes('bintang')) posClass = 'pos-bintang';
+                    else if(elName.includes('tongkat')) posClass = 'pos-tongkat';
+                    else if(elName.includes('ular')) posClass = 'pos-ular';
+                    else if(elName.includes('molar')) posClass = 'pos-molar';
+                    else if(elName.includes('phinisi') || elName.includes('perahu')) posClass = 'pos-phinisi';
+                    else if(elName.includes('2014')) posClass = 'pos-2014';
+
+                    let descHTML = '';
+                    if(item.makna) {
+                        descHTML = `
+                            <div class="card-text"><span class="badge arti">Arti</span> ${item.arti}</div>
+                            <div class="card-text"><span class="badge makna">Makna</span> ${item.makna}</div>
+                        `;
+                    } else {
+                        descHTML = `<div class="card-text">${item.arti}</div>`;
+                    }
+
+                    canvasDesktop.innerHTML += `
+                        <div class="ui-card ${posClass}">
+                            <div class="css-arrow"></div>
+                            <div class="card-title">${item.elemen}</div>
+                            ${descHTML}
+                        </div>
+                    `;
+                }
+            });
+            
+            if (trackMobile) {
+                trackMobile.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
+                initSliderLogic();
+            }
             
             // Render Filosofi Warna Pills
             globalWarnaData = dataFilosofi.warna;
             const pillsCont = document.getElementById('indexWarnaPills');
             pillsCont.innerHTML = '';
             globalWarnaData.forEach((item, idx) => {
-                // FIX AGENTIC ACCESSIBILITY: Button instead of div for interactive tab
                 pillsCont.innerHTML += `
                     <button class="warna-pill" onclick="selectWarna(${idx}, this)" role="tab" aria-selected="false">
                         <div class="warna-pill-dot" style="background-color: ${item.hex}; border: 1px solid rgba(255,255,255,0.2);"></div>
@@ -479,7 +565,6 @@
                 `;
             });
             
-            // Auto click warna pertama setelah selesai di-render
             setTimeout(() => {
                 if(document.querySelector('.warna-pill')) {
                     document.querySelector('.warna-pill').click();
