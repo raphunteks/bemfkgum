@@ -43,6 +43,33 @@
           "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
         },
         {
+          "@type": "Event",
+          "@id": "https://bemkbmfkgumi.com/proker-deskripsi/#event",
+          "name": "Department Profile & Work Programs",
+          "description": "Informasi detail mengenai deskripsi program kerja.",
+          "url": "https://bemkbmfkgumi.com/proker-deskripsi",
+          "image": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+          "eventStatus": "https://schema.org/EventScheduled",
+          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+          "startDate": "2026-01-01T08:00:00+08:00",
+          "endDate": "2026-12-31T17:00:00+08:00",
+          "location": {
+            "@type": "Place",
+            "name": "Universitas Muslim Indonesia",
+            "address": "Makassar, Sulawesi Selatan"
+          },
+          "performer": {
+            "@type": "Organization",
+            "name": "BEM KBMFKG UMI"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "IDR",
+            "url": "https://bemkbmfkgumi.com/proker-deskripsi"
+          }
+        },
+        {
           "@type": "Organization",
           "@id": "https://bemkbmfkgumi.com/#organization",
           "name": "BEM KBMFKG UMI",
@@ -221,6 +248,10 @@
             shortDesc: "PubMed (PublikasiMedia Elektronik & Media Cetak) BukuKBMFKG-UMI",
             lokasi: "Kondisional",
             targetPelaksanaan: "Sepanjang Periode",
+            startDate: "2026-01-01",
+            endDate: "2026-12-31",
+            performer: "Pengurus Dept. Infocom",
+            offers: "Gratis",
             koordinator: "Silviyananda",
             penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto",
             deskripsiLengkap: [
@@ -320,6 +351,43 @@
                     aboutSchema.name = `${deptData.dept} - Department Profile`;
                     aboutSchema.description = descText;
                     aboutSchema.url = pageUrl;
+                }
+
+                // Update Dynamic EVENT Schema (Anti Error Google GSC)
+                const eventSchema = schema["@graph"].find(item => item["@type"] === "Event");
+                if (eventSchema) {
+                    eventSchema.name = `${deptData.dept} - Work Programs`;
+                    eventSchema.description = descText;
+                    eventSchema.url = pageUrl;
+                    
+                    // Inject Dynamic Dates ISO 8601
+                    eventSchema.startDate = deptData.startDate ? deptData.startDate + "T08:00:00+08:00" : new Date().toISOString();
+                    eventSchema.endDate = deptData.endDate ? deptData.endDate + "T17:00:00+08:00" : eventSchema.startDate;
+                    
+                    eventSchema.location = { 
+                        "@type": "Place", 
+                        "name": deptData.lokasi || "Universitas Muslim Indonesia", 
+                        "address": deptData.lokasi || "Makassar, Sulawesi Selatan" 
+                    };
+
+                    eventSchema.performer = {
+                        "@type": "Organization",
+                        "name": deptData.performer || deptData.dept || "BEM KBMFKG UMI"
+                    };
+
+                    let priceValue = "0";
+                    if (deptData.offers && deptData.offers.toLowerCase() !== 'gratis') {
+                        priceValue = deptData.offers.replace(/[^0-9]/g, '') || "0";
+                    }
+                    eventSchema.offers = {
+                        "@type": "Offer",
+                        "price": priceValue,
+                        "priceCurrency": "IDR",
+                        "url": pageUrl,
+                        "availability": "https://schema.org/InStock"
+                    };
+                    
+                    if(deptData.bgImage) eventSchema.image = imgUrl;
                 }
 
                 // Update Dynamic Breadcrumb
@@ -436,6 +504,22 @@
                                 <div>
                                     <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; font-weight: 600;">Target Pelaksanaan</span>
                                     <strong style="color: var(--text-light); font-size: 1.05rem;">${data.targetPelaksanaan || 'Sepanjang Periode'}</strong>
+                                </div>
+                            </div>
+
+                            <div class="info-row">
+                                <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: #a855f7; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);" aria-hidden="true">📅</div>
+                                <div>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; font-weight: 600;">Periode Tanggal</span>
+                                    <strong style="color: var(--text-light); font-size: 1.05rem;">${data.startDate || '-'} s/d ${data.endDate || '-'}</strong>
+                                </div>
+                            </div>
+
+                            <div class="info-row">
+                                <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: #eab308; background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.2);" aria-hidden="true">🎟️</div>
+                                <div>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; font-weight: 600;">Biaya / HTM</span>
+                                    <strong style="color: var(--text-light); font-size: 1.05rem;">${data.offers || 'Gratis'}</strong>
                                 </div>
                             </div>
                         </div>
