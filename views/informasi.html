@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Information Center & PLASMA Services | Program Kerja BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT 100% UPGRADE ================= -->
+    <!-- ================= SEO EXPERT 100% UPGRADE (DYNAMIC READY) ================= -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
     <meta name="description" content="Information Center - Akses cepat untuk program kerja (Work Programs), kalender kegiatan (Event Calendar), galeri dokumentasi, dan layanan PLASMA (Student Aspirations) resmi BEM KBMFKG UMI.">
     <meta name="keywords" content="Informasi BEM FKG UMI, Information Center BEM KBMFKG UMI, Work Programs, Event Calendar, Student Aspirations, Proker BEM FKG, Kalender BEM FKG UMI, Aspirasi Mahasiswa FKG UMI, PLASMA BEM FKG, Universitas Muslim Indonesia">
@@ -36,8 +36,8 @@
     <meta property="twitter:description" content="Information Center - Akses program kerja (Work Programs), kalender kegiatan, galeri, dan sampaikan aspirasi Anda melalui layanan PLASMA BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (@graph Format) -->
-    <script type="application/ld+json">
+    <!-- ADVANCED JSON-LD Schema.org (@graph Format - DYNAMIC READY) -->
+    <script type="application/ld+json" id="structuredData">
     {
       "@context": "https://schema.org",
       "@graph": [
@@ -234,6 +234,79 @@
         const monthNames = ["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"];
         const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
         
+        // ================= BIG UPGRADE: DYNAMIC SEO METADATA CONFIG =================
+        const tabSEO = {
+            'proker': {
+                title: 'Program Kerja (Work Programs) | BEM KBMFKG UMI',
+                desc: 'Daftar lengkap Program Kerja (Work Programs) dari seluruh kementerian dan departemen BEM KBMFKG UMI.',
+                bcName: 'Program Kerja'
+            },
+            'kalender': {
+                title: 'Kalender Kegiatan (Event Calendar) | BEM KBMFKG UMI',
+                desc: 'Kalender resmi agenda kegiatan (Event Calendar) dan jadwal pelaksanaan program kerja BEM KBMFKG UMI secara lengkap.',
+                bcName: 'Kalender Kegiatan'
+            },
+            'timeline': {
+                title: 'Timeline Pergerakan & Proker | BEM KBMFKG UMI',
+                desc: 'Timeline perjalanan program kerja dan rekam jejak agenda pergerakan BEM KBMFKG UMI selama satu periode kepengurusan.',
+                bcName: 'Timeline Proker'
+            },
+            'galeri': {
+                title: 'Galeri Dokumentasi (Gallery) | BEM KBMFKG UMI',
+                desc: 'Galeri dokumentasi arsip kegiatan, acara, dan pengabdian yang telah dilaksanakan oleh BEM KBMFKG UMI.',
+                bcName: 'Galeri Dokumentasi'
+            },
+            'plasma': {
+                title: 'Layanan PLASMA (Aspirasi Mahasiswa) | BEM KBMFKG UMI',
+                desc: 'Pusat Layanan Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk menyampaikan saran, kritik, dan pengaduan kepada BEM KBMFKG UMI.',
+                bcName: 'Layanan PLASMA'
+            }
+        };
+
+        function updateSEO(tabId) {
+            const seo = tabSEO[tabId];
+            if(!seo) return;
+
+            const pageUrl = `https://bemkbmfkgumi.com/informasi#${tabId}`;
+
+            // Update HTML Meta Tags
+            document.title = seo.title;
+            document.querySelector('meta[name="description"]')?.setAttribute('content', seo.desc);
+            document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
+            
+            document.querySelector('meta[property="og:title"]')?.setAttribute('content', seo.title);
+            document.querySelector('meta[property="og:description"]')?.setAttribute('content', seo.desc);
+            document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
+            
+            document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', seo.title);
+            document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', seo.desc);
+            document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
+
+            // Update JSON-LD Schema.org (@graph format)
+            const schemaScript = document.getElementById('structuredData');
+            if(schemaScript) {
+                try {
+                    const schema = JSON.parse(schemaScript.innerHTML);
+                    const collPage = schema["@graph"].find(item => item["@type"] === "CollectionPage");
+                    if(collPage) {
+                        collPage.name = seo.title;
+                        collPage.description = seo.desc;
+                        collPage.url = pageUrl;
+                    }
+
+                    const breadcrumb = schema["@graph"].find(item => item["@type"] === "BreadcrumbList");
+                    if(breadcrumb && breadcrumb.itemListElement[1]) {
+                        breadcrumb.itemListElement[1].name = seo.bcName;
+                        breadcrumb.itemListElement[1].item = pageUrl;
+                    }
+                    schemaScript.innerHTML = JSON.stringify(schema);
+                } catch(e) {
+                    console.error("Gagal update Schema JSON-LD:", e);
+                }
+            }
+        }
+        // ================= END DYNAMIC SEO =================
+
         document.addEventListener('DOMContentLoaded', async () => {
             document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
             let resData = { proker: [], dokumentasi: [], kalender: [] };
@@ -282,6 +355,10 @@
                 setTimeout(() => { targetSection.style.opacity = '1'; }, 50);
 
                 if(window.location.hash !== '#' + t) { history.pushState(null, null, '#' + t); }
+                
+                // SUPER UPGRADE: Panggil updateSEO setiap kali tab berpindah
+                updateSEO(t);
+
                 if(t === 'kalender') { renderCalendar(); tampilkanAgendaSebulan(); }
             }
         }
@@ -295,6 +372,9 @@
                     const navEl = document.getElementById('tabNavMenu');
                     if (navEl) { window.scrollTo({ top: navEl.getBoundingClientRect().top - 100, behavior: 'smooth' }); }
                 }, 300);
+            } else {
+                // Default Tab (Program Kerja)
+                updateSEO('proker');
             }
         }
 
