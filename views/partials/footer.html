@@ -181,19 +181,23 @@
       const container = document.getElementById('flagCounterContainer');
       
       try {
-          // 1. Dapatkan Kode Negara User dari Cache atau API Terpercaya
+          // 1. Dapatkan Kode Negara User dan IP dari Cache atau API Terpercaya
           let countryCode = localStorage.getItem('user_country_code');
+          let userIp = localStorage.getItem('user_ip');
           const lastLogTime = localStorage.getItem('user_last_log');
           const now = new Date().getTime();
           let shouldLog = false;
 
-          if (!countryCode) {
+          // Memanggil IP & Lokasi jika data tidak ada di cache (menghindari request berlebih)
+          if (!countryCode || !userIp) {
               // Menggunakan GeoJS API yang sangat akurat, open source, & no CORS error.
               const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
               const geoData = await geoRes.json();
               if (geoData && geoData.country_code) {
                   countryCode = geoData.country_code;
+                  userIp = geoData.ip || 'UNKNOWN_IP';
                   localStorage.setItem('user_country_code', countryCode);
+                  localStorage.setItem('user_ip', userIp);
                   shouldLog = true;
               }
           } else if (!lastLogTime || (now - parseInt(lastLogTime)) > 3600000) {
@@ -202,9 +206,13 @@
               shouldLog = true;
           }
 
+          // Fallback apabila cache IP tetap null
+          userIp = userIp || 'UNKNOWN_IP';
+
           // 2. Fetch Sekaligus Kirim Data Eksekusi Google Sheet Backend
           const action = shouldLog ? 'log_and_get' : 'get';
-          const fetchUrl = shouldLog ? `${gasUrl}?action=${action}&country=${countryCode}` : `${gasUrl}?action=${action}`;
+          // SUPER BIG UPGRADE: MENGIRIMKAN IP ADDRESS & KODE NEGARA
+          const fetchUrl = shouldLog ? `${gasUrl}?action=${action}&country=${countryCode}&ip=${encodeURIComponent(userIp)}` : `${gasUrl}?action=${action}`;
           
           const statRes = await fetch(fetchUrl);
           const statData = await statRes.json();
