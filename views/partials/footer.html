@@ -85,6 +85,18 @@
       <a href="/ourteam" class="footer-credit-link">
           Copyright &copy; <span id="currentYear"></span> <span id="footerBottomText">BEM KBMFKG UMI</span> — All Rights Reserved. Made with ❤️ by Dept. Infocom.
       </a>
+
+      <!-- SUPER BIG UPGRADE: FLAG COUNTER CUSTOM (IP GEOLOCATION) -->
+      <div class="flag-counter-wrapper">
+        <div class="flag-counter-container" id="flagCounterContainer">
+          <div class="flag-loading">Memuat Statistik...</div>
+        </div>
+        <div class="flag-watermark">
+          <svg fill="#000" viewBox="0 0 24 24" width="12px" height="12px"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg> 
+          FLAG counter
+        </div>
+      </div>
+
     </div>
   </div>
 </footer>
@@ -158,6 +170,70 @@
     } catch (e) { 
         console.log("Footer fallback local data used (Offline Mode)"); 
     }
+  });
+</script>
+
+<!-- SCRIPT FLAG COUNTER KHUSUS (IP GEOLOCATION -> GAS DB) -->
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+      // PERHATIAN: Masukan URL Macro Anda secara langsung di sini
+      const gasUrl = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
+      const container = document.getElementById('flagCounterContainer');
+      
+      try {
+          // 1. Dapatkan Kode Negara User dari Cache atau API Terpercaya
+          let countryCode = localStorage.getItem('user_country_code');
+          const lastLogTime = localStorage.getItem('user_last_log');
+          const now = new Date().getTime();
+          let shouldLog = false;
+
+          if (!countryCode) {
+              // Menggunakan GeoJS API yang sangat akurat, open source, & no CORS error.
+              const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+              const geoData = await geoRes.json();
+              if (geoData && geoData.country_code) {
+                  countryCode = geoData.country_code;
+                  localStorage.setItem('user_country_code', countryCode);
+                  shouldLog = true;
+              }
+          } else if (!lastLogTime || (now - parseInt(lastLogTime)) > 3600000) {
+              // Mekanisme Log hanya 1 jam sekali per user browser 
+              // untuk hindari limit kuota execution & spamming Google Apps Script API
+              shouldLog = true;
+          }
+
+          // 2. Fetch Sekaligus Kirim Data Eksekusi Google Sheet Backend
+          const action = shouldLog ? 'log_and_get' : 'get';
+          const fetchUrl = shouldLog ? `${gasUrl}?action=${action}&country=${countryCode}` : `${gasUrl}?action=${action}`;
+          
+          const statRes = await fetch(fetchUrl);
+          const statData = await statRes.json();
+
+          // 3. Render Custom Flags (Dibatasi 10 teratas persis referensi Flag Counter)
+          if (statData.success && statData.data) {
+              if (shouldLog) localStorage.setItem('user_last_log', now.toString());
+              
+              container.innerHTML = ''; 
+              statData.data.slice(0, 10).forEach(stat => {
+                  if(stat.country === 'UNKNOWN' || !stat.country) return;
+                  
+                  // Menggunakan CDN gratis berkecepatan tinggi FlagCDN
+                  const flagUrl = `https://flagcdn.com/w20/${stat.country.toLowerCase()}.png`;
+                  
+                  container.innerHTML += `
+                      <div class="flag-item" title="${stat.country}">
+                          <img src="${flagUrl}" alt="${stat.country}" loading="lazy">
+                          <span>${stat.count.toLocaleString()}</span>
+                      </div>
+                  `;
+              });
+          } else {
+              container.innerHTML = '<div class="flag-error">Gagal memuat API</div>';
+          }
+      } catch (err) {
+          console.error("Flag Counter API Error:", err);
+          container.innerHTML = '<div class="flag-error">Gagal memuat koneksi</div>';
+      }
   });
 </script>
 
