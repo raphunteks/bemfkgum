@@ -170,12 +170,12 @@
                 <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
             </section>
 
-            <!-- 5. PROKER (DEPARTEMEN) - SUPER BIG UPGRADE SEO -->
+            <!-- 5. PROKER (DEPARTEMEN) - SUPER BIG UPGRADE 10 FIELDS -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
                         <h2 style="color: var(--text-light);">DESKRIPSI PROGRAM KERJA</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Data Card Departemen dan Halaman Deskripsi</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Data Card Departemen dan Halaman Deskripsi Lengkap</p>
                     </div>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Departemen</button>
                 </div>
@@ -319,7 +319,7 @@
 
     <div class="toast" id="globalToast">Notifikasi</div>
 
-    <button class="scroll-to-top" id="scrollToTopBtnAdmin" onclick="scrollToTopAdmin()" aria-label="Scroll to top">
+    <button class="scroll-to-top" id="scrollToTopBtnAdmin" aria-label="Scroll to top">
         <svg viewBox="0 0 24 24"><path d="M13 5.828V17h-2V5.828L5.636 11.192 4.222 9.778 12 2l7.778 7.778-1.414 1.414L13 5.828zM4 19h16v2H4v-2z"/></svg>
     </button>
 
@@ -346,7 +346,7 @@
         adminMainArea.addEventListener('scroll', () => { 
             if (adminMainArea.scrollTop > 300) { scrollToTopBtnAdmin.classList.add("show"); } else { scrollToTopBtnAdmin.classList.remove("show"); }
         });
-        function scrollToTopAdmin() { adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); }
+        scrollToTopBtnAdmin.addEventListener('click', () => { adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); });
 
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('axa_admin_token');
@@ -505,19 +505,18 @@
         function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
         function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
 
-        // ================= BIG UPGRADE: RENDER DEPARTEMEN PROKER (+ SEO FIELDS) =================
+        // ================= SUPER BIG UPGRADE: RENDER 10 FIELDS PROKER DEPARTEMEN =================
         function renderProker() {
             const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
             (db.proker || []).forEach((p, i) => {
-                if(!p.deskripsiLengkap) p.deskripsiLengkap = [];
-                let deskripsiText = Array.isArray(p.deskripsiLengkap) ? p.deskripsiLengkap.join('\n') : '';
-                
                 cont.innerHTML += `
                 <div class="glass-card" style="padding:25px; margin-bottom:25px; border-left:4px solid var(--accent-neon); position:relative;">
                     <button class="action-btn delete" onclick="if(confirm('Hapus Departemen ini dari list proker?')) { db.proker.splice(${i},1); renderProker(); }" style="position:absolute; top:20px; right:20px;">Hapus Dept</button>
                     
-                    <h3 style="color:var(--text-light); margin-bottom:15px; width:80%;">
-                        <input type="text" class="neo-input" style="font-size:1.2rem; font-weight:bold; color:var(--accent-neon); border:none; background:transparent; padding:0; box-shadow:none; text-transform:uppercase;" value="${p.dept || ''}" placeholder="NAMA DEPARTEMEN" oninput="db.proker[${i}].dept=this.value">
+                    <h3 style="margin-bottom:15px; width:80%; display:flex; gap:10px; align-items:center;">
+                        <input type="text" class="neo-input" style="flex:1; font-size:1.2rem; font-weight:bold; color:var(--accent-neon); border:none; background:var(--bg-dark-overlay); padding:10px; box-shadow:none; text-transform:uppercase;" value="${p.dept || ''}" placeholder="NAMA DEPARTEMEN" oninput="db.proker[${i}].dept=this.value">
+                        <span style="color:var(--text-muted);">|</span>
+                        <input type="text" class="neo-input" style="flex:1; font-size:1.2rem; font-weight:bold; color:var(--text-light); border:none; background:var(--bg-dark-overlay); padding:10px; box-shadow:none; text-transform:uppercase;" value="${p.namaProker || ''}" placeholder="NAMA PROKER (CTH: PUBMED)" oninput="db.proker[${i}].namaProker=this.value">
                     </h3>
                     
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
@@ -547,11 +546,11 @@
                         
                         <div style="display:flex; gap:10px; margin-top:10px;">
                             <div style="flex:1;">
-                                <label style="font-size:0.8rem; color:var(--text-muted);">Lokasi Utama</label>
-                                <input type="text" class="neo-input" value="${p.lokasi || ''}" placeholder="RK 01" oninput="db.proker[${i}].lokasi=this.value">
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Sasaran Peserta</label>
+                                <input type="text" class="neo-input" value="${p.sasaranPeserta || ''}" placeholder="Ruang lingkup internal hingga eksternal FKG-UMI." oninput="db.proker[${i}].sasaranPeserta=this.value">
                             </div>
                             <div style="flex:1;">
-                                <label style="font-size:0.8rem; color:var(--text-muted);">Target Waktu</label>
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Target Waktu Pelaksanaan</label>
                                 <input type="text" class="neo-input" value="${p.targetPelaksanaan || ''}" placeholder="Triwulan I" oninput="db.proker[${i}].targetPelaksanaan=this.value">
                             </div>
                         </div>
@@ -574,8 +573,8 @@
                                 <input type="text" class="neo-input" value="${p.performer || ''}" placeholder="Cth: Pengurus Dept" oninput="db.proker[${i}].performer=this.value">
                             </div>
                             <div>
-                                <label style="font-size:0.8rem; color:var(--text-muted);">Harga/Penawaran (Offers)</label>
-                                <input type="text" class="neo-input" value="${p.offers || ''}" placeholder="Cth: Gratis / 50000" oninput="db.proker[${i}].offers=this.value">
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Rancangan Anggaran Dana</label>
+                                <input type="text" class="neo-input" value="${p.anggaran || ''}" placeholder="Rp. 7.000.000,-" onchange="if(this.value && !this.value.toLowerCase().includes('rp')) this.value = 'Rp. ' + this.value; db.proker[${i}].anggaran=this.value;" oninput="db.proker[${i}].anggaran=this.value">
                             </div>
                         </div>
                     </div>
@@ -591,9 +590,20 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Lengkap (Pisahkan tiap poin dengan Enter)</label>
-                        <textarea class="neo-input" rows="5" placeholder="Poin 1\nPoin 2..." oninput="db.proker[${i}].deskripsiLengkap=this.value.split('\\n').filter(Boolean)">${deskripsiText}</textarea>
+                    <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 12px; border: 1px solid var(--border-light);">
+                        <h4 style="color:var(--accent-neon); margin-bottom:15px;">Detail Konten Program Kerja</h4>
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Latar Belakang / Bentuk Kegiatan</label>
+                        <textarea class="neo-input" rows="4" placeholder="Memasuki Era Revolusi Industri 5.0..." oninput="db.proker[${i}].latarBelakang=this.value">${p.latarBelakang || ''}</textarea>
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Tujuan Kegiatan</label>
+                        <textarea class="neo-input" rows="3" placeholder="Tujuan dari kegiatan ini adalah..." oninput="db.proker[${i}].tujuan=this.value">${p.tujuan || ''}</textarea>
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Analisis SWOT</label>
+                        <textarea class="neo-input" rows="4" placeholder="Strength: ...&#10;Weakness: ..." oninput="db.proker[${i}].swot=this.value">${p.swot || ''}</textarea>
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Parameter Keberhasilan</label>
+                        <textarea class="neo-input" rows="3" placeholder="Semua media informasi dapat memberikan konten..." oninput="db.proker[${i}].parameterKeberhasilan=this.value">${p.parameterKeberhasilan || ''}</textarea>
                     </div>
                 </div>`;
             });
@@ -601,9 +611,9 @@
 
         function tambahProkerDept() { 
             db.proker.push({
-                id: "dept-" + Date.now(), dept: "DEPT. BARU", bgImage: "/img/bemfkgumi.png", fotoPengurus: "/img/bemfkgumi.png",
-                shortDesc: "", lokasi: "", targetPelaksanaan: "", startDate: "", endDate: "", performer: "", offers: "", koordinator: "", penanggungJawab: "",
-                deskripsiLengkap: []
+                id: "proker-" + Date.now(), dept: "DEPT. BARU", namaProker: "NAMA PROKER", bgImage: "/img/bemfkgumi.png", fotoPengurus: "/img/bemfkgumi.png",
+                shortDesc: "", sasaranPeserta: "", targetPelaksanaan: "", startDate: "", endDate: "", performer: "", anggaran: "", koordinator: "", penanggungJawab: "",
+                latarBelakang: "", tujuan: "", swot: "", parameterKeberhasilan: ""
             }); 
             renderProker(); 
         }
