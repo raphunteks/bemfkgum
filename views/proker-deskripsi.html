@@ -459,7 +459,10 @@
             }
 
             // SUPER UPGRADE: Menyusun Judul Banner (Menggabungkan Nama Dept dan Nama Proker)
-            const titleBanner = data.namaProker ? `${data.dept} - ${data.namaProker}` : data.dept;
+            // Memastikan penamaan otomatis menjadi HURUF KAPITAL (UPPERCASE)
+            const deptText = data.dept ? data.dept.toUpperCase() : '';
+            const prokerText = data.namaProker ? data.namaProker.toUpperCase() : '';
+            const titleBanner = prokerText ? `${deptText} - ${prokerText}` : deptText;
 
             // Inject Konten Keseluruhan ke DOM
             const mainContent = document.getElementById('mainContent');
@@ -471,7 +474,7 @@
                     <!-- Gradient Overlay at bottom for title -->
                     <div class="proker-banner-overlay" style="z-index: 2;">
                         <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem; background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2);">DESKRIPSI PROGRAM KERJA</div>
-                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px;">${titleBanner}</h2>
+                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px; text-transform: uppercase;">${titleBanner}</h2>
                         <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;">${data.shortDesc || ''}</p>
                     </div>
                 </div>
