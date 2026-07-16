@@ -173,7 +173,7 @@
   });
 </script>
 
-<!-- SCRIPT FLAG COUNTER KHUSUS (MENCEGAH DOUBLE COUNT BERDASARKAN IP & CACHE) -->
+<!-- SCRIPT FLAG COUNTER KHUSUS (MENCEGAH DOUBLE COUNT BERDASARKAN CACHE & IPV4/IPV6) -->
 <script>
   document.addEventListener('DOMContentLoaded', async () => {
       // PERHATIAN: Masukan URL Macro Anda secara langsung di sini
@@ -181,48 +181,53 @@
       const container = document.getElementById('flagCounterContainer');
       
       try {
-          // LAYER 1 (FRONTEND PROTECTION): Mengambil cache IP & Status Log
-          let cachedCountry = localStorage.getItem('user_country_code');
-          let cachedIp = localStorage.getItem('user_ip');
-          let isIpLogged = localStorage.getItem('is_ip_logged'); // Penanda mutlak
-          
-          let shouldLog = false;
-          let currentIp = null;
-          let currentCountry = null;
+          let ipv4 = 'UNKNOWN_IPV4';
+          let ipv6 = 'UNKNOWN_IPV6';
+          let currentCountry = 'UNKNOWN';
 
-          // Memanggil API khusus IPv4 untuk memaksa format angka (contoh: 149.x.x.x)
-          const ipRes = await fetch('https://api.ipify.org?format=json');
-          const ipData = await ipRes.json();
-          
-          if (ipData && ipData.ip) {
-              currentIp = ipData.ip;
-              
-              // Mengambil data negara berdasarkan IPv4 tersebut menggunakan API GeoJS
-              const geoRes = await fetch(`https://get.geojs.io/v1/ip/geo/${currentIp}.json`);
+          // 1. Tarik IPv4 dengan memaksa api untuk mengeluarkan IPv4 (Menggunakan api.ipify.org)
+          try {
+              const res4 = await fetch('https://api.ipify.org?format=json');
+              const data4 = await res4.json();
+              if(data4 && data4.ip) ipv4 = data4.ip;
+          } catch(e) { console.log('Gagal menarik IPv4'); }
+
+          // 2. Tarik IPv6 jika tersedia (Menggunakan api6.ipify.org)
+          try {
+              const res6 = await fetch('https://api6.ipify.org?format=json');
+              const data6 = await res6.json();
+              if(data6 && data6.ip && data6.ip !== ipv4) ipv6 = data6.ip;
+          } catch(e) { console.log('Gagal menarik IPv6 / Tidak didukung'); }
+
+          // 3. Tarik Kode Negara (GeoJS)
+          try {
+              const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
               const geoData = await geoRes.json();
-              currentCountry = geoData.country_code || 'UNKNOWN';
+              if (geoData && geoData.country_code) currentCountry = geoData.country_code;
+          } catch(e) { console.log('Gagal menarik Lokasi (GeoJS)'); }
+
+          // LAYER 1 (FRONTEND PROTECTION): Mengambil cache untuk mencegah SPAM/Double Count
+          let cachedIpv4 = localStorage.getItem('user_ipv4');
+          let cachedIpv6 = localStorage.getItem('user_ipv6');
+          let isIpLogged = localStorage.getItem('is_ip_logged');
+          let shouldLog = false;
+
+          // Cek perlindungan: Apakah salah satu IP ini baru, ATAU belum pernah dilog?
+          if ((ipv4 !== 'UNKNOWN_IPV4' && ipv4 !== cachedIpv4) || 
+              (ipv6 !== 'UNKNOWN_IPV6' && ipv6 !== cachedIpv6) || 
+              isIpLogged !== 'true') {
+              shouldLog = true;
               
-              // Cek perlindungan: Apakah IP ini baru, ATAU belum pernah dilog sama sekali?
-              if (currentIp !== cachedIp || isIpLogged !== 'true') {
-                  shouldLog = true;
-                  // Update cache memori lokal
-                  localStorage.setItem('user_ip', currentIp);
-                  localStorage.setItem('user_country_code', currentCountry);
-              } else {
-                  // Jika IP sama persis dan sudah dilog sebelumnya, JANGAN hitung (Log) lagi!
-                  shouldLog = false;
-              }
+              // Update cache memori lokal
+              localStorage.setItem('user_ipv4', ipv4);
+              localStorage.setItem('user_ipv6', ipv6);
+              localStorage.setItem('user_country_code', currentCountry);
           }
 
-          // Fallback apabila deteksi IP gagal
-          currentIp = currentIp || 'UNKNOWN_IP';
-          currentCountry = currentCountry || cachedCountry || 'UNKNOWN';
-
           // LAYER 2 (BACKEND PROTECTION): Fetch API ke Google Apps Script
-          // Jika shouldLog = false, parameter 'action' hanya akan bernilai 'get' (Hanya mengambil data tanpa menambah views)
           const action = shouldLog ? 'log_and_get' : 'get';
           const fetchUrl = shouldLog 
-              ? `${gasUrl}?action=${action}&country=${currentCountry}&ip=${encodeURIComponent(currentIp)}` 
+              ? `${gasUrl}?action=${action}&country=${currentCountry}&ipv4=${encodeURIComponent(ipv4)}&ipv6=${encodeURIComponent(ipv6)}` 
               : `${gasUrl}?action=${action}`;
           
           const statRes = await fetch(fetchUrl);
@@ -230,10 +235,7 @@
 
           // Render Custom Flags (Dibatasi 10 teratas)
           if (statData.success && statData.data) {
-              // Menandai sukses log secara mutlak di browser pengguna
-              if (shouldLog) {
-                  localStorage.setItem('is_ip_logged', 'true');
-              }
+              if (shouldLog) localStorage.setItem('is_ip_logged', 'true');
               
               container.innerHTML = ''; 
               statData.data.slice(0, 10).forEach(stat => {
