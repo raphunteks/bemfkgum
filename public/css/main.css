@@ -262,8 +262,8 @@ header#main-header.scrolled .header-inner {
 
 .logo-container { display: flex; align-items: center; gap: 12px; z-index: 1001; transition: transform 0.3s ease; text-decoration: none; }
 .logo-container:hover { transform: scale(1.02); }
-.header-logo-img { height: 50px; filter: drop-shadow(0 0 8px var(--accent-glow)); transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
-header#main-header.scrolled .header-logo-img { height: 40px; }
+.header-logo-img { height: 50px; width: auto !important; object-fit: contain; filter: drop-shadow(0 0 8px var(--accent-glow)); transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+header#main-header.scrolled .header-logo-img { height: 40px; width: auto !important; }
 
 .header-text-group { display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
 .header-title { font-weight: 900; font-size: 1.2rem; letter-spacing: 0.5px; color: var(--text-light); transition: font-size 0.4s ease; text-shadow: 0 0 10px var(--accent-glow); }
@@ -888,16 +888,16 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     .floating-logo { width: 130px; height: 130px; }
     
     /* HEADER MOBILE ADJ */
-    header#main-header { top: 10px; }
-    .header-inner { width: 95%; padding: 10px 15px; border-radius: 30px; }
-    header#main-header.scrolled { top: 5px; }
-    header#main-header.scrolled .header-inner { width: 98%; padding: 8px 15px; border-radius: 25px; }
-    
-    .header-logo-img { height: 40px; }
-    header#main-header.scrolled .header-logo-img { height: 35px; }
-    .header-title { font-size: 1rem; }
-    .header-subtitle.script-font { font-size: 1rem; }
-    header#main-header.scrolled .header-title { font-size: 0.9rem; }
+  header#main-header { top: 10px; }
+  .header-inner { width: 95%; padding: 10px 15px; border-radius: 30px; }
+  header#main-header.scrolled { top: 5px; }
+  header#main-header.scrolled .header-inner { width: 98%; padding: 8px 15px; border-radius: 25px; }
+  
+  .header-logo-img { height: 40px; width: auto !important; object-fit: contain; }
+  header#main-header.scrolled .header-logo-img { height: 35px; width: auto !important; }
+  .header-title { font-size: 1rem; }
+  .header-subtitle.script-font { font-size: 1rem; }
+  header#main-header.scrolled .header-title { font-size: 0.9rem; }
     header#main-header.scrolled .header-subtitle.script-font { font-size: 0.9rem; }
     
     .nav-right-group { gap: 10px; }
