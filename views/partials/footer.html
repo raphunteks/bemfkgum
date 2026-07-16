@@ -190,12 +190,16 @@
           let currentIp = null;
           let currentCountry = null;
 
-          // Memanggil IP & Lokasi pengunjung saat ini
-          const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
-          const geoData = await geoRes.json();
+          // Memanggil API khusus IPv4 untuk memaksa format angka (contoh: 149.x.x.x)
+          const ipRes = await fetch('https://api.ipify.org?format=json');
+          const ipData = await ipRes.json();
           
-          if (geoData && geoData.ip) {
-              currentIp = geoData.ip;
+          if (ipData && ipData.ip) {
+              currentIp = ipData.ip;
+              
+              // Mengambil data negara berdasarkan IPv4 tersebut menggunakan API GeoJS
+              const geoRes = await fetch(`https://get.geojs.io/v1/ip/geo/${currentIp}.json`);
+              const geoData = await geoRes.json();
               currentCountry = geoData.country_code || 'UNKNOWN';
               
               // Cek perlindungan: Apakah IP ini baru, ATAU belum pernah dilog sama sekali?
@@ -205,4 +209,54 @@
                   localStorage.setItem('user_ip', currentIp);
                   localStorage.setItem('user_country_code', currentCountry);
               } else {
-                  // Jika IP sama persis dan sudah dilog
+                  // Jika IP sama persis dan sudah dilog sebelumnya, JANGAN hitung (Log) lagi!
+                  shouldLog = false;
+              }
+          }
+
+          // Fallback apabila deteksi IP gagal
+          currentIp = currentIp || 'UNKNOWN_IP';
+          currentCountry = currentCountry || cachedCountry || 'UNKNOWN';
+
+          // LAYER 2 (BACKEND PROTECTION): Fetch API ke Google Apps Script
+          // Jika shouldLog = false, parameter 'action' hanya akan bernilai 'get' (Hanya mengambil data tanpa menambah views)
+          const action = shouldLog ? 'log_and_get' : 'get';
+          const fetchUrl = shouldLog 
+              ? `${gasUrl}?action=${action}&country=${currentCountry}&ip=${encodeURIComponent(currentIp)}` 
+              : `${gasUrl}?action=${action}`;
+          
+          const statRes = await fetch(fetchUrl);
+          const statData = await statRes.json();
+
+          // Render Custom Flags (Dibatasi 10 teratas)
+          if (statData.success && statData.data) {
+              // Menandai sukses log secara mutlak di browser pengguna
+              if (shouldLog) {
+                  localStorage.setItem('is_ip_logged', 'true');
+              }
+              
+              container.innerHTML = ''; 
+              statData.data.slice(0, 10).forEach(stat => {
+                  if(stat.country === 'UNKNOWN' || !stat.country) return;
+                  
+                  // Menggunakan CDN gratis berkecepatan tinggi FlagCDN
+                  const flagUrl = `https://flagcdn.com/w20/${stat.country.toLowerCase()}.png`;
+                  
+                  container.innerHTML += `
+                      <div class="flag-item" title="${stat.country}">
+                          <img src="${flagUrl}" alt="${stat.country}" loading="lazy">
+                          <span>${stat.count.toLocaleString()}</span>
+                      </div>
+                  `;
+              });
+          } else {
+              container.innerHTML = '<div class="flag-error">Gagal memuat Statistik</div>';
+          }
+      } catch (err) {
+          console.error("Flag Counter API Error:", err);
+          container.innerHTML = '<div class="flag-error">Koneksi Terputus</div>';
+      }
+  });
+</script>
+
+<script src="/js/protect-devtools.js"></script>
