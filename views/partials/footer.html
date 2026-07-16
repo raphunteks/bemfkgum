@@ -173,7 +173,7 @@
   });
 </script>
 
-<!-- SCRIPT FLAG COUNTER KHUSUS (IP GEOLOCATION -> GAS DB) -->
+<!-- SCRIPT FLAG COUNTER KHUSUS (MENCEGAH DOUBLE COUNT BERDASARKAN IP & CACHE) -->
 <script>
   document.addEventListener('DOMContentLoaded', async () => {
       // PERHATIAN: Masukan URL Macro Anda secara langsung di sini
@@ -181,68 +181,28 @@
       const container = document.getElementById('flagCounterContainer');
       
       try {
-          // 1. Dapatkan Kode Negara User dan IP dari Cache atau API Terpercaya
-          let countryCode = localStorage.getItem('user_country_code');
-          let userIp = localStorage.getItem('user_ip');
-          const lastLogTime = localStorage.getItem('user_last_log');
-          const now = new Date().getTime();
-          let shouldLog = false;
-
-          // Memanggil IP & Lokasi jika data tidak ada di cache (menghindari request berlebih)
-          if (!countryCode || !userIp) {
-              // Menggunakan GeoJS API yang sangat akurat, open source, & no CORS error.
-              const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
-              const geoData = await geoRes.json();
-              if (geoData && geoData.country_code) {
-                  countryCode = geoData.country_code;
-                  userIp = geoData.ip || 'UNKNOWN_IP';
-                  localStorage.setItem('user_country_code', countryCode);
-                  localStorage.setItem('user_ip', userIp);
-                  shouldLog = true;
-              }
-          } else if (!lastLogTime || (now - parseInt(lastLogTime)) > 3600000) {
-              // Mekanisme Log hanya 1 jam sekali per user browser 
-              // untuk hindari limit kuota execution & spamming Google Apps Script API
-              shouldLog = true;
-          }
-
-          // Fallback apabila cache IP tetap null
-          userIp = userIp || 'UNKNOWN_IP';
-
-          // 2. Fetch Sekaligus Kirim Data Eksekusi Google Sheet Backend
-          const action = shouldLog ? 'log_and_get' : 'get';
-          // SUPER BIG UPGRADE: MENGIRIMKAN IP ADDRESS & KODE NEGARA
-          const fetchUrl = shouldLog ? `${gasUrl}?action=${action}&country=${countryCode}&ip=${encodeURIComponent(userIp)}` : `${gasUrl}?action=${action}`;
+          // LAYER 1 (FRONTEND PROTECTION): Mengambil cache IP & Status Log
+          let cachedCountry = localStorage.getItem('user_country_code');
+          let cachedIp = localStorage.getItem('user_ip');
+          let isIpLogged = localStorage.getItem('is_ip_logged'); // Penanda mutlak
           
-          const statRes = await fetch(fetchUrl);
-          const statData = await statRes.json();
+          let shouldLog = false;
+          let currentIp = null;
+          let currentCountry = null;
 
-          // 3. Render Custom Flags (Dibatasi 10 teratas persis referensi Flag Counter)
-          if (statData.success && statData.data) {
-              if (shouldLog) localStorage.setItem('user_last_log', now.toString());
+          // Memanggil IP & Lokasi pengunjung saat ini
+          const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+          const geoData = await geoRes.json();
+          
+          if (geoData && geoData.ip) {
+              currentIp = geoData.ip;
+              currentCountry = geoData.country_code || 'UNKNOWN';
               
-              container.innerHTML = ''; 
-              statData.data.slice(0, 10).forEach(stat => {
-                  if(stat.country === 'UNKNOWN' || !stat.country) return;
-                  
-                  // Menggunakan CDN gratis berkecepatan tinggi FlagCDN
-                  const flagUrl = `https://flagcdn.com/w20/${stat.country.toLowerCase()}.png`;
-                  
-                  container.innerHTML += `
-                      <div class="flag-item" title="${stat.country}">
-                          <img src="${flagUrl}" alt="${stat.country}" loading="lazy">
-                          <span>${stat.count.toLocaleString()}</span>
-                      </div>
-                  `;
-              });
-          } else {
-              container.innerHTML = '<div class="flag-error">Gagal memuat API</div>';
-          }
-      } catch (err) {
-          console.error("Flag Counter API Error:", err);
-          container.innerHTML = '<div class="flag-error">Gagal memuat koneksi</div>';
-      }
-  });
-</script>
-
-<script src="/js/protect-devtools.js"></script>
+              // Cek perlindungan: Apakah IP ini baru, ATAU belum pernah dilog sama sekali?
+              if (currentIp !== cachedIp || isIpLogged !== 'true') {
+                  shouldLog = true;
+                  // Update cache memori lokal
+                  localStorage.setItem('user_ip', currentIp);
+                  localStorage.setItem('user_country_code', currentCountry);
+              } else {
+                  // Jika IP sama persis dan sudah dilog
