@@ -76,25 +76,27 @@ const defaultOrg = {
     ]
 };
 
-// ================= BIG UPGRADE: DUMMY DEPT INFOCOM (+ EVENT SEO FIELDS) =================
+// ================= BIG UPGRADE: DUMMY DEPT INFOCOM (+ NEW 10 FORMS SEO FIELDS) =================
 const defaultProker = [
     {
         id: "pubmed",
         dept: "DEPT. INFOCOM",
+        namaProker: "PUBMED",
         bgImage: "/img/bemfkgumi.png",
-        shortDesc: "PubMed (PublikasiMedia Elektronik & Media Cetak) BukuKBMFKG-UMI",
-        lokasi: "RK 01",
+        fotoPengurus: "/img/bemfkgumi.png",
+        shortDesc: "Membuat konten-konten menarik yang memuat tentang informasi (berita, pemberitahuan, peringatan hari besar, isu-isu yang berkembang)",
+        sasaranPeserta: "Ruang lingkup internal hingga eksternal FKG-UMI.",
         targetPelaksanaan: "Triwulan I",
         startDate: "2026-01-01",
         endDate: "2026-12-31",
         performer: "Pengurus Dept. Infocom",
-        offers: "Gratis",
-        koordinator: "Silvyananda",
+        anggaran: "Rp. 7.000.000,-",
+        koordinator: "Silviyananda",
         penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto, Zahwa Alzahra Djohan, Zaneta Zahra Zulaikha, Novita Widyantari",
-        deskripsiLengkap: [
-            "Menginformasikan setiap agenda kegiatan yang akan dilaksanakan oleh lembaga KBMFKG-UMI. Mendokumentasi serta menginformasikan kegiatan internal maupun eksternal yang sedang atau telah berlangsung.",
-            "Menyosialisasikan informasi tentang kesehatan khususnya kesehatan gigi dan mulut melalui media cetak dan media sosial."
-        ]
+        latarBelakang: "Memasuki Era Revolusi Industri 5.0 yang lebih menitik beratkan pada pengembangan teknologi. Sehingga dengan hal ini kita akan memaksimalkan penyampaian informasi (Berita, Pemberitahuan, Peringatan Hari Besar), serta edukasi kepada seluruh warga KBMFKG-UMI melalui seluruh akun media sosial BEM KBMFKG-UMI yaitu meliputi :\n1. Instagram.\n2. Whatsapp.\n3. Facebook.\n4. Youtube.\n5. Tiktok.",
+        tujuan: "Memberikan kemudahan akses informasi yang cepat dan akurat kepada seluruh civitas akademika.",
+        swot: "Strength: Tim yang solid dan melek teknologi.\nWeakness: Keterbatasan alat dokumentasi tingkat tinggi.\nOpportunity: Banyaknya platform sosial media yang bisa dijangkau.\nThreat: Algoritma sosial media yang sering berubah.",
+        parameterKeberhasilan: "Semua media informasi (platform digital & cetak) dapat memberikan konten dan informasi baik seputar internal maupun eksternal ruang lingkup FKG-UMI."
     }
 ];
 
