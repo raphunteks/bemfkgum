@@ -418,6 +418,16 @@
             `;
         }
 
+        // Fungsi Convert Tanggal (YYYY-MM-DD ke DD-MM-YYYY)
+        function formatDateToDDMMYYYY(dateString) {
+            if (!dateString) return '-';
+            const parts = dateString.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            return dateString;
+        }
+
         // ================= FUNGSI RENDER UTAMA UI GLASSMORPHISM =================
         function renderDetail(data, orgDepartemen) {
             const bgImg = data.bgImage || '/img/bemfkgumi.png';
@@ -463,6 +473,10 @@
             const deptText = data.dept ? data.dept.toUpperCase() : '';
             const prokerText = data.namaProker ? data.namaProker.toUpperCase() : '';
             const titleBanner = prokerText ? `${deptText} - ${prokerText}` : deptText;
+
+            // SUPER UPGRADE: Format Tanggal ke DD-MM-YYYY
+            const formattedStart = formatDateToDDMMYYYY(data.startDate);
+            const formattedEnd = formatDateToDDMMYYYY(data.endDate);
 
             // Inject Konten Keseluruhan ke DOM
             const mainContent = document.getElementById('mainContent');
@@ -520,7 +534,7 @@
                                 <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: #a855f7; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);" aria-hidden="true">📅</div>
                                 <div>
                                     <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; font-weight: 600;">Periode Tanggal</span>
-                                    <strong style="color: var(--text-light); font-size: 1.05rem;">${data.startDate || '-'} s/d ${data.endDate || '-'}</strong>
+                                    <strong style="color: var(--text-light); font-size: 1.05rem;">${formattedStart} s/d ${formattedEnd}</strong>
                                 </div>
                             </div>
 
