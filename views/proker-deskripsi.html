@@ -28,7 +28,7 @@
     <meta property="twitter:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (@graph Format) -->
+    <!-- ADVANCED JSON-LD Schema.org (@graph Format) - 100% SEO COMPLIANT UPGRADE -->
     <script type="application/ld+json" id="structuredData">
     {
       "@context": "https://schema.org",
@@ -56,7 +56,17 @@
           "location": {
             "@type": "Place",
             "name": "Universitas Muslim Indonesia",
-            "address": "Makassar, Sulawesi Selatan"
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Makassar",
+              "addressRegion": "Sulawesi Selatan",
+              "addressCountry": "ID"
+            }
+          },
+          "organizer": {
+            "@type": "Organization",
+            "name": "BEM KBMFKG UMI",
+            "url": "https://bemkbmfkgumi.com/"
           },
           "performer": {
             "@type": "Organization",
@@ -66,7 +76,9 @@
             "@type": "Offer",
             "price": "0",
             "priceCurrency": "IDR",
-            "url": "https://bemkbmfkgumi.com/proker-deskripsi"
+            "url": "https://bemkbmfkgumi.com/proker-deskripsi",
+            "validFrom": "2025-01-01",
+            "availability": "https://schema.org/InStock"
           }
         },
         {
@@ -358,7 +370,7 @@
                 // Update Dynamic EVENT Schema (Anti Error Google GSC)
                 const eventSchema = schema["@graph"].find(item => item["@type"] === "Event");
                 if (eventSchema) {
-                    eventSchema.name = `${deptData.dept} - Work Programs`;
+                    eventSchema.name = deptData.namaProker ? `${deptData.dept} - ${deptData.namaProker}` : `${deptData.dept} - Work Programs`;
                     eventSchema.description = descText;
                     eventSchema.url = pageUrl;
                     
@@ -366,10 +378,22 @@
                     eventSchema.startDate = deptData.startDate ? deptData.startDate + "T08:00:00+08:00" : new Date().toISOString();
                     eventSchema.endDate = deptData.endDate ? deptData.endDate + "T17:00:00+08:00" : eventSchema.startDate;
                     
+                    // 100% SEO COMPLIANT: Use proper PostalAddress structure if possible
                     eventSchema.location = { 
                         "@type": "Place", 
                         "name": deptData.sasaranPeserta || "Universitas Muslim Indonesia", 
-                        "address": deptData.sasaranPeserta || "Makassar, Sulawesi Selatan" 
+                        "address": {
+                            "@type": "PostalAddress",
+                            "addressLocality": "Makassar",
+                            "addressRegion": "Sulawesi Selatan",
+                            "addressCountry": "ID"
+                        }
+                    };
+
+                    eventSchema.organizer = {
+                        "@type": "Organization",
+                        "name": "BEM KBMFKG UMI",
+                        "url": "https://bemkbmfkgumi.com/"
                     };
 
                     eventSchema.performer = {
@@ -386,6 +410,7 @@
                         "price": priceValue,
                         "priceCurrency": "IDR",
                         "url": pageUrl,
+                        "validFrom": new Date().toISOString().split('T')[0],
                         "availability": "https://schema.org/InStock"
                     };
                     
