@@ -458,24 +458,20 @@
                 `;
             }
 
+            // SUPER UPGRADE: Menyusun Judul Banner (Menggabungkan Nama Dept dan Nama Proker)
+            const titleBanner = data.namaProker ? `${data.dept} - ${data.namaProker}` : data.dept;
+
             // Inject Konten Keseluruhan ke DOM
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <!-- BAGIAN BANNER 1920x1080 (LCP OPTIMIZED) - SUPER UPGRADE MENGIKUTI REFERENSI GAMBAR -->
+                <!-- BAGIAN BANNER 1920x1080 (LCP OPTIMIZED) - DIKEMBALIKAN KE STYLE ELEGAN SEPERTI GAMBAR 2 -->
                 <div class="proker-banner-wrapper reveal active">
                     <img src="${bgImg}" alt="Banner ${data.dept}" class="proker-banner-img" width="1920" height="1080" fetchpriority="high">
                     
-                    <!-- Center Logo/Text for Proker -->
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1;">
-                        <div style="width: 450px; height: 450px; background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, rgba(0,0,0,0) 70%); position: absolute; border-radius: 50%;"></div>
-                        <h2 style="font-size: 2.5rem; color: #ffffff; font-weight: 900; letter-spacing: 2px; text-shadow: 0 4px 15px rgba(0,0,0,0.8); margin:0; z-index: 2; text-align: center; position:relative; top: 30px;">PROGRAM KERJA</h2>
-                        <h1 style="font-size: 7rem; color: rgba(255,255,255,0.15); font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin:0; z-index: 2; text-align: center; line-height: 1;">${data.namaProker || ''}</h1>
-                    </div>
-
                     <!-- Gradient Overlay at bottom for title -->
                     <div class="proker-banner-overlay" style="z-index: 2;">
                         <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem; background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2);">DESKRIPSI PROGRAM KERJA</div>
-                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px;">${data.dept}</h2>
+                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px;">${titleBanner}</h2>
                         <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;">${data.shortDesc || ''}</p>
                     </div>
                 </div>
