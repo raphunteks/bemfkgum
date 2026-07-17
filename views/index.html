@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#10b981"> <!-- Warna dominan brand untuk browser mobile -->
+    <meta name="theme-color" content="#10b981">
     <title>Beranda | Official Website BEM KBMFKG UMI</title>
     
     <!-- ================= SEO GOLD STANDARD GSC (SUPER BIG UPGRADE) ================= -->
-    <!-- VERIFIKASI KEPEMILIKAN GOOGLE SEARCH CONSOLE -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
-    
     <meta name="description" content="Website resmi Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia (BEM KBMFKG UMI). Wadah pergerakan, kolaborasi, dan penyaluran aspirasi mahasiswa.">
     <meta name="keywords" content="BEM FKG UMI, BEM KBMFKG UMI, Fakultas Kedokteran Gigi UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia, Makassar, Kabinet Ananta Anardhaya">
     <meta name="author" content="BEM KBMFKG UMI">
@@ -335,11 +333,10 @@
 
     </main>
 
-    <%- include('partials/header.html') %><!-- (Note: The user code had a typo here in their original, footer was likely intended but I am preserving the HTML structure exactness based on their file or wait, in the original they had include('partials/footer.html'). I will ensure it remains footer.html ) -->
     <%- include('partials/footer.html') %>
 
-    <!-- SCRIPT PROTEKSI DEVTOOLS -->
-    <script src="/js/protect-devtools.js"></script>
+    <!-- PERBAIKAN 1: Tambahkan 'defer' agar script proteksi tidak menahan loading halaman -->
+    <script src="/js/protect-devtools.js" defer></script>
 
     <script>
         // Data Fallback Filosofi untuk Index
@@ -427,7 +424,6 @@
                 let minDistance = Infinity;
 
                 cards.forEach((card, index) => {
-                    // Cari jarak tengah kartu ke tengah layar
                     let cardCenter = card.offsetLeft + (card.clientWidth / 2) - track.offsetLeft;
                     let distance = Math.abs(centerPoint - cardCenter);
                     if(distance < minDistance) {
@@ -436,7 +432,6 @@
                     }
                 });
 
-                // Terapkan class active ke kartu yang paling tengah
                 cards.forEach(c => c.classList.remove('active'));
                 if(cards[activeIndex]) cards[activeIndex].classList.add('active');
             });
@@ -471,12 +466,19 @@
         async function fetchDataBeranda() {
             let dataFilosofi = FALLBACK_FILOSOFI;
 
+            // PERBAIKAN 2: Tambahkan sistem AbortController (Timeout 3.5 Detik)
+            // Agar jika database loading lama, tidak membuat halaman ikut terhenti.
+            const fetchController = new AbortController();
+            const fetchTimeout = setTimeout(() => fetchController.abort(), 3500);
+
             try {
                 let apiUrl = '/api/content';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") {
                     apiUrl = 'https://bemkbmfkgumi.com/api/content';
                 }
-                const req = await fetch(apiUrl);
+                
+                const req = await fetch(apiUrl, { signal: fetchController.signal });
+                clearTimeout(fetchTimeout); // Hapus timer jika sukses
                 const res = await req.json();
                 
                 if (res.org) {
@@ -497,7 +499,6 @@
                         sidebar.innerHTML = '';
                         
                         globalMisiData.forEach((misi, idx) => {
-                            // FIX AGENTIC ACCESSIBILITY
                             sidebar.innerHTML += `
                                 <button class="misi-tab-btn ${idx === 0 ? 'active' : ''}" onclick="openMisiTab(${idx}, this)" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
                                     Pilar Misi Ke-${idx + 1} <span aria-hidden="true">&rarr;</span>
@@ -512,7 +513,7 @@
                     dataFilosofi = res.filosofi;
                 }
             } catch (err) { 
-                console.log("Menggunakan data statis untuk Beranda."); 
+                console.log("Koneksi API lambat atau gagal. Menggunakan data statis untuk Beranda agar loading tidak terhambat."); 
             }
 
             // Render Filosofi Logo Slider (Cover Flow)
@@ -520,7 +521,6 @@
             if (track) {
                 track.innerHTML = '';
                 dataFilosofi.logo.forEach((item, idx) => {
-                    // Beri Spacer di awal agar kartu pertama bisa berada di tengah layar
                     track.innerHTML += `
                         <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
                             <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
@@ -530,10 +530,7 @@
                         </div>
                     `;
                 });
-                // Spacer di akhir agar kartu terakhir bisa ke tengah
                 track.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
-
-                // Inisiasi Logika Deteksi Tengah (Intersection)
                 initSliderLogic();
             }
             
@@ -543,7 +540,6 @@
             if (pillsCont) {
                 pillsCont.innerHTML = '';
                 globalWarnaData.forEach((item, idx) => {
-                    // FIX AGENTIC ACCESSIBILITY: Button instead of div for interactive tab
                     pillsCont.innerHTML += `
                         <button class="warna-pill" onclick="selectWarna(${idx}, this)" role="tab" aria-selected="false">
                             <div class="warna-pill-dot" style="background-color: ${item.hex}; border: 1px solid rgba(255,255,255,0.2);"></div>
@@ -552,7 +548,6 @@
                     `;
                 });
                 
-                // Auto click warna pertama setelah selesai di-render
                 setTimeout(() => {
                     if(document.querySelector('.warna-pill')) {
                         document.querySelector('.warna-pill').click();
