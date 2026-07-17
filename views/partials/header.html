@@ -98,8 +98,8 @@
     })();
 </script>
 
-<!-- ================= SUPER UPGRADE: FLOATING HEADER GLASSMORPHISM ================= -->
-<header id="main-header" itemscope itemtype="http://schema.org/WPHeader">
+<!-- ================= SUPER UPGRADE: FLOATING HEADER GLASSMORPHISM & SEO SITELINKS ================= -->
+<header id="main-header" itemscope itemtype="https://schema.org/WPHeader">
     <div class="header-inner">
         <!-- Logo & Title Group -->
         <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI">
@@ -123,41 +123,50 @@
                 </label>
             </div>
             
-            <nav class="nav-links" role="menubar" itemscope itemtype="http://schema.org/SiteNavigationElement">
-                <div class="nav-item" itemprop="name" role="none">
-                    <a href="/" itemprop="url" role="menuitem">Beranda</a>
-                </div>
-                
-                <!-- Navigasi Tentang (Sesuai Urutan Baru) -->
-                <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
-                    <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true">Tentang ▾</a>
-                    <div class="mega-menu" role="menu">
-                        <a href="/tentang#visimisi" itemprop="url" role="menuitem">Visi & Misi</a>
-                        <a href="/tentang#struktur" itemprop="url" role="menuitem">Struktur Kepengurusan</a>
-                        <a href="/tentang#filosofi" itemprop="url" role="menuitem">Filosofi Logo & Warna</a>
-                        <a href="/tentang#sejarah-pembentukan" itemprop="url" role="menuitem">Sejarah Terbentuk BEMKBMFKG UMI</a>
-                        <a href="/tentang#sejarah" itemprop="url" role="menuitem">Timeline Sejarah Kepengurusan</a>
-                    </div>
-                </div>
-                
-                <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
-                    <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true">Informasi ▾</a>
-                    <div class="mega-menu" role="menu">
-                        <a href="/informasi#proker" itemprop="url" role="menuitem">Program Kerja</a>
-                        <a href="/informasi#kalender" itemprop="url" role="menuitem">Kalender Proker</a>
-                        <a href="/informasi#timeline" itemprop="url" role="menuitem">Timeline Proker</a>
-                        <a href="/informasi#galeri" itemprop="url" role="menuitem">Dokumentasi Kegiatan</a>
-                        <a href="/informasi#plasma" itemprop="url" role="menuitem">PLASMA (Aspirasi)</a>
-                    </div>
-                </div>
-                
-                <div class="nav-item" style="margin-left: 5px;" itemprop="name" role="none">
-                    <a href="/narahubung" class="holo-btn header-contact-btn" itemprop="url" role="menuitem">Hubungi Kami</a>
-                </div>
+            <!-- SUPER UPGRADE SEO: Transformasi DIV menjadi NAV > UL > LI yang disukai Bot Sitelinks -->
+            <nav aria-label="Navigasi Utama">
+                <ul class="nav-links" role="menubar" itemscope itemtype="https://schema.org/SiteNavigationElement" style="list-style: none; margin: 0; padding: 0;">
+                    
+                    <li class="nav-item" itemprop="name" role="none">
+                        <a href="/" itemprop="url" role="menuitem">Beranda</a>
+                    </li>
+                    
+                    <!-- Navigasi Tentang (Sesuai Urutan Baru) -->
+                    <li class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
+                        <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true" aria-expanded="false">Tentang ▾</a>
+                        
+                        <!-- Sub-menu diubah dari div menjadi ul -->
+                        <ul class="mega-menu" role="menu" aria-label="Submenu Tentang" style="list-style: none; padding: 0; margin: 0;">
+                            <li role="none"><a href="/tentang#visimisi" itemprop="url" role="menuitem" style="display: block;">Visi & Misi</a></li>
+                            <li role="none"><a href="/tentang#struktur" itemprop="url" role="menuitem" style="display: block;">Struktur Kepengurusan</a></li>
+                            <li role="none"><a href="/tentang#filosofi" itemprop="url" role="menuitem" style="display: block;">Filosofi Logo & Warna</a></li>
+                            <li role="none"><a href="/tentang#sejarah-pembentukan" itemprop="url" role="menuitem" style="display: block;">Sejarah Terbentuk BEMKBMFKG UMI</a></li>
+                            <li role="none"><a href="/tentang#sejarah" itemprop="url" role="menuitem" style="display: block;">Timeline Sejarah Kepengurusan</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
+                        <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true" aria-expanded="false">Informasi ▾</a>
+                        
+                        <!-- Sub-menu diubah dari div menjadi ul -->
+                        <ul class="mega-menu" role="menu" aria-label="Submenu Informasi" style="list-style: none; padding: 0; margin: 0;">
+                            <li role="none"><a href="/informasi#proker" itemprop="url" role="menuitem" style="display: block;">Program Kerja</a></li>
+                            <li role="none"><a href="/informasi#kalender" itemprop="url" role="menuitem" style="display: block;">Kalender Proker</a></li>
+                            <li role="none"><a href="/informasi#timeline" itemprop="url" role="menuitem" style="display: block;">Timeline Proker</a></li>
+                            <li role="none"><a href="/informasi#galeri" itemprop="url" role="menuitem" style="display: block;">Dokumentasi Kegiatan</a></li>
+                            <li role="none"><a href="/informasi#plasma" itemprop="url" role="menuitem" style="display: block;">PLASMA (Aspirasi)</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item" style="margin-left: 5px;" itemprop="name" role="none">
+                        <a href="/narahubung" class="holo-btn header-contact-btn" itemprop="url" role="menuitem">Hubungi Kami</a>
+                    </li>
+                    
+                </ul>
             </nav>
             
-            <!-- FIX AGENTIC ACCESSIBILITY: Aria Label sudah disematkan -->
-            <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+            <!-- FIX AGENTIC ACCESSIBILITY & DYNAMIC ARIA-EXPANDED -->
+            <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" onclick="const nav = document.querySelector('.nav-links'); nav.classList.toggle('active'); this.setAttribute('aria-expanded', nav.classList.contains('active'));">
                 <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
             </button>
         </div>
@@ -177,7 +186,15 @@
 
     function toggleMobileMenu(element) {
         if(window.innerWidth <= 768) {
+            // Toggle dropdown statis
             element.classList.toggle('mobile-expand');
+            
+            // Aksesibilitas: perbarui aria-expanded
+            const link = element.querySelector('a');
+            if (link) {
+                const isExpanded = element.classList.contains('mobile-expand');
+                link.setAttribute('aria-expanded', isExpanded);
+            }
         }
     }
 
@@ -195,7 +212,9 @@
                 setTimeout(() => { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
             }
             if(window.innerWidth <= 768) {
-                document.querySelector('.nav-links').classList.remove('active');
+                const navLinks = document.querySelector('.nav-links');
+                navLinks.classList.remove('active');
+                document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
             }
         }
     }
