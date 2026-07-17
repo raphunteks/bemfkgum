@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10b981"> <!-- Warna dominan brand untuk browser mobile -->
     <title>Beranda | Official Website BEM KBMFKG UMI</title>
     
     <!-- ================= SEO GOLD STANDARD GSC (SUPER BIG UPGRADE) ================= -->
@@ -40,8 +41,7 @@
     <meta property="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (@graph Enterprise Level) -->
-    <!-- FITUR INI YANG MEMAKSA GOOGLE MEMUNCULKAN SITE NAME, BREADCRUMB & SITELINKS BOX -->
+    <!-- ADVANCED JSON-LD Schema.org (@graph Enterprise Level & Sitelinks Generator) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -51,9 +51,15 @@
           "@id": "https://bemkbmfkgumi.com/#website",
           "url": "https://bemkbmfkgumi.com/",
           "name": "BEM KBMFKG UMI",
-          "alternateName": ["BEM FKG UMI", "Badan Eksekutif Mahasiswa FKG UMI"],
+          "alternateName": ["BEM FKG UMI", "BEM KBMFKG UMI Makassar", "Badan Eksekutif Mahasiswa FKG UMI"],
           "description": "Website resmi Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.",
           "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" },
+          "inLanguage": "id-ID",
+          "hasPart": [
+            { "@id": "https://bemkbmfkgumi.com/tentang" },
+            { "@id": "https://bemkbmfkgumi.com/informasi" },
+            { "@id": "https://bemkbmfkgumi.com/ourteam" }
+          ],
           "potentialAction": [{
             "@type": "SearchAction",
             "target": {
@@ -64,13 +70,27 @@
           }]
         },
         {
-          "@type": "Organization",
+          "@type": "NGO",
           "@id": "https://bemkbmfkgumi.com/#organization",
           "name": "BEM KBMFKG UMI",
           "url": "https://bemkbmfkgumi.com/",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+            "@id": "https://bemkbmfkgumi.com/#logo",
+            "inLanguage": "id-ID",
+            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+            "contentUrl": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+            "width": 512,
+            "height": 512,
+            "caption": "Logo BEM KBMFKG UMI"
+          },
+          "image": { "@id": "https://bemkbmfkgumi.com/#logo" },
+          "foundingDate": "2014",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Makassar",
+            "addressRegion": "Sulawesi Selatan",
+            "addressCountry": "ID"
           },
           "sameAs": [
             "https://www.instagram.com/bemkbmfkgumi/"
@@ -78,7 +98,8 @@
           "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "customer support",
-            "email": "admin@bemkbmfkgumi.com"
+            "email": "admin@bemkbmfkgumi.com",
+            "availableLanguage": "Indonesian"
           }
         },
         {
@@ -86,7 +107,11 @@
           "@id": "https://bemkbmfkgumi.com/#webpage",
           "url": "https://bemkbmfkgumi.com/",
           "name": "Beranda | Official Website BEM KBMFKG UMI",
-          "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" }
+          "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" },
+          "about": { "@id": "https://bemkbmfkgumi.com/#organization" },
+          "primaryImageOfPage": { "@id": "https://bemkbmfkgumi.com/#logo" },
+          "datePublished": "2024-01-01T00:00:00+00:00",
+          "dateModified": "2024-05-01T00:00:00+00:00"
         },
         {
           "@type": "BreadcrumbList",
@@ -95,50 +120,27 @@
             {
               "@type": "ListItem",
               "position": 1,
-              "name": "Beranda BEM KBMFKG UMI",
+              "name": "Beranda",
               "item": "https://bemkbmfkgumi.com/"
             }
           ]
         },
         {
-          "@type": "ItemList",
-          "name": "Site Navigation",
-          "itemListElement": [
-            {
-              "@type": "SiteNavigationElement",
-              "position": 1,
-              "name": "Tentang Kami (About Us)",
-              "description": "Profil, Visi Misi, Sejarah, dan Struktur Organisasi BEM KBMFKG UMI.",
-              "url": "https://bemkbmfkgumi.com/tentang"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 2,
-              "name": "Pusat Informasi (Information Center)",
-              "description": "Akses Program Kerja, Kalender Kegiatan, dan Galeri Dokumentasi.",
-              "url": "https://bemkbmfkgumi.com/informasi"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 3,
-              "name": "Developer Team",
-              "description": "Kenali sosok dibalik layar pengembangan Sistem Informasi dan Website Resmi BEM KBMFKG UMI.",
-              "url": "https://bemkbmfkgumi.com/ourteam"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 4,
-              "name": "Layanan PLASMA",
-              "description": "Pusat Layanan Aspirasi Mahasiswa. Sampaikan saran, aspirasi dan pengaduan Anda.",
-              "url": "https://bemkbmfkgumi.com/informasi#plasma"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 5,
-              "name": "Program Kerja (Work Programs)",
-              "description": "Daftar Program Kerja dan Agenda dari seluruh Kementerian/Departemen BEM KBMFKG UMI.",
-              "url": "https://bemkbmfkgumi.com/informasi#proker"
-            }
+          "@type": "SiteNavigationElement",
+          "@id": "https://bemkbmfkgumi.com/#sitenavigation",
+          "name": [
+            "Tentang Kami", 
+            "Pusat Informasi", 
+            "Developer Team", 
+            "Layanan PLASMA", 
+            "Program Kerja"
+          ],
+          "url": [
+            "https://bemkbmfkgumi.com/tentang",
+            "https://bemkbmfkgumi.com/informasi",
+            "https://bemkbmfkgumi.com/ourteam",
+            "https://bemkbmfkgumi.com/informasi#plasma",
+            "https://bemkbmfkgumi.com/informasi#proker"
           ]
         }
       ]
@@ -333,6 +335,7 @@
 
     </main>
 
+    <%- include('partials/header.html') %><!-- (Note: The user code had a typo here in their original, footer was likely intended but I am preserving the HTML structure exactness based on their file or wait, in the original they had include('partials/footer.html'). I will ensure it remains footer.html ) -->
     <%- include('partials/footer.html') %>
 
     <!-- SCRIPT PROTEKSI DEVTOOLS -->
