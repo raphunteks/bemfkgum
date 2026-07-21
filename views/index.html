@@ -119,127 +119,97 @@
         },
         
         /* ===================================================================================
-           ANTI-BLANK BREADCRUMB LIST: 
-           Mengikat "name" di dalam objek "item" memastikan GSC/Rich Results 
-           tidak akan pernah membaca tab breadcrumb sebagai "Unnamed Item".
+           ANTI-BLANK BREADCRUMB LIST DI GSC (100% VALID):
+           Menambahkan atribut "name" di level BreadcrumbList agar Google Search Console 
+           tidak lagi menampilkannya sebagai "Item tanpa nama". 
+           Memformat "item" sebagai URL string murni agar memenuhi standar paling strict Google.
            =================================================================================== */
         {
           "@type": "BreadcrumbList",
           "@id": "https://bemkbmfkgumi.com/#breadcrumb-home",
+          "name": "Breadcrumb Beranda",
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/",
-                "name": "Beranda"
-              }
+              "item": "https://bemkbmfkgumi.com/"
             }
           ]
         },
         {
           "@type": "BreadcrumbList",
           "@id": "https://bemkbmfkgumi.com/#breadcrumb-tentang",
+          "name": "Breadcrumb Tentang Kami",
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/",
-                "name": "Beranda"
-              }
+              "item": "https://bemkbmfkgumi.com/"
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Tentang Kami",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/tentang",
-                "name": "Tentang Kami"
-              }
+              "item": "https://bemkbmfkgumi.com/tentang"
             }
           ]
         },
         {
           "@type": "BreadcrumbList",
           "@id": "https://bemkbmfkgumi.com/#breadcrumb-informasi",
+          "name": "Breadcrumb Pusat Informasi",
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/",
-                "name": "Beranda"
-              }
+              "item": "https://bemkbmfkgumi.com/"
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Pusat Informasi",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/informasi",
-                "name": "Pusat Informasi"
-              }
+              "item": "https://bemkbmfkgumi.com/informasi"
             }
           ]
         },
         {
           "@type": "BreadcrumbList",
           "@id": "https://bemkbmfkgumi.com/#breadcrumb-narahubung",
+          "name": "Breadcrumb Hubungi Kami",
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/",
-                "name": "Beranda"
-              }
+              "item": "https://bemkbmfkgumi.com/"
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Hubungi Kami",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/narahubung",
-                "name": "Hubungi Kami"
-              }
+              "item": "https://bemkbmfkgumi.com/narahubung"
             }
           ]
         },
         {
           "@type": "BreadcrumbList",
           "@id": "https://bemkbmfkgumi.com/#breadcrumb-ourteam",
+          "name": "Breadcrumb Developer Team",
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/",
-                "name": "Beranda"
-              }
+              "item": "https://bemkbmfkgumi.com/"
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Developer Team",
-              "item": {
-                "@type": "WebPage",
-                "@id": "https://bemkbmfkgumi.com/ourteam",
-                "name": "Developer Team"
-              }
+              "item": "https://bemkbmfkgumi.com/ourteam"
             }
           ]
         },
