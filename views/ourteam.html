@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developer Team & IT Division | BEM KBMFKG UMI</title>
+    
+    <!-- UPGRADE 1: Penyesuaian Title Tag (Hyphen Format) -->
+    <title>Developer Team - BEM KBMFKG UMI</title>
     
     <!-- ================= SEO EXPERT 100% UPGRADE (DYNAMIC PERSON SCHEMA) ================= -->
     <meta name="description" content="Meet our Developer Team & IT Division. Kenali sosok dibalik layar pengembangan Sistem Informasi dan Website Resmi BEM KBMFKG UMI. Tim developer profesional dari Fakultas Kedokteran Gigi Universitas Muslim Indonesia.">
@@ -15,7 +17,7 @@
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="profile">
     <meta property="og:url" content="https://bemkbmfkgumi.com/ourteam">
-    <meta property="og:title" content="Developer Team & IT Division | BEM KBMFKG UMI">
+    <meta property="og:title" content="Developer Team - BEM KBMFKG UMI">
     <meta property="og:description" content="Meet our Developer Team. Sosok dibalik layar pengembangan Sistem Informasi BEM KBMFKG UMI. Berkenalan dengan tim hebat dari Fakultas Kedokteran Gigi UMI.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:site_name" content="BEM KBMFKG UMI">
@@ -23,11 +25,12 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://bemkbmfkgumi.com/ourteam">
-    <meta property="twitter:title" content="Developer Team & IT Division | BEM KBMFKG UMI">
+    <meta property="twitter:title" content="Developer Team - BEM KBMFKG UMI">
     <meta property="twitter:description" content="Meet our Developer Team. Sosok dibalik layar pengembangan Sistem Informasi BEM KBMFKG UMI. Berkenalan dengan tim hebat dari Fakultas Kedokteran Gigi UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (@graph Enterprise Level for AboutPage & Persons) -->
+    <!-- ADVANCED JSON-LD Schema.org (@graph Enterprise Level for AboutPage & Organization) -->
+    <!-- Tidak ada komentar JS di dalam blok ini untuk menghindari Parsing Error -->
     <script type="application/ld+json" id="structuredData">
     {
       "@context": "https://schema.org",
@@ -83,7 +86,14 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
-<body>
+<body itemscope itemtype="https://schema.org/Organization">
+    
+    <!-- Meta tersembunyi bilingual untuk bot SEO (Invisible to Users) -->
+    <div style="display: none;" aria-hidden="true">
+        <h2 itemprop="name">Developer Team - BEM KBMFKG UMI</h2>
+        <p itemprop="description">Sistem Informasi dan Website Resmi ini dikembangkan secara mandiri oleh kader-kader mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.</p>
+    </div>
+
     <%- include('partials/header.html') %>
     
     <main class="container" style="padding-top: 60px; min-height: 80vh; padding-bottom: 80px;">
@@ -133,28 +143,34 @@
                 console.warn("Memuat mode statis/fallback."); 
             }
             
-            // 1. Render antarmuka UI
+            // 1. Render antarmuka UI sekaligus menyuntikkan HTML Microdata SEO (itemscope Person)
             renderTeamUI(finalTeamData);
 
             // 2. ================= SUPER BIG UPGRADE: DYNAMIC PERSON SCHEMA SEO INJECTION =================
             // Sistem otomatis mendaftarkan masing-masing profil developer ke dalam algoritma Google
-            const schemaScript = document.getElementById('structuredData');
-            if (schemaScript && finalTeamData.length > 0) {
+            // TANPA memparsing HTML script lama, langsung merakit Object JSON murni (100% Anti SyntaxError)
+            if (finalTeamData.length > 0) {
                 try {
-                    const schema = JSON.parse(schemaScript.innerHTML);
                     let persons = [];
+                    const baseUrl = "https://bemkbmfkgumi.com";
                     
                     finalTeamData.forEach(cat => {
                         if (cat.members) {
                             cat.members.forEach(m => {
-                                // Pemastian Absolute URL untuk Gambar
-                                const imgUrl = m.foto ? (m.foto.startsWith('http') ? m.foto : `https://bemkbmfkgumi.com${m.foto}`) : 'https://bemkbmfkgumi.com/img/bemfkgumi.png';
-                                const igLink = m.ig && m.ig !== '#' ? m.ig : 'https://bemkbmfkgumi.com/ourteam';
+                                // Pemastian Absolute URL untuk Gambar Schema
+                                const imgUrl = m.foto ? (m.foto.startsWith('http') ? m.foto : `${baseUrl}${m.foto}`) : `${baseUrl}/img/bemfkgumi.png`;
+                                const igLink = m.ig && m.ig !== '#' ? m.ig : `${baseUrl}/ourteam`;
+                                
+                                // Penentuan Job Title Berdasarkan Kategori
+                                let dynamicJobTitle = `${cat.category} Specialist`;
+                                if(m.nama.includes("Aksa Arsyad") || m.nama.includes("drg. M. Aksa")) {
+                                    dynamicJobTitle = "Lead Developer / Demisioner Dept. Information and Communication";
+                                }
                                 
                                 persons.push({
                                     "@type": "Person",
                                     "name": m.nama,
-                                    "jobTitle": `${cat.category} Specialist`,
+                                    "jobTitle": dynamicJobTitle,
                                     "worksFor": { "@id": "https://bemkbmfkgumi.com/#organization" },
                                     "image": imgUrl,
                                     "sameAs": [igLink]
@@ -163,11 +179,22 @@
                         }
                     });
 
-                    // Injeksi masif semua profil Person ke dalam @graph utama
-                    schema["@graph"].push(...persons);
-                    schemaScript.innerHTML = JSON.stringify(schema);
+                    // Injeksi Script JSON-LD baru ke dalam <head>
+                    const dynamicSchemaScript = document.createElement('script');
+                    dynamicSchemaScript.type = 'application/ld+json';
+                    dynamicSchemaScript.id = 'dynamic-developer-schema';
+                    dynamicSchemaScript.text = JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@graph": persons
+                    });
+                    
+                    // Bersihkan script lama jika render ulang terjadi
+                    const oldScript = document.getElementById('dynamic-developer-schema');
+                    if(oldScript) oldScript.remove();
+                    
+                    document.head.appendChild(dynamicSchemaScript);
                 } catch(e) {
-                    console.error("Gagal menginjeksi SEO Person Schema:", e);
+                    console.error("Gagal merakit dynamic Person Schema:", e);
                 }
             }
             // ==============================================================================================
@@ -176,6 +203,7 @@
         function renderTeamUI(teamData) {
             const cont = document.getElementById('teamContainer');
             cont.innerHTML = '';
+            const baseUrl = "https://bemkbmfkgumi.com";
 
             teamData.forEach((cat, index) => {
                 const delay = index * 0.2;
@@ -193,27 +221,32 @@
                     cat.members.forEach(m => {
                         const igLink = m.ig || '#';
                         const profPic = m.foto || '/img/bemfkgumi.png';
+                        const absoluteProfPic = profPic.startsWith('http') ? profPic : baseUrl + profPic;
                         
                         // SUPER BIG UPGRADE: Validasi Dinamis Khusus "drg. M. Aksa Arsyad, S.KG"
                         let roleTeks = "Fakultas Kedokteran Gigi UMI";
                         let deptTeks = "Dept. Information and Communication";
+                        let jobTitleTeks = `${cat.category}`;
                         
                         // Jika mendeteksi nama tersebut (menggunakan includes agar lebih aman), maka ubah departemennya
                         if(m.nama.includes("Aksa Arsyad") || m.nama.includes("drg. M. Aksa")) {
                             deptTeks = "Demisioner Dept. Information and Communication";
+                            jobTitleTeks = "Lead Developer";
                         }
                         
+                        // UPGRADE SEO: Penambahan itemscope & itemprop pada setiap card
                         html += `
-                            <div class="team-card">
+                            <div class="team-card" itemprop="employee" itemscope itemtype="https://schema.org/Person">
+                                <meta itemprop="image" content="${absoluteProfPic}">
                                 <div class="team-avatar-wrapper">
-                                    <img src="${profPic}" alt="${m.nama}" class="team-avatar">
+                                    <img src="${profPic}" alt="${m.nama}" class="team-avatar" loading="lazy">
                                 </div>
-                                <h3 class="team-name">${m.nama}</h3>
-                                <p class="team-role">${roleTeks}</p>
-                                <p class="team-dept">${deptTeks}</p>
+                                <h3 class="team-name" itemprop="name">${m.nama}</h3>
+                                <p class="team-role" itemprop="jobTitle">${jobTitleTeks}</p>
+                                <p class="team-dept" style="font-size: 0.8rem; color: var(--text-muted);">${deptTeks}</p>
                                 
                                 <div class="team-social-box">
-                                    <a href="${igLink}" target="_blank" class="team-social-icon" title="Instagram">
+                                    <a href="${igLink}" target="_blank" class="team-social-icon" title="Instagram" itemprop="sameAs">
                                         <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                                     </a>
                                 </div>
@@ -229,6 +262,6 @@
     </script>
 
     <!-- Upgrade: Integrasi sistem proteksi devtools -->
-    <script src="/js/protect-devtools.js"></script>
+    <script src="/js/protect-devtools.js" defer></script>
 </body>
 </html>
