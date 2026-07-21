@@ -3,15 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hubungi Kami | BEM KBMFKG UMI</title>
+    
+    <!-- UPGRADE 1: Penyesuaian Title Tag (Hyphen Format untuk Site Name) -->
+    <title>Hubungi Kami - BEM KBMFKG UMI</title>
     
     <!-- PROTECT DEVTOOLS -->
     <script src="/js/protect-devtools.js"></script>
     
-    <!-- SEO EXPERT -->
+    <!-- ================= SEO EXPERT 100% UPGRADE (CONTACT PAGE & SITELINKS READY) ================= -->
     <meta name="description" content="Hubungi BEM FKG UMI untuk pertanyaan akademik, undangan kegiatan, penawaran kerjasama, atau kunjungi sekretariat kami di Makassar.">
     <meta name="keywords" content="Kontak BEM FKG UMI, Hubungi BEM UMI, Alamat BEM FKG UMI, Kerjasama BEM, Narahubung BEM UMI">
+    <meta name="author" content="BEM KBMFKG UMI">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://bemkbmfkgumi.com/narahubung">
+    
+    <!-- Open Graph / Twitter Cards -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bemkbmfkgumi.com/narahubung">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
+    <meta property="og:title" content="Hubungi Kami - BEM KBMFKG UMI">
+    <meta property="og:description" content="Kirimkan pesan penawaran kerjasama, undangan, atau kunjungi langsung sekretariat BEM KBMFKG UMI.">
+    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
+    
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bemkbmfkgumi.com/narahubung">
+    <meta property="twitter:title" content="Hubungi Kami - BEM KBMFKG UMI">
+    <meta property="twitter:description" content="Kirimkan pesan penawaran kerjasama, undangan, atau kunjungi langsung sekretariat BEM KBMFKG UMI.">
+    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+
+    <!-- UPGRADE 2: ADVANCED JSON-LD Schema.org (ContactPage, Organization, Sitelinks) -->
+    <script type="application/ld+json" id="structuredData">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "ContactPage",
+          "@id": "https://bemkbmfkgumi.com/narahubung/#webpage",
+          "url": "https://bemkbmfkgumi.com/narahubung",
+          "name": "Hubungi Kami - BEM KBMFKG UMI",
+          "description": "Hubungi BEM FKG UMI untuk pertanyaan akademik, undangan kegiatan, penawaran kerjasama, atau kunjungi sekretariat kami di Makassar.",
+          "inLanguage": "id-ID",
+          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://bemkbmfkgumi.com/#organization",
+          "name": "BEM KBMFKG UMI",
+          "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+          "url": "https://bemkbmfkgumi.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "admin@bemkbmfkgumi.com",
+            "availableLanguage": "Indonesian"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Hubungi Kami",
+              "item": "https://bemkbmfkgumi.com/narahubung"
+            }
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "@id": "https://bemkbmfkgumi.com/narahubung/#sitelinks",
+          "name": "Narahubung Jump Links",
+          "itemListElement": [
+            {
+              "@type": "SiteNavigationElement",
+              "position": 1,
+              "name": "Kirim Pesan Cepat",
+              "description": "Kirimkan pesan penawaran kerjasama, undangan, atau pertanyaan secara langsung.",
+              "url": "https://bemkbmfkgumi.com/narahubung#form-kontak"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 2,
+              "name": "Lokasi & Peta",
+              "description": "Lihat peta lokasi dan rute menuju Sekretariat resmi BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/narahubung#lokasi-kontak"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+    <!-- ================= END SEO ================= -->
+
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <!-- MAIN CSS -->
@@ -107,8 +201,8 @@
         </div>
 
         <div class="grid-2">
-            <!-- Form Kontak -->
-            <div class="glass-card reveal" style="border-top: 3px solid var(--accent-neon); padding: 35px;">
+            <!-- Form Kontak (Ditambahkan ID form-kontak untuk Sitelinks Google) -->
+            <div id="form-kontak" class="glass-card reveal" style="border-top: 3px solid var(--accent-neon); padding: 35px;">
                 <h2 style="font-size: 1.6rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; color: var(--text-light);">
                     <span style="font-size: 1.5rem;">✉️</span> Kirim Pesan Cepat
                 </h2>
@@ -146,8 +240,8 @@
                 <div id="formResult" style="display: none;"></div>
             </div>
 
-            <!-- Info & Map -->
-            <div class="reveal" style="display: flex; flex-direction: column; gap: 30px;">
+            <!-- Info & Map (Ditambahkan ID lokasi-kontak untuk Sitelinks Google) -->
+            <div id="lokasi-kontak" class="reveal" style="display: flex; flex-direction: column; gap: 30px;">
                 <div class="glass-card" style="padding: 35px;">
                     <h2 style="font-size: 1.5rem; margin-bottom: 25px; color: var(--text-light);">📍 Lokasi & Kontak Resmi</h2>
                     
@@ -303,6 +397,17 @@
             }), { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
             
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            
+            // Tangani hash URL untuk jump links Sitelinks SEO
+            setTimeout(() => {
+                if (window.location.hash) {
+                    const targetId = window.location.hash.substring(1);
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }, 500);
         });
     </script>
 </body>
