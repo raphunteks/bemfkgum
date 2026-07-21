@@ -38,7 +38,7 @@
     <meta property="twitter:description" content="Organization Profile - Kenali lebih dekat profil organisasi, visi misi, struktur kepengurusan, serta sejarah pergerakan BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (AboutPage, Organization, Breadcrumb) -->
+    <!-- ADVANCED JSON-LD Schema.org (AboutPage, Organization, Breadcrumb & Sitelinks Navigation) -->
     <script type="application/ld+json" id="structuredData">
     {
       "@context": "https://schema.org",
@@ -49,14 +49,14 @@
           "url": "https://bemkbmfkgumi.com/tentang",
           "name": "Tentang Kami (About Us) | Profil, Visi Misi & Sejarah BEM KBMFKG UMI",
           "description": "Profil, Visi Misi, Struktur, Filosofi, dan Sejarah BEM KBMFKG UMI (Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia).",
-          "inLanguage": "id-ID",
+          "inLanguage": ["id-ID", "en-US"],
           "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
         },
         {
           "@type": "Organization",
           "@id": "https://bemkbmfkgumi.com/#organization",
           "name": "BEM KBMFKG UMI",
-          "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+          "alternateName": ["Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia", "BEM FKG UMI"],
           "url": "https://bemkbmfkgumi.com/",
           "logo": {
             "@type": "ImageObject",
@@ -86,6 +86,22 @@
               "item": "https://bemkbmfkgumi.com/tentang"
             }
           ]
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "@id": "https://bemkbmfkgumi.com/tentang/#sitenavigation",
+          "name": [
+            "Visi & Misi", 
+            "Struktur Kepengurusan", 
+            "Filosofi Logo", 
+            "Sejarah KBMFKG UMI"
+          ],
+          "url": [
+            "https://bemkbmfkgumi.com/tentang#visimisi",
+            "https://bemkbmfkgumi.com/tentang#struktur",
+            "https://bemkbmfkgumi.com/tentang#filosofi",
+            "https://bemkbmfkgumi.com/tentang#sejarah-pembentukan"
+          ]
         }
       ]
     }
@@ -98,7 +114,14 @@
     <!-- SCRIPT PROTECT DEVTOOLS & RIGHT CLICK -->
     <script src="/js/protect-devtools.js"></script>
 </head>
-<body>
+<body itemscope itemtype="https://schema.org/Organization">
+    
+    <!-- Meta tersembunyi bilingual untuk bot SEO (Invisible to Users) -->
+    <div style="display: none;" aria-hidden="true">
+        <h2 itemprop="name">BEM KBMFKG UMI</h2>
+        <p itemprop="description">About Us - Welcome to the official profile of Student Executive Board (BEM) Dentistry Commissariat UMI. Discover our vision, mission, organizational structure, and executive board members.</p>
+    </div>
+
     <%- include('partials/header.html') %>
     <main class="container" style="padding-top: 60px; padding-bottom: 60px;">
         
@@ -170,7 +193,7 @@
                 
                 <div style="margin: 30px auto;">
                     <!-- FIX CLS -->
-                    <img src="/img/bemfkgumi.png" alt="Logo BEM KBMFKG UMI" class="floating-logo" width="160" height="160" loading="lazy">
+                    <img src="/img/bemfkgumi.png" alt="Logo BEM KBMFKG UMI" class="floating-logo" width="160" height="160" loading="lazy" itemprop="logo">
                 </div>
 
                 <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo BEM KBMFKG UMI memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
@@ -419,7 +442,6 @@
 
                     const breadcrumb = schema["@graph"].find(item => item["@type"] === "BreadcrumbList");
                     if(breadcrumb && breadcrumb.itemListElement[1]) {
-                        // Tambahkan spesifik seksi sebagai child dari "Tentang Kami" jika mau, atau ganti breadcrumb pos ke-3
                         if(!breadcrumb.itemListElement[2]) {
                             breadcrumb.itemListElement.push({
                                 "@type": "ListItem",
@@ -560,6 +582,10 @@
         }
 
         function renderTentangUI(orgData) {
+            // Arrays untuk menampung Data Dynamic Schema SEO JSON-LD
+            let personsSchema = [];
+            let baseUrl = "https://bemkbmfkgumi.com";
+
             if(orgData.artiKabinet && orgData.artiKabinet.kata1) {
                 document.getElementById('uiKata1').innerText = orgData.artiKabinet.kata1;
                 document.getElementById('uiArti1').innerText = orgData.artiKabinet.arti1;
@@ -579,21 +605,36 @@
                 });
             }
 
+            // ================= 1. Pimpinan Inti (HTML + Dynamic Schema JSON-LD) =================
             const pimContainer = document.getElementById('containerPimpinan');
             pimContainer.innerHTML = '';
             if(orgData.pimpinan) {
                 orgData.pimpinan.forEach(pim => {
                     const pic = pim.foto || '/img/bemfkgumi.png';
+                    const fullPicUrl = pic.startsWith('http') ? pic : baseUrl + pic;
+                    
+                    // Push ke Array Schema JSON-LD
+                    personsSchema.push({
+                        "@type": "Person",
+                        "name": pim.nama,
+                        "jobTitle": pim.jabatan,
+                        "worksFor": { "@id": baseUrl + "/#organization" },
+                        "image": fullPicUrl
+                    });
+
+                    // UPGRADE SEO: Menambahkan itemscope & itemprop ke HTML Card
                     pimContainer.innerHTML += `
-                        <div class="leader-card">
+                        <div class="leader-card" itemprop="member" itemscope itemtype="https://schema.org/Person">
+                            <meta itemprop="image" content="${fullPicUrl}">
                             <div class="leader-photo" style="background-image: url('${pic}'); border-color: var(--accent-neon);"></div>
-                            <h3 style="font-size: 1.2rem; margin-bottom: 5px; color: var(--text-light);">${pim.nama}</h3>
-                            <p style="color: var(--accent-neon); font-size: 0.85rem; font-weight:bold;">${pim.jabatan}</p>
+                            <h3 itemprop="name" style="font-size: 1.2rem; margin-bottom: 5px; color: var(--text-light);">${pim.nama}</h3>
+                            <p itemprop="jobTitle" style="color: var(--accent-neon); font-size: 0.85rem; font-weight:bold;">${pim.jabatan}</p>
                         </div>
                     `;
                 });
             }
 
+            // ================= 2. Departemen & Anggota (HTML + Dynamic Schema JSON-LD) =================
             const depContainer = document.getElementById('containerDepartemen');
             depContainer.innerHTML = '';
             if(orgData.departemen) {
@@ -602,11 +643,24 @@
                     if(dep.anggota) {
                         dep.anggota.forEach(ang => {
                             const angPic = ang.foto || '/img/bemfkgumi.png';
+                            const fullAngPicUrl = angPic.startsWith('http') ? angPic : baseUrl + angPic;
+                            
+                            // Push ke Array Schema JSON-LD
+                            personsSchema.push({
+                                "@type": "Person",
+                                "name": ang.nama,
+                                "jobTitle": ang.jabatan + " - " + dep.nama,
+                                "worksFor": { "@id": baseUrl + "/#organization" },
+                                "image": fullAngPicUrl
+                            });
+
+                            // UPGRADE SEO: Menambahkan itemscope & itemprop ke HTML Card
                             anggotaHTML += `
-                                <div class="leader-card" style="padding: 25px 15px;">
+                                <div class="leader-card" style="padding: 25px 15px;" itemprop="member" itemscope itemtype="https://schema.org/Person">
+                                    <meta itemprop="image" content="${fullAngPicUrl}">
                                     <div class="leader-photo" style="width: 80px; height: 80px; border-width: 2px; background-image: url('${angPic}'); margin-bottom: 15px;"></div>
-                                    <h4 style="font-size: 1rem; margin-bottom: 5px; color: var(--text-light);">${ang.nama}</h4>
-                                    <p style="color: var(--text-muted); font-size: 0.8rem;">${ang.jabatan}</p>
+                                    <h4 itemprop="name" style="font-size: 1rem; margin-bottom: 5px; color: var(--text-light);">${ang.nama}</h4>
+                                    <p itemprop="jobTitle" style="color: var(--text-muted); font-size: 0.8rem;">${ang.jabatan}</p>
                                 </div>
                             `;
                         });
@@ -618,6 +672,23 @@
                         </div>
                     `;
                 });
+            }
+
+            // ================= 3. EKSEKUSI PENYUNTIKAN DYNAMIC JSON-LD (ORANG/PENGURUS) =================
+            // Script ini membuat Googlebot tau data pengurus baru tanpa Anda perlu update HTML manual
+            if (personsSchema.length > 0) {
+                const schemaScript = document.createElement('script');
+                schemaScript.type = 'application/ld+json';
+                schemaScript.id = 'dynamic-persons-schema';
+                schemaScript.text = JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@graph": personsSchema
+                });
+                // Hapus script lama jika sudah ada agar tidak ganda saat re-render
+                const oldScript = document.getElementById('dynamic-persons-schema');
+                if(oldScript) oldScript.remove();
+                
+                document.head.appendChild(schemaScript);
             }
         }
 
