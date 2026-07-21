@@ -68,7 +68,7 @@
     }
     </script>
 
-    <!-- UPGRADE 5: SUPER SCHEMA UNTUK KNOWLEDGE GRAPH, BREADCRUMBS, DAN **EXPANDED SITELINKS** -->
+    <!-- UPGRADE 5: SUPER SCHEMA UNTUK KNOWLEDGE GRAPH, MULTI-PATH BREADCRUMBS, DAN EXPANDED SITELINKS -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -119,7 +119,7 @@
         },
         {
           "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/#breadcrumb",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-home",
           "itemListElement": [
             {
               "@type": "ListItem",
@@ -129,11 +129,78 @@
             }
           ]
         },
-        
-        /* ===================================================================================
-           ENTERPRISE SITELINKS GENERATOR: Memaksa Google membaca hirarki link penting Anda.
-           Deskripsi akan digunakan oleh Google sebagai teks di bawah judul Sitelinks.
-           =================================================================================== */
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-tentang",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Tentang Kami",
+              "item": "https://bemkbmfkgumi.com/tentang"
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-informasi",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Pusat Informasi",
+              "item": "https://bemkbmfkgumi.com/informasi"
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-narahubung",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Hubungi Kami",
+              "item": "https://bemkbmfkgumi.com/narahubung"
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-ourteam",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Developer Team",
+              "item": "https://bemkbmfkgumi.com/ourteam"
+            }
+          ]
+        },
         {
           "@type": "ItemList",
           "@id": "https://bemkbmfkgumi.com/#sitelinks",
@@ -156,13 +223,20 @@
             {
               "@type": "SiteNavigationElement",
               "position": 3,
+              "name": "Hubungi Kami (Narahubung)",
+              "description": "Kirimkan pesan penawaran kerjasama, undangan, atau kunjungi langsung sekretariat BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/narahubung"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 4,
               "name": "Layanan PLASMA",
               "description": "Platform Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk menyalurkan keluhan, saran, dan kritik.",
               "url": "https://bemkbmfkgumi.com/informasi#plasma"
             },
             {
               "@type": "SiteNavigationElement",
-              "position": 4,
+              "position": 5,
               "name": "Developer Team",
               "description": "Tim IT dan kolaborator di balik layar pengembangan official website BEM KBMFKG UMI.",
               "url": "https://bemkbmfkgumi.com/ourteam"
