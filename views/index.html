@@ -117,6 +117,12 @@
           "datePublished": "2024-01-01T00:00:00+00:00",
           "dateModified": "2024-05-01T00:00:00+00:00"
         },
+        
+        /* ===================================================================================
+           ANTI-BLANK BREADCRUMB LIST: 
+           Mengikat "name" di dalam objek "item" memastikan GSC/Rich Results 
+           tidak akan pernah membaca tab breadcrumb sebagai "Unnamed Item".
+           =================================================================================== */
         {
           "@type": "BreadcrumbList",
           "@id": "https://bemkbmfkgumi.com/#breadcrumb-home",
@@ -125,7 +131,11 @@
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/",
+                "name": "Beranda"
+              }
             }
           ]
         },
@@ -137,13 +147,21 @@
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/",
+                "name": "Beranda"
+              }
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Tentang Kami",
-              "item": "https://bemkbmfkgumi.com/tentang"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/tentang",
+                "name": "Tentang Kami"
+              }
             }
           ]
         },
@@ -155,13 +173,21 @@
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/",
+                "name": "Beranda"
+              }
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Pusat Informasi",
-              "item": "https://bemkbmfkgumi.com/informasi"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/informasi",
+                "name": "Pusat Informasi"
+              }
             }
           ]
         },
@@ -173,13 +199,21 @@
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/",
+                "name": "Beranda"
+              }
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Hubungi Kami",
-              "item": "https://bemkbmfkgumi.com/narahubung"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/narahubung",
+                "name": "Hubungi Kami"
+              }
             }
           ]
         },
@@ -191,13 +225,21 @@
               "@type": "ListItem",
               "position": 1,
               "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/",
+                "name": "Beranda"
+              }
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Developer Team",
-              "item": "https://bemkbmfkgumi.com/ourteam"
+              "item": {
+                "@type": "WebPage",
+                "@id": "https://bemkbmfkgumi.com/ourteam",
+                "name": "Developer Team"
+              }
             }
           ]
         },
