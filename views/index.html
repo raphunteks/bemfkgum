@@ -45,8 +45,7 @@
     <meta name="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta name="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- UPGRADE 4: PEMISAHAN SCHEMA KHUSUS "SITE NAME" (Standard Resmi Google Search Central) -->
-    <!-- Schema ini dibuat STANDALONE agar Googlebot tidak kebingungan mencari nama website Anda -->
+    <!-- UPGRADE 4: PEMISAHAN SCHEMA KHUSUS "SITE NAME" & "SITELINKS SEARCHBOX" -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -69,7 +68,7 @@
     }
     </script>
 
-    <!-- Schema Lanjutan untuk Profil Organisasi (Knowledge Graph) & Breadcrumbs -->
+    <!-- UPGRADE 5: SUPER SCHEMA UNTUK KNOWLEDGE GRAPH, BREADCRUMBS, DAN **EXPANDED SITELINKS** -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -127,6 +126,46 @@
               "position": 1,
               "name": "Beranda",
               "item": "https://bemkbmfkgumi.com/"
+            }
+          ]
+        },
+        
+        /* ===================================================================================
+           ENTERPRISE SITELINKS GENERATOR: Memaksa Google membaca hirarki link penting Anda.
+           Deskripsi akan digunakan oleh Google sebagai teks di bawah judul Sitelinks.
+           =================================================================================== */
+        {
+          "@type": "ItemList",
+          "@id": "https://bemkbmfkgumi.com/#sitelinks",
+          "name": "Sitelinks Navigation",
+          "itemListElement": [
+            {
+              "@type": "SiteNavigationElement",
+              "position": 1,
+              "name": "Tentang Kami",
+              "description": "Kenali lebih dekat profil organisasi, sejarah, visi misi, dan struktur kepengurusan BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/tentang"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 2,
+              "name": "Pusat Informasi & Proker",
+              "description": "Berita terbaru, kalender kegiatan, dan program kerja unggulan dari Kabinet Ananta Anardhaya.",
+              "url": "https://bemkbmfkgumi.com/informasi"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 3,
+              "name": "Layanan PLASMA",
+              "description": "Platform Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk menyalurkan keluhan, saran, dan kritik.",
+              "url": "https://bemkbmfkgumi.com/informasi#plasma"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 4,
+              "name": "Developer Team",
+              "description": "Tim IT dan kolaborator di balik layar pengembangan official website BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/ourteam"
             }
           ]
         }
