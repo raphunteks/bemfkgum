@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Profile | Deskripsi Program Kerja BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT (DYNAMIC READY) ================= -->
-    <meta name="description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap program kerja, penanggung jawab, dan struktur kepengurusan (Department Structure) di BEM KBMFKG UMI.">
+    <!-- ================= SEO EXPERT (DYNAMIC EVENT & SITELINKS READY) ================= -->
+    <meta name="description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap program kerja, penanggung jawab, dan struktur kepengurusan di BEM KBMFKG UMI.">
     <meta name="keywords" content="Deskripsi Program Kerja, Department Profile, Work Programs, Struktur Departemen, Department Structure, BEM FKG UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -28,59 +28,11 @@
     <meta property="twitter:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (@graph Format) - 100% SEO COMPLIANT UPGRADE -->
-    <script type="application/ld+json" id="structuredData">
+    <!-- BASE STATIC SCHEMA (Aman dari Parsing Error) -->
+    <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
-        {
-          "@type": "AboutPage",
-          "@id": "https://bemkbmfkgumi.com/proker-deskripsi/#webpage",
-          "name": "Department Profile & Work Programs | BEM KBMFKG UMI",
-          "description": "Informasi detail mengenai deskripsi program kerja dan struktur departemen (Department Structure).",
-          "url": "https://bemkbmfkgumi.com/proker-deskripsi",
-          "inLanguage": "id-ID",
-          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
-        },
-        {
-          "@type": "Event",
-          "@id": "https://bemkbmfkgumi.com/proker-deskripsi/#event",
-          "name": "Department Profile & Work Programs",
-          "description": "Informasi detail mengenai deskripsi program kerja.",
-          "url": "https://bemkbmfkgumi.com/proker-deskripsi",
-          "image": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
-          "eventStatus": "https://schema.org/EventScheduled",
-          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-          "startDate": "2026-01-01T08:00:00+08:00",
-          "endDate": "2026-12-31T17:00:00+08:00",
-          "location": {
-            "@type": "Place",
-            "name": "Universitas Muslim Indonesia",
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": "Makassar",
-              "addressRegion": "Sulawesi Selatan",
-              "addressCountry": "ID"
-            }
-          },
-          "organizer": {
-            "@type": "Organization",
-            "name": "BEM KBMFKG UMI",
-            "url": "https://bemkbmfkgumi.com/"
-          },
-          "performer": {
-            "@type": "Organization",
-            "name": "BEM KBMFKG UMI"
-          },
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "IDR",
-            "url": "https://bemkbmfkgumi.com/proker-deskripsi",
-            "validFrom": "2025-01-01",
-            "availability": "https://schema.org/InStock"
-          }
-        },
         {
           "@type": "Organization",
           "@id": "https://bemkbmfkgumi.com/#organization",
@@ -91,35 +43,11 @@
             "@type": "ImageObject",
             "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
           }
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/proker-deskripsi/#breadcrumb",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Program Kerja (Work Programs)",
-              "item": "https://bemkbmfkgumi.com/informasi#proker"
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": "Deskripsi Departemen",
-              "item": "https://bemkbmfkgumi.com/proker-deskripsi"
-            }
-          ]
         }
       ]
     }
     </script>
-    <!-- ================= END SEO ================= -->
+    <!-- ================= END STATIC SEO ================= -->
     
     <!-- OPTIMASI RENDER BLOCKING (LCP & FCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -238,7 +166,7 @@
         }
     </style>
 </head>
-<body>
+<body itemscope itemtype="https://schema.org/WebPage">
     <%- include('partials/header.html') %>
 
     <main class="container" style="padding-top: 30px; min-height: 70vh; padding-bottom: 80px;" id="mainContent">
@@ -326,110 +254,13 @@
 
             } catch (err) {
                 console.warn("[FETCH/PREVIEW MODE]: Menggunakan data lokal (Fallback).", err.message);
-                // Graceful Degradation: Pastikan aplikasi tidak rusak / error merah di Console
                 deptData = FALLBACK_PROKER_DATA;
                 allOrgDept = FALLBACK_ORG_DEPARTEMEN;
                 slug = FALLBACK_PROKER_DATA.id;
             }
 
-            // =========================================================
-            // SUPER UPGRADE SEO DYNAMIC INJECTION (OPEN GRAPH & JSON-LD)
-            // =========================================================
-            const pageTitle = `${deptData.dept} - Department Profile | BEM KBMFKG UMI`;
-            document.title = pageTitle;
-            
-            const descText = deptData.shortDesc ? (deptData.shortDesc.substring(0, 155) + '...') : `Informasi detail mengenai program kerja dan struktur kepengurusan dari ${deptData.dept} BEM KBMFKG UMI.`;
-            const pageUrl = `https://bemkbmfkgumi.com/proker-deskripsi/${slug}`;
-            const imgUrl = deptData.bgImage ? (deptData.bgImage.startsWith('http') ? deptData.bgImage : `https://bemkbmfkgumi.com${deptData.bgImage}`) : 'https://bemkbmfkgumi.com/img/bemfkgumi.png';
-
-            document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
-            document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
-            
-            document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
-            document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
-            document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
-            document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
-            
-            document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
-            document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
-            document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
-            document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
-
-            const schemaScript = document.getElementById('structuredData');
-            if (schemaScript) {
-                const schema = JSON.parse(schemaScript.innerHTML);
-                
-                // Update Dynamic AboutPage Schema
-                const aboutSchema = schema["@graph"].find(item => item["@type"] === "AboutPage");
-                if (aboutSchema) {
-                    aboutSchema.name = `${deptData.dept} - Department Profile`;
-                    aboutSchema.description = descText;
-                    aboutSchema.url = pageUrl;
-                }
-
-                // Update Dynamic EVENT Schema (Anti Error Google GSC)
-                const eventSchema = schema["@graph"].find(item => item["@type"] === "Event");
-                if (eventSchema) {
-                    eventSchema.name = deptData.namaProker ? `${deptData.dept} - ${deptData.namaProker}` : `${deptData.dept} - Work Programs`;
-                    eventSchema.description = descText;
-                    eventSchema.url = pageUrl;
-                    
-                    // Inject Dynamic Dates ISO 8601
-                    eventSchema.startDate = deptData.startDate ? deptData.startDate + "T08:00:00+08:00" : new Date().toISOString();
-                    eventSchema.endDate = deptData.endDate ? deptData.endDate + "T17:00:00+08:00" : eventSchema.startDate;
-                    
-                    // 100% SEO COMPLIANT: Use proper PostalAddress structure if possible
-                    eventSchema.location = { 
-                        "@type": "Place", 
-                        "name": deptData.sasaranPeserta || "Universitas Muslim Indonesia", 
-                        "address": {
-                            "@type": "PostalAddress",
-                            "addressLocality": "Makassar",
-                            "addressRegion": "Sulawesi Selatan",
-                            "addressCountry": "ID"
-                        }
-                    };
-
-                    eventSchema.organizer = {
-                        "@type": "Organization",
-                        "name": "BEM KBMFKG UMI",
-                        "url": "https://bemkbmfkgumi.com/"
-                    };
-
-                    eventSchema.performer = {
-                        "@type": "Organization",
-                        "name": deptData.performer || deptData.dept || "BEM KBMFKG UMI"
-                    };
-
-                    let priceValue = "0";
-                    if (deptData.anggaran && deptData.anggaran.toLowerCase() !== 'gratis') {
-                        priceValue = deptData.anggaran.replace(/[^0-9]/g, '') || "0";
-                    }
-                    eventSchema.offers = {
-                        "@type": "Offer",
-                        "price": priceValue,
-                        "priceCurrency": "IDR",
-                        "url": pageUrl,
-                        "validFrom": new Date().toISOString().split('T')[0],
-                        "availability": "https://schema.org/InStock"
-                    };
-                    
-                    if(deptData.bgImage) eventSchema.image = imgUrl;
-                }
-
-                // Update Dynamic Breadcrumb
-                const breadcrumbSchema = schema["@graph"].find(item => item["@type"] === "BreadcrumbList");
-                if (breadcrumbSchema && breadcrumbSchema.itemListElement[2]) {
-                    breadcrumbSchema.itemListElement[2].name = deptData.dept;
-                    breadcrumbSchema.itemListElement[2].item = pageUrl;
-                }
-
-                schemaScript.innerHTML = JSON.stringify(schema);
-            }
-            // ==================== END SEO DYNAMIC ====================
-            
-            // Render UI Terakhir
-            renderDetail(deptData, allOrgDept);
+            // Render UI Terlebih Dahulu agar Elemen ID tersedia untuk Sitelinks
+            renderDetail(deptData, allOrgDept, slug);
         });
 
         // ================= FUNGSI RENDER ERROR STATE =================
@@ -454,8 +285,9 @@
         }
 
         // ================= FUNGSI RENDER UTAMA UI GLASSMORPHISM =================
-        function renderDetail(data, orgDepartemen) {
-            const bgImg = data.bgImage || '/img/bemfkgumi.png';
+        function renderDetail(data, orgDepartemen, slug) {
+            const baseUrl = "https://bemkbmfkgumi.com";
+            const bgImg = data.bgImage ? (data.bgImage.startsWith('http') ? data.bgImage : baseUrl + data.bgImage) : baseUrl + '/img/bemfkgumi.png';
 
             // Generate Struktur Pengurus Card UI
             let strukturHtml = '';
@@ -467,18 +299,19 @@
             if (deptStructure && deptStructure.anggota && deptStructure.anggota.length > 0) {
                 strukturHtml = `<div class="dept-team-grid">`;
                 deptStructure.anggota.forEach(ang => {
-                    const angPic = ang.foto || '/img/bemfkgumi.png';
+                    const angPic = ang.foto ? (ang.foto.startsWith('http') ? ang.foto : baseUrl + ang.foto) : baseUrl + '/img/bemfkgumi.png';
+                    // Menambahkan Microdata Person untuk masing-masing anggota kepengurusan
                     strukturHtml += `
-                        <div class="dept-member-card">
+                        <div class="dept-member-card" itemprop="employee" itemscope itemtype="https://schema.org/Person">
+                            <meta itemprop="image" content="${angPic}">
                             <img src="${angPic}" alt="${ang.nama}" class="dept-member-photo" loading="lazy" width="80" height="80">
-                            <h4 class="dept-member-name">${ang.nama}</h4>
-                            <p class="dept-member-role">${ang.jabatan}</p>
+                            <h4 class="dept-member-name" itemprop="name">${ang.nama}</h4>
+                            <p class="dept-member-role" itemprop="jobTitle">${ang.jabatan}</p>
                         </div>
                     `;
                 });
                 strukturHtml += `</div>`;
             } else {
-                // Tampilan text fallback jika data foto tidak tersedia di Manajemen Profil
                 strukturHtml = `
                     <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px dashed var(--border-light);">
                         <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">Koordinator Departemen</span>
@@ -493,49 +326,54 @@
                 `;
             }
 
-            // SUPER UPGRADE: Menyusun Judul Banner (Menggabungkan Nama Dept dan Nama Proker)
-            // Memastikan penamaan otomatis menjadi HURUF KAPITAL (UPPERCASE)
+            // Menyusun Judul Banner
             const deptText = data.dept ? data.dept.toUpperCase() : '';
             const prokerText = data.namaProker ? data.namaProker.toUpperCase() : '';
             const titleBanner = prokerText ? `${deptText} - ${prokerText}` : deptText;
 
-            // SUPER UPGRADE: Format Tanggal ke DD-MM-YYYY
             const formattedStart = formatDateToDDMMYYYY(data.startDate);
             const formattedEnd = formatDateToDDMMYYYY(data.endDate);
 
-            // Inject Konten Keseluruhan ke DOM
+            // Inject Konten Keseluruhan ke DOM (DITAMBAHKAN ID UNTUK SITELINKS JUMP LINKS)
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <!-- BAGIAN BANNER 1920x1080 (LCP OPTIMIZED) - DIKEMBALIKAN KE STYLE ELEGAN SEPERTI GAMBAR 2 -->
+                <!-- BAGIAN BANNER 1920x1080 (LCP OPTIMIZED) -->
                 <div class="proker-banner-wrapper reveal active">
                     <img src="${bgImg}" alt="Banner ${data.dept}" class="proker-banner-img" width="1920" height="1080" fetchpriority="high">
                     
-                    <!-- Gradient Overlay at bottom for title -->
                     <div class="proker-banner-overlay" style="z-index: 2;">
                         <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem; background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2);">DESKRIPSI PROGRAM KERJA</div>
-                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px; text-transform: uppercase;">${titleBanner}</h2>
-                        <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;">${data.shortDesc || ''}</p>
+                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px; text-transform: uppercase;" itemprop="name">${titleBanner}</h2>
+                        <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;" itemprop="description">${data.shortDesc || ''}</p>
                     </div>
                 </div>
 
                 <div class="grid-2" style="margin-bottom: 40px; grid-template-columns: 1fr 380px; gap: 40px;">
                     <!-- BAGIAN KIRI: 4 DESKRIPSI LENGKAP -->
                     <div class="glass-card reveal active" style="transition-delay: 0.1s;">
-                        <h2 class="detail-section-title">Latar Belakang / Bentuk Kegiatan</h2>
-                        <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;">${data.latarBelakang || '-'}</p>
+                        <div id="latar-belakang" style="scroll-margin-top: 100px;">
+                            <h2 class="detail-section-title">Latar Belakang / Bentuk Kegiatan</h2>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;" itemprop="about">${data.latarBelakang || '-'}</p>
+                        </div>
 
-                        <h2 class="detail-section-title">Tujuan Kegiatan</h2>
-                        <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;">${data.tujuan || '-'}</p>
+                        <div id="tujuan" style="scroll-margin-top: 100px;">
+                            <h2 class="detail-section-title">Tujuan Kegiatan</h2>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;">${data.tujuan || '-'}</p>
+                        </div>
 
-                        <h2 class="detail-section-title">Analisis SWOT</h2>
-                        <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;">${data.swot || '-'}</p>
+                        <div id="swot" style="scroll-margin-top: 100px;">
+                            <h2 class="detail-section-title">Analisis SWOT</h2>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;">${data.swot || '-'}</p>
+                        </div>
 
-                        <h2 class="detail-section-title" style="margin-bottom: 15px;">Parameter Keberhasilan</h2>
-                        <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:10px; white-space: pre-wrap;">${data.parameterKeberhasilan || '-'}</p>
+                        <div id="parameter-keberhasilan" style="scroll-margin-top: 100px;">
+                            <h2 class="detail-section-title" style="margin-bottom: 15px;">Parameter Keberhasilan</h2>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:10px; white-space: pre-wrap;">${data.parameterKeberhasilan || '-'}</p>
+                        </div>
                     </div>
 
                     <!-- BAGIAN KANAN: METADATA & PENANGGUNG JAWAB -->
-                    <div class="reveal active" style="transition-delay: 0.2s;">
+                    <div class="reveal active" style="transition-delay: 0.2s;" id="detail-operasional" style="scroll-margin-top: 100px;">
                         <div class="glass-card" style="margin-bottom: 30px; padding: 25px; position: sticky; top: 100px;">
                             <h2 class="detail-section-title" style="border-left-color: #10b981; font-size: 1.4rem;">Detail Operasional</h2>
                             
@@ -574,8 +412,8 @@
                     </div>
                 </div>
 
-                <!-- KOTAK STRUKTUR PENGURUS BARU (FULL WIDTH DI BAWAH) -->
-                <div class="glass-card reveal active" style="padding: 35px; margin-bottom: 30px; transition-delay: 0.3s;">
+                <!-- KOTAK STRUKTUR PENGURUS -->
+                <div class="glass-card reveal active" id="struktur-pengurus" style="padding: 35px; margin-bottom: 30px; transition-delay: 0.3s; scroll-margin-top: 100px;">
                      <h2 class="detail-section-title" style="border-left-color: #8b5cf6;">Struktur Pengurus Departemen</h2>
                      <p style="color: var(--text-muted); margin-bottom: 25px;">Para punggawa penggerak program kerja di departemen ini.</p>
                      ${strukturHtml}
@@ -585,6 +423,190 @@
                     <a href="/informasi#proker" class="glass-btn">&larr; Kembali ke Pusat Informasi</a>
                 </div>
             `;
+
+            // Eksekusi Pembangkitan SEO
+            generateDynamicSEO(data, slug, titleBanner, bgImg, baseUrl);
+        }
+
+        // =========================================================
+        // SUPER UPGRADE: DYNAMIC JSON-LD GENERATOR (ANTI-ERROR)
+        // =========================================================
+        function generateDynamicSEO(data, slug, titleBanner, imgUrl, baseUrl) {
+            const pageTitle = `${titleBanner} | BEM KBMFKG UMI`;
+            document.title = pageTitle;
+            
+            const descText = data.shortDesc ? (data.shortDesc.substring(0, 155) + '...') : `Informasi detail mengenai program kerja dan struktur kepengurusan dari ${data.dept} BEM KBMFKG UMI.`;
+            const pageUrl = `${baseUrl}/proker-deskripsi/${slug}`;
+
+            // Update HTML Meta Tags
+            document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
+            document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
+            
+            document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
+            document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
+            document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
+            document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
+            
+            document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
+            document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
+            document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
+            document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
+
+            // Sanitasi dan persiapkan data untuk Google Schema (Event)
+            let priceValue = "0";
+            if (data.anggaran && data.anggaran.toLowerCase() !== 'gratis') {
+                priceValue = data.anggaran.replace(/[^0-9]/g, '') || "0";
+            }
+            
+            const startDateISO = data.startDate ? `${data.startDate}T08:00:00+08:00` : new Date().toISOString();
+            const endDateISO = data.endDate ? `${data.endDate}T17:00:00+08:00` : startDateISO;
+            
+            // Merakit Full Detailed Description khusus untuk Googlebot
+            const fullSEO_Description = `${data.shortDesc || ''} Latar Belakang: ${data.latarBelakang || '-'} Tujuan: ${data.tujuan || '-'} Parameter Keberhasilan: ${data.parameterKeberhasilan || '-'}`.substring(0, 4500);
+
+            try {
+                // Merakit Objek JSON Murni (Anti SyntaxError)
+                const schemaGraph = [
+                    {
+                        "@type": "WebPage",
+                        "@id": `${pageUrl}/#webpage`,
+                        "url": pageUrl,
+                        "name": pageTitle,
+                        "description": descText,
+                        "inLanguage": "id-ID",
+                        "publisher": { "@id": `${baseUrl}/#organization` }
+                    },
+                    {
+                        "@type": "Event",
+                        "@id": `${pageUrl}/#event`,
+                        "name": titleBanner,
+                        "description": fullSEO_Description,
+                        "url": pageUrl,
+                        "image": imgUrl,
+                        "eventStatus": "https://schema.org/EventScheduled",
+                        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                        "startDate": startDateISO,
+                        "endDate": endDateISO,
+                        "location": {
+                            "@type": "Place",
+                            "name": data.sasaranPeserta || "Universitas Muslim Indonesia",
+                            "address": {
+                                "@type": "PostalAddress",
+                                "addressLocality": "Makassar",
+                                "addressRegion": "Sulawesi Selatan",
+                                "addressCountry": "ID"
+                            }
+                        },
+                        "organizer": {
+                            "@type": "Organization",
+                            "@id": `${baseUrl}/#organization`,
+                            "name": "BEM KBMFKG UMI",
+                            "url": baseUrl
+                        },
+                        "performer": {
+                            "@type": "Organization",
+                            "name": data.performer || data.dept || "BEM KBMFKG UMI"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "price": priceValue,
+                            "priceCurrency": "IDR",
+                            "url": pageUrl,
+                            "validFrom": new Date().toISOString().split('T')[0],
+                            "availability": "https://schema.org/InStock"
+                        }
+                    },
+                    {
+                        "@type": "BreadcrumbList",
+                        "@id": `${pageUrl}/#breadcrumb`,
+                        "itemListElement": [
+                            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": baseUrl },
+                            { "@type": "ListItem", "position": 2, "name": "Program Kerja", "item": `${baseUrl}/informasi#proker` },
+                            { "@type": "ListItem", "position": 3, "name": titleBanner, "item": pageUrl }
+                        ]
+                    },
+                    // =========================================================
+                    // SITELINKS GENERATOR UNTUK HALAMAN SPESIFIK INI (JUMP LINKS)
+                    // =========================================================
+                    {
+                        "@type": "ItemList",
+                        "@id": `${pageUrl}/#sitelinks`,
+                        "name": "Detail Program Kerja Navigation",
+                        "itemListElement": [
+                            {
+                                "@type": "SiteNavigationElement",
+                                "position": 1,
+                                "name": "Latar Belakang & Bentuk",
+                                "description": "Latar belakang urgensi pelaksanaan serta gambaran bentuk kegiatan.",
+                                "url": `${pageUrl}#latar-belakang`
+                            },
+                            {
+                                "@type": "SiteNavigationElement",
+                                "position": 2,
+                                "name": "Tujuan Kegiatan",
+                                "description": "Tujuan dan target pencapaian dari pelaksanaan program kerja ini.",
+                                "url": `${pageUrl}#tujuan`
+                            },
+                            {
+                                "@type": "SiteNavigationElement",
+                                "position": 3,
+                                "name": "Analisis SWOT",
+                                "description": "Pemetaan kekuatan, kelemahan, peluang, dan ancaman kegiatan.",
+                                "url": `${pageUrl}#swot`
+                            },
+                            {
+                                "@type": "SiteNavigationElement",
+                                "position": 4,
+                                "name": "Parameter Keberhasilan",
+                                "description": "Tolak ukur evaluasi indikator kesuksesan program kerja.",
+                                "url": `${pageUrl}#parameter-keberhasilan`
+                            },
+                            {
+                                "@type": "SiteNavigationElement",
+                                "position": 5,
+                                "name": "Detail Operasional",
+                                "description": "Jadwal, waktu pelaksanaan, anggaran dana, dan sasaran peserta.",
+                                "url": `${pageUrl}#detail-operasional`
+                            },
+                            {
+                                "@type": "SiteNavigationElement",
+                                "position": 6,
+                                "name": "Struktur Pengurus",
+                                "description": "Daftar susunan nama penanggung jawab kepanitiaan dan departemen.",
+                                "url": `${pageUrl}#struktur-pengurus`
+                            }
+                        ]
+                    }
+                ];
+
+                // Suntikkan Dynamic Script
+                const dynamicSchemaScript = document.createElement('script');
+                dynamicSchemaScript.type = 'application/ld+json';
+                dynamicSchemaScript.id = 'dynamic-proker-schema';
+                dynamicSchemaScript.text = JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@graph": schemaGraph
+                });
+                
+                // Bersihkan jika pernah di-render sebelumnya (Menghindari Duplicate Content)
+                const oldScript = document.getElementById('dynamic-proker-schema');
+                if(oldScript) oldScript.remove();
+                
+                document.head.appendChild(dynamicSchemaScript);
+                
+                // Eksekusi autoscroll ke ID jika URL mengandung Hash (Sitelink clicked dari Google)
+                if (window.location.hash) {
+                    const targetId = window.location.hash.substring(1);
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        setTimeout(() => {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 500);
+                    }
+                }
+            } catch (e) {
+                console.error("Gagal menyusun SEO Dinamis:", e);
+            }
         }
     </script>
 </body>
