@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#10b981">
-    <title>Beranda | Official Website BEM KBMFKG UMI</title>
+    
+    <!-- UPGRADE 1: Penyesuaian Title Tag. Google lebih menyukai format "Judul Halaman - Nama Situs" untuk mengekstrak Site Name -->
+    <title>Beranda - BEM KBMFKG UMI</title>
     
     <!-- ================= SEO GOLD STANDARD GSC (SUPER BIG UPGRADE) ================= -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
@@ -12,6 +14,8 @@
     <meta name="keywords" content="BEM FKG UMI, BEM KBMFKG UMI, Fakultas Kedokteran Gigi UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia, Makassar, Kabinet Ananta Anardhaya">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- UPGRADE 2: Pastikan Canonical URL diakhiri dengan slash (/) untuk homepage -->
     <link rel="canonical" href="https://bemkbmfkgumi.com/">
     
     <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts -->
@@ -26,47 +30,50 @@
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemkbmfkgumi.com/">
+    
+    <!-- UPGRADE 3: OG Site Name adalah kunci kedua terpenting setelah JSON-LD untuk memunculkan Nama Website -->
     <meta property="og:site_name" content="BEM KBMFKG UMI">
-    <meta property="og:title" content="Beranda | Official Website BEM KBMFKG UMI">
+    <meta property="og:title" content="Beranda - BEM KBMFKG UMI">
     <meta property="og:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://bemkbmfkgumi.com/">
-    <meta property="twitter:title" content="Beranda | Official Website BEM KBMFKG UMI">
-    <meta property="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
-    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://bemkbmfkgumi.com/">
+    <meta name="twitter:title" content="Beranda - BEM KBMFKG UMI">
+    <meta name="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
+    <meta name="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- ADVANCED JSON-LD Schema.org (@graph Enterprise Level & Sitelinks Generator) -->
+    <!-- UPGRADE 4: PEMISAHAN SCHEMA KHUSUS "SITE NAME" (Standard Resmi Google Search Central) -->
+    <!-- Schema ini dibuat STANDALONE agar Googlebot tidak kebingungan mencari nama website Anda -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "BEM KBMFKG UMI",
+      "alternateName": [
+        "BEM FKG UMI", 
+        "BEM KBMFKG UMI Makassar", 
+        "Badan Eksekutif Mahasiswa FKG UMI"
+      ],
+      "url": "https://bemkbmfkgumi.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://bemkbmfkgumi.com/informasi?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Schema Lanjutan untuk Profil Organisasi (Knowledge Graph) & Breadcrumbs -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
-        {
-          "@type": "WebSite",
-          "@id": "https://bemkbmfkgumi.com/#website",
-          "url": "https://bemkbmfkgumi.com/",
-          "name": "BEM KBMFKG UMI",
-          "alternateName": ["BEM FKG UMI", "BEM KBMFKG UMI Makassar", "Badan Eksekutif Mahasiswa FKG UMI"],
-          "description": "Website resmi Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.",
-          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" },
-          "inLanguage": "id-ID",
-          "hasPart": [
-            { "@id": "https://bemkbmfkgumi.com/tentang" },
-            { "@id": "https://bemkbmfkgumi.com/informasi" },
-            { "@id": "https://bemkbmfkgumi.com/ourteam" }
-          ],
-          "potentialAction": [{
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": "https://bemkbmfkgumi.com/informasi?q={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
-          }]
-        },
         {
           "@type": "NGO",
           "@id": "https://bemkbmfkgumi.com/#organization",
@@ -104,7 +111,7 @@
           "@type": "WebPage",
           "@id": "https://bemkbmfkgumi.com/#webpage",
           "url": "https://bemkbmfkgumi.com/",
-          "name": "Beranda | Official Website BEM KBMFKG UMI",
+          "name": "Beranda - BEM KBMFKG UMI",
           "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" },
           "about": { "@id": "https://bemkbmfkgumi.com/#organization" },
           "primaryImageOfPage": { "@id": "https://bemkbmfkgumi.com/#logo" },
@@ -122,24 +129,6 @@
               "item": "https://bemkbmfkgumi.com/"
             }
           ]
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "@id": "https://bemkbmfkgumi.com/#sitenavigation",
-          "name": [
-            "Tentang Kami", 
-            "Pusat Informasi", 
-            "Developer Team", 
-            "Layanan PLASMA", 
-            "Program Kerja"
-          ],
-          "url": [
-            "https://bemkbmfkgumi.com/tentang",
-            "https://bemkbmfkgumi.com/informasi",
-            "https://bemkbmfkgumi.com/ourteam",
-            "https://bemkbmfkgumi.com/informasi#plasma",
-            "https://bemkbmfkgumi.com/informasi#proker"
-          ]
         }
       ]
     }
@@ -149,7 +138,7 @@
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     
-    <!-- PENGATURAN MANIFEST PWA (DIAMBIL DARI GBR 1) -->
+    <!-- PENGATURAN MANIFEST PWA -->
     <link rel="manifest" href="/manifest.json" />
 </head>
 <body>
@@ -169,7 +158,7 @@
                 </h1>
                 
                 <p class="hero-quote" style="font-size: 1.1rem; color: var(--text-light); max-width: 700px; margin: 0 auto;">
-                    "Perjuangan yang tak terbatas dan tidak Rusak/Hancur, Menggambarkan sesuatu yang abadi kekal, dan tidak terhalang oleh waktu."<br>
+                    "Perjuangan yang tak batas dan tidak Rusak/Hancur, Menggambarkan sesuatu yang abadi kekal, dan tidak terhalang oleh waktu."<br>
                     <span style="font-size: 0.95rem; color: var(--accent-neon); display: block; margin-top: 15px; font-weight: bold; letter-spacing: 1px;">Semangat Perjuangan Tanpa Batas, Sesuatu yang Abadi.</span>
                 </p>
                 
@@ -470,7 +459,6 @@
             let dataFilosofi = FALLBACK_FILOSOFI;
 
             // PERBAIKAN 2: Tambahkan sistem AbortController (Timeout 3.5 Detik)
-            // Agar jika database loading lama, tidak membuat halaman ikut terhenti.
             const fetchController = new AbortController();
             const fetchTimeout = setTimeout(() => fetchController.abort(), 3500);
 
@@ -481,7 +469,7 @@
                 }
                 
                 const req = await fetch(apiUrl, { signal: fetchController.signal });
-                clearTimeout(fetchTimeout); // Hapus timer jika sukses
+                clearTimeout(fetchTimeout); 
                 const res = await req.json();
                 
                 if (res.org) {
@@ -560,14 +548,10 @@
         }
     </script>
 
-    <!-- ================= PWA SERVICE WORKER REGISTRATION (UPGRADED) ================= -->
-    <!-- (Menambahkan proteksi protokol agar tidak error saat di-preview di mode sandbox/blob) -->
+    <!-- ================= PWA SERVICE WORKER REGISTRATION ================= -->
     <script>
         if ('serviceWorker' in navigator) {
-            // Menunggu load window selesai agar prioritas utama (UI/UX) tampil duluan
             window.addEventListener('load', () => {
-                // PROTEKSI KEAMANAN: Hanya daftarkan SW jika berjalan di HTTP/HTTPS
-                // Ini mencegah error "URL protocol 'blob:' is not supported" di mode Pratinjau
                 if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
                     navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
