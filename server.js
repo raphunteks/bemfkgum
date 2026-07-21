@@ -41,6 +41,17 @@ try {
     console.error("⚠️ Peringatan: Redis gagal inisiasi. Backend berjalan di Mode Offline.", error.message);
 }
 
+// ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
+const safeParse = (data, fallbackData) => {
+    if (!data) return fallbackData;
+    try {
+        return typeof data === 'string' ? JSON.parse(data) : data;
+    } catch (error) {
+        console.error("⚠️ Data terdeteksi korup, menggunakan fallback data.");
+        return fallbackData;
+    }
+};
+
 // ================= DATA SEED (STRUKTUR BEM KBMFKG UMI LENGKAP) =================
 const defaultOrg = {
     visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
@@ -76,10 +87,10 @@ const defaultOrg = {
     ]
 };
 
-// ================= BIG UPGRADE: DUMMY DEPT INFOCOM (+ NEW 10 FORMS SEO FIELDS) =================
 const defaultProker = [
     {
         id: "pubmed",
+        slug: "pubmed",
         dept: "DEPT. INFOCOM",
         namaProker: "PUBMED",
         bgImage: "/img/bemfkgumi.png",
@@ -161,7 +172,7 @@ const defaultKontak = {
 
 const defaultKalender = [
     {
-        id: "umi-amal-senyuman-uas-vol-iv", // Disinkronkan dengan slug
+        id: "umi-amal-senyuman-uas-vol-iv", 
         slug: "umi-amal-senyuman-uas-vol-iv",
         nama: "UMI Amal Senyuman (UAS) Vol. IV",
         dept: "Dept. of Dedication Humanity",
@@ -222,16 +233,119 @@ app.get('/proker-detail/:slug', (req, res) => {
     res.render('proker-detail'); 
 });
 
-// ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
-const safeParse = (data, fallbackData) => {
-    if (!data) return fallbackData;
+// ============================================================================
+// SUPER BIG UPGRADE: DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR
+// Menyuntikkan seluruh link dinamis dari database agar terindeks oleh Googlebot
+// ============================================================================
+
+app.get('/robots.txt', (req, res) => {
+    const domain = "https://bemkbmfkgumi.com";
+    const robotsContent = `User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: ${domain}/sitemap.xml
+`;
+    res.header('Content-Type', 'text/plain');
+    res.send(robotsContent);
+});
+
+app.get('/sitemap.xml', async (req, res) => {
     try {
-        return typeof data === 'string' ? JSON.parse(data) : data;
+        const domain = "https://bemkbmfkgumi.com";
+        const today = new Date().toISOString().split('T')[0];
+        
+        let prokerData = defaultProker;
+        let kalenderData = defaultKalender;
+
+        // Coba fetch dari DB Redis
+        if(redis) {
+            const rawProker = await redis.get('Proker_Data');
+            const rawKalender = await redis.get('Kalender_Data');
+            prokerData = safeParse(rawProker, defaultProker);
+            kalenderData = safeParse(rawKalender, defaultKalender);
+        }
+
+        // Generate URL Statis
+        let xmlUrls = `
+    <url>
+        <loc>${domain}/</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>${domain}/tentang</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${domain}/informasi</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>${domain}/narahubung</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>${domain}/ourteam</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>`;
+
+        // Generate URL Dinamis untuk Deskripsi Proker (Departemen)
+        if (Array.isArray(prokerData)) {
+            prokerData.forEach(p => {
+                const slug = p.slug || p.id;
+                if (slug) {
+                    xmlUrls += `
+    <url>
+        <loc>${domain}/proker-deskripsi/${slug}</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
+                }
+            });
+        }
+
+        // Generate URL Dinamis untuk Detail Kegiatan (Kalender)
+        if (Array.isArray(kalenderData)) {
+            kalenderData.forEach(k => {
+                const slug = k.slug || k.id;
+                if (slug) {
+                    xmlUrls += `
+    <url>
+        <loc>${domain}/proker-detail/${slug}</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
+                }
+            });
+        }
+
+        // Bungkus dengan Tag Root XML
+        const sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${xmlUrls}
+</urlset>`;
+
+        res.header('Content-Type', 'application/xml');
+        res.send(sitemapXML);
     } catch (error) {
-        console.error("⚠️ Data terdeteksi korup, menggunakan fallback data.");
-        return fallbackData;
+        console.error("Gagal men-generate Sitemap:", error);
+        res.status(500).send("Internal Server Error generating Sitemap");
     }
-};
+});
+
 
 // ================= API ENDPOINTS: MANAJEMEN KONTEN (CMS) =================
 app.get('/api/content', async (req, res) => {
@@ -280,19 +394,26 @@ app.post('/api/content/:type', async (req, res) => {
         
         let bodyData = req.body; 
         
-        // Auto-Generate & Sanitize Slug Kalender (SEO URL)
-        if (type === 'kalender' && Array.isArray(bodyData)) {
-            bodyData.forEach(evt => {
-                let textToSlug = evt.slug && evt.slug.trim() !== '' ? evt.slug : (evt.nama || evt.id);
-                let safeSlug = textToSlug.toString().toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^\w\-]+/g, '')
-                    .replace(/\-\-+/g, '-')
-                    .replace(/^-+/, '')
-                    .replace(/-+$/, '');
+        // =========================================================================
+        // SUPER BIG UPGRADE: DYNAMIC SEO SLUG GENERATOR
+        // Otomatis men-generate Slug URL yang rapi untuk Proker dan Kalender
+        // agar menghindari URL dengan spasi, huruf kapital, atau karakter ilegal
+        // =========================================================================
+        if ((type === 'kalender' || type === 'proker') && Array.isArray(bodyData)) {
+            bodyData.forEach(item => {
+                // Memilih field apa yang akan dijadikan Slug (Judul/Nama Kegiatan/Nama Proker)
+                let textToSlug = item.slug || item.id || item.nama || item.namaProker || item.dept || "kegiatan";
                 
-                evt.slug = safeSlug;
-                evt.id = safeSlug; 
+                // Algoritma Pembersih Karakter URL (SEO Friendly)
+                let safeSlug = textToSlug.toString().toLowerCase().trim()
+                    .replace(/\s+/g, '-')           // Ganti spasi dengan strip
+                    .replace(/[^\w\-]+/g, '')       // Buang semua karakter kecuali huruf, angka, dan strip
+                    .replace(/\-\-+/g, '-')         // Gabungkan strip yang beruntun
+                    .replace(/^-+/, '')             // Hapus strip di awal
+                    .replace(/-+$/, '');            // Hapus strip di akhir
+                
+                item.slug = safeSlug;
+                item.id = safeSlug; // Menyamakan ID dengan Slug agar sinkron
             });
         }
 
