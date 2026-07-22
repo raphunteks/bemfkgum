@@ -241,7 +241,11 @@ app.get('/proker-deskripsi/:slug', (req, res) => res.render('proker-deskripsi'))
 app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proker-detail/${req.query.id}`) : res.render('proker-detail'));
 app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
 
-// ================= SUPER BIG UPGRADE: DYNAMIC SEO SITEMAP =================
+// ============================================================================
+// SUPER BIG UPGRADE: DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR
+// Mencegah Error Validasi Tanggal (Lastmod) di Google Search Console
+// ============================================================================
+
 app.get('/robots.txt', (req, res) => {
     const domain = "https://bemkbmfkgumi.com";
     res.header('Content-Type', 'text/plain');
@@ -251,11 +255,44 @@ app.get('/robots.txt', (req, res) => {
 app.get('/sitemap.xml', async (req, res) => {
     try {
         const domain = "https://bemkbmfkgumi.com";
-        const today = new Date().toISOString().split('T')[0];
+        
+        // PENGAMAN 100% SEO ENTERPRISE: Helper untuk memastikan format YYYY-MM-DD mutlak sesuai standar Google
+        const formatSitemapDate = (dateStr) => {
+            try {
+                const fallback = new Date().toISOString().split('T')[0];
+                if (!dateStr) return fallback;
+                
+                // Jika sudah memiliki format ISO (ada 'T')
+                if (dateStr.includes('T')) return new Date(dateStr).toISOString().split('T')[0];
+                
+                if (dateStr.includes('-')) {
+                    const parts = dateStr.split('-');
+                    // Jika format YYYY-MM-DD
+                    if (parts[0].length === 4) {
+                        const d = new Date(dateStr);
+                        return isNaN(d) ? fallback : d.toISOString().split('T')[0];
+                    }
+                    // Jika format DD-MM-YYYY (seperti di backend / GAS kita)
+                    if (parts.length === 3 && parts[2].length === 4) {
+                        const d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                        return isNaN(d) ? fallback : d.toISOString().split('T')[0];
+                    }
+                }
+                
+                // Coba parse biasa jika format lain
+                const parsed = new Date(dateStr);
+                return isNaN(parsed) ? fallback : parsed.toISOString().split('T')[0];
+            } catch (e) {
+                return new Date().toISOString().split('T')[0];
+            }
+        };
+
+        const today = formatSitemapDate(); // Format mutlak: YYYY-MM-DD
         
         let prokerData = defaultProker;
         let kalenderData = defaultKalender;
 
+        // Coba fetch dari DB Redis
         if(redis) {
             const rawProker = await redis.get('Proker_Data');
             const rawKalender = await redis.get('Kalender_Data');
@@ -263,14 +300,14 @@ app.get('/sitemap.xml', async (req, res) => {
             kalenderData = safeParse(rawKalender, defaultKalender);
         }
 
-        // 1. GENERATE STATIC URLs (Sesuai Struktur Format Request)
+        // 1. GENERATE STATIC URLs
         let xmlUrls = `
     <!-- ========================================= -->
     <!-- HALAMAN UTAMA & PRIORITAS TINGGI          -->
     <!-- ========================================= -->
     <url>
         <loc>${domain}/</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
         <image:image>
@@ -285,37 +322,37 @@ app.get('/sitemap.xml', async (req, res) => {
     <!-- ========================================= -->
     <url>
         <loc>${domain}/informasi</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>${domain}/informasi#proker</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>${domain}/informasi#kalender</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>${domain}/informasi#timeline</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>${domain}/informasi#galeri</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>${domain}/informasi#plasma</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.85</priority>
     </url>
@@ -325,37 +362,37 @@ app.get('/sitemap.xml', async (req, res) => {
     <!-- ========================================= -->
     <url>
         <loc>${domain}/tentang</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>${domain}/tentang#visimisi</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>${domain}/tentang#struktur</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>${domain}/tentang#filosofi</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>${domain}/tentang#sejarah-pembentukan</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>${domain}/tentang#sejarah</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.85</priority>
     </url>
@@ -365,19 +402,19 @@ app.get('/sitemap.xml', async (req, res) => {
     <!-- ========================================= -->
     <url>
         <loc>${domain}/berita</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>${domain}/ourteam</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>${domain}/narahubung</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
     </url>
@@ -387,13 +424,13 @@ app.get('/sitemap.xml', async (req, res) => {
     <!-- ========================================= -->
     <url>
         <loc>${domain}/proker-deskripsi</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>${domain}/proker-detail</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${today}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.7</priority>
     </url>`;
@@ -405,10 +442,12 @@ app.get('/sitemap.xml', async (req, res) => {
                 const slug = p.slug || p.id;
                 const img = p.fotoPengurus || p.bgImage || `${domain}/img/bemfkgumi.png`;
                 if (slug) {
+                    // Penarikan Tanggal Rilis Proker Dinamis
+                    const itemLastMod = formatSitemapDate(p.startDate);
                     xmlUrls += `
     <url>
         <loc>${domain}/proker-deskripsi/${escapeXml(slug)}</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${itemLastMod}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
         <image:image>
@@ -427,10 +466,12 @@ app.get('/sitemap.xml', async (req, res) => {
                 const slug = k.slug || k.id;
                 const img = k.banner || `${domain}/img/bemfkgumi.png`;
                 if (slug) {
+                    // Penarikan Tanggal Mulai Agenda Dinamis
+                    const itemLastMod = formatSitemapDate(k.tglMulai);
                     xmlUrls += `
     <url>
         <loc>${domain}/proker-detail/${escapeXml(slug)}</loc>
-        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <lastmod>${itemLastMod}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
         <image:image>
@@ -455,19 +496,14 @@ app.get('/sitemap.xml', async (req, res) => {
                         const slug = art.Slug_URL || art.ID_Berita;
                         const img = art.Gambar_URL || `${domain}/img/bemfkgumi.png`;
                         
-                        // Handle Date format (Support standard DB dates DD-MM-YYYY to XML standard YYYY-MM-DD)
-                        let lastModDate = today;
-                        if(art.Tgl_Rilis && art.Tgl_Rilis.includes('-')) {
-                            let dParts = art.Tgl_Rilis.split('-');
-                            if(dParts[0].length === 4) lastModDate = art.Tgl_Rilis.split('T')[0]; 
-                            else if(dParts.length === 3) lastModDate = `${dParts[2]}-${dParts[1]}-${dParts[0]}`; 
-                        }
+                        // Handle Date format dengan Helper khusus (Bypass "Tanggal Tidak Valid")
+                        const itemLastMod = formatSitemapDate(art.Tgl_Rilis);
 
                         if(slug) {
                             xmlUrls += `
     <url>
         <loc>${domain}/berita?article=${escapeXml(slug)}</loc>
-        <lastmod>${lastModDate}T00:00:00+00:00</lastmod>
+        <lastmod>${itemLastMod}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.85</priority>
         <image:image>
@@ -495,7 +531,7 @@ ${xmlUrls}
 </urlset>`;
 
         res.header('Content-Type', 'application/xml');
-        res.send(sitemapXML);
+        res.send(sitemapXML.trim());
     } catch (error) {
         console.error("Gagal men-generate Sitemap:", error);
         res.status(500).send("Internal Server Error generating Sitemap");
