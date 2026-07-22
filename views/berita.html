@@ -49,6 +49,12 @@
     <meta name="twitter:title" id="twTitle" content="Portal Berita BEM KBMFKG UMI">
 
     <!-- =========================================================================
+         SUPER BIG UPGRADE SEO (PETA SITUS & REFERRER):
+         Menjawab isu GSC "Tidak ada peta situs perujuk yang terdeteksi"
+         ========================================================================= -->
+    <link rel="sitemap" type="application/xml" title="Sitemap BEM KBMFKG UMI" href="https://bemkbmfkgumi.com/sitemap.xml">
+
+    <!-- =========================================================================
          SUPER BIG UPGRADE: STATIC INITIAL SCHEMA UNTUK GSC
          Mencegah GSC mendeteksi "URL tidak memiliki penyempurnaan". 
          Memberikan landasan skema Breadcrumb yang valid pada pemuatan awal HTML.
@@ -63,7 +69,12 @@
           "url": "https://bemkbmfkgumi.com/berita",
           "name": "Portal Berita E-Zine | BEM KBMFKG UMI",
           "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
-          "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" }
+          "isPartOf": { 
+              "@type": "WebSite",
+              "@id": "https://bemkbmfkgumi.com/#website",
+              "url": "https://bemkbmfkgumi.com/",
+              "name": "BEM KBMFKG UMI"
+          }
         },
         {
           "@type": "BreadcrumbList",
@@ -130,6 +141,15 @@
     </style>
 </head>
 <body class="bg-custom-dark font-sans relative" itemscope itemtype="https://schema.org/WebPage">
+
+    <!-- =========================================================================
+         INJEKSI REFERRER SEMANTIC DOM (Menjawab isu GSC "Halaman perujuk: Tidak ada")
+         Memaksa bot membaca relasi hirarki backlink secara fisik di HTML
+         ========================================================================= -->
+    <div style="display:none;" itemscope itemtype="https://schema.org/SiteNavigationElement" aria-hidden="true">
+        <a itemprop="url" href="https://bemkbmfkgumi.com/" title="Beranda BEM KBMFKG UMI"><span itemprop="name">Beranda (Halaman Perujuk)</span></a>
+        <a itemprop="url" href="https://bemkbmfkgumi.com/berita" title="Portal Berita E-Zine"><span itemprop="name">Portal Berita E-Zine</span></a>
+    </div>
 
     <!-- ================= BEM STANDAR HEADER ================= -->
     <%- include('partials/header.html') %>
