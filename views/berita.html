@@ -333,23 +333,56 @@
     }
 
     // =========================================================================
-    // ENTERPRISE JSON-LD SEO GENERATOR
+    // ENTERPRISE JSON-LD SEO GENERATOR (MASTER UPGRADE)
     // =========================================================================
+    function setOrUpdateMeta(attrName, attrValue, content) {
+        var el = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+        if (el) {
+            el.setAttribute("content", content);
+        } else {
+            el = document.createElement('meta');
+            el.setAttribute(attrName, attrValue);
+            el.setAttribute("content", content);
+            document.head.appendChild(el);
+        }
+    }
+
     function injectEnterpriseSEO(article, url) {
-      document.title = article.Judul + " | BEM KBMFKG UMI";
-      var desc = article.Meta_Desc || article.Desc || article.Judul;
+      // 1. DYNAMIC HTML META TAGS
+      var safeTitle = article.Judul + " | BEM KBMFKG UMI";
+      var rawHtml = article.Konten_HTML || "";
+      var plainText = rawHtml.replace(/<[^>]*>?/gm, '').substring(0, 155).trim() + "...";
+      var safeDesc = article.Meta_Desc || article.Desc || plainText;
+      var safeImg = article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png";
       
-      document.querySelector('meta[name="description"]')?.setAttribute("content", desc);
+      document.title = safeTitle;
+      document.querySelector('meta[name="description"]')?.setAttribute("content", safeDesc);
+      
+      // Auto-generate keywords based on category & title
+      var autoKeywords = `${article.Kategori}, kedokteran gigi, BEM FKG UMI, ` + article.Judul.toLowerCase().replace(/[^a-z0-9]+/g, ', ');
+      setOrUpdateMeta('name', 'keywords', autoKeywords);
+      
       document.getElementById('canonicalUrl')?.setAttribute("href", url);
       
-      document.getElementById('ogTitle')?.setAttribute("content", article.Judul);
-      document.getElementById('ogDesc')?.setAttribute("content", desc);
+      // 2. OPEN GRAPH TAGS (Facebook, LinkedIn, WA)
+      document.getElementById('ogTitle')?.setAttribute("content", safeTitle);
+      document.getElementById('ogDesc')?.setAttribute("content", safeDesc);
       document.getElementById('ogUrl')?.setAttribute("content", url);
-      document.getElementById('ogImage')?.setAttribute("content", article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png");
+      document.getElementById('ogImage')?.setAttribute("content", safeImg);
       document.getElementById('ogType')?.setAttribute("content", "article");
       
-      document.getElementById('twTitle')?.setAttribute("content", article.Judul);
+      // Extended Open Graph Article Specs
+      var datePub = article.Tgl_Rilis ? new Date(article.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString();
+      setOrUpdateMeta('property', 'article:published_time', datePub);
+      setOrUpdateMeta('property', 'article:section', article.Kategori || "Berita");
+      setOrUpdateMeta('property', 'article:author', article.Penulis || "Admin BEM FKG UMI");
       
+      // 3. TWITTER CARDS
+      document.getElementById('twTitle')?.setAttribute("content", safeTitle);
+      setOrUpdateMeta('name', 'twitter:description', safeDesc);
+      setOrUpdateMeta('name', 'twitter:image', safeImg);
+      
+      // 4. JSON-LD ADVANCED SCHEMA (NewsArticle & BreadcrumbList)
       var oldSchema = document.getElementById('enterprise-schema');
       if (oldSchema) oldSchema.remove();
       
@@ -361,21 +394,30 @@
             "@id": url + "#article",
             "url": url,
             "headline": article.Judul,
-            "description": desc,
-            "image": [ article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png" ],
-            "datePublished": article.Tgl_Rilis || new Date().toISOString(),
-            "dateModified": article.Tgl_Rilis || new Date().toISOString(),
-            "author": { "@type": "Person", "name": article.Penulis || "Admin BEM FKG UMI" },
-            "publisher": { "@type": "Organization", "@id": "https://bemkbmfkgumi.com/#organization", "name": "BEM KBMFKG UMI", "logo": { "@type": "ImageObject", "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png" } },
+            "description": safeDesc,
+            "image": [ safeImg ],
+            "datePublished": datePub,
+            "dateModified": datePub,
+            "author": { 
+                "@type": "Person", 
+                "name": article.Penulis || "Admin BEM FKG UMI",
+                "url": "https://bemkbmfkgumi.com/tentang" 
+            },
+            "publisher": { 
+                "@type": "Organization", 
+                "@id": "https://bemkbmfkgumi.com/#organization", 
+                "name": "BEM KBMFKG UMI", 
+                "logo": { "@type": "ImageObject", "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png" } 
+            },
             "mainEntityOfPage": { "@type": "WebPage", "@id": url }
           },
           {
             "@type": "BreadcrumbList",
             "@id": url + "#breadcrumb",
             "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Beranda Publik", "item": "https://bemkbmfkgumi.com/" },
-              { "@type": "ListItem", "position": 2, "name": "Berita & Artikel", "item": "https://bemkbmfkgumi.com/berita" },
-              { "@type": "ListItem", "position": 3, "name": article.Kategori, "item": "https://bemkbmfkgumi.com/berita?category=" + encodeURIComponent(article.Kategori) },
+              { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://bemkbmfkgumi.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Portal E-Zine", "item": "https://bemkbmfkgumi.com/berita" },
+              { "@type": "ListItem", "position": 3, "name": article.Kategori || "Berita", "item": "https://bemkbmfkgumi.com/berita?category=" + encodeURIComponent(article.Kategori) },
               { "@type": "ListItem", "position": 4, "name": article.Judul, "item": url }
             ]
           }
@@ -390,45 +432,67 @@
     }
 
     function injectDefaultSEO() {
+      // Revert base tags
       document.title = "Portal Berita E-Zine | BEM KBMFKG UMI";
       document.querySelector('meta[name="description"]')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.");
+      setOrUpdateMeta('name', 'keywords', 'portal berita, ezine, fkg umi, kedokteran gigi, artikel seo, bem fkg umi');
       document.getElementById('canonicalUrl')?.setAttribute("href", "https://bemkbmfkgumi.com/berita");
+      
       document.getElementById('ogTitle')?.setAttribute("content", "Portal Berita E-Zine | BEM KBMFKG UMI");
       document.getElementById('ogDesc')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, dan event terkini.");
       document.getElementById('ogUrl')?.setAttribute("content", "https://bemkbmfkgumi.com/berita");
+      document.getElementById('ogImage')?.setAttribute("content", "https://bemkbmfkgumi.com/img/bemfkgumi.png");
       document.getElementById('ogType')?.setAttribute("content", "website");
+      
+      document.getElementById('twTitle')?.setAttribute("content", "Portal Berita BEM KBMFKG UMI");
+      setOrUpdateMeta('name', 'twitter:description', "Portal berita kampus, inovasi kedokteran gigi, dan event terkini BEM KBMFKG UMI.");
+      setOrUpdateMeta('name', 'twitter:image', "https://bemkbmfkgumi.com/img/bemfkgumi.png");
 
       var oldSchema = document.getElementById('enterprise-schema');
       if (oldSchema) oldSchema.remove();
 
-      var itemListElements = appState.articles.slice(0, 10).map(function(art, index) {
-          var url = "https://bemkbmfkgumi.com/berita?article=" + (art.Slug_URL || art.ID_Berita);
+      // AUTO-GENERATE ITEMLIST SCHEMAS UNTUK MENDAPATKAN SITELINKS GOOGLE
+      var itemListElements = appState.articles.slice(0, 15).map(function(art, index) {
+          var artUrl = "https://bemkbmfkgumi.com/berita?article=" + (art.Slug_URL || art.ID_Berita);
           return {
               "@type": "ListItem",
               "position": index + 1,
-              "url": url,
+              "url": artUrl,
               "name": art.Judul
           };
       });
-
-      if(itemListElements.length === 0) return;
 
       var schema = {
         "@context": "https://schema.org",
         "@graph": [
             {
+              "@type": "WebSite",
+              "@id": "https://bemkbmfkgumi.com/#website",
+              "url": "https://bemkbmfkgumi.com/",
+              "name": "BEM KBMFKG UMI",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://bemkbmfkgumi.com/berita?search={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            },
+            {
               "@type": "CollectionPage",
               "@id": "https://bemkbmfkgumi.com/berita#webpage",
               "url": "https://bemkbmfkgumi.com/berita",
               "name": "Portal Berita E-Zine | BEM KBMFKG UMI",
-              "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI."
-            },
-            {
-              "@type": "ItemList",
-              "itemListElement": itemListElements
+              "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
+              "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" }
             }
         ]
       };
+
+      if(itemListElements.length > 0) {
+          schema["@graph"].push({
+              "@type": "ItemList",
+              "itemListElement": itemListElements
+          });
+      }
 
       var script = document.createElement('script');
       script.type = 'application/ld+json';
@@ -481,6 +545,7 @@
       
       fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementView', ID_Berita: id}) }).catch(function(e) {});
 
+      // Inject SEO
       injectEnterpriseSEO(article, currentFullUrl);
     }
 
@@ -492,6 +557,7 @@
 
       if (!skipPushState) window.history.pushState(null, '', window.location.pathname);
 
+      // Revert SEO to default listing
       injectDefaultSEO();
     }
 
@@ -515,7 +581,6 @@
       fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementLike', ID_Berita: id}) }).catch(function(e){});
     }
 
-    // SUPER UPGRADE: NATIVE WEB SHARE API UNTUK HP (IOS/ANDROID)
     function shareArticle() {
       var id = appState.currentViewId;
       var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
@@ -531,14 +596,13 @@
           console.log('User membatalkan share', error);
         });
       } else {
-        // Fallback untuk browser Desktop yang tidak support Native Share
         var dummy = document.createElement('input');
         document.body.appendChild(dummy);
         dummy.value = url; 
         dummy.select();
         document.execCommand('copy');
         document.body.removeChild(dummy);
-        alert("Link artikel publikasi berhasil disalin ke clipboard!");
+        alert("Tautan artikel publikasi berhasil disalin ke clipboard!");
       }
     }
   </script>
