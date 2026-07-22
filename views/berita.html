@@ -51,10 +51,6 @@
     /* Tailwind Override untuk menyatu dengan CSS Root Main BEM UMI */
     body { background-color: var(--bg-dark); color: var(--text-light); }
     .bg-custom-dark { background-color: var(--bg-dark); }
-    .bg-custom-card { background-color: var(--bg-dark-heavy); }
-    .text-custom-neon { color: var(--accent-neon); }
-    .border-custom-neon { border-color: var(--accent-neon); }
-    .hover-text-neon:hover { color: var(--accent-neon); }
     
     /* Specific Modal Override */
     .article-modal-overlay {
@@ -74,7 +70,7 @@
     .article-modal-overlay.active .article-modal-content { transform: translateY(0) scale(1); opacity: 1; }
     
     @media (max-width: 768px) {
-      .article-modal-content { margin: 0; border-radius: 0; min-height: 100vh; }
+      .article-modal-content { margin: 0; border-radius: 0; min-height: 100vh; border: none; }
     }
     
     .article-text { font-family: 'Merriweather', 'Times New Roman', serif; line-height: 1.8; color: var(--text-muted); }
@@ -91,17 +87,18 @@
   <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-4">
     <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 mb-8">
         <div>
-            <h1 class="text-4xl md:text-5xl font-black text-white glow-text tracking-tight mb-2">Portal Publik <span class="text-custom-neon">E-Zine</span></h1>
-            <p class="text-gray-400 text-lg">Jelajahi inovasi, berita organisasi, edukasi klinis, dan event terbaru kami.</p>
+            <!-- PENYESUAIAN THEME: Menggunakan text-[color:var(--text-light)] agar kontras mengikuti Light/Dark Mode -->
+            <h1 class="text-4xl md:text-5xl font-black text-[color:var(--text-light)] glow-text tracking-tight mb-2">Portal Publik <span class="text-[color:var(--accent-neon)]">E-Zine</span></h1>
+            <p class="text-[color:var(--text-muted)] text-lg">Jelajahi inovasi, berita organisasi, edukasi klinis, dan event terbaru kami.</p>
         </div>
         <div class="relative w-full md:w-80">
-            <i class="ph ph-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-lg"></i>
-            <input type="search" id="searchInput" placeholder="Cari publikasi..." class="w-full bg-[#111827] border border-gray-700/50 rounded-full py-3 pl-12 pr-4 text-white focus:outline-none focus:border-[#00e5ff] focus:ring-1 focus:ring-[#00e5ff] transition shadow-inner">
+            <i class="ph ph-magnifying-glass absolute left-4 top-3.5 text-[color:var(--text-muted)] text-lg"></i>
+            <input type="search" id="searchInput" placeholder="Cari publikasi..." class="w-full bg-[color:var(--input-bg)] border border-[color:var(--border-light)] rounded-full py-3 pl-12 pr-4 text-[color:var(--text-light)] focus:outline-none focus:border-[color:var(--accent-neon)] focus:ring-1 focus:ring-[color:var(--accent-neon)] transition shadow-inner">
         </div>
     </div>
 
     <!-- FILTER KATEGORI -->
-    <nav aria-label="Filter Kategori" class="flex flex-wrap gap-3 mb-10 border-b border-gray-800 pb-6" id="categoryContainer">
+    <nav aria-label="Filter Kategori" class="flex flex-wrap gap-3 mb-10 border-b border-[color:var(--border-light)] pb-6" id="categoryContainer">
       <button class="badge-category active" onclick="filterCategory('All', this)">Semua</button>
       <button class="badge-category" onclick="filterCategory('Pengumuman', this)">Pengumuman</button>
       <button class="badge-category" onclick="filterCategory('Edukasi', this)">Edukasi</button>
@@ -125,27 +122,27 @@
   <!-- ================= MODAL FULL VIEW ARTIKEL ================= -->
   <div id="articleModal" class="article-modal-overlay" role="dialog" aria-modal="true" tabindex="-1">
     <article class="article-modal-content pb-10">
-      <button onclick="closeModalAndGoHome(event)" class="absolute top-4 right-4 bg-black/60 p-3 rounded-full text-white hover:bg-[#00e5ff] hover:text-black transition z-10 backdrop-blur-sm outline-none border border-white/10" aria-label="Tutup Artikel">
+      <button onclick="closeModalAndGoHome(event)" class="absolute top-4 right-4 bg-[color:var(--bg-dark-overlay)] p-3 rounded-full text-[color:var(--text-light)] hover:bg-[color:var(--accent-neon)] hover:text-black transition z-10 backdrop-blur-sm outline-none border border-[color:var(--border-light)]" aria-label="Tutup Artikel">
         <i class="ph ph-x text-xl"></i>
       </button>
       
-      <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-gray-900 relative m-0 rounded-t-3xl overflow-hidden">
-          <!-- Gambar Injeksi. Ada OnError fallback agar tidak pernah terlihat broken -->
+      <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-[color:var(--bg-dark-heavy)] relative m-0 rounded-t-3xl overflow-hidden">
+          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer -->
       </figure>
 
       <div class="px-6 md:px-12 mt-8">
         <nav aria-label="Breadcrumb" id="modalBreadcrumb" class="breadcrumb-nav text-sm"></nav>
 
-        <div id="modalMeta" class="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-4 mt-2"></div>
+        <div id="modalMeta" class="flex flex-wrap items-center gap-4 text-sm text-[color:var(--text-muted)] mb-4 mt-2"></div>
         
-        <h1 id="modalTitle" class="text-3xl md:text-5xl font-black mb-8 text-white leading-tight tracking-tight glow-text"></h1>
+        <h1 id="modalTitle" class="text-3xl md:text-5xl font-black mb-8 text-[color:var(--text-light)] leading-tight tracking-tight glow-text"></h1>
         
-        <div class="flex gap-4 mb-8 border-b border-gray-800 pb-6">
-          <button onclick="likeArticle()" class="flex items-center gap-2 text-gray-400 hover:text-[#ff3366] transition p-2 -ml-2 rounded-lg outline-none bg-gray-800/50 hover:bg-gray-800 border border-gray-700">
+        <div class="flex gap-4 mb-8 border-b border-[color:var(--border-light)] pb-6">
+          <button onclick="likeArticle()" class="flex items-center gap-2 text-[color:var(--text-muted)] hover:text-[#ff3366] transition p-2 -ml-2 rounded-lg outline-none bg-[color:var(--bg-dark-overlay)] hover:bg-[color:var(--border-light)] border border-[color:var(--border-light)]">
             <i class="ph ph-heart text-xl" id="iconLike"></i>
             <span id="txtLikeCount" class="font-bold">0</span> Suka
           </button>
-          <button onclick="shareArticle()" class="flex items-center gap-2 text-gray-400 hover:text-[#00e5ff] transition p-2 rounded-lg outline-none bg-gray-800/50 hover:bg-gray-800 border border-gray-700">
+          <button onclick="shareArticle()" class="flex items-center gap-2 text-[color:var(--text-muted)] hover:text-[color:var(--accent-neon)] transition p-2 rounded-lg outline-none bg-[color:var(--bg-dark-overlay)] hover:bg-[color:var(--border-light)] border border-[color:var(--border-light)]">
             <i class="ph ph-share-network text-xl"></i> Bagikan
           </button>
         </div>
@@ -235,14 +232,14 @@
     }
 
     function processNewData(newData, hasMore) {
-      // FRONTEND AUTO-SANITIZER URL IMAGE: Konversi URL Google Drive bermasalah (drive.usercontent / drive.google) 
-      // menjadi Direct View Public URL secara realtime sebelum disimpan ke state
+      // FRONTEND AUTO-SANITIZER URL IMAGE: Mengubah link GDrive yang berantakan menjadi Format Unduhan Bypass CORS
       var cleanedData = newData.map(function(item) {
          var url = item.Gambar_URL || '';
          if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
-             var match = url.match(/[-\w]{25,33}/); // Menangkap 25-33 karakter ID Unik Google Drive
+             var match = url.match(/[-\w]{25,33}/); // Regex mengekstrak Unik ID Drive 
              if (match && match[0]) {
-                 item.Gambar_URL = "https://drive.google.com/uc?export=view&id=" + match[0];
+                 // Format spesifik anti-block CORS Google Drive
+                 item.Gambar_URL = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
              }
          }
          return item;
@@ -276,22 +273,22 @@
         var isHero = (currentOffset === 0 && i === 0);
         var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
         
-        // Penambahan 'onerror' agar jika URL gambar dari Google Drive terblokir, otomatis memakai logo default BEM
+        // PENTING: Penambahan referrerpolicy="no-referrer" agar API Image Google tidak di Block Browser.
         html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
         html +=   '<div class="zine-img-wrapper">';
-        html +=     '<img src="' + img + '" ' + loadingAttr + ' class="card-img" alt="' + title + '" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';">';
-        html +=     '<div class="absolute top-4 left-4 bg-[#000000]/70 text-[#00e5ff] text-xs px-4 py-1.5 rounded-full border border-[#00e5ff]/50 backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
+        html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';">';
+        html +=     '<div class="absolute top-4 left-4 bg-[color:var(--bg-dark-overlay)] text-[color:var(--accent-neon)] text-xs px-4 py-1.5 rounded-full border border-[color:var(--accent-glow)] backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
         html +=   '</div>';
         html +=   '<div class="p-6 flex-1 flex flex-col justify-between">';
-        html +=     '<h2 class="card-title text-xl font-black text-white mb-4 line-clamp-3 group-hover:text-[#00e5ff] transition leading-snug">' + title + '</h2>';
-        html +=     '<div class="flex justify-between items-center text-sm text-gray-400 mt-auto border-t border-gray-700/50 pt-4 font-medium">';
+        html +=     '<h2 class="card-title text-xl font-black text-[color:var(--text-light)] mb-4 line-clamp-3 group-hover:text-[color:var(--accent-neon)] transition leading-snug">' + title + '</h2>';
+        html +=     '<div class="flex justify-between items-center text-sm text-[color:var(--text-muted)] mt-auto border-t border-[color:var(--border-light)] pt-4 font-medium">';
         html +=       '<span class="flex items-center gap-1"><i class="ph ph-clock text-lg"></i> ' + String(item.Waktu_Baca || '2 min') + '</span>';
         html +=       '<span class="flex items-center gap-1"><i class="ph ph-eye text-lg"></i> <span id="viewCount-' + id + '">' + String(item.Jumlah_View || 0) + '</span></span>';
         html +=   '</div></div></a>';
       }
       
       if(data.length === 0 && currentOffset === 0) {
-          grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500 text-lg">Belum ada publikasi artikel untuk kategori ini.</div>`;
+          grid.innerHTML = `<div class="col-span-full text-center py-20 text-[color:var(--text-muted)] text-lg">Belum ada publikasi artikel untuk kategori ini.</div>`;
       } else {
           grid.innerHTML += html;
       }
@@ -328,7 +325,6 @@
       appState.category = cat; loadArticles(true);
     }
 
-    // --- UPGRADE DYNAMIC SEO & BREADCRUMBS INJECTION 100% ---
     function openModal(event, id, skipPushState = false) {
       if (event) event.preventDefault(); 
 
@@ -343,14 +339,14 @@
       }
 
       var breadcrumbHtml = '<a href="/" onclick="closeModalAndGoHome(event)">Beranda Publik</a> <span class="separator">/</span> ';
-      breadcrumbHtml += '<span class="text-gray-400">' + article.Kategori + '</span> <span class="separator">/</span> ';
-      breadcrumbHtml += '<span class="text-gray-200 truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
+      breadcrumbHtml += '<span class="text-[color:var(--text-muted)]">' + article.Kategori + '</span> <span class="separator">/</span> ';
+      breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
       document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
-      // Fallback Image dengan OnError agar tidak broken.
-      document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[var(--card-bg)] via-transparent to-transparent"></div>';
+      // referrerpolicy="no-referrer" diterapkan untuk Modal
+      document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
       
-      document.getElementById('modalMeta').innerHTML = '<span class="text-[#00e5ff] font-bold border border-[#00e5ff]/30 px-3 py-1 rounded-full uppercase tracking-wider bg-[#00e5ff]/10">' + article.Kategori + '</span> <span class="text-gray-500">&bull;</span> <span class="font-medium text-gray-300">✍️ ' + (article.Penulis || 'Admin') + '</span> <span class="text-gray-500">&bull;</span> <span>📅 ' + (article.Tgl_Rilis || '').split("T")[0] + '</span>';
+      document.getElementById('modalMeta').innerHTML = '<span class="text-[color:var(--accent-neon)] font-bold border border-[color:var(--accent-glow)] px-3 py-1 rounded-full uppercase tracking-wider bg-[color:var(--bg-dark-overlay)]">' + article.Kategori + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span class="font-medium text-[color:var(--text-muted)]">✍️ ' + (article.Penulis || 'Admin') + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span>📅 ' + (article.Tgl_Rilis || '').split("T")[0] + '</span>';
       document.getElementById('modalTitle').innerText = article.Judul;
       document.getElementById('modalContent').innerHTML = article.Konten_HTML;
       document.getElementById('txtLikeCount').innerText = article.Jumlah_Like || 0;
@@ -367,10 +363,8 @@
       var gridBadge = document.getElementById('viewCount-' + id);
       if (gridBadge) gridBadge.innerText = article.Jumlah_View;
       
-      // Update View ke Backend GAS
       fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementView', ID_Berita: id}) }).catch(function(e) {});
 
-      // SEO META INJECTION
       document.title = article.Judul + " | BEM KBMFKG UMI";
       if(article.Meta_Desc || article.Desc) document.querySelector('meta[name="description"]').setAttribute("content", article.Meta_Desc || article.Desc);
       document.getElementById('canonicalUrl').setAttribute("href", currentFullUrl);
@@ -384,12 +378,9 @@
       var modal = document.getElementById('articleModal');
       modal.classList.remove('active');
       document.body.style.overflow = 'auto';
-      
       appState.currentViewId = null;
 
-      if (!skipPushState) {
-        window.history.pushState(null, '', window.location.pathname);
-      }
+      if (!skipPushState) window.history.pushState(null, '', window.location.pathname);
 
       document.title = "Portal Berita E-Zine | BEM KBMFKG UMI";
       document.getElementById('canonicalUrl').setAttribute("href", "https://bemkbmfkgumi.com/berita");
