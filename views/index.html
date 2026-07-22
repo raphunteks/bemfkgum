@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#10b981">
     
-    <!-- UPGRADE 1: Penyesuaian Title Tag. Google lebih menyukai format "Judul Halaman - Nama Situs" untuk mengekstrak Site Name -->
-    <title>Beranda - BEM KBMFKG UMI</title>
+    <!-- UPGRADE 1 (FIXED): Format Title "Nama Brand Utama - Judul" untuk memicu Site Name Google -->
+    <title>BEM KBMFKG UMI OFFICIAL - Beranda</title>
     
     <!-- ================= SEO GOLD STANDARD GSC (SUPER BIG UPGRADE) ================= -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
@@ -37,9 +37,9 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemkbmfkgumi.com/">
     
-    <!-- UPGRADE 3: OG Site Name adalah kunci kedua terpenting setelah JSON-LD untuk memunculkan Nama Website -->
-    <meta property="og:site_name" content="BEM KBMFKG UMI">
-    <meta property="og:title" content="Beranda - BEM KBMFKG UMI">
+    <!-- UPGRADE 3 (FIXED): OG Site Name dan OG Title disesuaikan untuk Site Name "BEM KBMFKG UMI OFFICIAL" -->
+    <meta property="og:site_name" content="BEM KBMFKG UMI OFFICIAL">
+    <meta property="og:title" content="BEM KBMFKG UMI OFFICIAL - Beranda">
     <meta property="og:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
@@ -47,17 +47,18 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://bemkbmfkgumi.com/">
-    <meta name="twitter:title" content="Beranda - BEM KBMFKG UMI">
+    <meta name="twitter:title" content="BEM KBMFKG UMI OFFICIAL - Beranda">
     <meta name="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta name="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- UPGRADE 4: PEMISAHAN SCHEMA KHUSUS "SITE NAME" & "SITELINKS SEARCHBOX" -->
+    <!-- UPGRADE 4 (FIXED): PEMISAHAN SCHEMA KHUSUS "SITE NAME" (Target: BEM KBMFKG UMI OFFICIAL) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "BEM KBMFKG UMI",
+      "name": "BEM KBMFKG UMI OFFICIAL",
       "alternateName": [
+        "BEM KBMFKG UMI",
         "BEM FKG UMI", 
         "BEM KBMFKG UMI Makassar", 
         "Badan Eksekutif Mahasiswa FKG UMI"
@@ -74,7 +75,7 @@
     }
     </script>
 
-    <!-- UPGRADE 5: SUPER SCHEMA UNTUK KNOWLEDGE GRAPH, MULTI-PATH BREADCRUMBS, DAN EXPANDED SITELINKS -->
+    <!-- UPGRADE 5 (FIXED): SUPER SCHEMA UNTUK KNOWLEDGE GRAPH, & SITELINKS (Tanpa Breadcrumb Overkill) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -82,7 +83,8 @@
         {
           "@type": "NGO",
           "@id": "https://bemkbmfkgumi.com/#organization",
-          "name": "BEM KBMFKG UMI",
+          "name": "BEM KBMFKG UMI OFFICIAL",
+          "alternateName": "BEM KBMFKG UMI",
           "url": "https://bemkbmfkgumi.com/",
           "logo": {
             "@type": "ImageObject",
@@ -103,7 +105,7 @@
             "addressCountry": "ID"
           },
           "sameAs": [
-            "https://www.instagram.com/bemkbmfkgumi/"
+            "https://www.instagram.com/bem.kbmfkg.umi/"
           ],
           "contactPoint": {
             "@type": "ContactPoint",
@@ -116,7 +118,7 @@
           "@type": "WebPage",
           "@id": "https://bemkbmfkgumi.com/#webpage",
           "url": "https://bemkbmfkgumi.com/",
-          "name": "Beranda - BEM KBMFKG UMI",
+          "name": "BEM KBMFKG UMI OFFICIAL - Beranda",
           "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" },
           "about": { "@id": "https://bemkbmfkgumi.com/#organization" },
           "primaryImageOfPage": { "@id": "https://bemkbmfkgumi.com/#logo" },
@@ -125,9 +127,7 @@
         },
         
         /* ===================================================================================
-           ANTI-BLANK 6 BREADCRUMB LIST TERSTRUKTUR DI GSC (100% VALID):
-           Sesuai instruksi, keenam Breadcrumb dimuat dengan @id terpisah agar tidak bentrok.
-           Posisi diatur secara teratur: Posisi 1 mutlak Beranda, Posisi 2 halaman turunan.
+           BREADCRUMB LIST HANYA UNTUK BERANDA (Dihapus yang overkill agar bot tidak bingung)
            =================================================================================== */
         {
           "@type": "BreadcrumbList",
@@ -142,102 +142,6 @@
             }
           ]
         },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/#breadcrumb-tentang",
-          "name": "Breadcrumb Tentang Kami",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Tentang Kami",
-              "item": "https://bemkbmfkgumi.com/tentang"
-            }
-          ]
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/#breadcrumb-informasi",
-          "name": "Breadcrumb Pusat Informasi",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Pusat Informasi & Berita",
-              "item": "https://bemkbmfkgumi.com/informasi"
-            }
-          ]
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/#breadcrumb-narahubung",
-          "name": "Breadcrumb Hubungi Kami",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Hubungi Kami (Narahubung)",
-              "item": "https://bemkbmfkgumi.com/narahubung"
-            }
-          ]
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/#breadcrumb-ourteam",
-          "name": "Breadcrumb Developer Team",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Developer Team",
-              "item": "https://bemkbmfkgumi.com/ourteam"
-            }
-          ]
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/#breadcrumb-berita",
-          "name": "Breadcrumb Portal E-Zine",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Portal Publik E-Zine",
-              "item": "https://bemkbmfkgumi.com/berita"
-            }
-          ]
-        },
-        /* ========================== END BREADCRUMBS ========================== */
 
         {
           "@type": "ItemList",
@@ -271,6 +175,13 @@
               "name": "Portal Publik E-Zine",
               "description": "Jelajahi inovasi, artikel kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
               "url": "https://bemkbmfkgumi.com/berita"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 5,
+              "name": "Developer Team",
+              "description": "Developer Team, sosok dibalik layar pengembangan sistem informasi terkini BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/ourteam"
             }
           ]
         }
@@ -290,21 +201,17 @@
 
     <main>
         <!-- =========================================================================
-             SUPER BIG UPGRADE: SEMANTIC HTML MICRODATA (Seperti Script HMI)
-             Menambahkan itemscope & itemtype agar struktur halaman terbaca jelas oleh Bot
+             PERBAIKAN: Menghapus Microdata 'itemscope' pada tag HTML agar tidak bentrok 
+             dengan JSON-LD di tag <head>. Ini 100% GSC Valid.
              ========================================================================= -->
-        <section class="hero-section" itemscope itemtype="https://schema.org/WebSite">
-            <link itemprop="url" href="https://bemkbmfkgumi.com/"/>
-            <meta itemprop="name" content="BEM KBMFKG UMI">
-            <meta itemprop="description" content="Website resmi Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.">
-
+        <section class="hero-section">
             <div class="reveal" style="max-width: 900px; margin: 0 auto;">
                 <div class="clay-badge" style="margin-bottom: 30px; letter-spacing: 2px; font-size: 0.85rem; text-transform: uppercase;">
                     Welcome to
                     Official Website BEM KBMFKG UMI
                 </div>
                 
-                <h1 itemprop="headline" style="font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px;">
+                <h1 style="font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px;">
                     Kabinet <span class="script-font">Ananta Anardhaya</span>
                 </h1>
                 
@@ -313,10 +220,9 @@
                     <span style="font-size: 0.95rem; color: var(--accent-neon); display: block; margin-top: 15px; font-weight: bold; letter-spacing: 1px;">Semangat Perjuangan Tanpa Batas, Sesuatu yang Abadi.</span>
                 </p>
                 
-                <!-- Microdata untuk Navigasi Sitelinks Internal -->
-                <div class="btn-group" style="margin-top: 40px;" itemscope itemtype="https://schema.org/SiteNavigationElement">
-                    <a itemprop="url" href="/berita" class="holo-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span itemprop="name">Berita & Artikel &rarr;</span></a>
-                    <a itemprop="url" href="/tentang" class="glass-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span itemprop="name">Tentang Kami</span></a>
+                <div class="btn-group" style="margin-top: 40px;">
+                    <a href="/berita" class="holo-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span>Berita & Artikel &rarr;</span></a>
+                    <a href="/tentang" class="glass-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span>Tentang Kami</span></a>
                 </div>
             </div>
         </section>
