@@ -232,14 +232,14 @@
     }
 
     function processNewData(newData, hasMore) {
-      // FRONTEND AUTO-SANITIZER URL IMAGE: Mengubah link GDrive yang berantakan menjadi Format Unduhan Bypass CORS Sesuai referensi
+      // FRONTEND AUTO-SANITIZER URL IMAGE: Bypass CORS dengan Thumbnail API sesuai solusi E-VOT
       var cleanedData = newData.map(function(item) {
          var url = item.Gambar_URL || '';
          if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
-             var match = url.match(/[-\w]{25,33}/); // Regex mengekstrak Unik ID Drive 
+             var match = url.match(/[-\w]{25,}/); // Regex mengekstrak Unik ID Drive 
              if (match && match[0]) {
-                 // Ganti dengan format unduhan direct yang Anda konfirmasi berfungsi 100%
-                 item.Gambar_URL = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
+                 // Ganti dengan Thumbnail API yang 100% tahan CORS dan memuat HD
+                 item.Gambar_URL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
              }
          }
          return item;
@@ -273,14 +273,13 @@
         var isHero = (currentOffset === 0 && i === 0);
         var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
         
-        // PENTING: Penambahan referrerpolicy="no-referrer" dan crossorigin="anonymous" agar API Image Google tidak di Block Browser.
-        // FALLBACK DIHAPUS TOTAL sesuai instruksi "TIDAK USAH ADA FALLBACK LOGO BEM KARENA SAYA INGIN IMAGE YG DIUPLOAD PADA ADMIN YANG MUNCUL".
+        // PENTING: Penambahan referrerpolicy="no-referrer" dan crossorigin="anonymous"
         html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
         html +=   '<div class="zine-img-wrapper">';
         if (img) {
             html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" crossorigin="anonymous" class="card-img" alt="' + title + '">';
         } else {
-            // Hanya merender icon kamera placeholder jika Admin sama sekali mengkosongkan isian link gambar
+            // Placeholder saat gambar kosong tanpa onerror yang melompat
             html +=     '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-[color:var(--text-muted)]"></i></div>';
         }
         html +=     '<div class="absolute top-4 left-4 bg-[color:var(--bg-dark-overlay)] text-[color:var(--accent-neon)] text-xs px-4 py-1.5 rounded-full border border-[color:var(--accent-glow)] backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
@@ -349,7 +348,6 @@
       breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
       document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
-      // Modal render tanpa Fallback OnError, dipasang atribut crossorigin dan no-referrer
       if (article.Gambar_URL) {
           document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" crossorigin="anonymous" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
       } else {
