@@ -349,7 +349,7 @@
         </div>
     </div>
 
-    <!-- ================= SUPER UPGRADE MODAL ARTIKEL (IMAGE PREVIEW ANTI-CORS, FILE UPLOAD, DATALIST) ================= -->
+    <!-- ================= SUPER UPGRADE MODAL ARTIKEL ================= -->
     <div class="modal-overlay" id="artikelModal">
         <div class="modal-content-box" style="padding: 30px; max-width: 800px;">
             <button class="modal-close" onclick="closeArtikelModal()">X</button>
@@ -362,7 +362,7 @@
             
             <div class="grid-2" style="margin-bottom: 0;">
                 <div>
-                    <!-- KATEGORI DATALIST (Dapat memilih atau input baru) -->
+                    <!-- KATEGORI DATALIST -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Kategori</label>
                     <input list="listKategori" id="artKategori" class="neo-input" placeholder="Ketik atau pilih kategori...">
                     <datalist id="listKategori">
@@ -381,8 +381,8 @@
                     <input type="text" id="artDesc" class="neo-input" placeholder="Ringkasan 1 kalimat...">
                 </div>
                 <div>
-                    <!-- FILE IMAGE UPLOAD DENGAN PREVIEW ANTI CORS (Dihapus Atribut Crossorigin) -->
-                    <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Preview & Upload Gambar</label>
+                    <!-- REKOMENDASI UKURAN GAMBAR -->
+                    <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Preview & Upload Gambar <span style="color:#3b82f6; font-weight:normal;">(Rekomendasi: 1280 x 720 px)</span></label>
                     <div class="art-preview-container">
                         <span id="artPreviewPlaceholder" style="color:var(--text-muted); font-size:0.8rem;">Belum ada gambar</span>
                         <img id="artPreviewImg" class="art-preview-img" src="" alt="Preview" referrerpolicy="no-referrer">
@@ -394,23 +394,19 @@
 
             <div class="grid-3" style="margin-bottom: 0;">
                 <div>
-                    <!-- CUSTOM TANGGAL -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Tanggal Rilis</label>
                     <input type="date" id="artTanggal" class="neo-input">
                 </div>
                 <div>
-                    <!-- CRUD VIEW -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Total Views</label>
                     <input type="number" id="artViews" class="neo-input" value="0" min="0">
                 </div>
                 <div>
-                    <!-- CRUD LIKES -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Total Likes</label>
                     <input type="number" id="artLikes" class="neo-input" value="0" min="0">
                 </div>
             </div>
             
-            <!-- AUTO <p> TAGGING INSTRUCTION -->
             <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Isi Artikel / Deskripsi</label>
             <p style="font-size:0.75rem; color:#3b82f6; margin-bottom:5px; font-weight:600;">💡 Tips: Ketik paragraf secara normal (tekan Enter). Sistem akan otomatis membungkusnya menjadi paragraf terpisah di web.</p>
             <textarea id="artIsi" class="neo-input" rows="7" placeholder="Tuliskan isi artikel Anda di sini..."></textarea>
@@ -429,8 +425,23 @@
     </button>
 
     <script>
+        // ================= FIX BUG: EMPTY TABS DATA INJECTION =================
+        // Menanamkan data fallback fundamental untuk mem-bypass error jika Redis mengembalikan kosong
         const FALLBACK_ADMIN_ORG = { visi: "", misi: [], pimpinan: [], departemen: [], artiKabinet: { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" } };
-        let db = { org: FALLBACK_ADMIN_ORG, filosofi: { logo: [], warna: [] }, sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], kontak: { alamat: "", email: "", wa: "", waName: "", mapsIframe: "" }, settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
+        const FALLBACK_FILOSOFI = { logo: [{elemen:"Bulan Bintang", arti:"Keislaman", makna:"Rahmat alam semesta"}], warna: [{warna:"Hijau", hex:"#10b981", makna:"Kesuburan"}] };
+        const FALLBACK_PROKER = [{ id: "proker-dummy", dept: "DEPT. DUMMY", namaProker: "Proker Dummy", shortDesc: "Harap edit/tambahkan data." }];
+        const FALLBACK_SEJARAH = [{ tahun: "2026", kabinet: "Kabinet Test", logo: "/img/bemfkgumi.png", ketua: "Ketua", wakil: "Wakil" }];
+        
+        let db = { 
+            org: FALLBACK_ADMIN_ORG, 
+            filosofi: FALLBACK_FILOSOFI, 
+            sejarah: FALLBACK_SEJARAH, 
+            proker: FALLBACK_PROKER, 
+            kalender: [], dokumentasi: [], team: [], 
+            kontak: { alamat: "", email: "", wa: "", waName: "", mapsIframe: "" }, 
+            settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, 
+            interaksi: {aspirasi:[], pesan:[]} 
+        };
         
         let aspirasiData = []; let pesanData = [];
         let artikelData = []; 
@@ -507,11 +518,18 @@
                 const req = await fetch(apiUrl);
                 if(req.ok) {
                     const data = await req.json();
-                    if(data.org) { db.org.visi = data.org.visi || ""; db.org.misi = data.org.misi || []; db.org.pimpinan = data.org.pimpinan || []; db.org.departemen = data.org.departemen || []; db.org.artiKabinet = data.org.artiKabinet || { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" }; }
-                    if(data.filosofi) { db.filosofi = data.filosofi; }
+                    
+                    // PENERAPAN HARD FALLBACK UNTUK MENCEGAH BUG TAB KOSONG
+                    if(data.org && data.org.pimpinan) { db.org = data.org; }
+                    if(data.filosofi && data.filosofi.logo && data.filosofi.logo.length > 0) { db.filosofi = data.filosofi; }
+                    if(data.sejarah && data.sejarah.length > 0) { db.sejarah = data.sejarah; }
+                    if(data.proker && data.proker.length > 0) { db.proker = data.proker; }
+                    
                     if(data.settings) db.settings = { ...db.settings, ...data.settings };
                     if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak };
-                    db.sejarah = data.sejarah || []; db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || []; db.team = data.team || [];
+                    if(data.kalender) db.kalender = data.kalender;
+                    if(data.dokumentasi) db.dokumentasi = data.dokumentasi;
+                    if(data.team) db.team = data.team;
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
             } catch(err) { showToast("⚠️ Memuat data Offline."); }
@@ -523,7 +541,66 @@
         function renderKontak() { if(db.kontak) { document.getElementById('setKontakAlamat').value = db.kontak.alamat || ""; document.getElementById('setKontakEmail').value = db.kontak.email || ""; document.getElementById('setKontakWA').value = db.kontak.wa || ""; document.getElementById('setKontakWAName').value = db.kontak.waName || ""; document.getElementById('setKontakMaps').value = db.kontak.mapsIframe || ""; } }
         function renderPengaturan() { if(db.settings) { document.getElementById('setHeaderText').value = db.settings.headerText || ""; document.getElementById('setFooterSlogan').value = db.settings.footerSlogan || ""; document.getElementById('setFooterAlamat').value = db.settings.footerAlamat || ""; document.getElementById('prevLogo1').src = db.settings.logo1 || "/img/bemfkgumi.png"; document.getElementById('prevLogo2').src = db.settings.logo2 || "/img/bemfkgumi.png"; document.getElementById('prevLogo3').src = db.settings.logo3 || "/img/bemfkgumi.png"; } }
         async function saveData(type) { if(type === 'org') { db.org.visi = document.getElementById('editVisi').value; db.org.misi = document.getElementById('editMisi').value.split('\n').filter(m => m.trim() !== ''); } try { let apiUrl = `/api/content/${type}`; if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com/api/content/${type}`; const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) }); if(req.ok) showToast(`✅ Data Tersimpan!`); else throw new Error(); } catch(e) { showToast("⚠️ Gagal menyimpan."); } }
-        function renderOrg() { /* Dibiarkan standar sesuai instruksi tdk diubah */ } function tambahPimpinan() { /* ... */ } function tambahDepartemen() { /* ... */ } function renderProker() { /* ... */ } function tambahProkerDept() { /* ... */ } function renderKalender() { /* ... */ } function tambahAgenda() { /* ... */ } function tambahPanitiaDivisi(kIdx) { /* ... */ } function tambahPanitiaAnggota(kIdx, divIdx) { /* ... */ } function renderFilosofi() { /* ... */ } function tambahFiloLogo() { /* ... */ } function tambahFiloWarna() { /* ... */ } function renderSejarah() { /* ... */ } function tambahSejarah() { /* ... */ } function renderDokumentasi() { /* ... */ } function tambahDokumentasi() { /* ... */ } function renderTeam() { /* ... */ } function tambahKategoriTeam() { /* ... */ } 
+        
+        // --- Render Functions (Basic) ---
+        function renderOrg() { /* Dibiarkan standar */ } function tambahPimpinan() { /* ... */ } function tambahDepartemen() { /* ... */ } 
+        function renderProker() { 
+            const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
+            (db.proker || []).forEach((p, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px; margin-bottom:15px; border-left:4px solid var(--accent-neon);">
+                    <input type="text" class="neo-input" value="${p.dept || ''}" placeholder="DEPT." oninput="db.proker[${i}].dept=this.value" style="font-weight:bold; color:var(--accent-neon);">
+                    <input type="text" class="neo-input" value="${p.namaProker || ''}" placeholder="NAMA PROKER" oninput="db.proker[${i}].namaProker=this.value">
+                    <textarea class="neo-input" rows="3" placeholder="Deskripsi Singkat" oninput="db.proker[${i}].shortDesc=this.value">${p.shortDesc || ''}</textarea>
+                    <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();">Hapus</button>
+                </div>`;
+            });
+        } 
+        function tambahProkerDept() { db.proker.push({id:"proker-"+Date.now(), dept:"DEPT. BARU", namaProker:"Nama Proker", shortDesc:""}); renderProker(); } 
+        function renderKalender() { /* ... */ } function tambahAgenda() { /* ... */ } function tambahPanitiaDivisi(kIdx) { /* ... */ } function tambahPanitiaAnggota(kIdx, divIdx) { /* ... */ } 
+        function renderFilosofi() { 
+            const logoCont = document.getElementById('cmsFiloLogo'); logoCont.innerHTML = '';
+            (db.filosofi.logo || []).forEach((el, i) => {
+                logoCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid #10b981; margin-bottom:10px;">
+                    <input type="text" class="neo-input" value="${el.elemen}" placeholder="Nama Elemen" oninput="db.filosofi.logo[${i}].elemen=this.value">
+                    <input type="text" class="neo-input" value="${el.arti}" placeholder="Arti" oninput="db.filosofi.logo[${i}].arti=this.value">
+                    <textarea class="neo-input" rows="2" placeholder="Makna" oninput="db.filosofi.logo[${i}].makna=this.value">${el.makna}</textarea>
+                    <button class="action-btn delete" onclick="db.filosofi.logo.splice(${i},1); renderFilosofi();">X</button>
+                </div>`;
+            });
+            const warnaCont = document.getElementById('cmsFiloWarna'); warnaCont.innerHTML = '';
+            (db.filosofi.warna || []).forEach((w, i) => {
+                warnaCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid ${w.hex}; margin-bottom:10px;">
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" class="neo-input" value="${w.warna}" placeholder="Nama Warna" oninput="db.filosofi.warna[${i}].warna=this.value" style="flex:2;">
+                        <input type="color" value="${w.hex}" oninput="db.filosofi.warna[${i}].hex=this.value" style="flex:1; height:45px; border:none; cursor:pointer;">
+                    </div>
+                    <textarea class="neo-input" rows="2" placeholder="Makna" oninput="db.filosofi.warna[${i}].makna=this.value">${w.makna}</textarea>
+                    <button class="action-btn delete" onclick="db.filosofi.warna.splice(${i},1); renderFilosofi();">X</button>
+                </div>`;
+            });
+        } 
+        function tambahFiloLogo() { if(!db.filosofi.logo) db.filosofi.logo = []; db.filosofi.logo.push({elemen:"Elemen Baru", arti:"", makna:""}); renderFilosofi(); } 
+        function tambahFiloWarna() { if(!db.filosofi.warna) db.filosofi.warna = []; db.filosofi.warna.push({warna:"Warna Baru", hex:"#ffffff", makna:""}); renderFilosofi(); } 
+        
+        function renderSejarah() { 
+            const cont = document.getElementById('cmsSejarah'); cont.innerHTML = '';
+            (db.sejarah || []).forEach((s, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:15px; align-items:center; border-left:4px solid var(--accent-neon); margin-bottom:10px;">
+                    <div style="width: 80px; text-align:center;">
+                        <img src="${s.logo || '/img/bemfkgumi.png'}" style="width:100%; height:60px; object-fit:contain; background:var(--bg-dark-overlay); padding:5px; border-radius:10px; margin-bottom:5px;">
+                        <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.sejarah[${i}], 'logo', renderSejarah)">
+                    </div>
+                    <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+                        <input type="text" class="neo-input" placeholder="Tahun" value="${s.tahun || ''}" oninput="db.sejarah[${i}].tahun=this.value" style="margin:0;">
+                        <input type="text" class="neo-input" placeholder="Nama Kabinet" value="${s.kabinet || ''}" oninput="db.sejarah[${i}].kabinet=this.value" style="margin:0;">
+                    </div>
+                    <button class="action-btn delete" onclick="db.sejarah.splice(${i},1); renderSejarah();">X</button>
+                </div>`;
+            });
+        } 
+        function tambahSejarah() { if(!db.sejarah) db.sejarah = []; db.sejarah.unshift({ tahun: "", kabinet: "Kabinet Baru", logo: "/img/bemfkgumi.png", ketua: "", wakil: "" }); renderSejarah(); } 
+        function renderDokumentasi() { /* ... */ } function tambahDokumentasi() { /* ... */ } function renderTeam() { /* ... */ } function tambahKategoriTeam() { /* ... */ } 
+        
         function renderTabel() { document.getElementById('statAspirasi').innerText = aspirasiData.length; document.getElementById('statPesan').innerText = pesanData.length; const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = ''; aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td style="color:var(--text-light);">${item.id}</td><td style="color:var(--text-muted);">${item.kategori}</td><td style="color:var(--text-light);"><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; }); const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = ''; pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td style="color:var(--text-light);"><strong>${item.nama}</strong></td><td style="color:var(--text-muted);">${item.subjek}</td><td style="color:var(--text-muted);">${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; }); }
         async function deleteData(type, id) { if(confirm('Yakin ingin menghapus?')) { try { let apiUrl = '/api/delete-interaction'; if(window.location.protocol === 'blob:') apiUrl = 'https://bemkbmfkgumi.com/api/delete-interaction'; await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) }); if(type==='aspirasi') aspirasiData = aspirasiData.filter(x => x.id !== id); else pesanData = pesanData.filter(x => x.id !== id); renderTabel(); showToast('✅ Data dihapus.'); } catch(e) { showToast('⚠️ Gagal menghapus.'); } } }
         function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
@@ -531,7 +608,7 @@
         function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
 
-        // ================= FUNGSI MANAJEMEN ARTIKEL (FULL UPGRADE CRUD & PREVIEW SANITIZER) =================
+        // ================= FUNGSI MANAJEMEN ARTIKEL (FULL UPGRADE CRUD) =================
         function renderArtikelTable(dataToRender = artikelData) {
             const tbody = document.getElementById('tableBodyArtikel'); tbody.innerHTML = '';
             dataToRender.forEach((item, index) => {
@@ -552,7 +629,7 @@
                             <span style="color:#3b82f6;">👁️ ${item.Jumlah_View || 0}</span>
                         </div>
                     </td>
-                    <td style="color:var(--text-muted); font-size:0.85rem;">📅 ${item.Tgl_Rilis ? item.Tgl_Rilis.split('T')[0] : '-'}</td>
+                    <td style="color:var(--text-muted); font-size:0.85rem;">📅 ${item.Tgl_Rilis || '-'}</td>
                     <td>
                         <button class="action-btn view" onclick="openArtikelModal('${item.ID_Berita}')">✏️ Edit</button>
                         <button class="action-btn delete" onclick="deleteArtikelGAS('${item.ID_Berita}')">🗑️ Hapus</button>
@@ -566,7 +643,8 @@
             renderArtikelTable(filtered);
         }
 
-        function getTodayDateStr() {
+        // FUNGSI TANGGAL ISO KE DD-MM-YYYY (Menampilkan di <input type="date"> YYYY-MM-DD)
+        function getTodayDateStrForInput() {
             const d = new Date();
             let month = '' + (d.getMonth() + 1), day = '' + d.getDate(), year = d.getFullYear();
             if (month.length < 2) month = '0' + month;
@@ -587,8 +665,6 @@
 
         function updateArtPreviewUrl(url) {
             let safeUrl = url;
-            // ADMIN DASHBOARD AUTO SANITIZER (FULL UPGRADE 100% CORS BYPASS): 
-            // Mengubah segala format link Drive mentah menjadi link Thumbnail API
             if (safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
                 let match = safeUrl.match(/[-\w]{25,33}/);
                 if (match && match[0]) {
@@ -608,8 +684,8 @@
 
         function openArtikelModal(id = null) {
             document.getElementById('artikelModal').classList.add('active');
-            document.getElementById('artFileImage').value = ''; // Reset File Input
-            updateArtPreviewUI(''); // Reset Preview
+            document.getElementById('artFileImage').value = ''; 
+            updateArtPreviewUI(''); 
             
             if(id) {
                 const art = artikelData.find(a => a.ID_Berita === id);
@@ -618,7 +694,6 @@
                 document.getElementById('artJudul').value = art.Judul || "";
                 document.getElementById('artKategori').value = art.Kategori || "Kegiatan";
                 
-                // Admin Dashboard Sanitizer for existing link
                 let safeUrl = art.Gambar_URL || "";
                 if(safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
                     let match = safeUrl.match(/[-\w]{25,33}/);
@@ -626,18 +701,24 @@
                         safeUrl = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
                     }
                 }
-                
                 document.getElementById('artGambar').value = safeUrl;
                 if(safeUrl) updateArtPreviewUI(safeUrl);
 
                 document.getElementById('artPenulis').value = art.Penulis || "Admin BEM FKG UMI";
                 document.getElementById('artDesc').value = art.Meta_Desc || art.Desc || "";
                 
-                // Konversi <p> tag kembali menjadi newlines untuk editor text
                 let plainTextIsi = (art.Konten_HTML || "").replace(/<\/p>\s*<p>/g, '\n\n').replace(/<p>/g, '').replace(/<\/p>/g, '');
                 document.getElementById('artIsi').value = plainTextIsi;
                 
-                document.getElementById('artTanggal').value = art.Tgl_Rilis ? art.Tgl_Rilis.split('T')[0] : getTodayDateStr();
+                // MENGUBAH TANGGAL DB (DD-MM-YYYY) KE INPUT (YYYY-MM-DD)
+                let inputDate = getTodayDateStrForInput();
+                if(art.Tgl_Rilis && art.Tgl_Rilis.includes('-')) {
+                    let dParts = art.Tgl_Rilis.split('-');
+                    if(dParts[0].length === 4) inputDate = art.Tgl_Rilis.split('T')[0]; // Legacy format
+                    else if(dParts.length === 3) inputDate = `${dParts[2]}-${dParts[1]}-${dParts[0]}`; // DD-MM-YYYY format
+                }
+                document.getElementById('artTanggal').value = inputDate;
+
                 document.getElementById('artViews').value = art.Jumlah_View || 0;
                 document.getElementById('artLikes').value = art.Jumlah_Like || 0;
                 
@@ -651,7 +732,7 @@
                 document.getElementById('artPenulis').value = "Admin BEM FKG UMI";
                 document.getElementById('artDesc').value = "";
                 document.getElementById('artIsi').value = "";
-                document.getElementById('artTanggal').value = getTodayDateStr();
+                document.getElementById('artTanggal').value = getTodayDateStrForInput();
                 document.getElementById('artViews').value = 0;
                 document.getElementById('artLikes').value = 0;
                 document.getElementById('btnSaveArtikel').innerText = "Publikasikan";
@@ -669,7 +750,6 @@
             const judul = document.getElementById('artJudul').value;
             const slug = judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
             
-            // KUNCI AUTO <p> TAGGING:
             const rawIsi = document.getElementById('artIsi').value;
             let htmlIsi = rawIsi;
             if (!rawIsi.trim().startsWith('<')) {
@@ -682,11 +762,14 @@
             const wordCount = htmlIsi.split(' ').length;
             const waktuBaca = Math.ceil(wordCount / 200) + " min read";
 
-            // LOGIC IMAGE BASE64 UPLOAD
+            // LOGIC TANGGAL KE DATABASE (DD-MM-YYYY)
+            const rawDate = document.getElementById('artTanggal').value; // YYYY-MM-DD
+            const dSplit = rawDate.split('-');
+            const dbDate = `${dSplit[2]}-${dSplit[1]}-${dSplit[0]}`; // DD-MM-YYYY
+
             const fileInput = document.getElementById('artFileImage');
             let base64Image = null;
             
-            // SANITASI FINAL SEBELUM PUSH KE GAS: Paksa pakai Thumbnail API
             let finalImageURL = document.getElementById('artGambar').value; 
             if (finalImageURL && (finalImageURL.indexOf('drive.google.com') !== -1 || finalImageURL.indexOf('drive.usercontent.com') !== -1)) {
                 let match = finalImageURL.match(/[-\w]{25,33}/);
@@ -704,29 +787,27 @@
                 ID_Berita: id,
                 Slug_URL: slug,
                 Judul: judul,
-                Meta_Desc: document.getElementById('artDesc').value, // SEO Field
+                Meta_Desc: document.getElementById('artDesc').value, 
                 Kategori: document.getElementById('artKategori').value,
                 Penulis: document.getElementById('artPenulis').value,
                 Gambar_URL: finalImageURL,
-                base64Image: base64Image, // Dikirim ke backend jika ada file upload
+                base64Image: base64Image, 
                 Konten_HTML: htmlIsi,
-                Tgl_Rilis: document.getElementById('artTanggal').value,
+                Tgl_Rilis: dbDate, // Disimpan ke GAS dalam DD-MM-YYYY
                 Waktu_Baca: waktuBaca,
                 Jumlah_View: parseInt(document.getElementById('artViews').value) || 0,
                 Jumlah_Like: parseInt(document.getElementById('artLikes').value) || 0
             };
 
             try {
-                // Fetch to Google Apps Script
                 await fetch(GAS_ARTIKEL_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
                 showToast('✅ Publikasi Berhasil disimpan di Database!');
-                loadArtikelGas(); // Refresh Tabel
+                loadArtikelGas(); 
             } catch(e) {
-                // Mode Offline Simulation Fallback
                 if(!isEdit) artikelData.unshift({...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || '/img/bemfkgumi.png'});
                 else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || artikelData[idx].Gambar_URL}; }
                 renderArtikelTable();
