@@ -127,7 +127,7 @@
       </button>
       
       <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-[color:var(--bg-dark-heavy)] relative m-0 rounded-t-3xl overflow-hidden">
-          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer -->
+          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. Tidak ada Fallback OnError -->
       </figure>
 
       <div class="px-6 md:px-12 mt-8">
@@ -238,7 +238,7 @@
          if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
              var match = url.match(/[-\w]{25,33}/); // Regex mengekstrak Unik ID Drive 
              if (match && match[0]) {
-                 // Ganti dengan format `download?id=...` jika memang itu yang bekerja 100% untuk Anda
+                 // Ganti dengan format unduhan direct yang Anda konfirmasi berfungsi 100%
                  item.Gambar_URL = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
              }
          }
@@ -265,7 +265,7 @@
         var item = data[i];
         var id = String(item.ID_Berita);
         var slug = String(item.Slug_URL || id);
-        var img = String(item.Gambar_URL || '/img/bemfkgumi.png');
+        var img = String(item.Gambar_URL || '');
         var cat = String(item.Kategori);
         var title = String(item.Judul);
         var seoUrl = "?article=" + slug;
@@ -273,10 +273,15 @@
         var isHero = (currentOffset === 0 && i === 0);
         var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
         
-        // PENTING: Penambahan referrerpolicy="no-referrer" agar API Image Google tidak di Block Browser.
+        // Atribut 'onerror' DIHAPUS TOTAL agar browser fokus merender gambar asli tanpa gangguan
         html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
         html +=   '<div class="zine-img-wrapper">';
-        html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';">';
+        if (img) {
+            html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '">';
+        } else {
+            // Jika memang sama sekali tidak ada input link gambar
+            html +=     '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-gray-600"></i></div>';
+        }
         html +=     '<div class="absolute top-4 left-4 bg-[color:var(--bg-dark-overlay)] text-[color:var(--accent-neon)] text-xs px-4 py-1.5 rounded-full border border-[color:var(--accent-glow)] backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
         html +=   '</div>';
         html +=   '<div class="p-6 flex-1 flex flex-col justify-between">';
@@ -343,8 +348,12 @@
       breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
       document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
-      // referrerpolicy="no-referrer" diterapkan untuk Modal
-      document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
+      // Modal render tanpa Fallback OnError
+      if (article.Gambar_URL) {
+          document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
+      } else {
+          document.getElementById('modalImgWrapper').innerHTML = '<div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
+      }
       
       document.getElementById('modalMeta').innerHTML = '<span class="text-[color:var(--accent-neon)] font-bold border border-[color:var(--accent-glow)] px-3 py-1 rounded-full uppercase tracking-wider bg-[color:var(--bg-dark-overlay)]">' + article.Kategori + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span class="font-medium text-[color:var(--text-muted)]">✍️ ' + (article.Penulis || 'Admin') + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span>📅 ' + (article.Tgl_Rilis || '').split("T")[0] + '</span>';
       document.getElementById('modalTitle').innerText = article.Judul;
