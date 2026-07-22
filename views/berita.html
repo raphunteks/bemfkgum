@@ -1,610 +1,677 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0b132b">
-  
-  <!-- PERFORMANCE PRECONNECTS -->
-  <link rel="preconnect" href="https://script.google.com" crossorigin>
-  <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-  <link rel="dns-prefetch" href="https://script.google.com">
-
-  <!-- ENTERPRISE SEO DIRECTIVES & CANONICAL -->
-  <title>Portal Berita E-Zine | BEM KBMFKG UMI</title>
-  <meta name="description" content="Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.">
-  <meta name="keywords" content="portal berita, ezine, fkg umi, kedokteran gigi, artikel seo, bem fkg umi">
-  <meta name="author" content="BEM KBMFKG UMI">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <link rel="canonical" id="canonicalUrl" href="https://bemkbmfkgumi.com/berita">
-
-  <!-- MOBILE WEB APP & FAVICON OPTIMIZATION -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
-  <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
-  
-  <!-- FIX RENDER BLOCKING -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-  
-  <link rel="preload" href="/css/main.css" as="style">
-  <link rel="stylesheet" href="/css/main.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  
-  <!-- PROTECT DEVTOOLS -->
-  <script src="/js/protect-devtools.js"></script>
-
-  <!-- OPEN GRAPH & TWITTER CARDS (DYNAMIC TARGET) -->
-  <meta property="og:site_name" content="Portal Berita E-Zine BEM KBMFKG UMI">
-  <meta property="og:title" id="ogTitle" content="Portal Berita E-Zine | BEM KBMFKG UMI">
-  <meta property="og:description" id="ogDesc" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini.">
-  <meta property="og:type" id="ogType" content="website">
-  <meta property="og:url" id="ogUrl" content="https://bemkbmfkgumi.com/berita">
-  <meta property="og:image" id="ogImage" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
-  
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" id="twTitle" content="Portal Berita BEM KBMFKG UMI">
-
-  <style>
-    /* Tailwind Override untuk menyatu dengan CSS Root Main BEM UMI */
-    body { background-color: var(--bg-dark); color: var(--text-light); }
-    .bg-custom-dark { background-color: var(--bg-dark); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0b132b">
     
-    /* Specific Modal Override */
-    .article-modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
-      z-index: 9999; display: none; opacity: 0; transition: opacity 0.4s ease;
-      overflow-y: auto; overscroll-behavior: contain;
-    }
-    .article-modal-overlay.active { display: block; opacity: 1; }
+    <!-- PERFORMANCE PRECONNECTS -->
+    <link rel="preconnect" href="https://script.google.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="dns-prefetch" href="https://script.google.com">
+
+    <!-- ENTERPRISE SEO DIRECTIVES & CANONICAL (SUPER BIG UPGRADE) -->
+    <title>Portal Berita E-Zine - BEM KBMFKG UMI</title>
+    <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
+    <meta name="description" content="Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.">
+    <meta name="keywords" content="portal berita, ezine, fkg umi, kedokteran gigi, artikel seo, bem fkg umi">
+    <meta name="author" content="BEM KBMFKG UMI">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" id="canonicalUrl" href="https://bemkbmfkgumi.com/berita">
+
+    <!-- MOBILE WEB APP & FAVICON OPTIMIZATION -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     
-    .article-modal-content {
-      background: var(--bg-dark); max-width: 850px; margin: 40px auto; border-radius: 24px;
-      border: 1px solid var(--glass-border); box-shadow: 0 20px 50px var(--card-shadow);
-      transform: translateY(40px) scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      opacity: 0; position: relative;
-    }
-    .article-modal-overlay.active .article-modal-content { transform: translateY(0) scale(1); opacity: 1; }
+    <!-- FIX RENDER BLOCKING -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     
-    @media (max-width: 768px) {
-      .article-modal-content { margin: 0; border-radius: 0; min-height: 100vh; border: none; }
-    }
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    .article-text { font-family: 'Merriweather', 'Times New Roman', serif; line-height: 1.8; color: var(--text-muted); }
-    .article-text h2, .article-text h3 { color: var(--text-light); font-family: 'Inter', sans-serif; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; }
-    .article-text p { margin-bottom: 1.2rem; }
-  </style>
+    <!-- PROTECT DEVTOOLS -->
+    <script src="/js/protect-devtools.js" defer></script>
+
+    <!-- OPEN GRAPH & TWITTER CARDS (DYNAMIC TARGET) -->
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
+    <meta property="og:title" id="ogTitle" content="Portal Berita E-Zine - BEM KBMFKG UMI">
+    <meta property="og:description" id="ogDesc" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini.">
+    <meta property="og:type" id="ogType" content="website">
+    <meta property="og:url" id="ogUrl" content="https://bemkbmfkgumi.com/berita">
+    <meta property="og:image" id="ogImage" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:image:alt" content="Cover Berita E-Zine BEM KBMFKG UMI">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" id="twTitle" content="Portal Berita E-Zine - BEM KBMFKG UMI">
+    <meta name="twitter:description" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini BEM KBMFKG UMI.">
+    <meta name="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+
+    <!-- PENGATURAN MANIFEST PWA -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <style>
+        /* Tailwind Override untuk menyatu dengan CSS Root Main BEM UMI */
+        body { background-color: var(--bg-dark); color: var(--text-light); }
+        .bg-custom-dark { background-color: var(--bg-dark); }
+        
+        /* Specific Modal Override */
+        .article-modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
+            z-index: 9999; display: none; opacity: 0; transition: opacity 0.4s ease;
+            overflow-y: auto; overscroll-behavior: contain;
+        }
+        .article-modal-overlay.active { display: block; opacity: 1; }
+        
+        .article-modal-content {
+            background: var(--bg-dark); max-width: 850px; margin: 40px auto; border-radius: 24px;
+            border: 1px solid var(--glass-border); box-shadow: 0 20px 50px var(--card-shadow);
+            transform: translateY(40px) scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0; position: relative;
+        }
+        .article-modal-overlay.active .article-modal-content { transform: translateY(0) scale(1); opacity: 1; }
+        
+        @media (max-width: 768px) {
+            .article-modal-content { margin: 0; border-radius: 0; min-height: 100vh; border: none; }
+        }
+        
+        .article-text { font-family: 'Merriweather', 'Times New Roman', serif; line-height: 1.8; color: var(--text-muted); }
+        .article-text h2, .article-text h3 { color: var(--text-light); font-family: 'Inter', sans-serif; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .article-text p { margin-bottom: 1.2rem; }
+        
+        /* Kustom Toast Copy Share Fallback */
+        #shareToast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #10b981; color: white; padding: 12px 24px; border-radius: 30px;
+            font-weight: 600; font-size: 0.9rem; z-index: 10000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        #shareToast.show { opacity: 1; }
+    </style>
 </head>
 <body class="bg-custom-dark font-sans relative">
 
-  <!-- ================= BEM STANDAR HEADER ================= -->
-  <%- include('partials/header.html') %>
+    <!-- ================= BEM STANDAR HEADER ================= -->
+    <%- include('partials/header.html') %>
 
-  <!-- SEARCH & HERO E-ZINE -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-4">
-    <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 mb-8">
-        <div>
-            <!-- THEME RESPONSIVE COLOR -->
-            <h1 class="text-4xl md:text-5xl font-black text-[color:var(--text-light)] glow-text tracking-tight mb-2">Portal Publik <span class="text-[color:var(--accent-neon)]">E-Zine</span></h1>
-            <p class="text-[color:var(--text-muted)] text-lg">Jelajahi inovasi, berita organisasi, edukasi klinis, dan event terbaru kami.</p>
+    <!-- SEARCH & HERO E-ZINE -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-4">
+        <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 mb-8">
+            <div>
+                <!-- THEME RESPONSIVE COLOR -->
+                <h1 class="text-4xl md:text-5xl font-black text-[color:var(--text-light)] glow-text tracking-tight mb-2">Portal Publik <span class="text-[color:var(--accent-neon)]">E-Zine</span></h1>
+                <p class="text-[color:var(--text-muted)] text-lg">Jelajahi inovasi, berita organisasi, edukasi klinis, dan event terbaru kami.</p>
+            </div>
+            <div class="relative w-full md:w-80">
+                <i class="ph ph-magnifying-glass absolute left-4 top-3.5 text-[color:var(--text-muted)] text-lg"></i>
+                <input type="search" id="searchInput" placeholder="Cari publikasi..." class="w-full bg-[color:var(--input-bg)] border border-[color:var(--border-light)] rounded-full py-3 pl-12 pr-4 text-[color:var(--text-light)] focus:outline-none focus:border-[color:var(--accent-neon)] focus:ring-1 focus:ring-[color:var(--accent-neon)] transition shadow-inner">
+            </div>
         </div>
-        <div class="relative w-full md:w-80">
-            <i class="ph ph-magnifying-glass absolute left-4 top-3.5 text-[color:var(--text-muted)] text-lg"></i>
-            <input type="search" id="searchInput" placeholder="Cari publikasi..." class="w-full bg-[color:var(--input-bg)] border border-[color:var(--border-light)] rounded-full py-3 pl-12 pr-4 text-[color:var(--text-light)] focus:outline-none focus:border-[color:var(--accent-neon)] focus:ring-1 focus:ring-[color:var(--accent-neon)] transition shadow-inner">
+
+        <!-- FILTER KATEGORI -->
+        <nav aria-label="Filter Kategori" class="flex flex-wrap gap-3 mb-10 border-b border-[color:var(--border-light)] pb-6" id="categoryContainer">
+            <button class="badge-category active" onclick="filterCategory('All', this)">Semua</button>
+            <button class="badge-category" onclick="filterCategory('Pengumuman', this)">Pengumuman</button>
+            <button class="badge-category" onclick="filterCategory('Edukasi', this)">Edukasi</button>
+            <button class="badge-category" onclick="filterCategory('Sosial', this)">Kegiatan Sosial</button>
+            <button class="badge-category" onclick="filterCategory('Olahraga', this)">Olahraga</button>
+            <button class="badge-category" onclick="filterCategory('Prestasi', this)">Prestasi</button>
+        </nav>
+    </section>
+
+    <!-- GRID ARTIKEL E-ZINE -->
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 pb-20 min-h-[50vh]">
+        <div class="grid-zine" id="articleGrid" aria-live="polite">
+            <!-- Diinjeksi oleh JavaScript -->
         </div>
+        <div id="scrollLoader" class="hidden"><div class="loader-ring"></div></div>
+    </main>
+
+    <!-- ================= BEM STANDAR FOOTER ================= -->
+    <%- include('partials/footer.html') %>
+
+    <!-- ================= MODAL FULL VIEW ARTIKEL ================= -->
+    <div id="articleModal" class="article-modal-overlay" role="dialog" aria-modal="true" tabindex="-1">
+        <article class="article-modal-content pb-10">
+            <button onclick="closeModalAndGoHome(event)" class="absolute top-4 right-4 bg-[color:var(--bg-dark-overlay)] p-3 rounded-full text-[color:var(--text-light)] hover:bg-[color:var(--accent-neon)] hover:text-[color:var(--bg-dark)] transition z-10 backdrop-blur-sm outline-none border border-[color:var(--border-light)]" aria-label="Tutup Artikel">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+            
+            <!-- FIX RENDER IMAGE MODAL: Hapus mix-blend-screen yang membuat error di Light Mode -->
+            <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-[color:var(--bg-dark-heavy)] relative m-0 rounded-t-3xl overflow-hidden">
+                <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. -->
+            </figure>
+
+            <div class="px-6 md:px-12 mt-8">
+                <nav aria-label="Breadcrumb" id="modalBreadcrumb" class="breadcrumb-nav text-sm"></nav>
+
+                <div id="modalMeta" class="flex flex-wrap items-center gap-4 text-sm text-[color:var(--text-muted)] mb-4 mt-2"></div>
+                
+                <h1 id="modalTitle" class="text-3xl md:text-5xl font-black mb-8 text-[color:var(--text-light)] leading-tight tracking-tight glow-text"></h1>
+                
+                <div class="flex gap-4 mb-8 border-b border-[color:var(--border-light)] pb-6">
+                    <button onclick="likeArticle()" class="flex items-center gap-2 text-[color:var(--text-muted)] hover:text-[#ff3366] transition p-2 -ml-2 rounded-lg outline-none bg-[color:var(--bg-dark-overlay)] hover:bg-[color:var(--border-light)] border border-[color:var(--border-light)]">
+                        <i class="ph ph-heart text-xl" id="iconLike"></i>
+                        <span id="txtLikeCount" class="font-bold">0</span> Suka
+                    </button>
+                    
+                    <!-- UPGRADE SHARE BUTTON (Native Web Share API) -->
+                    <button onclick="shareArticle()" class="flex items-center gap-2 text-[color:var(--text-muted)] hover:text-[color:var(--accent-neon)] transition p-2 rounded-lg outline-none bg-[color:var(--bg-dark-overlay)] hover:bg-[color:var(--border-light)] border border-[color:var(--border-light)]">
+                        <i class="ph ph-share-network text-xl"></i> Bagikan
+                    </button>
+                </div>
+
+                <div id="modalContent" class="article-text text-lg"></div>
+            </div>
+        </article>
     </div>
 
-    <!-- FILTER KATEGORI -->
-    <nav aria-label="Filter Kategori" class="flex flex-wrap gap-3 mb-10 border-b border-[color:var(--border-light)] pb-6" id="categoryContainer">
-      <button class="badge-category active" onclick="filterCategory('All', this)">Semua</button>
-      <button class="badge-category" onclick="filterCategory('Pengumuman', this)">Pengumuman</button>
-      <button class="badge-category" onclick="filterCategory('Edukasi', this)">Edukasi</button>
-      <button class="badge-category" onclick="filterCategory('Sosial', this)">Kegiatan Sosial</button>
-      <button class="badge-category" onclick="filterCategory('Olahraga', this)">Olahraga</button>
-      <button class="badge-category" onclick="filterCategory('Prestasi', this)">Prestasi</button>
-    </nav>
-  </section>
+    <!-- UI Toast untuk fallback Share Clipboard -->
+    <div id="shareToast">Tautan artikel publikasi berhasil disalin!</div>
 
-  <!-- GRID ARTIKEL E-ZINE -->
-  <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 pb-20 min-h-[50vh]">
-    <div class="grid-zine" id="articleGrid" aria-live="polite">
-      <!-- Diinjeksi oleh JavaScript -->
-    </div>
-    <div id="scrollLoader" class="hidden"><div class="loader-ring"></div></div>
-  </main>
+    <button id="fabBtn" class="scroll-to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" aria-label="Kembali ke atas">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="#ffffff"><path d="M13 5.828V17h-2V5.828L5.636 11.192 4.222 9.778 12 2l7.778 7.778-1.414 1.414L13 5.828zM4 19h16v2H4v-2z"/></svg>
+    </button>
 
-  <!-- ================= BEM STANDAR FOOTER ================= -->
-  <%- include('partials/footer.html') %>
+    <script>
+        // --- LINK GOOGLE APPS SCRIPT API BACKEND ---
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
 
-  <!-- ================= MODAL FULL VIEW ARTIKEL ================= -->
-  <div id="articleModal" class="article-modal-overlay" role="dialog" aria-modal="true" tabindex="-1">
-    <article class="article-modal-content pb-10">
-      <button onclick="closeModalAndGoHome(event)" class="absolute top-4 right-4 bg-[color:var(--bg-dark-overlay)] p-3 rounded-full text-[color:var(--text-light)] hover:bg-[color:var(--accent-neon)] hover:text-[color:var(--bg-dark)] transition z-10 backdrop-blur-sm outline-none border border-[color:var(--border-light)]" aria-label="Tutup Artikel">
-        <i class="ph ph-x text-xl"></i>
-      </button>
-      
-      <!-- FIX RENDER IMAGE MODAL: Hapus mix-blend-screen yang membuat error di Light Mode -->
-      <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-[color:var(--bg-dark-heavy)] relative m-0 rounded-t-3xl overflow-hidden">
-          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. -->
-      </figure>
+        var appState = {
+            articles: [], page: 1, limit: 10, category: 'All', 
+            hasMore: true, isLoading: false, currentViewId: null,
+            initialLoadDone: false 
+        };
 
-      <div class="px-6 md:px-12 mt-8">
-        <nav aria-label="Breadcrumb" id="modalBreadcrumb" class="breadcrumb-nav text-sm"></nav>
-
-        <div id="modalMeta" class="flex flex-wrap items-center gap-4 text-sm text-[color:var(--text-muted)] mb-4 mt-2"></div>
-        
-        <h1 id="modalTitle" class="text-3xl md:text-5xl font-black mb-8 text-[color:var(--text-light)] leading-tight tracking-tight glow-text"></h1>
-        
-        <div class="flex gap-4 mb-8 border-b border-[color:var(--border-light)] pb-6">
-          <button onclick="likeArticle()" class="flex items-center gap-2 text-[color:var(--text-muted)] hover:text-[#ff3366] transition p-2 -ml-2 rounded-lg outline-none bg-[color:var(--bg-dark-overlay)] hover:bg-[color:var(--border-light)] border border-[color:var(--border-light)]">
-            <i class="ph ph-heart text-xl" id="iconLike"></i>
-            <span id="txtLikeCount" class="font-bold">0</span> Suka
-          </button>
-          
-          <!-- UPGRADE SHARE BUTTON (Native Web Share API) -->
-          <button onclick="shareArticle()" class="flex items-center gap-2 text-[color:var(--text-muted)] hover:text-[color:var(--accent-neon)] transition p-2 rounded-lg outline-none bg-[color:var(--bg-dark-overlay)] hover:bg-[color:var(--border-light)] border border-[color:var(--border-light)]">
-            <i class="ph ph-share-network text-xl"></i> Bagikan
-          </button>
-        </div>
-
-        <div id="modalContent" class="article-text text-lg"></div>
-      </div>
-    </article>
-  </div>
-
-  <button id="fabBtn" class="scroll-to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" aria-label="Kembali ke atas">
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="#ffffff"><path d="M13 5.828V17h-2V5.828L5.636 11.192 4.222 9.778 12 2l7.778 7.778-1.414 1.414L13 5.828zM4 19h16v2H4v-2z"/></svg>
-  </button>
-
-  <script>
-    // --- LINK GOOGLE APPS SCRIPT API BACKEND ---
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
-
-    var appState = {
-      articles: [], page: 1, limit: 10, category: 'All', 
-      hasMore: true, isLoading: false, currentViewId: null,
-      initialLoadDone: false 
-    };
-
-    window.onload = function() {
-      loadArticles(true);
-      setupScrollListener();
-      setupSearchListener();
-      
-      document.addEventListener('keydown', function(event) {
-        if (event.key === "Escape" && document.getElementById('articleModal').classList.contains('active')) {
-          closeModalAndGoHome(event);
-        }
-      });
-      
-      const themeCheckbox = document.getElementById('checkboxTheme');
-      if(themeCheckbox) {
-          themeCheckbox.addEventListener('change', (e) => {
-              if(e.target.checked) document.documentElement.setAttribute('data-theme', 'dark');
-              else document.documentElement.removeAttribute('data-theme');
-          });
-      }
-    };
-
-    window.addEventListener('popstate', function(event) { checkUrlRouting(true); });
-
-    function checkUrlRouting(isPopState = false) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const articleIdOrSlug = urlParams.get('article');
-      
-      if (articleIdOrSlug) {
-        var found = appState.articles.find(function(a) { 
-          return a.ID_Berita === articleIdOrSlug || a.Slug_URL === articleIdOrSlug; 
-        });
-        if (found) openModal(null, found.ID_Berita, true); 
-      } else if (isPopState && appState.currentViewId) {
-        closeModal(true); 
-      }
-    }
-
-    function loadArticles(isReset) {
-      if (appState.isLoading || (!appState.hasMore && !isReset)) return;
-      appState.isLoading = true;
-      document.getElementById('scrollLoader').style.display = 'block';
-
-      if (isReset) {
-        appState.page = 1; appState.articles = [];
-        document.getElementById('articleGrid').innerHTML = '';
-      }
-
-      var fetchUrl = GAS_URL + "?action=getArticles&page=" + appState.page + "&limit=" + appState.limit + "&category=" + encodeURIComponent(appState.category);
-
-      fetch(fetchUrl)
-        .then(function(response) {
-          if (!response.ok) throw new Error("Gagal menyambung ke GAS API.");
-          return response.json();
-        })
-        .then(function(res) {
-          var parsedData = typeof res === 'string' ? JSON.parse(res) : res;
-          var articleList = parsedData.data || parsedData || [];
-          processNewData(articleList, false); 
-        })
-        .catch(function(err) {
-          console.warn("GAS API Error.", err);
-          appState.isLoading = false;
-          document.getElementById('scrollLoader').style.display = 'none';
-        });
-    }
-
-    function processNewData(newData, hasMore) {
-      var cleanedData = newData.map(function(item) {
-         var url = item.Gambar_URL || '';
-         if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
-             var match = url.match(/[-\w]{25,}/); 
-             if (match && match[0]) {
-                 item.Gambar_URL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
-             }
-         }
-         return item;
-      });
-
-      appState.articles = appState.articles.concat(cleanedData);
-      appState.hasMore = hasMore; appState.page++; appState.isLoading = false;
-      document.getElementById('scrollLoader').style.display = 'none';
-      renderArticles(cleanedData);
-      
-      if (!appState.currentViewId) injectDefaultSEO();
-
-      if (!appState.initialLoadDone) {
-        appState.initialLoadDone = true;
-        checkUrlRouting(); 
-      }
-    }
-
-    function renderArticles(data) {
-      var grid = document.getElementById('articleGrid');
-      var html = "";
-      var currentOffset = appState.articles.length - data.length;
-
-      for (var i = 0; i < data.length; i++) {
-        var item = data[i];
-        var id = String(item.ID_Berita);
-        var slug = String(item.Slug_URL || id);
-        var img = String(item.Gambar_URL || '');
-        var cat = String(item.Kategori);
-        var title = String(item.Judul);
-        var seoUrl = "?article=" + slug;
-        
-        var isHero = (currentOffset === 0 && i === 0);
-        var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
-        
-        html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
-        html +=   '<div class="zine-img-wrapper">';
-        if (img) {
-            html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '">';
-        } else {
-            html +=     '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-[color:var(--text-muted)]"></i></div>';
-        }
-        html +=     '<div class="absolute top-4 left-4 bg-[color:var(--bg-dark-overlay)] text-[color:var(--accent-neon)] text-xs px-4 py-1.5 rounded-full border border-[color:var(--accent-glow)] backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
-        html +=   '</div>';
-        html +=   '<div class="p-6 flex-1 flex flex-col justify-between">';
-        html +=     '<h2 class="card-title text-xl font-black text-[color:var(--text-light)] mb-4 line-clamp-3 group-hover:text-[color:var(--accent-neon)] transition leading-snug">' + title + '</h2>';
-        html +=     '<div class="flex justify-between items-center text-sm text-[color:var(--text-muted)] mt-auto border-t border-[color:var(--border-light)] pt-4 font-medium">';
-        html +=       '<span class="flex items-center gap-1"><i class="ph ph-clock text-lg"></i> ' + String(item.Waktu_Baca || '2 min') + '</span>';
-        html +=       '<span class="flex items-center gap-1"><i class="ph ph-eye text-lg"></i> <span id="viewCount-' + id + '">' + String(item.Jumlah_View || 0) + '</span></span>';
-        html +=   '</div></div></a>';
-      }
-      
-      if(data.length === 0 && currentOffset === 0) {
-          grid.innerHTML = `<div class="col-span-full text-center py-20 text-[color:var(--text-muted)] text-lg">Belum ada publikasi artikel untuk kategori ini.</div>`;
-      } else {
-          grid.innerHTML += html;
-      }
-    }
-
-    function setupSearchListener() {
-      var input = document.getElementById('searchInput');
-      input.addEventListener('keyup', function(e) {
-        var term = e.target.value.toLowerCase();
-        var cards = document.querySelectorAll('.zine-card');
-        cards.forEach(function(card) {
-          card.style.display = card.querySelector('.card-title').innerText.toLowerCase().indexOf(term) > -1 ? 'flex' : 'none';
-        });
-      });
-    }
-
-    function setupScrollListener() {
-      window.addEventListener('scroll', function() {
-        var fab = document.getElementById('fabBtn');
-        window.scrollY > 300 ? fab.classList.add('show') : fab.classList.remove('show');
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) loadArticles(false);
-        
-        const header = document.getElementById('main-header');
-        if (window.scrollY > 20) header.classList.add('scrolled');
-        else header.classList.remove('scrolled');
-      });
-    }
-
-    function filterCategory(cat, btnElement) {
-      document.querySelectorAll('.badge-category').forEach(function(b) { 
-        b.classList.remove('active'); 
-      });
-      btnElement.classList.add('active');
-      appState.category = cat; loadArticles(true);
-    }
-
-    // =========================================================================
-    // ENTERPRISE JSON-LD SEO GENERATOR (MASTER UPGRADE)
-    // =========================================================================
-    function setOrUpdateMeta(attrName, attrValue, content) {
-        var el = document.querySelector(`meta[${attrName}="${attrValue}"]`);
-        if (el) {
-            el.setAttribute("content", content);
-        } else {
-            el = document.createElement('meta');
-            el.setAttribute(attrName, attrValue);
-            el.setAttribute("content", content);
-            document.head.appendChild(el);
-        }
-    }
-
-    function injectEnterpriseSEO(article, url) {
-      // 1. DYNAMIC HTML META TAGS
-      var safeTitle = article.Judul + " | BEM KBMFKG UMI";
-      var rawHtml = article.Konten_HTML || "";
-      var plainText = rawHtml.replace(/<[^>]*>?/gm, '').substring(0, 155).trim() + "...";
-      var safeDesc = article.Meta_Desc || article.Desc || plainText;
-      var safeImg = article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png";
-      
-      document.title = safeTitle;
-      document.querySelector('meta[name="description"]')?.setAttribute("content", safeDesc);
-      
-      // Auto-generate keywords based on category & title
-      var autoKeywords = `${article.Kategori}, kedokteran gigi, BEM FKG UMI, ` + article.Judul.toLowerCase().replace(/[^a-z0-9]+/g, ', ');
-      setOrUpdateMeta('name', 'keywords', autoKeywords);
-      
-      document.getElementById('canonicalUrl')?.setAttribute("href", url);
-      
-      // 2. OPEN GRAPH TAGS (Facebook, LinkedIn, WA)
-      document.getElementById('ogTitle')?.setAttribute("content", safeTitle);
-      document.getElementById('ogDesc')?.setAttribute("content", safeDesc);
-      document.getElementById('ogUrl')?.setAttribute("content", url);
-      document.getElementById('ogImage')?.setAttribute("content", safeImg);
-      document.getElementById('ogType')?.setAttribute("content", "article");
-      
-      // Extended Open Graph Article Specs
-      var datePub = article.Tgl_Rilis ? new Date(article.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString();
-      setOrUpdateMeta('property', 'article:published_time', datePub);
-      setOrUpdateMeta('property', 'article:section', article.Kategori || "Berita");
-      setOrUpdateMeta('property', 'article:author', article.Penulis || "Admin BEM FKG UMI");
-      
-      // 3. TWITTER CARDS
-      document.getElementById('twTitle')?.setAttribute("content", safeTitle);
-      setOrUpdateMeta('name', 'twitter:description', safeDesc);
-      setOrUpdateMeta('name', 'twitter:image', safeImg);
-      
-      // 4. JSON-LD ADVANCED SCHEMA (NewsArticle & BreadcrumbList)
-      var oldSchema = document.getElementById('enterprise-schema');
-      if (oldSchema) oldSchema.remove();
-      
-      var schema = {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "NewsArticle",
-            "@id": url + "#article",
-            "url": url,
-            "headline": article.Judul,
-            "description": safeDesc,
-            "image": [ safeImg ],
-            "datePublished": datePub,
-            "dateModified": datePub,
-            "author": { 
-                "@type": "Person", 
-                "name": article.Penulis || "Admin BEM FKG UMI",
-                "url": "https://bemkbmfkgumi.com/tentang" 
-            },
-            "publisher": { 
-                "@type": "Organization", 
-                "@id": "https://bemkbmfkgumi.com/#organization", 
-                "name": "BEM KBMFKG UMI", 
-                "logo": { "@type": "ImageObject", "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png" } 
-            },
-            "mainEntityOfPage": { "@type": "WebPage", "@id": url }
-          },
-          {
-            "@type": "BreadcrumbList",
-            "@id": url + "#breadcrumb",
-            "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://bemkbmfkgumi.com/" },
-              { "@type": "ListItem", "position": 2, "name": "Portal E-Zine", "item": "https://bemkbmfkgumi.com/berita" },
-              { "@type": "ListItem", "position": 3, "name": article.Kategori || "Berita", "item": "https://bemkbmfkgumi.com/berita?category=" + encodeURIComponent(article.Kategori) },
-              { "@type": "ListItem", "position": 4, "name": article.Judul, "item": url }
-            ]
-          }
-        ]
-      };
-
-      var script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.id = 'enterprise-schema';
-      script.text = JSON.stringify(schema);
-      document.head.appendChild(script);
-    }
-
-    function injectDefaultSEO() {
-      // Revert base tags
-      document.title = "Portal Berita E-Zine | BEM KBMFKG UMI";
-      document.querySelector('meta[name="description"]')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.");
-      setOrUpdateMeta('name', 'keywords', 'portal berita, ezine, fkg umi, kedokteran gigi, artikel seo, bem fkg umi');
-      document.getElementById('canonicalUrl')?.setAttribute("href", "https://bemkbmfkgumi.com/berita");
-      
-      document.getElementById('ogTitle')?.setAttribute("content", "Portal Berita E-Zine | BEM KBMFKG UMI");
-      document.getElementById('ogDesc')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, dan event terkini.");
-      document.getElementById('ogUrl')?.setAttribute("content", "https://bemkbmfkgumi.com/berita");
-      document.getElementById('ogImage')?.setAttribute("content", "https://bemkbmfkgumi.com/img/bemfkgumi.png");
-      document.getElementById('ogType')?.setAttribute("content", "website");
-      
-      document.getElementById('twTitle')?.setAttribute("content", "Portal Berita BEM KBMFKG UMI");
-      setOrUpdateMeta('name', 'twitter:description', "Portal berita kampus, inovasi kedokteran gigi, dan event terkini BEM KBMFKG UMI.");
-      setOrUpdateMeta('name', 'twitter:image', "https://bemkbmfkgumi.com/img/bemfkgumi.png");
-
-      var oldSchema = document.getElementById('enterprise-schema');
-      if (oldSchema) oldSchema.remove();
-
-      // AUTO-GENERATE ITEMLIST SCHEMAS UNTUK MENDAPATKAN SITELINKS GOOGLE
-      var itemListElements = appState.articles.slice(0, 15).map(function(art, index) {
-          var artUrl = "https://bemkbmfkgumi.com/berita?article=" + (art.Slug_URL || art.ID_Berita);
-          return {
-              "@type": "ListItem",
-              "position": index + 1,
-              "url": artUrl,
-              "name": art.Judul
-          };
-      });
-
-      var schema = {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-              "@type": "WebSite",
-              "@id": "https://bemkbmfkgumi.com/#website",
-              "url": "https://bemkbmfkgumi.com/",
-              "name": "BEM KBMFKG UMI",
-              "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://bemkbmfkgumi.com/berita?search={search_term_string}",
-                "query-input": "required name=search_term_string"
-              }
-            },
-            {
-              "@type": "CollectionPage",
-              "@id": "https://bemkbmfkgumi.com/berita#webpage",
-              "url": "https://bemkbmfkgumi.com/berita",
-              "name": "Portal Berita E-Zine | BEM KBMFKG UMI",
-              "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
-              "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" }
+        window.onload = function() {
+            loadArticles(true);
+            setupScrollListener();
+            setupSearchListener();
+            
+            document.addEventListener('keydown', function(event) {
+                if (event.key === "Escape" && document.getElementById('articleModal').classList.contains('active')) {
+                    closeModalAndGoHome(event);
+                }
+            });
+            
+            const themeCheckbox = document.getElementById('checkboxTheme');
+            if(themeCheckbox) {
+                themeCheckbox.addEventListener('change', (e) => {
+                    if(e.target.checked) document.documentElement.setAttribute('data-theme', 'dark');
+                    else document.documentElement.removeAttribute('data-theme');
+                });
             }
-        ]
-      };
+        };
 
-      if(itemListElements.length > 0) {
-          schema["@graph"].push({
-              "@type": "ItemList",
-              "itemListElement": itemListElements
-          });
-      }
+        window.addEventListener('popstate', function(event) { checkUrlRouting(true); });
 
-      var script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.id = 'enterprise-schema';
-      script.text = JSON.stringify(schema);
-      document.head.appendChild(script);
-    }
-    // =========================================================================
+        function checkUrlRouting(isPopState = false) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleIdOrSlug = urlParams.get('article');
+            
+            if (articleIdOrSlug) {
+                var found = appState.articles.find(function(a) { 
+                    return a.ID_Berita === articleIdOrSlug || a.Slug_URL === articleIdOrSlug; 
+                });
+                if (found) openModal(null, found.ID_Berita, true); 
+            } else if (isPopState && appState.currentViewId) {
+                closeModal(true); 
+            }
+        }
 
-    function openModal(event, id, skipPushState = false) {
-      if (event) event.preventDefault(); 
+        function loadArticles(isReset) {
+            if (appState.isLoading || (!appState.hasMore && !isReset)) return;
+            appState.isLoading = true;
+            document.getElementById('scrollLoader').style.display = 'block';
 
-      appState.currentViewId = id;
-      var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
-      if (!article) return;
+            if (isReset) {
+                appState.page = 1; appState.articles = [];
+                document.getElementById('articleGrid').innerHTML = '';
+            }
 
-      var currentFullUrl = window.location.origin + window.location.pathname + '?article=' + (article.Slug_URL || id);
+            var fetchUrl = GAS_URL + "?action=getArticles&page=" + appState.page + "&limit=" + appState.limit + "&category=" + encodeURIComponent(appState.category);
 
-      if (!skipPushState) {
-        window.history.pushState({ id: id }, article.Judul, currentFullUrl);
-      }
+            fetch(fetchUrl)
+                .then(function(response) {
+                    if (!response.ok) throw new Error("Gagal menyambung ke GAS API.");
+                    return response.json();
+                })
+                .then(function(res) {
+                    var parsedData = typeof res === 'string' ? JSON.parse(res) : res;
+                    var articleList = parsedData.data || parsedData || [];
+                    processNewData(articleList, false); 
+                })
+                .catch(function(err) {
+                    console.warn("GAS API Error.", err);
+                    appState.isLoading = false;
+                    document.getElementById('scrollLoader').style.display = 'none';
+                });
+        }
 
-      var breadcrumbHtml = '<a href="/" onclick="closeModalAndGoHome(event)">Beranda Publik</a> <span class="separator">/</span> ';
-      breadcrumbHtml += '<span class="text-[color:var(--text-muted)]">' + article.Kategori + '</span> <span class="separator">/</span> ';
-      breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
-      document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
+        function processNewData(newData, hasMore) {
+            var cleanedData = newData.map(function(item) {
+                var url = item.Gambar_URL || '';
+                if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
+                    var match = url.match(/[-\w]{25,}/); 
+                    if (match && match[0]) {
+                        item.Gambar_URL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
+                    }
+                }
+                return item;
+            });
 
-      if (article.Gambar_URL) {
-          document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
-      } else {
-          document.getElementById('modalImgWrapper').innerHTML = '<div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
-      }
-      
-      document.getElementById('modalMeta').innerHTML = '<span class="text-[color:var(--accent-neon)] font-bold border border-[color:var(--accent-glow)] px-3 py-1 rounded-full uppercase tracking-wider bg-[color:var(--bg-dark-overlay)]">' + article.Kategori + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span class="font-medium text-[color:var(--text-muted)]">✍️ ' + (article.Penulis || 'Admin') + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span>📅 ' + (article.Tgl_Rilis || '').split("T")[0] + '</span>';
-      document.getElementById('modalTitle').innerText = article.Judul;
-      document.getElementById('modalContent').innerHTML = article.Konten_HTML;
-      document.getElementById('txtLikeCount').innerText = article.Jumlah_Like || 0;
-      
-      var iconLike = document.getElementById('iconLike');
-      iconLike.classList.remove('ph-fill', 'text-[#ff3366]'); iconLike.classList.add('ph-heart');
+            appState.articles = appState.articles.concat(cleanedData);
+            appState.hasMore = hasMore; appState.page++; appState.isLoading = false;
+            document.getElementById('scrollLoader').style.display = 'none';
+            renderArticles(cleanedData);
+            
+            if (!appState.currentViewId) injectDefaultSEO();
 
-      var modal = document.getElementById('articleModal');
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+            if (!appState.initialLoadDone) {
+                appState.initialLoadDone = true;
+                checkUrlRouting(); 
+            }
+        }
 
-      var currentView = parseInt(article.Jumlah_View) || 0;
-      article.Jumlah_View = currentView + 1;
-      var gridBadge = document.getElementById('viewCount-' + id);
-      if (gridBadge) gridBadge.innerText = article.Jumlah_View;
-      
-      fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementView', ID_Berita: id}) }).catch(function(e) {});
+        function renderArticles(data) {
+            var grid = document.getElementById('articleGrid');
+            var html = "";
+            var currentOffset = appState.articles.length - data.length;
 
-      // Inject SEO
-      injectEnterpriseSEO(article, currentFullUrl);
-    }
+            for (var i = 0; i < data.length; i++) {
+                var item = data[i];
+                var id = String(item.ID_Berita);
+                var slug = String(item.Slug_URL || id);
+                var img = String(item.Gambar_URL || '');
+                var cat = String(item.Kategori);
+                var title = String(item.Judul);
+                var seoUrl = "?article=" + slug;
+                
+                var isHero = (currentOffset === 0 && i === 0);
+                var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
+                
+                html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
+                html +=   '<div class="zine-img-wrapper">';
+                if (img) {
+                    html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '">';
+                } else {
+                    html +=     '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-[color:var(--text-muted)]"></i></div>';
+                }
+                html +=     '<div class="absolute top-4 left-4 bg-[color:var(--bg-dark-overlay)] text-[color:var(--accent-neon)] text-xs px-4 py-1.5 rounded-full border border-[color:var(--accent-glow)] backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
+                html +=   '</div>';
+                html +=   '<div class="p-6 flex-1 flex flex-col justify-between">';
+                html +=     '<h2 class="card-title text-xl font-black text-[color:var(--text-light)] mb-4 line-clamp-3 group-hover:text-[color:var(--accent-neon)] transition leading-snug">' + title + '</h2>';
+                html +=     '<div class="flex justify-between items-center text-sm text-[color:var(--text-muted)] mt-auto border-t border-[color:var(--border-light)] pt-4 font-medium">';
+                html +=       '<span class="flex items-center gap-1"><i class="ph ph-clock text-lg"></i> ' + String(item.Waktu_Baca || '2 min') + '</span>';
+                html +=       '<span class="flex items-center gap-1"><i class="ph ph-eye text-lg"></i> <span id="viewCount-' + id + '">' + String(item.Jumlah_View || 0) + '</span></span>';
+                html +=   '</div></div></a>';
+            }
+            
+            if(data.length === 0 && currentOffset === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-20 text-[color:var(--text-muted)] text-lg">Belum ada publikasi artikel untuk kategori ini.</div>`;
+            } else {
+                grid.innerHTML += html;
+            }
+        }
 
-    function closeModal(skipPushState = false) {
-      var modal = document.getElementById('articleModal');
-      modal.classList.remove('active');
-      document.body.style.overflow = 'auto';
-      appState.currentViewId = null;
+        function setupSearchListener() {
+            var input = document.getElementById('searchInput');
+            input.addEventListener('keyup', function(e) {
+                var term = e.target.value.toLowerCase();
+                var cards = document.querySelectorAll('.zine-card');
+                cards.forEach(function(card) {
+                    card.style.display = card.querySelector('.card-title').innerText.toLowerCase().indexOf(term) > -1 ? 'flex' : 'none';
+                });
+            });
+        }
 
-      if (!skipPushState) window.history.pushState(null, '', window.location.pathname);
+        function setupScrollListener() {
+            window.addEventListener('scroll', function() {
+                var fab = document.getElementById('fabBtn');
+                window.scrollY > 300 ? fab.classList.add('show') : fab.classList.remove('show');
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) loadArticles(false);
+                
+                const header = document.getElementById('main-header');
+                if (header) {
+                    if (window.scrollY > 20) header.classList.add('scrolled');
+                    else header.classList.remove('scrolled');
+                }
+            });
+        }
 
-      // Revert SEO to default listing
-      injectDefaultSEO();
-    }
+        function filterCategory(cat, btnElement) {
+            document.querySelectorAll('.badge-category').forEach(function(b) { 
+                b.classList.remove('active'); 
+            });
+            btnElement.classList.add('active');
+            appState.category = cat; loadArticles(true);
+        }
 
-    function closeModalAndGoHome(event) {
-      if (event) event.preventDefault();
-      closeModal();
-    }
+        // =========================================================================
+        // ENTERPRISE JSON-LD SEO GENERATOR (MASTER UPGRADE)
+        // =========================================================================
+        function setOrUpdateMeta(attrName, attrValue, content) {
+            var el = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+            if (el) {
+                el.setAttribute("content", content);
+            } else {
+                el = document.createElement('meta');
+                el.setAttribute(attrName, attrValue);
+                el.setAttribute("content", content);
+                document.head.appendChild(el);
+            }
+        }
 
-    function likeArticle() {
-      var id = appState.currentViewId;
-      var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
-      if (!article) return;
-      var iconLike = document.getElementById('iconLike');
-      if (iconLike.classList.contains('ph-fill')) return; 
+        function injectEnterpriseSEO(article, url) {
+            // 1. DYNAMIC HTML META TAGS (Format Dashes "-" disukai Google untuk identifikasi Site Name)
+            var safeTitle = article.Judul + " - BEM KBMFKG UMI";
+            var rawHtml = article.Konten_HTML || "";
+            var plainText = rawHtml.replace(/<[^>]*>?/gm, '').substring(0, 155).trim() + "...";
+            var safeDesc = article.Meta_Desc || article.Desc || plainText;
+            var safeImg = article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png";
+            
+            document.title = safeTitle;
+            var descMeta = document.querySelector('meta[name="description"]');
+            if(descMeta) descMeta.setAttribute("content", safeDesc);
+            
+            // Auto-generate keywords based on category & title
+            var autoKeywords = `${article.Kategori}, kedokteran gigi, BEM FKG UMI, ` + article.Judul.toLowerCase().replace(/[^a-z0-9]+/g, ', ');
+            setOrUpdateMeta('name', 'keywords', autoKeywords);
+            
+            var canonUrl = document.getElementById('canonicalUrl');
+            if(canonUrl) canonUrl.setAttribute("href", url);
+            
+            // 2. OPEN GRAPH TAGS (Facebook, LinkedIn, WA)
+            var ogT = document.getElementById('ogTitle'); if(ogT) ogT.setAttribute("content", safeTitle);
+            var ogD = document.getElementById('ogDesc'); if(ogD) ogD.setAttribute("content", safeDesc);
+            var ogU = document.getElementById('ogUrl'); if(ogU) ogU.setAttribute("content", url);
+            var ogI = document.getElementById('ogImage'); if(ogI) ogI.setAttribute("content", safeImg);
+            var ogTy = document.getElementById('ogType'); if(ogTy) ogTy.setAttribute("content", "article");
+            
+            // Extended Open Graph Article Specs
+            var datePub = article.Tgl_Rilis ? new Date(article.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString();
+            setOrUpdateMeta('property', 'article:published_time', datePub);
+            setOrUpdateMeta('property', 'article:section', article.Kategori || "Berita");
+            setOrUpdateMeta('property', 'article:author', article.Penulis || "Admin BEM FKG UMI");
+            
+            // 3. TWITTER CARDS
+            var twT = document.getElementById('twTitle'); if(twT) twT.setAttribute("content", safeTitle);
+            setOrUpdateMeta('name', 'twitter:description', safeDesc);
+            setOrUpdateMeta('name', 'twitter:image', safeImg);
+            
+            // 4. JSON-LD ADVANCED SCHEMA (NewsArticle & Anti-Blank BreadcrumbList)
+            var oldSchema = document.getElementById('enterprise-schema');
+            if (oldSchema) oldSchema.remove();
+            
+            /* ===================================================================================
+               ANTI-BLANK BREADCRUMB LIST DI GSC (100% VALID):
+               Menambahkan atribut "name" di level BreadcrumbList agar Google Search Console 
+               tidak lagi menampilkannya sebagai "Item tanpa nama". 
+               Memformat "item" sebagai URL string murni agar memenuhi standar paling strict Google.
+               =================================================================================== */
+            var schema = {
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@type": "NewsArticle",
+                        "@id": url + "#article",
+                        "url": url,
+                        "headline": article.Judul,
+                        "description": safeDesc,
+                        "image": [ safeImg ],
+                        "datePublished": datePub,
+                        "dateModified": datePub,
+                        "author": { 
+                            "@type": "Person", 
+                            "name": article.Penulis || "Admin BEM FKG UMI",
+                            "url": "https://bemkbmfkgumi.com/tentang" 
+                        },
+                        "publisher": { 
+                            "@type": "Organization", 
+                            "@id": "https://bemkbmfkgumi.com/#organization", 
+                            "name": "BEM KBMFKG UMI", 
+                            "logo": { "@type": "ImageObject", "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png" } 
+                        },
+                        "mainEntityOfPage": { "@type": "WebPage", "@id": url }
+                    },
+                    {
+                        "@type": "BreadcrumbList",
+                        "@id": url + "#breadcrumb",
+                        "name": "Breadcrumb Artikel " + article.Judul,
+                        "itemListElement": [
+                            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://bemkbmfkgumi.com/" },
+                            { "@type": "ListItem", "position": 2, "name": "Portal E-Zine", "item": "https://bemkbmfkgumi.com/berita" },
+                            { "@type": "ListItem", "position": 3, "name": article.Kategori || "Berita", "item": "https://bemkbmfkgumi.com/berita?category=" + encodeURIComponent(article.Kategori) },
+                            { "@type": "ListItem", "position": 4, "name": article.Judul, "item": url }
+                        ]
+                    }
+                ]
+            };
 
-      iconLike.classList.remove('ph-heart');
-      iconLike.classList.add('ph-fill', 'text-[#ff3366]');
-      article.Jumlah_Like = (parseInt(article.Jumlah_Like) || 0) + 1;
-      document.getElementById('txtLikeCount').innerText = article.Jumlah_Like;
+            var script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.id = 'enterprise-schema';
+            script.text = JSON.stringify(schema);
+            document.head.appendChild(script);
+        }
 
-      fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementLike', ID_Berita: id}) }).catch(function(e){});
-    }
+        function injectDefaultSEO() {
+            // Revert base tags
+            document.title = "Portal Berita E-Zine - BEM KBMFKG UMI";
+            var descMeta = document.querySelector('meta[name="description"]');
+            if(descMeta) descMeta.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.");
+            setOrUpdateMeta('name', 'keywords', 'portal berita, ezine, fkg umi, kedokteran gigi, artikel seo, bem fkg umi');
+            var can = document.getElementById('canonicalUrl');
+            if(can) can.setAttribute("href", "https://bemkbmfkgumi.com/berita");
+            
+            var ogT = document.getElementById('ogTitle'); if(ogT) ogT.setAttribute("content", "Portal Berita E-Zine - BEM KBMFKG UMI");
+            var ogD = document.getElementById('ogDesc'); if(ogD) ogD.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, dan event terkini.");
+            var ogU = document.getElementById('ogUrl'); if(ogU) ogU.setAttribute("content", "https://bemkbmfkgumi.com/berita");
+            var ogI = document.getElementById('ogImage'); if(ogI) ogI.setAttribute("content", "https://bemkbmfkgumi.com/img/bemfkgumi.png");
+            var ogTy = document.getElementById('ogType'); if(ogTy) ogTy.setAttribute("content", "website");
+            
+            var twT = document.getElementById('twTitle'); if(twT) twT.setAttribute("content", "Portal Berita E-Zine - BEM KBMFKG UMI");
+            setOrUpdateMeta('name', 'twitter:description', "Portal berita kampus, inovasi kedokteran gigi, dan event terkini BEM KBMFKG UMI.");
+            setOrUpdateMeta('name', 'twitter:image', "https://bemkbmfkgumi.com/img/bemfkgumi.png");
 
-    function shareArticle() {
-      var id = appState.currentViewId;
-      var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
-      if (!article) return;
-      var url = window.location.href; 
-      
-      if (navigator.share) {
-        navigator.share({
-          title: article.Judul + ' | BEM KBMFKG UMI',
-          text: 'Baca artikel menarik ini di Portal Publik E-Zine BEM KBMFKG UMI: ' + article.Judul,
-          url: url
-        }).catch(function(error) {
-          console.log('User membatalkan share', error);
-        });
-      } else {
-        var dummy = document.createElement('input');
-        document.body.appendChild(dummy);
-        dummy.value = url; 
-        dummy.select();
-        document.execCommand('copy');
-        document.body.removeChild(dummy);
-        alert("Tautan artikel publikasi berhasil disalin ke clipboard!");
-      }
-    }
-  </script>
+            var oldSchema = document.getElementById('enterprise-schema');
+            if (oldSchema) oldSchema.remove();
+
+            // AUTO-GENERATE ITEMLIST SCHEMAS UNTUK MENDAPATKAN SITELINKS GOOGLE
+            var itemListElements = appState.articles.slice(0, 15).map(function(art, index) {
+                var artUrl = "https://bemkbmfkgumi.com/berita?article=" + (art.Slug_URL || art.ID_Berita);
+                return {
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "url": artUrl,
+                    "name": art.Judul
+                };
+            });
+
+            var schema = {
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@type": "WebSite",
+                        "@id": "https://bemkbmfkgumi.com/#website",
+                        "url": "https://bemkbmfkgumi.com/",
+                        "name": "BEM KBMFKG UMI",
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": "https://bemkbmfkgumi.com/berita?search={search_term_string}",
+                            "query-input": "required name=search_term_string"
+                        }
+                    },
+                    {
+                        "@type": "CollectionPage",
+                        "@id": "https://bemkbmfkgumi.com/berita#webpage",
+                        "url": "https://bemkbmfkgumi.com/berita",
+                        "name": "Portal Berita E-Zine - BEM KBMFKG UMI",
+                        "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
+                        "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" }
+                    },
+                    {
+                        "@type": "BreadcrumbList",
+                        "@id": "https://bemkbmfkgumi.com/berita#breadcrumb",
+                        "name": "Breadcrumb Portal E-Zine",
+                        "itemListElement": [
+                            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://bemkbmfkgumi.com/" },
+                            { "@type": "ListItem", "position": 2, "name": "Portal E-Zine", "item": "https://bemkbmfkgumi.com/berita" }
+                        ]
+                    }
+                ]
+            };
+
+            if(itemListElements.length > 0) {
+                schema["@graph"].push({
+                    "@type": "ItemList",
+                    "itemListElement": itemListElements
+                });
+            }
+
+            var script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.id = 'enterprise-schema';
+            script.text = JSON.stringify(schema);
+            document.head.appendChild(script);
+        }
+        // =========================================================================
+
+        function openModal(event, id, skipPushState = false) {
+            if (event) event.preventDefault(); 
+
+            appState.currentViewId = id;
+            var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
+            if (!article) return;
+
+            var currentFullUrl = window.location.origin + window.location.pathname + '?article=' + (article.Slug_URL || id);
+
+            if (!skipPushState) {
+                window.history.pushState({ id: id }, article.Judul, currentFullUrl);
+            }
+
+            var breadcrumbHtml = '<a href="/" onclick="closeModalAndGoHome(event)">Beranda Publik</a> <span class="separator">/</span> ';
+            breadcrumbHtml += '<span class="text-[color:var(--text-muted)]">' + article.Kategori + '</span> <span class="separator">/</span> ';
+            breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
+            document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
+
+            if (article.Gambar_URL) {
+                document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
+            } else {
+                document.getElementById('modalImgWrapper').innerHTML = '<div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
+            }
+            
+            document.getElementById('modalMeta').innerHTML = '<span class="text-[color:var(--accent-neon)] font-bold border border-[color:var(--accent-glow)] px-3 py-1 rounded-full uppercase tracking-wider bg-[color:var(--bg-dark-overlay)]">' + article.Kategori + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span class="font-medium text-[color:var(--text-muted)]">✍️ ' + (article.Penulis || 'Admin') + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span>📅 ' + (article.Tgl_Rilis || '').split("T")[0] + '</span>';
+            document.getElementById('modalTitle').innerText = article.Judul;
+            document.getElementById('modalContent').innerHTML = article.Konten_HTML;
+            document.getElementById('txtLikeCount').innerText = article.Jumlah_Like || 0;
+            
+            var iconLike = document.getElementById('iconLike');
+            iconLike.classList.remove('ph-fill', 'text-[#ff3366]'); iconLike.classList.add('ph-heart');
+
+            var modal = document.getElementById('articleModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            var currentView = parseInt(article.Jumlah_View) || 0;
+            article.Jumlah_View = currentView + 1;
+            var gridBadge = document.getElementById('viewCount-' + id);
+            if (gridBadge) gridBadge.innerText = article.Jumlah_View;
+            
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementView', ID_Berita: id}) }).catch(function(e) {});
+
+            // Inject SEO
+            injectEnterpriseSEO(article, currentFullUrl);
+        }
+
+        function closeModal(skipPushState = false) {
+            var modal = document.getElementById('articleModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            appState.currentViewId = null;
+
+            if (!skipPushState) window.history.pushState(null, '', window.location.pathname);
+
+            // Revert SEO to default listing
+            injectDefaultSEO();
+        }
+
+        function closeModalAndGoHome(event) {
+            if (event) event.preventDefault();
+            closeModal();
+        }
+
+        function likeArticle() {
+            var id = appState.currentViewId;
+            var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
+            if (!article) return;
+            var iconLike = document.getElementById('iconLike');
+            if (iconLike.classList.contains('ph-fill')) return; 
+
+            iconLike.classList.remove('ph-heart');
+            iconLike.classList.add('ph-fill', 'text-[#ff3366]');
+            article.Jumlah_Like = (parseInt(article.Jumlah_Like) || 0) + 1;
+            document.getElementById('txtLikeCount').innerText = article.Jumlah_Like;
+
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementLike', ID_Berita: id}) }).catch(function(e){});
+        }
+
+        function showShareToast() {
+            var t = document.getElementById('shareToast');
+            if(t) {
+                t.classList.add('show');
+                setTimeout(function() { t.classList.remove('show'); }, 3000);
+            }
+        }
+
+        function shareArticle() {
+            var id = appState.currentViewId;
+            var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
+            if (!article) return;
+            var url = window.location.href; 
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: article.Judul + ' - BEM KBMFKG UMI',
+                    text: 'Baca artikel menarik ini di Portal Publik E-Zine BEM KBMFKG UMI: ' + article.Judul,
+                    url: url
+                }).catch(function(error) {
+                    console.log('User membatalkan share', error);
+                });
+            } else {
+                var dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = url; 
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                showShareToast();
+            }
+        }
+    </script>
+
+    <!-- PENGATURAN SERVICE WORKER PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                    navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker E-Zine berhasil didaftarkan:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('❌ Service Worker gagal didaftarkan:', error);
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>
