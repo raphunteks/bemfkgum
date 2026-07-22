@@ -24,10 +24,18 @@
   <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
   <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
   
-  <!-- CORE CSS (BEM Theme + Tailwind) -->
+  <!-- FIX RENDER BLOCKING (Standar Informasi.html) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  
+  <link rel="preload" href="/css/main.css" as="style">
   <link rel="stylesheet" href="/css/main.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <!-- PROTECT DEVTOOLS (Standar Informasi.html) -->
+  <script src="/js/protect-devtools.js"></script>
 
   <!-- OPEN GRAPH & TWITTER CARDS -->
   <meta property="og:site_name" content="Portal Berita E-Zine BEM KBMFKG UMI">
@@ -76,37 +84,8 @@
 </head>
 <body class="bg-custom-dark font-sans relative">
 
-  <!-- ================= BEM STANDAR HEADER (TERINTEGRASI) ================= -->
-  <header id="main-header" itemscope itemtype="https://schema.org/WPHeader">
-      <div class="header-inner">
-          <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI">
-              <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="image" class="header-logo-img" onerror="this.src='/img/bemfkgumi.png';">
-              <div class="header-text-group">
-                  <span class="header-title" itemprop="headline">BEM KBMFKG UMI</span>
-                  <span class="header-subtitle script-font" id="header-kabinet-name" itemprop="description">Kabinet Ananta Anardhaya</span>
-              </div>
-          </a>
-          <div class="nav-right-group">
-              <div class="theme-toggle-container">
-                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                  <label class="theme-switch" aria-label="Aktifkan Mode Gelap">
-                      <input type="checkbox" id="checkboxTheme" checked>
-                      <span class="theme-slider"></span>
-                  </label>
-              </div>
-              <nav class="nav-links" role="menubar">
-                  <div class="nav-item" role="none"><a href="/" role="menuitem">Beranda</a></div>
-                  <div class="nav-item" role="none"><a href="/tentang" role="menuitem">Tentang</a></div>
-                  <div class="nav-item active" role="none"><a href="/berita" role="menuitem">Artikel</a></div>
-                  <div class="nav-item" role="none"><a href="/informasi" role="menuitem">Informasi</a></div>
-                  <div class="nav-item" style="margin-left: 5px;" role="none"><a href="/narahubung" class="holo-btn header-contact-btn" role="menuitem">Hubungi Kami</a></div>
-              </nav>
-              <button class="menu-toggle" aria-label="Buka Menu Navigasi" onclick="document.querySelector('.nav-links').classList.toggle('active');">
-                  <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-              </button>
-          </div>
-      </div>
-  </header>
+  <!-- ================= BEM STANDAR HEADER (TERINTEGRASI VIA PARTIALS) ================= -->
+  <%- include('partials/header.html') %>
 
   <!-- SEARCH & HERO E-ZINE -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-4">
@@ -140,35 +119,8 @@
     <div id="scrollLoader" class="hidden"><div class="loader-ring"></div></div>
   </main>
 
-  <!-- ================= BEM STANDAR FOOTER ================= -->
-  <footer class="footer-wrapper">
-      <div class="custom-footer-grid">
-          <div class="footer-col">
-              <h3>Navigasi Cepat</h3>
-              <ul class="footer-links">
-                  <li><a href="/">Beranda Utama</a></li>
-                  <li><a href="/tentang">Tentang Kami</a></li>
-                  <li><a href="/berita">Portal Publik Berita</a></li>
-                  <li><a href="/informasi">Galeri & Event</a></li>
-              </ul>
-          </div>
-          <div class="footer-center">
-              <div class="footer-brand">
-                  <img src="/img/bemfkgumi.png" alt="Logo">
-              </div>
-              <div class="footer-brand-text">
-                  <h2>BEM KBMFKG UMI</h2>
-                  <p>Kabinet Ananta Anardhaya</p>
-              </div>
-              <div class="footer-socials">
-                  <a href="#" class="social-circle"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
-              </div>
-          </div>
-      </div>
-      <div class="footer-bottom">
-          <p>&copy; 2026 BEM KBMFKG UMI. All Rights Reserved. Crafted with <span style="color:var(--accent-neon);">♥</span> by Axa Development Team.</p>
-      </div>
-  </footer>
+  <!-- ================= BEM STANDAR FOOTER (TERINTEGRASI VIA PARTIALS) ================= -->
+  <%- include('partials/footer.html') %>
 
   <!-- ================= MODAL FULL VIEW ARTIKEL ================= -->
   <div id="articleModal" class="article-modal-overlay" role="dialog" aria-modal="true" tabindex="-1">
@@ -283,10 +235,23 @@
     }
 
     function processNewData(newData, hasMore) {
-      appState.articles = appState.articles.concat(newData);
+      // FRONTEND AUTO-SANITIZER URL IMAGE: Konversi URL Google Drive bermasalah (drive.usercontent / drive.google) 
+      // menjadi Direct View Public URL secara realtime sebelum disimpan ke state
+      var cleanedData = newData.map(function(item) {
+         var url = item.Gambar_URL || '';
+         if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
+             var match = url.match(/[-\w]{25,33}/); // Menangkap 25-33 karakter ID Unik Google Drive
+             if (match && match[0]) {
+                 item.Gambar_URL = "https://drive.google.com/uc?export=view&id=" + match[0];
+             }
+         }
+         return item;
+      });
+
+      appState.articles = appState.articles.concat(cleanedData);
       appState.hasMore = hasMore; appState.page++; appState.isLoading = false;
       document.getElementById('scrollLoader').style.display = 'none';
-      renderArticles(newData);
+      renderArticles(cleanedData);
 
       if (!appState.initialLoadDone) {
         appState.initialLoadDone = true;
