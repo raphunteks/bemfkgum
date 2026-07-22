@@ -78,6 +78,7 @@
                 <button onclick="switchSection('proker', this)"><span aria-hidden="true">📋</span> Program Kerja</button>
                 <button onclick="switchSection('kalender', this)" style="color: #10b981;"><span aria-hidden="true">📅</span> Kalender & Detail Proker</button>
                 <button onclick="switchSection('dok', this)"><span aria-hidden="true">📸</span> Galeri Dokumentasi</button>
+                <button onclick="switchSection('artikel', this)" style="color: #00ffaa;"><span aria-hidden="true">📰</span> Manajemen Berita</button>
                 <button onclick="switchSection('aspirasi', this)"><span aria-hidden="true">📣</span> Interaksi Masuk</button>
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span aria-hidden="true">🧑‍💻</span> Developer Team</button>
                 <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span aria-hidden="true">📞</span> Manajemen Narahubung</button>
@@ -206,6 +207,38 @@
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
+            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA (NEW) -->
+            <section id="sec-artikel" class="admin-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <div>
+                        <h2 style="color: var(--text-light);">Manajemen Artikel & Berita</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Kelola publikasi ke Portal Publik E-Zine BEM</p>
+                    </div>
+                    <div style="display:flex; gap:15px; align-items:center;">
+                        <input type="text" id="searchArtikel" class="neo-input" placeholder="🔍 Cari artikel..." style="margin-bottom:0; width:250px;" onkeyup="cariArtikel(this.value)">
+                        <button class="holo-btn" style="padding: 10px 20px; font-size: 0.9rem; background: #10b981; color: white;" onclick="openArtikelModal()">+ Tambah</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive" style="margin-top:20px;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>JUDUL ARTIKEL</th>
+                                <th>KATEGORI</th>
+                                <th>STATISTIK</th>
+                                <th>TANGGAL</th>
+                                <th>AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBodyArtikel">
+                            <!-- Injeksi JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <!-- 8. PESAN -->
             <section id="sec-aspirasi" class="admin-section">
                 <h2 style="color: var(--text-light);">Aspirasi & Pesan Masuk</h2>
@@ -317,6 +350,56 @@
         </div>
     </div>
 
+    <!-- Modal CRUD Artikel Baru -->
+    <div class="modal-overlay" id="artikelModal">
+        <div class="modal-content-box" style="padding: 30px; max-width: 700px;">
+            <button class="modal-close" onclick="closeArtikelModal()">X</button>
+            <h2 id="artikelModalTitle" style="margin-bottom: 20px; color: #10b981;">Tambah Artikel Baru</h2>
+            
+            <input type="hidden" id="artId">
+            
+            <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Judul Kegiatan / Berita</label>
+            <input type="text" id="artJudul" class="neo-input" placeholder="Masukkan judul lengkap...">
+            
+            <div class="grid-2" style="margin-bottom: 0;">
+                <div>
+                    <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Kategori</label>
+                    <select id="artKategori" class="neo-input">
+                        <option value="Sosial">Sosial</option>
+                        <option value="Edukasi">Edukasi</option>
+                        <option value="Olahraga">Olahraga</option>
+                        <option value="Event">Event</option>
+                        <option value="Pengumuman">Pengumuman</option>
+                        <option value="Prestasi">Prestasi</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">URL Gambar (Opsional)</label>
+                    <input type="text" id="artGambar" class="neo-input" placeholder="https://unsplash.com/...">
+                </div>
+            </div>
+            
+            <div class="grid-2" style="margin-bottom: 0;">
+                <div>
+                    <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Penulis / Publisher</label>
+                    <input type="text" id="artPenulis" class="neo-input" placeholder="Admin BEM FKG UMI">
+                </div>
+                <div>
+                    <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Deskripsi Singkat (SEO Meta)</label>
+                    <input type="text" id="artDesc" class="neo-input" placeholder="Ringkasan 1 kalimat...">
+                </div>
+            </div>
+            
+            <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Isi Artikel / Deskripsi (HTML Diterima)</label>
+            <textarea id="artIsi" class="neo-input" rows="7" placeholder="Tuliskan isi artikel Anda di sini..."></textarea>
+            
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                <button class="action-btn delete" style="padding:10px 25px; border-radius:12px;" onclick="closeArtikelModal()">Batal</button>
+                <button class="holo-btn" id="btnSaveArtikel" style="padding:10px 25px; border-radius:12px; background:#10b981; color:white; border:none;" onclick="saveArtikel()">Publikasikan</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="globalToast">Notifikasi</div>
 
     <button class="scroll-to-top" id="scrollToTopBtnAdmin" aria-label="Scroll to top">
@@ -339,6 +422,8 @@
         };
         
         let aspirasiData = []; let pesanData = [];
+        let artikelData = []; // NEW: Array untuk menampung data artikel dari GAS
+        const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
 
         const scrollToTopBtnAdmin = document.getElementById("scrollToTopBtnAdmin");
         const adminMainArea = document.querySelector(".admin-main");
@@ -382,6 +467,17 @@
             setTimeout(() => { document.getElementById('loginGate').style.display = 'none'; document.getElementById('dashboardContent').style.display = 'flex'; document.getElementById('dashboardContent').style.opacity = '1'; loadAllData(); }, 500);
         }
 
+        async function loadArtikelGas() {
+            try {
+                const req = await fetch(GAS_ARTIKEL_URL + '?action=getArticles&page=1&limit=50');
+                const res = await req.json();
+                artikelData = res.data || [];
+                renderArtikelTable();
+            } catch(e) {
+                console.warn("⚠️ Mode offline untuk artikel GAS", e);
+            }
+        }
+
         function switchSection(id, btn) {
             document.querySelectorAll('.admin-section').forEach(e => e.classList.remove('active'));
             document.querySelectorAll('.admin-nav button').forEach(e => e.classList.remove('active'));
@@ -418,6 +514,7 @@
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
             } catch(err) { showToast("⚠️ Memuat data Offline."); }
             renderSemuaCMS();
+            loadArtikelGas(); // NEW: Eksekusi sinkronisasi dengan GAS
         }
 
         function renderSemuaCMS() { 
@@ -816,6 +913,141 @@
             const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = '';
             pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td style="color:var(--text-light);"><strong>${item.nama}</strong></td><td style="color:var(--text-muted);">${item.subjek}</td><td style="color:var(--text-muted);">${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; });
         }
+
+        // ================= NEW: FUNGSI MANAJEMEN ARTIKEL (CRUD Google Apps Script) =================
+        function renderArtikelTable(dataToRender = artikelData) {
+            const tbody = document.getElementById('tableBodyArtikel'); tbody.innerHTML = '';
+            dataToRender.forEach((item, index) => {
+                let catBadge = '';
+                if(item.Kategori === 'Pengumuman') catBadge = '<span style="color:#3b82f6; background:rgba(59, 130, 246, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #3b82f6;">Pengumuman</span>';
+                else catBadge = `<span style="color:#10b981; background:rgba(16, 185, 129, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #10b981;">${item.Kategori}</span>`;
+
+                tbody.innerHTML += `
+                <tr style="background:var(--card-bg); transition:0.3s;">
+                    <td style="color:var(--text-muted); font-weight:bold;">${index + 1}</td>
+                    <td>
+                        <strong style="color:var(--text-light); font-size:1rem; display:block; margin-bottom:4px;">${item.Judul}</strong>
+                        <span style="color:var(--text-muted); font-size:0.8rem;">✍️ ${item.Penulis}</span>
+                    </td>
+                    <td>${catBadge}</td>
+                    <td>
+                        <div style="display:flex; flex-direction:column; gap:4px; font-size:0.85rem; font-weight:600;">
+                            <span style="color:#ef4444;">❤️ ${item.Jumlah_Like || 0}</span>
+                            <span style="color:#3b82f6;">👁️ ${item.Jumlah_View || 0}</span>
+                        </div>
+                    </td>
+                    <td style="color:var(--text-muted); font-size:0.85rem;">📅 ${item.Tgl_Rilis}</td>
+                    <td>
+                        <button class="action-btn view" onclick="openArtikelModal('${item.ID_Berita}')">✏️ Edit</button>
+                        <button class="action-btn delete" onclick="deleteArtikelGAS('${item.ID_Berita}')">🗑️ Hapus</button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        function cariArtikel(keyword) {
+            const filtered = artikelData.filter(a => a.Judul.toLowerCase().includes(keyword.toLowerCase()) || a.Kategori.toLowerCase().includes(keyword.toLowerCase()));
+            renderArtikelTable(filtered);
+        }
+
+        function openArtikelModal(id = null) {
+            document.getElementById('artikelModal').classList.add('active');
+            if(id) {
+                const art = artikelData.find(a => a.ID_Berita === id);
+                document.getElementById('artikelModalTitle').innerText = "Edit Artikel";
+                document.getElementById('artId').value = art.ID_Berita;
+                document.getElementById('artJudul').value = art.Judul;
+                document.getElementById('artKategori').value = art.Kategori;
+                document.getElementById('artGambar').value = art.Gambar_URL;
+                document.getElementById('artPenulis').value = art.Penulis;
+                document.getElementById('artDesc').value = art.Desc;
+                document.getElementById('artIsi').value = art.Konten_HTML;
+                document.getElementById('btnSaveArtikel').innerText = "Simpan Perubahan";
+            } else {
+                document.getElementById('artikelModalTitle').innerText = "Tambah Artikel Baru";
+                document.getElementById('artId').value = "";
+                document.getElementById('artJudul').value = "";
+                document.getElementById('artKategori').value = "Kegiatan";
+                document.getElementById('artGambar').value = "";
+                document.getElementById('artPenulis').value = "Admin BEM FKG UMI";
+                document.getElementById('artDesc').value = "";
+                document.getElementById('artIsi').value = "";
+                document.getElementById('btnSaveArtikel').innerText = "Publikasikan";
+            }
+        }
+
+        function closeArtikelModal() {
+            document.getElementById('artikelModal').classList.remove('active');
+        }
+
+        async function saveArtikel() {
+            const btn = document.getElementById('btnSaveArtikel');
+            btn.innerText = "Menyimpan..."; btn.disabled = true;
+
+            const isEdit = !!document.getElementById('artId').value;
+            const id = isEdit ? document.getElementById('artId').value : `ART-${Date.now()}`;
+            const judul = document.getElementById('artJudul').value;
+            const slug = judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            const wordCount = document.getElementById('artIsi').value.split(' ').length;
+            const waktuBaca = Math.ceil(wordCount / 200) + " min read";
+
+            const payload = {
+                action: isEdit ? 'updateArticle' : 'addArticle',
+                ID_Berita: id,
+                Slug_URL: slug,
+                Judul: judul,
+                Desc: document.getElementById('artDesc').value,
+                Kategori: document.getElementById('artKategori').value,
+                Penulis: document.getElementById('artPenulis').value,
+                Gambar_URL: document.getElementById('artGambar').value || '/img/bemfkgumi.png',
+                Konten_HTML: document.getElementById('artIsi').value,
+                Tgl_Rilis: new Date().toISOString().split('T')[0],
+                Waktu_Baca: waktuBaca,
+                Jumlah_View: 0,
+                Jumlah_Like: 0
+            };
+
+            try {
+                // Mengirim payload ke Google Apps Script (Metode Text/Plain menghindari masalah CORS preflight)
+                await fetch(GAS_ARTIKEL_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                showToast('✅ Publikasi Berhasil dikirim ke Server!');
+                loadArtikelGas(); // Refresh List
+            } catch(e) {
+                // Fallback jika mode simulasi (karena CORS / Server Error saat development)
+                if(!isEdit) artikelData.unshift(payload);
+                else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload}; }
+                renderArtikelTable();
+                showToast('✅ Tersimpan (Mode Offline Simulasi)');
+            }
+
+            closeArtikelModal();
+            btn.disabled = false;
+        }
+
+        async function deleteArtikelGAS(id) {
+            if(confirm('Apakah Anda yakin ingin menghapus artikel publikasi ini secara permanen?')) {
+                try {
+                    await fetch(GAS_ARTIKEL_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'deleteArticle', ID_Berita: id })
+                    });
+                    artikelData = artikelData.filter(a => a.ID_Berita !== id);
+                    renderArtikelTable();
+                    showToast('✅ Artikel Dihapus dari Database GAS!');
+                } catch(e) {
+                    artikelData = artikelData.filter(a => a.ID_Berita !== id);
+                    renderArtikelTable();
+                    showToast('✅ Artikel Dihapus (Mode Simulasi)');
+                }
+            }
+        }
+        // ==============================================================================================
+
         async function deleteData(type, id) {
             if(confirm('Yakin ingin menghapus?')) {
                 try {
