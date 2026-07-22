@@ -1,4 +1,3 @@
-<!-- FILE: views/admin-dashboard.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -12,8 +11,10 @@
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
     
+    <!-- SCRIPT PROTECT DEVTOOLS & RIGHT CLICK -->
     <script src="/js/protect-devtools.js"></script>
 
+    <!-- SUPER UPGRADE: Custom File Input Styling for Admin -->
     <style>
         .custom-file-input {
             background: var(--input-bg);
@@ -27,12 +28,23 @@
             transition: 0.3s;
             box-shadow: inset 2px 2px 5px var(--card-shadow);
         }
-        .custom-file-input:hover { border-color: #3b82f6; }
-        .custom-file-input::file-selector-button {
-            background: #3b82f6; color: #ffffff; border: none; padding: 8px 16px;
-            border-radius: 8px; margin-right: 15px; font-weight: 600; cursor: pointer; transition: background 0.3s;
+        .custom-file-input:hover {
+            border-color: #3b82f6;
         }
-        .custom-file-input::file-selector-button:hover { background: #2563eb; }
+        .custom-file-input::file-selector-button {
+            background: #3b82f6;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-right: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .custom-file-input::file-selector-button:hover {
+            background: #2563eb;
+        }
         
         /* Thumbnail Preview untuk Artikel */
         .art-preview-container {
@@ -56,7 +68,6 @@
     </style>
 </head>
 <body>
-    
     <div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:9999; display:flex; justify-content:center; align-items:center; transition: opacity 0.5s;">
         <div class="glass-card" style="width: 100%; max-width: 400px; text-align:center;">
             <img src="/img/bemfkgumi.png" alt="Logo" style="height: 60px; margin-bottom: 15px;">
@@ -116,6 +127,7 @@
                     <h2 style="color: var(--text-light);">Manajemen Struktur Kepengurusan</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org')">💾 Simpan Ke Database</button>
                 </div>
+
                 <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
                     <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px;">Arti Nama Kabinet</h3>
                     <div class="grid-2">
@@ -135,13 +147,17 @@
                     <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 10px;">Kesimpulan Makna (Gabungan)</label>
                     <textarea id="editKesimpulan" class="neo-input" rows="3" placeholder="Dapat diartikan sebagai perjuangan..." oninput="db.org.artiKabinet.kesimpulan=this.value"></textarea>
                 </div>
+                
                 <label style="color:var(--accent-neon);">Visi Kabinet</label>
                 <textarea id="editVisi" class="neo-input" rows="3" oninput="db.org.visi=this.value"></textarea>
+                
                 <label style="color:var(--accent-neon); margin-top: 15px; display: block;">Misi Kabinet</label>
                 <textarea id="editMisi" class="neo-input" rows="6" placeholder="Masukkan misi, pisahkan tiap poin dengan ENTER..." oninput="db.org.misi=this.value.split('\n')"></textarea>
+                
                 <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--border-light); padding-bottom:10px; color:var(--accent-neon);">Pimpinan Inti BEM</h3>
                 <div id="cmsPimpinan" class="pimpinan-grid"></div>
                 <button class="action-btn view" onclick="tambahPimpinan()" style="margin: 10px 0 30px;">+ Tambah Pimpinan</button>
+
                 <h3 style="margin: 40px 0 15px; border-bottom: 1px solid var(--border-light); padding-bottom:10px; color:var(--accent-neon);">Daftar Departemen & Anggota</h3>
                 <div id="cmsDepartemen" style="display:grid; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahDepartemen()" style="margin-top: 10px;">+ Tambah Departemen Baru</button>
@@ -153,6 +169,7 @@
                     <h2 style="color: var(--text-light);">Manajemen Filosofi Logo & Warna</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('filosofi')">💾 Simpan Filosofi</button>
                 </div>
+                
                 <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--border-light); padding-bottom:10px; color:var(--accent-neon);">Filosofi Logo</h3>
                 <div id="cmsFiloLogo" style="display:flex; flex-direction:column; gap:15px;"></div>
                 <button class="action-btn view" onclick="tambahFiloLogo()" style="margin: 10px 0 30px;">+ Tambah Elemen Logo</button>
@@ -172,7 +189,7 @@
                 <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
             </section>
 
-            <!-- 5. PROKER (DEPARTEMEN) -->
+            <!-- 5. PROKER (DEPARTEMEN) - SUPER BIG UPGRADE 10 FIELDS -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
@@ -277,6 +294,7 @@
                     <h2 style="color: var(--text-light);">Manajemen Narahubung & Lokasi</h2>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kontak')">💾 Simpan Info Kontak</button>
                 </div>
+                
                 <div class="glass-card" style="margin-bottom: 20px;">
                     <h3 style="color:#10b981; margin-bottom:15px;">Informasi Kontak BEM</h3>
                     <label style="color:var(--text-muted); font-size: 0.85rem;">Alamat Sekretariat Utama</label>
@@ -337,6 +355,7 @@
                     </div>
                 </div>
             </section>
+
         </main>
     </div>
 
@@ -349,7 +368,7 @@
         </div>
     </div>
 
-    <!-- ================= SUPER UPGRADE MODAL ARTIKEL (IMAGE PREVIEW ANTI-CORS, FILE UPLOAD, DATALIST) ================= -->
+    <!-- Modal Tambah / Edit Artikel -->
     <div class="modal-overlay" id="artikelModal">
         <div class="modal-content-box" style="padding: 30px; max-width: 800px;">
             <button class="modal-close" onclick="closeArtikelModal()">X</button>
@@ -362,7 +381,6 @@
             
             <div class="grid-2" style="margin-bottom: 0;">
                 <div>
-                    <!-- KATEGORI DATALIST (Dapat memilih atau input baru) -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Kategori</label>
                     <input list="listKategori" id="artKategori" class="neo-input" placeholder="Ketik atau pilih kategori...">
                     <datalist id="listKategori">
@@ -381,7 +399,6 @@
                     <input type="text" id="artDesc" class="neo-input" placeholder="Ringkasan 1 kalimat...">
                 </div>
                 <div>
-                    <!-- FILE IMAGE UPLOAD DENGAN PREVIEW ANTI CORS (Dihapus Atribut Crossorigin) -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Preview & Upload Gambar</label>
                     <div class="art-preview-container">
                         <span id="artPreviewPlaceholder" style="color:var(--text-muted); font-size:0.8rem;">Belum ada gambar</span>
@@ -394,25 +411,21 @@
 
             <div class="grid-3" style="margin-bottom: 0;">
                 <div>
-                    <!-- CUSTOM TANGGAL -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Tanggal Rilis</label>
                     <input type="date" id="artTanggal" class="neo-input">
                 </div>
                 <div>
-                    <!-- CRUD VIEW -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Total Views</label>
                     <input type="number" id="artViews" class="neo-input" value="0" min="0">
                 </div>
                 <div>
-                    <!-- CRUD LIKES -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Total Likes</label>
                     <input type="number" id="artLikes" class="neo-input" value="0" min="0">
                 </div>
             </div>
             
-            <!-- AUTO <p> TAGGING INSTRUCTION -->
             <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Isi Artikel / Deskripsi</label>
-            <p style="font-size:0.75rem; color:#3b82f6; margin-bottom:5px; font-weight:600;">💡 Tips: Ketik paragraf secara normal (tekan Enter). Sistem akan otomatis membungkusnya menjadi paragraf terpisah di web.</p>
+            <p style="font-size:0.75rem; color:#3b82f6; margin-bottom:5px; font-weight:600;">💡 Tips: Ketik paragraf secara normal (tekan Enter). Sistem otomatis membuatnya rapi di web.</p>
             <textarea id="artIsi" class="neo-input" rows="7" placeholder="Tuliskan isi artikel Anda di sini..."></textarea>
             
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
@@ -429,8 +442,19 @@
     </button>
 
     <script>
-        const FALLBACK_ADMIN_ORG = { visi: "", misi: [], pimpinan: [], departemen: [], artiKabinet: { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" } };
-        let db = { org: FALLBACK_ADMIN_ORG, filosofi: { logo: [], warna: [] }, sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], kontak: { alamat: "", email: "", wa: "", waName: "", mapsIframe: "" }, settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, interaksi: {aspirasi:[], pesan:[]} };
+        const FALLBACK_ADMIN_ORG = { 
+            visi: "", misi: [], pimpinan: [], departemen: [],
+            artiKabinet: { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" }
+        };
+        
+        let db = { 
+            org: FALLBACK_ADMIN_ORG, 
+            filosofi: { logo: [], warna: [] }, 
+            sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], 
+            kontak: { alamat: "", email: "", wa: "", waName: "", mapsIframe: "" },
+            settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, 
+            interaksi: {aspirasi:[], pesan:[]} 
+        };
         
         let aspirasiData = []; let pesanData = [];
         let artikelData = []; 
@@ -439,7 +463,9 @@
         const scrollToTopBtnAdmin = document.getElementById("scrollToTopBtnAdmin");
         const adminMainArea = document.querySelector(".admin-main");
         
-        adminMainArea.addEventListener('scroll', () => { if (adminMainArea.scrollTop > 300) { scrollToTopBtnAdmin.classList.add("show"); } else { scrollToTopBtnAdmin.classList.remove("show"); } });
+        adminMainArea.addEventListener('scroll', () => { 
+            if (adminMainArea.scrollTop > 300) { scrollToTopBtnAdmin.classList.add("show"); } else { scrollToTopBtnAdmin.classList.remove("show"); }
+        });
         scrollToTopBtnAdmin.addEventListener('click', () => { adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); });
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -476,15 +502,6 @@
             setTimeout(() => { document.getElementById('loginGate').style.display = 'none'; document.getElementById('dashboardContent').style.display = 'flex'; document.getElementById('dashboardContent').style.opacity = '1'; loadAllData(); }, 500);
         }
 
-        async function loadArtikelGas() {
-            try {
-                const req = await fetch(GAS_ARTIKEL_URL + '?action=getArticles&page=1&limit=50');
-                const res = await req.json();
-                artikelData = res.data || [];
-                renderArtikelTable();
-            } catch(e) { console.warn("⚠️ Mode offline untuk artikel GAS", e); }
-        }
-
         function switchSection(id, btn) {
             document.querySelectorAll('.admin-section').forEach(e => e.classList.remove('active'));
             document.querySelectorAll('.admin-nav button').forEach(e => e.classList.remove('active'));
@@ -493,7 +510,6 @@
         }
 
         function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
-        
         async function handleImageUpload(inputElem, objToUpdate, keyName, renderFn) {
             const file = inputElem.files[0];
             if(file) { const base64 = await fileToBase64(file); objToUpdate[keyName] = base64; showToast("Gambar dimuat! Klik Simpan."); renderFn(); }
@@ -507,7 +523,13 @@
                 const req = await fetch(apiUrl);
                 if(req.ok) {
                     const data = await req.json();
-                    if(data.org) { db.org.visi = data.org.visi || ""; db.org.misi = data.org.misi || []; db.org.pimpinan = data.org.pimpinan || []; db.org.departemen = data.org.departemen || []; db.org.artiKabinet = data.org.artiKabinet || { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" }; }
+                    if(data.org) { 
+                        db.org.visi = data.org.visi || ""; 
+                        db.org.misi = data.org.misi || []; 
+                        db.org.pimpinan = data.org.pimpinan || []; 
+                        db.org.departemen = data.org.departemen || []; 
+                        db.org.artiKabinet = data.org.artiKabinet || { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" };
+                    }
                     if(data.filosofi) { db.filosofi = data.filosofi; }
                     if(data.settings) db.settings = { ...db.settings, ...data.settings };
                     if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak };
@@ -515,23 +537,425 @@
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
             } catch(err) { showToast("⚠️ Memuat data Offline."); }
-            renderSemuaCMS(); loadArtikelGas();
+            renderSemuaCMS(); loadArtikelGas(); // Menjamin GAS diload
         }
 
-        function renderSemuaCMS() { renderOrg(); renderFilosofi(); renderSejarah(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); renderKontak(); }
+        function renderSemuaCMS() { 
+            renderOrg(); renderFilosofi(); renderSejarah(); renderProker(); renderKalender(); 
+            renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); renderKontak(); 
+        }
+
+        function renderKontak() {
+            if(db.kontak) {
+                document.getElementById('setKontakAlamat').value = db.kontak.alamat || "";
+                document.getElementById('setKontakEmail').value = db.kontak.email || "";
+                document.getElementById('setKontakWA').value = db.kontak.wa || "";
+                document.getElementById('setKontakWAName').value = db.kontak.waName || "";
+                document.getElementById('setKontakMaps').value = db.kontak.mapsIframe || "";
+            }
+        }
+
+        function renderPengaturan() {
+            if(db.settings) {
+                document.getElementById('setHeaderText').value = db.settings.headerText || "";
+                document.getElementById('setFooterSlogan').value = db.settings.footerSlogan || "";
+                document.getElementById('setFooterAlamat').value = db.settings.footerAlamat || "";
+                document.getElementById('prevLogo1').src = db.settings.logo1 || "/img/bemfkgumi.png";
+                document.getElementById('prevLogo2').src = db.settings.logo2 || "/img/bemfkgumi.png";
+                document.getElementById('prevLogo3').src = db.settings.logo3 || "/img/bemfkgumi.png";
+            }
+        }
+
+        async function saveData(type) {
+            if(type === 'org') {
+                db.org.visi = document.getElementById('editVisi').value;
+                db.org.misi = document.getElementById('editMisi').value.split('\n').filter(m => m.trim() !== '');
+            }
+            try {
+                let apiUrl = `/api/content/${type}`;
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com/api/content/${type}`;
+                const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) });
+                if(req.ok) showToast(`✅ Data Tersimpan!`); else throw new Error();
+            } catch(e) { showToast("⚠️ Gagal menyimpan (mode simulasi aktif)."); }
+        }
+
+        function renderOrg() {
+            if(!db.org.artiKabinet) db.org.artiKabinet = { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" };
+            document.getElementById('editKata1').value = db.org.artiKabinet.kata1 || '';
+            document.getElementById('editArti1').value = db.org.artiKabinet.arti1 || '';
+            document.getElementById('editKata2').value = db.org.artiKabinet.kata2 || '';
+            document.getElementById('editArti2').value = db.org.artiKabinet.arti2 || '';
+            document.getElementById('editKesimpulan').value = db.org.artiKabinet.kesimpulan || '';
+
+            document.getElementById('editVisi').value = db.org.visi || '';
+            document.getElementById('editMisi').value = (db.org.misi || []).join('\n');
+            const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
+            (db.org.pimpinan || []).forEach((p, i) => {
+                pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
+                    <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:10px;" alt="Pimpinan">
+                    <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px;">
+                    <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan || ''}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
+                    <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama || ''}" oninput="db.org.pimpinan[${i}].nama=this.value">
+                    <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus</button>
+                </div>`;
+            });
+
+            const dCont = document.getElementById('cmsDepartemen'); dCont.innerHTML = '';
+            (db.org.departemen || []).forEach((d, i) => {
+                let html = `<div class="glass-card" style="border-top:2px solid var(--accent-neon); padding:15px;">
+                    <input type="text" class="neo-input" value="${d.nama || ''}" placeholder="Nama Departemen" oninput="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; color:var(--accent-neon);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                        <button class="action-btn view" onclick="if(!db.org.departemen[${i}].anggota) db.org.departemen[${i}].anggota=[]; db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:'/img/bemfkgumi.png'}); renderOrg();">+ Anggota</button>
+                        <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Dept</button>
+                    </div><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">`;
+                if(d.anggota) {
+                    d.anggota.forEach((a, j) => {
+                        html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px; border: 1px solid var(--border-light);">
+                            <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:5px;" alt="Anggota">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="margin-bottom:10px;">
+                            <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama || ''}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
+                            <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan || ''}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
+                            <button class="action-btn delete" style="width:100%;" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">X Hapus</button>
+                        </div>`;
+                    });
+                }
+                dCont.innerHTML += html + `</div></div>`;
+            });
+        }
+        function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
+        function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
+
+        function renderProker() {
+            const cont = document.getElementById('cmsProker'); cont.innerHTML = '';
+            (db.proker || []).forEach((p, i) => {
+                cont.innerHTML += `
+                <div class="glass-card" style="padding:25px; margin-bottom:25px; border-left:4px solid var(--accent-neon); position:relative;">
+                    <button class="action-btn delete" onclick="db.proker.splice(${i},1); renderProker();" style="position:absolute; top:20px; right:20px;">Hapus Dept</button>
+                    
+                    <h3 style="margin-bottom:15px; width:80%; display:flex; gap:10px; align-items:center;">
+                        <input type="text" class="neo-input" style="flex:1; font-size:1.2rem; font-weight:bold; color:var(--accent-neon); border:none; background:var(--bg-dark-overlay); padding:10px; box-shadow:none; text-transform:uppercase;" value="${p.dept || ''}" placeholder="NAMA DEPARTEMEN" oninput="db.proker[${i}].dept=this.value">
+                        <span style="color:var(--text-muted);">|</span>
+                        <input type="text" class="neo-input" style="flex:1; font-size:1.2rem; font-weight:bold; color:var(--text-light); border:none; background:var(--bg-dark-overlay); padding:10px; box-shadow:none; text-transform:uppercase;" value="${p.namaProker || ''}" placeholder="NAMA PROKER (CTH: PUBMED)" oninput="db.proker[${i}].namaProker=this.value">
+                    </h3>
+                    
+                    <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
+                        <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">ID Slug Proker (URL)</label>
+                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${p.id || ''}" placeholder="contoh: pubmed" oninput="db.proker[${i}].id=this.value">
+                    </div>
+
+                    <div class="grid-2" style="align-items:start; margin-bottom:20px;">
+                        <!-- KOTAK 1: FOTO PENGURUS KHUSUS CARD -->
+                        <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px solid var(--border-light);">
+                            <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold; display:block; margin-bottom:8px;">Foto Pengurus / Cover Card (900x600 px)</label>
+                            <img src="${p.fotoPengurus || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light); background: var(--bg-dark-heavy);" alt="Cover Dept">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.proker[${i}], 'fotoPengurus', renderProker)">
+                        </div>
+
+                        <!-- KOTAK 2: BANNER HEADER KHUSUS DETAIL -->
+                        <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px solid var(--border-light);">
+                            <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold; display:block; margin-bottom:8px;">Banner Header (1920x1080 px)</label>
+                            <img src="${p.bgImage || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light); background: var(--bg-dark-heavy);" alt="Banner Dept">
+                            <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.proker[${i}], 'bgImage', renderProker)">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:20px;">
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Singkat (Tampil di Card Depan)</label>
+                        <textarea class="neo-input" rows="3" placeholder="Deskripsi pendek untuk tampilan awal..." oninput="db.proker[${i}].shortDesc=this.value">${p.shortDesc || ''}</textarea>
+                        
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            <div style="flex:1;">
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Sasaran Peserta</label>
+                                <input type="text" class="neo-input" value="${p.sasaranPeserta || ''}" placeholder="Ruang lingkup internal hingga eksternal FKG-UMI." oninput="db.proker[${i}].sasaranPeserta=this.value">
+                            </div>
+                            <div style="flex:1;">
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Target Waktu Pelaksanaan</label>
+                                <input type="text" class="neo-input" value="${p.targetPelaksanaan || ''}" placeholder="Triwulan I" oninput="db.proker[${i}].targetPelaksanaan=this.value">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KOTAK 3: SEO EVENT SCHEMA DATA -->
+                    <div style="margin-bottom:20px; background: rgba(16, 185, 129, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(16, 185, 129, 0.3);">
+                        <h4 style="color:#10b981; font-size:0.9rem; margin-bottom:10px;">SEO Event Data (Wajib Diisi agar Tidak Error di Google)</h4>
+                        <div class="grid-2">
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Tanggal Mulai (Start Date)</label>
+                                <input type="date" class="neo-input" value="${p.startDate || ''}" oninput="db.proker[${i}].startDate=this.value">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Tanggal Selesai (End Date)</label>
+                                <input type="date" class="neo-input" value="${p.endDate || ''}" oninput="db.proker[${i}].endDate=this.value">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Penampil Utama (Performer)</label>
+                                <input type="text" class="neo-input" value="${p.performer || ''}" placeholder="Cth: Pengurus Dept" oninput="db.proker[${i}].performer=this.value">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--text-muted);">Rancangan Anggaran Dana</label>
+                                <input type="text" class="neo-input" value="${p.anggaran || ''}" placeholder="Rp. 7.000.000,-" onchange="if(this.value && !this.value.toLowerCase().includes('rp')) this.value = 'Rp. ' + this.value; db.proker[${i}].anggaran=this.value;" oninput="db.proker[${i}].anggaran=this.value">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-bottom:20px;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Nama Koordinator</label>
+                            <input type="text" class="neo-input" value="${p.koordinator || ''}" placeholder="Nama Koordinator" oninput="db.proker[${i}].koordinator=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Anggota / Penanggung Jawab Proker</label>
+                            <textarea class="neo-input" rows="2" placeholder="Nama anggota (pisahkan koma)" oninput="db.proker[${i}].penanggungJawab=this.value">${p.penanggungJawab || ''}</textarea>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 12px; border: 1px solid var(--border-light);">
+                        <h4 style="color:var(--accent-neon); margin-bottom:15px;">Detail Konten Program Kerja</h4>
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Latar Belakang / Bentuk Kegiatan</label>
+                        <textarea class="neo-input" rows="4" placeholder="Memasuki Era Revolusi Industri 5.0..." oninput="db.proker[${i}].latarBelakang=this.value">${p.latarBelakang || ''}</textarea>
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Tujuan Kegiatan</label>
+                        <textarea class="neo-input" rows="3" placeholder="Tujuan dari kegiatan ini adalah..." oninput="db.proker[${i}].tujuan=this.value">${p.tujuan || ''}</textarea>
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Analisis SWOT</label>
+                        <textarea class="neo-input" rows="4" placeholder="Strength: ...&#10;Weakness: ..." oninput="db.proker[${i}].swot=this.value">${p.swot || ''}</textarea>
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Parameter Keberhasilan</label>
+                        <textarea class="neo-input" rows="3" placeholder="Semua media informasi dapat memberikan konten..." oninput="db.proker[${i}].parameterKeberhasilan=this.value">${p.parameterKeberhasilan || ''}</textarea>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function tambahProkerDept() { 
+            db.proker.push({
+                id: "proker-" + Date.now(), dept: "DEPT. BARU", namaProker: "NAMA PROKER", bgImage: "/img/bemfkgumi.png", fotoPengurus: "/img/bemfkgumi.png",
+                shortDesc: "", sasaranPeserta: "", targetPelaksanaan: "", startDate: "", endDate: "", performer: "", anggaran: "", koordinator: "", penanggungJawab: "",
+                latarBelakang: "", tujuan: "", swot: "", parameterKeberhasilan: ""
+            }); 
+            renderProker(); 
+        }
+
+        // --- RENDER KALENDER / AGENDA CMS ---
+        function renderKalender() {
+            const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
+            (db.kalender || []).forEach((k, i) => { 
+                
+                let htmlPanitia = '';
+                if(k.kepanitiaan) {
+                    k.kepanitiaan.forEach((div, divIdx) => {
+                        htmlPanitia += `
+                        <div style="background:var(--bg-dark-overlay); padding:10px; border-radius:10px; border:1px solid var(--border-light); margin-bottom:10px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                <input type="text" class="neo-input" style="margin:0; padding:5px; font-weight:bold; color:var(--text-light); border:none; background:transparent;" value="${div.namaDivisi}" oninput="db.kalender[${i}].kepanitiaan[${divIdx}].namaDivisi=this.value" placeholder="Nama Divisi">
+                                <div>
+                                    <button class="action-btn view" onclick="tambahPanitiaAnggota(${i}, ${divIdx})" style="padding:4px 8px; font-size:0.7rem;">+ Anggota</button>
+                                    <button class="action-btn delete" onclick="db.kalender[${i}].kepanitiaan.splice(${divIdx},1); renderKalender();" style="padding:4px 8px; font-size:0.7rem;">Hapus Div</button>
+                                </div>
+                            </div>
+                            <div style="padding-left:10px;">
+                            ${(div.anggota || []).map((ang, angIdx) => `
+                                <div style="display:flex; gap:10px; margin-bottom:5px;">
+                                    <input type="text" class="neo-input" style="margin:0; padding:5px; font-size:0.85rem;" value="${ang.nama}" placeholder="Nama" oninput="db.kalender[${i}].kepanitiaan[${divIdx}].anggota[${angIdx}].nama=this.value">
+                                    <input type="text" class="neo-input" style="margin:0; padding:5px; font-size:0.85rem;" value="${ang.jabatan}" placeholder="Jabatan" oninput="db.kalender[${i}].kepanitiaan[${divIdx}].anggota[${angIdx}].jabatan=this.value">
+                                    <button class="action-btn delete" onclick="db.kalender[${i}].kepanitiaan[${divIdx}].anggota.splice(${angIdx},1); renderKalender();" style="padding:4px 8px;">X</button>
+                                </div>
+                            `).join('')}
+                            </div>
+                        </div>`;
+                    });
+                }
+
+                cont.innerHTML += `
+                <div class="glass-card" style="padding:25px; border-left:4px solid #10b981; position:relative;">
+                    <button class="action-btn delete" onclick="db.kalender.splice(${i},1); renderKalender();" style="position:absolute; top:20px; right:20px;">Hapus Agenda</button>
+                    
+                    <h3 style="color:#10b981; margin-bottom:15px;">Informasi Dasar Agenda</h3>
+                    
+                    <div class="grid-2" style="margin-bottom:15px;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Nama Kegiatan</label>
+                            <input type="text" class="neo-input" value="${k.nama || ''}" oninput="db.kalender[${i}].nama=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Dept / Kementerian Pelaksana</label>
+                            <input type="text" class="neo-input" value="${k.dept || ''}" oninput="db.kalender[${i}].dept=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Tanggal Mulai</label>
+                            <input type="date" class="neo-input" value="${k.tglMulai || ''}" oninput="db.kalender[${i}].tglMulai=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Tanggal Selesai (Opsional)</label>
+                            <input type="date" class="neo-input" value="${k.tglSelesai || ''}" oninput="db.kalender[${i}].tglSelesai=this.value">
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
+                        <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">Custom Link / Slug (Opsional - SEO URL)</label>
+                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${k.slug || ''}" placeholder="contoh: umi-amal-senyuman-vol-3" oninput="db.kalender[${i}].slug=this.value">
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">*Biarkan kosong agar sistem otomatis membuat link dari Nama Kegiatan secara rapi.</p>
+                    </div>
+
+                    <label style="font-size:0.8rem; color:var(--text-muted);">Deskripsi Lengkap Kegiatan</label>
+                    <textarea class="neo-input" rows="4" placeholder="Tuliskan deskripsi..." oninput="db.kalender[${i}].deskripsi=this.value">${k.deskripsi || ''}</textarea>
+
+                    <h3 style="color:#3b82f6; margin-top:20px; margin-bottom:15px; border-top:1px solid var(--border-light); padding-top:15px;">Detail Pendaftaran & Lokasi</h3>
+                    <div class="grid-2">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Lokasi</label>
+                            <input type="text" class="neo-input" value="${k.lokasi || ''}" oninput="db.kalender[${i}].lokasi=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Target Peserta</label>
+                            <input type="text" class="neo-input" value="${k.targetPeserta || ''}" oninput="db.kalender[${i}].targetPeserta=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Status Pendaftaran</label>
+                            <select class="neo-input" onchange="db.kalender[${i}].statusDaftar=this.value">
+                                <option value="Tutup" ${k.statusDaftar==='Tutup'?'selected':''}>Belum Dibuka / Tutup</option>
+                                <option value="Buka" ${k.statusDaftar==='Buka'?'selected':''}>Telah Dibuka</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Link Pendaftaran</label>
+                            <input type="text" class="neo-input" value="${k.linkDaftar || ''}" placeholder="https://..." oninput="db.kalender[${i}].linkDaftar=this.value">
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; border-top:1px solid var(--border-light); padding-top:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px;">
+                            <h3 style="color:var(--accent-neon);">Banner Kegiatan & Kepanitiaan</h3>
+                            <button class="action-btn view" onclick="tambahPanitiaDivisi(${i})">+ Tambah Divisi Kepanitiaan</button>
+                        </div>
+                        
+                        <div class="grid-2" style="align-items:start;">
+                            <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px dashed var(--border-light);">
+                                <div style="margin-bottom: 15px;">
+                                    <p style="color: #3b82f6; font-size: 0.85rem; font-weight: bold; margin-bottom: 4px;">💡 Rekomendasi Ukuran: 1200 x 400 pixel</p>
+                                </div>
+                                <img src="${k.banner || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:3/1; object-fit:cover; border-radius:12px; margin-bottom:15px; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); box-shadow: 0 5px 15px var(--card-shadow);" alt="Banner Kalender">
+                                <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.kalender[${i}], 'banner', renderKalender)">
+                            </div>
+                            
+                            <div style="max-height: 280px; overflow-y:auto; padding-right:5px;">
+                                ${htmlPanitia}
+                            </div>
+                        </div>
+                    </div>
+                </div>`; 
+            });
+        }
         
-        function renderKontak() { if(db.kontak) { document.getElementById('setKontakAlamat').value = db.kontak.alamat || ""; document.getElementById('setKontakEmail').value = db.kontak.email || ""; document.getElementById('setKontakWA').value = db.kontak.wa || ""; document.getElementById('setKontakWAName').value = db.kontak.waName || ""; document.getElementById('setKontakMaps').value = db.kontak.mapsIframe || ""; } }
-        function renderPengaturan() { if(db.settings) { document.getElementById('setHeaderText').value = db.settings.headerText || ""; document.getElementById('setFooterSlogan').value = db.settings.footerSlogan || ""; document.getElementById('setFooterAlamat').value = db.settings.footerAlamat || ""; document.getElementById('prevLogo1').src = db.settings.logo1 || "/img/bemfkgumi.png"; document.getElementById('prevLogo2').src = db.settings.logo2 || "/img/bemfkgumi.png"; document.getElementById('prevLogo3').src = db.settings.logo3 || "/img/bemfkgumi.png"; } }
-        async function saveData(type) { if(type === 'org') { db.org.visi = document.getElementById('editVisi').value; db.org.misi = document.getElementById('editMisi').value.split('\n').filter(m => m.trim() !== ''); } try { let apiUrl = `/api/content/${type}`; if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com/api/content/${type}`; const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) }); if(req.ok) showToast(`✅ Data Tersimpan!`); else throw new Error(); } catch(e) { showToast("⚠️ Gagal menyimpan."); } }
-        function renderOrg() { /* Dibiarkan standar sesuai instruksi tdk diubah */ } function tambahPimpinan() { /* ... */ } function tambahDepartemen() { /* ... */ } function renderProker() { /* ... */ } function tambahProkerDept() { /* ... */ } function renderKalender() { /* ... */ } function tambahAgenda() { /* ... */ } function tambahPanitiaDivisi(kIdx) { /* ... */ } function tambahPanitiaAnggota(kIdx, divIdx) { /* ... */ } function renderFilosofi() { /* ... */ } function tambahFiloLogo() { /* ... */ } function tambahFiloWarna() { /* ... */ } function renderSejarah() { /* ... */ } function tambahSejarah() { /* ... */ } function renderDokumentasi() { /* ... */ } function tambahDokumentasi() { /* ... */ } function renderTeam() { /* ... */ } function tambahKategoriTeam() { /* ... */ } 
-        function renderTabel() { document.getElementById('statAspirasi').innerText = aspirasiData.length; document.getElementById('statPesan').innerText = pesanData.length; const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = ''; aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td style="color:var(--text-light);">${item.id}</td><td style="color:var(--text-muted);">${item.kategori}</td><td style="color:var(--text-light);"><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; }); const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = ''; pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td style="color:var(--text-light);"><strong>${item.nama}</strong></td><td style="color:var(--text-muted);">${item.subjek}</td><td style="color:var(--text-muted);">${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; }); }
-        async function deleteData(type, id) { if(confirm('Yakin ingin menghapus?')) { try { let apiUrl = '/api/delete-interaction'; if(window.location.protocol === 'blob:') apiUrl = 'https://bemkbmfkgumi.com/api/delete-interaction'; await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) }); if(type==='aspirasi') aspirasiData = aspirasiData.filter(x => x.id !== id); else pesanData = pesanData.filter(x => x.id !== id); renderTabel(); showToast('✅ Data dihapus.'); } catch(e) { showToast('⚠️ Gagal menghapus.'); } } }
+        function tambahAgenda() { db.kalender.push({id: "evt-"+Date.now(), slug: "", nama:"Agenda Baru", dept:"", tglMulai:"", tglSelesai:"", deskripsi:"", lokasi:"", targetPeserta:"", statusDaftar:"Tutup", linkDaftar:"", banner:"", kepanitiaan:[]}); renderKalender(); }
+        function tambahPanitiaDivisi(kIdx) { if(!db.kalender[kIdx].kepanitiaan) db.kalender[kIdx].kepanitiaan = []; db.kalender[kIdx].kepanitiaan.push({namaDivisi:"Divisi Baru", anggota:[]}); renderKalender(); }
+        function tambahPanitiaAnggota(kIdx, divIdx) { db.kalender[kIdx].kepanitiaan[divIdx].anggota.push({nama:"", jabatan:""}); renderKalender(); }
+
+        function renderFilosofi() {
+            const logoCont = document.getElementById('cmsFiloLogo'); logoCont.innerHTML = '';
+            (db.filosofi.logo || []).forEach((el, i) => {
+                logoCont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:10px; border-left:3px solid #10b981;">
+                    <div style="flex:1;">
+                        <input type="text" class="neo-input" value="${el.elemen}" placeholder="Nama Elemen (Cth: Bintang)" oninput="db.filosofi.logo[${i}].elemen=this.value">
+                        <input type="text" class="neo-input" value="${el.arti}" placeholder="Arti Elemen" oninput="db.filosofi.logo[${i}].arti=this.value">
+                        <textarea class="neo-input" rows="2" placeholder="Makna Filosofis" oninput="db.filosofi.logo[${i}].makna=this.value">${el.makna}</textarea>
+                    </div>
+                    <button class="action-btn delete" onclick="db.filosofi.logo.splice(${i},1); renderFilosofi();">X</button>
+                </div>`;
+            });
+            const warnaCont = document.getElementById('cmsFiloWarna'); warnaCont.innerHTML = '';
+            (db.filosofi.warna || []).forEach((w, i) => {
+                warnaCont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:10px; border-left:3px solid ${w.hex};">
+                    <div style="flex:1;">
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" class="neo-input" value="${w.warna}" placeholder="Nama Warna (Cth: Hijau)" oninput="db.filosofi.warna[${i}].warna=this.value" style="flex:2;">
+                            <input type="color" value="${w.hex}" oninput="db.filosofi.warna[${i}].hex=this.value" style="flex:1; height:45px; border:none; cursor:pointer;" aria-label="Pilih Warna">
+                        </div>
+                        <textarea class="neo-input" rows="2" placeholder="Makna Warna" oninput="db.filosofi.warna[${i}].makna=this.value">${w.makna}</textarea>
+                    </div>
+                    <button class="action-btn delete" onclick="db.filosofi.warna.splice(${i},1); renderFilosofi();">X</button>
+                </div>`;
+            });
+        }
+        function tambahFiloLogo() { if(!db.filosofi.logo) db.filosofi.logo = []; db.filosofi.logo.push({elemen:"Elemen Baru", arti:"", makna:""}); renderFilosofi(); }
+        function tambahFiloWarna() { if(!db.filosofi.warna) db.filosofi.warna = []; db.filosofi.warna.push({warna:"Warna Baru", hex:"#ffffff", makna:""}); renderFilosofi(); }
+
+        function renderSejarah() {
+            const cont = document.getElementById('cmsSejarah'); cont.innerHTML = '';
+            (db.sejarah || []).forEach((s, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px; display:flex; gap:15px; align-items:center; border-left:4px solid var(--accent-neon);">
+                    <div style="width: 80px; text-align:center;">
+                        <img src="${s.logo || '/img/bemfkgumi.png'}" style="width:100%; height:60px; object-fit:contain; background:var(--bg-dark-overlay); padding:5px; border-radius:10px; margin-bottom:5px;" alt="Logo Kabinet">
+                        <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.sejarah[${i}], 'logo', renderSejarah)">
+                    </div>
+                    <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" class="neo-input" placeholder="Tahun (e.g. 2025-2026)" value="${s.tahun || ''}" oninput="db.sejarah[${i}].tahun=this.value" style="margin:0; flex:1;">
+                            <input type="text" class="neo-input" placeholder="Nama Kabinet" value="${s.kabinet || ''}" oninput="db.sejarah[${i}].kabinet=this.value" style="margin:0; flex:2;">
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" class="neo-input" placeholder="Nama Ketua/Presiden" value="${s.ketua || ''}" oninput="db.sejarah[${i}].ketua=this.value" style="margin:0; flex:1;">
+                            <input type="text" class="neo-input" placeholder="Nama Wakil" value="${s.wakil || ''}" oninput="db.sejarah[${i}].wakil=this.value" style="margin:0; flex:1;">
+                        </div>
+                    </div>
+                    <button class="action-btn delete" onclick="db.sejarah.splice(${i},1); renderSejarah();">X</button>
+                </div>`;
+            });
+        }
+        function tambahSejarah() { if(!db.sejarah) db.sejarah = []; db.sejarah.unshift({ tahun: "", kabinet: "Kabinet Baru", logo: "/img/bemfkgumi.png", ketua: "", wakil: "" }); renderSejarah(); }
+
+        function renderDokumentasi() {
+            const cont = document.getElementById('cmsDokumentasi'); cont.innerHTML = '';
+            (db.dokumentasi || []).forEach((d, i) => {
+                cont.innerHTML += `<div class="glass-card" style="padding:15px;"><img src="${d.foto || '/img/bemfkgumi.png'}" style="width:100%; max-height:150px; object-fit:contain; background:var(--bg-dark-overlay); margin-bottom:10px;" alt="Dokumentasi"><input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.dokumentasi[${i}], 'foto', renderDokumentasi)" style="margin-bottom:10px;"><input type="text" class="neo-input" value="${d.judul || ''}" placeholder="Judul" oninput="db.dokumentasi[${i}].judul=this.value"><input type="date" class="neo-input" value="${d.tanggal || ''}" oninput="db.dokumentasi[${i}].tanggal=this.value"><textarea class="neo-input" placeholder="Deskripsi" oninput="db.dokumentasi[${i}].deskripsi=this.value">${d.deskripsi || ''}</textarea><button class="action-btn delete" onclick="db.dokumentasi.splice(${i},1); renderDokumentasi();">Hapus</button></div>`;
+            });
+        }
+        function tambahDokumentasi() { db.dokumentasi.push({judul:"Judul", foto:"/img/bemfkgumi.png", tanggal:"", deskripsi:""}); renderDokumentasi(); }
+
+        function renderTeam() {
+            const cont = document.getElementById('cmsTeam'); cont.innerHTML = '';
+            (db.team || []).forEach((cat, i) => {
+                let html = `<div class="glass-card" style="margin-bottom:10px; border-left:4px solid #3b82f6;"><input type="text" class="neo-input" value="${cat.category || ''}" placeholder="Kategori" oninput="db.team[${i}].category=this.value" style="font-weight:bold; color:#3b82f6;"><button class="action-btn delete" onclick="db.team.splice(${i},1); renderTeam();" style="margin-bottom:15px;">Hapus Kategori</button><div class="grid-3">`;
+                (cat.members || []).forEach((m, j) => { html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px;"><img src="${m.foto || '/img/bemfkgumi.png'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin:0 auto 10px; display:block;" alt="Tim"><input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.team[${i}].members[${j}], 'foto', renderTeam)" style="margin-bottom:10px;"><input type="text" class="neo-input" placeholder="Nama Lengkap" value="${m.nama || ''}" oninput="db.team[${i}].members[${j}].nama=this.value" style="padding:8px; margin-bottom:8px;"><input type="text" class="neo-input" placeholder="Link Instagram" value="${m.ig || ''}" oninput="db.team[${i}].members[${j}].ig=this.value" style="padding:8px; margin-bottom:8px;"><button class="action-btn delete" style="width:100%;" onclick="db.team[${i}].members.splice(${j},1); renderTeam();">X</button></div>`; });
+                html += `</div><button class="action-btn view" style="margin-top:15px;" onclick="if(!db.team[${i}].members) db.team[${i}].members=[]; db.team[${i}].members.push({nama:'', foto:'/img/bemfkgumi.png', ig:''}); renderTeam();">+ Tambah Member</button></div>`;
+                cont.innerHTML += html;
+            });
+        }
+        function tambahKategoriTeam() { if(!db.team) db.team = []; db.team.push({category: "Kategori Baru", members: []}); renderTeam(); }
+
+        function renderTabel() {
+            document.getElementById('statAspirasi').innerText = aspirasiData.length; document.getElementById('statPesan').innerText = pesanData.length;
+            const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
+            aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td style="color:var(--text-light);">${item.id}</td><td style="color:var(--text-muted);">${item.kategori}</td><td style="color:var(--text-light);"><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; });
+            const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = '';
+            pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td style="color:var(--text-light);"><strong>${item.nama}</strong></td><td style="color:var(--text-muted);">${item.subjek}</td><td style="color:var(--text-muted);">${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; });
+        }
+        
+        async function deleteData(type, id) {
+            // Confirm di-bypass untuk kompatibilitas Canvas Environment
+            try {
+                let apiUrl = '/api/delete-interaction'; if(window.location.protocol === 'blob:') apiUrl = 'https://bemkbmfkgumi.com/api/delete-interaction';
+                await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) });
+                if(type==='aspirasi') aspirasiData = aspirasiData.filter(x => x.id !== id); else pesanData = pesanData.filter(x => x.id !== id);
+                renderTabel(); showToast('✅ Data dihapus.');
+            } catch(e) { showToast('⚠️ Gagal menghapus.'); }
+        }
+        
         function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
         function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><strong>Dari:</strong> ${data.nama} (${data.kontak})</p><p><strong>Subjek:</strong> ${data.subjek}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
         function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
 
-        // ================= FUNGSI MANAJEMEN ARTIKEL (FULL UPGRADE CRUD & PREVIEW SANITIZER) =================
+        async function loadArtikelGas() {
+            try {
+                const req = await fetch(GAS_ARTIKEL_URL + '?action=getArticles&page=1&limit=50');
+                const res = await req.json();
+                artikelData = res.data || [];
+                renderArtikelTable();
+            } catch(e) { console.warn("⚠️ Mode offline untuk artikel GAS", e); }
+        }
+
         function renderArtikelTable(dataToRender = artikelData) {
             const tbody = document.getElementById('tableBodyArtikel'); tbody.innerHTML = '';
             dataToRender.forEach((item, index) => {
@@ -574,7 +998,6 @@
             return [year, month, day].join('-');
         }
 
-        // Preview Image UI Updater
         function updateArtPreviewUI(src) {
             const img = document.getElementById('artPreviewImg');
             const placeholder = document.getElementById('artPreviewPlaceholder');
@@ -587,8 +1010,6 @@
 
         function updateArtPreviewUrl(url) {
             let safeUrl = url;
-            // ADMIN DASHBOARD AUTO SANITIZER (FULL UPGRADE 100% CORS BYPASS): 
-            // Mengubah segala format link Drive mentah menjadi link Thumbnail API
             if (safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
                 let match = safeUrl.match(/[-\w]{25,33}/);
                 if (match && match[0]) {
@@ -602,14 +1023,14 @@
             if (input.files && input.files[0]) {
                 const base64 = await fileToBase64(input.files[0]);
                 updateArtPreviewUI(`data:${input.files[0].type};base64,${base64}`);
-                document.getElementById('artGambar').value = ''; // Kosongkan URL jika pakai file lokal
+                document.getElementById('artGambar').value = '';
             }
         }
 
         function openArtikelModal(id = null) {
             document.getElementById('artikelModal').classList.add('active');
-            document.getElementById('artFileImage').value = ''; // Reset File Input
-            updateArtPreviewUI(''); // Reset Preview
+            document.getElementById('artFileImage').value = ''; 
+            updateArtPreviewUI(''); 
             
             if(id) {
                 const art = artikelData.find(a => a.ID_Berita === id);
@@ -618,13 +1039,10 @@
                 document.getElementById('artJudul').value = art.Judul || "";
                 document.getElementById('artKategori').value = art.Kategori || "Kegiatan";
                 
-                // Admin Dashboard Sanitizer for existing link
                 let safeUrl = art.Gambar_URL || "";
                 if(safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
                     let match = safeUrl.match(/[-\w]{25,33}/);
-                    if (match && match[0]) {
-                        safeUrl = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
-                    }
+                    if (match && match[0]) safeUrl = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
                 }
                 
                 document.getElementById('artGambar').value = safeUrl;
@@ -633,7 +1051,6 @@
                 document.getElementById('artPenulis').value = art.Penulis || "Admin BEM FKG UMI";
                 document.getElementById('artDesc').value = art.Meta_Desc || art.Desc || "";
                 
-                // Konversi <p> tag kembali menjadi newlines untuk editor text
                 let plainTextIsi = (art.Konten_HTML || "").replace(/<\/p>\s*<p>/g, '\n\n').replace(/<p>/g, '').replace(/<\/p>/g, '');
                 document.getElementById('artIsi').value = plainTextIsi;
                 
@@ -669,30 +1086,22 @@
             const judul = document.getElementById('artJudul').value;
             const slug = judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
             
-            // KUNCI AUTO <p> TAGGING:
             const rawIsi = document.getElementById('artIsi').value;
             let htmlIsi = rawIsi;
             if (!rawIsi.trim().startsWith('<')) {
-                 htmlIsi = rawIsi.split('\n')
-                                 .filter(p => p.trim() !== '')
-                                 .map(p => '<p>' + p.trim() + '</p>')
-                                 .join('');
+                 htmlIsi = rawIsi.split('\n').filter(p => p.trim() !== '').map(p => '<p>' + p.trim() + '</p>').join('');
             }
             
             const wordCount = htmlIsi.split(' ').length;
             const waktuBaca = Math.ceil(wordCount / 200) + " min read";
 
-            // LOGIC IMAGE BASE64 UPLOAD
             const fileInput = document.getElementById('artFileImage');
             let base64Image = null;
             
-            // SANITASI FINAL SEBELUM PUSH KE GAS: Paksa pakai Thumbnail API
             let finalImageURL = document.getElementById('artGambar').value; 
             if (finalImageURL && (finalImageURL.indexOf('drive.google.com') !== -1 || finalImageURL.indexOf('drive.usercontent.com') !== -1)) {
                 let match = finalImageURL.match(/[-\w]{25,33}/);
-                if (match && match[0]) {
-                    finalImageURL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
-                }
+                if (match && match[0]) finalImageURL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
             }
             
             if (fileInput.files.length > 0) {
@@ -704,11 +1113,11 @@
                 ID_Berita: id,
                 Slug_URL: slug,
                 Judul: judul,
-                Meta_Desc: document.getElementById('artDesc').value, // SEO Field
+                Meta_Desc: document.getElementById('artDesc').value, 
                 Kategori: document.getElementById('artKategori').value,
                 Penulis: document.getElementById('artPenulis').value,
                 Gambar_URL: finalImageURL,
-                base64Image: base64Image, // Dikirim ke backend jika ada file upload
+                base64Image: base64Image, 
                 Konten_HTML: htmlIsi,
                 Tgl_Rilis: document.getElementById('artTanggal').value,
                 Waktu_Baca: waktuBaca,
@@ -717,16 +1126,14 @@
             };
 
             try {
-                // Fetch to Google Apps Script
                 await fetch(GAS_ARTIKEL_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
                 showToast('✅ Publikasi Berhasil disimpan di Database!');
-                loadArtikelGas(); // Refresh Tabel
+                loadArtikelGas(); 
             } catch(e) {
-                // Mode Offline Simulation Fallback
                 if(!isEdit) artikelData.unshift({...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || '/img/bemfkgumi.png'});
                 else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || artikelData[idx].Gambar_URL}; }
                 renderArtikelTable();
@@ -738,17 +1145,16 @@
         }
 
         async function deleteArtikelGAS(id) {
-            if(confirm('Apakah Anda yakin ingin menghapus artikel publikasi ini secara permanen?')) {
-                try {
-                    await fetch(GAS_ARTIKEL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteArticle', ID_Berita: id }) });
-                    artikelData = artikelData.filter(a => a.ID_Berita !== id);
-                    renderArtikelTable();
-                    showToast('✅ Artikel Dihapus dari Database GAS!');
-                } catch(e) {
-                    artikelData = artikelData.filter(a => a.ID_Berita !== id);
-                    renderArtikelTable();
-                    showToast('✅ Artikel Dihapus (Mode Simulasi)');
-                }
+            // Confirm di-bypass untuk kompatibilitas Canvas Environment
+            try {
+                await fetch(GAS_ARTIKEL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteArticle', ID_Berita: id }) });
+                artikelData = artikelData.filter(a => a.ID_Berita !== id);
+                renderArtikelTable();
+                showToast('✅ Artikel Dihapus dari Database GAS!');
+            } catch(e) {
+                artikelData = artikelData.filter(a => a.ID_Berita !== id);
+                renderArtikelTable();
+                showToast('✅ Artikel Dihapus (Mode Simulasi)');
             }
         }
     </script>
