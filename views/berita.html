@@ -238,7 +238,7 @@
          if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
              var match = url.match(/[-\w]{25,33}/); // Regex mengekstrak Unik ID Drive 
              if (match && match[0]) {
-                 // Format spesifik anti-block CORS Google Drive
+                 // Ganti dengan format `download?id=...` jika memang itu yang bekerja 100% untuk Anda
                  item.Gambar_URL = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
              }
          }
