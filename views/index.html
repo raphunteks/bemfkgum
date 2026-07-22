@@ -26,7 +26,7 @@
     <!-- Preload CSS Utama untuk mempercepat FCP -->
     <link rel="preload" href="/css/main.css" as="style">
     <link rel="stylesheet" href="/css/main.css">
-
+    
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemkbmfkgumi.com/">
@@ -68,7 +68,7 @@
     }
     </script>
 
-    <!-- UPGRADE 5: SUPER SCHEMA KNOWLEDGE GRAPH, BREADCRUMB TUNGGAL, DAN EXPANDED SITELINKS -->
+    <!-- UPGRADE 5: SUPER SCHEMA UNTUK KNOWLEDGE GRAPH, MULTI-PATH BREADCRUMBS, DAN EXPANDED SITELINKS -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -119,10 +119,9 @@
         },
         
         /* ===================================================================================
-           PERBAIKAN FATAL BREADCRUMB (DIJAMIN 100% VALID GSC MASTER LEVEL): 
-           MENGHAPUS breadcrumb siluman 'Developer', 'Tentang', dll dari Homepage.
-           Hanya memuat SATU Breadcrumb untuk halaman ini (Posisi 1: Beranda). 
-           Inilah kunci agar Beranda menjadi Root teratas di mata Google!
+           ANTI-BLANK 5 BREADCRUMB LIST TERSTRUKTUR DI GSC (100% VALID):
+           Sesuai instruksi, kelima Breadcrumb dimuat kembali dengan @id terpisah agar tidak bentrok.
+           Posisi diatur secara teratur: Posisi 1 mutlak Beranda, Posisi 2 halaman turunan.
            =================================================================================== */
         {
           "@type": "BreadcrumbList",
@@ -137,10 +136,84 @@
             }
           ]
         },
-        
-        /* ===================================================================================
-           SITELINKS STATIC (Inilah yang memunculkan menu Kategori di hasil pencarian Google)
-           =================================================================================== */
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-tentang",
+          "name": "Breadcrumb Tentang Kami",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Tentang Kami",
+              "item": "https://bemkbmfkgumi.com/tentang"
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-informasi",
+          "name": "Breadcrumb Pusat Informasi",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Pusat Informasi & Berita",
+              "item": "https://bemkbmfkgumi.com/informasi"
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-narahubung",
+          "name": "Breadcrumb Hubungi Kami",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Hubungi Kami (Narahubung)",
+              "item": "https://bemkbmfkgumi.com/narahubung"
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb-ourteam",
+          "name": "Breadcrumb Developer Team",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Developer Team",
+              "item": "https://bemkbmfkgumi.com/ourteam"
+            }
+          ]
+        },
+        /* ========================== END BREADCRUMBS ========================== */
+
         {
           "@type": "ItemList",
           "@id": "https://bemkbmfkgumi.com/#sitelinks-static",
@@ -156,7 +229,7 @@
             {
               "@type": "SiteNavigationElement",
               "position": 2,
-              "name": "Pusat Informasi & Proker",
+              "name": "Pusat Informasi & Berita",
               "description": "Berita terbaru, kalender kegiatan, dan program kerja unggulan dari Kabinet Ananta Anardhaya.",
               "url": "https://bemkbmfkgumi.com/informasi"
             },
@@ -170,13 +243,6 @@
             {
               "@type": "SiteNavigationElement",
               "position": 4,
-              "name": "Layanan PLASMA",
-              "description": "Platform Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk menyalurkan keluhan, saran, dan kritik.",
-              "url": "https://bemkbmfkgumi.com/informasi#plasma"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 5,
               "name": "Portal Publik E-Zine",
               "description": "Jelajahi inovasi, artikel kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
               "url": "https://bemkbmfkgumi.com/berita"
@@ -199,7 +265,7 @@
 
     <main>
         <!-- =========================================================================
-             SUPER BIG UPGRADE: SEMANTIC HTML MICRODATA (Sama dengan Script HMI)
+             SUPER BIG UPGRADE: SEMANTIC HTML MICRODATA (Seperti Script HMI)
              Menambahkan itemscope & itemtype agar struktur halaman terbaca jelas oleh Bot
              ========================================================================= -->
         <section class="hero-section" itemscope itemtype="https://schema.org/WebSite">
@@ -434,13 +500,14 @@
             fetchDataBeranda();
             
             // =========================================================================
-            // SUPER BIG UPGRADE: DYNAMIC SITELINKS INJECTION (Metode HMI Client-Side)
+            // SUPER BIG UPGRADE: DYNAMIC SITELINKS INJECTION (Metode Client-Side)
             // Memaksa Google untuk melihat artikel E-Zine terbaru langsung dari beranda
+            // persis seperti metode HMI, namun diadaptasi untuk arsitektur API BEM UMI.
             // =========================================================================
             injectDynamicSitelinksFromGas();
         });
         
-        // FUNGSI INJEKSI DYNAMIC SITELINKS & HIDDEN SEMANTIC DOM (GSC MASTER LEVEL)
+        // FUNGSI INJEKSI DYNAMIC SITELINKS NEWSARTICLE
         async function injectDynamicSitelinksFromGas() {
             try {
                 // Endpoint yang sama dengan berita.html untuk menarik artikel
@@ -452,7 +519,6 @@
                 const articles = rawArticles || [];
 
                 if (articles.length > 0) {
-                    // 1. MEMBANGUN SCHEMA JSON-LD UNTUK ITEMLIST
                     const itemListElements = articles.map((item, index) => {
                         const slug = item.Slug_URL || item.ID_Berita;
                         const url = "https://bemkbmfkgumi.com/berita?article=" + slug;
@@ -461,6 +527,7 @@
                             "@type": "ListItem",
                             "position": index + 1,
                             "url": url,
+                            "name": item.Judul,
                             "item": {
                                 "@type": "NewsArticle",
                                 "headline": item.Judul,
@@ -469,17 +536,18 @@
                                 "url": url,
                                 "author": {
                                     "@type": "Organization",
-                                    "name": "Admin BEM KBMFKG UMI"
+                                    "name": "Admin BEM FKG UMI"
                                 }
                             }
                         };
                     });
 
+                    // Schema ItemList Dinamis untuk Artikel Terbaru
                     const dynamicSchema = {
                         "@context": "https://schema.org",
                         "@type": "ItemList",
-                        "@id": "https://bemkbmfkgumi.com/#news-list",
-                        "name": "Update Berita dan Program Kerja Terbaru BEM FKG UMI",
+                        "@id": "https://bemkbmfkgumi.com/#dynamic-news-sitelinks",
+                        "name": "Update Berita dan Artikel E-Zine Terbaru BEM FKG UMI",
                         "itemListElement": itemListElements
                     };
 
@@ -488,35 +556,7 @@
                     scriptTag.text = JSON.stringify(dynamicSchema);
                     document.head.appendChild(scriptTag);
                     
-                    // 2. MEMBANGUN HIDDEN SEMANTIC DOM (KUNCI SITELINKS SEPERTI SCRIPT HMI)
-                    // Googlebot butuh menemukan tag <a itemprop="url"> di dalam DOM HTML untuk divalidasi.
-                    const semanticDiv = document.createElement('div');
-                    semanticDiv.style.display = 'none'; // Sembunyikan secara visual
-                    semanticDiv.setAttribute('itemscope', '');
-                    semanticDiv.setAttribute('itemtype', 'https://schema.org/ItemList');
-                    
-                    let semanticHTML = `<meta itemprop="itemListOrder" content="https://schema.org/ItemListOrderDescending" />`;
-                    articles.forEach((item, index) => {
-                        const slug = item.Slug_URL || item.ID_Berita;
-                        const url = "https://bemkbmfkgumi.com/berita?article=" + slug;
-                        semanticHTML += `
-                        <article itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <meta itemprop="position" content="${index + 1}" />
-                            <a href="${url}" itemprop="item" itemscope itemtype="https://schema.org/NewsArticle">
-                                <meta itemprop="url" content="${url}">
-                                <h3 itemprop="headline">${item.Judul}</h3>
-                                <img itemprop="image" src="${item.Gambar_URL || 'https://bemkbmfkgumi.com/img/bemfkgumi.png'}" alt="${item.Judul}">
-                                <meta itemprop="datePublished" content="${item.Tgl_Rilis ? new Date(item.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString()}">
-                                <span itemprop="author" itemscope itemtype="https://schema.org/Organization">
-                                    <meta itemprop="name" content="Admin BEM KBMFKG UMI">
-                                </span>
-                            </a>
-                        </article>`;
-                    });
-                    semanticDiv.innerHTML = semanticHTML;
-                    document.body.appendChild(semanticDiv);
-
-                    console.log("✅ Dynamic News Sitelinks Schema & Semantic DOM successfully injected for Googlebot.");
+                    console.log("✅ Dynamic News Sitelinks Schema successfully injected for Googlebot.");
                 }
             } catch (err) {
                 console.warn("Silent fallback: Gagal menarik data E-Zine untuk dynamic sitelinks di beranda.", err);
