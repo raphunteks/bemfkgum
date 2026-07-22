@@ -144,6 +144,8 @@
             <i class="ph ph-heart text-xl" id="iconLike"></i>
             <span id="txtLikeCount" class="font-bold">0</span> Suka
           </button>
+          
+          <!-- UPGRADE SHARE BUTTON (Native Web Share API) -->
           <button onclick="shareArticle()" class="flex items-center gap-2 text-[color:var(--text-muted)] hover:text-[color:var(--accent-neon)] transition p-2 rounded-lg outline-none bg-[color:var(--bg-dark-overlay)] hover:bg-[color:var(--border-light)] border border-[color:var(--border-light)]">
             <i class="ph ph-share-network text-xl"></i> Bagikan
           </button>
@@ -234,7 +236,6 @@
     }
 
     function processNewData(newData, hasMore) {
-      // FRONTEND AUTO-SANITIZER URL IMAGE: Bypass CORS 100% menggunakan Thumbnail API
       var cleanedData = newData.map(function(item) {
          var url = item.Gambar_URL || '';
          if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
@@ -251,7 +252,6 @@
       document.getElementById('scrollLoader').style.display = 'none';
       renderArticles(cleanedData);
       
-      // Inject ItemList (Sitelinks) SEO saat berada di beranda
       if (!appState.currentViewId) injectDefaultSEO();
 
       if (!appState.initialLoadDone) {
@@ -333,27 +333,23 @@
     }
 
     // =========================================================================
-    // SUPER BIG UPGRADE: ENTERPRISE JSON-LD SEO GENERATOR
+    // ENTERPRISE JSON-LD SEO GENERATOR
     // =========================================================================
     function injectEnterpriseSEO(article, url) {
-      // 1. Meta Tags Update
       document.title = article.Judul + " | BEM KBMFKG UMI";
       var desc = article.Meta_Desc || article.Desc || article.Judul;
       
       document.querySelector('meta[name="description"]')?.setAttribute("content", desc);
       document.getElementById('canonicalUrl')?.setAttribute("href", url);
       
-      // Open Graph
       document.getElementById('ogTitle')?.setAttribute("content", article.Judul);
       document.getElementById('ogDesc')?.setAttribute("content", desc);
       document.getElementById('ogUrl')?.setAttribute("content", url);
       document.getElementById('ogImage')?.setAttribute("content", article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png");
       document.getElementById('ogType')?.setAttribute("content", "article");
       
-      // Twitter
       document.getElementById('twTitle')?.setAttribute("content", article.Judul);
       
-      // 2. JSON-LD Enterprise Schema (NewsArticle + Breadcrumb)
       var oldSchema = document.getElementById('enterprise-schema');
       if (oldSchema) oldSchema.remove();
       
@@ -394,7 +390,6 @@
     }
 
     function injectDefaultSEO() {
-      // Revert HTML Meta
       document.title = "Portal Berita E-Zine | BEM KBMFKG UMI";
       document.querySelector('meta[name="description"]')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.");
       document.getElementById('canonicalUrl')?.setAttribute("href", "https://bemkbmfkgumi.com/berita");
@@ -403,7 +398,6 @@
       document.getElementById('ogUrl')?.setAttribute("content", "https://bemkbmfkgumi.com/berita");
       document.getElementById('ogType')?.setAttribute("content", "website");
 
-      // Inject Sitelinks & Carousel ItemList
       var oldSchema = document.getElementById('enterprise-schema');
       if (oldSchema) oldSchema.remove();
 
@@ -462,7 +456,6 @@
       breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
       document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
-      // FIX RENDER: Hapus opacity dan mix-blend-screen. Gunakan properti normal agar tahan Light/Dark Mode.
       if (article.Gambar_URL) {
           document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
       } else {
@@ -488,7 +481,6 @@
       
       fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementView', ID_Berita: id}) }).catch(function(e) {});
 
-      // Injeksi Enterprise SEO
       injectEnterpriseSEO(article, currentFullUrl);
     }
 
@@ -500,7 +492,6 @@
 
       if (!skipPushState) window.history.pushState(null, '', window.location.pathname);
 
-      // Kembalikan ke SEO Homepage
       injectDefaultSEO();
     }
 
@@ -524,14 +515,31 @@
       fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementLike', ID_Berita: id}) }).catch(function(e){});
     }
 
+    // SUPER UPGRADE: NATIVE WEB SHARE API UNTUK HP (IOS/ANDROID)
     function shareArticle() {
-      var dummy = document.createElement('input');
-      document.body.appendChild(dummy);
-      dummy.value = window.location.href; 
-      dummy.select();
-      document.execCommand('copy');
-      document.body.removeChild(dummy);
-      alert("Tautan artikel publikasi berhasil disalin ke clipboard!");
+      var id = appState.currentViewId;
+      var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
+      if (!article) return;
+      var url = window.location.href; 
+      
+      if (navigator.share) {
+        navigator.share({
+          title: article.Judul + ' | BEM KBMFKG UMI',
+          text: 'Baca artikel menarik ini di Portal Publik E-Zine BEM KBMFKG UMI: ' + article.Judul,
+          url: url
+        }).catch(function(error) {
+          console.log('User membatalkan share', error);
+        });
+      } else {
+        // Fallback untuk browser Desktop yang tidak support Native Share
+        var dummy = document.createElement('input');
+        document.body.appendChild(dummy);
+        dummy.value = url; 
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+        alert("Link artikel publikasi berhasil disalin ke clipboard!");
+      }
     }
   </script>
 </body>
