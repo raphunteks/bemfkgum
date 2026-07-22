@@ -205,18 +205,25 @@ const defaultKalender = [
     }
 ];
 
+// Google Apps Script API Endpoint untuk Artikel
+const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
+
 // ================= ROUTES FRONTEND =================
 app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
+
+// SUPER UPGRADE: Route untuk halaman BERITA (Menjawab isu Cannot GET /berita)
+app.get('/berita', (req, res) => res.render('berita'));
+
 app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
 
-// Rute Dinamis
+// Rute Dinamis Proker
 app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
 app.get('/proker-deskripsi/:slug', (req, res) => {
     res.render('proker-deskripsi'); 
@@ -235,7 +242,6 @@ app.get('/proker-detail/:slug', (req, res) => {
 
 // ============================================================================
 // SUPER BIG UPGRADE: DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR
-// Menyuntikkan seluruh link dinamis dari database agar terindeks oleh Googlebot
 // ============================================================================
 
 app.get('/robots.txt', (req, res) => {
@@ -267,7 +273,7 @@ app.get('/sitemap.xml', async (req, res) => {
             kalenderData = safeParse(rawKalender, defaultKalender);
         }
 
-        // Generate URL Statis
+        // Generate URL Statis (Termasuk /berita)
         let xmlUrls = `
     <url>
         <loc>${domain}/</loc>
@@ -280,6 +286,12 @@ app.get('/sitemap.xml', async (req, res) => {
         <lastmod>${today}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${domain}/berita</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
     </url>
     <url>
         <loc>${domain}/informasi</loc>
@@ -330,6 +342,29 @@ app.get('/sitemap.xml', async (req, res) => {
     </url>`;
                 }
             });
+        }
+
+        // MENGAMBIL URL DINAMIS ARTIKEL DARI GAS SECARA LANGSUNG (SEO SUPER BOOST)
+        try {
+            const gasReq = await fetch(`${GAS_ARTIKEL_URL}?action=getArticles&page=1&limit=100`);
+            if(gasReq.ok) {
+                const gasRes = await gasReq.json();
+                const articles = gasRes.data || [];
+                articles.forEach(art => {
+                    const slug = art.Slug_URL || art.ID_Berita;
+                    if(slug) {
+                        xmlUrls += `
+    <url>
+        <loc>${domain}/berita?article=${slug}</loc>
+        <lastmod>${art.Tgl_Rilis ? art.Tgl_Rilis.split('T')[0] : today}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
+                    }
+                });
+            }
+        } catch(e) {
+            console.warn("⚠️ Sitemap: Gagal melakukan sinkronisasi artikel dari GAS Backend", e);
         }
 
         // Bungkus dengan Tag Root XML
