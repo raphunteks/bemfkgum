@@ -216,7 +216,9 @@ app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
 
 // SUPER UPGRADE: Route untuk halaman BERITA (Menjawab isu Cannot GET /berita)
-app.get('/berita', (req, res) => res.render('berita'));
+app.get('/berita', (req, res) => {
+    res.render('berita'); 
+});
 
 app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
