@@ -215,7 +215,7 @@ app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
 
-// SUPER UPGRADE: Route untuk halaman BERITA (Menjawab isu Cannot GET /berita)
+// SUPER UPGRADE: Route untuk halaman BERITA
 app.get('/berita', (req, res) => {
     res.render('berita'); 
 });
