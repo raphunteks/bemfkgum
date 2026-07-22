@@ -381,11 +381,11 @@
                     <input type="text" id="artDesc" class="neo-input" placeholder="Ringkasan 1 kalimat...">
                 </div>
                 <div>
-                    <!-- FILE IMAGE UPLOAD DENGAN PREVIEW ANTI CORS -->
+                    <!-- FILE IMAGE UPLOAD DENGAN PREVIEW ANTI CORS (Dihapus Atribut Crossorigin) -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Preview & Upload Gambar</label>
                     <div class="art-preview-container">
                         <span id="artPreviewPlaceholder" style="color:var(--text-muted); font-size:0.8rem;">Belum ada gambar</span>
-                        <img id="artPreviewImg" class="art-preview-img" src="" alt="Preview" crossorigin="anonymous" referrerpolicy="no-referrer">
+                        <img id="artPreviewImg" class="art-preview-img" src="" alt="Preview" referrerpolicy="no-referrer">
                     </div>
                     <input type="file" id="artFileImage" class="custom-file-input" accept="image/jpeg, image/png, image/jpg, image/webp" style="margin-bottom:5px;" onchange="previewArtImage(this)">
                     <input type="text" id="artGambar" class="neo-input" placeholder="Atau tempel URL Gambar langsung..." style="font-size:0.8rem; padding: 10px 15px;" oninput="updateArtPreviewUrl(this.value)">
