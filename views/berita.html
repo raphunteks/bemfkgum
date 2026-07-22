@@ -24,7 +24,7 @@
   <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
   <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
   
-  <!-- FIX RENDER BLOCKING (Standar Informasi.html) -->
+  <!-- FIX RENDER BLOCKING -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
@@ -34,16 +34,17 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   
-  <!-- PROTECT DEVTOOLS (Standar Informasi.html) -->
+  <!-- PROTECT DEVTOOLS -->
   <script src="/js/protect-devtools.js"></script>
 
-  <!-- OPEN GRAPH & TWITTER CARDS -->
+  <!-- OPEN GRAPH & TWITTER CARDS (DYNAMIC TARGET) -->
   <meta property="og:site_name" content="Portal Berita E-Zine BEM KBMFKG UMI">
   <meta property="og:title" id="ogTitle" content="Portal Berita E-Zine | BEM KBMFKG UMI">
   <meta property="og:description" id="ogDesc" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini.">
-  <meta property="og:type" content="website">
+  <meta property="og:type" id="ogType" content="website">
   <meta property="og:url" id="ogUrl" content="https://bemkbmfkgumi.com/berita">
   <meta property="og:image" id="ogImage" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+  
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" id="twTitle" content="Portal Berita BEM KBMFKG UMI">
 
@@ -62,7 +63,7 @@
     .article-modal-overlay.active { display: block; opacity: 1; }
     
     .article-modal-content {
-      background: var(--card-bg); max-width: 850px; margin: 40px auto; border-radius: 24px;
+      background: var(--bg-dark); max-width: 850px; margin: 40px auto; border-radius: 24px;
       border: 1px solid var(--glass-border); box-shadow: 0 20px 50px var(--card-shadow);
       transform: translateY(40px) scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       opacity: 0; position: relative;
@@ -80,14 +81,14 @@
 </head>
 <body class="bg-custom-dark font-sans relative">
 
-  <!-- ================= BEM STANDAR HEADER (TERINTEGRASI VIA PARTIALS) ================= -->
+  <!-- ================= BEM STANDAR HEADER ================= -->
   <%- include('partials/header.html') %>
 
   <!-- SEARCH & HERO E-ZINE -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-4">
     <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 mb-8">
         <div>
-            <!-- PENYESUAIAN THEME: Menggunakan text-[color:var(--text-light)] agar kontras mengikuti Light/Dark Mode -->
+            <!-- THEME RESPONSIVE COLOR -->
             <h1 class="text-4xl md:text-5xl font-black text-[color:var(--text-light)] glow-text tracking-tight mb-2">Portal Publik <span class="text-[color:var(--accent-neon)]">E-Zine</span></h1>
             <p class="text-[color:var(--text-muted)] text-lg">Jelajahi inovasi, berita organisasi, edukasi klinis, dan event terbaru kami.</p>
         </div>
@@ -116,18 +117,19 @@
     <div id="scrollLoader" class="hidden"><div class="loader-ring"></div></div>
   </main>
 
-  <!-- ================= BEM STANDAR FOOTER (TERINTEGRASI VIA PARTIALS) ================= -->
+  <!-- ================= BEM STANDAR FOOTER ================= -->
   <%- include('partials/footer.html') %>
 
   <!-- ================= MODAL FULL VIEW ARTIKEL ================= -->
   <div id="articleModal" class="article-modal-overlay" role="dialog" aria-modal="true" tabindex="-1">
     <article class="article-modal-content pb-10">
-      <button onclick="closeModalAndGoHome(event)" class="absolute top-4 right-4 bg-[color:var(--bg-dark-overlay)] p-3 rounded-full text-[color:var(--text-light)] hover:bg-[color:var(--accent-neon)] hover:text-black transition z-10 backdrop-blur-sm outline-none border border-[color:var(--border-light)]" aria-label="Tutup Artikel">
+      <button onclick="closeModalAndGoHome(event)" class="absolute top-4 right-4 bg-[color:var(--bg-dark-overlay)] p-3 rounded-full text-[color:var(--text-light)] hover:bg-[color:var(--accent-neon)] hover:text-[color:var(--bg-dark)] transition z-10 backdrop-blur-sm outline-none border border-[color:var(--border-light)]" aria-label="Tutup Artikel">
         <i class="ph ph-x text-xl"></i>
       </button>
       
+      <!-- FIX RENDER IMAGE MODAL: Hapus mix-blend-screen yang membuat error di Light Mode -->
       <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-[color:var(--bg-dark-heavy)] relative m-0 rounded-t-3xl overflow-hidden">
-          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. Tidak ada Fallback OnError -->
+          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. -->
       </figure>
 
       <div class="px-6 md:px-12 mt-8">
@@ -157,7 +159,7 @@
   </button>
 
   <script>
-    // --- LINK GOOGLE APPS SCRIPT API BACKEND (MANAJEMEN ARTIKEL) ---
+    // --- LINK GOOGLE APPS SCRIPT API BACKEND ---
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
 
     var appState = {
@@ -232,13 +234,12 @@
     }
 
     function processNewData(newData, hasMore) {
-      // FRONTEND AUTO-SANITIZER URL IMAGE: Bypass CORS dengan Thumbnail API (Sama seperti E-VOT)
+      // FRONTEND AUTO-SANITIZER URL IMAGE: Bypass CORS 100% menggunakan Thumbnail API
       var cleanedData = newData.map(function(item) {
          var url = item.Gambar_URL || '';
          if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
-             var match = url.match(/[-\w]{25,}/); // Regex mengekstrak Unik ID Drive 
+             var match = url.match(/[-\w]{25,}/); 
              if (match && match[0]) {
-                 // Format mutlak yang kebal CORS dan support HD rendering
                  item.Gambar_URL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
              }
          }
@@ -249,6 +250,9 @@
       appState.hasMore = hasMore; appState.page++; appState.isLoading = false;
       document.getElementById('scrollLoader').style.display = 'none';
       renderArticles(cleanedData);
+      
+      // Inject ItemList (Sitelinks) SEO saat berada di beranda
+      if (!appState.currentViewId) injectDefaultSEO();
 
       if (!appState.initialLoadDone) {
         appState.initialLoadDone = true;
@@ -273,13 +277,11 @@
         var isHero = (currentOffset === 0 && i === 0);
         var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
         
-        // Atribut Crossorigin dihapus TOTAL agar tidak ada CORS Error di Browser, dan murni mengandalkan no-referrer.
         html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
         html +=   '<div class="zine-img-wrapper">';
         if (img) {
             html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '">';
         } else {
-            // Placeholder saat gambar kosong tanpa onerror yang melompat
             html +=     '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-[color:var(--text-muted)]"></i></div>';
         }
         html +=     '<div class="absolute top-4 left-4 bg-[color:var(--bg-dark-overlay)] text-[color:var(--accent-neon)] text-xs px-4 py-1.5 rounded-full border border-[color:var(--accent-glow)] backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
@@ -330,6 +332,118 @@
       appState.category = cat; loadArticles(true);
     }
 
+    // =========================================================================
+    // SUPER BIG UPGRADE: ENTERPRISE JSON-LD SEO GENERATOR
+    // =========================================================================
+    function injectEnterpriseSEO(article, url) {
+      // 1. Meta Tags Update
+      document.title = article.Judul + " | BEM KBMFKG UMI";
+      var desc = article.Meta_Desc || article.Desc || article.Judul;
+      
+      document.querySelector('meta[name="description"]')?.setAttribute("content", desc);
+      document.getElementById('canonicalUrl')?.setAttribute("href", url);
+      
+      // Open Graph
+      document.getElementById('ogTitle')?.setAttribute("content", article.Judul);
+      document.getElementById('ogDesc')?.setAttribute("content", desc);
+      document.getElementById('ogUrl')?.setAttribute("content", url);
+      document.getElementById('ogImage')?.setAttribute("content", article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png");
+      document.getElementById('ogType')?.setAttribute("content", "article");
+      
+      // Twitter
+      document.getElementById('twTitle')?.setAttribute("content", article.Judul);
+      
+      // 2. JSON-LD Enterprise Schema (NewsArticle + Breadcrumb)
+      var oldSchema = document.getElementById('enterprise-schema');
+      if (oldSchema) oldSchema.remove();
+      
+      var schema = {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "NewsArticle",
+            "@id": url + "#article",
+            "url": url,
+            "headline": article.Judul,
+            "description": desc,
+            "image": [ article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png" ],
+            "datePublished": article.Tgl_Rilis || new Date().toISOString(),
+            "dateModified": article.Tgl_Rilis || new Date().toISOString(),
+            "author": { "@type": "Person", "name": article.Penulis || "Admin BEM FKG UMI" },
+            "publisher": { "@type": "Organization", "@id": "https://bemkbmfkgumi.com/#organization", "name": "BEM KBMFKG UMI", "logo": { "@type": "ImageObject", "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png" } },
+            "mainEntityOfPage": { "@type": "WebPage", "@id": url }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": url + "#breadcrumb",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Beranda Publik", "item": "https://bemkbmfkgumi.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Berita & Artikel", "item": "https://bemkbmfkgumi.com/berita" },
+              { "@type": "ListItem", "position": 3, "name": article.Kategori, "item": "https://bemkbmfkgumi.com/berita?category=" + encodeURIComponent(article.Kategori) },
+              { "@type": "ListItem", "position": 4, "name": article.Judul, "item": url }
+            ]
+          }
+        ]
+      };
+
+      var script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'enterprise-schema';
+      script.text = JSON.stringify(schema);
+      document.head.appendChild(script);
+    }
+
+    function injectDefaultSEO() {
+      // Revert HTML Meta
+      document.title = "Portal Berita E-Zine | BEM KBMFKG UMI";
+      document.querySelector('meta[name="description"]')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.");
+      document.getElementById('canonicalUrl')?.setAttribute("href", "https://bemkbmfkgumi.com/berita");
+      document.getElementById('ogTitle')?.setAttribute("content", "Portal Berita E-Zine | BEM KBMFKG UMI");
+      document.getElementById('ogDesc')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, dan event terkini.");
+      document.getElementById('ogUrl')?.setAttribute("content", "https://bemkbmfkgumi.com/berita");
+      document.getElementById('ogType')?.setAttribute("content", "website");
+
+      // Inject Sitelinks & Carousel ItemList
+      var oldSchema = document.getElementById('enterprise-schema');
+      if (oldSchema) oldSchema.remove();
+
+      var itemListElements = appState.articles.slice(0, 10).map(function(art, index) {
+          var url = "https://bemkbmfkgumi.com/berita?article=" + (art.Slug_URL || art.ID_Berita);
+          return {
+              "@type": "ListItem",
+              "position": index + 1,
+              "url": url,
+              "name": art.Judul
+          };
+      });
+
+      if(itemListElements.length === 0) return;
+
+      var schema = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+              "@type": "CollectionPage",
+              "@id": "https://bemkbmfkgumi.com/berita#webpage",
+              "url": "https://bemkbmfkgumi.com/berita",
+              "name": "Portal Berita E-Zine | BEM KBMFKG UMI",
+              "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI."
+            },
+            {
+              "@type": "ItemList",
+              "itemListElement": itemListElements
+            }
+        ]
+      };
+
+      var script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'enterprise-schema';
+      script.text = JSON.stringify(schema);
+      document.head.appendChild(script);
+    }
+    // =========================================================================
+
     function openModal(event, id, skipPushState = false) {
       if (event) event.preventDefault(); 
 
@@ -348,11 +462,11 @@
       breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
       document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
-      // Modal render tanpa Fallback OnError, tanpa atribut crossorigin, murni pakai no-referrer
+      // FIX RENDER: Hapus opacity dan mix-blend-screen. Gunakan properti normal agar tahan Light/Dark Mode.
       if (article.Gambar_URL) {
-          document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
+          document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
       } else {
-          document.getElementById('modalImgWrapper').innerHTML = '<div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
+          document.getElementById('modalImgWrapper').innerHTML = '<div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
       }
       
       document.getElementById('modalMeta').innerHTML = '<span class="text-[color:var(--accent-neon)] font-bold border border-[color:var(--accent-glow)] px-3 py-1 rounded-full uppercase tracking-wider bg-[color:var(--bg-dark-overlay)]">' + article.Kategori + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span class="font-medium text-[color:var(--text-muted)]">✍️ ' + (article.Penulis || 'Admin') + '</span> <span class="text-[color:var(--border-light)]">&bull;</span> <span>📅 ' + (article.Tgl_Rilis || '').split("T")[0] + '</span>';
@@ -374,13 +488,8 @@
       
       fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementView', ID_Berita: id}) }).catch(function(e) {});
 
-      document.title = article.Judul + " | BEM KBMFKG UMI";
-      if(article.Meta_Desc || article.Desc) document.querySelector('meta[name="description"]').setAttribute("content", article.Meta_Desc || article.Desc);
-      document.getElementById('canonicalUrl').setAttribute("href", currentFullUrl);
-      document.getElementById('ogTitle').setAttribute("content", article.Judul);
-      if(article.Meta_Desc || article.Desc) document.getElementById('ogDesc').setAttribute("content", article.Meta_Desc || article.Desc);
-      document.getElementById('ogUrl').setAttribute("content", currentFullUrl);
-      document.getElementById('ogImage').setAttribute("content", article.Gambar_URL);
+      // Injeksi Enterprise SEO
+      injectEnterpriseSEO(article, currentFullUrl);
     }
 
     function closeModal(skipPushState = false) {
@@ -391,8 +500,8 @@
 
       if (!skipPushState) window.history.pushState(null, '', window.location.pathname);
 
-      document.title = "Portal Berita E-Zine | BEM KBMFKG UMI";
-      document.getElementById('canonicalUrl').setAttribute("href", "https://bemkbmfkgumi.com/berita");
+      // Kembalikan ke SEO Homepage
+      injectDefaultSEO();
     }
 
     function closeModalAndGoHome(event) {
