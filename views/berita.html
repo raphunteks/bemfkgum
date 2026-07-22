@@ -80,7 +80,7 @@
   <header id="main-header" itemscope itemtype="https://schema.org/WPHeader">
       <div class="header-inner">
           <a href="/" itemprop="url" class="logo-container" aria-label="Beranda BEM KBMFKG UMI">
-              <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="image" class="header-logo-img">
+              <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="image" class="header-logo-img" onerror="this.src='/img/bemfkgumi.png';">
               <div class="header-text-group">
                   <span class="header-title" itemprop="headline">BEM KBMFKG UMI</span>
                   <span class="header-subtitle script-font" id="header-kabinet-name" itemprop="description">Kabinet Ananta Anardhaya</span>
@@ -126,7 +126,7 @@
       <button class="badge-category active" onclick="filterCategory('All', this)">Semua</button>
       <button class="badge-category" onclick="filterCategory('Pengumuman', this)">Pengumuman</button>
       <button class="badge-category" onclick="filterCategory('Edukasi', this)">Edukasi</button>
-      <button class="badge-category" onclick="filterCategory('Kegiatan', this)">Kegiatan Sosial</button>
+      <button class="badge-category" onclick="filterCategory('Sosial', this)">Kegiatan Sosial</button>
       <button class="badge-category" onclick="filterCategory('Olahraga', this)">Olahraga</button>
       <button class="badge-category" onclick="filterCategory('Prestasi', this)">Prestasi</button>
     </nav>
@@ -178,18 +178,13 @@
       </button>
       
       <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-gray-900 relative m-0 rounded-t-3xl overflow-hidden">
-          <!-- Gambar Injeksi -->
+          <!-- Gambar Injeksi. Ada OnError fallback agar tidak pernah terlihat broken -->
       </figure>
 
       <div class="px-6 md:px-12 mt-8">
-        <!-- Visual Breadcrumbs UI -->
-        <nav aria-label="Breadcrumb" id="modalBreadcrumb" class="breadcrumb-nav text-sm">
-           <!-- Diinjeksi via JS -->
-        </nav>
+        <nav aria-label="Breadcrumb" id="modalBreadcrumb" class="breadcrumb-nav text-sm"></nav>
 
-        <div id="modalMeta" class="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-4 mt-2">
-          <!-- Meta Injeksi -->
-        </div>
+        <div id="modalMeta" class="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-4 mt-2"></div>
         
         <h1 id="modalTitle" class="text-3xl md:text-5xl font-black mb-8 text-white leading-tight tracking-tight glow-text"></h1>
         
@@ -203,9 +198,7 @@
           </button>
         </div>
 
-        <div id="modalContent" class="article-text text-lg">
-          <!-- Konten Injeksi -->
-        </div>
+        <div id="modalContent" class="article-text text-lg"></div>
       </div>
     </article>
   </div>
@@ -235,7 +228,6 @@
         }
       });
       
-      // Theme toggler header logic sync
       const themeCheckbox = document.getElementById('checkboxTheme');
       if(themeCheckbox) {
           themeCheckbox.addEventListener('change', (e) => {
@@ -245,9 +237,7 @@
       }
     };
 
-    window.addEventListener('popstate', function(event) {
-      checkUrlRouting(true);
-    });
+    window.addEventListener('popstate', function(event) { checkUrlRouting(true); });
 
     function checkUrlRouting(isPopState = false) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -282,12 +272,11 @@
         })
         .then(function(res) {
           var parsedData = typeof res === 'string' ? JSON.parse(res) : res;
-          // Format Data dari GAS
           var articleList = parsedData.data || parsedData || [];
-          processNewData(articleList, false); // Sementara hasMore false sampai API mendukung pagination
+          processNewData(articleList, false); 
         })
         .catch(function(err) {
-          console.warn("GAS API Error. Kemungkinan DB kosong atau Endpoint Belum Deploy.", err);
+          console.warn("GAS API Error.", err);
           appState.isLoading = false;
           document.getElementById('scrollLoader').style.display = 'none';
         });
@@ -305,11 +294,9 @@
       }
     }
 
-    // --- EXPERT PERFORMANCE UPGRADE: LCP / EAGER LOADING UNTUK GAMBAR PERTAMA ---
     function renderArticles(data) {
       var grid = document.getElementById('articleGrid');
       var html = "";
-      
       var currentOffset = appState.articles.length - data.length;
 
       for (var i = 0; i < data.length; i++) {
@@ -324,9 +311,10 @@
         var isHero = (currentOffset === 0 && i === 0);
         var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
         
+        // Penambahan 'onerror' agar jika URL gambar dari Google Drive terblokir, otomatis memakai logo default BEM
         html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
         html +=   '<div class="zine-img-wrapper">';
-        html +=     '<img src="' + img + '" ' + loadingAttr + ' width="400" height="220" class="card-img" alt="' + title + '">';
+        html +=     '<img src="' + img + '" ' + loadingAttr + ' class="card-img" alt="' + title + '" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';">';
         html +=     '<div class="absolute top-4 left-4 bg-[#000000]/70 text-[#00e5ff] text-xs px-4 py-1.5 rounded-full border border-[#00e5ff]/50 backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
         html +=   '</div>';
         html +=   '<div class="p-6 flex-1 flex flex-col justify-between">';
@@ -361,7 +349,6 @@
         window.scrollY > 300 ? fab.classList.add('show') : fab.classList.remove('show');
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) loadArticles(false);
         
-        // Header Shrink logic
         const header = document.getElementById('main-header');
         if (window.scrollY > 20) header.classList.add('scrolled');
         else header.classList.remove('scrolled');
@@ -395,7 +382,9 @@
       breadcrumbHtml += '<span class="text-gray-200 truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
       document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
-      document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[var(--card-bg)] via-transparent to-transparent"></div>';
+      // Fallback Image dengan OnError agar tidak broken.
+      document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[var(--card-bg)] via-transparent to-transparent"></div>';
+      
       document.getElementById('modalMeta').innerHTML = '<span class="text-[#00e5ff] font-bold border border-[#00e5ff]/30 px-3 py-1 rounded-full uppercase tracking-wider bg-[#00e5ff]/10">' + article.Kategori + '</span> <span class="text-gray-500">&bull;</span> <span class="font-medium text-gray-300">✍️ ' + (article.Penulis || 'Admin') + '</span> <span class="text-gray-500">&bull;</span> <span>📅 ' + (article.Tgl_Rilis || '').split("T")[0] + '</span>';
       document.getElementById('modalTitle').innerText = article.Judul;
       document.getElementById('modalContent').innerHTML = article.Konten_HTML;
@@ -418,10 +407,10 @@
 
       // SEO META INJECTION
       document.title = article.Judul + " | BEM KBMFKG UMI";
-      if(article.Desc) document.querySelector('meta[name="description"]').setAttribute("content", article.Desc);
+      if(article.Meta_Desc || article.Desc) document.querySelector('meta[name="description"]').setAttribute("content", article.Meta_Desc || article.Desc);
       document.getElementById('canonicalUrl').setAttribute("href", currentFullUrl);
       document.getElementById('ogTitle').setAttribute("content", article.Judul);
-      if(article.Desc) document.getElementById('ogDesc').setAttribute("content", article.Desc);
+      if(article.Meta_Desc || article.Desc) document.getElementById('ogDesc').setAttribute("content", article.Meta_Desc || article.Desc);
       document.getElementById('ogUrl').setAttribute("content", currentFullUrl);
       document.getElementById('ogImage').setAttribute("content", article.Gambar_URL);
     }
