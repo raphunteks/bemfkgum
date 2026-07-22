@@ -52,6 +52,21 @@ const safeParse = (data, fallbackData) => {
     }
 };
 
+// Fungsi krusial untuk mencegah XML Sitemap error karena karakter ilegal (seperti '&' pada URL Gambar)
+const escapeXml = (unsafe) => {
+    if (!unsafe) return '';
+    return unsafe.replace(/[<>&'"]/g, (c) => {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+            default: return c;
+        }
+    });
+};
+
 // ================= DATA SEED (STRUKTUR BEM KBMFKG UMI LENGKAP) =================
 const defaultOrg = {
     visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
@@ -214,12 +229,7 @@ app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/
 
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
-
-// SUPER UPGRADE: Route untuk halaman BERITA (Menjawab isu Cannot GET /berita)
-app.get('/berita', (req, res) => {
-    res.render('berita'); 
-});
-
+app.get('/berita', (req, res) => res.render('berita'));
 app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
@@ -227,36 +237,15 @@ app.get('/ourteam', (req, res) => res.render('ourteam'));
 
 // Rute Dinamis Proker
 app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
-app.get('/proker-deskripsi/:slug', (req, res) => {
-    res.render('proker-deskripsi'); 
-});
+app.get('/proker-deskripsi/:slug', (req, res) => res.render('proker-deskripsi'));
+app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proker-detail/${req.query.id}`) : res.render('proker-detail'));
+app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
 
-app.get('/proker-detail', (req, res) => {
-    if (req.query.id) {
-        return res.redirect(301, `/proker-detail/${req.query.id}`);
-    }
-    res.render('proker-detail'); 
-});
-
-app.get('/proker-detail/:slug', (req, res) => {
-    res.render('proker-detail'); 
-});
-
-// ============================================================================
-// SUPER BIG UPGRADE: DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR
-// ============================================================================
-
+// ================= SUPER BIG UPGRADE: DYNAMIC SEO SITEMAP =================
 app.get('/robots.txt', (req, res) => {
     const domain = "https://bemkbmfkgumi.com";
-    const robotsContent = `User-agent: *
-Allow: /
-Disallow: /admin
-Disallow: /api/
-
-Sitemap: ${domain}/sitemap.xml
-`;
     res.header('Content-Type', 'text/plain');
-    res.send(robotsContent);
+    res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: ${domain}/sitemap.xml\n`);
 });
 
 app.get('/sitemap.xml', async (req, res) => {
@@ -267,7 +256,6 @@ app.get('/sitemap.xml', async (req, res) => {
         let prokerData = defaultProker;
         let kalenderData = defaultKalender;
 
-        // Coba fetch dari DB Redis
         if(redis) {
             const rawProker = await redis.get('Proker_Data');
             const rawKalender = await redis.get('Kalender_Data');
@@ -275,103 +263,234 @@ app.get('/sitemap.xml', async (req, res) => {
             kalenderData = safeParse(rawKalender, defaultKalender);
         }
 
-        // Generate URL Statis (Termasuk /berita)
+        // 1. GENERATE STATIC URLs (Sesuai Struktur Format Request)
         let xmlUrls = `
+    <!-- ========================================= -->
+    <!-- HALAMAN UTAMA & PRIORITAS TINGGI          -->
+    <!-- ========================================= -->
     <url>
         <loc>${domain}/</loc>
-        <lastmod>${today}</lastmod>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
+        <image:image>
+            <image:loc>${domain}/img/bemfkgumi.png</image:loc>
+            <image:title>Logo Resmi BEM KBMFKG UMI</image:title>
+            <image:caption>Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi UMI</image:caption>
+        </image:image>
     </url>
-    <url>
-        <loc>${domain}/tentang</loc>
-        <lastmod>${today}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    <url>
-        <loc>${domain}/berita</loc>
-        <lastmod>${today}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.9</priority>
-    </url>
+
+    <!-- ========================================= -->
+    <!-- PUSAT INFORMASI & SUB-TAB (SPA ROUTING)   -->
+    <!-- ========================================= -->
     <url>
         <loc>${domain}/informasi</loc>
-        <lastmod>${today}</lastmod>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>${domain}/narahubung</loc>
-        <lastmod>${today}</lastmod>
+        <loc>${domain}/informasi#proker</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>${domain}/informasi#kalender</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>${domain}/informasi#timeline</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>${domain}/informasi#galeri</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>${domain}/informasi#plasma</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <!-- ========================================= -->
+    <!-- TENTANG KAMI & SUB-SECTION (SPA ROUTING)  -->
+    <!-- ========================================= -->
+    <url>
+        <loc>${domain}/tentang</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>${domain}/tentang#visimisi</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>${domain}/tentang#struktur</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>${domain}/tentang#filosofi</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>${domain}/tentang#sejarah-pembentukan</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>${domain}/tentang#sejarah</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <!-- ========================================= -->
+    <!-- HALAMAN PROFIL & KONTAK                   -->
+    <!-- ========================================= -->
+    <url>
+        <loc>${domain}/berita</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
     </url>
     <url>
         <loc>${domain}/ourteam</loc>
-        <lastmod>${today}</lastmod>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${domain}/narahubung</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
+    </url>
+
+    <!-- ========================================= -->
+    <!-- INDUK ROUTING KEGIATAN & DEPARTEMEN       -->
+    <!-- ========================================= -->
+    <url>
+        <loc>${domain}/proker-deskripsi</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>${domain}/proker-detail</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.7</priority>
     </url>`;
 
-        // Generate URL Dinamis untuk Deskripsi Proker (Departemen)
-        if (Array.isArray(prokerData)) {
+        // 2. GENERATE DYNAMIC URLs (PROKER/DEPARTEMEN)
+        if (Array.isArray(prokerData) && prokerData.length > 0) {
+            xmlUrls += `\n\n    <!-- ========================================= -->\n    <!-- DIRECT DYNAMIC SEO URLs (PROKER & DEPARTEMEN) -->\n    <!-- ========================================= -->`;
             prokerData.forEach(p => {
                 const slug = p.slug || p.id;
+                const img = p.fotoPengurus || p.bgImage || `${domain}/img/bemfkgumi.png`;
                 if (slug) {
                     xmlUrls += `
     <url>
-        <loc>${domain}/proker-deskripsi/${slug}</loc>
-        <lastmod>${today}</lastmod>
+        <loc>${domain}/proker-deskripsi/${escapeXml(slug)}</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
+        <image:image>
+            <image:loc>${escapeXml(img)}</image:loc>
+            <image:title>${escapeXml(p.dept || 'Departemen BEM FKG UMI')}</image:title>
+        </image:image>
     </url>`;
                 }
             });
         }
 
-        // Generate URL Dinamis untuk Detail Kegiatan (Kalender)
-        if (Array.isArray(kalenderData)) {
+        // 3. GENERATE DYNAMIC URLs (KALENDER EVENT)
+        if (Array.isArray(kalenderData) && kalenderData.length > 0) {
+            xmlUrls += `\n\n    <!-- ========================================= -->\n    <!-- DIRECT DYNAMIC SEO URLs (EVENT KALENDER) -->\n    <!-- ========================================= -->`;
             kalenderData.forEach(k => {
                 const slug = k.slug || k.id;
+                const img = k.banner || `${domain}/img/bemfkgumi.png`;
                 if (slug) {
                     xmlUrls += `
     <url>
-        <loc>${domain}/proker-detail/${slug}</loc>
-        <lastmod>${today}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
+        <loc>${domain}/proker-detail/${escapeXml(slug)}</loc>
+        <lastmod>${today}T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>${escapeXml(img)}</image:loc>
+            <image:title>${escapeXml(k.nama || 'Event BEM FKG UMI')}</image:title>
+        </image:image>
     </url>`;
                 }
             });
         }
 
-        // MENGAMBIL URL DINAMIS ARTIKEL DARI GAS SECARA LANGSUNG (SEO SUPER BOOST)
+        // 4. GENERATE DYNAMIC URLs (ARTIKEL BERITA DARI GOOGLE APPS SCRIPT)
         try {
             const gasReq = await fetch(`${GAS_ARTIKEL_URL}?action=getArticles&page=1&limit=100`);
             if(gasReq.ok) {
                 const gasRes = await gasReq.json();
                 const articles = gasRes.data || [];
-                articles.forEach(art => {
-                    const slug = art.Slug_URL || art.ID_Berita;
-                    if(slug) {
-                        xmlUrls += `
+                
+                if (articles.length > 0) {
+                    xmlUrls += `\n\n    <!-- ========================================= -->\n    <!-- DIRECT DYNAMIC SEO URLs (ARTIKEL/E-ZINE) -->\n    <!-- ========================================= -->`;
+                    articles.forEach(art => {
+                        const slug = art.Slug_URL || art.ID_Berita;
+                        const img = art.Gambar_URL || `${domain}/img/bemfkgumi.png`;
+                        
+                        // Handle Date format (Support standard DB dates DD-MM-YYYY to XML standard YYYY-MM-DD)
+                        let lastModDate = today;
+                        if(art.Tgl_Rilis && art.Tgl_Rilis.includes('-')) {
+                            let dParts = art.Tgl_Rilis.split('-');
+                            if(dParts[0].length === 4) lastModDate = art.Tgl_Rilis.split('T')[0]; 
+                            else if(dParts.length === 3) lastModDate = `${dParts[2]}-${dParts[1]}-${dParts[0]}`; 
+                        }
+
+                        if(slug) {
+                            xmlUrls += `
     <url>
-        <loc>${domain}/berita?article=${slug}</loc>
-        <lastmod>${art.Tgl_Rilis ? art.Tgl_Rilis.split('T')[0] : today}</lastmod>
+        <loc>${domain}/berita?article=${escapeXml(slug)}</loc>
+        <lastmod>${lastModDate}T00:00:00+00:00</lastmod>
         <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
+        <priority>0.85</priority>
+        <image:image>
+            <image:loc>${escapeXml(img)}</image:loc>
+            <image:title>${escapeXml(art.Judul || 'Artikel BEM KBMFKG UMI')}</image:title>
+            <image:caption>${escapeXml(art.Kategori || 'Berita')}</image:caption>
+        </image:image>
     </url>`;
-                    }
-                });
+                        }
+                    });
+                }
             }
         } catch(e) {
             console.warn("⚠️ Sitemap: Gagal melakukan sinkronisasi artikel dari GAS Backend", e);
         }
 
-        // Bungkus dengan Tag Root XML
+        // 5. BUNGKUS DENGAN TAG ROOT SITEMAP SCHEMA GOOGLE
         const sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 ${xmlUrls}
 </urlset>`;
 
@@ -384,7 +503,7 @@ ${xmlUrls}
 });
 
 
-// ================= API ENDPOINTS: MANAJEMEN KONTEN (CMS) =================
+// ================= API CMS ENDPOINTS =================
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -431,26 +550,18 @@ app.post('/api/content/:type', async (req, res) => {
         
         let bodyData = req.body; 
         
-        // =========================================================================
-        // SUPER BIG UPGRADE: DYNAMIC SEO SLUG GENERATOR
-        // Otomatis men-generate Slug URL yang rapi untuk Proker dan Kalender
-        // agar menghindari URL dengan spasi, huruf kapital, atau karakter ilegal
-        // =========================================================================
         if ((type === 'kalender' || type === 'proker') && Array.isArray(bodyData)) {
             bodyData.forEach(item => {
-                // Memilih field apa yang akan dijadikan Slug (Judul/Nama Kegiatan/Nama Proker)
                 let textToSlug = item.slug || item.id || item.nama || item.namaProker || item.dept || "kegiatan";
-                
-                // Algoritma Pembersih Karakter URL (SEO Friendly)
                 let safeSlug = textToSlug.toString().toLowerCase().trim()
-                    .replace(/\s+/g, '-')           // Ganti spasi dengan strip
-                    .replace(/[^\w\-]+/g, '')       // Buang semua karakter kecuali huruf, angka, dan strip
-                    .replace(/\-\-+/g, '-')         // Gabungkan strip yang beruntun
-                    .replace(/^-+/, '')             // Hapus strip di awal
-                    .replace(/-+$/, '');            // Hapus strip di akhir
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]+/g, '')
+                    .replace(/\-\-+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
                 
                 item.slug = safeSlug;
-                item.id = safeSlug; // Menyamakan ID dengan Slug agar sinkron
+                item.id = safeSlug; 
             });
         }
 
@@ -469,7 +580,6 @@ app.post('/api/content/:type', async (req, res) => {
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
     } catch (error) {
-        console.error("Gagal simpan:", error);
         res.status(500).json({ success: false, message: 'Gagal menyimpan data ke Redis.' });
     }
 });
