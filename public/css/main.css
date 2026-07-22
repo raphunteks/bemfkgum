@@ -1003,11 +1003,11 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 
 /* ================= AZ E-ZINE CSS (SOSMED IG STYLE UNTUK PORTAL BERITA) ================= */
 .glass-header-zine {
-  background: rgba(11, 15, 25, 0.85);
+  background: var(--header-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(0, 255, 170, 0.15);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: 0 4px 30px var(--card-shadow);
 }
 
 .glow-text {
@@ -1027,7 +1027,7 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 }
 
 .zine-card {
-  background: var(--bg-dark-heavy);
+  background: var(--card-bg);
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border-light);
@@ -1051,8 +1051,8 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 
 .badge-category {
   background: var(--bg-dark-overlay);
-  color: var(--accent-neon);
-  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
   padding: 8px 16px;
   border-radius: 24px;
   font-size: 0.875rem;
@@ -1068,8 +1068,9 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 }
 .badge-category.active, .badge-category:hover, .badge-category:focus-visible {
   background: var(--accent-neon);
-  color: #ffffff;
+  color: var(--btn-text-active);
   box-shadow: 0 0 15px var(--accent-glow);
+  border-color: var(--accent-neon);
 }
 
 .breadcrumb-nav {
