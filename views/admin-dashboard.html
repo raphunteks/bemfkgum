@@ -520,7 +520,6 @@
 
         function renderSemuaCMS() { renderOrg(); renderFilosofi(); renderSejarah(); renderProker(); renderKalender(); renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); renderKontak(); }
         
-        // ... Fungsi Render CMS Lainnya ...
         function renderKontak() { if(db.kontak) { document.getElementById('setKontakAlamat').value = db.kontak.alamat || ""; document.getElementById('setKontakEmail').value = db.kontak.email || ""; document.getElementById('setKontakWA').value = db.kontak.wa || ""; document.getElementById('setKontakWAName').value = db.kontak.waName || ""; document.getElementById('setKontakMaps').value = db.kontak.mapsIframe || ""; } }
         function renderPengaturan() { if(db.settings) { document.getElementById('setHeaderText').value = db.settings.headerText || ""; document.getElementById('setFooterSlogan').value = db.settings.footerSlogan || ""; document.getElementById('setFooterAlamat').value = db.settings.footerAlamat || ""; document.getElementById('prevLogo1').src = db.settings.logo1 || "/img/bemfkgumi.png"; document.getElementById('prevLogo2').src = db.settings.logo2 || "/img/bemfkgumi.png"; document.getElementById('prevLogo3').src = db.settings.logo3 || "/img/bemfkgumi.png"; } }
         async function saveData(type) { if(type === 'org') { db.org.visi = document.getElementById('editVisi').value; db.org.misi = document.getElementById('editMisi').value.split('\n').filter(m => m.trim() !== ''); } try { let apiUrl = `/api/content/${type}`; if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com/api/content/${type}`; const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) }); if(req.ok) showToast(`✅ Data Tersimpan!`); else throw new Error(); } catch(e) { showToast("⚠️ Gagal menyimpan."); } }
@@ -588,11 +587,12 @@
 
         function updateArtPreviewUrl(url) {
             let safeUrl = url;
-            // ADMIN DASHBOARD AUTO SANITIZER: Mencegah error preview bagi Admin yang mengcopy link Drive secara sembarangan
+            // ADMIN DASHBOARD AUTO SANITIZER (FULL UPGRADE 100% CORS BYPASS): 
+            // Mengubah segala format link Drive mentah menjadi link Thumbnail API
             if (safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
                 let match = safeUrl.match(/[-\w]{25,33}/);
                 if (match && match[0]) {
-                    safeUrl = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
+                    safeUrl = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
                 }
             }
             updateArtPreviewUI(safeUrl);
@@ -623,7 +623,7 @@
                 if(safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
                     let match = safeUrl.match(/[-\w]{25,33}/);
                     if (match && match[0]) {
-                        safeUrl = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
+                        safeUrl = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
                     }
                 }
                 
@@ -686,12 +686,12 @@
             const fileInput = document.getElementById('artFileImage');
             let base64Image = null;
             
-            // SANITASI FINAL SEBELUM PUSH KE GAS
+            // SANITASI FINAL SEBELUM PUSH KE GAS: Paksa pakai Thumbnail API
             let finalImageURL = document.getElementById('artGambar').value; 
             if (finalImageURL && (finalImageURL.indexOf('drive.google.com') !== -1 || finalImageURL.indexOf('drive.usercontent.com') !== -1)) {
                 let match = finalImageURL.match(/[-\w]{25,33}/);
                 if (match && match[0]) {
-                    finalImageURL = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
+                    finalImageURL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
                 }
             }
             
