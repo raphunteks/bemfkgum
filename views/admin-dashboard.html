@@ -349,7 +349,7 @@
         </div>
     </div>
 
-    <!-- ================= SUPER UPGRADE MODAL ARTIKEL (IMAGE PREVIEW, FILE UPLOAD, DATALIST, CRUD VIEWS/LIKES) ================= -->
+    <!-- ================= SUPER UPGRADE MODAL ARTIKEL (IMAGE PREVIEW ANTI-CORS, FILE UPLOAD, DATALIST) ================= -->
     <div class="modal-overlay" id="artikelModal">
         <div class="modal-content-box" style="padding: 30px; max-width: 800px;">
             <button class="modal-close" onclick="closeArtikelModal()">X</button>
@@ -381,11 +381,11 @@
                     <input type="text" id="artDesc" class="neo-input" placeholder="Ringkasan 1 kalimat...">
                 </div>
                 <div>
-                    <!-- FILE IMAGE UPLOAD DENGAN PREVIEW -->
+                    <!-- FILE IMAGE UPLOAD DENGAN PREVIEW ANTI CORS -->
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Preview & Upload Gambar</label>
                     <div class="art-preview-container">
                         <span id="artPreviewPlaceholder" style="color:var(--text-muted); font-size:0.8rem;">Belum ada gambar</span>
-                        <img id="artPreviewImg" class="art-preview-img" src="" alt="Preview">
+                        <img id="artPreviewImg" class="art-preview-img" src="" alt="Preview" crossorigin="anonymous" referrerpolicy="no-referrer">
                     </div>
                     <input type="file" id="artFileImage" class="custom-file-input" accept="image/jpeg, image/png, image/jpg, image/webp" style="margin-bottom:5px;" onchange="previewArtImage(this)">
                     <input type="text" id="artGambar" class="neo-input" placeholder="Atau tempel URL Gambar langsung..." style="font-size:0.8rem; padding: 10px 15px;" oninput="updateArtPreviewUrl(this.value)">
@@ -532,7 +532,7 @@
         function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
 
-        // ================= FUNGSI MANAJEMEN ARTIKEL (FULL UPGRADE CRUD) =================
+        // ================= FUNGSI MANAJEMEN ARTIKEL (FULL UPGRADE CRUD & PREVIEW SANITIZER) =================
         function renderArtikelTable(dataToRender = artikelData) {
             const tbody = document.getElementById('tableBodyArtikel'); tbody.innerHTML = '';
             dataToRender.forEach((item, index) => {
@@ -587,13 +587,21 @@
         }
 
         function updateArtPreviewUrl(url) {
-            updateArtPreviewUI(url);
+            let safeUrl = url;
+            // ADMIN DASHBOARD AUTO SANITIZER: Mencegah error preview bagi Admin yang mengcopy link Drive secara sembarangan
+            if (safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
+                let match = safeUrl.match(/[-\w]{25,33}/);
+                if (match && match[0]) {
+                    safeUrl = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
+                }
+            }
+            updateArtPreviewUI(safeUrl);
         }
 
         async function previewArtImage(input) {
             if (input.files && input.files[0]) {
                 const base64 = await fileToBase64(input.files[0]);
-                updateArtPreviewUI(base64);
+                updateArtPreviewUI(`data:${input.files[0].type};base64,${base64}`);
                 document.getElementById('artGambar').value = ''; // Kosongkan URL jika pakai file lokal
             }
         }
@@ -609,9 +617,18 @@
                 document.getElementById('artId').value = art.ID_Berita;
                 document.getElementById('artJudul').value = art.Judul || "";
                 document.getElementById('artKategori').value = art.Kategori || "Kegiatan";
-                document.getElementById('artGambar').value = art.Gambar_URL || "";
                 
-                if(art.Gambar_URL) updateArtPreviewUI(art.Gambar_URL);
+                // Admin Dashboard Sanitizer for existing link
+                let safeUrl = art.Gambar_URL || "";
+                if(safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
+                    let match = safeUrl.match(/[-\w]{25,33}/);
+                    if (match && match[0]) {
+                        safeUrl = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
+                    }
+                }
+                
+                document.getElementById('artGambar').value = safeUrl;
+                if(safeUrl) updateArtPreviewUI(safeUrl);
 
                 document.getElementById('artPenulis').value = art.Penulis || "Admin BEM FKG UMI";
                 document.getElementById('artDesc').value = art.Meta_Desc || art.Desc || "";
@@ -668,7 +685,15 @@
             // LOGIC IMAGE BASE64 UPLOAD
             const fileInput = document.getElementById('artFileImage');
             let base64Image = null;
-            let finalImageURL = document.getElementById('artGambar').value; // URL Manual (Fallback)
+            
+            // SANITASI FINAL SEBELUM PUSH KE GAS
+            let finalImageURL = document.getElementById('artGambar').value; 
+            if (finalImageURL && (finalImageURL.indexOf('drive.google.com') !== -1 || finalImageURL.indexOf('drive.usercontent.com') !== -1)) {
+                let match = finalImageURL.match(/[-\w]{25,33}/);
+                if (match && match[0]) {
+                    finalImageURL = "https://drive.usercontent.google.com/download?id=" + match[0] + "&authuser=0";
+                }
+            }
             
             if (fileInput.files.length > 0) {
                 base64Image = await fileToBase64(fileInput.files[0]);
@@ -702,8 +727,8 @@
                 loadArtikelGas(); // Refresh Tabel
             } catch(e) {
                 // Mode Offline Simulation Fallback
-                if(!isEdit) artikelData.unshift({...payload, Gambar_URL: base64Image || finalImageURL || '/img/bemfkgumi.png'});
-                else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload, Gambar_URL: base64Image || finalImageURL || artikelData[idx].Gambar_URL}; }
+                if(!isEdit) artikelData.unshift({...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || '/img/bemfkgumi.png'});
+                else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || artikelData[idx].Gambar_URL}; }
                 renderArtikelTable();
                 showToast('✅ Tersimpan (Mode Offline Simulasi)');
             }
