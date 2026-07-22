@@ -215,8 +215,8 @@
         },
         {
           "@type": "ItemList",
-          "@id": "https://bemkbmfkgumi.com/#sitelinks",
-          "name": "Sitelinks Navigation",
+          "@id": "https://bemkbmfkgumi.com/#sitelinks-static",
+          "name": "Navigasi Utama BEM FKG UMI",
           "itemListElement": [
             {
               "@type": "SiteNavigationElement",
@@ -228,7 +228,7 @@
             {
               "@type": "SiteNavigationElement",
               "position": 2,
-              "name": "Pusat Informasi & Proker",
+              "name": "Pusat Informasi & Berita",
               "description": "Berita terbaru, kalender kegiatan, dan program kerja unggulan dari Kabinet Ananta Anardhaya.",
               "url": "https://bemkbmfkgumi.com/informasi"
             },
@@ -242,16 +242,9 @@
             {
               "@type": "SiteNavigationElement",
               "position": 4,
-              "name": "Layanan PLASMA",
-              "description": "Platform Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk menyalurkan keluhan, saran, dan kritik.",
-              "url": "https://bemkbmfkgumi.com/informasi#plasma"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 5,
-              "name": "Developer Team",
-              "description": "Tim IT dan kolaborator di balik layar pengembangan official website BEM KBMFKG UMI.",
-              "url": "https://bemkbmfkgumi.com/ourteam"
+              "name": "Portal Publik E-Zine",
+              "description": "Jelajahi inovasi, artikel kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/berita"
             }
           ]
         }
@@ -266,19 +259,26 @@
     <!-- PENGATURAN MANIFEST PWA -->
     <link rel="manifest" href="/manifest.json" />
 </head>
-<body>
+<body itemscope itemtype="https://schema.org/WebPage">
     <%- include('partials/header.html') %>
 
     <main>
-        <!-- HERO SECTION -->
-        <section class="hero-section">
+        <!-- =========================================================================
+             SUPER BIG UPGRADE: SEMANTIC HTML MICRODATA (Seperti Script HMI)
+             Menambahkan itemscope & itemtype agar struktur halaman terbaca jelas oleh Bot
+             ========================================================================= -->
+        <section class="hero-section" itemscope itemtype="https://schema.org/WebSite">
+            <link itemprop="url" href="https://bemkbmfkgumi.com/"/>
+            <meta itemprop="name" content="BEM KBMFKG UMI">
+            <meta itemprop="description" content="Website resmi Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.">
+
             <div class="reveal" style="max-width: 900px; margin: 0 auto;">
                 <div class="clay-badge" style="margin-bottom: 30px; letter-spacing: 2px; font-size: 0.85rem; text-transform: uppercase;">
                     Welcome to
                     Official Website BEM KBMFKG UMI
                 </div>
                 
-                <h1 style="font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px;">
+                <h1 itemprop="headline" style="font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px;">
                     Kabinet <span class="script-font">Ananta Anardhaya</span>
                 </h1>
                 
@@ -287,9 +287,10 @@
                     <span style="font-size: 0.95rem; color: var(--accent-neon); display: block; margin-top: 15px; font-weight: bold; letter-spacing: 1px;">Semangat Perjuangan Tanpa Batas, Sesuatu yang Abadi.</span>
                 </p>
                 
-                <div class="btn-group" style="margin-top: 40px;">
-                    <a href="/informasi" class="holo-btn" style="padding: 15px 35px; font-size: 1.1rem;">Program Kami &rarr;</a>
-                    <a href="/tentang" class="glass-btn" style="padding: 15px 35px; font-size: 1.1rem;">Tentang Kami</a>
+                <!-- Microdata untuk Navigasi Sitelinks Internal -->
+                <div class="btn-group" style="margin-top: 40px;" itemscope itemtype="https://schema.org/SiteNavigationElement">
+                    <a itemprop="url" href="/berita" class="holo-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span itemprop="name">Berita & Artikel &rarr;</span></a>
+                    <a itemprop="url" href="/tentang" class="glass-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span itemprop="name">Tentang Kami</span></a>
                 </div>
             </div>
         </section>
@@ -496,7 +497,70 @@
             
             // Ambil Data DB untuk Beranda
             fetchDataBeranda();
+            
+            // =========================================================================
+            // SUPER BIG UPGRADE: DYNAMIC SITELINKS INJECTION (Metode Client-Side)
+            // Memaksa Google untuk melihat artikel E-Zine terbaru langsung dari beranda
+            // persis seperti metode HMI, namun diadaptasi untuk arsitektur API BEM UMI.
+            // =========================================================================
+            injectDynamicSitelinksFromGas();
         });
+        
+        // FUNGSI INJEKSI DYNAMIC SITELINKS NEWSARTICLE
+        async function injectDynamicSitelinksFromGas() {
+            try {
+                // Endpoint yang sama dengan berita.html untuk menarik artikel
+                const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
+                const response = await fetch(GAS_ARTIKEL_URL + "?action=getArticles&page=1&limit=4");
+                const resData = await response.json();
+                
+                const rawArticles = typeof resData === 'string' ? JSON.parse(resData).data : resData.data;
+                const articles = rawArticles || [];
+
+                if (articles.length > 0) {
+                    const itemListElements = articles.map((item, index) => {
+                        const slug = item.Slug_URL || item.ID_Berita;
+                        const url = "https://bemkbmfkgumi.com/berita?article=" + slug;
+                        
+                        return {
+                            "@type": "ListItem",
+                            "position": index + 1,
+                            "url": url,
+                            "name": item.Judul,
+                            "item": {
+                                "@type": "NewsArticle",
+                                "headline": item.Judul,
+                                "image": item.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+                                "datePublished": item.Tgl_Rilis ? new Date(item.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString(),
+                                "url": url,
+                                "author": {
+                                    "@type": "Organization",
+                                    "name": "Admin BEM FKG UMI"
+                                }
+                            }
+                        };
+                    });
+
+                    // Schema ItemList Dinamis untuk Artikel Terbaru
+                    const dynamicSchema = {
+                        "@context": "https://schema.org",
+                        "@type": "ItemList",
+                        "@id": "https://bemkbmfkgumi.com/#dynamic-news-sitelinks",
+                        "name": "Update Berita dan Artikel E-Zine Terbaru BEM FKG UMI",
+                        "itemListElement": itemListElements
+                    };
+
+                    const scriptTag = document.createElement('script');
+                    scriptTag.type = 'application/ld+json';
+                    scriptTag.text = JSON.stringify(dynamicSchema);
+                    document.head.appendChild(scriptTag);
+                    
+                    console.log("✅ Dynamic News Sitelinks Schema successfully injected for Googlebot.");
+                }
+            } catch (err) {
+                console.warn("Silent fallback: Gagal menarik data E-Zine untuk dynamic sitelinks di beranda.", err);
+            }
+        }
 
         // Logika Tab Misi
         let globalMisiData = [];
