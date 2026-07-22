@@ -127,7 +127,7 @@
       </button>
       
       <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-[color:var(--bg-dark-heavy)] relative m-0 rounded-t-3xl overflow-hidden">
-          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. Tidak ada Fallback OnError -->
+          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. -->
       </figure>
 
       <div class="px-6 md:px-12 mt-8">
@@ -232,7 +232,7 @@
     }
 
     function processNewData(newData, hasMore) {
-      // FRONTEND AUTO-SANITIZER URL IMAGE: Mengubah link GDrive yang berantakan menjadi Format Unduhan Bypass CORS
+      // FRONTEND AUTO-SANITIZER URL IMAGE: Mengubah link GDrive yang berantakan menjadi Format Unduhan Bypass CORS Sesuai referensi
       var cleanedData = newData.map(function(item) {
          var url = item.Gambar_URL || '';
          if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
@@ -273,14 +273,15 @@
         var isHero = (currentOffset === 0 && i === 0);
         var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
         
-        // Atribut 'onerror' DIHAPUS TOTAL agar browser fokus merender gambar asli tanpa gangguan
+        // PENTING: Penambahan referrerpolicy="no-referrer" dan crossorigin="anonymous" agar API Image Google tidak di Block Browser.
+        // FALLBACK DIHAPUS TOTAL sesuai instruksi "TIDAK USAH ADA FALLBACK LOGO BEM KARENA SAYA INGIN IMAGE YG DIUPLOAD PADA ADMIN YANG MUNCUL".
         html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
         html +=   '<div class="zine-img-wrapper">';
         if (img) {
-            html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '">';
+            html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" crossorigin="anonymous" class="card-img" alt="' + title + '">';
         } else {
-            // Jika memang sama sekali tidak ada input link gambar
-            html +=     '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-gray-600"></i></div>';
+            // Hanya merender icon kamera placeholder jika Admin sama sekali mengkosongkan isian link gambar
+            html +=     '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-[color:var(--text-muted)]"></i></div>';
         }
         html +=     '<div class="absolute top-4 left-4 bg-[color:var(--bg-dark-overlay)] text-[color:var(--accent-neon)] text-xs px-4 py-1.5 rounded-full border border-[color:var(--accent-glow)] backdrop-blur-md uppercase font-bold tracking-widest shadow-lg">' + cat + '</div>';
         html +=   '</div>';
@@ -348,9 +349,9 @@
       breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
       document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
-      // Modal render tanpa Fallback OnError
+      // Modal render tanpa Fallback OnError, dipasang atribut crossorigin dan no-referrer
       if (article.Gambar_URL) {
-          document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
+          document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" crossorigin="anonymous" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
       } else {
           document.getElementById('modalImgWrapper').innerHTML = '<div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
       }
