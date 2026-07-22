@@ -127,7 +127,7 @@
       </button>
       
       <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-[color:var(--bg-dark-heavy)] relative m-0 rounded-t-3xl overflow-hidden">
-          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. -->
+          <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. Tidak ada Fallback OnError -->
       </figure>
 
       <div class="px-6 md:px-12 mt-8">
@@ -232,13 +232,13 @@
     }
 
     function processNewData(newData, hasMore) {
-      // FRONTEND AUTO-SANITIZER URL IMAGE: Bypass CORS dengan Thumbnail API sesuai solusi E-VOT
+      // FRONTEND AUTO-SANITIZER URL IMAGE: Bypass CORS dengan Thumbnail API (Sama seperti E-VOT)
       var cleanedData = newData.map(function(item) {
          var url = item.Gambar_URL || '';
          if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
              var match = url.match(/[-\w]{25,}/); // Regex mengekstrak Unik ID Drive 
              if (match && match[0]) {
-                 // Ganti dengan Thumbnail API yang 100% tahan CORS dan memuat HD
+                 // Format mutlak yang kebal CORS dan support HD rendering
                  item.Gambar_URL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
              }
          }
@@ -273,11 +273,11 @@
         var isHero = (currentOffset === 0 && i === 0);
         var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
         
-        // PENTING: Penambahan referrerpolicy="no-referrer" dan crossorigin="anonymous"
+        // Atribut Crossorigin dihapus TOTAL agar tidak ada CORS Error di Browser, dan murni mengandalkan no-referrer.
         html += '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')">';
         html +=   '<div class="zine-img-wrapper">';
         if (img) {
-            html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" crossorigin="anonymous" class="card-img" alt="' + title + '">';
+            html +=     '<img src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '">';
         } else {
             // Placeholder saat gambar kosong tanpa onerror yang melompat
             html +=     '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-[color:var(--text-muted)]"></i></div>';
@@ -348,8 +348,9 @@
       breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
       document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
+      // Modal render tanpa Fallback OnError, tanpa atribut crossorigin, murni pakai no-referrer
       if (article.Gambar_URL) {
-          document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" crossorigin="anonymous" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
+          document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover opacity-60 mix-blend-screen"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
       } else {
           document.getElementById('modalImgWrapper').innerHTML = '<div class="absolute inset-0 bg-gradient-to-t from-[color:var(--card-bg)] via-transparent to-transparent"></div>';
       }
