@@ -100,6 +100,10 @@
                 <button onclick="switchSection('aspirasi', this)"><span aria-hidden="true">📣</span> Interaksi Masuk</button>
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span aria-hidden="true">🧑‍💻</span> Developer Team</button>
                 <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span aria-hidden="true">📞</span> Manajemen Narahubung</button>
+                
+                <!-- NEW UPGRADE: RADAR BEM TAB -->
+                <button onclick="switchSection('radar', this)" style="color: #f43f5e;"><span aria-hidden="true">📡</span> Manajemen Radar BEM</button>
+
                 <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span aria-hidden="true">⚙️</span> Header & Footer</button>
                 <button onclick="logout()" style="margin-top: 30px; color: #ef4444;"><span aria-hidden="true">🚪</span> Logout</button>
             </nav>
@@ -189,7 +193,7 @@
                 <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
             </section>
 
-            <!-- 5. PROKER (DEPARTEMEN) - SUPER BIG UPGRADE 10 FIELDS -->
+            <!-- 5. PROKER (DEPARTEMEN) -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
@@ -225,7 +229,7 @@
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
-            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA (SUPER UPGRADE CRUD) -->
+            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA -->
             <section id="sec-artikel" class="admin-section">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
@@ -315,6 +319,19 @@
                     <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px;">Paste kode HTML `&lt;iframe src="..."&gt;` dari Google Maps di sini.</p>
                     <textarea id="setKontakMaps" class="neo-input" rows="6" oninput="db.kontak.mapsIframe = this.value"></textarea>
                 </div>
+            </section>
+            
+            <!-- 10.5 MANAJEMEN RADAR BEM (WIDGET ELFSIGHT) -->
+            <section id="sec-radar" class="admin-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
+                    <div>
+                        <h2 style="color: var(--text-light);">Manajemen Radar BEM</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Kelola integrasi Elfsight Instagram Widget untuk setiap departemen/lembaga BEM.</p>
+                    </div>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem; background: #f43f5e; border-color: #f43f5e;" onclick="saveData('radar')">💾 Simpan Radar BEM</button>
+                </div>
+                <div id="cmsRadar" style="display:grid; grid-template-columns: 1fr; gap:20px;"></div>
+                <button class="action-btn view" onclick="tambahRadar()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem; border-color: #f43f5e; color: #f43f5e;">+ Tambah Widget Radar Baru</button>
             </section>
 
             <!-- 11. PENGATURAN HEADER & FOOTER -->
@@ -450,7 +467,7 @@
         let db = { 
             org: FALLBACK_ADMIN_ORG, 
             filosofi: { logo: [], warna: [] }, 
-            sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], 
+            sejarah: [], proker: [], kalender: [], dokumentasi: [], team: [], radar: [],
             kontak: { alamat: "", email: "", wa: "", waName: "", mapsIframe: "" },
             settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, 
             interaksi: {aspirasi:[], pesan:[]} 
@@ -533,7 +550,7 @@
                     if(data.filosofi) { db.filosofi = data.filosofi; }
                     if(data.settings) db.settings = { ...db.settings, ...data.settings };
                     if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak };
-                    db.sejarah = data.sejarah || []; db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || []; db.team = data.team || [];
+                    db.sejarah = data.sejarah || []; db.proker = data.proker || []; db.kalender = data.kalender || []; db.dokumentasi = data.dokumentasi || []; db.team = data.team || []; db.radar = data.radar || [];
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
             } catch(err) { showToast("⚠️ Memuat data Offline."); }
@@ -542,7 +559,7 @@
 
         function renderSemuaCMS() { 
             renderOrg(); renderFilosofi(); renderSejarah(); renderProker(); renderKalender(); 
-            renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); renderKontak(); 
+            renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); renderKontak(); renderRadar();
         }
 
         function renderKontak() {
@@ -577,6 +594,29 @@
                 const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) });
                 if(req.ok) showToast(`✅ Data Tersimpan!`); else throw new Error();
             } catch(e) { showToast("⚠️ Gagal menyimpan (mode simulasi aktif)."); }
+        }
+
+        /* MANAJEMEN RADAR BEM (BARU) */
+        function renderRadar() {
+            const cont = document.getElementById('cmsRadar'); cont.innerHTML = '';
+            (db.radar || []).forEach((r, i) => {
+                cont.innerHTML += `
+                <div class="glass-card" style="padding:20px; border-left:4px solid #f43f5e; position:relative;">
+                    <button class="action-btn delete" onclick="db.radar.splice(${i},1); renderRadar();" style="position:absolute; top:20px; right:20px;">Hapus</button>
+                    <div style="width: 85%;">
+                        <label style="font-size:0.8rem; color:var(--text-muted); font-weight:bold;">Nama Departemen / Unit / UKM</label>
+                        <input type="text" class="neo-input" value="${r.nama || ''}" placeholder="Cth: Dept. of Art and Sport" oninput="db.radar[${i}].nama=this.value">
+                        
+                        <label style="font-size:0.8rem; color:var(--text-muted); font-weight:bold;">Script Embed Elfsight (Kode HTML)</label>
+                        <textarea class="neo-input" rows="4" placeholder="<script src='...'></script><div class='...'></div>" oninput="db.radar[${i}].embed=this.value">${r.embed || ''}</textarea>
+                    </div>
+                </div>`;
+            });
+        }
+        function tambahRadar() {
+            if(!db.radar) db.radar = [];
+            db.radar.push({nama: "Widget Baru", embed: ""});
+            renderRadar();
         }
 
         function renderOrg() {
