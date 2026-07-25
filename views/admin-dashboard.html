@@ -985,7 +985,7 @@
                     <input type="text" class="neo-input" value="${r.departemen || ''}" placeholder="Contoh: Dept. of Art and Sport" oninput="db.radar[${i}].departemen=this.value">
                     
                     <label style="font-size:0.8rem; color:var(--text-muted);">Script Embed Code (Elfsight / Widget lainnya)</label>
-                    <textarea class="neo-input" rows="4" placeholder='<script src="..."></script>\\n<div class="..."></div>' oninput="db.radar[${i}].embed=this.value">${r.embed || ''}</textarea>
+                    <textarea class="neo-input" rows="4" placeholder='<script src="..."><\/script>\\n<div class="..."></div>' oninput="db.radar[${i}].embed=this.value">${r.embed || ''}</textarea>
                     
                     <div style="background: rgba(236, 72, 153, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(236, 72, 153, 0.3); margin-top: 10px;">
                         <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">💡 <strong>Tips:</strong> Paste langsung kode HTML dari Elfsight ke dalam kotak di atas. Sistem akan merender otomatis di halaman radarbem.html</p>
