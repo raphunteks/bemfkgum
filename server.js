@@ -220,6 +220,14 @@ const defaultKalender = [
     }
 ];
 
+// DATA SEED BARU: RADAR BEM (Elfsight Widgets)
+const defaultRadar = [
+    {
+        nama: "Dept. of Art and Sport",
+        embed: `<script src="https://elfsightcdn.com/platform.js" async></script>\n<div class="elfsight-app-d45c7363-2d29-4b5f-b704-ea3501da1023" data-elfsight-app-lazy></div>`
+    }
+];
+
 // Google Apps Script API Endpoint untuk Artikel
 const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
 
@@ -234,6 +242,9 @@ app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
+
+// RUTE BARU: RADAR BEM
+app.get('/radarbem', (req, res) => res.render('radarbem'));
 
 // Rute Dinamis Proker
 app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
@@ -398,7 +409,7 @@ app.get('/sitemap.xml', async (req, res) => {
     </url>
 
     <!-- ========================================= -->
-    <!-- HALAMAN PROFIL & KONTAK                   -->
+    <!-- HALAMAN PROFIL & KONTAK & RADAR           -->
     <!-- ========================================= -->
     <url>
         <loc>${domain}/berita</loc>
@@ -417,6 +428,12 @@ app.get('/sitemap.xml', async (req, res) => {
         <lastmod>${today}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>${domain}/radarbem</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.85</priority>
     </url>
 
     <!-- ========================================= -->
@@ -552,6 +569,7 @@ app.get('/api/content', async (req, res) => {
         let sejarah = await redis.get('Sejarah_Data');
         let filosofi = await redis.get('Filosofi_Data'); 
         let kontak = await redis.get('Kontak_Data');
+        let radar = await redis.get('Radar_Data');
 
         let parsedOrg = safeParse(org, defaultOrg);
         
@@ -572,10 +590,11 @@ app.get('/api/content', async (req, res) => {
             team: safeParse(team, defaultTeam),
             sejarah: safeParse(sejarah, defaultSejarah),
             filosofi: safeParse(filosofi, defaultFilosofi),
-            kontak: safeParse(kontak, defaultKontak)
+            kontak: safeParse(kontak, defaultKontak),
+            radar: safeParse(radar, defaultRadar)
         });
     } catch (error) {
-        res.status(200).json({ success: false, org: defaultOrg, proker: defaultProker, kalender: defaultKalender, dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi, kontak: defaultKontak });
+        res.status(200).json({ success: false, org: defaultOrg, proker: defaultProker, kalender: defaultKalender, dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi, kontak: defaultKontak, radar: defaultRadar });
     }
 });
 
@@ -612,6 +631,7 @@ app.post('/api/content/:type', async (req, res) => {
         else if (type === 'sejarah') await redis.set('Sejarah_Data', payload);
         else if (type === 'filosofi') await redis.set('Filosofi_Data', payload); 
         else if (type === 'kontak') await redis.set('Kontak_Data', payload);
+        else if (type === 'radar') await redis.set('Radar_Data', payload);
         else return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
 
         res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
