@@ -172,7 +172,7 @@ const defaultFilosofi = {
         { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
         { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian." },
         { warna: "Kuning", hex: "#f59e0b", makna: "Melambangkan kedewasaan, kemuliaan, dan kelestarian." },
-        { warna: "Merah", hex: "#ef4444", makna: "Melambangkan keadilan, keberanian, dan tanggung jawab." },
+        { warna: "Merah", hex: "#ef4444", makna: "Melambangkan keadilan, keberanian, dan tanggung responsabilidad." },
         { warna: "Hitam", hex: "#111827", makna: "Melambangkan kejujuran dan keilmuan." }
     ]
 };
@@ -184,6 +184,14 @@ const defaultKontak = {
     waName: "Silvyananda",
     mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
+
+// SEED DATA BARU: RADAR BEM WIDGETS
+const defaultRadar = [
+    { 
+        departemen: "Dept. of Art and Sport", 
+        embed: '<script src="https://elfsightcdn.com/platform.js" async></script>\n<div class="elfsight-app-d45c7363-2d29-4b5f-b704-ea3501da1023" data-elfsight-app-lazy></div>' 
+    }
+];
 
 const defaultKalender = [
     {
@@ -220,14 +228,6 @@ const defaultKalender = [
     }
 ];
 
-// DATA SEED BARU: RADAR BEM (Elfsight Widgets)
-const defaultRadar = [
-    {
-        nama: "Dept. of Art and Sport",
-        embed: `<script src="https://elfsightcdn.com/platform.js" async></script>\n<div class="elfsight-app-d45c7363-2d29-4b5f-b704-ea3501da1023" data-elfsight-app-lazy></div>`
-    }
-];
-
 // Google Apps Script API Endpoint untuk Artikel
 const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
 
@@ -240,11 +240,9 @@ app.get('/tentang', (req, res) => res.render('tentang'));
 app.get('/berita', (req, res) => res.render('berita'));
 app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
+app.get('/radarbem', (req, res) => res.render('radarbem'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
-
-// RUTE BARU: RADAR BEM
-app.get('/radarbem', (req, res) => res.render('radarbem'));
 
 // Rute Dinamis Proker
 app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
@@ -409,7 +407,7 @@ app.get('/sitemap.xml', async (req, res) => {
     </url>
 
     <!-- ========================================= -->
-    <!-- HALAMAN PROFIL & KONTAK & RADAR           -->
+    <!-- HALAMAN PROFIL & KONTAK                   -->
     <!-- ========================================= -->
     <url>
         <loc>${domain}/berita</loc>
@@ -428,12 +426,6 @@ app.get('/sitemap.xml', async (req, res) => {
         <lastmod>${today}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>${domain}/radarbem</loc>
-        <lastmod>${today}</lastmod>
-        <changefreq>hourly</changefreq>
-        <priority>0.85</priority>
     </url>
 
     <!-- ========================================= -->
