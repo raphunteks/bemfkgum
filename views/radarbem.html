@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- UPGRADE 1: Penyesuaian Title Tag (Hyphen Format untuk Site Name) -->
+    <title>Lini Masa Radar BEM - BEM KBMFKG UMI</title>
+    
+    <!-- PROTECT DEVTOOLS -->
+    <script src="/js/protect-devtools.js"></script>
+    
+    <!-- ================= SEO EXPERT 100% UPGRADE (RADAR PAGE & SITELINKS READY) ================= -->
+    <meta name="description" content="Pantau update kegiatan dan dokumentasi terbaru dari seluruh departemen dan UKM BEM KBMFKG UMI melalui Lini Masa Radar BEM.">
+    <meta name="keywords" content="Radar BEM, Instagram BEM FKG UMI, Lini Masa, Kegiatan BEM, Feed BEM UMI, Live Instagram BEM">
+    <meta name="author" content="BEM KBMFKG UMI">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://bemkbmfkgumi.com/radarbem">
+    
+    <!-- Open Graph / Twitter Cards -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bemkbmfkgumi.com/radarbem">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
+    <meta property="og:title" content="Lini Masa Radar BEM - BEM KBMFKG UMI">
+    <meta property="og:description" content="Pantau update kegiatan dan dokumentasi terbaru dari seluruh departemen dan UKM BEM KBMFKG UMI melalui Lini Masa Radar BEM.">
+    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
+    
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bemkbmfkgumi.com/radarbem">
+    <meta property="twitter:title" content="Lini Masa Radar BEM - BEM KBMFKG UMI">
+    <meta property="twitter:description" content="Pantau update kegiatan dan dokumentasi terbaru dari seluruh departemen dan UKM BEM KBMFKG UMI melalui Lini Masa Radar BEM.">
+    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+
+    <!-- UPGRADE 2: ADVANCED JSON-LD Schema.org -->
+    <script type="application/ld+json" id="structuredData">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "@id": "https://bemkbmfkgumi.com/radarbem/#webpage",
+          "url": "https://bemkbmfkgumi.com/radarbem",
+          "name": "Lini Masa Radar BEM - BEM KBMFKG UMI",
+          "description": "Pantau update kegiatan dan dokumentasi terbaru dari seluruh departemen dan UKM BEM KBMFKG UMI melalui Lini Masa Radar BEM.",
+          "inLanguage": "id-ID",
+          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Radar BEM",
+              "item": "https://bemkbmfkgumi.com/radarbem"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+    <!-- ================= END SEO ================= -->
+    
+    <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
+    
+    <!-- Pemuatan Font Google Cepat & Anti-Render Blocking -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- Specific In-Page Styles -->
+    <style>
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <!-- Inject Header Partial Secara Dinamis -->
+    <%- include('partials/header.html') %>
+
+    <main class="container" style="padding-top: 80px; padding-bottom: 80px;">
+        <!-- HERO SECTION RADAR BEM -->
+        <section class="radar-hero">
+            <div class="reveal active">
+                <div class="clay-badge" style="margin-bottom: 15px;">SOSIAL MEDIA NETWORK</div>
+                <h1 class="radar-title glow-text">Lini Masa <span class="script-font">Radar BEM</span></h1>
+                <p class="radar-subtitle">Pantau <i>update</i> kegiatan dan dokumentasi terbaru dari seluruh elemen, departemen, dan himpunan BEM KBMFKG UMI langsung dari <i>feed</i> Instagram kami.</p>
+            </div>
+        </section>
+
+        <!-- WIDGET GRID SECTION -->
+        <section class="radar-content">
+            <div class="radar-grid reveal" id="radarContainer">
+                
+                <!-- SKELETON LOADING UI (Hanya Tampil Saat API Sedang Ditarik) -->
+                <div class="radar-card-wrapper" id="radarLoader">
+                    <div class="radar-dept-name" style="width: 60%; height: 30px; background: rgba(255,255,255,0.1); border-radius: 8px; border:none; animation: pulse 1.5s infinite;"></div>
+                    <div class="radar-widget-container" style="background: rgba(255,255,255,0.05); animation: pulse 1.5s infinite;">
+                        <span style="color: var(--text-muted); font-weight: bold; letter-spacing: 2px;">MENYAMBUNGKAN SINYAL RADAR...</span>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+    </main>
+
+    <!-- Inject Footer Partial Secara Dinamis -->
+    <%- include('partials/footer.html') %>
+
+    <!-- Animasi Scroll -->
+    <button class="scroll-to-top" id="scrollToTopBtn" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24"><path d="M13 5.828V17h-2V5.828L5.636 11.192 4.222 9.778 12 2l7.778 7.778-1.414 1.414L13 5.828zM4 19h16v2H4v-2z"/></svg>
+    </button>
+
+    <script>
+        // Animasi Reveal & Scroll To Top
+        window.addEventListener('scroll', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            for(let i=0; i<reveals.length; i++){
+                const windowHeight = window.innerHeight;
+                const elementTop = reveals[i].getBoundingClientRect().top;
+                const elementVisible = 50;
+                if(elementTop < windowHeight - elementVisible){
+                    reveals[i].classList.add('active');
+                }
+            }
+            
+            const scrollBtn = document.getElementById("scrollToTopBtn");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollBtn.classList.add("show");
+            } else {
+                scrollBtn.classList.remove("show");
+            }
+        });
+        
+        document.getElementById("scrollToTopBtn").addEventListener("click", () => {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+
+        // ================= KUNCI PENTING: FUNGSI INJEKTOR SCRIPT (ANTI-BYPASS BROWSER) =================
+        // Ketika embed Elfsight (yang mengandung tag <script>) dimasukkan via innerHTML, browser secara default tidak akan mengeksekusi script tersebut demi keamanan.
+        // Fungsi ini membaca HTML string, mencari tag <script>, lalu secara manual membuat Document Node baru dan menjalankannya.
+        function injectHTMLWithScripts(containerId, htmlString) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = htmlString;
+            
+            // Cari dan jalankan ulang semua tag script
+            const scripts = container.querySelectorAll("script");
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement("script");
+                // Pindahkan semua attributes (src, async, defer, dll)
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                // Pindahkan inner text jika script inline
+                if(oldScript.innerHTML) {
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                }
+                // Ganti tag lama dengan yang baru agar dieksekusi
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+        }
+
+        // ================= PENARIKAN DATA API RADAR =================
+        async function loadRadarData() {
+            try {
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/content'; 
+                }
+
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+                
+                const radarContainer = document.getElementById('radarContainer');
+                const radarData = data.radar || [];
+                
+                if(radarData.length === 0) {
+                    radarContainer.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align:center; padding: 50px 20px; background: var(--bg-dark-overlay); border-radius: 20px; border: 1px dashed var(--border-light);">
+                        <h3 style="color:var(--text-muted); font-size: 1.5rem; margin-bottom: 10px;">Sinyal Radar Kosong.</h3>
+                        <p style="color:var(--text-muted); font-size:1rem;">Belum ada widget Instagram yang dipasang oleh Admin BEM.</p>
+                    </div>`;
+                    return;
+                }
+
+                let htmlContent = '';
+                radarData.forEach(item => {
+                    htmlContent += `
+                    <div class="radar-card-wrapper">
+                        <div class="radar-dept-name">${item.nama || 'Lini Masa'}</div>
+                        <div class="radar-widget-container">
+                            ${item.embed || '<p style="color:var(--text-muted); padding:20px;">Widget Error/Kosong</p>'}
+                        </div>
+                    </div>`;
+                });
+
+                // Eksekusi Injeksi Khusus agar Widget Elfsight Berjalan Mulus secara Realtime
+                injectHTMLWithScripts('radarContainer', htmlContent);
+
+            } catch(e) {
+                console.error("Gagal menarik sinyal Radar", e);
+                document.getElementById('radarContainer').innerHTML = `
+                <div style="grid-column: 1 / -1; text-align:center; padding: 50px 20px; background: rgba(239, 68, 68, 0.05); border-radius: 20px; border: 1px dashed rgba(239, 68, 68, 0.3);">
+                    <h3 style="color:#ef4444; font-size: 1.5rem; margin-bottom: 10px;">⚠️ Gagal Tersambung Ke Radar</h3>
+                    <p style="color:var(--text-muted); font-size:1rem;">Periksa koneksi internet Anda atau hubungi Developer Team.</p>
+                </div>`;
+            }
+        }
+
+        // Jalankan saat halaman diload
+        document.addEventListener('DOMContentLoaded', loadRadarData);
+    </script>
+</body>
+</html>
