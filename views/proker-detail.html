@@ -243,7 +243,8 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
             
-            let eventId = window.location.pathname.split('/').pop();
+            // Pengambilan ID yang Diperketat (.filter(Boolean) untuk cegah trailing slash bug)
+            let eventId = window.location.pathname.split('/').filter(Boolean).pop();
             if (!eventId || eventId === 'proker-detail') {
                 eventId = urlParams.get('id');
             }
@@ -306,8 +307,15 @@
                 const rawDesc = eventData.deskripsi || '';
                 const descText = rawDesc.length > 155 ? rawDesc.substring(0, 155) + '...' : (rawDesc || `Informasi detail kegiatan ${eventData.nama} oleh BEM KBMFKG UMI.`);
                 
-                const pageUrl = `${baseUrl}/proker-detail/${eventId}`;
+                const finalSlug = eventData.slug || eventData.id || eventId;
+                const pageUrl = `${baseUrl}/proker-detail/${finalSlug}`;
                 const imgUrl = eventData.banner ? (eventData.banner.startsWith('http') ? eventData.banner : `${baseUrl}${eventData.banner}`) : `${baseUrl}/img/bemfkgumi.png`;
+
+                // SUPER UPGRADE: Auto-Rewrite Address Bar History (Jika user masuk pakai ?id=)
+                // Ini men-force Struktur Clean URL secara visual & behavior SEO tanpa mereload
+                if (window.location.search.includes('id=') && !isPreview) {
+                    window.history.replaceState({}, '', `/proker-detail/${finalSlug}`);
+                }
 
                 // Update HTML Meta Tags
                 document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
@@ -334,7 +342,6 @@
                 // Offers Logic to Fix GSC URL/ValidFrom/Availability Warning
                 let offersData = undefined;
                 const urlDaftar = eventData.linkDaftar && eventData.linkDaftar.trim();
-                // Only render "offers" if it's a valid http/https link (not "#")
                 if (urlDaftar && urlDaftar.startsWith('http')) {
                     offersData = {
                         "@type": "Offer",
@@ -363,7 +370,7 @@
                             "name": eventData.nama,
                             "description": eventData.deskripsi || descText,
                             "url": pageUrl,
-                            "image": imgUrl,
+                            "image": [imgUrl], // GSC sometimes prefers an array for images
                             "eventStatus": "https://schema.org/EventScheduled",
                             "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
                             "startDate": startDateISO,
