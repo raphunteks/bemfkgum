@@ -108,7 +108,7 @@ const defaultProker = [
         slug: "pubmed",
         dept: "DEPT. INFOCOM",
         namaProker: "PUBMED",
-        bgImage: "/img/bemfkgumi.png",
+        bgImage: "/img/bannerprokerdeskripsi.png",
         fotoPengurus: "/img/bemfkgumi.png",
         shortDesc: "Membuat konten-konten menarik yang memuat tentang informasi (berita, pemberitahuan, peringatan hari besar, isu-isu yang berkembang)",
         sasaranPeserta: "Ruang lingkup internal hingga eksternal FKG-UMI.",
@@ -449,7 +449,13 @@ app.get('/sitemap.xml', async (req, res) => {
             xmlUrls += `\n\n    <!-- ========================================= -->\n    <!-- DIRECT DYNAMIC SEO URLs (PROKER & DEPARTEMEN) -->\n    <!-- ========================================= -->`;
             prokerData.forEach(p => {
                 const slug = p.slug || p.id;
-                const img = p.fotoPengurus || p.bgImage || `${domain}/img/bemfkgumi.png`;
+                let img = p.bgImage || p.fotoPengurus || `/img/bannerprokerdeskripsi.png`;
+                
+                // SUPER FIX: Pastikan URL Gambar adalah HTTP Absolute (Untuk Validasi XML Sitemap)
+                if (img.startsWith('/')) {
+                    img = `${domain}${img}`;
+                }
+                
                 if (slug) {
                     // Penarikan Tanggal Rilis Proker Dinamis
                     const itemLastMod = formatSitemapDate(p.startDate);
