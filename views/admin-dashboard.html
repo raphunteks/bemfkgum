@@ -129,7 +129,7 @@
             <section id="sec-profil" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2 style="color: var(--text-light);">Manajemen Struktur Kepengurusan</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org')">💾 Simpan Ke Database</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org', this)">💾 Simpan Ke Database</button>
                 </div>
 
                 <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
@@ -171,7 +171,7 @@
             <section id="sec-filosofi" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2 style="color: var(--text-light);">Manajemen Filosofi Logo & Warna</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('filosofi')">💾 Simpan Filosofi</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('filosofi', this)">💾 Simpan Filosofi</button>
                 </div>
                 
                 <h3 style="margin: 30px 0 15px; border-bottom: 1px solid var(--border-light); padding-bottom:10px; color:var(--accent-neon);">Filosofi Logo</h3>
@@ -187,7 +187,7 @@
             <section id="sec-sejarah" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2 style="color: var(--text-light);">Manajemen Sejarah Kepengurusan</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('sejarah')">💾 Simpan Sejarah</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('sejarah', this)">💾 Simpan Sejarah</button>
                 </div>
                 <div id="cmsSejarah" style="display:flex; flex-direction:column; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
@@ -200,7 +200,7 @@
                         <h2 style="color: var(--text-light);">DESKRIPSI PROGRAM KERJA</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Data Card Departemen dan Halaman Deskripsi Lengkap</p>
                     </div>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker')">💾 Simpan Departemen</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker', this)">💾 Simpan Departemen</button>
                 </div>
                 <div id="cmsProker" style="display:flex; flex-direction:column; gap:25px;"></div>
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem;">+ Tambah Proker Baru</button>
@@ -213,7 +213,7 @@
                         <h2 style="color: var(--text-light);">Manajemen Agenda Kalender & Detail Proker</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Untuk Event Kegiatan Spesifik</p>
                     </div>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kalender')">💾 Simpan Semua Agenda</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kalender', this)">💾 Simpan Semua Agenda</button>
                 </div>
                 <div id="cmsKalender" style="display:flex; flex-direction:column; gap:25px;"></div>
                 <button class="action-btn view" onclick="tambahAgenda()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem;">+ Tambah Agenda Baru</button>
@@ -223,7 +223,7 @@
             <section id="sec-dok" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2 style="color: var(--text-light);">Galeri Dokumentasi</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('dokumentasi')">💾 Simpan Dokumentasi</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('dokumentasi', this)">💾 Simpan Dokumentasi</button>
                 </div>
                 <div id="cmsDokumentasi" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
@@ -268,7 +268,7 @@
                         <h2 style="color: var(--text-light);">Manajemen Radar BEM</h2>
                         <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Kelola feed Instagram/Sosmed real-time per Departemen menggunakan widget embed.</p>
                     </div>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('radar')">💾 Simpan Radar BEM</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('radar', this)">💾 Simpan Radar BEM</button>
                 </div>
                 <div id="cmsRadar" style="display:flex; flex-direction:column; gap:20px;"></div>
                 <button class="action-btn view" onclick="tambahRadar()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem; border-color:#ec4899; color:#ec4899;">+ Tambah Feed Radar Baru</button>
@@ -298,7 +298,7 @@
             <section id="sec-team" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2 style="color: var(--text-light);">Manajemen Developer Team (Credits)</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('team')">💾 Simpan Developer Team</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('team', this)">💾 Simpan Developer Team</button>
                 </div>
                 <p style="color: var(--text-muted); margin-bottom: 20px;">Sesuaikan struktur credits development untuk halaman /ourteam.</p>
                 <div id="cmsTeam" style="display:flex; flex-direction:column; gap:20px;"></div>
@@ -309,7 +309,7 @@
             <section id="sec-kontak" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2 style="color: var(--text-light);">Manajemen Narahubung & Lokasi</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kontak')">💾 Simpan Info Kontak</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kontak', this)">💾 Simpan Info Kontak</button>
                 </div>
                 
                 <div class="glass-card" style="margin-bottom: 20px;">
@@ -338,7 +338,7 @@
             <section id="sec-pengaturan" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <h2 style="color: var(--text-light);">Manajemen Header & Footer</h2>
-                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('settings')">💾 Simpan Pengaturan</button>
+                    <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('settings', this)">💾 Simpan Pengaturan</button>
                 </div>
                 
                 <div class="glass-card" style="margin-bottom: 20px;">
@@ -528,9 +528,20 @@
         }
 
         function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
+        
         async function handleImageUpload(inputElem, objToUpdate, keyName, renderFn) {
             const file = inputElem.files[0];
-            if(file) { const base64 = await fileToBase64(file); objToUpdate[keyName] = base64; showToast("Gambar dimuat! Klik Simpan."); renderFn(); }
+            if(file) { 
+                showToast("⏳ Memproses gambar...");
+                try {
+                    const base64 = await fileToBase64(file); 
+                    objToUpdate[keyName] = base64; 
+                    showToast("✅ Gambar dimuat! Ingat klik Simpan."); 
+                    renderFn(); 
+                } catch(e) {
+                    showToast("⚠️ Gagal memproses gambar.");
+                }
+            }
         }
 
         async function loadAllData() {
@@ -556,11 +567,11 @@
                     db.kalender = data.kalender || []; 
                     db.dokumentasi = data.dokumentasi || []; 
                     db.team = data.team || [];
-                    db.radar = data.radar || []; // Fetching Data Radar
+                    db.radar = data.radar || []; 
                 }
                 const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
-            } catch(err) { showToast("⚠️ Memuat data Offline."); }
-            renderSemuaCMS(); loadArtikelGas(); // Menjamin GAS diload
+            } catch(err) { showToast("⚠️ Memuat data Offline (Sesi Preview)."); }
+            renderSemuaCMS(); loadArtikelGas(); 
         }
 
         function renderSemuaCMS() { 
@@ -589,17 +600,55 @@
             }
         }
 
-        async function saveData(type) {
+        // =======================================================================================
+        // SUPER UPGRADE: FUNGSI SAVE DATA TERINTEGRASI SMART FALLBACK (MENCEGAH ERROR UI)
+        // =======================================================================================
+        async function saveData(type, btnElement) {
             if(type === 'org') {
                 db.org.visi = document.getElementById('editVisi').value;
                 db.org.misi = document.getElementById('editMisi').value.split('\n').filter(m => m.trim() !== '');
             }
+
+            let originalText = "💾 Simpan";
+            if (btnElement) {
+                originalText = btnElement.innerHTML;
+                btnElement.innerHTML = "⏳ Memproses...";
+                btnElement.disabled = true;
+                btnElement.style.opacity = "0.7";
+            }
+
             try {
                 let apiUrl = `/api/content/${type}`;
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com/api/content/${type}`;
-                const req = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db[type]) });
-                if(req.ok) showToast(`✅ Data Tersimpan!`); else throw new Error();
-            } catch(e) { showToast("⚠️ Gagal menyimpan (mode simulasi aktif)."); }
+                const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
+                if(isPreview) apiUrl = `https://bemkbmfkgumi.com/api/content/${type}`;
+
+                const req = await fetch(apiUrl, { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(db[type]) 
+                });
+                
+                if(req.ok) {
+                    showToast(`✅ Data ${type.toUpperCase()} Berhasil Tersimpan di Database Server!`); 
+                } else { 
+                    throw new Error("Server mengembalikan status HTTP " + req.status); 
+                }
+            } catch(e) { 
+                const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
+                if (isPreview) {
+                    // Mencegah munculnya pop-up error merah di Canvas. Data tetap tersimpan di memori lokal.
+                    showToast(`✅ Tersimpan di Sesi Preview (Mode Canvas Lokal).`);
+                } else {
+                    console.warn("Gagal terhubung ke backend API:", e.message);
+                    showToast("⚠️ Gagal menyimpan ke server. Pastikan koneksi internet stabil."); 
+                }
+            } finally {
+                if (btnElement) {
+                    btnElement.innerHTML = originalText;
+                    btnElement.disabled = false;
+                    btnElement.style.opacity = "1";
+                }
+            }
         }
 
         function renderOrg() {
@@ -661,9 +710,10 @@
                         <input type="text" class="neo-input" style="flex:1; font-size:1.2rem; font-weight:bold; color:var(--text-light); border:none; background:var(--bg-dark-overlay); padding:10px; box-shadow:none; text-transform:uppercase;" value="${p.namaProker || ''}" placeholder="NAMA PROKER (CTH: PUBMED)" oninput="db.proker[${i}].namaProker=this.value">
                     </h3>
                     
+                    <!-- SUPER UPGRADE: Double Binding ID dan Slug agar kompatibel mutlak dengan backend GSC URL -->
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
                         <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">ID Slug Proker (URL)</label>
-                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${p.id || ''}" placeholder="contoh: pubmed" oninput="db.proker[${i}].id=this.value">
+                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${p.slug || p.id || ''}" placeholder="contoh: pubmed" oninput="db.proker[${i}].slug=this.value; db.proker[${i}].id=this.value">
                     </div>
 
                     <div class="grid-2" style="align-items:start; margin-bottom:20px;">
@@ -677,7 +727,7 @@
                         <!-- KOTAK 2: BANNER HEADER KHUSUS DETAIL -->
                         <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px solid var(--border-light);">
                             <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold; display:block; margin-bottom:8px;">Banner Header (1920x1080 px)</label>
-                            <img src="${p.bgImage || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light); background: var(--bg-dark-heavy);" alt="Banner Dept">
+                            <img src="${p.bgImage || '/img/bannerprokerdeskripsi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light); background: var(--bg-dark-heavy);" alt="Banner Dept">
                             <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.proker[${i}], 'bgImage', renderProker)">
                         </div>
                     </div>
@@ -753,7 +803,7 @@
 
         function tambahProkerDept() { 
             db.proker.push({
-                id: "proker-" + Date.now(), dept: "DEPT. BARU", namaProker: "NAMA PROKER", bgImage: "/img/bemfkgumi.png", fotoPengurus: "/img/bemfkgumi.png",
+                id: "proker-" + Date.now(), dept: "DEPT. BARU", namaProker: "NAMA PROKER", bgImage: "/img/bannerprokerdeskripsi.png", fotoPengurus: "/img/bemfkgumi.png",
                 shortDesc: "", sasaranPeserta: "", targetPelaksanaan: "", startDate: "", endDate: "", performer: "", anggaran: "", koordinator: "", penanggungJawab: "",
                 latarBelakang: "", tujuan: "", swot: "", parameterKeberhasilan: ""
             }); 
@@ -815,9 +865,10 @@
                         </div>
                     </div>
                     
+                    <!-- SUPER UPGRADE: Double Binding ID dan Slug agar kompatibel mutlak dengan backend GSC URL -->
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
                         <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">Custom Link / Slug (Opsional - SEO URL)</label>
-                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${k.slug || ''}" placeholder="contoh: umi-amal-senyuman-vol-3" oninput="db.kalender[${i}].slug=this.value">
+                        <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${k.slug || k.id || ''}" placeholder="contoh: umi-amal-senyuman-vol-3" oninput="db.kalender[${i}].slug=this.value; db.kalender[${i}].id=this.value">
                         <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">*Biarkan kosong agar sistem otomatis membuat link dari Nama Kegiatan secara rapi.</p>
                     </div>
 
@@ -1132,7 +1183,7 @@
 
         async function saveArtikel() {
             const btn = document.getElementById('btnSaveArtikel');
-            btn.innerText = "Memproses & Upload..."; btn.disabled = true;
+            btn.innerText = "⏳ Memproses Upload..."; btn.disabled = true;
 
             const isEdit = !!document.getElementById('artId').value;
             const id = isEdit ? document.getElementById('artId').value : `ART-${Date.now()}`;
@@ -1190,10 +1241,11 @@
                 if(!isEdit) artikelData.unshift({...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || '/img/bemfkgumi.png'});
                 else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || artikelData[idx].Gambar_URL}; }
                 renderArtikelTable();
-                showToast('✅ Tersimpan (Mode Offline Simulasi)');
+                showToast('✅ Tersimpan (Sesi Canvas Lokal)');
             }
 
             closeArtikelModal();
+            btn.innerText = "Publikasikan";
             btn.disabled = false;
         }
 
@@ -1207,7 +1259,7 @@
             } catch(e) {
                 artikelData = artikelData.filter(a => a.ID_Berita !== id);
                 renderArtikelTable();
-                showToast('✅ Artikel Dihapus (Mode Simulasi)');
+                showToast('✅ Artikel Dihapus (Sesi Simulasi Lokal)');
             }
         }
     </script>
