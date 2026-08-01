@@ -10,12 +10,19 @@
     <meta name="description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap program kerja, penanggung jawab, dan struktur kepengurusan di BEM KBMFKG UMI.">
     <meta name="keywords" content="Deskripsi Program Kerja, Department Profile, Work Programs, Struktur Departemen, Department Structure, BEM FKG UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia">
     <meta name="author" content="BEM KBMFKG UMI">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://bemkbmfkgumi.com/proker-deskripsi">
+    
+    <!-- Tag default ini akan diubah oleh JS menjadi noindex jika data tidak ditemukan (Mencegah Soft 404) -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" id="metaRobots">
+    
+    <!-- 
+      SUPER UPGRADE: 
+      Tag <link rel="canonical"> dan <meta property="og:url"> statis DIHAPUS. 
+      Jika dibiarkan statis ke URL root, Googlebot akan menganggap semua slug sebagai duplikat dan menolak mengindeksnya (Error Kanonis / Soft 404).
+      Script JS di bawah akan menyuntikkan canonical secara dinamis sesuai slug database.
+    -->
     
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://bemkbmfkgumi.com/proker-deskripsi">
     <meta property="og:title" content="Department Profile & Work Programs | BEM KBMFKG UMI">
     <meta property="og:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bannerprokerdeskripsi.png">
@@ -23,7 +30,6 @@
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://bemkbmfkgumi.com/proker-deskripsi">
     <meta property="twitter:title" content="Department Profile & Work Programs | BEM KBMFKG UMI">
     <meta property="twitter:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bannerprokerdeskripsi.png">
@@ -287,6 +293,10 @@
 
         // ================= FUNGSI RENDER ERROR STATE =================
         function showErrorState(title, message) {
+            // SUPER UPGRADE: Jika Data tidak ada, set meta robots ke noindex agar Google tidak melabelinya Soft 404
+            const metaRobots = document.getElementById('metaRobots');
+            if(metaRobots) metaRobots.setAttribute('content', 'noindex, nofollow');
+
             document.getElementById('mainContent').innerHTML = `
                 <div style="text-align:center; padding: 100px 0; animation: fadeInTab 0.5s ease;">
                     <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
@@ -373,8 +383,8 @@
                     
                     <div class="proker-banner-overlay" style="z-index: 2;">
                         <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem; background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2);">DESKRIPSI PROGRAM KERJA</div>
-                        <h2 class="banner-title-text" itemprop="name">${titleBanner}</h2>
-                        <p class="banner-desc-text" itemprop="description">${data.shortDesc || ''}</p>
+                        <h2 class="banner-title-text">${titleBanner}</h2>
+                        <p class="banner-desc-text">${data.shortDesc || ''}</p>
                     </div>
                 </div>
 
@@ -383,7 +393,7 @@
                     <div class="proker-main-col">
                         <div id="latar-belakang" class="glass-card reveal active" style="margin-bottom: 35px; scroll-margin-top: 100px;">
                             <h2 class="detail-section-title">Latar Belakang / Bentuk Kegiatan</h2>
-                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; white-space: pre-wrap;" itemprop="about">${data.latarBelakang || '-'}</p>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; white-space: pre-wrap;">${data.latarBelakang || '-'}</p>
                         </div>
 
                         <div id="tujuan" class="glass-card reveal active" style="margin-bottom: 35px; scroll-margin-top: 100px;">
@@ -465,6 +475,16 @@
             const finalSlug = data.slug || data.id || slug;
             const pageUrl = `${baseUrl}/proker-deskripsi/${finalSlug}`;
             
+            // SUPER FIX GSC: Dynamic Canonical Tag Injection
+            // Menghapus elemen canonical yang mungkin sudah ada, lalu membuat yang baru dan absolut
+            let canonicalLink = document.querySelector('link[rel="canonical"]');
+            if (!canonicalLink) {
+                canonicalLink = document.createElement('link');
+                canonicalLink.setAttribute('rel', 'canonical');
+                document.head.appendChild(canonicalLink);
+            }
+            canonicalLink.setAttribute('href', pageUrl);
+            
             // Rewrite URL Address Bar History Secara Otomatis
             const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
             if (window.location.search.includes('id=') && !isPreview) {
@@ -478,11 +498,18 @@
 
             // Update HTML Meta Tags
             document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
-            document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
             
+            // Update Open Graph (OG) URL secara dinamis agar sesuai halaman
+            let ogUrlMeta = document.querySelector('meta[property="og:url"]');
+            if (!ogUrlMeta) {
+                ogUrlMeta = document.createElement('meta');
+                ogUrlMeta.setAttribute('property', 'og:url');
+                document.head.appendChild(ogUrlMeta);
+            }
+            ogUrlMeta.setAttribute('content', pageUrl);
+
             document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
             document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
-            document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
             document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
             
             document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
