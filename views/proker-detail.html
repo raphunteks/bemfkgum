@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Details & Registration | Program Kerja BEM KBMFKG UMI</title>
+    <title>Detail Kegiatan | Program Kerja BEM KBMFKG UMI</title>
     
     <!-- ================= SEO EXPERT (DYNAMIC EVENT & SITELINKS READY) ================= -->
-    <meta name="description" content="Event Details - Detail lengkap informasi program kerja (Work Programs) dan agenda kegiatan (Event Agenda) dari BEM KBMFKG UMI. Dapatkan update jadwal (Schedule), lokasi, dan link pendaftaran (Registration).">
-    <meta name="keywords" content="Program Kerja BEM FKG UMI, Work Programs, Event Agenda, Mahasiswa FKG UMI, Kegiatan Mahasiswa Makassar, Pendaftaran BEM FKG, Event Registration, Detail Kegiatan, Universitas Muslim Indonesia">
+    <meta name="description" content="Informasi dan detail lengkap program kerja serta agenda kegiatan dari BEM KBMFKG UMI.">
+    <meta name="keywords" content="Program Kerja BEM FKG UMI, Work Programs, Event Agenda, Mahasiswa FKG UMI, Kegiatan Mahasiswa Makassar, Pendaftaran BEM FKG">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://bemkbmfkgumi.com/proker-detail">
@@ -16,19 +16,19 @@
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://bemkbmfkgumi.com/proker-detail">
-    <meta property="og:title" content="Event Details & Registration | Program Kerja BEM KBMFKG UMI">
-    <meta property="og:description" content="Event Details - Detail lengkap informasi program kerja (Work Programs) dan agenda kegiatan dari BEM KBMFKG UMI.">
+    <meta property="og:title" content="Detail Kegiatan | Program Kerja BEM KBMFKG UMI">
+    <meta property="og:description" content="Informasi dan detail lengkap program kerja serta agenda kegiatan dari BEM KBMFKG UMI.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:site_name" content="BEM KBMFKG UMI">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://bemkbmfkgumi.com/proker-detail">
-    <meta property="twitter:title" content="Event Details & Registration | Program Kerja BEM KBMFKG UMI">
-    <meta property="twitter:description" content="Event Details - Detail lengkap informasi program kerja (Work Programs) dan agenda kegiatan dari BEM KBMFKG UMI.">
+    <meta property="twitter:title" content="Detail Kegiatan | Program Kerja BEM KBMFKG UMI">
+    <meta property="twitter:description" content="Informasi dan detail lengkap program kerja serta agenda kegiatan dari BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- BASE STATIC SCHEMA (Aman dari Parsing Error - Hanya memuat info Organisasi) -->
+    <!-- BASE STATIC SCHEMA (Akan di-update dinamis oleh JS) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -47,13 +47,11 @@
       ]
     }
     </script>
-    <!-- ================= END STATIC SEO ================= -->
 
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
     
-    <!-- SCRIPT PROTECT DEVTOOLS & RIGHT CLICK -->
     <script src="/js/protect-devtools.js"></script>
 </head>
 <body itemscope itemtype="https://schema.org/Event">
@@ -70,7 +68,7 @@
             <div style="font-size: 0.95rem; color: var(--text-muted); background: var(--bg-dark-overlay); padding: 10px 22px; border-radius: 30px; border: 1px solid var(--border-light); backdrop-filter: blur(10px);">
                 <a href="/informasi#kalender" style="color: var(--accent-neon); text-decoration: none; font-weight: 600;">🗓️ Program Kerja</a> 
                 <span style="margin: 0 12px; color: var(--text-muted);">/</span> 
-                <span id="bcTitle" style="color: var(--text-light); font-weight: 600;">Memuat...</span>
+                <span id="bcTitle" style="color: var(--text-light); font-weight: 600;">Mencari Data...</span>
             </div>
             
             <a href="/informasi#kalender" class="action-btn view" style="text-decoration:none; display:flex; align-items:center; gap:8px; padding: 10px 20px; border-radius: 20px;">
@@ -79,24 +77,23 @@
             </a>
         </div>
 
+        <!-- LOADER & ERROR STATE UI -->
         <div id="loaderData" style="text-align: center; padding: 100px 0; color: var(--accent-neon);">
             <div style="width: 50px; height: 50px; border: 4px solid var(--border-light); border-top-color: var(--accent-neon); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-            Menarik Data Kegiatan...
+            <p style="font-weight: 600; letter-spacing: 1px;">Menarik Data dari Database...</p>
         </div>
 
         <!-- MAIN CONTENT WRAPPER -->
         <div id="mainDetailContent" style="display: none;">
             
-            <!-- SUPER UPGRADE: BANNER FULL WIDTH DI ATAS -->
+            <!-- BANNER FULL WIDTH -->
             <div class="proker-banner-wrapper glass-card reveal active" style="padding:0; overflow:hidden; margin-bottom:40px; position:relative; width: 100%; border-radius: 30px;">
-                <!-- Fallback aspect ratio via CSS -->
                 <img id="detailBanner" src="/img/bemfkgumi.png" class="proker-banner-img" alt="Banner Kegiatan" itemprop="image" style="width: 100%; height: 450px; object-fit: cover; display: block;">
                 
-                <!-- Overlay Gradient untuk Teks diatur via CSS class -->
                 <div class="proker-banner-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, var(--bg-dark) 0%, rgba(11, 19, 43, 0.8) 60%, transparent 100%); padding: 80px 40px 40px;">
                     <div style="display:flex; gap:12px; margin-bottom:15px; flex-wrap: wrap;">
                         <span class="detail-header-badge blue" style="background: var(--bg-dark-overlay); color: var(--text-light); border: 1px solid var(--border-light); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; letter-spacing: 1px;">PROGRAM KERJA</span>
-                        <span id="detailBadgeStatus" class="detail-header-badge" style="padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; letter-spacing: 1px;">BERLANGSUNG</span>
+                        <span id="detailBadgeStatus" class="detail-header-badge" style="padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; letter-spacing: 1px;">-</span>
                     </div>
                     
                     <h1 id="detailTitle" itemprop="name" style="font-size:3.2rem; font-weight:900; color:var(--text-light); line-height:1.2; text-shadow: 0 5px 15px var(--shadow-text); margin-bottom: 20px;">Nama Kegiatan</h1>
@@ -104,23 +101,21 @@
                     <div style="display: flex; align-items: center; gap: 25px; flex-wrap: wrap;">
                         <p id="detailWaktuBanner" style="color:var(--text-light); font-size:1.05rem; font-weight: 500; display: flex; align-items: center; gap: 8px;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            Memuat Waktu...
+                            -
                         </p>
                         <p id="detailDept" itemprop="organizer" itemscope itemtype="https://schema.org/Organization" style="color:var(--accent-neon); font-size:1.05rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                            <span itemprop="name">Kementerian/Departemen</span>
+                            <span itemprop="name">-</span>
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- GRID 2 KOLOM (BAWAH BANNER) -->
+            <!-- GRID 2 KOLOM -->
             <div class="grid-2" style="margin-bottom: 40px; grid-template-columns: 1fr 380px; gap: 40px;">
                 
                 <!-- KOLOM KIRI (DESKRIPSI & KONTRIBUTOR) -->
                 <div class="proker-main-col">
-                    
-                    <!-- DESKRIPSI (Diberi ID untuk Sitelinks Google) -->
                     <div id="deskripsi-kegiatan" class="glass-card reveal active" style="margin-bottom: 35px; border-radius: 20px; padding: 40px; scroll-margin-top: 100px;">
                         <h3 style="font-size: 1.8rem; color: var(--text-light); margin-bottom: 25px; padding-left: 18px; border-left: 5px solid var(--accent-neon); font-weight: 800;">Deskripsi Kegiatan</h3>
                         <div id="detailDesc" itemprop="description" style="color: var(--text-light); line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap;">
@@ -128,14 +123,12 @@
                         </div>
                     </div>
 
-                    <!-- KONTRIBUTOR / KEPANITIAAN (Diberi ID untuk Sitelinks Google) -->
                     <div id="kepanitiaan" class="glass-card reveal active" style="margin-bottom: 30px; border-radius: 20px; padding: 40px; scroll-margin-top: 100px;">
                         <h3 style="font-size: 1.8rem; color: var(--text-light); margin-bottom: 25px; padding-left: 18px; border-left: 5px solid #10b981; font-weight: 800;">Kontributor Kegiatan</h3>
                         <div id="detailKepanitiaan" style="margin-top: 25px;">
                             <!-- JS Injected Tables -->
                         </div>
                     </div>
-
                 </div>
 
                 <!-- KOLOM KANAN / SIDEBAR (INFORMASI DETAIL) -->
@@ -146,25 +139,31 @@
                         </h3>
                         
                         <div style="margin-bottom: 25px;" itemprop="location" itemscope itemtype="https://schema.org/Place">
-                            <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">LOKASI</span>
-                            <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--bg-dark-heavy); padding: 16px; border-radius: 16px; border: 1px solid var(--border-light);">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 2px; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            <span class="detail-info-label">LOKASI</span>
+                            <div class="info-row">
+                                <div class="info-icon-wrapper ic-lokasi">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                </div>
                                 <strong id="detailLokasi" itemprop="name" style="color:var(--text-light); font-size:1.05rem; line-height: 1.4;">-</strong>
                             </div>
                         </div>
 
                         <div style="margin-bottom: 25px;">
-                            <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">WAKTU PELAKSANAAN</span>
-                            <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--bg-dark-heavy); padding: 16px; border-radius: 16px; border: 1px solid var(--border-light);">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-neon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 2px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            <span class="detail-info-label">WAKTU PELAKSANAAN</span>
+                            <div class="info-row">
+                                <div class="info-icon-wrapper ic-waktu">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                </div>
                                 <strong id="detailWaktu" style="color:var(--text-light); font-size:1.05rem; line-height: 1.4;"> - </strong>
                             </div>
                         </div>
 
                         <div style="margin-bottom: 35px;">
-                            <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 600;">TARGET PESERTA</span>
-                            <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--bg-dark-heavy); padding: 16px; border-radius: 16px; border: 1px solid var(--border-light);">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 2px; flex-shrink: 0;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            <span class="detail-info-label">TARGET PESERTA</span>
+                            <div class="info-row">
+                                <div class="info-icon-wrapper ic-target">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                </div>
                                 <strong id="detailTarget" style="color:var(--text-light); font-size:1.05rem; line-height: 1.4;">-</strong>
                             </div>
                         </div>
@@ -194,6 +193,8 @@
         function formatTglRange(startStr, endStr) {
             if(!startStr) return "-";
             const s = new Date(startStr); const e = endStr ? new Date(endStr) : s;
+            if(isNaN(s.getTime())) return startStr; // Fallback jika string bukan format tanggal valid
+            
             if(s.getTime() === e.getTime()) return `${s.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
             if(s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) return `${s.getDate()} - ${e.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
             return `${s.getDate()} ${monthNames[s.getMonth()]} - ${e.getDate()} ${monthNames[e.getMonth()]} ${s.getFullYear()}`;
@@ -202,41 +203,34 @@
         function getAgendaStatus(startStr, endStr) {
             const defaultStyle = "padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; letter-spacing: 1px;";
             if(!startStr) return { text: "INFO", style: `background: var(--bg-dark-overlay); color: var(--text-light); border: 1px solid var(--border-light); ${defaultStyle}` };
+            
             const today = new Date(); today.setHours(0,0,0,0);
-            const s = new Date(startStr); s.setHours(0,0,0,0);
-            const e = endStr ? new Date(endStr) : s; e.setHours(0,0,0,0);
+            const s = new Date(startStr); 
+            if(isNaN(s.getTime())) return { text: "TERJADWAL", style: `background: var(--bg-dark-overlay); color: var(--text-light); border: 1px solid var(--border-light); ${defaultStyle}` };
+            
+            s.setHours(0,0,0,0);
+            const e = endStr ? new Date(endStr) : s; 
+            if(!isNaN(e.getTime())) e.setHours(0,0,0,0);
             
             if(today >= s && today <= e) return { text: "SEDANG BERLANGSUNG", style: `background: #2563eb; color: #ffffff; border: 1px solid #60a5fa; ${defaultStyle}` };
             if(today < s) return { text: "SEGERA HADIR", style: `background: var(--accent-neon); color: #000000; border: 1px solid var(--accent-glow); ${defaultStyle}` };
-            return { text: "SELESAI DILAKSANAKAN", style: `background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); ${defaultStyle}` };
+            return { text: "SELESAI DILAKSANAKAN", style: `background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); ${defaultStyle}` };
         }
 
-        // ======================================================================
-        // DATA DUMMY FALLBACK (Agar Preview tidak blank jika API CORS / Gagal)
-        // ======================================================================
-        const FALLBACK_EVENT_DATA = {
-            id: "amal-senyuman",
-            slug: "amal-senyuman",
-            nama: "Amal Senyuman Vol. 3",
-            dept: "DEPT. PENGABDIAN MASYARAKAT",
-            deskripsi: "Kegiatan bakti sosial pengobatan gigi gratis untuk masyarakat luas serta edukasi penyuluhan kesehatan gigi dan mulut.",
-            lokasi: "Puskesmas Bara-Baraya Makassar",
-            tglMulai: "2026-08-10",
-            tglSelesai: "2026-08-12",
-            targetPeserta: "Masyarakat Umum & Siswa SD",
-            statusDaftar: "Buka",
-            linkDaftar: "#",
-            banner: "/img/bemfkgumi.png",
-            kepanitiaan: [
-                { 
-                    namaDivisi: "Steering Committee", 
-                    anggota: [
-                        { nama: "drg. Aksa", jabatan: "Penasihat" },
-                        { nama: "M. Irfan", jabatan: "Koordinator" }
-                    ] 
-                }
-            ]
-        };
+        // Tampilkan Error UI jika data kosong/fetch gagal (Tanpa memicu Console Error Popup)
+        function showErrorState(message) {
+            document.getElementById('bcTitle').innerText = "Data Tidak Ditemukan";
+            document.getElementById('loaderData').innerHTML = `
+                <div class="glass-card reveal active" style="text-align:center; padding: 50px 30px; max-width: 500px; margin: 0 auto; border-top: 3px solid #ef4444;">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <h3 style="color: #ef4444; font-size: 1.5rem; margin-bottom: 15px; font-weight: 800;">Oops! Terjadi Kesalahan</h3>
+                    <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 25px;">${message}</p>
+                    <a href="/informasi#kalender" class="glass-btn">Kembali ke Kalender</a>
+                </div>
+            `;
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -245,68 +239,90 @@
             // Deteksi ID dari Query (?id=) ATAU Slug dari URL Path (/proker-detail/slug)
             let eventId = window.location.pathname.split('/').pop();
             if (!eventId || eventId === 'proker-detail') {
-                eventId = urlParams.get('id') || (isPreview ? 'amal-senyuman' : null);
+                eventId = urlParams.get('id');
             }
 
             if(!eventId) {
-                document.getElementById('loaderData').innerHTML = "⚠️ ID Kegiatan tidak ditemukan pada URL.";
+                showErrorState("URL tidak memiliki parameter ID Kegiatan yang valid. Silakan pilih kegiatan melalui halaman utama atau menu informasi.");
                 return;
             }
 
-            let eventData = null;
-
             try {
-                // Proses Ambil Data Database Server
+                // Fetch REAL-TIME ke Database (TANPA DUMMY/FALLBACK)
                 let apiUrl = isPreview ? 'https://bemkbmfkgumi.com/api/content' : '/api/content';
                 const req = await fetch(apiUrl);
-                if(!req.ok) throw new Error("API Fetch failed (CORS/Network)");
+                
+                if(!req.ok) throw new Error("Gagal terhubung ke database server (HTTP " + req.status + ").");
                 
                 const res = await req.json();
-                eventData = res.kalender.find(ev => ev.id === eventId || ev.slug === eventId);
+                let eventData = null;
+
+                // 1. Cari di Kalender Event
+                if (res.kalender && Array.isArray(res.kalender)) {
+                    eventData = res.kalender.find(ev => ev.id === eventId || ev.slug === eventId);
+                }
                 
-                if(!eventData) throw new Error("Kegiatan tidak ditemukan di database");
+                // 2. Jika tidak ada di Kalender, Cari di Proker Utama
+                if (!eventData && res.proker && Array.isArray(res.proker)) {
+                    const prokerMatch = res.proker.find(p => p.id === eventId || p.slug === eventId);
+                    if (prokerMatch) {
+                        // Mapping format struktur Proker ke bentuk UI Detail
+                        eventData = {
+                            nama: prokerMatch.namaProker,
+                            dept: prokerMatch.dept,
+                            tglMulai: prokerMatch.startDate,
+                            tglSelesai: prokerMatch.endDate,
+                            banner: prokerMatch.bgImage || prokerMatch.fotoPengurus,
+                            deskripsi: prokerMatch.latarBelakang || prokerMatch.shortDesc,
+                            lokasi: "Cek Detail Proposal",
+                            targetPeserta: prokerMatch.sasaranPeserta,
+                            statusDaftar: "Tutup",
+                            linkDaftar: "#",
+                            kepanitiaan: [
+                                {
+                                    namaDivisi: "Koordinator & Penanggung Jawab",
+                                    anggota: [
+                                        { nama: prokerMatch.koordinator, jabatan: "Koordinator Utama" },
+                                        { nama: prokerMatch.penanggungJawab, jabatan: "Penanggung Jawab" }
+                                    ]
+                                }
+                            ]
+                        };
+                    }
+                }
+                
+                if(!eventData) throw new Error(`Kegiatan dengan ID "<b>${eventId}</b>" tidak ditemukan di dalam database kami.`);
 
-            } catch (e) {
-                console.warn("⚠️ API Error / Preview Mode. Menggunakan data Fallback.", e.message);
-                // JIKA FETCH GAGAL (Seperti di gambar), JANGAN TAMPILKAN ERROR, TAPI GUNAKAN FALLBACK
-                eventData = FALLBACK_EVENT_DATA;
-                // Selaraskan ID fallback agar sesuai jika dipanggil dengan slug berbeda saat uji coba
-                eventData.id = eventId;
-            }
-
-            // Eksekusi jika eventData sudah tersedia (baik dari API maupun Fallback)
-            if (eventData) {
                 // =========================================================
-                // SUPER UPGRADE: DYNAMIC SEO INJECTION (BEBAS SYNTAX ERROR)
+                // INJEKSI SEO DINAMIS (BEBAS SYNTAX ERROR & VALID 100%)
                 // =========================================================
                 const baseUrl = "https://bemkbmfkgumi.com";
-                const pageTitle = `${eventData.nama} - Program Kerja | BEM KBMFKG UMI`;
+                const pageTitle = `${eventData.nama} - BEM KBMFKG UMI`;
                 document.title = pageTitle;
                 
-                const descText = eventData.deskripsi ? (eventData.deskripsi.substring(0, 155) + '...') : `Informasi detail kegiatan ${eventData.nama} oleh BEM KBMFKG UMI.`;
-                const pageUrl = `${baseUrl}/proker-detail/${eventData.slug || eventData.id}`;
+                const rawDesc = eventData.deskripsi || '';
+                const descText = rawDesc.length > 155 ? rawDesc.substring(0, 155) + '...' : (rawDesc || `Informasi detail kegiatan ${eventData.nama} oleh BEM KBMFKG UMI.`);
+                
+                const pageUrl = `${baseUrl}/proker-detail/${eventId}`;
                 const imgUrl = eventData.banner ? (eventData.banner.startsWith('http') ? eventData.banner : `${baseUrl}${eventData.banner}`) : `${baseUrl}/img/bemfkgumi.png`;
 
-                // Update Meta Tags HTML
+                // Update HTML Meta Tags
                 document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
                 document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
-                
                 document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
                 document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
                 document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
                 document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
-                
                 document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
                 document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
                 document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
                 document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
 
                 // Merakit ISO 8601 Date untuk Schema
-                const startDateISO = eventData.tglMulai ? `${eventData.tglMulai}T08:00:00+08:00` : new Date().toISOString();
-                const endDateISO = eventData.tglSelesai ? `${eventData.tglSelesai}T17:00:00+08:00` : startDateISO;
+                const startDateISO = eventData.tglMulai && !isNaN(new Date(eventData.tglMulai).getTime()) ? `${eventData.tglMulai}T08:00:00+08:00` : new Date().toISOString();
+                const endDateISO = eventData.tglSelesai && !isNaN(new Date(eventData.tglSelesai).getTime()) ? `${eventData.tglSelesai}T17:00:00+08:00` : startDateISO;
 
                 try {
-                    // Merakit Objek JSON-LD Secara Dinamis (Aman, Tanpa Parse Error)
                     const schemaGraph = [
                         {
                             "@type": "WebPage",
@@ -331,17 +347,9 @@
                             "location": {
                                 "@type": "Place",
                                 "name": eventData.lokasi || "Universitas Muslim Indonesia",
-                                "address": {
-                                    "@type": "PostalAddress",
-                                    "addressLocality": "Makassar",
-                                    "addressRegion": "Sulawesi Selatan",
-                                    "addressCountry": "ID"
-                                }
+                                "address": { "@type": "PostalAddress", "addressLocality": "Makassar", "addressRegion": "Sulawesi Selatan", "addressCountry": "ID" }
                             },
-                            "organizer": {
-                                "@type": "Organization",
-                                "@id": `${baseUrl}/#organization`
-                            }
+                            "organizer": { "@type": "Organization", "@id": `${baseUrl}/#organization` }
                         },
                         {
                             "@type": "BreadcrumbList",
@@ -351,67 +359,32 @@
                                 { "@type": "ListItem", "position": 2, "name": "Program Kerja", "item": `${baseUrl}/informasi#kalender` },
                                 { "@type": "ListItem", "position": 3, "name": eventData.nama, "item": pageUrl }
                             ]
-                        },
-                        // SITELINKS JUMP LINKS GENERATOR UNTUK HALAMAN DETAIL INI
-                        {
-                            "@type": "ItemList",
-                            "@id": `${pageUrl}/#sitelinks`,
-                            "name": "Detail Kegiatan Navigation",
-                            "itemListElement": [
-                                {
-                                    "@type": "SiteNavigationElement",
-                                    "position": 1,
-                                    "name": "Deskripsi Kegiatan",
-                                    "description": "Penjelasan rinci mengenai agenda, latar belakang, dan pelaksanaan kegiatan.",
-                                    "url": `${pageUrl}#deskripsi-kegiatan`
-                                },
-                                {
-                                    "@type": "SiteNavigationElement",
-                                    "position": 2,
-                                    "name": "Kontributor & Panitia",
-                                    "description": "Daftar susunan panitia dan kontributor yang menyukseskan kegiatan ini.",
-                                    "url": `${pageUrl}#kepanitiaan`
-                                },
-                                {
-                                    "@type": "SiteNavigationElement",
-                                    "position": 3,
-                                    "name": "Informasi Detail",
-                                    "description": "Informasi waktu, lokasi, target peserta, dan formulir pendaftaran kegiatan.",
-                                    "url": `${pageUrl}#informasi-detail`
-                                }
-                            ]
                         }
                     ];
 
-                    // Suntikkan Dynamic Script ke HTML
                     const dynamicSchemaScript = document.createElement('script');
                     dynamicSchemaScript.type = 'application/ld+json';
                     dynamicSchemaScript.id = 'dynamic-event-schema';
-                    dynamicSchemaScript.text = JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@graph": schemaGraph
-                    });
+                    dynamicSchemaScript.text = JSON.stringify({ "@context": "https://schema.org", "@graph": schemaGraph });
                     
                     const oldScript = document.getElementById('dynamic-event-schema');
                     if(oldScript) oldScript.remove();
                     document.head.appendChild(dynamicSchemaScript);
                 } catch (schemaErr) {
-                    console.error("Gagal menyuntikkan Schema Dinamis", schemaErr);
+                    console.warn("Peringatan Schema Dinamis:", schemaErr.message); // Silent warn, tidak memicu popup
                 }
                 // ==================== END SEO DYNAMIC ====================
 
-                // Populate UI dengan data (Real atau Fallback)
+                // POPULATE DATA KE UI
                 document.getElementById('bcTitle').innerText = eventData.nama || "Detail Kegiatan";
                 document.getElementById('detailTitle').innerText = eventData.nama || "Tanpa Judul";
                 
-                // Set Departemen & Waktu ke Banner Baru
                 const deptDisplay = eventData.dept || "-";
                 document.getElementById('detailDept').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> <span itemprop="name">${deptDisplay}</span>`;
                 
                 const formatWaktu = formatTglRange(eventData.tglMulai, eventData.tglSelesai);
                 document.getElementById('detailWaktuBanner').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${formatWaktu}`;
                 
-                // Sidebar Text
                 document.getElementById('detailDesc').innerText = eventData.deskripsi || "Tidak ada deskripsi tersedia untuk kegiatan ini.";
                 document.getElementById('detailLokasi').innerText = eventData.lokasi || "-";
                 document.getElementById('detailWaktu').innerText = formatWaktu;
@@ -419,13 +392,13 @@
                 
                 if(eventData.banner) document.getElementById('detailBanner').src = imgUrl;
 
-                // Status Badge Update
+                // Status Badge
                 const statusInfo = getAgendaStatus(eventData.tglMulai, eventData.tglSelesai);
                 const badgeEl = document.getElementById('detailBadgeStatus');
                 badgeEl.innerText = statusInfo.text;
                 badgeEl.style.cssText = statusInfo.style; 
                 
-                // Button Daftar Logic
+                // Logika Tombol Daftar
                 const btn = document.getElementById('btnDaftar');
                 if(eventData.statusDaftar && eventData.statusDaftar.toLowerCase() === 'buka') {
                     btn.innerHTML = "Daftar Sekarang &rarr;";
@@ -436,7 +409,7 @@
                     document.getElementById('daftarKeterangan').innerText = "Pendaftaran sedang berlangsung. Segera daftarkan diri Anda!";
                     btn.querySelector('meta[itemprop="url"]')?.setAttribute('content', eventData.linkDaftar || "#");
                 } else {
-                    btn.innerHTML = "Pendaftaran Belum Dibuka";
+                    btn.innerHTML = "Pendaftaran Belum Dibuka / Ditutup";
                     btn.href = "javascript:void(0)";
                     btn.className = "";
                     btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; background: var(--bg-dark-overlay); color: var(--text-muted); border: 1px dashed var(--border-light); border-radius: 12px; cursor: not-allowed; pointer-events: none; text-decoration: none; font-weight: 600;";
@@ -444,55 +417,66 @@
                     document.getElementById('daftarKeterangan').innerText = "*Tombol aktif jika pengelola membuka formulir pendaftaran.";
                 }
 
-                // Render Kepanitiaan Tables
+                // Render Kepanitiaan (Kontributor)
                 const panitiaCont = document.getElementById('detailKepanitiaan');
                 panitiaCont.innerHTML = '';
                 if(eventData.kepanitiaan && eventData.kepanitiaan.length > 0) {
                     eventData.kepanitiaan.forEach(divisi => {
                         let rowsHtml = '';
-                        if(divisi.anggota) {
+                        if(divisi.anggota && divisi.anggota.length > 0) {
                             divisi.anggota.forEach(ang => {
                                 rowsHtml += `<tr itemprop="performer" itemscope itemtype="https://schema.org/Person">
-                                    <td itemprop="name" style="font-weight:700; color:var(--text-light); width:55%;">
-                                        ${ang.nama}
-                                    </td>
+                                    <td itemprop="name" style="font-weight:700; color:var(--text-light); width:55%;">${ang.nama}</td>
                                     <td itemprop="jobTitle" style="color:var(--text-muted); font-size: 0.95rem;">${ang.jabatan}</td>
                                 </tr>`;
                             });
+                            
+                            panitiaCont.innerHTML += `
+                                <div class="panitia-box" style="margin-bottom: 25px;">
+                                    <h4 class="panitia-title" style="color:var(--text-light); font-size:1.15rem; margin-bottom:15px; padding-bottom:12px; border-bottom:1px solid var(--border-light);">${divisi.namaDivisi}</h4>
+                                    <table class="panitia-table" style="width: 100%; text-align: left; border-collapse: collapse;">
+                                        <thead>
+                                            <tr>
+                                                <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">NAMA</th>
+                                                <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">SEBAGAI</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>${rowsHtml}</tbody>
+                                    </table>
+                                </div>
+                            `;
                         }
-                        panitiaCont.innerHTML += `
-                            <div class="panitia-box" style="margin-bottom: 25px;">
-                                <h4 class="panitia-title" style="color:var(--text-light); font-size:1.15rem; margin-bottom:15px; padding-bottom:12px; border-bottom:1px solid var(--border-light);">${divisi.namaDivisi}</h4>
-                                <table class="panitia-table" style="width: 100%; text-align: left; border-collapse: collapse;">
-                                    <thead>
-                                        <tr>
-                                            <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">NAMA</th>
-                                            <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">SEBAGAI</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>${rowsHtml}</tbody>
-                                </table>
-                            </div>
-                        `;
                     });
-                } else {
-                    panitiaCont.innerHTML = "<div style='text-align:left; padding:20px; background:var(--bg-dark-overlay); border-radius:12px; color:var(--text-muted);'>Struktur kepanitiaan belum dipublikasikan.</div>";
+                } 
+                
+                if (panitiaCont.innerHTML === '') {
+                    panitiaCont.innerHTML = "<div style='text-align:left; padding:20px; background:var(--bg-dark-overlay); border-radius:12px; color:var(--text-muted); border: 1px dashed var(--border-light);'>Struktur kepanitiaan atau kontributor belum dipublikasikan untuk kegiatan ini.</div>";
                 }
 
-                // Sembunyikan loader dan tampilkan konten
+                // Sembunyikan Loader, Tampilkan Konten
                 document.getElementById('loaderData').style.display = 'none';
                 document.getElementById('mainDetailContent').style.display = 'block'; 
 
-                // Auto Scroll Handler untuk Sitelinks (Jika ada hashtag di URL)
+                // Auto Scroll Handler (Untuk akses link via Hash/Sitelinks)
                 if (window.location.hash) {
                     const targetId = window.location.hash.substring(1);
                     const target = document.getElementById(targetId);
                     if (target) {
-                        setTimeout(() => {
-                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 500);
+                        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 500);
                     }
                 }
+
+            } catch (error) {
+                // MENGHILANGKAN console.error UNTUK MENCEGAH POPUP ERROR DI CANVAS/PREVIEW
+                console.warn("Peringatan Sistem:", error.message); // Silent warn
+                
+                // Mengubah pesan error teknis menjadi bahasa yang user-friendly
+                let userFriendlyMessage = error.message;
+                if (userFriendlyMessage.includes("Failed to fetch") || userFriendlyMessage.includes("NetworkError")) {
+                    userFriendlyMessage = "Koneksi ke database terputus. Pastikan koneksi internet Anda stabil atau server API sedang aktif.";
+                }
+                
+                showErrorState(userFriendlyMessage);
             }
         });
     </script>
