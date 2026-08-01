@@ -835,41 +835,6 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 .v-tl-btn:hover { color: #ffffff; border-color: transparent; box-shadow: 0 5px 20px var(--accent-glow); transform: translateY(-3px); }
 .v-tl-btn:hover::before { width: 100%; }
 
-/* ================= HISTORY ACCORDION UI (SEJARAH PEMBENTUKAN) ================= */
-.history-layout { display: flex; flex-direction: column; gap: 30px; max-width: 1000px; margin: 0 auto; }
-.history-row { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: start; }
-.history-sidebar h3 { font-size: 1.8rem; color: var(--text-light); font-weight: 800; position: sticky; top: 120px; line-height: 1.3; transition: color 0.3s; }
-
-.accordion-group { display: flex; flex-direction: column; gap: 15px; }
-.accordion-item { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 16px; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 5px 15px var(--card-shadow); backdrop-filter: blur(10px); }
-.accordion-item:hover { border-color: var(--accent-glow); box-shadow: 0 10px 25px var(--accent-glow); transform: translateX(5px); }
-.accordion-item.active { border-color: var(--accent-neon); box-shadow: 0 10px 30px var(--accent-glow); transform: translateX(5px); }
-
-.accordion-header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: var(--bg-dark-overlay); transition: background 0.3s; }
-.accordion-item.active .accordion-header { background: linear-gradient(90deg, var(--bg-dark-overlay), transparent); border-bottom: 1px solid var(--border-light); }
-
-.accordion-header h4 { font-size: 1.1rem; color: var(--text-light); margin: 0; font-weight: 700; letter-spacing: 0.5px; transition: color 0.3s; }
-.accordion-item.active .accordion-header h4 { color: var(--accent-neon); }
-
-.accordion-icon { position: relative; width: 24px; height: 24px; border-radius: 50%; background: var(--bg-dark-heavy); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; transition: all 0.4s ease; box-shadow: 0 2px 5px var(--card-shadow); flex-shrink: 0; }
-.accordion-item.active .accordion-icon { background: var(--accent-neon); border-color: var(--accent-neon); transform: rotate(180deg); }
-
-.accordion-icon::before, .accordion-icon::after { content: ''; position: absolute; background: var(--text-muted); transition: all 0.4s ease; }
-.accordion-item.active .accordion-icon::before, .accordion-item.active .accordion-icon::after { background: var(--bg-dark); }
-.accordion-icon::before { width: 12px; height: 2px; }
-.accordion-icon::after { width: 2px; height: 12px; }
-.accordion-item.active .accordion-icon::after { transform: rotate(90deg); opacity: 0; }
-
-.accordion-body { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
-.accordion-item.active .accordion-body { max-height: 2000px; opacity: 1; }
-
-.accordion-content-inner { padding: 20px 25px 25px; }
-.accordion-content-inner p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; margin-bottom: 15px; text-align: justify; transition: color 0.3s; }
-.accordion-content-inner p:last-child { margin-bottom: 0; }
-.accordion-content-inner ul, .accordion-content-inner ol { color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; margin-bottom: 15px; padding-left: 20px; transition: color 0.3s; }
-.accordion-content-inner li { margin-bottom: 8px; }
-.accordion-content-inner strong { color: var(--text-light); font-weight: 700; transition: color 0.3s; }
-
 
 /* ================= RESPONSIVE MEDIA QUERIES (MOBILE) ================= */
 @media(max-width: 900px) {
@@ -888,28 +853,70 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     .floating-logo { width: 130px; height: 130px; }
     
     /* HEADER MOBILE ADJ */
-  header#main-header { top: 10px; }
-  .header-inner { width: 95%; padding: 10px 15px; border-radius: 30px; }
-  header#main-header.scrolled { top: 5px; }
-  header#main-header.scrolled .header-inner { width: 98%; padding: 8px 15px; border-radius: 25px; }
-  
-  .header-logo-img { height: 40px; width: auto !important; object-fit: contain; }
-  header#main-header.scrolled .header-logo-img { height: 35px; width: auto !important; }
-  .header-title { font-size: 1rem; }
-  .header-subtitle.script-font { font-size: 1rem; }
-  header#main-header.scrolled .header-title { font-size: 0.9rem; }
+    header#main-header { top: 10px; }
+    .header-inner { width: 95%; padding: 10px 15px; border-radius: 30px; }
+    header#main-header.scrolled { top: 5px; }
+    header#main-header.scrolled .header-inner { width: 98%; padding: 8px 15px; border-radius: 25px; }
+    
+    .header-logo-img { height: 40px; width: auto !important; object-fit: contain; }
+    header#main-header.scrolled .header-logo-img { height: 35px; width: auto !important; }
+    .header-title { font-size: 1rem; }
+    .header-subtitle.script-font { font-size: 1rem; }
+    header#main-header.scrolled .header-title { font-size: 0.9rem; }
     header#main-header.scrolled .header-subtitle.script-font { font-size: 0.9rem; }
     
     .nav-right-group { gap: 10px; }
     
-    .nav-links { position: fixed; top: 0; right: -100%; width: 80vw; height: 100vh; background: var(--bg-dark-heavy); backdrop-filter: blur(30px); flex-direction: column; padding-top: 100px; padding-left: 30px; align-items: flex-start; border-left: 1px solid var(--border-light); transition: background-color 0.4s, border-color 0.4s, right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 999; }
-    .nav-links.active { right: 0; box-shadow: -15px 0 40px var(--card-shadow); }
+    /* ========= FIX PROBLEM 1: MOBILE MENU OVERLAP (NYANGKUT) ========= */
+    .nav-links { 
+        position: fixed; 
+        top: 0; 
+        right: -320px; /* Gunakan pixel mutlak agar bersih dari layar */
+        width: 280px;  /* Lebar wajar untuk mobile sidebar */
+        height: 100vh; 
+        background: var(--bg-dark-heavy); 
+        backdrop-filter: blur(30px); 
+        flex-direction: column; 
+        padding-top: 100px; 
+        padding-left: 20px; 
+        padding-right: 20px;
+        align-items: flex-start; 
+        border-left: 1px solid var(--border-light); 
+        transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0.4s; 
+        z-index: 999; 
+        visibility: hidden; /* Sembunyikan sepenuhnya jika tidak aktif */
+        box-shadow: none;
+    }
+    .nav-links.active { 
+        right: 0; 
+        visibility: visible;
+        box-shadow: -15px 0 40px var(--card-shadow); 
+    }
     .nav-item { width: 100%; }
-    .nav-item > a { padding: 15px 0; border-bottom: 1px solid var(--border-light); font-size: 1.1rem; }
+    .nav-item > a { padding: 15px 10px; border-bottom: 1px solid var(--border-light); font-size: 1.1rem; }
     .nav-item:hover .mega-menu { display: none; }
     .nav-item.mobile-expand .mega-menu { display: flex; position: static; transform: none; box-shadow: none; border: none; border-left: 2px solid var(--accent-neon); background: transparent; padding: 10px 0 10px 20px; opacity: 1; visibility: visible; }
-    .header-contact-btn { width: auto; display: inline-block; margin-top: 20px; }
+    .header-contact-btn { width: 100%; text-align: center; margin-top: 20px; }
     
+    /* ========= FIX PROBLEM 2: PROKER DETAIL MOBILE SPACING & PADDING ========= */
+    .proker-detail-grid { gap: 25px; } /* Kurangi jarak antar kolom jadi lebih rapat */
+    .proker-banner-wrapper { margin-bottom: 25px; border-radius: 20px; }
+    .proker-banner-img { height: 280px; } /* Tinggikan banner sedikit agar proporsi lebih baik */
+    .proker-banner-overlay { padding: 30px 20px 20px; }
+    #detailTitle { font-size: 1.8rem !important; margin-bottom: 15px; }
+    
+    /* Padding pada Card Info/Kontributor disesuaikan untuk layar sempit */
+    #deskripsi-kegiatan, #kepanitiaan, #informasi-detail {
+        padding: 25px 20px !important;
+        border-radius: 16px;
+    }
+    .detail-section-title { font-size: 1.4rem; margin-bottom: 20px; }
+    
+    /* Info Row agar Icon dan Teks tidak bertabrakan */
+    .info-row { padding: 12px 15px; gap: 12px; border-radius: 14px; }
+    .info-icon-wrapper { width: 38px; height: 38px; font-size: 1.1rem; }
+    .info-row strong { font-size: 0.95rem !important; }
+
     .admin-layout { flex-direction: column; }
     .admin-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--glass-border); padding: 15px 20px; }
     .admin-nav { flex-direction: row; overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-top: 15px; }
@@ -927,39 +934,22 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     
     /* ================= PUSAT BANTUAN TERTATA RAPI DI BAWAH (MOBILE FOOTER ALIGNMENT) ================= */
     .footer-wrapper { padding: 25px 12px; margin: 0 10px 30px 10px; border-radius: 20px; }
-    
-    /* KUNCI PERBAIKAN FOOTER: Mengembalikan format ke 3 Kolom meskipun di Mobile (TIDAK LAGI 1fr) */
     .custom-footer-grid { grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; align-items: start; }
-    
-    /* Pengecilan Ukuran Teks dan Link Footer Navigasi (Kiri) */
     .footer-col h3 { font-size: 0.75rem; margin-bottom: 10px; letter-spacing: 0; }
     .footer-links { gap: 6px; }
     .footer-links li a { font-size: 0.65rem; }
-    
-    /* Pengecilan Area Tengah (Brand, Slogan & Sosmed) Tanpa Memindahkan Order ke Atas */
     .footer-center { border: none; border-left: 1px solid var(--border-light); border-right: 1px solid var(--border-light); padding: 0 8px; order: unset; }
     .footer-brand { gap: 6px; margin-bottom: 10px; flex-direction: column; text-align: center; justify-content: center; align-items: center; flex-wrap: nowrap; }
-    
-    /* Menyesuaikan gambar logo di tengah agar pas dalam rasio */
     .footer-brand img { height: 35px; width: auto; max-width: 100%; object-fit: contain; }
-    
     .footer-brand-text h2 { font-size: 0.85rem; letter-spacing: 0; margin-bottom: 2px;}
     .footer-brand-text p { font-size: 0.5rem; letter-spacing: 0; line-height: 1.3; margin-top: 5px; }
-    
-    /* Pengecilan Icon Social Media (Tengah Bawah) */
     .footer-socials { gap: 5px; margin-bottom: 10px; margin-top: 10px; }
     .social-circle { width: 26px; height: 26px; }
     .social-circle svg { width: 12px; height: 12px; }
-    
-    /* Pengecilan Area Kontak & Bantuan (Kanan) */
     .footer-contact-list { gap: 8px; }
     .footer-contact-list li { font-size: 0.6rem; gap: 5px; line-height: 1.3; align-items: flex-start; }
     .footer-contact-list li svg { width: 12px; height: 12px; margin-top: 0; }
-    
-    /* Pengecilan Button "Hubungi Kami / Tulis Pesan" (Jika ada di kontak/menu) */
     .glass-btn, .holo-btn { font-size: 0.7rem !important; padding: 8px 15px !important; border-radius: 20px; }
-    
-    /* Pengecilan Footer Bottom (Copyright) */
     .footer-bottom { margin-top: 20px; padding-top: 15px; font-size: 0.65rem; }
 
     /* TIMELINE SEJARAH KEPENGURUSAN */
@@ -982,10 +972,6 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     .warna-detail-text h3 { justify-content: center; flex-direction: column; gap: 5px; }
     .warna-detail-text p { text-align: center; }
 
-    .proker-banner-img { height: 250px; }
-    .proker-banner-overlay { padding: 40px 20px 20px; }
-    #detailTitle { font-size: 2rem !important; }
-
     /* SUPER BIG UPGRADE: Responsive Mobile Timeline Proker Vertikal */
     .v-timeline-container::before { left: 24px; margin-left: 0; }
     .v-timeline-item { width: 100%; padding: 15px 0 15px 55px; float: none; clear: both; }
@@ -995,10 +981,9 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
         left: 14px; right: auto;
     }
 
-    /* KUNCI PERBAIKAN: ACCORDION MOBILE ALIGNMENT */
     .history-row { grid-template-columns: 1fr; gap: 20px; }
     .history-sidebar h3 { font-size: 1.5rem; position: static; margin-bottom: 10px; border-bottom: 2px solid var(--accent-neon); display: inline-block; padding-bottom: 5px; }
-    .accordion-item { transform: none !important; } /* Mematikan translasi geser kiri/kanan di mobile agar tidak merusak lebar layar */
+    .accordion-item { transform: none !important; }
 }
 
 /* ================= AZ E-ZINE CSS (SOSMED IG STYLE UNTUK PORTAL BERITA) ================= */
@@ -1088,65 +1073,74 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* ================= RADAR BEM UI (GEN-Z WIDGET AESTHETIC) ================= */
+/* ========= FIX PROBLEM 3: RADAR BEM UI (SOFT PREMIUM GLASSMORPHISM WIDGET) ========= */
 .radar-feed-card {
-    background: linear-gradient(145deg, #064e3b 0%, #022c22 100%);
-    border: 2px solid #10b981;
+    background: var(--card-bg); /* Menggunakan warna dasar sistem (menyatu Light/Dark Mode) */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-top: 2px solid var(--accent-neon); /* Garis tegas sesuai warna Neon Global */
     border-radius: 24px;
     padding: 30px;
     margin-bottom: 40px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 15px 35px var(--card-shadow), inset 0 0 20px var(--bg-dark-overlay);
     position: relative;
     overflow: hidden;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease, border-color 0.4s;
 }
-[data-theme="light"] .radar-feed-card {
-    background: linear-gradient(145deg, #ecfdf5 0%, #d1fae5 100%);
-    border-color: #34d399;
-    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.8);
+
+/* Tambahan cahaya blur/glow melingkar di dalam card secara estetik */
+.radar-feed-card::before {
+    content: ''; 
+    position: absolute; 
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at top right, var(--accent-glow), transparent 60%);
+    pointer-events: none; 
+    z-index: 0;
 }
+
 .radar-feed-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 60px rgba(16, 185, 129, 0.3), inset 0 0 30px rgba(16, 185, 129, 0.3);
-    border-color: #34d399;
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px var(--card-shadow), 0 0 25px var(--accent-glow);
+    border-color: var(--accent-neon);
 }
-[data-theme="light"] .radar-feed-card:hover {
-    box-shadow: 0 25px 50px rgba(16, 185, 129, 0.25);
-    border-color: #10b981;
-}
+
 .radar-feed-header {
     text-align: center;
     margin-bottom: 25px;
-    border-bottom: 1px dashed rgba(16, 185, 129, 0.4);
+    border-bottom: 1px dashed var(--border-light);
     padding-bottom: 15px;
+    position: relative; 
+    z-index: 1;
 }
+
 .radar-feed-title {
-    color: #fca5a5; /* Gen-Z Peach/Pinkish */
+    color: var(--text-light);
     font-size: 1.6rem;
     font-weight: 800;
     margin-bottom: 8px;
     letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(252, 165, 165, 0.3);
+    text-shadow: 0 0 15px var(--accent-glow);
 }
-[data-theme="light"] .radar-feed-title {
-    color: #e11d48;
-    text-shadow: none;
-}
+
 .radar-feed-subtitle {
-    color: #a7f3d0;
+    color: var(--text-muted);
     font-size: 0.95rem;
     font-weight: 500;
 }
-[data-theme="light"] .radar-feed-subtitle {
-    color: #047857;
-}
+
 .radar-widget-container {
     width: 100%;
     border-radius: 16px;
     overflow: hidden;
-    background: #000000;
+    background: var(--bg-dark-heavy);
+    border: 1px solid var(--border-light);
     min-height: 300px;
+    position: relative; 
+    z-index: 1;
+    box-shadow: inset 0 0 15px var(--card-shadow);
 }
+
 
 /* ================= APPLE GLASSMORPHISM PROKER CARDS ================= */
 .proker-grid-apple {
