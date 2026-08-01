@@ -84,6 +84,25 @@
             background: linear-gradient(to top, var(--bg-dark) 0%, rgba(11, 19, 43, 0.8) 60%, transparent 100%);
             padding: 80px 40px 40px;
         }
+        
+        /* SUPER UPGRADE: RESPONSIVE BANNER TYPOGRAPHY */
+        .banner-title-text {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+        .banner-desc-text {
+            color: rgba(255,255,255,0.85);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
         .detail-section-title {
             font-size: 1.8rem;
             color: var(--text-light);
@@ -159,14 +178,34 @@
             border: 1px solid var(--border-light);
         }
 
+        /* SUPER UPGRADE: MOBILE OPTIMIZATION */
         @media(max-width: 900px) {
             .grid-2 { grid-template-columns: 1fr !important; }
             .proker-banner-img { height: 300px; }
             .proker-banner-overlay { padding: 40px 20px 20px; }
         }
+
+        @media(max-width: 768px) {
+            .banner-title-text { 
+                font-size: 1.8rem; /* Mengecil otomatis di HP agar tidak offside */
+                line-height: 1.2;
+            }
+            .banner-desc-text { 
+                font-size: 0.95rem; 
+            }
+            .proker-banner-img { 
+                height: 280px; 
+            }
+            .proker-banner-overlay { 
+                padding: 30px 20px 20px; 
+            }
+            .detail-section-title { 
+                font-size: 1.4rem; 
+            }
+        }
     </style>
 </head>
-<body>
+<body itemscope itemtype="https://schema.org/WebPage">
     <%- include('partials/header.html') %>
 
     <main class="container" style="padding-top: 30px; min-height: 70vh; padding-bottom: 80px;" id="mainContent">
@@ -180,39 +219,6 @@
     <%- include('partials/footer.html') %>
 
     <script>
-        // Data Fallback (Mencegah Error di Preview Canvas / Saat API Mati)
-        const FALLBACK_PROKER_DATA = {
-            id: "pubmed",
-            dept: "DEPT. INFOCOM",
-            namaProker: "PUBMED",
-            bgImage: "/img/bannerprokerdeskripsi.png", // Ganti banner default
-            fotoPengurus: "/img/bemfkgumi.png",
-            shortDesc: "Membuat konten-konten menarik yang memuat tentang informasi (berita, pemberitahuan, peringatan hari besar, isu-isu yang berkembang)",
-            sasaranPeserta: "Ruang lingkup internal hingga eksternal FKG-UMI.",
-            targetPelaksanaan: "Triwulan I",
-            startDate: "2026-01-01",
-            endDate: "2026-12-31",
-            performer: "Pengurus Dept. Infocom",
-            anggaran: "Rp. 7.000.000,-",
-            koordinator: "Silviyananda",
-            penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto",
-            latarBelakang: "Memasuki Era Revolusi Industri 5.0 yang lebih menitik beratkan pada pengembangan teknologi...",
-            tujuan: "Memberikan kemudahan akses informasi yang cepat dan akurat...",
-            swot: "Strength: Tim yang solid dan melek teknologi...\nWeakness: Keterbatasan alat dokumentasi...",
-            parameterKeberhasilan: "Semua media informasi (platform digital & cetak) dapat memberikan konten..."
-        };
-
-        const FALLBACK_ORG_DEPARTEMEN = [
-            {
-                nama: "DEPT. INFOCOM",
-                anggota: [
-                    {jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png"},
-                    {jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png"},
-                    {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"}
-                ]
-            }
-        ];
-
         // Helper Konversi Tanggal ISO 8601 Valid GSC
         function createValidISODate(dateStr, defaultTime) {
             if (!dateStr) return new Date().toISOString(); 
@@ -236,8 +242,13 @@
             const urlParams = new URLSearchParams(window.location.search);
             let slug = window.location.pathname.split('/').filter(Boolean).pop();
             
-            if(!slug || slug === 'proker-deskripsi' || isPreview) {
-                slug = urlParams.get('id') || 'pubmed'; // Fallback aman
+            if(!slug || slug === 'proker-deskripsi') {
+                slug = urlParams.get('id');
+            }
+
+            if (!slug) {
+                showErrorState("URL Tidak Valid", "Mohon maaf, tautan ini tidak memiliki parameter ID Departemen yang sah.");
+                return;
             }
 
             let deptData = null;
@@ -245,7 +256,7 @@
             
             try {
                 const req = await fetch(apiUrl);
-                if(!req.ok) throw new Error("Gagal mengambil data dari Database API");
+                if(!req.ok) throw new Error("Gagal terhubung ke Database Server (HTTP " + req.status + ").");
                 
                 const res = await req.json();
                 const allProker = res.proker || [];
@@ -253,29 +264,36 @@
                 
                 deptData = allProker.find(p => p.id === slug || p.slug === slug);
                 
-                if(!deptData && isPreview) {
-                    throw new Error("Preview Mode: Fallback diaktifkan.");
-                } else if(!deptData) {
-                    showErrorState("404 - Departemen Tidak Ditemukan", "Data departemen atau program kerja tidak tersedia di database. Kemungkinan tautan salah atau data telah dihapus.");
+                if(!deptData) {
+                    showErrorState("404 - Departemen Tidak Ditemukan", `Data program kerja dengan ID "<b>${slug}</b>" tidak tersedia di database. Kemungkinan tautan salah atau data telah dihapus oleh Admin.`);
                     return;
                 }
 
-            } catch (err) {
-                console.warn("[FETCH/PREVIEW MODE]: Menggunakan data lokal (Fallback).", err.message);
-                deptData = FALLBACK_PROKER_DATA;
-                allOrgDept = FALLBACK_ORG_DEPARTEMEN;
-                slug = FALLBACK_PROKER_DATA.id;
-            }
+                // Render UI & Injeksi SEO
+                renderDetail(deptData, allOrgDept, slug);
 
-            renderDetail(deptData, allOrgDept, slug);
+            } catch (err) {
+                // Menghilangkan Console Error untuk mencegah popup hitam di Preview
+                console.warn("[SISTEM]: Terjadi kendala saat mengambil data.", err.message);
+                
+                let userFriendlyMessage = err.message;
+                if (userFriendlyMessage.includes("Failed to fetch") || userFriendlyMessage.includes("NetworkError")) {
+                    userFriendlyMessage = "Koneksi ke database terputus. Pastikan koneksi internet Anda stabil atau server API sedang aktif.";
+                }
+                
+                showErrorState("Oops! Terjadi Kesalahan", userFriendlyMessage);
+            }
         });
 
         // ================= FUNGSI RENDER ERROR STATE =================
         function showErrorState(title, message) {
             document.getElementById('mainContent').innerHTML = `
                 <div style="text-align:center; padding: 100px 0; animation: fadeInTab 0.5s ease;">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
                     <h2 style="font-size: 2.2rem; color: #ef4444; margin-bottom: 10px;">${title}</h2>
-                    <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px;">${message}</p>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">${message}</p>
                     <a href="/informasi#proker" class="holo-btn">Kembali ke Pusat Informasi</a>
                 </div>
             `;
@@ -355,17 +373,17 @@
                     
                     <div class="proker-banner-overlay" style="z-index: 2;">
                         <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem; background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2);">DESKRIPSI PROGRAM KERJA</div>
-                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px; text-transform: uppercase;">${titleBanner}</h2>
-                        <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;">${data.shortDesc || ''}</p>
+                        <h2 class="banner-title-text" itemprop="name">${titleBanner}</h2>
+                        <p class="banner-desc-text" itemprop="description">${data.shortDesc || ''}</p>
                     </div>
                 </div>
 
-                <div class="proker-detail-grid" style="margin-bottom: 40px;">
+                <div class="grid-2" style="margin-bottom: 40px; grid-template-columns: 1fr 380px; gap: 40px;">
                     <!-- BAGIAN KIRI: DESKRIPSI LENGKAP -->
                     <div class="proker-main-col">
                         <div id="latar-belakang" class="glass-card reveal active" style="margin-bottom: 35px; scroll-margin-top: 100px;">
                             <h2 class="detail-section-title">Latar Belakang / Bentuk Kegiatan</h2>
-                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; white-space: pre-wrap;">${data.latarBelakang || '-'}</p>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; white-space: pre-wrap;" itemprop="about">${data.latarBelakang || '-'}</p>
                         </div>
 
                         <div id="tujuan" class="glass-card reveal active" style="margin-bottom: 35px; scroll-margin-top: 100px;">
