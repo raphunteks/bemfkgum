@@ -18,7 +18,7 @@
     <meta property="og:url" content="https://bemkbmfkgumi.com/proker-deskripsi">
     <meta property="og:title" content="Department Profile & Work Programs | BEM KBMFKG UMI">
     <meta property="og:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
-    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bannerprokerdeskripsi.png">
     <meta property="og:site_name" content="BEM KBMFKG UMI">
 
     <!-- Twitter -->
@@ -26,9 +26,9 @@
     <meta property="twitter:url" content="https://bemkbmfkgumi.com/proker-deskripsi">
     <meta property="twitter:title" content="Department Profile & Work Programs | BEM KBMFKG UMI">
     <meta property="twitter:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
-    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bannerprokerdeskripsi.png">
 
-    <!-- BASE STATIC SCHEMA (Aman dari Parsing Error) -->
+    <!-- BASE STATIC SCHEMA (Aman dari Parsing Error - Di-update JS Lanjut) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -166,7 +166,7 @@
         }
     </style>
 </head>
-<body itemscope itemtype="https://schema.org/WebPage">
+<body>
     <%- include('partials/header.html') %>
 
     <main class="container" style="padding-top: 30px; min-height: 70vh; padding-bottom: 80px;" id="mainContent">
@@ -185,7 +185,7 @@
             id: "pubmed",
             dept: "DEPT. INFOCOM",
             namaProker: "PUBMED",
-            bgImage: "/img/bemfkgumi.png",
+            bgImage: "/img/bannerprokerdeskripsi.png", // Ganti banner default
             fotoPengurus: "/img/bemfkgumi.png",
             shortDesc: "Membuat konten-konten menarik yang memuat tentang informasi (berita, pemberitahuan, peringatan hari besar, isu-isu yang berkembang)",
             sasaranPeserta: "Ruang lingkup internal hingga eksternal FKG-UMI.",
@@ -208,32 +208,42 @@
                 anggota: [
                     {jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png"},
                     {jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png"},
-                    {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"},
-                    {jabatan: "Anggota", nama: "Zahwa Alzahra", foto: "/img/bemfkgumi.png"},
-                    {jabatan: "Anggota", nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png"},
-                    {jabatan: "Anggota", nama: "Novita Widyantari", foto: "/img/bemfkgumi.png"}
+                    {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"}
                 ]
             }
         ];
+
+        // Helper Konversi Tanggal ISO 8601 Valid GSC
+        function createValidISODate(dateStr, defaultTime) {
+            if (!dateStr) return new Date().toISOString(); 
+            try {
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return new Date().toISOString();
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}T${defaultTime}+08:00`; 
+            } catch (e) {
+                return new Date().toISOString();
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
             let apiUrl = isPreview ? 'https://bemkbmfkgumi.com/api/content' : '/api/content';
             
-            // Ambil SLUG dari URL Path (Cth: /proker-deskripsi/pubmed) atau query parameter di preview
+            // Ambil SLUG dari URL Path atau Query Parameter (.filter mencegah trailing slash error)
             const urlParams = new URLSearchParams(window.location.search);
-            const pathParts = window.location.pathname.split('/');
-            let slug = pathParts[pathParts.length - 1];
+            let slug = window.location.pathname.split('/').filter(Boolean).pop();
             
             if(!slug || slug === 'proker-deskripsi' || isPreview) {
-                slug = urlParams.get('id') || 'pubmed'; // Fallback aman untuk preview
+                slug = urlParams.get('id') || 'pubmed'; // Fallback aman
             }
 
             let deptData = null;
             let allOrgDept = [];
             
             try {
-                // Mencoba mengambil data dari Database Server
                 const req = await fetch(apiUrl);
                 if(!req.ok) throw new Error("Gagal mengambil data dari Database API");
                 
@@ -241,10 +251,8 @@
                 const allProker = res.proker || [];
                 allOrgDept = (res.org || {}).departemen || [];
                 
-                // Pencarian data spesifik berdasarkan SLUG
-                deptData = allProker.find(p => p.id === slug);
+                deptData = allProker.find(p => p.id === slug || p.slug === slug);
                 
-                // Jika data tidak ditemukan dan sedang di preview, paksakan fallback
                 if(!deptData && isPreview) {
                     throw new Error("Preview Mode: Fallback diaktifkan.");
                 } else if(!deptData) {
@@ -259,7 +267,6 @@
                 slug = FALLBACK_PROKER_DATA.id;
             }
 
-            // Render UI Terlebih Dahulu agar Elemen ID tersedia untuk Sitelinks
             renderDetail(deptData, allOrgDept, slug);
         });
 
@@ -274,7 +281,6 @@
             `;
         }
 
-        // Fungsi Convert Tanggal (YYYY-MM-DD ke DD-MM-YYYY)
         function formatDateToDDMMYYYY(dateString) {
             if (!dateString) return '-';
             const parts = dateString.split('-');
@@ -287,9 +293,18 @@
         // ================= FUNGSI RENDER UTAMA UI GLASSMORPHISM =================
         function renderDetail(data, orgDepartemen, slug) {
             const baseUrl = "https://bemkbmfkgumi.com";
-            const bgImg = data.bgImage ? (data.bgImage.startsWith('http') ? data.bgImage : baseUrl + data.bgImage) : baseUrl + '/img/bemfkgumi.png';
+            
+            // Prioritas Background Image > Foto Pengurus > Default Banner Baru
+            const defaultBannerPath = '/img/bannerprokerdeskripsi.png';
+            let bgImg = baseUrl + defaultBannerPath;
+            
+            if (data.bgImage) {
+                bgImg = (data.bgImage.startsWith('http') || data.bgImage.startsWith('data:')) ? data.bgImage : baseUrl + data.bgImage;
+            } else if (data.fotoPengurus) {
+                bgImg = (data.fotoPengurus.startsWith('http') || data.fotoPengurus.startsWith('data:')) ? data.fotoPengurus : baseUrl + data.fotoPengurus;
+            }
 
-            // Generate Struktur Pengurus Card UI
+            // Generate Struktur Pengurus Card UI Tanpa Konflik Microdata
             let strukturHtml = '';
             let deptStructure = null;
             if(orgDepartemen && orgDepartemen.length > 0) {
@@ -299,14 +314,12 @@
             if (deptStructure && deptStructure.anggota && deptStructure.anggota.length > 0) {
                 strukturHtml = `<div class="dept-team-grid">`;
                 deptStructure.anggota.forEach(ang => {
-                    const angPic = ang.foto ? (ang.foto.startsWith('http') ? ang.foto : baseUrl + ang.foto) : baseUrl + '/img/bemfkgumi.png';
-                    // Menambahkan Microdata Person untuk masing-masing anggota kepengurusan
+                    const angPic = ang.foto ? (ang.foto.startsWith('http') || ang.foto.startsWith('data:') ? ang.foto : baseUrl + ang.foto) : baseUrl + '/img/bemfkgumi.png';
                     strukturHtml += `
-                        <div class="dept-member-card" itemprop="employee" itemscope itemtype="https://schema.org/Person">
-                            <meta itemprop="image" content="${angPic}">
+                        <div class="dept-member-card">
                             <img src="${angPic}" alt="${ang.nama}" class="dept-member-photo" loading="lazy" width="80" height="80">
-                            <h4 class="dept-member-name" itemprop="name">${ang.nama}</h4>
-                            <p class="dept-member-role" itemprop="jobTitle">${ang.jabatan}</p>
+                            <h4 class="dept-member-name">${ang.nama}</h4>
+                            <p class="dept-member-role">${ang.jabatan}</p>
                         </div>
                     `;
                 });
@@ -326,7 +339,6 @@
                 `;
             }
 
-            // Menyusun Judul Banner
             const deptText = data.dept ? data.dept.toUpperCase() : '';
             const prokerText = data.namaProker ? data.namaProker.toUpperCase() : '';
             const titleBanner = prokerText ? `${deptText} - ${prokerText}` : deptText;
@@ -334,47 +346,47 @@
             const formattedStart = formatDateToDDMMYYYY(data.startDate);
             const formattedEnd = formatDateToDDMMYYYY(data.endDate);
 
-            // Inject Konten Keseluruhan ke DOM (DITAMBAHKAN ID UNTUK SITELINKS JUMP LINKS)
+            // Inject Konten Keseluruhan ke DOM
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <!-- BAGIAN BANNER 1920x1080 (LCP OPTIMIZED) -->
+                <!-- BAGIAN BANNER LCP OPTIMIZED -->
                 <div class="proker-banner-wrapper reveal active">
                     <img src="${bgImg}" alt="Banner ${data.dept}" class="proker-banner-img" width="1920" height="1080" fetchpriority="high">
                     
                     <div class="proker-banner-overlay" style="z-index: 2;">
                         <div class="clay-badge" style="margin-bottom: 15px; font-size:0.75rem; background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2);">DESKRIPSI PROGRAM KERJA</div>
-                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px; text-transform: uppercase;" itemprop="name">${titleBanner}</h2>
-                        <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;" itemprop="description">${data.shortDesc || ''}</p>
+                        <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 5px; text-transform: uppercase;">${titleBanner}</h2>
+                        <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; max-width: 800px; margin-top: 10px; line-height: 1.6;">${data.shortDesc || ''}</p>
                     </div>
                 </div>
 
-                <div class="grid-2" style="margin-bottom: 40px; grid-template-columns: 1fr 380px; gap: 40px;">
-                    <!-- BAGIAN KIRI: 4 DESKRIPSI LENGKAP -->
-                    <div class="glass-card reveal active" style="transition-delay: 0.1s;">
-                        <div id="latar-belakang" style="scroll-margin-top: 100px;">
+                <div class="proker-detail-grid" style="margin-bottom: 40px;">
+                    <!-- BAGIAN KIRI: DESKRIPSI LENGKAP -->
+                    <div class="proker-main-col">
+                        <div id="latar-belakang" class="glass-card reveal active" style="margin-bottom: 35px; scroll-margin-top: 100px;">
                             <h2 class="detail-section-title">Latar Belakang / Bentuk Kegiatan</h2>
-                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;" itemprop="about">${data.latarBelakang || '-'}</p>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; white-space: pre-wrap;">${data.latarBelakang || '-'}</p>
                         </div>
 
-                        <div id="tujuan" style="scroll-margin-top: 100px;">
+                        <div id="tujuan" class="glass-card reveal active" style="margin-bottom: 35px; scroll-margin-top: 100px;">
                             <h2 class="detail-section-title">Tujuan Kegiatan</h2>
-                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;">${data.tujuan || '-'}</p>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; white-space: pre-wrap;">${data.tujuan || '-'}</p>
                         </div>
 
-                        <div id="swot" style="scroll-margin-top: 100px;">
+                        <div id="swot" class="glass-card reveal active" style="margin-bottom: 35px; scroll-margin-top: 100px;">
                             <h2 class="detail-section-title">Analisis SWOT</h2>
-                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:30px; white-space: pre-wrap;">${data.swot || '-'}</p>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; white-space: pre-wrap;">${data.swot || '-'}</p>
                         </div>
 
-                        <div id="parameter-keberhasilan" style="scroll-margin-top: 100px;">
+                        <div id="parameter-keberhasilan" class="glass-card reveal active" style="margin-bottom: 35px; scroll-margin-top: 100px;">
                             <h2 class="detail-section-title" style="margin-bottom: 15px;">Parameter Keberhasilan</h2>
-                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; margin-bottom:10px; white-space: pre-wrap;">${data.parameterKeberhasilan || '-'}</p>
+                            <p style="color:var(--text-muted); line-height:1.8; font-size:1.05rem; white-space: pre-wrap;">${data.parameterKeberhasilan || '-'}</p>
                         </div>
                     </div>
 
-                    <!-- BAGIAN KANAN: METADATA & PENANGGUNG JAWAB -->
-                    <div class="reveal active" style="transition-delay: 0.2s;" id="detail-operasional" style="scroll-margin-top: 100px;">
-                        <div class="glass-card" style="margin-bottom: 30px; padding: 25px; position: sticky; top: 100px;">
+                    <!-- BAGIAN KANAN: METADATA -->
+                    <div class="proker-sidebar-col">
+                        <div class="glass-card reveal active" id="detail-operasional" style="margin-bottom: 30px; position: sticky; top: 110px; scroll-margin-top: 100px;">
                             <h2 class="detail-section-title" style="border-left-color: #10b981; font-size: 1.4rem;">Detail Operasional</h2>
                             
                             <div class="info-row">
@@ -413,7 +425,7 @@
                 </div>
 
                 <!-- KOTAK STRUKTUR PENGURUS -->
-                <div class="glass-card reveal active" id="struktur-pengurus" style="padding: 35px; margin-bottom: 30px; transition-delay: 0.3s; scroll-margin-top: 100px;">
+                <div class="glass-card reveal active" id="struktur-pengurus" style="padding: 35px; margin-bottom: 30px; scroll-margin-top: 100px;">
                      <h2 class="detail-section-title" style="border-left-color: #8b5cf6;">Struktur Pengurus Departemen</h2>
                      <p style="color: var(--text-muted); margin-bottom: 25px;">Para punggawa penggerak program kerja di departemen ini.</p>
                      ${strukturHtml}
@@ -429,14 +441,22 @@
         }
 
         // =========================================================
-        // SUPER UPGRADE: DYNAMIC JSON-LD GENERATOR (ANTI-ERROR)
+        // SUPER UPGRADE: DYNAMIC JSON-LD GENERATOR (100% GSC VALID)
         // =========================================================
         function generateDynamicSEO(data, slug, titleBanner, imgUrl, baseUrl) {
+            const finalSlug = data.slug || data.id || slug;
+            const pageUrl = `${baseUrl}/proker-deskripsi/${finalSlug}`;
+            
+            // Rewrite URL Address Bar History Secara Otomatis
+            const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
+            if (window.location.search.includes('id=') && !isPreview) {
+                window.history.replaceState({}, '', `/proker-deskripsi/${finalSlug}`);
+            }
+
             const pageTitle = `${titleBanner} | BEM KBMFKG UMI`;
             document.title = pageTitle;
             
             const descText = data.shortDesc ? (data.shortDesc.substring(0, 155) + '...') : `Informasi detail mengenai program kerja dan struktur kepengurusan dari ${data.dept} BEM KBMFKG UMI.`;
-            const pageUrl = `${baseUrl}/proker-deskripsi/${slug}`;
 
             // Update HTML Meta Tags
             document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
@@ -452,20 +472,24 @@
             document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
             document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
 
-            // Sanitasi dan persiapkan data untuk Google Schema (Event)
+            // Sanitasi Strict untuk Google Schema (Event)
             let priceValue = "0";
             if (data.anggaran && data.anggaran.toLowerCase() !== 'gratis') {
                 priceValue = data.anggaran.replace(/[^0-9]/g, '') || "0";
             }
             
-            const startDateISO = data.startDate ? `${data.startDate}T08:00:00+08:00` : new Date().toISOString();
-            const endDateISO = data.endDate ? `${data.endDate}T17:00:00+08:00` : startDateISO;
+            const startDateISO = createValidISODate(data.startDate, "08:00:00");
+            const endDateISO = createValidISODate(data.endDate || data.startDate, "17:00:00");
             
-            // Merakit Full Detailed Description khusus untuk Googlebot
             const fullSEO_Description = `${data.shortDesc || ''} Latar Belakang: ${data.latarBelakang || '-'} Tujuan: ${data.tujuan || '-'} Parameter Keberhasilan: ${data.parameterKeberhasilan || '-'}`.substring(0, 4500);
 
+            let performerArr = [];
+            if (data.performer) performerArr.push({ "@type": "Person", "name": data.performer });
+            else if (data.dept) performerArr.push({ "@type": "Organization", "name": data.dept });
+            else performerArr.push({ "@type": "Organization", "name": "BEM KBMFKG UMI" });
+
             try {
-                // Merakit Objek JSON Murni (Anti SyntaxError)
+                // Merakit Objek JSON Murni Valid
                 const schemaGraph = [
                     {
                         "@type": "WebPage",
@@ -482,7 +506,7 @@
                         "name": titleBanner,
                         "description": fullSEO_Description,
                         "url": pageUrl,
-                        "image": imgUrl,
+                        "image": [imgUrl],
                         "eventStatus": "https://schema.org/EventScheduled",
                         "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
                         "startDate": startDateISO,
@@ -492,8 +516,10 @@
                             "name": data.sasaranPeserta || "Universitas Muslim Indonesia",
                             "address": {
                                 "@type": "PostalAddress",
+                                "streetAddress": "Jl. Pajonga Dg. Ngalle No. 27 A",
                                 "addressLocality": "Makassar",
                                 "addressRegion": "Sulawesi Selatan",
+                                "postalCode": "90122",
                                 "addressCountry": "ID"
                             }
                         },
@@ -503,18 +529,7 @@
                             "name": "BEM KBMFKG UMI",
                             "url": baseUrl
                         },
-                        "performer": {
-                            "@type": "Organization",
-                            "name": data.performer || data.dept || "BEM KBMFKG UMI"
-                        },
-                        "offers": {
-                            "@type": "Offer",
-                            "price": priceValue,
-                            "priceCurrency": "IDR",
-                            "url": pageUrl,
-                            "validFrom": new Date().toISOString().split('T')[0],
-                            "availability": "https://schema.org/InStock"
-                        }
+                        "performer": performerArr
                     },
                     {
                         "@type": "BreadcrumbList",
@@ -525,9 +540,6 @@
                             { "@type": "ListItem", "position": 3, "name": titleBanner, "item": pageUrl }
                         ]
                     },
-                    // =========================================================
-                    // SITELINKS GENERATOR UNTUK HALAMAN SPESIFIK INI (JUMP LINKS)
-                    // =========================================================
                     {
                         "@type": "ItemList",
                         "@id": `${pageUrl}/#sitelinks`,
@@ -537,7 +549,7 @@
                                 "@type": "SiteNavigationElement",
                                 "position": 1,
                                 "name": "Latar Belakang & Bentuk",
-                                "description": "Latar belakang urgensi pelaksanaan serta gambaran bentuk kegiatan.",
+                                "description": "Latar belakang urgensi pelaksanaan.",
                                 "url": `${pageUrl}#latar-belakang`
                             },
                             {
@@ -551,35 +563,27 @@
                                 "@type": "SiteNavigationElement",
                                 "position": 3,
                                 "name": "Analisis SWOT",
-                                "description": "Pemetaan kekuatan, kelemahan, peluang, dan ancaman kegiatan.",
+                                "description": "Pemetaan kekuatan, kelemahan, peluang, dan ancaman.",
                                 "url": `${pageUrl}#swot`
                             },
                             {
                                 "@type": "SiteNavigationElement",
                                 "position": 4,
-                                "name": "Parameter Keberhasilan",
-                                "description": "Tolak ukur evaluasi indikator kesuksesan program kerja.",
-                                "url": `${pageUrl}#parameter-keberhasilan`
-                            },
-                            {
-                                "@type": "SiteNavigationElement",
-                                "position": 5,
                                 "name": "Detail Operasional",
-                                "description": "Jadwal, waktu pelaksanaan, anggaran dana, dan sasaran peserta.",
+                                "description": "Jadwal, waktu, anggaran dana, dan sasaran peserta.",
                                 "url": `${pageUrl}#detail-operasional`
                             },
                             {
                                 "@type": "SiteNavigationElement",
-                                "position": 6,
+                                "position": 5,
                                 "name": "Struktur Pengurus",
-                                "description": "Daftar susunan nama penanggung jawab kepanitiaan dan departemen.",
+                                "description": "Susunan nama penanggung jawab dan kepanitiaan.",
                                 "url": `${pageUrl}#struktur-pengurus`
                             }
                         ]
                     }
                 ];
 
-                // Suntikkan Dynamic Script
                 const dynamicSchemaScript = document.createElement('script');
                 dynamicSchemaScript.type = 'application/ld+json';
                 dynamicSchemaScript.id = 'dynamic-proker-schema';
@@ -588,13 +592,11 @@
                     "@graph": schemaGraph
                 });
                 
-                // Bersihkan jika pernah di-render sebelumnya (Menghindari Duplicate Content)
                 const oldScript = document.getElementById('dynamic-proker-schema');
                 if(oldScript) oldScript.remove();
                 
                 document.head.appendChild(dynamicSchemaScript);
                 
-                // Eksekusi autoscroll ke ID jika URL mengandung Hash (Sitelink clicked dari Google)
                 if (window.location.hash) {
                     const targetId = window.location.hash.substring(1);
                     const target = document.getElementById(targetId);
@@ -605,7 +607,7 @@
                     }
                 }
             } catch (e) {
-                console.error("Gagal menyusun SEO Dinamis:", e);
+                console.warn("Sistem SEO Terjadi Peringatan (Diabaikan):", e.message);
             }
         }
     </script>
