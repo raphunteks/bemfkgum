@@ -4,31 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Department Profile | Deskripsi Program Kerja BEM KBMFKG UMI</title>
+    <!-- Judul sementara, akan ditimpa JS -->
+    <title>Deskripsi Program Kerja | BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT (DYNAMIC READY) ================= -->
-    <meta name="description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap program kerja, penanggung jawab, dan struktur kepengurusan di BEM KBMFKG UMI.">
+    <!-- ================= STATIC SEO BASE ================= -->
     <meta name="keywords" content="Deskripsi Program Kerja, Department Profile, Work Programs, Struktur Departemen, Department Structure, BEM FKG UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://bemkbmfkgumi.com/proker-deskripsi">
     
-    <!-- Open Graph / Facebook / WhatsApp -->
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://bemkbmfkgumi.com/proker-deskripsi">
-    <meta property="og:title" content="Department Profile & Work Programs | BEM KBMFKG UMI">
-    <meta property="og:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
-    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bannerprokerdeskripsi.png">
-    <meta property="og:site_name" content="BEM KBMFKG UMI">
+    <!-- TAG META, OG, TWITTER & CANONICAL STATIS DIHAPUS. AKAN DIBANGUN 100% OLEH JAVASCRIPT -->
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://bemkbmfkgumi.com/proker-deskripsi">
-    <meta property="twitter:title" content="Department Profile & Work Programs | BEM KBMFKG UMI">
-    <meta property="twitter:description" content="Department Profile & Work Programs - Informasi detail mengenai deskripsi lengkap dan struktur departemen di BEM KBMFKG UMI.">
-    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bannerprokerdeskripsi.png">
-
-    <!-- ADVANCED JSON-LD Schema.org (@graph Format) - Akan Ditimpa Secara Dinamis -->
+    <!-- BASE STATIC SCHEMA (Aman dari Parsing Error - Akan Dihapus dan Ditimpa oleh JS) -->
     <script type="application/ld+json" id="structuredData">
     {
       "@context": "https://schema.org",
@@ -47,7 +33,7 @@
       ]
     }
     </script>
-    <!-- ================= END SEO ================= -->
+    <!-- ================= END STATIC SEO BASE ================= -->
     
     <!-- OPTIMASI RENDER BLOCKING (LCP & FCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -246,6 +232,17 @@
             } catch (e) {
                 return new Date().toISOString();
             }
+        }
+
+        // Helper untuk membuang dan membuat ulang elemen <meta>
+        function updateMeta(nameOrProperty, attrName, value) {
+            let meta = document.querySelector(`meta[${nameOrProperty}="${attrName}"]`);
+            if (!meta) {
+                meta = document.createElement('meta');
+                meta.setAttribute(nameOrProperty, attrName);
+                document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', value);
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -475,7 +472,7 @@
             const descText = data.shortDesc ? (data.shortDesc.substring(0, 155) + '...') : `Informasi detail mengenai program kerja dan struktur kepengurusan dari ${data.dept} BEM KBMFKG UMI.`;
 
             // Update HTML Meta Tags
-            document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
+            updateMeta('name', 'description', descText);
             
             let canonicalLink = document.querySelector('link[rel="canonical"]');
             if (!canonicalLink) {
@@ -485,22 +482,15 @@
             }
             canonicalLink.setAttribute('href', pageUrl);
 
-            let ogUrlMeta = document.querySelector('meta[property="og:url"]');
-            if (!ogUrlMeta) {
-                ogUrlMeta = document.createElement('meta');
-                ogUrlMeta.setAttribute('property', 'og:url');
-                document.head.appendChild(ogUrlMeta);
-            }
-            ogUrlMeta.setAttribute('content', pageUrl);
-
-            document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
-            document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
-            document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
+            updateMeta('property', 'og:url', pageUrl);
+            updateMeta('property', 'og:title', pageTitle);
+            updateMeta('property', 'og:description', descText);
+            updateMeta('property', 'og:image', imgUrl);
             
-            document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
-            document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
-            document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
-            document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
+            updateMeta('property', 'twitter:title', pageTitle);
+            updateMeta('property', 'twitter:description', descText);
+            updateMeta('property', 'twitter:url', pageUrl);
+            updateMeta('property', 'twitter:image', imgUrl);
 
             // Sanitasi Strict untuk Google Schema (Event)
             let priceValue = "0";
@@ -599,6 +589,15 @@
                     document.head.appendChild(schemaScript);
                 }
                 
+                if (window.location.hash) {
+                    const targetId = window.location.hash.substring(1);
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        setTimeout(() => {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 500);
+                    }
+                }
             } catch (e) {
                 console.warn("Sistem SEO Terjadi Peringatan (Diabaikan):", e.message);
             }
