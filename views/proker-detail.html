@@ -28,7 +28,7 @@
     <meta property="twitter:description" content="Informasi dan detail lengkap program kerja serta agenda kegiatan dari BEM KBMFKG UMI.">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- BASE STATIC SCHEMA (Akan di-update dinamis oleh JS) -->
+    <!-- BASE STATIC SCHEMA (Akan di-update dinamis oleh JS, bebas dari Microdata konflik) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -54,11 +54,7 @@
     
     <script src="/js/protect-devtools.js"></script>
 </head>
-<body itemscope itemtype="https://schema.org/Event">
-    <!-- Meta Invisible for Schema Event Validation -->
-    <meta itemprop="eventAttendanceMode" content="https://schema.org/OfflineEventAttendanceMode">
-    <meta itemprop="eventStatus" content="https://schema.org/EventScheduled">
-
+<body>
     <%- include('partials/header.html') %>
     
     <main class="container" style="padding-top: 40px; min-height: 80vh; padding-bottom: 80px;">
@@ -88,7 +84,7 @@
             
             <!-- BANNER FULL WIDTH -->
             <div class="proker-banner-wrapper glass-card reveal active" style="padding:0; overflow:hidden; margin-bottom:40px; position:relative; width: 100%; border-radius: 30px;">
-                <img id="detailBanner" src="/img/bemfkgumi.png" class="proker-banner-img" alt="Banner Kegiatan" itemprop="image" style="width: 100%; height: 450px; object-fit: cover; display: block;">
+                <img id="detailBanner" src="/img/bemfkgumi.png" class="proker-banner-img" alt="Banner Kegiatan" style="width: 100%; height: 450px; object-fit: cover; display: block;">
                 
                 <div class="proker-banner-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, var(--bg-dark) 0%, rgba(11, 19, 43, 0.8) 60%, transparent 100%); padding: 80px 40px 40px;">
                     <div style="display:flex; gap:12px; margin-bottom:15px; flex-wrap: wrap;">
@@ -96,16 +92,16 @@
                         <span id="detailBadgeStatus" class="detail-header-badge" style="padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; letter-spacing: 1px;">-</span>
                     </div>
                     
-                    <h1 id="detailTitle" itemprop="name" style="font-size:3.2rem; font-weight:900; color:var(--text-light); line-height:1.2; text-shadow: 0 5px 15px var(--shadow-text); margin-bottom: 20px;">Nama Kegiatan</h1>
+                    <h1 id="detailTitle" style="font-size:3.2rem; font-weight:900; color:var(--text-light); line-height:1.2; text-shadow: 0 5px 15px var(--shadow-text); margin-bottom: 20px;">Nama Kegiatan</h1>
                     
                     <div style="display: flex; align-items: center; gap: 25px; flex-wrap: wrap;">
                         <p id="detailWaktuBanner" style="color:var(--text-light); font-size:1.05rem; font-weight: 500; display: flex; align-items: center; gap: 8px;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                             -
                         </p>
-                        <p id="detailDept" itemprop="organizer" itemscope itemtype="https://schema.org/Organization" style="color:var(--accent-neon); font-size:1.05rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <p id="detailDept" style="color:var(--accent-neon); font-size:1.05rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                            <span itemprop="name">-</span>
+                            <span>-</span>
                         </p>
                     </div>
                 </div>
@@ -118,7 +114,7 @@
                 <div class="proker-main-col">
                     <div id="deskripsi-kegiatan" class="glass-card reveal active" style="margin-bottom: 35px; border-radius: 20px; padding: 40px; scroll-margin-top: 100px;">
                         <h3 style="font-size: 1.8rem; color: var(--text-light); margin-bottom: 25px; padding-left: 18px; border-left: 5px solid var(--accent-neon); font-weight: 800;">Deskripsi Kegiatan</h3>
-                        <div id="detailDesc" itemprop="description" style="color: var(--text-light); line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap;">
+                        <div id="detailDesc" style="color: var(--text-light); line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap;">
                             Memuat deskripsi...
                         </div>
                     </div>
@@ -138,13 +134,13 @@
                             Informasi Detail
                         </h3>
                         
-                        <div style="margin-bottom: 25px;" itemprop="location" itemscope itemtype="https://schema.org/Place">
+                        <div style="margin-bottom: 25px;">
                             <span class="detail-info-label">LOKASI</span>
                             <div class="info-row">
                                 <div class="info-icon-wrapper ic-lokasi">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                                 </div>
-                                <strong id="detailLokasi" itemprop="name" style="color:var(--text-light); font-size:1.05rem; line-height: 1.4;">-</strong>
+                                <strong id="detailLokasi" style="color:var(--text-light); font-size:1.05rem; line-height: 1.4;">-</strong>
                             </div>
                         </div>
 
@@ -170,10 +166,7 @@
 
                         <!-- BUTTON PENDAFTARAN -->
                         <div id="daftarContainer" style="margin-top: 40px; padding-top: 25px; border-top: 1px solid var(--border-light);">
-                            <a id="btnDaftar" href="#" target="_blank" style="width:100%; text-align:center; padding:16px; display: block; border-radius: 12px; font-weight: 600; transition: 0.3s;" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                                <meta itemprop="url" content="#">
-                                <meta itemprop="price" content="0">
-                                <meta itemprop="priceCurrency" content="IDR">
+                            <a id="btnDaftar" href="#" target="_blank" style="width:100%; text-align:center; padding:16px; display: block; border-radius: 12px; font-weight: 600; transition: 0.3s;">
                                 Pendaftaran Belum Dibuka
                             </a>
                             <p id="daftarKeterangan" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 12px; line-height: 1.5;">*Tombol aktif jika pengelola membuka formulir pendaftaran.</p>
@@ -193,7 +186,7 @@
         function formatTglRange(startStr, endStr) {
             if(!startStr) return "-";
             const s = new Date(startStr); const e = endStr ? new Date(endStr) : s;
-            if(isNaN(s.getTime())) return startStr; // Fallback jika string bukan format tanggal valid
+            if(isNaN(s.getTime())) return startStr; 
             
             if(s.getTime() === e.getTime()) return `${s.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
             if(s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) return `${s.getDate()} - ${e.getDate()} ${monthNames[s.getMonth()]} ${s.getFullYear()}`;
@@ -217,7 +210,6 @@
             return { text: "SELESAI DILAKSANAKAN", style: `background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); ${defaultStyle}` };
         }
 
-        // Tampilkan Error UI jika data kosong/fetch gagal (Tanpa memicu Console Error Popup)
         function showErrorState(message) {
             document.getElementById('bcTitle').innerText = "Data Tidak Ditemukan";
             document.getElementById('loaderData').innerHTML = `
@@ -232,11 +224,25 @@
             `;
         }
 
+        // Helper untuk menghasilkan ISO 8601 Date yang valid untuk GSC
+        function createValidISODate(dateStr, defaultTime) {
+            if (!dateStr) return new Date().toISOString(); 
+            try {
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return new Date().toISOString();
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}T${defaultTime}+08:00`; // Asumsi WITA
+            } catch (e) {
+                return new Date().toISOString();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
             
-            // Deteksi ID dari Query (?id=) ATAU Slug dari URL Path (/proker-detail/slug)
             let eventId = window.location.pathname.split('/').pop();
             if (!eventId || eventId === 'proker-detail') {
                 eventId = urlParams.get('id');
@@ -248,7 +254,6 @@
             }
 
             try {
-                // Fetch REAL-TIME ke Database (TANPA DUMMY/FALLBACK)
                 let apiUrl = isPreview ? 'https://bemkbmfkgumi.com/api/content' : '/api/content';
                 const req = await fetch(apiUrl);
                 
@@ -257,27 +262,25 @@
                 const res = await req.json();
                 let eventData = null;
 
-                // 1. Cari di Kalender Event
                 if (res.kalender && Array.isArray(res.kalender)) {
                     eventData = res.kalender.find(ev => ev.id === eventId || ev.slug === eventId);
                 }
                 
-                // 2. Jika tidak ada di Kalender, Cari di Proker Utama
                 if (!eventData && res.proker && Array.isArray(res.proker)) {
                     const prokerMatch = res.proker.find(p => p.id === eventId || p.slug === eventId);
                     if (prokerMatch) {
-                        // Mapping format struktur Proker ke bentuk UI Detail
                         eventData = {
                             nama: prokerMatch.namaProker,
                             dept: prokerMatch.dept,
                             tglMulai: prokerMatch.startDate,
                             tglSelesai: prokerMatch.endDate,
+                            performer: prokerMatch.performer || prokerMatch.dept, // Extract performer
                             banner: prokerMatch.bgImage || prokerMatch.fotoPengurus,
                             deskripsi: prokerMatch.latarBelakang || prokerMatch.shortDesc,
                             lokasi: "Cek Detail Proposal",
                             targetPeserta: prokerMatch.sasaranPeserta,
                             statusDaftar: "Tutup",
-                            linkDaftar: "#",
+                            linkDaftar: "",
                             kepanitiaan: [
                                 {
                                     namaDivisi: "Koordinator & Penanggung Jawab",
@@ -294,7 +297,7 @@
                 if(!eventData) throw new Error(`Kegiatan dengan ID "<b>${eventId}</b>" tidak ditemukan di dalam database kami.`);
 
                 // =========================================================
-                // INJEKSI SEO DINAMIS (BEBAS SYNTAX ERROR & VALID 100%)
+                // INJEKSI SEO DINAMIS (SUPER BIG UPGRADE - 100% GSC VALID)
                 // =========================================================
                 const baseUrl = "https://bemkbmfkgumi.com";
                 const pageTitle = `${eventData.nama} - BEM KBMFKG UMI`;
@@ -318,9 +321,30 @@
                 document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
                 document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
 
-                // Merakit ISO 8601 Date untuk Schema
-                const startDateISO = eventData.tglMulai && !isNaN(new Date(eventData.tglMulai).getTime()) ? `${eventData.tglMulai}T08:00:00+08:00` : new Date().toISOString();
-                const endDateISO = eventData.tglSelesai && !isNaN(new Date(eventData.tglSelesai).getTime()) ? `${eventData.tglSelesai}T17:00:00+08:00` : startDateISO;
+                // Build Strict ISO 8601 Dates to Fix GSC Critical Errors
+                const startDateISO = createValidISODate(eventData.tglMulai, "08:00:00");
+                const endDateISO = createValidISODate(eventData.tglSelesai || eventData.tglMulai, "17:00:00");
+
+                // Performers Fallback to Fix GSC Warning
+                let performerArr = [];
+                if (eventData.performer) performerArr.push({ "@type": "Person", "name": eventData.performer });
+                else if (eventData.dept) performerArr.push({ "@type": "Organization", "name": eventData.dept });
+                else performerArr.push({ "@type": "Organization", "name": "BEM KBMFKG UMI" });
+
+                // Offers Logic to Fix GSC URL/ValidFrom/Availability Warning
+                let offersData = undefined;
+                const urlDaftar = eventData.linkDaftar && eventData.linkDaftar.trim();
+                // Only render "offers" if it's a valid http/https link (not "#")
+                if (urlDaftar && urlDaftar.startsWith('http')) {
+                    offersData = {
+                        "@type": "Offer",
+                        "url": urlDaftar,
+                        "price": "0",
+                        "priceCurrency": "IDR",
+                        "availability": "https://schema.org/InStock",
+                        "validFrom": startDateISO
+                    };
+                }
 
                 try {
                     const schemaGraph = [
@@ -346,10 +370,24 @@
                             "endDate": endDateISO,
                             "location": {
                                 "@type": "Place",
-                                "name": eventData.lokasi || "Universitas Muslim Indonesia",
-                                "address": { "@type": "PostalAddress", "addressLocality": "Makassar", "addressRegion": "Sulawesi Selatan", "addressCountry": "ID" }
+                                "name": eventData.lokasi || "Universitas Muslim Indonesia, Makassar",
+                                "address": { 
+                                    "@type": "PostalAddress", 
+                                    "streetAddress": "Jl. Pajonga Dg. Ngalle No. 27 A",
+                                    "addressLocality": "Makassar", 
+                                    "addressRegion": "Sulawesi Selatan", 
+                                    "postalCode": "90122",
+                                    "addressCountry": "ID" 
+                                }
                             },
-                            "organizer": { "@type": "Organization", "@id": `${baseUrl}/#organization` }
+                            "performer": performerArr,
+                            "organizer": { 
+                                "@type": "Organization", 
+                                "@id": `${baseUrl}/#organization`,
+                                "name": "BEM KBMFKG UMI",
+                                "url": baseUrl
+                            },
+                            "offers": offersData // Will be omitted if undefined
                         },
                         {
                             "@type": "BreadcrumbList",
@@ -362,16 +400,24 @@
                         }
                     ];
 
+                    // Hapus schema lama dan injeksi yang baru (bersih, valid)
+                    const oldScript = document.getElementById('dynamic-event-schema');
+                    if(oldScript) oldScript.remove();
+
                     const dynamicSchemaScript = document.createElement('script');
                     dynamicSchemaScript.type = 'application/ld+json';
                     dynamicSchemaScript.id = 'dynamic-event-schema';
-                    dynamicSchemaScript.text = JSON.stringify({ "@context": "https://schema.org", "@graph": schemaGraph });
+                    // Membersihkan undefined properties (seperti offers jika tidak valid)
+                    dynamicSchemaScript.text = JSON.stringify({ 
+                        "@context": "https://schema.org", 
+                        "@graph": schemaGraph 
+                    }, (key, value) => {
+                         if (value !== undefined) return value;
+                    });
                     
-                    const oldScript = document.getElementById('dynamic-event-schema');
-                    if(oldScript) oldScript.remove();
                     document.head.appendChild(dynamicSchemaScript);
                 } catch (schemaErr) {
-                    console.warn("Peringatan Schema Dinamis:", schemaErr.message); // Silent warn, tidak memicu popup
+                    console.warn("Peringatan Schema Dinamis:", schemaErr.message); 
                 }
                 // ==================== END SEO DYNAMIC ====================
 
@@ -380,7 +426,7 @@
                 document.getElementById('detailTitle').innerText = eventData.nama || "Tanpa Judul";
                 
                 const deptDisplay = eventData.dept || "-";
-                document.getElementById('detailDept').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> <span itemprop="name">${deptDisplay}</span>`;
+                document.getElementById('detailDept').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> <span>${deptDisplay}</span>`;
                 
                 const formatWaktu = formatTglRange(eventData.tglMulai, eventData.tglSelesai);
                 document.getElementById('detailWaktuBanner').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${formatWaktu}`;
@@ -407,7 +453,6 @@
                     btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; font-size: 1.05rem; border-radius: 12px; cursor: pointer; pointer-events: auto;";
                     btn.removeAttribute('disabled');
                     document.getElementById('daftarKeterangan').innerText = "Pendaftaran sedang berlangsung. Segera daftarkan diri Anda!";
-                    btn.querySelector('meta[itemprop="url"]')?.setAttribute('content', eventData.linkDaftar || "#");
                 } else {
                     btn.innerHTML = "Pendaftaran Belum Dibuka / Ditutup";
                     btn.href = "javascript:void(0)";
@@ -425,9 +470,9 @@
                         let rowsHtml = '';
                         if(divisi.anggota && divisi.anggota.length > 0) {
                             divisi.anggota.forEach(ang => {
-                                rowsHtml += `<tr itemprop="performer" itemscope itemtype="https://schema.org/Person">
-                                    <td itemprop="name" style="font-weight:700; color:var(--text-light); width:55%;">${ang.nama}</td>
-                                    <td itemprop="jobTitle" style="color:var(--text-muted); font-size: 0.95rem;">${ang.jabatan}</td>
+                                rowsHtml += `<tr>
+                                    <td style="font-weight:700; color:var(--text-light); width:55%;">${ang.nama}</td>
+                                    <td style="color:var(--text-muted); font-size: 0.95rem;">${ang.jabatan}</td>
                                 </tr>`;
                             });
                             
@@ -457,7 +502,7 @@
                 document.getElementById('loaderData').style.display = 'none';
                 document.getElementById('mainDetailContent').style.display = 'block'; 
 
-                // Auto Scroll Handler (Untuk akses link via Hash/Sitelinks)
+                // Auto Scroll Handler 
                 if (window.location.hash) {
                     const targetId = window.location.hash.substring(1);
                     const target = document.getElementById(targetId);
@@ -467,10 +512,8 @@
                 }
 
             } catch (error) {
-                // MENGHILANGKAN console.error UNTUK MENCEGAH POPUP ERROR DI CANVAS/PREVIEW
-                console.warn("Peringatan Sistem:", error.message); // Silent warn
+                console.warn("Peringatan Sistem:", error.message);
                 
-                // Mengubah pesan error teknis menjadi bahasa yang user-friendly
                 let userFriendlyMessage = error.message;
                 if (userFriendlyMessage.includes("Failed to fetch") || userFriendlyMessage.includes("NetworkError")) {
                     userFriendlyMessage = "Koneksi ke database terputus. Pastikan koneksi internet Anda stabil atau server API sedang aktif.";
