@@ -218,6 +218,21 @@
     <%- include('partials/footer.html') %>
 
     <script>
+        // MOCK DATA: Hanya berjalan di Canvas Simulator untuk keperluan Development UI.
+        // Script ini otomatis mati dan tidak di-index Google ketika di-upload ke Hosting.
+        const PREVIEW_MOCK_DATA = {
+            id: "pubmed", dept: "DEPT. INFOCOM", namaProker: "PUBMED",
+            bgImage: "/img/bannerprokerdeskripsi.png", fotoPengurus: "/img/bemfkgumi.png",
+            shortDesc: "Membuat konten-konten menarik yang memuat tentang informasi (berita, pemberitahuan, peringatan hari besar, isu-isu yang berkembang)",
+            sasaranPeserta: "Ruang lingkup internal hingga eksternal FKG-UMI.",
+            targetPelaksanaan: "Triwulan I", startDate: "2026-01-01", endDate: "2026-12-31", performer: "Pengurus Dept. Infocom", anggaran: "Rp. 7.000.000,-",
+            koordinator: "Silviyananda", penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto",
+            latarBelakang: "Memasuki Era Revolusi Industri 5.0 yang lebih menitik beratkan pada pengembangan teknologi...",
+            tujuan: "Memberikan kemudahan akses informasi yang cepat dan akurat...",
+            swot: "Strength: Tim yang solid dan melek teknologi...\nWeakness: Keterbatasan alat dokumentasi...",
+            parameterKeberhasilan: "Semua media informasi dapat memberikan konten..."
+        };
+
         // Helper Konversi Tanggal ISO 8601 Valid GSC
         function createValidISODate(dateStr, defaultTime) {
             if (!dateStr) return new Date().toISOString(); 
@@ -234,9 +249,16 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // SUPER FIX GSC: URL Absolute API agar Googlebot yang merender tidak bingung resolve relative path
-            const baseUrl = "https://bemkbmfkgumi.com";
-            let apiUrl = baseUrl + '/api/content';
+            // DETEKSI OTOMATIS: Apakah script berjalan di Server Asli atau di Simulator(Canvas/Local)
+            const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.protocol === 'file:';
+            
+            // SUPER FIX CORS: Menggunakan Relative Path agar tidak error saat diakses via www atau non-www
+            let apiUrl = '/api/content'; 
+            
+            if (isPreview) {
+                // Gunakan URL Absolut hanya jika sedang di dalam Simulator Canvas
+                apiUrl = 'https://bemkbmfkgumi.com/api/content';
+            }
             
             // Ambil SLUG dari URL Path atau Query Parameter (.filter mencegah trailing slash error)
             const urlParams = new URLSearchParams(window.location.search);
@@ -246,7 +268,7 @@
                 slug = urlParams.get('id');
             }
 
-            if (!slug) {
+            if (!slug && !isPreview) {
                 showErrorState("URL Tidak Valid", "Mohon maaf, tautan ini tidak memiliki parameter ID Departemen yang sah.");
                 return;
             }
@@ -255,7 +277,7 @@
             let allOrgDept = [];
             
             try {
-                // Fetch Data dari API Absolute
+                // Fetch Data ke Database Server
                 const req = await fetch(apiUrl);
                 if(!req.ok) throw new Error("Gagal terhubung ke Database Server (HTTP " + req.status + ").");
                 
@@ -266,20 +288,26 @@
                 deptData = allProker.find(p => p.id === slug || p.slug === slug);
                 
                 if(!deptData) {
-                    showErrorState("404 - Departemen Tidak Ditemukan", `Data program kerja dengan ID "<b>${slug}</b>" tidak tersedia di database. Kemungkinan tautan salah atau data telah dihapus oleh Admin.`);
-                    return;
+                    throw new Error("Data program kerja tidak tersedia di database.");
                 }
 
-                // Render UI & Injeksi SEO
+                // Render UI & Injeksi SEO dari Server
                 renderDetail(deptData, allOrgDept, slug);
 
             } catch (err) {
-                // Silent Error log untuk mencegah intervensi console
+                // Jika Error terjadi DI DALAM SIMULATOR CANVAS (Misal API Mati/Terblokir)
+                if (isPreview) {
+                    console.info("🛠️ [SIMULATOR]: Koneksi ke API asli terblokir. Merender UI dengan data Simulasi.");
+                    renderDetail(PREVIEW_MOCK_DATA, [], "pubmed");
+                    return;
+                }
+
+                // Jika Error terjadi DI SERVER ASLI (Koneksi putus betulan / data dihapus admin)
                 console.warn("[SISTEM]: Terjadi kendala saat mengambil data.", err.message);
                 
                 let userFriendlyMessage = err.message;
                 if (userFriendlyMessage.includes("Failed to fetch") || userFriendlyMessage.includes("NetworkError")) {
-                    userFriendlyMessage = "Koneksi ke database terputus. Pastikan koneksi internet Anda stabil atau server API sedang aktif.";
+                    userFriendlyMessage = "Koneksi ke database terputus. Pastikan koneksi internet Anda stabil atau server sedang aktif.";
                 }
                 
                 showErrorState("Oops! Terjadi Kesalahan", userFriendlyMessage);
@@ -288,8 +316,6 @@
 
         // ================= FUNGSI RENDER ERROR STATE =================
         function showErrorState(title, message) {
-            // FITUR "Ubah META ROBOTS ke NOINDEX" DIHAPUS TOTAL DI SINI UNTUK MEMASTIKAN GSC TETAP VALID.
-
             document.getElementById('mainContent').innerHTML = `
                 <div style="text-align:center; padding: 100px 0; animation: fadeInTab 0.5s ease;">
                     <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
@@ -325,7 +351,7 @@
                 bgImg = (data.fotoPengurus.startsWith('http') || data.fotoPengurus.startsWith('data:')) ? data.fotoPengurus : baseUrl + data.fotoPengurus;
             }
 
-            // Generate Struktur Pengurus Card UI Tanpa Konflik Microdata
+            // Generate Struktur Pengurus Card UI
             let strukturHtml = '';
             let deptStructure = null;
             if(orgDepartemen && orgDepartemen.length > 0) {
@@ -469,7 +495,6 @@
             const pageUrl = `${baseUrl}/proker-deskripsi/${finalSlug}`;
             
             // SUPER FIX GSC: Dynamic Canonical Tag Injection
-            // Menghapus elemen canonical yang mungkin sudah ada, lalu membuat yang baru dan absolut
             let canonicalLink = document.querySelector('link[rel="canonical"]');
             if (!canonicalLink) {
                 canonicalLink = document.createElement('link');
@@ -479,7 +504,7 @@
             canonicalLink.setAttribute('href', pageUrl);
             
             // Rewrite URL Address Bar History Secara Otomatis
-            const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
+            const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.protocol === 'file:';
             if (window.location.search.includes('id=') && !isPreview) {
                 window.history.replaceState({}, '', `/proker-deskripsi/${finalSlug}`);
             }
@@ -492,7 +517,6 @@
             // Update HTML Meta Tags
             document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
             
-            // Update Open Graph (OG) URL secara dinamis agar sesuai halaman
             let ogUrlMeta = document.querySelector('meta[property="og:url"]');
             if (!ogUrlMeta) {
                 ogUrlMeta = document.createElement('meta');
