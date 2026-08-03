@@ -3,6 +3,7 @@ const express = require('express');
 const { Redis } = require('@upstash/redis');
 const cors = require('cors');
 const path = require('path');
+const xlsx = require('xlsx'); // PACKAGE BARU UNTUK EXPORT EXCEL FORM
 require('dotenv').config();
 
 const app = express();
@@ -231,7 +232,7 @@ const defaultKalender = [
 // Google Apps Script API Endpoint untuk Artikel
 const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
 
-// ================= ROUTES FRONTEND =================
+// ================= ROUTES FRONTEND UTAMA =================
 app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 
@@ -251,8 +252,147 @@ app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proke
 app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
 
 // ============================================================================
-// SUPER BIG UPGRADE: DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR
-// Mencegah Error Validasi Tanggal (Lastmod) di Google Search Console
+// SUPER BIG UPGRADE BARU: ROUTES BEM-FORM & ADMIN DASHBOARD V2
+// ============================================================================
+app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
+app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.slug }));
+
+// ============================================================================
+// SUPER BIG UPGRADE BARU: API ENDPOINTS BEM-FORM
+// ============================================================================
+
+// 1. Ambil semua form (Untuk Daftar di Admin)
+app.get('/api/forms', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const forms = await redis.hgetall('BEM_Forms') || {};
+        const parsedForms = Object.values(forms).map(item => safeParse(item, {}));
+        res.status(200).json({ success: true, data: parsedForms });
+    } catch (e) { res.status(500).json({ success: false }); }
+});
+
+// 2. Ambil 1 form berdasarkan Slug (Untuk halaman Publik bem-form.html)
+app.get('/api/forms/:slug', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const forms = await redis.hgetall('BEM_Forms') || {};
+        const formArr = Object.values(forms).map(item => safeParse(item, {}));
+        const form = formArr.find(f => f.slug === req.params.slug);
+        
+        if(!form) return res.status(404).json({ success: false, message: "Form tidak ditemukan" });
+        res.status(200).json({ success: true, data: form });
+    } catch (e) { res.status(500).json({ success: false }); }
+});
+
+// 3. Simpan / Update Form (Untuk Admin V2)
+app.post('/api/forms/save', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const formData = req.body;
+        
+        // Membersihkan string untuk URL slug
+        formData.slug = formData.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        if(!formData.id) formData.id = `FRM-${Date.now()}`;
+        
+        await redis.hset('BEM_Forms', { [formData.id]: JSON.stringify(formData) });
+        res.status(200).json({ success: true, message: "Form berhasil disimpan", id: formData.id });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+// 4. Submit Jawaban Form (Untuk Publik)
+app.post('/api/forms/submit', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { formId, responses, email } = req.body;
+        const resId = `RES-${Date.now()}`;
+        
+        const payload = {
+            id: resId, 
+            formId: formId, 
+            email: email,
+            timestamp: new Date().toISOString(),
+            answers: responses
+        };
+        
+        // Simpan ke HASH BEM_Form_Responses, kita kelompokkan dengan Key = formId (Array)
+        let existingResp = await redis.hget('BEM_Form_Responses', formId);
+        existingResp = safeParse(existingResp, []);
+        existingResp.push(payload);
+        
+        await redis.hset('BEM_Form_Responses', { [formId]: JSON.stringify(existingResp) });
+        res.status(200).json({ success: true, message: "Jawaban berhasil dikirim!" });
+    } catch (e) { res.status(500).json({ success: false }); }
+});
+
+// 5. Ambil Daftar Jawaban (Untuk Admin V2)
+app.get('/api/forms/:id/responses', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        let responses = await redis.hget('BEM_Form_Responses', req.params.id);
+        res.status(200).json({ success: true, data: safeParse(responses, []) });
+    } catch (e) { res.status(500).json({ success: false }); }
+});
+
+// 6. EXPORT KE EXCEL (.XLSX) (Untuk Admin V2)
+app.get('/api/forms/:id/export', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const formId = req.params.id;
+        
+        // Ambil struktur form untuk menyusun kolom header Excel
+        const formsRaw = await redis.hgetall('BEM_Forms') || {};
+        const formArr = Object.values(formsRaw).map(item => safeParse(item, {}));
+        const form = formArr.find(f => f.id === formId);
+        
+        if(!form) return res.status(404).send("Form tidak ditemukan");
+
+        // Ambil data jawaban (Responses)
+        let responses = safeParse(await redis.hget('BEM_Form_Responses', formId), []);
+
+        // Melakukan Flatten data JSON menjadi Row/Column untuk Excel
+        const excelData = responses.map((resp, index) => {
+            let row = { 
+                "No": index + 1, 
+                "Timestamp (Waktu)": new Date(resp.timestamp).toLocaleString('id-ID'),
+                "Email Responden": resp.email || "-"
+            };
+            
+            // Memetakan ID Pertanyaan dengan Judul Pertanyaannya
+            form.sections.forEach(sec => {
+                sec.questions.forEach(q => {
+                    // Abaikan tipe non-input
+                    if(q.type !== 'title_only') {
+                        let ans = resp.answers[q.id];
+                        // Jika jawabannya berbentuk array (seperti kotak centang), gabungkan dengan koma
+                        if(Array.isArray(ans)) ans = ans.join(', '); 
+                        row[q.title || "Pertanyaan Tanpa Judul"] = ans || "";
+                    }
+                });
+            });
+            return row;
+        });
+
+        // Generate Struktur Excel Workbook
+        const worksheet = xlsx.utils.json_to_sheet(excelData);
+        const workbook = xlsx.utils.book_new();
+        xlsx.utils.book_append_sheet(workbook, worksheet, "Data Responden");
+
+        // Konversi ke File Buffer untuk diunduh langsung via Browser
+        const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+        res.setHeader('Content-Disposition', `attachment; filename="Hasil_Form_${form.slug}.xlsx"`);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.send(excelBuffer);
+
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Gagal menggenerate File Excel Server.");
+    }
+});
+
+
+// ============================================================================
+// DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR (CMS V1 - UTUH)
 // ============================================================================
 
 app.get('/robots.txt', (req, res) => {
@@ -444,7 +584,7 @@ app.get('/sitemap.xml', async (req, res) => {
         <priority>0.7</priority>
     </url>`;
 
-        // 2. GENERATE DYNAMIC URLs (PROKER/DEPARTEMEN)
+        // 2. GENERATE DYNAMIC URLs (PROKER & DEPARTEMEN)
         if (Array.isArray(prokerData) && prokerData.length > 0) {
             xmlUrls += `\n\n    <!-- ========================================= -->\n    <!-- DIRECT DYNAMIC SEO URLs (PROKER & DEPARTEMEN) -->\n    <!-- ========================================= -->`;
             prokerData.forEach(p => {
@@ -554,7 +694,7 @@ ${xmlUrls}
 });
 
 
-// ================= API CMS ENDPOINTS =================
+// ================= API CMS ENDPOINTS (CMS V1 - UTUH) =================
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -694,142 +834,6 @@ app.post('/api/admin/auth', (req, res) => {
   } else {
     res.status(401).json({ success: false, message: 'Kredensial salah!' });
   }
-});
-
-// ================= ROUTES FRONTEND UTAMA =================
-app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
-app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
-
-app.get('/', (req, res) => res.render('index'));
-app.get('/tentang', (req, res) => res.render('tentang'));
-app.get('/berita', (req, res) => res.render('berita'));
-app.get('/informasi', (req, res) => res.render('informasi'));
-app.get('/narahubung', (req, res) => res.render('narahubung'));
-app.get('/radarbem', (req, res) => res.render('radarbem'));
-app.get('/admin', (req, res) => res.render('admin-dashboard'));
-app.get('/ourteam', (req, res) => res.render('ourteam'));
-
-// Rute Dinamis Proker
-app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
-app.get('/proker-deskripsi/:slug', (req, res) => res.render('proker-deskripsi'));
-app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proker-detail/${req.query.id}`) : res.render('proker-detail'));
-app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
-
-// ================= ROUTES BARU: SISTEM G-FORM BEM =================
-// 1. Halaman Admin Form Builder
-app.get('/admin/forms', (req, res) => res.render('admin-dashboardV2'));
-
-// 2. Halaman Publik Form (Berdasarkan Slug Custom)
-app.get('/f/:slug', (req, res) => {
-    // Akan merender bem-form.html, di frontend javascript akan fetch data berdasarkan slug URL
-    res.render('bem-form');
-});
-
-
-// ================= API ENDPOINTS: SISTEM G-FORM =================
-
-// Ambil semua daftar form (Untuk Admin)
-app.get('/api/admin/forms/list', async (req, res) => {
-    try {
-        if(!redis) throw new Error("Redis Offline");
-        const forms = await redis.hgetall('BEM_Forms') || {};
-        const parsedForms = Object.values(forms).map(f => safeParse(f, {}));
-        res.status(200).json({ success: true, data: parsedForms });
-    } catch (e) {
-        res.status(500).json({ success: false, message: e.message });
-    }
-});
-
-// Ambil 1 form spesifik berdasarkan ID
-app.get('/api/admin/forms/get/:id', async (req, res) => {
-    try {
-        if(!redis) throw new Error("Redis Offline");
-        const formStr = await redis.hget('BEM_Forms', req.params.id);
-        if(!formStr) return res.status(404).json({success: false, message: "Form tidak ditemukan"});
-        res.status(200).json({ success: true, data: JSON.parse(formStr) });
-    } catch (e) { res.status(500).json({ success: false }); }
-});
-
-// Simpan/Update Form (Admin Builder)
-app.post('/api/admin/forms/save', async (req, res) => {
-    try {
-        if(!redis) throw new Error("Redis Offline");
-        const formData = req.body;
-        if(!formData.id) formData.id = 'FORM-' + Date.now();
-        if(!formData.slug) formData.slug = formData.id; // Fallback slug
-        
-        // Simpan ke Hash BEM_Forms
-        await redis.hset('BEM_Forms', { [formData.id]: JSON.stringify(formData) });
-        // Simpan mapping Slug -> ID agar publik mudah mencari
-        await redis.hset('BEM_Form_Slugs', { [formData.slug]: formData.id });
-        
-        res.status(200).json({ success: true, message: "Form tersimpan!", id: formData.id, slug: formData.slug });
-    } catch (e) {
-        res.status(500).json({ success: false, message: e.message });
-    }
-});
-
-// Ambil Form untuk Publik berdasarkan Slug
-app.get('/api/forms/public/:slug', async (req, res) => {
-    try {
-        if(!redis) throw new Error("Redis Offline");
-        const slug = req.params.slug;
-        const formId = await redis.hget('BEM_Form_Slugs', slug);
-        if(!formId) return res.status(404).json({success: false, message: "Form tidak ditemukan / URL Salah"});
-        
-        const formStr = await redis.hget('BEM_Forms', formId);
-        const form = JSON.parse(formStr);
-        
-        // Sembunyikan data sensitif jika ada sebelum dikirim ke publik
-        res.status(200).json({ success: true, data: form });
-    } catch (e) { res.status(500).json({ success: false }); }
-});
-
-// Submit Jawaban dari Publik
-app.post('/api/forms/submit/:id', async (req, res) => {
-    try {
-        if(!redis) throw new Error("Redis Offline");
-        const formId = req.params.id;
-        const responsData = req.body;
-        const responseId = 'RES-' + Date.now();
-        
-        const payload = {
-            responseId: responseId,
-            formId: formId,
-            timestamp: new Date().toISOString(),
-            answers: responsData // Object mapping { questionId: answer }
-        };
-        
-        // Simpan jawaban ke hash list khusus form tersebut: Responses_FORM-123
-        await redis.hset(`Responses_${formId}`, { [responseId]: JSON.stringify(payload) });
-        
-        res.status(200).json({ success: true, message: "Jawaban berhasil direkam!" });
-    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
-});
-
-// Ambil semua jawaban untuk 1 form (Admin - Untuk Download Excel)
-app.get('/api/admin/forms/:id/responses', async (req, res) => {
-    try {
-        if(!redis) throw new Error("Redis Offline");
-        const formId = req.params.id;
-        const responsesStr = await redis.hgetall(`Responses_${formId}`) || {};
-        const responsesList = Object.values(responsesStr).map(r => JSON.parse(r));
-        
-        res.status(200).json({ success: true, data: responsesList });
-    } catch (e) { res.status(500).json({ success: false }); }
-});
-
-// Hapus Form
-app.post('/api/admin/forms/delete', async (req, res) => {
-    try {
-        const { id, slug } = req.body;
-        if(redis) {
-            await redis.hdel('BEM_Forms', id);
-            if(slug) await redis.hdel('BEM_Form_Slugs', slug);
-            // Opsional: Hapus databasenya juga -> await redis.del(`Responses_${id}`);
-        }
-        res.status(200).json({ success: true });
-    } catch (e) { res.status(500).json({ success: false }); }
 });
 
 const PORT = process.env.PORT || 3000;
