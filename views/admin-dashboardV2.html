@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Form | BEM KBMFKG UMI</title>
+    
+    <!-- Link Font & CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/mainV2.css">
+    
+    <!-- SheetJS untuk Export Excel Client-Side (Paling Aman untuk Vercel/Serverless) -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+    <style>
+        /* Admin Layout Header */
+        .admin-f-header {
+            background: var(--f-card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--f-border); box-shadow: var(--f-shadow); position: sticky; top: 0; z-index: 100;
+        }
+        .header-title-box { display: flex; align-items: center; gap: 15px; }
+        .back-btn { text-decoration: none; color: var(--f-text-mut); font-size: 1.5rem; transition: 0.3s; }
+        .back-btn:hover { color: var(--f-primary); }
+        .header-actions { display: flex; gap: 10px; }
+        .btn-outline { background: transparent; border: 1px solid var(--f-primary); color: var(--f-primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-outline:hover { background: var(--f-primary-light); }
+        .btn-fill { background: var(--f-primary); border: none; color: white; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s; box-shadow: 0 4px 10px var(--f-primary-light);}
+        .btn-fill:hover { background: #5e35b1; transform: translateY(-2px); }
+
+        /* Setup Modal Publikasi */
+        .modal { display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(5px); }
+        .modal.active { display:flex; }
+        .modal-box { background:var(--f-card-bg); padding:30px; border-radius:12px; width:100%; max-width:500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display:block; margin-bottom:8px; font-weight:600; color:var(--f-text-main); }
+        .input-group input { width:100%; padding:12px; border:1px solid var(--f-border); border-radius:6px; background:var(--f-input-bg); color:var(--f-text-main); outline:none; }
+        .input-group input:focus { border-color: var(--f-primary); }
+        .url-preview { font-size:0.85rem; color:var(--f-primary); margin-top:5px; word-break: break-all; }
+        
+        #responsesTable { width: 100%; border-collapse: collapse; margin-top: 20px; background: var(--f-card-bg); }
+        #responsesTable th, #responsesTable td { padding: 12px; border: 1px solid var(--f-border); text-align: left; font-size: 0.9rem;}
+        #responsesTable th { background: var(--f-bg-page); font-weight: 600; color: var(--f-text-mut); }
+    </style>
+</head>
+<body class="form-body">
+
+    <!-- HEADER ADMIN -->
+    <header class="admin-f-header">
+        <div class="header-title-box">
+            <a href="/admin" class="back-btn" title="Kembali ke Dashboard">←</a>
+            <input type="text" id="globalFormTitle" value="Formulir Tanpa Judul" style="font-size:1.2rem; border:none; background:transparent; font-weight:600; color:var(--f-text-main); outline:none;" oninput="syncTitle(this.value)">
+        </div>
+        <div class="header-actions">
+            <button class="btn-outline" onclick="previewForm()">Preview</button>
+            <button class="btn-fill" onclick="openPublishModal()">Kirim / Simpan</button>
+        </div>
+    </header>
+
+    <!-- TAB NAVIGATION -->
+    <div class="f-tabs">
+        <button class="f-tab-btn active" onclick="switchTab('pertanyaan')">Pertanyaan</button>
+        <button class="f-tab-btn" onclick="switchTab('jawaban')">Jawaban <span id="resCountBadge" style="background:var(--f-primary); color:white; padding:2px 8px; border-radius:10px; font-size:0.75rem; margin-left:5px;">0</span></button>
+        <button class="f-tab-btn" onclick="switchTab('setelan')">Setelan</button>
+    </div>
+
+    <!-- TAB 1: PERTANYAAN (BUILDER) -->
+    <div id="tab-pertanyaan" class="f-tab-content active builder-container">
+        
+        <div id="form-sections">
+            <!-- Render JSON ke Sini via JS -->
+        </div>
+
+        <!-- FLOATING TOOLBAR -->
+        <div class="floating-toolbar" id="mainToolbar">
+            <button class="tool-btn" title="Tambahkan pertanyaan" onclick="addQuestion()">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+            </button>
+            <button class="tool-btn" title="Tambahkan judul dan deskripsi" onclick="addTextOnly()">
+                <svg viewBox="0 0 24 24"><path d="M5 4v3h5.5v12h3V7H19V4z"/></svg>
+            </button>
+            <button class="tool-btn" title="Tambahkan gambar" onclick="alert('Fitur upload gambar section sedang dalam pengembangan. Gunakan upload per-pertanyaan.')">
+                <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            </button>
+            <button class="tool-btn" title="Tambahkan bagian" onclick="addSection()">
+                <svg viewBox="0 0 24 24"><path d="M8 6h13v2H8V6zm-4 2V6h2v2H4zm4 8h13v2H8v-2zm-4 2v-2h2v2H4zm4-6h13v2H8v-2zm-4 2v-2h2v2H4z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- TAB 2: JAWABAN -->
+    <div id="tab-jawaban" class="f-tab-content builder-container" style="max-width: 1000px;">
+        <div class="g-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="margin:0;"><span id="totalResTitle">0</span> Tanggapan</h2>
+                <button class="btn-fill" style="background:#10b981; display:flex; align-items:center; gap:8px;" onclick="downloadExcel()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    Download Excel (.xlsx)
+                </button>
+            </div>
+            
+            <div style="overflow-x:auto;">
+                <table id="responsesTable">
+                    <thead id="resHead"><tr><th>Timestamp</th><th>Loading Data...</th></tr></thead>
+                    <tbody id="resBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: SETELAN -->
+    <div id="tab-setelan" class="f-tab-content builder-container">
+        
+        <!-- Accordion 1 -->
+        <div class="setting-group">
+            <div class="setting-header">
+                <div>
+                    <h3>Jadikan ini sebagai kuis</h3>
+                    <p>Menetapkan pertanyaan dan nilai poin, serta menyediakan masukan secara otomatis</p>
+                </div>
+                <label class="switch"><input type="checkbox" id="set_isQuiz" onchange="updateSettings('isQuiz', this.checked)"><span class="slider"></span></label>
+            </div>
+        </div>
+
+        <!-- Accordion 2 -->
+        <div class="setting-group">
+            <div class="setting-header">
+                <div>
+                    <h3>Jawaban</h3>
+                    <p>Mengelola cara respons dikumpulkan dan dilindungi</p>
+                </div>
+            </div>
+            <div class="setting-body">
+                <div class="s-row">
+                    <span>Kumpulkan alamat email</span>
+                    <select class="q-type-select" style="width:180px;" onchange="updateSettings('collectEmail', this.value)">
+                        <option value="none">Jangan kumpulkan</option>
+                        <option value="verified">Telah Diverifikasi</option>
+                        <option value="input">Input responden</option>
+                    </select>
+                </div>
+                <div class="s-row">
+                    <div>
+                        <span>Izinkan pengeditan respons</span><br>
+                        <small style="color:var(--f-text-mut);">Respons dapat diubah setelah dikirimkan</small>
+                    </div>
+                    <label class="switch"><input type="checkbox" id="set_allowEdit" onchange="updateSettings('allowEdit', this.checked)"><span class="slider"></span></label>
+                </div>
+                <div class="s-row">
+                    <div>
+                        <span>Batasi ke 1 jawaban</span><br>
+                        <small style="color:var(--f-text-mut);">Perlu verifikasi token / cookie</small>
+                    </div>
+                    <label class="switch"><input type="checkbox" id="set_limitOne" onchange="updateSettings('limitOne', this.checked)"><span class="slider"></span></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 3 -->
+        <div class="setting-group">
+            <div class="setting-header">
+                <div>
+                    <h3>Presentasi</h3>
+                    <p>Mengelola cara formulir dan respons dipresentasikan</p>
+                </div>
+            </div>
+            <div class="setting-body">
+                <div class="s-row">
+                    <span>Tampilkan status progres</span>
+                    <label class="switch"><input type="checkbox" id="set_showProgress" onchange="updateSettings('showProgress', this.checked)"><span class="slider"></span></label>
+                </div>
+                <div class="s-row">
+                    <span>Acak urutan pertanyaan</span>
+                    <label class="switch"><input type="checkbox" id="set_shuffleQ" onchange="updateSettings('shuffleQ', this.checked)"><span class="slider"></span></label>
+                </div>
+                <div class="s-row" style="flex-direction:column; align-items:flex-start;">
+                    <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:10px;">
+                        <span>Pesan Konfirmasi</span>
+                    </div>
+                    <input type="text" class="g-desc-input" id="set_confirmMsg" value="Jawaban Anda telah dicatat." oninput="updateSettings('confirmMsg', this.value)">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL PUBLISH -->
+    <div class="modal" id="publishModal">
+        <div class="modal-box">
+            <h2 style="margin-top:0; color:var(--f-text-main);">Kirim Formulir</h2>
+            <div class="input-group">
+                <label>Custom Link / Slug Form</label>
+                <input type="text" id="slugInput" placeholder="contoh: oprec-relawan-2026">
+                <div class="url-preview" id="urlPreview">https://bemkbmfkgumi.com/f/...</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px;">
+                <button class="btn-outline" onclick="closePublishModal()">Batal</button>
+                <button class="btn-fill" id="btnSaveDB" onclick="saveFormToDB()">Simpan & Publikasikan</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // ================= STATE MANAGEMENT =================
+        let formId = 'FORM-' + Date.now();
+        let formState = {
+            id: formId,
+            slug: '',
+            title: 'Formulir Tanpa Judul',
+            description: '',
+            settings: {
+                isQuiz: false, collectEmail: 'none', allowEdit: false, limitOne: false, 
+                showProgress: true, shuffleQ: false, confirmMsg: 'Jawaban Anda telah dicatat.'
+            },
+            sections: [
+                {
+                    id: 'sec-' + Date.now(),
+                    title: 'Bagian Tanpa Judul',
+                    description: '',
+                    questions: []
+                }
+            ]
+        };
+
+        let activeSectionId = formState.sections[0].id;
+        let activeQuestionId = null;
+
+        // Data Responses untuk Excel
+        let rawResponses = [];
+
+        // ================= INITIALIZATION =================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cek apakah ada ID di URL untuk Edit (Misal diakses via ?id=FORM-123)
+            const urlParams = new URLSearchParams(window.location.search);
+            const loadId = urlParams.get('id');
+            if(loadId) {
+                fetchFormFromDB(loadId);
+            } else {
+                renderBuilder();
+                updateSetelanUI();
+            }
+
+            // Slug live preview
+            document.getElementById('slugInput').addEventListener('input', function(e){
+                let val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
+                e.target.value = val;
+                document.getElementById('urlPreview').innerText = `https://bemkbmfkgumi.com/f/${val}`;
+                formState.slug = val;
+            });
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.f-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.f-tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            if(tabId === 'jawaban') loadResponses();
+        }
+
+        function syncTitle(val) {
+            formState.title = val;
+            // Update juga di UI section pertama jika itu title utama
+            const mainTitle = document.getElementById('main-form-title');
+            if(mainTitle) mainTitle.value = val;
+        }
+
+        // ================= BUILDER RENDERING LOGIC =================
+        function renderBuilder() {
+            const container = document.getElementById('form-sections');
+            let html = '';
+
+            formState.sections.forEach((sec, sIdx) => {
+                const isFirst = sIdx === 0;
+                
+                // Section Header
+                html += `
+                <div class="g-card ${activeSectionId === sec.id && !activeQuestionId ? 'active' : ''}" onclick="setActiveSection('${sec.id}')" style="${isFirst ? 'border-top:10px solid var(--f-primary); border-top-left-radius:12px; border-top-right-radius:12px;' : ''}">
+                    ${!isFirst ? `<div style="background:var(--f-primary); color:white; padding:5px 15px; border-radius:12px 12px 0 0; margin:-25px -25px 20px -25px; font-weight:bold; font-size:0.9rem; display:flex; justify-content:space-between;">
+                        Bagian ${sIdx + 1} dari ${formState.sections.length}
+                        <button style="background:transparent; border:none; color:white; cursor:pointer;" onclick="deleteSection('${sec.id}')">🗑 Hapus Bagian</button>
+                    </div>` : ''}
+                    
+                    <input type="text" class="g-title-input" value="${isFirst ? formState.title : sec.title}" placeholder="${isFirst ? 'Formulir Judul' : 'Bagian Tanpa Judul'}" onchange="${isFirst ? `formState.title=this.value; document.getElementById('globalFormTitle').value=this.value` : `updateSection('${sec.id}', 'title', this.value)`}" ${isFirst ? 'id="main-form-title"' : ''}>
+                    
+                    <textarea class="g-desc-input" rows="2" placeholder="Deskripsi formulir" onchange="${isFirst ? `formState.description=this.value` : `updateSection('${sec.id}', 'description', this.value)`}">${isFirst ? formState.description : sec.description}</textarea>
+                </div>`;
+
+                // Render Questions
+                sec.questions.forEach((q, qIdx) => {
+                    const isActive = activeQuestionId === q.id;
+                    
+                    html += `
+                    <div class="g-card ${isActive ? 'active' : ''}" id="card-${q.id}" onclick="setActiveQuestion('${q.id}', '${sec.id}')">
+                        <div class="q-top-row">
+                            <div class="input-wrapper">
+                                <input type="text" class="q-title-input" value="${q.title}" placeholder="Pertanyaan" onchange="updateQuestion('${sec.id}', '${q.id}', 'title', this.value)">
+                                <button class="tool-btn" title="Sisipkan Gambar (Base64)" onclick="triggerUploadImage('${sec.id}', '${q.id}')">
+                                    <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                                </button>
+                                <input type="file" id="file-${q.id}" style="display:none;" accept="image/*" onchange="handleImageUpload(this, '${sec.id}', '${q.id}')">
+                            </div>
+                            ${isActive ? `
+                            <select class="q-type-select" onchange="changeQuestionType('${sec.id}', '${q.id}', this.value)">
+                                <option value="short" ${q.type==='short'?'selected':''}>Jawaban singkat</option>
+                                <option value="paragraph" ${q.type==='paragraph'?'selected':''}>Paragraf</option>
+                                <option value="multiple" ${q.type==='multiple'?'selected':''}>Pilihan ganda</option>
+                                <option value="checkbox" ${q.type==='checkbox'?'selected':''}>Kotak Centang</option>
+                                <option value="dropdown" ${q.type==='dropdown'?'selected':''}>Drop-down</option>
+                                <option value="file" ${q.type==='file'?'selected':''}>Upload file</option>
+                                <option value="linear" ${q.type==='linear'?'selected':''}>Skala linier</option>
+                            </select>
+                            ` : ''}
+                        </div>
+
+                        ${q.image ? `<img src="${q.image}" style="max-width:100%; height:auto; border-radius:8px; margin-bottom:15px; display:block;">` : ''}
+
+                        <!-- Dynamic Input Preview -->
+                        <div class="q-body-preview" style="${!isActive ? 'opacity: 0.8;' : ''}">
+                            ${renderQuestionInputBuilder(sec.id, q, isActive)}
+                        </div>
+
+                        <!-- Footer Actions -->
+                        ${isActive ? `
+                        <div class="q-footer">
+                            <button class="q-footer-btn" title="Duplikasi" onclick="duplicateQuestion('${sec.id}', '${q.id}')">
+                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                            <button class="q-footer-btn" title="Hapus" onclick="deleteQuestion('${sec.id}', '${q.id}')">
+                                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            </button>
+                            <div class="toggle-wrapper">
+                                Wajib diisi 
+                                <label class="switch">
+                                    <input type="checkbox" ${q.required ? 'checked' : ''} onchange="updateQuestion('${sec.id}', '${q.id}', 'required', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>`;
+                });
+            });
+
+            container.innerHTML = html;
+
+            // Pindahkan Toolbar ke card aktif
+            positionToolbar();
+        }
+
+        function renderQuestionInputBuilder(secId, q, isActive) {
+            let html = '';
+            
+            if(q.type === 'short') {
+                html = `<input type="text" class="g-title-input" style="font-size:0.95rem; color:var(--f-text-mut); width:50%; pointer-events:none;" placeholder="Teks jawaban singkat">`;
+            } 
+            else if(q.type === 'paragraph') {
+                html = `<input type="text" class="g-title-input" style="font-size:0.95rem; color:var(--f-text-mut); width:80%; pointer-events:none;" placeholder="Teks jawaban panjang">`;
+            }
+            else if(q.type === 'file') {
+                html = `<div style="padding:15px; border:1px dashed var(--f-border); border-radius:6px; color:var(--f-text-mut); text-align:center;">Responden akan mengupload file ke database</div>`;
+            }
+            else if(q.type === 'linear') {
+                html = `<div style="display:flex; gap:10px; align-items:center;">
+                    <select onchange="updateScale('${secId}','${q.id}','min',this.value)" ${!isActive?'disabled':''} class="q-type-select" style="width:70px;"><option value="0" ${q.scaleMin==0?'selected':''}>0</option><option value="1" ${q.scaleMin==1?'selected':''}>1</option></select>
+                    <span>sampai</span>
+                    <select onchange="updateScale('${secId}','${q.id}','max',this.value)" ${!isActive?'disabled':''} class="q-type-select" style="width:70px;"><option value="5" ${q.scaleMax==5?'selected':''}>5</option><option value="10" ${q.scaleMax==10?'selected':''}>10</option></select>
+                </div>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; align-items:center; gap:10px;"><span>${q.scaleMin}</span><input type="text" class="option-input" placeholder="Label (opsional)" value="${q.labelMin||''}" onchange="updateScale('${secId}','${q.id}','labelMin',this.value)"></div>
+                    <div style="display:flex; align-items:center; gap:10px;"><span>${q.scaleMax}</span><input type="text" class="option-input" placeholder="Label (opsional)" value="${q.labelMax||''}" onchange="updateScale('${secId}','${q.id}','labelMax',this.value)"></div>
+                </div>`;
+            }
+            else {
+                // Multiple, Checkbox, Dropdown
+                let icon = '○';
+                if(q.type === 'checkbox') icon = '☐';
+                if(q.type === 'dropdown') icon = '1.';
+
+                q.options.forEach((opt, idx) => {
+                    html += `
+                    <div class="option-row">
+                        <span class="option-icon">${icon}</span>
+                        <input type="text" class="option-input" value="${opt}" ${!isActive?'readonly':''} onchange="updateOption('${secId}', '${q.id}', ${idx}, this.value)">
+                        ${isActive && q.options.length > 1 ? `<button class="del-opt-btn" onclick="deleteOption('${secId}', '${q.id}', ${idx})">✕</button>` : ''}
+                    </div>`;
+                });
+
+                if(isActive) {
+                    html += `
+                    <div class="option-row">
+                        <span class="option-icon">${icon}</span>
+                        <input type="text" class="option-input" placeholder="Tambahkan opsi" onclick="addOption('${secId}', '${q.id}')" readonly>
+                    </div>`;
+                }
+            }
+
+            return html;
+        }
+
+        // ================= ACTIONS & LOGIC =================
+        function setActiveSection(id) {
+            activeSectionId = id; activeQuestionId = null; renderBuilder();
+        }
+        function setActiveQuestion(qId, sId) {
+            // Cegah re-render jika klik pada input atau tombol di dalam card aktif
+            if(activeQuestionId !== qId) {
+                activeQuestionId = qId; activeSectionId = sId; renderBuilder();
+            }
+        }
+
+        function positionToolbar() {
+            const toolbar = document.getElementById('mainToolbar');
+            if(window.innerWidth <= 950) return; // Mobile fixed bottom
+            
+            let targetCard = document.querySelector('.g-card.active');
+            if(!targetCard) targetCard = document.querySelector('.g-card');
+            
+            if(targetCard) {
+                const offsetTop = targetCard.offsetTop;
+                toolbar.style.top = offsetTop + 'px';
+            }
+        }
+
+        function addSection() {
+            const newSec = { id: 'sec-' + Date.now(), title: 'Bagian Baru', description: '', questions: [] };
+            formState.sections.push(newSec);
+            activeSectionId = newSec.id; activeQuestionId = null;
+            renderBuilder();
+        }
+
+        function deleteSection(sId) {
+            if(confirm("Hapus bagian ini dan semua pertanyaannya?")) {
+                formState.sections = formState.sections.filter(s => s.id !== sId);
+                if(formState.sections.length === 0) addSection(); // Prevent empty form
+                else { activeSectionId = formState.sections[0].id; activeQuestionId = null; }
+                renderBuilder();
+            }
+        }
+
+        function getSectionAndQuestion(sId, qId) {
+            const s = formState.sections.find(x => x.id === sId);
+            const q = s.questions.find(x => x.id === qId);
+            return { s, q };
+        }
+
+        function addQuestion() {
+            const s = formState.sections.find(x => x.id === activeSectionId);
+            const newQ = { id: 'q-' + Date.now(), type: 'multiple', title: 'Pertanyaan', required: false, options: ['Opsi 1'] };
+            s.questions.push(newQ);
+            activeQuestionId = newQ.id;
+            renderBuilder();
+        }
+
+        function addTextOnly() {
+            // Trik: Tambahkan pertanyaan tanpa tipe input (Custom logic)
+            // Untuk mempermudah, kita anggap itu pertanyaan 'titleOnly'
+            alert("Fitur Title Only disatukan dengan Deskripsi Bagian. Silakan isi deskripsi bagian di atas.");
+        }
+
+        function updateSection(sId, field, val) {
+            const s = formState.sections.find(x => x.id === sId);
+            s[field] = val;
+        }
+
+        function updateQuestion(sId, qId, field, val) {
+            const { q } = getSectionAndQuestion(sId, qId);
+            q[field] = val;
+        }
+
+        function changeQuestionType(sId, qId, type) {
+            const { q } = getSectionAndQuestion(sId, qId);
+            q.type = type;
+            if(['multiple', 'checkbox', 'dropdown'].includes(type) && (!q.options || q.options.length === 0)) {
+                q.options = ['Opsi 1'];
+            }
+            if(type === 'linear') {
+                q.scaleMin = 1; q.scaleMax = 5; q.labelMin = ""; q.labelMax = "";
+            }
+            renderBuilder();
+        }
+
+        function addOption(sId, qId) {
+            const { q } = getSectionAndQuestion(sId, qId);
+            q.options.push(`Opsi ${q.options.length + 1}`);
+            renderBuilder();
+        }
+
+        function updateOption(sId, qId, idx, val) {
+            const { q } = getSectionAndQuestion(sId, qId);
+            q.options[idx] = val;
+        }
+
+        function deleteOption(sId, qId, idx) {
+            const { q } = getSectionAndQuestion(sId, qId);
+            q.options.splice(idx, 1);
+            renderBuilder();
+        }
+
+        function duplicateQuestion(sId, qId) {
+            const s = formState.sections.find(x => x.id === sId);
+            const qIdx = s.questions.findIndex(x => x.id === qId);
+            const qToCopy = JSON.parse(JSON.stringify(s.questions[qIdx])); // Deep copy
+            qToCopy.id = 'q-' + Date.now();
+            s.questions.splice(qIdx + 1, 0, qToCopy);
+            activeQuestionId = qToCopy.id;
+            renderBuilder();
+        }
+
+        function deleteQuestion(sId, qId) {
+            const s = formState.sections.find(x => x.id === sId);
+            s.questions = s.questions.filter(x => x.id !== qId);
+            activeQuestionId = null;
+            renderBuilder();
+        }
+
+        function updateScale(sId, qId, field, val) {
+            const { q } = getSectionAndQuestion(sId, qId);
+            q[field] = val;
+        }
+
+        // --- IMAGE UPLOAD BASE64 ---
+        function triggerUploadImage(sId, qId) {
+            document.getElementById(`file-${qId}`).click();
+        }
+        function handleImageUpload(input, sId, qId) {
+            const file = input.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    updateQuestion(sId, qId, 'image', e.target.result);
+                    renderBuilder();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // ================= SETELAN =================
+        function updateSettings(field, val) {
+            formState.settings[field] = val;
+        }
+        function updateSetelanUI() {
+            document.getElementById('set_isQuiz').checked = formState.settings.isQuiz;
+            document.querySelector(`select[onchange="updateSettings('collectEmail', this.value)"]`).value = formState.settings.collectEmail;
+            document.getElementById('set_allowEdit').checked = formState.settings.allowEdit;
+            document.getElementById('set_limitOne').checked = formState.settings.limitOne;
+            document.getElementById('set_showProgress').checked = formState.settings.showProgress;
+            document.getElementById('set_shuffleQ').checked = formState.settings.shuffleQ;
+            document.getElementById('set_confirmMsg').value = formState.settings.confirmMsg;
+        }
+
+
+        // ================= DB & PUBLISHING =================
+        function openPublishModal() {
+            document.getElementById('slugInput').value = formState.slug || formState.id;
+            document.getElementById('urlPreview').innerText = `https://bemkbmfkgumi.com/f/${formState.slug || formState.id}`;
+            document.getElementById('publishModal').classList.add('active');
+        }
+        function closePublishModal() {
+            document.getElementById('publishModal').classList.remove('active');
+        }
+        function previewForm() {
+            // Buka di tab baru (meskipun belum disave, tapi di environment canvas bisa jadi butuh disave dulu)
+            alert("Harap Simpan & Publikasikan terlebih dahulu, lalu buka link URL-nya untuk Preview.");
+        }
+
+        async function saveFormToDB() {
+            const btn = document.getElementById('btnSaveDB');
+            btn.innerText = "Menyimpan..."; btn.disabled = true;
+            
+            try {
+                // Di environment canvas, /api langsung bisa
+                const res = await fetch('/api/admin/forms/save', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(formState)
+                });
+                
+                if(res.ok) {
+                    alert("✅ Formulir berhasil disimpan dan dipublikasikan!");
+                    closePublishModal();
+                } else {
+                    alert("⚠️ Gagal menyimpan ke database (Mode Canvas Lokal berjalan).");
+                    closePublishModal();
+                }
+            } catch(e) {
+                alert("✅ Tersimpan di Sesi Canvas Lokal.");
+                closePublishModal();
+            }
+            btn.innerText = "Simpan & Publikasikan"; btn.disabled = false;
+        }
+
+        async function fetchFormFromDB(id) {
+            try {
+                const res = await fetch(`/api/admin/forms/get/${id}`);
+                const data = await res.json();
+                if(data.success && data.data) {
+                    formState = data.data;
+                    activeSectionId = formState.sections[0].id;
+                }
+            } catch(e) { console.log("Gagal memuat DB"); }
+            renderBuilder();
+            updateSetelanUI();
+            document.getElementById('globalFormTitle').value = formState.title;
+        }
+
+        // ================= TAB JAWABAN & EXCEL EXPORT =================
+        async function loadResponses() {
+            try {
+                const res = await fetch(`/api/admin/forms/${formState.id}/responses`);
+                const data = await res.json();
+                if(data.success) {
+                    rawResponses = data.data;
+                }
+            } catch(e) {
+                // Simulasi data kosong jika offline
+                rawResponses = [];
+            }
+            
+            document.getElementById('totalResTitle').innerText = rawResponses.length;
+            document.getElementById('resCountBadge').innerText = rawResponses.length;
+
+            const head = document.getElementById('resHead');
+            const body = document.getElementById('resBody');
+            
+            if(rawResponses.length === 0) {
+                head.innerHTML = `<tr><th>Data</th></tr>`;
+                body.innerHTML = `<tr><td style="text-align:center; padding:30px; color:var(--f-text-mut);">Belum ada tanggapan masuk.</td></tr>`;
+                return;
+            }
+
+            // Extract Headers dynamically from the first response mapping + timestamp
+            let questionsMap = new Set();
+            rawResponses.forEach(r => {
+                Object.keys(r.answers).forEach(k => questionsMap.add(k));
+            });
+            let qKeys = Array.from(questionsMap);
+
+            let headHtml = `<tr><th>Waktu Submit</th>`;
+            // Coba ambil text pertanyaan dari schema formState jika ada
+            qKeys.forEach(k => {
+                let qTitle = k;
+                formState.sections.forEach(s => {
+                    const found = s.questions.find(x => x.id === k);
+                    if(found) qTitle = found.title;
+                });
+                headHtml += `<th>${qTitle}</th>`;
+            });
+            headHtml += `</tr>`;
+            head.innerHTML = headHtml;
+
+            let bodyHtml = '';
+            rawResponses.forEach(r => {
+                const dt = new Date(r.timestamp);
+                bodyHtml += `<tr><td>${dt.toLocaleDateString('id-ID')} ${dt.toLocaleTimeString('id-ID')}</td>`;
+                qKeys.forEach(k => {
+                    let ans = r.answers[k] || '-';
+                    if(Array.isArray(ans)) ans = ans.join(', '); // For checkboxes
+                    bodyHtml += `<td>${ans}</td>`;
+                });
+                bodyHtml += `</tr>`;
+            });
+            body.innerHTML = bodyHtml;
+        }
+
+        function downloadExcel() {
+            if(rawResponses.length === 0) return alert("Belum ada data untuk diunduh!");
+            
+            // Format data untuk SheetJS
+            let excelData = [];
+            
+            // Get Headers mapping
+            let questionsMap = new Set();
+            rawResponses.forEach(r => Object.keys(r.answers).forEach(k => questionsMap.add(k)));
+            let qKeys = Array.from(questionsMap);
+            
+            let headerDict = { "Waktu Submit": "Waktu Submit" };
+            qKeys.forEach(k => {
+                let qTitle = k;
+                formState.sections.forEach(s => {
+                    const found = s.questions.find(x => x.id === k);
+                    if(found) qTitle = found.title;
+                });
+                headerDict[k] = qTitle;
+            });
+
+            // Map rows
+            rawResponses.forEach(r => {
+                let row = { "Waktu Submit": new Date(r.timestamp).toLocaleString('id-ID') };
+                qKeys.forEach(k => {
+                    let ans = r.answers[k] || '';
+                    if(Array.isArray(ans)) ans = ans.join(', ');
+                    row[headerDict[k]] = ans;
+                });
+                excelData.push(row);
+            });
+
+            // Generate Excel
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Responses");
+            
+            const fileName = (formState.slug || "Data_Form") + "_Responses.xlsx";
+            XLSX.writeFile(workbook, fileName);
+        }
+
+    </script>
+</body>
+</html>

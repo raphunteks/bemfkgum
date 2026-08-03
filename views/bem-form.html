@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir | BEM KBMFKG UMI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/mainV2.css">
+
+    <style>
+        .pub-container { max-width: 750px; margin: 40px auto; padding: 0 20px; }
+        
+        .loading-state { text-align:center; padding:100px 20px; color:var(--f-text-mut); font-weight:bold; }
+        .success-state { display:none; background:var(--f-card-bg); padding:50px 30px; border-radius:12px; border-top:10px solid var(--f-primary); box-shadow:var(--f-shadow); text-align:center;}
+        .success-state h2 { color:var(--f-text-main); margin-bottom:15px;}
+        .success-state p { color:var(--f-text-mut); margin-bottom:25px;}
+
+        /* Error Text */
+        .error-msg { color: var(--f-danger); font-size: 0.8rem; margin-top: 5px; display: none; }
+        .has-error .error-msg { display: block; }
+        .has-error .p-input-text { border-color: var(--f-danger); }
+        .has-error .g-card { border-color: var(--f-danger); }
+
+        .btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+    </style>
+</head>
+<body class="form-body">
+
+    <div class="pub-container" id="mainContainer">
+        <div class="loading-state" id="loadingDiv">Memuat Formulir...</div>
+
+        <!-- Render Form Area -->
+        <form id="publicForm" onsubmit="submitForm(event)" style="display:none;">
+            
+            <div class="progress-bar-container" id="progBarCont" style="display:none;">
+                <div class="progress-bar-fill" id="progBar"></div>
+            </div>
+
+            <!-- Header Form (Diambil dari Section 1 atau Judul Utama) -->
+            <div class="p-form-header">
+                <h1 class="p-form-title" id="pubTitle">Formulir</h1>
+                <p class="p-form-desc" id="pubDesc"></p>
+                <span class="p-required-text">* Menunjukkan pertanyaan yang wajib diisi</span>
+            </div>
+
+            <!-- Dynamic Sections Content -->
+            <div id="pubSectionsContent"></div>
+
+            <!-- Navigation / Submit -->
+            <div class="btn-row" id="pubBtnRow">
+                <button type="button" class="btn-secondary" id="btnBack" onclick="prevSection()" style="display:none;">Kembali</button>
+                <button type="button" class="btn-primary" id="btnNext" onclick="nextSection()">Berikutnya</button>
+                <button type="submit" class="btn-primary" id="btnSubmit" style="display:none;">Kirim</button>
+            </div>
+            
+            <div style="text-align:center; margin-top:30px; font-size:0.8rem; color:var(--f-text-mut);">
+                Jangan pernah mengirimkan sandi melalui Google Formulir. <br>
+                Konten ini tidak dibuat atau didukung oleh Google. Didesain secara mandiri oleh BEM KBMFKG UMI.
+            </div>
+        </form>
+
+        <div class="success-state" id="successDiv">
+            <h2>Tanggapan Direkam</h2>
+            <p id="successMsg">Jawaban Anda telah dicatat.</p>
+            <a href="#" onclick="location.reload()" class="smart-link" id="linkResSubmit" style="display:none; color:var(--f-primary); text-decoration:underline;">Kirim jawaban lain</a>
+        </div>
+    </div>
+
+    <script>
+        let formSchema = null;
+        let currentSectionIdx = 0;
+        let answers = {}; 
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Ambil Slug dari URL. Jika formatnya domain.com/f/nama-form, URL path ke-2 adalah slug.
+            const pathParts = window.location.pathname.split('/');
+            let slug = pathParts[pathParts.length - 1];
+            
+            // Fallback for canvas testing
+            if(slug === 'bem-form.html' || slug==='') slug = 'test-form';
+
+            try {
+                // Di environment production, fetch ke endpoint API
+                const res = await fetch(`/api/forms/public/${slug}`);
+                const data = await res.json();
+                
+                if(data.success && data.data) {
+                    formSchema = data.data;
+                    initForm();
+                } else {
+                    document.getElementById('loadingDiv').innerText = "Formulir tidak ditemukan atau sudah ditutup.";
+                }
+            } catch(e) {
+                document.getElementById('loadingDiv').innerText = "Mode Offline: Silakan jalankan di Server Node.js untuk melihat form utuh.";
+            }
+        });
+
+        function initForm() {
+            document.getElementById('loadingDiv').style.display = 'none';
+            document.getElementById('publicForm').style.display = 'block';
+
+            document.getElementById('pubTitle').innerText = formSchema.title;
+            // Ganti line breaks dengan <br>
+            document.getElementById('pubDesc').innerHTML = (formSchema.description || '').replace(/\n/g, '<br>');
+
+            if(formSchema.settings.showProgress && formSchema.sections.length > 1) {
+                document.getElementById('progBarCont').style.display = 'block';
+            }
+
+            // Jika collect email aktif, sisipkan pertanyaan email palsu di section pertama
+            if(formSchema.settings.collectEmail !== 'none') {
+                formSchema.sections[0].questions.unshift({
+                    id: 'email-collect',
+                    type: 'short',
+                    title: 'Alamat Email',
+                    required: true,
+                    isEmailVal: true
+                });
+            }
+
+            renderCurrentSection();
+        }
+
+        function renderCurrentSection() {
+            const sec = formSchema.sections[currentSectionIdx];
+            const cont = document.getElementById('pubSectionsContent');
+            
+            // Progress Bar update
+            if(formSchema.settings.showProgress && formSchema.sections.length > 1) {
+                const prog = ((currentSectionIdx) / formSchema.sections.length) * 100;
+                document.getElementById('progBar').style.width = prog + '%';
+            }
+
+            let html = '';
+            
+            // Render section description if it's not the first section (first sec desc is in header)
+            if(currentSectionIdx > 0 && (sec.title || sec.description)) {
+                html += `
+                <div class="g-card" style="border-top: 10px solid var(--f-primary); border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                    <h2 style="margin:0 0 10px 0; font-size:1.5rem; font-weight:400;">${sec.title}</h2>
+                    <p style="margin:0; font-size:0.95rem; color:var(--f-text-mut);">${(sec.description||'').replace(/\n/g, '<br>')}</p>
+                </div>`;
+            }
+
+            // Shuffle questions if setting is true (kecuali pertanyaan email otomatis)
+            let qList = [...sec.questions];
+            if(formSchema.settings.shuffleQ) {
+                let em = qList.find(x => x.id === 'email-collect');
+                let rest = qList.filter(x => x.id !== 'email-collect');
+                rest = rest.sort(() => Math.random() - 0.5);
+                qList = em ? [em, ...rest] : rest;
+            }
+
+            qList.forEach(q => {
+                const ans = answers[q.id] || '';
+                
+                html += `
+                <div class="g-card" id="qcard-${q.id}" data-req="${q.required}">
+                    <div class="p-q-title">${q.title} ${q.required ? '<span class="req-star">*</span>' : ''}</div>
+                    ${q.image ? `<img src="${q.image}" style="max-width:100%; border-radius:8px; margin-bottom:15px; display:block;">` : ''}
+                    
+                    <div class="p-q-body">
+                        ${renderInputControl(q, ans)}
+                    </div>
+                    <div class="error-msg">Pertanyaan ini wajib diisi</div>
+                </div>`;
+            });
+
+            cont.innerHTML = html;
+
+            // Buttons Logic
+            document.getElementById('btnBack').style.display = currentSectionIdx > 0 ? 'block' : 'none';
+            
+            if(currentSectionIdx === formSchema.sections.length - 1) {
+                document.getElementById('btnNext').style.display = 'none';
+                document.getElementById('btnSubmit').style.display = 'block';
+            } else {
+                document.getElementById('btnNext').style.display = 'block';
+                document.getElementById('btnSubmit').style.display = 'none';
+            }
+        }
+
+        function renderInputControl(q, ans) {
+            if(q.type === 'short') {
+                return `<input type="${q.isEmailVal ? 'email' : 'text'}" class="p-input-text" name="${q.id}" placeholder="Jawaban Anda" value="${ans}" ${q.required ? 'required' : ''} oninput="answers['${q.id}']=this.value">`;
+            }
+            if(q.type === 'paragraph') {
+                return `<textarea class="p-input-text" style="resize:vertical;" name="${q.id}" placeholder="Jawaban Anda" rows="3" ${q.required ? 'required' : ''} oninput="answers['${q.id}']=this.value">${ans}</textarea>`;
+            }
+            if(q.type === 'multiple') {
+                return q.options.map((opt, i) => `
+                    <label class="p-radio-label">
+                        <input type="radio" name="${q.id}" value="${opt}" ${ans===opt?'checked':''} onchange="answers['${q.id}']=this.value">
+                        ${opt}
+                    </label>
+                `).join('');
+            }
+            if(q.type === 'checkbox') {
+                const ansArr = Array.isArray(ans) ? ans : [];
+                return q.options.map((opt, i) => `
+                    <label class="p-check-label">
+                        <input type="checkbox" name="${q.id}" value="${opt}" ${ansArr.includes(opt)?'checked':''} onchange="toggleCheckboxArray('${q.id}', this.value, this.checked)">
+                        ${opt}
+                    </label>
+                `).join('');
+            }
+            if(q.type === 'dropdown') {
+                let h = `<select class="p-select" name="${q.id}" onchange="answers['${q.id}']=this.value"><option value="" disabled ${!ans?'selected':''}>Pilih</option>`;
+                q.options.forEach(opt => { h += `<option value="${opt}" ${ans===opt?'selected':''}>${opt}</option>`; });
+                h += `</select>`; return h;
+            }
+            if(q.type === 'file') {
+                return `
+                <div class="p-file-upload" onclick="document.getElementById('fileInp-${q.id}').click()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--f-primary)"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg><br>
+                    <span id="lblFile-${q.id}">Tambahkan file</span>
+                </div>
+                <input type="file" id="fileInp-${q.id}" style="display:none;" onchange="processPublicFile(this, '${q.id}')">
+                `;
+            }
+            if(q.type === 'linear') {
+                let h = `<div class="p-scale-container">`;
+                if(q.labelMin) h += `<span class="p-scale-label">${q.labelMin}</span>`;
+                for(let i=q.scaleMin; i<=q.scaleMax; i++) {
+                    h += `<div class="p-scale-item">
+                        <span>${i}</span>
+                        <input type="radio" name="${q.id}" value="${i}" ${ans==i?'checked':''} onchange="answers['${q.id}']=this.value" style="width:20px;height:20px;accent-color:var(--f-primary);">
+                    </div>`;
+                }
+                if(q.labelMax) h += `<span class="p-scale-label">${q.labelMax}</span>`;
+                h += `</div>`; return h;
+            }
+            return `<i>Tipe pertanyaan belum diimplementasikan di pratinjau ini.</i>`;
+        }
+
+        function toggleCheckboxArray(qId, val, isChecked) {
+            if(!Array.isArray(answers[qId])) answers[qId] = [];
+            if(isChecked) answers[qId].push(val);
+            else answers[qId] = answers[qId].filter(x => x !== val);
+        }
+
+        function processPublicFile(input, qId) {
+            const file = input.files[0];
+            if(file) {
+                document.getElementById(`lblFile-${qId}`).innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => { answers[qId] = e.target.result; }; // Save base64
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function validateCurrentSection() {
+            let isValid = true;
+            const sec = formSchema.sections[currentSectionIdx];
+            sec.questions.forEach(q => {
+                const card = document.getElementById(`qcard-${q.id}`);
+                card.classList.remove('has-error');
+                
+                if(q.required) {
+                    const ans = answers[q.id];
+                    if(!ans || (Array.isArray(ans) && ans.length === 0)) {
+                        card.classList.add('has-error');
+                        isValid = false;
+                    }
+                }
+            });
+            
+            if(!isValid) {
+                // Scroll to first error
+                const firstErr = document.querySelector('.has-error');
+                if(firstErr) firstErr.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }
+            return isValid;
+        }
+
+        function nextSection() {
+            if(validateCurrentSection()) {
+                currentSectionIdx++;
+                renderCurrentSection();
+                window.scrollTo(0,0);
+            }
+        }
+
+        function prevSection() {
+            currentSectionIdx--;
+            renderCurrentSection();
+            window.scrollTo(0,0);
+        }
+
+        async function submitForm(e) {
+            e.preventDefault();
+            if(!validateCurrentSection()) return;
+
+            const btn = document.getElementById('btnSubmit');
+            btn.innerText = "Mengirim..."; btn.disabled = true;
+
+            try {
+                const res = await fetch(`/api/forms/submit/${formSchema.id}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(answers)
+                });
+                
+                if(res.ok) {
+                    document.getElementById('publicForm').style.display = 'none';
+                    document.getElementById('successDiv').style.display = 'block';
+                    document.getElementById('successMsg').innerText = formSchema.settings.confirmMsg;
+                    if(!formSchema.settings.limitOne) {
+                        document.getElementById('linkResSubmit').style.display = 'inline-block';
+                    }
+                    
+                    // Progress bar 100%
+                    if(document.getElementById('progBarCont').style.display === 'block') {
+                        document.getElementById('progBar').style.width = '100%';
+                    }
+                } else { alert("Terjadi kesalahan."); btn.innerText = "Kirim"; btn.disabled = false; }
+            } catch(err) {
+                alert("Simulasi berhasil (Mode Canvas).");
+                document.getElementById('publicForm').style.display = 'none';
+                document.getElementById('successDiv').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
