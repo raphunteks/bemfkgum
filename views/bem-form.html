@@ -155,14 +155,15 @@
                 const ans = answers[q.id] || '';
                 
                 html += `
-                <div class="g-card" id="qcard-${q.id}" data-req="${q.required}">
+                <div class="g-card" id="qcard-${q.id}" data-req="${q.required}" data-type="${q.type}">
                     <div class="p-q-title">${q.title} ${q.required ? '<span class="req-star">*</span>' : ''}</div>
+                    ${q.showDescription ? `<div class="p-q-desc">${(q.description||'').replace(/\n/g, '<br>')}</div>` : ''}
                     ${q.image ? `<img src="${q.image}" style="max-width:100%; border-radius:8px; margin-bottom:15px; display:block;">` : ''}
                     
                     <div class="p-q-body">
                         ${renderInputControl(q, ans)}
                     </div>
-                    <div class="error-msg">Pertanyaan ini wajib diisi</div>
+                    <div class="error-msg">Pertanyaan ini wajib diisi dengan lengkap</div>
                 </div>`;
             });
 
@@ -180,6 +181,7 @@
             }
         }
 
+        // ================ FULL 12 QUESTION TYPES PUBLIC RENDERER ================
         function renderInputControl(q, ans) {
             if(q.type === 'short') {
                 return `<input type="${q.isEmailVal ? 'email' : 'text'}" class="p-input-text" name="${q.id}" placeholder="Jawaban Anda" value="${ans}" ${q.required ? 'required' : ''} oninput="answers['${q.id}']=this.value">`;
@@ -213,10 +215,23 @@
                 return `
                 <div class="p-file-upload" onclick="document.getElementById('fileInp-${q.id}').click()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--f-primary)"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg><br>
-                    <span id="lblFile-${q.id}">Tambahkan file</span>
+                    <span id="lblFile-${q.id}">${ans ? 'File dipilih (Ganti)' : 'Tambahkan file'}</span>
                 </div>
                 <input type="file" id="fileInp-${q.id}" style="display:none;" onchange="processPublicFile(this, '${q.id}')">
                 `;
+            }
+            if(q.type === 'date') {
+                return `<input type="date" class="p-input-date" name="${q.id}" value="${ans}" ${q.required ? 'required' : ''} oninput="answers['${q.id}']=this.value">`;
+            }
+            if(q.type === 'time') {
+                return `<input type="time" class="p-input-time" name="${q.id}" value="${ans}" ${q.required ? 'required' : ''} oninput="answers['${q.id}']=this.value">`;
+            }
+            if(q.type === 'rating') {
+                let h = `<div class="p-rating-container">`;
+                for(let i=1; i<=5; i++) {
+                    h += `<span class="p-rating-star ${ans>=i?'active':''}" onclick="setRating('${q.id}', ${i}, this)">★</span>`;
+                }
+                h += `</div>`; return h;
             }
             if(q.type === 'linear') {
                 let h = `<div class="p-scale-container">`;
@@ -230,13 +245,46 @@
                 if(q.labelMax) h += `<span class="p-scale-label">${q.labelMax}</span>`;
                 h += `</div>`; return h;
             }
+            if(q.type === 'grid_multiple' || q.type === 'grid_checkbox') {
+                const isCheck = q.type === 'grid_checkbox';
+                let h = `<div class="p-grid-table-wrapper"><table class="p-grid-table"><thead><tr><th></th>`;
+                q.cols.forEach(c => h+= `<th>${c}</th>`);
+                h += `</tr></thead><tbody>`;
+                q.rows.forEach((r, rIdx) => {
+                    h += `<tr><td>${r}</td>`;
+                    q.cols.forEach((c, cIdx) => {
+                        const cellChecked = answers[q.id] && answers[q.id][r] && (isCheck ? answers[q.id][r].includes(c) : answers[q.id][r] === c);
+                        h += `<td><input type="${isCheck?'checkbox':'radio'}" name="${q.id}_row_${rIdx}" value="${c}" ${cellChecked?'checked':''} onchange="setGridAnswer('${q.id}', '${r}', '${c}', ${isCheck}, this.checked)" style="width:18px;height:18px;accent-color:var(--f-primary);"></td>`;
+                    });
+                    h += `</tr>`;
+                });
+                h += `</tbody></table></div>`; return h;
+            }
             return `<i>Tipe pertanyaan belum diimplementasikan di pratinjau ini.</i>`;
         }
 
+        // --- Custom Input Handlers ---
         function toggleCheckboxArray(qId, val, isChecked) {
             if(!Array.isArray(answers[qId])) answers[qId] = [];
             if(isChecked) answers[qId].push(val);
             else answers[qId] = answers[qId].filter(x => x !== val);
+        }
+
+        function setRating(qId, val, element) {
+            answers[qId] = val;
+            const stars = element.parentElement.querySelectorAll('.p-rating-star');
+            stars.forEach((s, idx) => { if(idx < val) s.classList.add('active'); else s.classList.remove('active'); });
+        }
+
+        function setGridAnswer(qId, row, col, isCheck, isChecked) {
+            if(!answers[qId]) answers[qId] = {};
+            if(isCheck) {
+                if(!Array.isArray(answers[qId][row])) answers[qId][row] = [];
+                if(isChecked) answers[qId][row].push(col);
+                else answers[qId][row] = answers[qId][row].filter(x => x !== col);
+            } else {
+                answers[qId][row] = col;
+            }
         }
 
         function processPublicFile(input, qId) {
@@ -258,15 +306,21 @@
                 
                 if(q.required) {
                     const ans = answers[q.id];
-                    if(!ans || (Array.isArray(ans) && ans.length === 0)) {
-                        card.classList.add('has-error');
-                        isValid = false;
+                    // Complex validation
+                    if(!ans) { card.classList.add('has-error'); isValid = false; }
+                    else if(Array.isArray(ans) && ans.length === 0) { card.classList.add('has-error'); isValid = false; }
+                    else if(q.type === 'grid_multiple' || q.type === 'grid_checkbox') {
+                        // All rows must be answered
+                        const rowKeys = Object.keys(ans);
+                        if(rowKeys.length < q.rows.length) { card.classList.add('has-error'); isValid = false; }
+                        else if(q.type === 'grid_checkbox') {
+                            rowKeys.forEach(rk => { if(ans[rk].length === 0) { card.classList.add('has-error'); isValid = false; }});
+                        }
                     }
                 }
             });
             
             if(!isValid) {
-                // Scroll to first error
                 const firstErr = document.querySelector('.has-error');
                 if(firstErr) firstErr.scrollIntoView({behavior: 'smooth', block: 'center'});
             }
