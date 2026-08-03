@@ -6,114 +6,151 @@
     <title>Manajemen Form | BEM Admin V2</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- LOAD CSS UTAMA DAN CSS V2 (FORM) -->
+    <!-- Load Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Playfair+Display:wght@500&family=Oswald:wght@500&family=Lora:wght@500&family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    
+    <!-- LOAD CSS -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
     
     <style>
-        /* INLINE FIX UNTUK LAYOUT KACAU & SQUASHED DI ADMIN V2 */
+        /* INLINE FIX UNTUK LAYOUT DASAR */
         body { background: var(--form-bg); }
-        .main-container { 
-            width: 100%; 
-            max-width: 1000px; 
-            margin: 0 auto; 
-            padding: 30px 20px; 
-            box-sizing: border-box;
-            position: relative;
-        }
-        .tab-content { display: none; margin-top: 20px; width: 100%; }
+        .main-container { width: 100%; max-width: 800px; margin: 0 auto; padding: 30px 20px; box-sizing: border-box; position: relative;}
+        .tab-content { display: none; margin-top: 10px; width: 100%; }
         .tab-content.active { display: block; animation: fadeInTab 0.4s ease; }
         
         .header-admin-nav {
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 15px 30px; background: var(--form-header-bg); border-bottom: 1px solid var(--form-border);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 10px 20px; background: var(--form-header-bg); border-bottom: 1px solid var(--form-border);
             width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 15px;
         }
 
         .admin-header-main {
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--form-header-bg); padding: 25px 30px; border-radius: 16px;
-            border: 1px solid var(--form-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            background: var(--form-header-bg); padding: 25px 30px; border-radius: 12px;
+            border: 1px solid var(--form-border); box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             margin-bottom: 30px; width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 15px;
         }
 
         .list-form-card {
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--form-card-bg); padding: 25px 30px; border-radius: 16px;
-            border: 1px solid var(--form-border); margin-bottom: 20px; width: 100%; 
-            box-sizing: border-box; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            flex-wrap: wrap; gap: 20px; transition: transform 0.3s, border-color 0.3s;
+            background: var(--form-card-bg); padding: 20px 25px; border-radius: 12px;
+            border: 1px solid var(--form-border); margin-bottom: 15px; width: 100%; 
+            box-sizing: border-box; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            flex-wrap: wrap; gap: 20px; transition: 0.3s;
         }
-        .list-form-card:hover { border-color: var(--form-active-border); transform: translateY(-3px); }
+        .list-form-card:hover { border-color: var(--form-active-border); transform: translateY(-2px); }
     </style>
 </head>
 <body class="admin-v2-body">
 
-    <!-- SCRIPT PROTECT DEVTOOLS & AUTH GUARD ANTI-CRASH -->
     <script src="/js/protect-devtools.js"></script>
     <script>
-        // Mencegah SyntaxError di Environment Preview (Canvas/Sandboxed Iframe)
         const isPreviewEnv = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.origin.includes('preview');
-        
         if (!localStorage.getItem('axa_admin_token')) {
-            if (!isPreviewEnv) {
-                try { window.location.replace('/admin'); } catch(e) { console.error("Redirect diblokir browser"); }
-            } else {
-                console.warn("Canvas Preview Mode: Bypass Admin Auth");
-                localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN');
-            }
+            if (!isPreviewEnv) { try { window.location.replace('/admin'); } catch(e) {} } 
+            else { localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); }
         }
     </script>
 
     <!-- Header Atas Dashboard V2 -->
     <div class="header-admin-nav">
         <div style="display:flex; align-items:center; gap: 15px;">
-            <img src="/img/bemfkgumi.png" style="height: 40px;" alt="Logo">
-            <h2 style="color:var(--form-text); font-size:1.3rem; margin:0; font-weight: 800;">BEM-Form Builder V2</h2>
+            <button class="gf-btn-clear" onclick="if(!isPreviewEnv){window.location.href='/admin'}else{alert('Kembali ke Dashboard V1')}" style="padding: 8px;">🏠</button>
+            <h2 style="color:var(--form-text); font-size:1.2rem; margin:0; font-weight: 500;">BEM-Form Builder V2</h2>
         </div>
-        <div style="display: flex; gap: 10px; align-items:center;">
-            <button class="gf-btn-clear" onclick="if(!isPreviewEnv){window.location.href='/admin'}else{alert('Kembali ke Dashboard V1')}">← Panel V1</button>
-            <button class="gf-btn-submit" style="background:#ef4444; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);" onclick="localStorage.removeItem('axa_admin_token'); if(!isPreviewEnv){window.location.href='/admin'}else{location.reload();}">Logout</button>
+        
+        <!-- ICONS: Theme, Preview, Undo, Redo -->
+        <div id="builderTopIcons" style="display: none; align-items: center; gap: 5px;">
+            <button class="top-icon-btn" title="Sesuaikan Tema" onclick="toggleThemeSidebar()">🎨</button>
+            <button class="top-icon-btn" title="Pratinjau" onclick="previewForm()">👁️</button>
+            <button class="top-icon-btn" id="btnUndo" title="Urungkan (Undo)" onclick="undoState()" disabled>↩</button>
+            <button class="top-icon-btn" id="btnRedo" title="Ulangi (Redo)" onclick="redoState()" disabled>↪</button>
+            <button class="gf-btn-submit" style="margin-left: 10px;" onclick="saveFormToDB()">Kirim</button>
+        </div>
+        
+        <div id="listTopIcons" style="display: flex; gap: 10px; align-items:center;">
+            <button class="gf-btn-clear" style="color:#ef4444;" onclick="localStorage.removeItem('axa_admin_token'); if(!isPreviewEnv){window.location.href='/admin'}else{location.reload();}">Logout</button>
         </div>
     </div>
 
-    <!-- 4 TABS LAYAKNYA GOOGLE FORMS -->
-    <div class="builder-tabs">
-        <div class="b-tab active" onclick="switchFormTab('main')">Main (Daftar Form)</div>
+    <!-- TABS -->
+    <div class="builder-tabs" id="mainTabs">
+        <div class="b-tab active" onclick="switchFormTab('main')" id="tabMain">Main (Daftar Form)</div>
         <div class="b-tab" onclick="switchFormTab('pertanyaan')" id="tabPertanyaan" style="display:none;">Pertanyaan</div>
         <div class="b-tab" onclick="switchFormTab('jawaban')" id="tabJawaban" style="display:none;">Jawaban</div>
         <div class="b-tab" onclick="switchFormTab('setelan')" id="tabSetelan" style="display:none;">Setelan</div>
     </div>
 
+    <!-- TEMA SIDEBAR (OFFCANVAS) -->
+    <div class="theme-sidebar" id="themeSidebar">
+        <div class="theme-sidebar-header">
+            <h3 style="margin:0; font-size:1.1rem; font-weight:500; color:var(--form-text);">🎨 Tema</h3>
+            <button class="top-icon-btn" onclick="toggleThemeSidebar()">✕</button>
+        </div>
+        <div class="theme-sidebar-content">
+            <div class="theme-section-title">Gaya teks</div>
+            <label style="font-size:0.85rem; color:var(--form-text-muted);">Header</label>
+            <div class="font-select-group">
+                <select class="t-select" style="flex:1;" id="themeHeaderFont" onchange="updateTheme('headerFont', this.value)">
+                    <option value="Roboto">Roboto</option><option value="Playfair Display">Playfair</option>
+                    <option value="Oswald">Oswald</option><option value="Lora">Lora</option>
+                </select>
+                <select class="t-select" style="width:70px;" id="themeHeaderSize" onchange="updateTheme('headerFontSize', this.value)">
+                    <option value="18">18</option><option value="22">22</option>
+                    <option value="24">24</option><option value="28">28</option>
+                </select>
+            </div>
+            
+            <label style="font-size:0.85rem; color:var(--form-text-muted);">Pertanyaan</label>
+            <div class="font-select-group">
+                <select class="t-select" style="flex:1;" id="themeQuestionFont" onchange="updateTheme('questionFont', this.value)">
+                    <option value="Roboto">Roboto</option><option value="Montserrat">Montserrat</option>
+                </select>
+                <select class="t-select" style="width:70px;" id="themeQuestionSize" onchange="updateTheme('questionFontSize', this.value)">
+                    <option value="12">12</option><option value="14">14</option><option value="16">16</option>
+                </select>
+            </div>
+            
+            <div class="theme-section-title" style="margin-top:20px;">Header</div>
+            <div style="border:1px dashed var(--form-border); padding:20px; text-align:center; border-radius:8px; margin-bottom:20px; background:var(--form-bg);">
+                <img id="themeHeaderPreview" src="" style="width:100%; height:80px; object-fit:cover; border-radius:4px; display:none; margin-bottom:10px;">
+                <input type="file" id="themeHeaderUpload" accept="image/*" style="display:none;" onchange="handleHeaderImage(this)">
+                <button class="gf-btn-clear" onclick="document.getElementById('themeHeaderUpload').click()" style="border-color:var(--form-active-border); color:var(--form-active-border);">Pilih Gambar</button>
+                <button class="gf-btn-clear" onclick="removeHeaderImage()" style="margin-top:5px; border:none; display:none;" id="btnRmHeader">Hapus</button>
+            </div>
+
+            <div class="theme-section-title">Warna Tema</div>
+            <div class="color-circle-group" id="themeColorGrid">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="theme-section-title">Latar Belakang</div>
+            <div class="color-circle-group" id="themeBgGrid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
     <div class="main-container">
         
-        <!-- ================= TAB 1: MAIN (DAFTAR FORM LENGKAP DGN TOGGLE) ================= -->
+        <!-- ================= TAB 1: MAIN (DAFTAR FORM) ================= -->
         <div id="tab-main" class="tab-content active">
             <div class="admin-header-main">
                 <div>
-                    <h2 style="color:var(--form-text); font-size:1.8rem; margin:0; font-weight:800;">Daftar Formulir Anda</h2>
-                    <p style="color: var(--form-text-muted); margin-top: 8px;">Kelola dan buat form layaknya Google Forms untuk kegiatan BEM.</p>
+                    <h2 style="color:var(--form-text); font-size:1.5rem; margin:0; font-weight:500;">Formulir Terbaru</h2>
                 </div>
-                <button class="gf-btn-submit" onclick="createNewForm()">+ Buat Form Baru</button>
+                <button class="gf-btn-submit" onclick="createNewForm()">+ Formulir Kosong</button>
             </div>
-            
             <div id="formListContainer">
-                <div style="text-align:center; padding: 50px; color: var(--form-text-muted);">Memuat data form dari Database Upstash...</div>
+                <div style="text-align:center; padding: 50px; color: var(--form-text-muted);">Memuat...</div>
             </div>
         </div>
 
         <!-- ================= TAB 2: PERTANYAAN (BUILDER / EDITOR) ================= -->
         <div id="tab-pertanyaan" class="tab-content">
-            <div style="display:flex; justify-content:space-between; margin-bottom: 25px; align-items:center; flex-wrap:wrap; gap:15px;">
-                <button class="gf-btn-clear" onclick="backToMain()">← Simpan & Keluar</button>
-                <div style="display:flex; gap:10px;">
-                    <button class="gf-btn-clear" onclick="previewForm()" style="background:var(--form-card-bg);">👁️ Pratinjau</button>
-                    <button class="gf-btn-submit" onclick="saveFormToDB()">💾 Publikasikan Form</button>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 20px; position:relative; max-width: 800px; margin:0 auto;">
+            <div style="display: flex; gap: 20px; position:relative;">
                 <div id="builderCanvas" style="flex: 1; padding-bottom: 150px; width: 100%;">
                     <!-- Javascript merender pertanyaan disini -->
                 </div>
@@ -121,53 +158,62 @@
                 <!-- Floating Toolbar (Tools Kanan) -->
                 <div class="floating-toolbar" id="floater">
                     <button class="toolbar-btn" onclick="addQuestion()" title="Tambahkan Pertanyaan">⊕</button>
-                    <button class="toolbar-btn" onclick="addSection()" title="Tambahkan Bagian Baru">◫</button>
+                    <button class="toolbar-btn" onclick="addSection()" title="Tambahkan Bagian">◫</button>
                     <button class="toolbar-btn" onclick="addTitleDesc()" title="Tambahkan Judul dan Deskripsi">Tt</button>
                 </div>
             </div>
         </div>
 
         <!-- ================= TAB 3: JAWABAN ================= -->
-        <div id="tab-jawaban" class="tab-content" style="max-width: 800px; margin:0 auto;">
-            <div class="form-header-card">
-                <h2 class="form-title" id="respCount">0 Jawaban</h2>
-                <p style="color:var(--form-text-muted);">Daftar rekapitulasi data responden yang telah mengisi form ini.</p>
-                <div style="margin-top: 25px;">
-                    <button class="gf-btn-submit" onclick="downloadExcel()" style="background: #10b981; box-shadow: 0 5px 15px rgba(16,185,129,0.3);">📥 Download .XLSX (Excel)</button>
+        <div id="tab-jawaban" class="tab-content">
+            <div class="form-header-card" style="border-top:none;">
+                <h2 class="form-title" id="respCount" style="font-size:2rem; font-weight:400;">0 Tanggapan</h2>
+                <div style="margin-top: 25px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--form-border); padding-bottom:15px;">
+                    <span style="color:var(--form-text-muted);">Menerima tanggapan</span>
+                    <button class="gf-btn-submit" onclick="downloadExcel()" style="background: #10b981;">Link ke Spreadsheet</button>
                 </div>
-                <div id="respList" style="margin-top: 25px; max-height: 500px; overflow-y:auto; border-top:1px solid var(--form-border); padding-top:15px; color:var(--form-text);">
+                <div id="respList" style="margin-top: 15px; max-height: 500px; overflow-y:auto; color:var(--form-text);">
                     <!-- List Jawaban Di Render Disini -->
                 </div>
             </div>
         </div>
 
         <!-- ================= TAB 4: SETELAN ================= -->
-        <div id="tab-setelan" class="tab-content" style="max-width: 800px; margin:0 auto;">
-            <div class="form-header-card">
-                <h2 class="form-title">Setelan Formulir</h2>
-                <p class="form-desc">Atur perilaku form dan cara presentasi ke pengguna. Pastikan untuk menekan tombol "Publikasikan Form" setelah merubah setelan.</p>
-                
+        <div id="tab-setelan" class="tab-content">
+            <div class="form-header-card" style="border-top:none; padding:10px 30px;">
+                <div class="setting-group">
+                    <div class="setting-header">
+                        <div style="flex:1;">
+                            <div class="setting-title">Jadikan ini sebagai kuis</div>
+                            <div class="setting-desc">Menetapkan nilai poin (Fitur mendatang)</div>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="setKuis" class="switch-input" disabled>
+                            <label for="setKuis" class="switch-label"></label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="setting-group">
                     <div class="setting-header">
                         <div style="flex:1;">
                             <div class="setting-title">Status Form</div>
-                            <div class="setting-desc">Aktif menerima respons dari pengguna publik</div>
+                            <div class="setting-desc">Menerima respons formulir</div>
                         </div>
                         <div class="toggle-switch">
-                            <input type="checkbox" id="setActive" class="switch-input" onchange="currentForm.isActive = this.checked">
+                            <input type="checkbox" id="setActive" class="switch-input" onchange="updateSetting('isActive', this.checked)">
                             <label for="setActive" class="switch-label"></label>
                         </div>
                     </div>
                 </div>
 
-                <!-- FITUR DEADLINE / BATAS WAKTU TANGGAL -->
                 <div class="setting-group">
                     <div class="setting-header">
                         <div style="flex:1;">
-                            <div class="setting-title" style="color:#eab308;">Batas Waktu Pengisian (Deadline) 📅</div>
-                            <div class="setting-desc">Formulir otomatis tertutup jika melewati tanggal & waktu ini. Kosongkan jika tanpa batas.</div>
+                            <div class="setting-title" style="color:#eab308;">Batas Waktu Pengisian (Deadline)</div>
+                            <div class="setting-desc">Otomatis tertutup pada tanggal tertentu.</div>
                         </div>
-                        <input type="datetime-local" class="gf-input" id="setDeadline" style="width:230px; background:var(--form-bg); padding:10px 15px; border-radius:8px; border:1px solid var(--form-border);" onchange="currentForm.settings.deadline = this.value">
+                        <input type="datetime-local" class="gf-input" id="setDeadline" style="width:230px;" onchange="updateSetting('deadline', this.value)">
                     </div>
                 </div>
 
@@ -175,11 +221,10 @@
                     <div class="setting-header">
                         <div style="flex:1;">
                             <div class="setting-title">Kumpulkan alamat email</div>
-                            <div class="setting-desc">Wajibkan responden mengisi email valid di form</div>
                         </div>
-                        <select class="q-type-select" id="setCollectEmail" onchange="currentForm.settings.collectEmail = this.value" style="width:230px;">
+                        <select class="q-type-select" id="setCollectEmail" onchange="updateSetting('collectEmail', this.value)" style="width:200px;">
                             <option value="none">Jangan Kumpulkan</option>
-                            <option value="input">Input responden (Wajib)</option>
+                            <option value="input">Input responden</option>
                         </select>
                     </div>
                 </div>
@@ -188,10 +233,9 @@
                     <div class="setting-header">
                         <div style="flex:1;">
                             <div class="setting-title">Batasi ke 1 jawaban</div>
-                            <div class="setting-desc">Responden hanya bisa mengirim satu kali form</div>
                         </div>
                         <div class="toggle-switch">
-                            <input type="checkbox" id="setLimitOne" class="switch-input" onchange="currentForm.settings.limitOne = this.checked">
+                            <input type="checkbox" id="setLimitOne" class="switch-input" onchange="updateSetting('limitOne', this.checked)">
                             <label for="setLimitOne" class="switch-label"></label>
                         </div>
                     </div>
@@ -200,42 +244,39 @@
                 <div class="setting-group">
                     <div class="setting-header">
                         <div style="flex:1;">
-                            <div class="setting-title">Izinkan pengeditan respons</div>
-                            <div class="setting-desc">Respons dapat diubah setelah form dikirim</div>
-                        </div>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="setEditResp" class="switch-input" onchange="currentForm.settings.editResponse = this.checked">
-                            <label for="setEditResp" class="switch-label"></label>
+                            <div class="setting-title">Pesan Konfirmasi</div>
+                            <div class="setting-desc">Tampil setelah pengiriman.</div>
                         </div>
                     </div>
+                    <input type="text" class="gf-input" id="setConfMsg" onchange="updateSetting('confirmationMessage', this.value)" placeholder="Jawaban Anda telah dicatat." style="margin-top: 15px;">
                 </div>
-
-                <div class="setting-group">
-                    <div class="setting-header">
-                        <div style="flex:1;">
-                            <div class="setting-title">Pesan Konfirmasi Pengiriman</div>
-                            <div class="setting-desc">Teks konfirmasi yang tampil setelah klik tombol kirim</div>
-                        </div>
-                    </div>
-                    <input type="text" class="gf-input" id="setConfMsg" oninput="currentForm.settings.confirmationMessage = this.value" placeholder="Jawaban Anda telah dicatat." style="margin-top: 15px; background:var(--form-bg); padding-left:15px; border-radius:8px;">
-                </div>
-
             </div>
         </div>
 
     </div>
 
     <!-- TOAST Notification -->
-    <div class="toast" id="globalToast" style="position:fixed; bottom:-100px; right:20px; background:var(--form-active-border); color:#fff; padding:15px 25px; border-radius:12px; font-weight:700; transition:0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index:9999; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">Notifikasi</div>
+    <div class="toast" id="globalToast">Notifikasi</div>
 
     <script>
-        // ================= GLOBAL STATE =================
+        // ================= GLOBAL STATE & UNDO REDO =================
         let allForms = [];
         let currentForm = null;
         let activeSecIdx = 0;
         let activeQIdx = -1;
 
-        document.addEventListener('DOMContentLoaded', loadAllForms);
+        // Undo Redo Stack
+        let historyStack = [];
+        let historyPointer = -1;
+        let isNavigatingHistory = false;
+
+        const THEME_COLORS = ['#db4437', '#673ab7', '#3f51b5', '#4285f4', '#03a9f4', '#00bcd4', '#ff5722', '#ff9800', '#009688', '#4caf50', '#607d8b', '#9e9e9e'];
+        const BG_COLORS = ['#f8dada', '#f0ebf8', '#e8eaf6', '#e8f0fe', '#e1f5fe', '#e0f7fa', '#fbe9e7', '#fff3e0', '#e0f2f1', '#e8f5e9', '#eceff1', '#f5f5f5'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllForms();
+            initThemeGrids();
+        });
 
         function showToast(msg) {
             const t = document.getElementById('globalToast');
@@ -243,26 +284,155 @@
             setTimeout(() => t.style.bottom = '-100px', 3000);
         }
 
-        // ================= NAVIGASI TAB UTAMA =================
+        // ================= UNDO / REDO ENGINE =================
+        function saveState() {
+            if(isNavigatingHistory) return;
+            // Jika pointer tidak di ujung, potong masa depan
+            if(historyPointer < historyStack.length - 1) {
+                historyStack = historyStack.slice(0, historyPointer + 1);
+            }
+            historyStack.push(JSON.stringify(currentForm));
+            historyPointer++;
+            updateUndoRedoUI();
+        }
+
+        function undoState() {
+            if(historyPointer > 0) {
+                isNavigatingHistory = true;
+                historyPointer--;
+                currentForm = JSON.parse(historyStack[historyPointer]);
+                applyThemeToDOM();
+                renderBuilder();
+                isNavigatingHistory = false;
+                updateUndoRedoUI();
+            }
+        }
+
+        function redoState() {
+            if(historyPointer < historyStack.length - 1) {
+                isNavigatingHistory = true;
+                historyPointer++;
+                currentForm = JSON.parse(historyStack[historyPointer]);
+                applyThemeToDOM();
+                renderBuilder();
+                isNavigatingHistory = false;
+                updateUndoRedoUI();
+            }
+        }
+
+        function updateUndoRedoUI() {
+            document.getElementById('btnUndo').disabled = historyPointer <= 0;
+            document.getElementById('btnRedo').disabled = historyPointer >= historyStack.length - 1;
+        }
+
+        // Delay Save State untuk input teks agar tidak penuh stacknya
+        let debounceTimer;
+        function debouncedSaveState() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(saveState, 500);
+        }
+
+        // ================= THEME ENGINE =================
+        function initThemeGrids() {
+            const cGrid = document.getElementById('themeColorGrid');
+            const bGrid = document.getElementById('themeBgGrid');
+            
+            THEME_COLORS.forEach((c, i) => {
+                cGrid.innerHTML += `<div class="color-circle" style="background:${c};" onclick="updateTheme('color', '${c}'); updateTheme('bgColor', '${BG_COLORS[i]}');" id="tc-${c}"></div>`;
+                bGrid.innerHTML += `<div class="color-circle bg-circle" style="background:${BG_COLORS[i]};" onclick="updateTheme('bgColor', '${BG_COLORS[i]}');" id="tb-${BG_COLORS[i]}"></div>`;
+            });
+        }
+
+        function toggleThemeSidebar() {
+            document.getElementById('themeSidebar').classList.toggle('active');
+        }
+
+        function updateTheme(key, value) {
+            currentForm.theme[key] = value;
+            applyThemeToDOM();
+            saveState();
+        }
+
+        function applyThemeToDOM() {
+            if(!currentForm || !currentForm.theme) return;
+            const t = currentForm.theme;
+            
+            document.documentElement.style.setProperty('--form-active-border', t.color);
+            document.documentElement.style.setProperty('--form-bg', t.bgColor);
+            document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont}", sans-serif`);
+            document.documentElement.style.setProperty('--form-font-question', `"${t.questionFont}", sans-serif`);
+            
+            // Update Select UI
+            document.getElementById('themeHeaderFont').value = t.headerFont;
+            document.getElementById('themeHeaderSize').value = t.headerFontSize;
+            document.getElementById('themeQuestionFont').value = t.questionFont;
+            document.getElementById('themeQuestionSize').value = t.questionFontSize;
+
+            // Highlight color circles
+            document.querySelectorAll('#themeColorGrid .color-circle').forEach(el => el.innerHTML = '');
+            const activeColor = document.getElementById(`tc-${t.color}`);
+            if(activeColor) activeColor.innerHTML = '✓';
+
+            document.querySelectorAll('#themeBgGrid .color-circle').forEach(el => el.innerHTML = '');
+            const activeBg = document.getElementById(`tb-${t.bgColor}`);
+            if(activeBg) activeBg.innerHTML = '✓';
+
+            // Handle Header Image
+            const imgPreview = document.getElementById('themeHeaderPreview');
+            const btnRm = document.getElementById('btnRmHeader');
+            if(t.headerImage) {
+                imgPreview.src = t.headerImage;
+                imgPreview.style.display = 'block';
+                btnRm.style.display = 'inline-block';
+            } else {
+                imgPreview.src = '';
+                imgPreview.style.display = 'none';
+                btnRm.style.display = 'none';
+            }
+            renderBuilder();
+        }
+
+        function handleHeaderImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    updateTheme('headerImage', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function removeHeaderImage() { updateTheme('headerImage', ''); }
+
+        // ================= NAVIGASI =================
         function switchFormTab(tabId) {
             document.querySelectorAll('.b-tab').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             
-            document.querySelector(`.b-tab[onclick="switchFormTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.add('active');
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
+            if(tabId === 'main') {
+                document.getElementById('builderTopIcons').style.display = 'none';
+                document.getElementById('listTopIcons').style.display = 'flex';
+                document.getElementById('themeSidebar').classList.remove('active');
+            } else {
+                document.getElementById('builderTopIcons').style.display = 'flex';
+                document.getElementById('listTopIcons').style.display = 'none';
+            }
+
             if(tabId === 'jawaban') loadResponses();
             if(tabId === 'setelan') renderSettings();
             if(tabId === 'pertanyaan') positionToolbar(); 
         }
 
         function backToMain() {
-            if(currentForm) saveFormToDB(true); // Silent Auto save saat kembali
+            if(currentForm) saveFormToDB(true); 
             document.getElementById('tabPertanyaan').style.display = 'none';
             document.getElementById('tabJawaban').style.display = 'none';
             document.getElementById('tabSetelan').style.display = 'none';
             switchFormTab('main');
             currentForm = null;
+            historyStack = []; historyPointer = -1; // Reset stack
         }
 
         function previewForm() { window.open(`/form/${currentForm.slug}`, '_blank'); }
@@ -288,103 +458,69 @@
                 });
                 const json = await res.json();
                 if(json.success) {
-                    if(!isSilent) showToast("✅ Form Tersimpan ke Database Server!");
-                    currentForm.id = json.id; // Update ID jika form baru
-                    loadAllForms(); // Sinkron list ulang di background
+                    if(!isSilent) showToast("✅ Form Tersimpan!");
+                    currentForm.id = json.id;
+                    loadAllForms(); 
                 }
-                if(!isSilent && btn) { btn.innerText = "💾 Publikasikan Form"; btn.disabled = false; }
+                if(!isSilent && btn) { btn.innerText = "Kirim"; btn.disabled = false; }
             } catch (e) {
                 if(!isSilent) showToast("⚠️ Gagal menyimpan!");
-                if(!isSilent && btn) { btn.innerText = "💾 Publikasikan Form"; btn.disabled = false; }
+                if(!isSilent && btn) { btn.innerText = "Kirim"; btn.disabled = false; }
             }
         }
 
-        // ================= FITUR: TOGGLE STATUS & HAPUS DARI LIST =================
         async function toggleFormStatusList(formId, isActiveStatus) {
-            currentForm = allForms.find(f => f.id === formId);
-            if(currentForm) {
-                currentForm.isActive = isActiveStatus;
-                await saveFormToDB(true); // Silent Save to DB
+            let formToUpdate = allForms.find(f => f.id === formId);
+            if(formToUpdate) {
+                formToUpdate.isActive = isActiveStatus;
+                await fetch('/api/forms/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(formToUpdate) });
                 showToast(`Formulir berhasil di${isActiveStatus ? 'aktifkan' : 'tutup'}.`);
-                renderFormList(); // Render ulang label text hijau/merah
-            }
-        }
-
-        async function deleteFormDirect(formId) {
-            if(confirm("PERINGATAN: Apakah Anda yakin ingin menghapus Formulir ini secara PERMANEN? Data jawaban akan ikut terhapus.")) {
-                // Sebagai bentuk keamanan Data, kita hanya filter dari UI saat ini.
-                // Jika ingin DB permanen, perlu endpoint DELETE khusus di server.js
-                alert("Fitur penghapusan form permanen dilindungi demi keamanan data. Silahkan hubungi Webmaster atau akses Redis Dashboard langsung.");
+                renderFormList();
             }
         }
 
         async function loadResponses() {
-            document.getElementById('respList').innerHTML = "Memuat rekapan jawaban...";
+            document.getElementById('respList').innerHTML = "Memuat tanggapan...";
             try {
                 const res = await fetch(`/api/forms/${currentForm.id}/responses`);
                 const json = await res.json();
                 const data = json.data || [];
-                document.getElementById('respCount').innerText = `${data.length} Jawaban`;
+                document.getElementById('respCount').innerText = `${data.length} Tanggapan`;
                 
                 let html = '';
-                data.slice().reverse().forEach((r, i) => { 
+                data.slice().reverse().forEach((r) => { 
                     html += `
-                        <div style="padding:15px; border-bottom:1px solid var(--form-border); background:var(--bg-dark-overlay); margin-bottom:10px; border-radius:10px;">
-                            <strong style="color:var(--form-text);">Waktu Pengiriman:</strong> <span style="color:var(--form-text-muted);">${new Date(r.timestamp).toLocaleString('id-ID')}</span><br>
-                            <strong style="color:var(--form-text); display:inline-block; margin-top:5px;">Email Responden:</strong> <span style="color:var(--form-active-border); font-weight:bold;">${r.email || 'Tanpa Email'}</span>
+                        <div style="padding:15px; border-bottom:1px solid var(--form-border);">
+                            <div style="color:var(--form-text-muted); font-size:0.85rem;">${new Date(r.timestamp).toLocaleString('id-ID')}</div>
+                            <strong style="color:var(--form-text); display:block; margin-top:5px;">${r.email || 'Tanpa Email'}</strong>
                         </div>`;
                 });
-                document.getElementById('respList').innerHTML = html || "Belum ada respon jawaban pada formulir ini.";
-            } catch(e) { document.getElementById('respList').innerHTML = "Gagal memuat data jawaban."; }
+                document.getElementById('respList').innerHTML = html || "<div style='padding:20px; color:#888;'>Belum ada tanggapan.</div>";
+            } catch(e) { document.getElementById('respList').innerHTML = "Gagal memuat data."; }
         }
 
-        function downloadExcel() {
-            window.open(`/api/forms/${currentForm.id}/export`, '_blank');
-        }
+        function downloadExcel() { window.open(`/api/forms/${currentForm.id}/export`, '_blank'); }
 
-        // ================= RENDERING =================
+        // ================= RENDERING LIST =================
         function renderFormList() {
             const cont = document.getElementById('formListContainer');
-            if(allForms.length === 0) { cont.innerHTML = "<div style='text-align:center; background:var(--form-card-bg); padding:50px; border-radius:15px; border:1px dashed var(--form-active-border); font-weight:600;'>Belum ada form yang dibuat. Klik tombol Buat Form Baru di atas.</div>"; return; }
+            if(allForms.length === 0) { cont.innerHTML = "<div style='text-align:center; color:#888;'>Belum ada formulir.</div>"; return; }
             
             let html = '';
-            // Render dari yang paling baru
             [...allForms].reverse().forEach(f => {
-                
-                // Formating Deadline Date
-                let deadlineStr = '<span style="color:#10b981; background:rgba(16,185,129,0.1); padding:4px 10px; border-radius:8px;">Tanpa Batas</span>';
-                if(f.settings && f.settings.deadline) {
-                    const dl = new Date(f.settings.deadline);
-                    deadlineStr = `<span style="color:#eab308; background:rgba(234,179,8,0.1); padding:4px 10px; border-radius:8px;">${dl.toLocaleString('id-ID', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'})} WITA</span>`;
-                }
-
                 html += `
                 <div class="list-form-card">
-                    <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
-                        <h3 style="font-size: 1.4rem; color:var(--form-text); margin:0; font-weight:800;">${f.title || 'Form Tanpa Judul'}</h3>
-                        <a href="/form/${f.slug}" target="_blank" style="color:var(--form-active-border); font-weight:600; text-decoration:none; background:var(--form-focus-glow); padding:6px 12px; border-radius:8px; width:max-content; font-size:0.9rem;">/form/${f.slug}</a>
-                        
-                        <div style="display:flex; gap:15px; align-items:center; margin-top:8px; flex-wrap:wrap;">
-                            <!-- TOGGLE AKTIFKAN FORM -->
-                            <div style="display:flex; align-items:center; gap:8px; background:var(--form-bg); padding:8px 15px; border-radius:20px; border:1px solid var(--form-border);">
-                                <span style="font-size:0.85rem; font-weight:600; color:var(--form-text-muted);">Status:</span>
-                                <div class="toggle-switch" style="gap:5px;">
-                                    <input type="checkbox" id="tg-${f.id}" class="switch-input" ${f.isActive ? 'checked' : ''} onchange="toggleFormStatusList('${f.id}', this.checked)">
-                                    <label for="tg-${f.id}" class="switch-label" style="transform: scale(0.85); margin:0;"></label>
-                                </div>
-                                <span style="font-size:0.85rem; font-weight:800; color:${f.isActive ? '#10b981' : '#ef4444'}; margin-left:5px;">${f.isActive ? 'Menerima Respons' : 'Ditutup'}</span>
-                            </div>
-                            
-                            <!-- INFO DEADLINE TANGGAL -->
-                            <div style="font-size:0.85rem; font-weight:700; color:var(--form-text-muted); background:var(--form-bg); padding:8px 15px; border-radius:12px; border:1px solid var(--form-border); display:flex; align-items:center; gap:8px;">
-                                ⏳ Batas Waktu: ${deadlineStr}
-                            </div>
+                    <div style="flex:1;">
+                        <h3 style="font-size: 1.1rem; color:var(--form-text); margin:0; font-weight:500; font-family:var(--form-font-header);">${f.title || 'Formulir Tanpa Judul'}</h3>
+                        <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+                            <img src="${f.theme && f.theme.headerImage ? f.theme.headerImage : '/img/bemfkgumi.png'}" style="width:24px; height:24px; object-fit:cover; border-radius:4px;">
+                            <span style="font-size:0.85rem; color:var(--form-text-muted);">Dibuka: ${f.isActive ? 'Ya' : 'Tidak'}</span>
                         </div>
                     </div>
-                    
-                    <div style="display:flex; gap: 10px; align-items:center; margin-top:10px;">
-                        <button class="gf-btn-submit" onclick="openFormEditor('${f.id}')" style="padding:12px 25px; font-size:0.95rem;">✏️ Edit Form</button>
-                        <button class="gf-btn-clear" onclick="deleteFormDirect('${f.id}')" style="color:#ef4444; border-color:rgba(239,68,68,0.3); background:rgba(239,68,68,0.05); padding: 12px 18px; font-size:1.2rem;" title="Hapus Permanen">🗑️</button>
+                    <div style="display:flex; gap: 10px; align-items:center;">
+                        <button class="top-icon-btn" onclick="openFormEditor('${f.id}')" title="Edit">✏️</button>
+                        <a href="/form/${f.slug}" target="_blank" class="top-icon-btn" style="text-decoration:none;" title="Buka">👁️</a>
+                        <button class="top-icon-btn" onclick="alert('Silahkan hapus data via Upstash UI untuk keamanan.')" style="color:#ef4444;" title="Hapus">🗑️</button>
                     </div>
                 </div>`;
             });
@@ -393,17 +529,23 @@
 
         function createNewForm() {
             currentForm = {
-                id: '', slug: `form-baru-${Date.now()}`, title: 'Formulir Tanpa Judul', description: 'Deskripsi formulir', isActive: true,
+                id: '', slug: `form-${Date.now()}`, title: 'Formulir Tanpa Judul', description: '', isActive: true,
                 settings: { collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '' },
+                theme: { headerFont: 'Roboto', headerFontSize: 24, questionFont: 'Roboto', questionFontSize: 12, textFont: 'Roboto', textFontSize: 11, color: '#673ab7', bgColor: '#f0ebf8', headerImage: '' },
                 sections: [ { id: 's1', title: 'Bagian 1', description: '', questions: [] } ]
             };
+            historyStack = []; historyPointer = -1;
+            saveState(); // Initial state
             openEditorUI();
         }
 
         function openFormEditor(id) {
-            currentForm = allForms.find(f => f.id === id);
-            // Default Backward Compatibility Setelan Jika Belum Ada
+            currentForm = JSON.parse(JSON.stringify(allForms.find(f => f.id === id))); // Deep clone prevent ref bug
             if(!currentForm.settings) currentForm.settings = { collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '' };
+            if(!currentForm.theme) currentForm.theme = { headerFont: 'Roboto', headerFontSize: 24, questionFont: 'Roboto', questionFontSize: 12, textFont: 'Roboto', textFontSize: 11, color: '#673ab7', bgColor: '#f0ebf8', headerImage: '' };
+            
+            historyStack = []; historyPointer = -1;
+            saveState();
             openEditorUI();
         }
 
@@ -411,146 +553,168 @@
             document.getElementById('tabPertanyaan').style.display = 'block';
             document.getElementById('tabJawaban').style.display = 'block';
             document.getElementById('tabSetelan').style.display = 'block';
+            applyThemeToDOM();
             switchFormTab('pertanyaan');
-            renderBuilder();
         }
+
+        // ================= DRAG AND DROP ENGINE =================
+        let dragSrcEl = null;
+        function handleDragStart(e, sIdx, qIdx) {
+            dragSrcEl = { sIdx, qIdx, element: e.target };
+            e.target.style.opacity = '0.4';
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', qIdx); // Dummy
+        }
+        function handleDragOver(e) {
+            if (e.preventDefault) e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+        function handleDragEnter(e) { this.classList.add('drop-placeholder'); }
+        function handleDragLeave(e) { this.classList.remove('drop-placeholder'); }
+        function handleDrop(e, targetSIdx, targetQIdx) {
+            if (e.stopPropagation) e.stopPropagation();
+            this.classList.remove('drop-placeholder');
+            
+            if (dragSrcEl && (dragSrcEl.sIdx === targetSIdx && dragSrcEl.qIdx !== targetQIdx)) {
+                // Swap dalam section yang sama
+                let questions = currentForm.sections[targetSIdx].questions;
+                let draggedItem = questions.splice(dragSrcEl.qIdx, 1)[0];
+                questions.splice(targetQIdx, 0, draggedItem);
+                
+                activeQIdx = targetQIdx; // Pindah fokus ke item yang didrop
+                saveState();
+                renderBuilder();
+            }
+            return false;
+        }
+        function handleDragEnd(e) { this.style.opacity = '1'; }
 
         // ================= CORE FORM BUILDER ENGINE =================
         function renderBuilder() {
             const canvas = document.getElementById('builderCanvas');
+            const theme = currentForm.theme;
             
-            // Header Formulir Global
+            // Header Image
+            let headerImgHtml = theme.headerImage ? `<img src="${theme.headerImage}" style="width:100%; height:130px; object-fit:cover; border-radius:8px 8px 0 0; display:block;">` : '';
+            
             let html = `
-                <div class="form-header-card" onclick="setActive(-1, -1, this)">
-                    <input type="text" class="gf-input form-title" value="${currentForm.title}" oninput="currentForm.title=this.value" placeholder="Judul Formulir">
-                    <textarea class="gf-input form-desc" rows="2" placeholder="Deskripsi formulir (Opsional)" oninput="currentForm.description=this.value">${currentForm.description}</textarea>
-                    
-                    <div style="margin-top:25px; font-size:0.9rem; color:var(--form-text-muted); background:var(--form-bg); padding:15px; border-radius:10px; display:flex; align-items:center; gap:10px;">
-                        🔗 <strong>Custom Link (Slug):</strong> 
-                        <input type="text" value="${currentForm.slug}" oninput="currentForm.slug=this.value" style="border:none; border-bottom:2px solid var(--form-active-border); background:transparent; color:var(--form-active-border); outline:none; padding:5px; font-weight:bold; font-size:1rem; flex:1;">
+                <div class="form-header-card" style="padding:0; overflow:hidden; border-top: ${theme.headerImage ? 'none' : '10px solid var(--form-active-border)'};" onclick="setActive(-1, -1, this)">
+                    ${headerImgHtml}
+                    <div style="padding: 25px 30px;">
+                        <input type="text" class="gf-input form-title" style="font-size:${theme.headerFontSize}px;" value="${currentForm.title}" oninput="currentForm.title=this.value; debouncedSaveState()" placeholder="Judul Formulir">
+                        <textarea class="gf-input form-desc" style="font-size:${theme.textFontSize}px;" rows="1" oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'; currentForm.description=this.value; debouncedSaveState()">${currentForm.description}</textarea>
                     </div>
                 </div>
             `;
 
-            // Render Setiap Bagian (Section) dan Pertanyaannya (Questions)
             currentForm.sections.forEach((sec, sIdx) => {
-                // Render Header Bagian (Jika lebih dari 1 section)
+                // Render Label Bagian X dari Y (Sesuai Gbr 1)
                 if(currentForm.sections.length > 1) {
                     html += `
-                    <div class="form-header-card" style="border-top: 10px solid var(--form-text-muted); border-radius:16px; margin-top:30px;" onclick="setActive(${sIdx}, -1, this)">
-                        <div style="background:var(--form-active-border); color:#fff; display:inline-block; padding:6px 18px; border-radius:20px; font-size:0.85rem; font-weight:bold; margin-bottom:15px; box-shadow:0 4px 10px var(--form-focus-glow);">Bagian ${sIdx+1} dari ${currentForm.sections.length}</div>
-                        <button style="float:right; border:none; background:rgba(239,68,68,0.1); border-radius:8px; padding:8px 12px; cursor:pointer; font-size:1.2rem; color:#ef4444;" title="Hapus Bagian" onclick="deleteSection(${sIdx})">🗑️</button>
-                        <input type="text" class="gf-input form-title" style="font-size:1.6rem;" value="${sec.title}" oninput="currentForm.sections[${sIdx}].title=this.value" placeholder="Bagian Tanpa Judul">
-                        <input type="text" class="gf-input form-desc" value="${sec.description}" oninput="currentForm.sections[${sIdx}].description=this.value" placeholder="Deskripsi (opsional)">
+                    <div style="margin-top:20px; position:relative;">
+                        <div class="form-section-header">Bagian ${sIdx+1} dari ${currentForm.sections.length}</div>
+                        <div class="form-header-card" style="border-top: none; border-radius: 0 8px 8px 8px; margin-top:0;" onclick="setActive(${sIdx}, -1, this)">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <input type="text" class="gf-input form-title" style="font-size:1.4rem; border:none; margin:0; flex:1;" value="${sec.title}" oninput="currentForm.sections[${sIdx}].title=this.value; debouncedSaveState()" placeholder="Bagian Tanpa Judul">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <button class="top-icon-btn" title="Hapus Bagian" onclick="deleteSection(${sIdx})">🗑️</button>
+                                </div>
+                            </div>
+                            <input type="text" class="gf-input form-desc" style="font-size:${theme.textFontSize}px; border-bottom:1px solid var(--form-border);" value="${sec.description}" oninput="currentForm.sections[${sIdx}].description=this.value; debouncedSaveState()" placeholder="Deskripsi (opsional)">
+                        </div>
                     </div>`;
                 }
 
                 sec.questions.forEach((q, qIdx) => {
                     let isActive = (activeSecIdx === sIdx && activeQIdx === qIdx) ? 'active' : '';
                     
-                    // Render UI Mock Berdasarkan Tipe Pertanyaan sesuai gambar 2 & 3
                     let optionsHtml = '';
-                    
-                    // Logic: Opsi List/Checkbox/Dropdown
                     if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(q.type)) {
-                        optionsHtml = `<div class="gf-radio-group" style="margin-top:20px;">`;
+                        optionsHtml = `<div class="gf-radio-group" style="margin-top:15px;">`;
                         q.options.forEach((opt, oIdx) => {
                             let icon = q.type === 'kotak_centang' ? '☐' : (q.type==='dropdown' ? `${oIdx+1}.` : '○');
                             optionsHtml += `
                             <div style="display:flex; align-items:center; gap:10px;">
-                                <span style="color:var(--form-text-muted); font-size:1.4rem;">${icon}</span>
-                                <input type="text" class="gf-input" style="padding:10px 5px; font-size:1rem;" value="${opt}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].options[${oIdx}]=this.value" placeholder="Opsi">
-                                <button style="border:none; background:transparent; cursor:pointer; color:#ef4444; font-size:1.2rem;" onclick="deleteOption(${sIdx},${qIdx},${oIdx})" title="Hapus Opsi">✖</button>
+                                <span style="color:#ccc; font-size:1.2rem;">${icon}</span>
+                                <input type="text" class="gf-input" style="padding:5px 0; font-size:${theme.textFontSize}px;" value="${opt}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].options[${oIdx}]=this.value; debouncedSaveState()" placeholder="Opsi ${oIdx+1}">
+                                <button class="top-icon-btn" style="width:30px; height:30px; font-size:1rem;" onclick="deleteOption(${sIdx},${qIdx},${oIdx})">✕</button>
                             </div>`;
                         });
-                        optionsHtml += `<div style="display:flex; align-items:center; gap:10px; margin-top:15px; background:var(--form-bg); padding:10px; border-radius:10px;"><span style="color:#ccc; font-size:1.4rem;">${q.type === 'kotak_centang' ? '☐' : '○'}</span><button class="gf-btn-clear" style="margin-left:0; font-weight:700;" onclick="addOption(${sIdx},${qIdx})">Tambahkan Opsi +</button></div></div>`;
+                        optionsHtml += `<div style="display:flex; align-items:center; gap:10px; margin-top:5px;"><span style="color:#ccc; font-size:1.2rem;">${q.type === 'kotak_centang' ? '☐' : '○'}</span><button class="gf-btn-clear" style="margin-left:0; font-weight:normal; padding:5px;" onclick="addOption(${sIdx},${qIdx})">Tambahkan opsi</button></div></div>`;
                     } 
                     else if (q.type === 'paragraf' || q.type === 'jawaban_singkat') {
-                        optionsHtml = `<input type="text" class="gf-input" placeholder="Teks jawaban ${q.type.replace('_',' ')}" disabled style="border-bottom: 2px dotted #ccc; margin-top:20px; background:transparent;">`;
+                        optionsHtml = `<input type="text" class="gf-input" placeholder="Teks jawaban ${q.type.replace('_',' ')}" disabled style="border-bottom: 1px dotted #ccc; margin-top:15px;">`;
                     } 
                     else if (q.type === 'upload_file') {
-                         optionsHtml = `<div style="padding:30px; border:2px dashed var(--form-active-border); text-align:center; color:var(--form-text-muted); margin-top:20px; border-radius:12px; background:var(--form-focus-glow); font-weight:600;">☁️ Area Drop File (Pengguna akan upload file disini)</div>`;
+                         optionsHtml = `<div style="padding:20px; border:1px dashed #ccc; text-align:center; color:#888; margin-top:15px; border-radius:4px; background:rgba(0,0,0,0.02);">Upload File</div>`;
                     } 
                     else if (q.type === 'tanggal') {
-                        optionsHtml = `<div style="margin-top:20px; display:flex; align-items:center; border-bottom:2px dotted #ccc; width:180px; color:var(--form-text-muted); padding-bottom:5px; font-size:1.1rem;">Bulan, Hari, Tahun 📅</div>`;
+                        optionsHtml = `<div style="margin-top:15px; color:#888; border-bottom:1px dotted #ccc; width:150px; padding-bottom:5px;">Bulan, Hari, Tahun 📅</div>`;
                     }
-                    else if (q.type === 'waktu') {
-                        optionsHtml = `<div style="margin-top:20px; display:flex; align-items:center; border-bottom:2px dotted #ccc; width:120px; color:var(--form-text-muted); padding-bottom:5px; font-size:1.1rem;">Waktu ⏰</div>`;
-                    } 
                     else if (q.type === 'skala_linier' || q.type === 'rating') {
-                        optionsHtml = `<div style="margin-top:20px; display:flex; gap:15px; align-items:center; background:var(--form-bg); padding:20px; border-radius:12px;">
-                            <span style="font-weight:bold; color:var(--form-text);">1</span> <input type="text" class="gf-input" placeholder="Label Kiri (opsional)" style="width:150px; background:transparent;"> 
-                            <span style="margin:0 15px; color:var(--form-text-muted);">hingga</span> 
-                            <span style="font-weight:bold; color:var(--form-text);">5</span> <input type="text" class="gf-input" placeholder="Label Kanan (opsional)" style="width:150px; background:transparent;">
+                        optionsHtml = `<div style="margin-top:15px; display:flex; gap:10px; align-items:center; color:#555;">
+                            1 <input type="text" class="gf-input" placeholder="Label Kiri" style="width:100px;"> 
+                            hingga 5 <input type="text" class="gf-input" placeholder="Label Kanan" style="width:100px;">
                         </div>`;
                     } 
-                    else {
-                        optionsHtml = `<div style="margin-top:20px; color:#888; background:var(--form-bg); padding:15px; border-radius:8px;">[Tipe pertanyaan disimulasikan sebagai Paragraf di layar Publik]</div>`;
-                    }
+                    else { optionsHtml = `<div style="margin-top:15px; color:#888;">[Format Simulasi]</div>`; }
 
-                    // Tipe Judul Only (Text Descriptor)
+                    // Title Only Type (Teks Judul Gbr 2)
                     if(q.type === 'title_only') {
                         html += `
-                        <div class="form-question-card ${isActive}" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
-                            <input type="text" class="gf-input question-title" style="font-size:1.4rem; border-bottom: 2px solid var(--form-active-border);" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value" placeholder="Judul Teks">
-                            <div class="builder-card-footer">
-                                <button class="toolbar-btn" style="color:#ef4444; background:rgba(239,68,68,0.1);" title="Hapus" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
+                        <div class="form-question-card ${isActive}" draggable="true" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}"
+                             ondragstart="handleDragStart(event, ${sIdx}, ${qIdx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${sIdx}, ${qIdx})" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
+                            <div class="drag-handle">⠿</div>
+                            <input type="text" class="gf-input question-title" style="font-size:1.2rem; border-bottom:none; margin-bottom:0;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; debouncedSaveState()" placeholder="Judul Teks">
+                            <input type="text" class="gf-input" style="font-size:${theme.textFontSize}px;" value="${q.image || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value; debouncedSaveState()" placeholder="Deskripsi (Opsional)">
+                            <div class="builder-card-footer" style="padding-top:10px; margin-top:10px;">
+                                <button class="top-icon-btn" onclick="duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
+                                <button class="top-icon-btn" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
                             </div>
                         </div>`;
-                        return; // Lanjut looping
+                        return;
                     }
 
+                    // Normal Question Render
                     html += `
-                    <div class="form-question-card ${isActive}" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
-                        <div style="display:grid; grid-template-columns: 1fr 280px; gap: 20px; align-items:start;">
-                            <input type="text" class="gf-input question-title" style="background:var(--form-bg); padding:18px; border-radius:10px; border-bottom:3px solid var(--form-text-muted); font-size:1.15rem; margin-bottom:0; transition:border-color 0.3s;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value" placeholder="Pertanyaan">
+                    <div class="form-question-card ${isActive}" draggable="true" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}"
+                         ondragstart="handleDragStart(event, ${sIdx}, ${qIdx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${sIdx}, ${qIdx})" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
+                        
+                        <div class="drag-handle">⠿</div>
+
+                        <div style="display:flex; gap: 15px; align-items:start; flex-wrap:wrap;">
+                            <input type="text" class="gf-input question-title" style="flex:1; background:rgba(0,0,0,0.02); padding:15px; border-radius:4px; font-size:${theme.questionFontSize}px; margin-bottom:0;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; debouncedSaveState()" placeholder="Pertanyaan">
                             
-                            <!-- Dropdown Select Tipe Mengacu ke Gbr 3 -->
-                            <div style="display:flex; align-items:center; gap: 10px;">
-                                <button class="toolbar-btn" style="border:1px solid var(--form-border); background:var(--form-card-bg); box-shadow:0 2px 5px rgba(0,0,0,0.05);" title="Sisipkan Gambar" onclick="document.getElementById('img-ipt-${sIdx}-${qIdx}').style.display='block'">🖼️</button>
-                                <select class="q-type-select" onchange="changeQType(${sIdx}, ${qIdx}, this.value)">
-                                    <option value="jawaban_singkat" ${q.type==='jawaban_singkat'?'selected':''}>Jawaban singkat</option>
-                                    <option value="paragraf" ${q.type==='paragraf'?'selected':''}>Paragraf</option>
-                                    <optgroup label="---"></optgroup>
-                                    <option value="pilihan_ganda" ${q.type==='pilihan_ganda'?'selected':''}>Pilihan ganda</option>
-                                    <option value="kotak_centang" ${q.type==='kotak_centang'?'selected':''}>Kotak centang</option>
-                                    <option value="dropdown" ${q.type==='dropdown'?'selected':''}>Drop-down</option>
-                                    <optgroup label="---"></optgroup>
-                                    <option value="upload_file" ${q.type==='upload_file'?'selected':''}>Upload file</option>
-                                    <optgroup label="---"></optgroup>
-                                    <option value="skala_linier" ${q.type==='skala_linier'?'selected':''}>Skala linier</option>
-                                    <option value="rating" ${q.type==='rating'?'selected':''}>Rating (Bintang)</option>
-                                    <option value="kisi_pilihan" ${q.type==='kisi_pilihan'?'selected':''}>Kisi pilihan ganda</option>
-                                    <option value="kisi_centang" ${q.type==='kisi_centang'?'selected':''}>Petak kotak centang</option>
-                                    <optgroup label="---"></optgroup>
-                                    <option value="tanggal" ${q.type==='tanggal'?'selected':''}>Tanggal</option>
-                                    <option value="waktu" ${q.type==='waktu'?'selected':''}>Waktu</option>
-                                </select>
-                            </div>
+                            <select class="q-type-select" onchange="changeQType(${sIdx}, ${qIdx}, this.value)">
+                                <option value="jawaban_singkat" ${q.type==='jawaban_singkat'?'selected':''}>Jawaban singkat</option>
+                                <option value="paragraf" ${q.type==='paragraf'?'selected':''}>Paragraf</option>
+                                <optgroup label="---"></optgroup>
+                                <option value="pilihan_ganda" ${q.type==='pilihan_ganda'?'selected':''}>Pilihan ganda</option>
+                                <option value="kotak_centang" ${q.type==='kotak_centang'?'selected':''}>Kotak centang</option>
+                                <option value="dropdown" ${q.type==='dropdown'?'selected':''}>Drop-down</option>
+                                <optgroup label="---"></optgroup>
+                                <option value="upload_file" ${q.type==='upload_file'?'selected':''}>Upload file</option>
+                                <optgroup label="---"></optgroup>
+                                <option value="skala_linier" ${q.type==='skala_linier'?'selected':''}>Skala linier</option>
+                                <option value="tanggal" ${q.type==='tanggal'?'selected':''}>Tanggal</option>
+                                <option value="waktu" ${q.type==='waktu'?'selected':''}>Waktu</option>
+                            </select>
                         </div>
                         
-                        <!-- Input URL Gambar (Hidden by default) -->
-                        <div id="img-ipt-${sIdx}-${qIdx}" style="${q.image ? 'display:block;' : 'display:none;'} margin-top:20px; background:var(--form-bg); padding:15px; border-radius:10px; border-left:4px solid var(--form-active-border);">
-                            <label style="font-size:0.85rem; color:var(--form-text-muted); font-weight:bold;">🔗 Sisipkan URL Gambar (Opsional)</label>
-                            <input type="text" class="gf-input" style="font-size:0.95rem; background:transparent;" value="${q.image || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value" placeholder="https://url-gambar.com/contoh.png">
-                        </div>
-
-                        <!-- Opsi Injected Disini -->
                         ${optionsHtml}
 
-                        <!-- Action Bar Footer (Gambar 4) -->
                         <div class="builder-card-footer">
-                            <button class="toolbar-btn" style="background:var(--form-bg);" title="Duplikasikan" onclick="duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
-                            <button class="toolbar-btn" style="color:#ef4444; background:rgba(239,68,68,0.1);" title="Hapus" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
-                            <div style="width:2px; height:30px; background:var(--form-border); margin:0 15px;"></div>
+                            <button class="top-icon-btn" title="Duplikasikan" onclick="duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
+                            <button class="top-icon-btn" title="Hapus" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
+                            <div style="width:1px; height:25px; background:var(--form-border); margin:0 10px;"></div>
                             
                             <div class="toggle-switch">
-                                <span style="font-weight:700; color:var(--form-text);">Wajib diisi</span>
-                                <input type="checkbox" id="req-${sIdx}-${qIdx}" class="switch-input" ${q.required?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].required=this.checked">
+                                <span style="font-weight:500;">Wajib diisi</span>
+                                <input type="checkbox" id="req-${sIdx}-${qIdx}" class="switch-input" ${q.required?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].required=this.checked; saveState()">
                                 <label for="req-${sIdx}-${qIdx}" class="switch-label"></label>
                             </div>
-                            
-                            <div style="margin-left: 15px; cursor:pointer; color:var(--form-text-muted); font-size:1.6rem; font-weight:bold; transition:color 0.3s;" onmouseover="this.style.color='var(--form-active-border)'" onmouseout="this.style.color='var(--form-text-muted)'">⋮</div>
+                            <button class="top-icon-btn" style="margin-left:5px;">⋮</button>
                         </div>
                     </div>`;
                 });
@@ -560,111 +724,59 @@
             positionToolbar();
         }
 
-        // ================= LOGIC FLOATING TOOLBAR & BUILDER ACTIONS =================
-        function setActive(sIdx, qIdx, element) {
-            activeSecIdx = sIdx === -1 ? 0 : sIdx; 
-            activeQIdx = qIdx;
-            
-            document.querySelectorAll('.form-question-card').forEach(c => c.classList.remove('active'));
-            if(element && element.classList.contains('form-question-card')) {
-                element.classList.add('active');
-                
-                // MENGHITUNG POSISI FLOATER AGAR MENGIKUTI CARD YG AKTIF SECARA AMAN
-                const floater = document.getElementById('floater');
-                const rect = element.getBoundingClientRect();
-                const containerRect = document.getElementById('tab-pertanyaan').getBoundingClientRect();
-                
-                let topPos = rect.top - containerRect.top + 100;
-                if(topPos < 0) topPos = 50; 
-                floater.style.top = topPos + 'px';
-            }
-        }
-
-        function positionToolbar() {
-             const floater = document.getElementById('floater');
-             floater.style.top = '100px'; // Posisi Reset
-        }
-
+        // ================= BUILDER ACTIONS =================
         function addQuestion() {
             const newQ = { id: 'q_'+Date.now(), type: 'pilihan_ganda', title: 'Pertanyaan Baru', image: '', required: false, options: ['Opsi 1'] };
             if(activeSecIdx === -1) activeSecIdx = 0;
-            
-            if(activeQIdx === -1) { 
-                currentForm.sections[activeSecIdx].questions.push(newQ); 
-                activeQIdx = currentForm.sections[activeSecIdx].questions.length-1; 
-            } else { 
-                currentForm.sections[activeSecIdx].questions.splice(activeQIdx + 1, 0, newQ); 
-                activeQIdx++; 
-            }
-            renderBuilder();
+            if(activeQIdx === -1) { currentForm.sections[activeSecIdx].questions.push(newQ); activeQIdx = currentForm.sections[activeSecIdx].questions.length-1; } 
+            else { currentForm.sections[activeSecIdx].questions.splice(activeQIdx + 1, 0, newQ); activeQIdx++; }
+            saveState(); renderBuilder();
         }
 
         function addSection() {
             const newSec = { id: 's_'+Date.now(), title: 'Bagian Tanpa Judul', description: 'Deskripsi (opsional)', questions: [] };
             currentForm.sections.splice(activeSecIdx + 1, 0, newSec);
             activeSecIdx++; activeQIdx = -1;
-            renderBuilder();
+            saveState(); renderBuilder();
         }
 
         function addTitleDesc() {
-            const newQ = { id: 'q_'+Date.now(), type: 'title_only', title: 'Judul Teks Tambahan', image: '', required: false, options: [] };
+            const newQ = { id: 'q_'+Date.now(), type: 'title_only', title: 'Judul Teks', image: '', required: false, options: [] };
             currentForm.sections[activeSecIdx].questions.push(newQ);
-            renderBuilder();
+            saveState(); renderBuilder();
         }
 
-        function deleteQuestion(sIdx, qIdx) {
-            currentForm.sections[sIdx].questions.splice(qIdx, 1);
-            activeQIdx = -1;
-            renderBuilder();
-        }
-
+        function deleteQuestion(sIdx, qIdx) { currentForm.sections[sIdx].questions.splice(qIdx, 1); activeQIdx = -1; saveState(); renderBuilder(); }
         function duplicateQuestion(sIdx, qIdx) {
-            let q = JSON.parse(JSON.stringify(currentForm.sections[sIdx].questions[qIdx])); // Deep Clone
-            q.id = 'q_' + Date.now();
-            currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, q);
-            activeQIdx = qIdx + 1;
-            renderBuilder();
+            let q = JSON.parse(JSON.stringify(currentForm.sections[sIdx].questions[qIdx])); q.id = 'q_' + Date.now();
+            currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, q); activeQIdx = qIdx + 1; saveState(); renderBuilder();
         }
-
         function deleteSection(sIdx) {
-            if(currentForm.sections.length <= 1) { showToast("Gagal: Tidak dapat menghapus bagian terakhir form."); return; }
-            if(confirm("Apakah Anda yakin ingin menghapus bagian ini beserta seluruh pertanyaannya?")) {
-                currentForm.sections.splice(sIdx, 1);
-                activeSecIdx = 0; activeQIdx = -1;
-                renderBuilder();
-            }
+            if(currentForm.sections.length <= 1) return showToast("Tidak dapat menghapus bagian terakhir.");
+            if(confirm("Hapus bagian ini?")) { currentForm.sections.splice(sIdx, 1); activeSecIdx = 0; activeQIdx = -1; saveState(); renderBuilder(); }
         }
-
         function changeQType(sIdx, qIdx, type) {
             currentForm.sections[sIdx].questions[qIdx].type = type;
-            // Generate dummy options jika tipe berubah ke list base
-            if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(type)) {
-                if(!currentForm.sections[sIdx].questions[qIdx].options || currentForm.sections[sIdx].questions[qIdx].options.length === 0) 
-                    currentForm.sections[sIdx].questions[qIdx].options = ['Opsi 1'];
-            }
-            renderBuilder();
+            if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(type) && (!currentForm.sections[sIdx].questions[qIdx].options || currentForm.sections[sIdx].questions[qIdx].options.length === 0)) 
+                currentForm.sections[sIdx].questions[qIdx].options = ['Opsi 1'];
+            saveState(); renderBuilder();
+        }
+        function addOption(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].options.push('Opsi ' + (currentForm.sections[sIdx].questions[qIdx].options.length + 1)); saveState(); renderBuilder(); }
+        function deleteOption(sIdx, qIdx, oIdx) { currentForm.sections[sIdx].questions[qIdx].options.splice(oIdx, 1); saveState(); renderBuilder(); }
+
+        // ================= SETTINGS =================
+        function updateSetting(key, val) {
+            if(key === 'isActive') currentForm[key] = val;
+            else currentForm.settings[key] = val;
+            saveState();
         }
 
-        function addOption(sIdx, qIdx) {
-            let opts = currentForm.sections[sIdx].questions[qIdx].options;
-            opts.push('Opsi ' + (opts.length + 1));
-            renderBuilder();
-        }
-
-        function deleteOption(sIdx, qIdx, oIdx) {
-            currentForm.sections[sIdx].questions[qIdx].options.splice(oIdx, 1);
-            renderBuilder();
-        }
-
-        // ================= SETTINGS RENDERER =================
         function renderSettings() {
             document.getElementById('setActive').checked = currentForm.isActive !== false;
             document.getElementById('setCollectEmail').value = currentForm.settings.collectEmail || 'none';
             document.getElementById('setLimitOne').checked = currentForm.settings.limitOne || false;
             document.getElementById('setEditResp').checked = currentForm.settings.editResponse || false;
             document.getElementById('setConfMsg').value = currentForm.settings.confirmationMessage || 'Jawaban Anda telah dicatat.';
-            
-            // Render Tenggat Waktu
             document.getElementById('setDeadline').value = currentForm.settings.deadline || '';
         }
     </script>
