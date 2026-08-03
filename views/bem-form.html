@@ -3,12 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulir - BEM KBMFKG UMI</title>
+    <title>Formulir Kegiatan - BEM KBMFKG UMI</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    
+    <!-- MENGGUNAKAN DUA FILE CSS LENGKAP -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
+    
+    <!-- PROTECT DEVTOOLS UNTUK KEAMANAN PUBLIK -->
+    <script src="/js/protect-devtools.js"></script>
+
     <style>
+        /* Override untuk Page Publik Form */
         body { background: var(--form-bg); }
+        .form-header-banner {
+            width: 100%; height: 130px; background: var(--form-active-border);
+            border-radius: 16px 16px 0 0; border: 1px solid var(--form-border); border-bottom: none;
+            position: relative; overflow: hidden;
+        }
+        .form-header-banner::after {
+            content: ''; position: absolute; width: 100%; height: 100%; top:0; left:0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+        }
     </style>
 </head>
 <body>
@@ -16,9 +32,9 @@
     <%- include('partials/header.html') %>
 
     <main class="form-wrapper" id="publicFormWrapper">
-        <div style="text-align:center; padding: 100px 20px;">
+        <div style="text-align:center; padding: 150px 20px;">
             <div class="loader-ring"></div>
-            <p style="color:var(--text-muted);">Mempersiapkan Formulir...</p>
+            <p style="color:var(--form-text-muted); font-size:1.15rem; font-weight:700; margin-top:20px; letter-spacing:0.5px;">Mempersiapkan Formulir Pendaftaran...</p>
         </div>
     </main>
 
@@ -26,7 +42,7 @@
     <%- include('partials/footer.html') %>
 
     <script>
-        // Ambil slug dari URL path e.g., /form/pendaftaran-panitia
+        // Mengambil Slug unik Formuler dari URL Browser
         const pathArray = window.location.pathname.split('/');
         const slug = pathArray[pathArray.length - 1];
         let formData = null;
@@ -35,85 +51,117 @@
 
         async function loadPublicForm() {
             try {
+                // Fetch JSON Struktur Form By Slug
                 const res = await fetch(`/api/forms/${slug}`);
                 const json = await res.json();
                 
                 if(!json.success || !json.data) {
-                    renderError("Formulir tidak ditemukan atau link salah.");
+                    renderError("Oops! Formulir tidak ditemukan atau URL link Anda tidak valid.");
                     return;
                 }
                 
                 formData = json.data;
-                if(!formData.isActive) {
-                    renderError("Formulir ini sudah tidak menerima respons.");
+                
+                // 1. Validasi Status Manual dari Admin
+                if(formData.isActive === false) {
+                    renderError("Formulir ini sudah ditutup secara manual dan tidak menerima tanggapan lagi.");
                     return;
                 }
 
+                // 2. SUPER UPGRADE: Validasi Batas Pengisian Waktu (Deadline Kalender)
+                if(formData.settings && formData.settings.deadline) {
+                    const now = new Date();
+                    const deadlineDate = new Date(formData.settings.deadline);
+                    if(now > deadlineDate) {
+                        const dateStr = deadlineDate.toLocaleString('id-ID', {
+                            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+                        renderError(`Waktu pengisian formulir ini telah berakhir pada <strong>${dateStr} WITA</strong>.`);
+                        return;
+                    }
+                }
+
+                // Jika Lolos Validasi, Render UI Form
                 renderFormHTML();
             } catch(e) {
-                renderError("Terjadi kesalahan jaringan.");
+                renderError("Terjadi kesalahan jaringan server saat memuat form.");
             }
         }
 
         function renderError(msg) {
             document.getElementById('publicFormWrapper').innerHTML = `
-                <div class="form-header-card" style="border-top-color:#d93025; text-align:center; padding: 50px;">
-                    <h2 class="form-title" style="color:#d93025;">Peringatan</h2>
-                    <p class="form-desc">${msg}</p>
+                <div class="form-header-card" style="border-top:12px solid #ef4444; text-align:center; padding: 60px 30px; box-shadow: 0 15px 35px rgba(239, 68, 68, 0.1);">
+                    <div style="font-size: 4rem; margin-bottom: 20px; filter: drop-shadow(0 5px 15px rgba(239, 68, 68, 0.4));">🚫</div>
+                    <h2 class="form-title" style="color:#ef4444; font-size:2rem; font-weight:800; margin-bottom:15px; letter-spacing:-0.5px;">Akses Formulir Ditolak</h2>
+                    <p class="form-desc" style="font-size:1.15rem; color:var(--form-text);">${msg}</p>
+                    <button class="gf-btn-clear" style="margin-top:35px; font-size:1.1rem; color:#ef4444; background:rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); padding:14px 30px; border-radius:30px; font-weight:700;" onclick="window.location.href='/'">Kembali ke Beranda</button>
                 </div>
             `;
         }
 
         function renderFormHTML() {
             const wrapper = document.getElementById('publicFormWrapper');
+            
+            // Hitung Tanggal untuk Warning jika Deadline dekat (Opsional UI UX GenZ)
+            let warningHTML = '';
+            if(formData.settings.deadline) {
+                const dl = new Date(formData.settings.deadline);
+                const strDl = dl.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour:'2-digit', minute:'2-digit'});
+                warningHTML = `<div style="background:rgba(234, 179, 8, 0.1); color:#ca8a04; border:1px solid rgba(234, 179, 8, 0.3); padding:10px 15px; border-radius:10px; margin-top:20px; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px;">⏳ Formulir ini akan ditutup pada: ${strDl}</div>`;
+            }
+
             let html = `
                 <form id="submissionForm" onsubmit="submitForm(event)">
-                    <div class="form-header-card">
+                    <div class="form-header-banner"></div>
+                    <div class="form-header-card" style="border-top:none; border-radius: 0 0 16px 16px; margin-top:-1px; padding-top:40px;">
                         <h1 class="form-title">${formData.title}</h1>
-                        <p class="form-desc">${formData.description}</p>
+                        <p class="form-desc" style="white-space: pre-line; font-size:1.05rem;">${formData.description}</p>
+                        ${warningHTML}
                         ${formData.settings.collectEmail === 'input' ? '<div class="required-notice">* Menunjukkan pertanyaan yang wajib diisi</div>' : ''}
                     </div>
             `;
 
-            // Email Collection Check
+            // Aturan Kumpulkan Email (Validasi Wajib Form Settings)
             if (formData.settings.collectEmail === 'input') {
                 html += `
-                    <div class="form-question-card">
-                        <div class="question-title">Email <span class="asterisk">*</span></div>
-                        <input type="email" class="gf-input" name="respondent_email" placeholder="Jawaban Anda" required>
+                    <div class="form-question-card" style="border-left: 8px solid var(--form-active-border); background:var(--form-card-bg);">
+                        <div class="question-title" style="font-size:1.2rem;">Alamat Email <span class="asterisk">*</span></div>
+                        <input type="email" class="gf-input" name="respondent_email" placeholder="contoh: emailanda@gmail.com" required style="font-size:1.1rem; padding:15px 5px;">
                     </div>
                 `;
             }
 
             formData.sections.forEach((sec, sIdx) => {
-                // Section Title (Jika ada bagian lebih dari 1)
+                // Header Bagian (Jika dibuat section-section oleh Admin)
                 if(formData.sections.length > 1 && sec.title) {
                     html += `
-                    <div class="form-header-card" style="border-top: 10px solid #607d8b; border-radius:0; margin-top:20px;">
-                        <h2 class="form-title" style="font-size:1.5rem;">${sec.title}</h2>
-                        <p class="form-desc">${sec.description}</p>
+                    <div class="form-header-card" style="border-top: 10px solid #64748b; border-radius:16px; margin-top:30px;">
+                        <h2 class="form-title" style="font-size:1.6rem; color:var(--form-text);">${sec.title}</h2>
+                        <p class="form-desc" style="white-space: pre-line;">${sec.description}</p>
                     </div>`;
                 }
 
                 sec.questions.forEach(q => {
-                    // Judul Only Type
+                    // Logic Rendering Teks Judul
                     if(q.type === 'title_only') {
                          html += `
-                         <div class="form-question-card" style="border-left:none;">
-                            <h3 style="font-size:1.2rem; color:var(--form-text); margin-bottom:5px;">${q.title}</h3>
+                         <div class="form-question-card" style="border-left:none; box-shadow:none; background:transparent; padding-bottom:10px;">
+                            <h3 style="font-size:1.4rem; color:var(--form-text); margin-bottom:5px; border-bottom: 2px solid var(--form-border); padding-bottom:10px;">${q.title}</h3>
                          </div>`;
-                         return;
+                         return; // Lewati input
                     }
 
+                    // Tanda Bintang Wajib Isi
                     let reqHtml = q.required ? '<span class="asterisk">*</span>' : '';
                     let inputHtml = '';
                     let nameAttr = `name="${q.id}"`;
 
+                    // Mapping Output HTML Form HTML5 Berdasarkan Type
                     if (q.type === 'jawaban_singkat') {
                         inputHtml = `<input type="text" class="gf-input" ${nameAttr} placeholder="Jawaban Anda" ${q.required?'required':''}>`;
                     } 
                     else if (q.type === 'paragraf') {
-                        inputHtml = `<textarea class="gf-input" ${nameAttr} rows="1" placeholder="Jawaban Anda" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'" style="resize:none; overflow:hidden;" ${q.required?'required':''}></textarea>`;
+                        inputHtml = `<textarea class="gf-input" ${nameAttr} rows="3" placeholder="Jawaban Anda" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'" style="resize:none; overflow:hidden;" ${q.required?'required':''}></textarea>`;
                     }
                     else if (q.type === 'pilihan_ganda') {
                         inputHtml = `<div class="gf-radio-group">`;
@@ -125,39 +173,40 @@
                     else if (q.type === 'kotak_centang') {
                         inputHtml = `<div class="gf-checkbox-group">`;
                         q.options.forEach(opt => {
-                            // Checkbox tak bisa 'required' biasa di HTML5 array, butuh custom validation, kita omit native required
+                            // Validasi array checkbox form bypass required natif html
                             inputHtml += `<label class="gf-option-label"><input type="checkbox" class="gf-checkbox" ${nameAttr} value="${opt}"> ${opt}</label>`;
                         });
                         inputHtml += `</div>`;
                     }
                     else if (q.type === 'dropdown') {
-                        inputHtml = `<select class="q-type-select gf-input" ${nameAttr} ${q.required?'required':''}>
-                                        <option value="" disabled selected>Pilih</option>`;
+                        inputHtml = `<select class="gf-input" style="padding:15px; border-radius:8px; background:var(--form-bg); border:1px solid var(--form-border);" ${nameAttr} ${q.required?'required':''}>
+                                        <option value="" disabled selected>Pilih salah satu</option>`;
                         q.options.forEach(opt => { inputHtml += `<option value="${opt}">${opt}</option>`; });
                         inputHtml += `</select>`;
                     }
                     else if (q.type === 'upload_file') {
-                        inputHtml = `<input type="file" class="gf-input" style="border:none;" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="file" class="gf-input" style="border:none; background:var(--form-bg); padding:15px; border-radius:10px;" ${nameAttr} ${q.required?'required':''}>`;
                     }
                     else if (q.type === 'tanggal') {
-                        inputHtml = `<input type="date" class="gf-input" style="width:auto;" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="date" class="gf-input" style="width:250px; font-family:inherit; background:var(--form-bg); padding:12px; border-radius:8px; border:1px solid var(--form-border);" ${nameAttr} ${q.required?'required':''}>`;
                     }
                     else if (q.type === 'waktu') {
-                        inputHtml = `<input type="time" class="gf-input" style="width:auto;" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="time" class="gf-input" style="width:200px; font-family:inherit; background:var(--form-bg); padding:12px; border-radius:8px; border:1px solid var(--form-border);" ${nameAttr} ${q.required?'required':''}>`;
                     }
-                    else if (q.type === 'skala_linier') {
-                        inputHtml = `<div class="gf-scale-wrapper">`;
+                    else if (q.type === 'skala_linier' || q.type === 'rating') {
+                        inputHtml = `<div class="gf-scale-wrapper" style="overflow-x:auto;">`;
                         for(let i=1; i<=5; i++){
-                             inputHtml += `<label class="gf-scale-item"><span class="gf-scale-label">${i}</span><input type="radio" class="gf-radio" ${nameAttr} value="${i}" ${q.required?'required':''}></label>`;
+                             inputHtml += `<label class="gf-scale-item"><span class="gf-scale-label" style="font-size:1.1rem;">${i}</span><input type="radio" class="gf-radio" ${nameAttr} value="${i}" ${q.required?'required':''}></label>`;
                         }
                         inputHtml += `</div>`;
                     }
                     else {
-                        // Fallback
-                        inputHtml = `<textarea class="gf-input" ${nameAttr} rows="2" placeholder="Jawaban Anda" ${q.required?'required':''}></textarea>`;
+                        // Fallback (Paragraf)
+                        inputHtml = `<textarea class="gf-input" ${nameAttr} rows="4" placeholder="Jawaban Anda" ${q.required?'required':''}></textarea>`;
                     }
 
-                    let imgHtml = q.image ? `<img src="${q.image}" style="max-width:100%; border-radius:8px; margin-bottom:15px; display:block;">` : '';
+                    // Render Gambar Internal (Jika di embed url gambar oleh admin)
+                    let imgHtml = q.image ? `<img src="${q.image}" style="width:100%; max-width:600px; object-fit:cover; border-radius:16px; margin-bottom:25px; display:block; border:1px solid var(--form-border); box-shadow:0 5px 15px rgba(0,0,0,0.05);">` : '';
 
                     html += `
                     <div class="form-question-card">
@@ -170,9 +219,9 @@
             });
 
             html += `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-                    <button type="submit" class="gf-btn-submit" id="btnKirim">Kirim</button>
-                    <button type="button" class="gf-btn-clear" onclick="document.getElementById('submissionForm').reset()">Kosongkan formulir</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:35px;">
+                    <button type="submit" class="gf-btn-submit" id="btnKirim">Kirim Jawaban</button>
+                    <button type="button" class="gf-btn-clear" onclick="if(confirm('Yakin ingin menghapus seluruh jawaban Anda di halaman ini?')) document.getElementById('submissionForm').reset()">Kosongkan formulir</button>
                 </div>
                 </form>
             `;
@@ -180,10 +229,11 @@
             wrapper.innerHTML = html;
         }
 
+        // ================= TRANSAKSI MENGIRIM JAWABAN =================
         async function submitForm(e) {
             e.preventDefault();
             const btn = document.getElementById('btnKirim');
-            btn.innerText = 'Mengirim...'; btn.disabled = true;
+            btn.innerText = 'Mengirim Data...'; btn.disabled = true;
 
             const formElement = document.getElementById('submissionForm');
             const formDataObj = new FormData(formElement);
@@ -191,10 +241,11 @@
             let responses = {};
             let email = "";
 
+            // Loop untuk mengoleksi semua key input
             for (let [key, value] of formDataObj.entries()) {
                 if (key === 'respondent_email') { email = value; continue; }
                 
-                // Handle multiple checkboxes array
+                // Handle Checkbox Arrays / Uploads (Mengelompokkan jawaban dgn ID yg sama)
                 if (responses[key]) {
                     if (!Array.isArray(responses[key])) responses[key] = [responses[key]];
                     responses[key].push(value);
@@ -210,6 +261,7 @@
             };
 
             try {
+                // Post to Backend Server
                 const res = await fetch('/api/forms/submit', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -219,21 +271,28 @@
                 
                 if (json.success) {
                     const msg = formData.settings.confirmationMessage || "Jawaban Anda telah dicatat.";
+                    
                     document.getElementById('publicFormWrapper').innerHTML = `
-                        <div class="form-header-card" style="text-align:center; padding: 60px 30px;">
-                            <h1 class="form-title">${formData.title}</h1>
-                            <p style="font-size:1.2rem; margin: 20px 0;">✅ ${msg}</p>
-                            <a href="#" onclick="location.reload()" style="color:var(--form-active-border); font-weight:bold; text-decoration:none;">Kirim jawaban lain</a>
+                        <div class="form-header-banner" style="background:#10b981;"></div>
+                        <div class="form-header-card" style="border-top:none; border-radius: 0 0 16px 16px; margin-top:-1px; text-align:left; padding: 50px 40px;">
+                            <h1 class="form-title" style="font-size:2.4rem;">${formData.title}</h1>
+                            <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:20px; border-radius:12px; margin: 25px 0;">
+                                <p style="font-size:1.1rem; color:var(--form-text); font-weight:500; margin:0;">✅ ${msg}</p>
+                            </div>
+                            
+                            ${formData.settings.editResponse ? `<p style="margin-bottom:15px;"><a href="#" style="color:var(--form-active-border); font-weight:600; text-decoration:underline; font-size:1.05rem;">Edit tanggapan Anda</a></p>` : ''}
+                            ${!formData.settings.limitOne ? `<a href="#" onclick="location.reload()" style="color:var(--form-active-border); font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:1.05rem;"><span>↻</span> Kirim jawaban lain</a>` : ''}
                         </div>
                     `;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    alert("Gagal mengirim jawaban. Coba lagi.");
+                    alert("Gagal mengirim jawaban. Coba periksa koneksi internet Anda.");
                 }
             } catch (err) {
-                alert("Kesalahan jaringan.");
+                alert("Kesalahan Jaringan. Database server tidak merespon.");
             }
             
-            btn.innerText = 'Kirim'; btn.disabled = false;
+            btn.innerText = 'Kirim Jawaban'; btn.disabled = false;
         }
     </script>
 </body>
