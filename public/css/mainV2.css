@@ -1,21 +1,21 @@
 /* FILE: public/css/mainV2.css */
-/* Melanjutkan variabel warna dari main.css untuk sinkronisasi tema */
+/* SUPER UI MODERN GEN-Z UNTUK BEM-FORM */
 
 :root {
-    --form-bg: #f0ebf8; /* Soft purple Google Form vibe */
-    --form-header-bg: #ffffff;
-    --form-card-bg: #ffffff;
-    --form-border: #dadce0;
-    --form-active-border: #673ab7; /* GForm Purple */
-    --form-text: #202124;
-    --form-text-muted: #5f6368;
-    --form-focus-glow: rgba(103, 58, 183, 0.1);
+    --form-bg: #f4f0fa; /* Soft elegant purple bg */
+    --form-header-bg: rgba(255, 255, 255, 0.95);
+    --form-card-bg: rgba(255, 255, 255, 1);
+    --form-border: #e2e8f0;
+    --form-active-border: #7c3aed; /* BEM Purple Modern */
+    --form-text: #0f172a;
+    --form-text-muted: #64748b;
+    --form-focus-glow: rgba(124, 58, 237, 0.15);
 }
 
 [data-theme="dark"] {
-    --form-bg: #0b132b; 
-    --form-header-bg: #121e3d;
-    --form-card-bg: #101a36;
+    --form-bg: #0f172a; 
+    --form-header-bg: rgba(30, 41, 59, 0.95);
+    --form-card-bg: rgba(15, 23, 42, 1);
     --form-border: #334155;
     --form-active-border: #00e5ff; /* BEM Neon Blue */
     --form-text: #f8fafc;
@@ -23,249 +23,331 @@
     --form-focus-glow: rgba(0, 229, 255, 0.15);
 }
 
+/* ================== OVERRIDE ALIGNMENT DASAR ================== */
+.admin-v2-body {
+    background: var(--form-bg) !important;
+    display: block !important; /* Mencegah body flex center dari main.css */
+}
+
 /* ================== PUBLIC BEM-FORM PAGE ================== */
 .form-wrapper {
     max-width: 770px;
+    width: 100%;
     margin: 40px auto;
     padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .form-header-card {
-    background: var(--form-header-bg);
-    border-radius: 12px;
+    background: var(--form-card-bg);
+    border-radius: 16px;
     border: 1px solid var(--form-border);
-    border-top: 10px solid var(--form-active-border);
-    padding: 30px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border-top: 12px solid var(--form-active-border);
+    padding: 35px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
     transition: all 0.3s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: var(--form-text);
-    margin-bottom: 10px;
-    font-weight: 400;
+    margin-bottom: 12px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 .form-desc {
     color: var(--form-text-muted);
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 .required-notice {
-    color: #d93025;
-    font-size: 0.85rem;
-    margin-top: 15px;
-    border-top: 1px solid var(--form-border);
+    color: #ef4444;
+    font-size: 0.9rem;
+    margin-top: 20px;
+    border-top: 1px dashed var(--form-border);
     padding-top: 15px;
+    font-weight: 500;
 }
 
 .form-question-card {
     background: var(--form-card-bg);
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid var(--form-border);
-    padding: 25px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-    transition: all 0.3s ease;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     position: relative;
     overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-question-card.active {
-    box-shadow: 0 4px 15px var(--card-shadow);
-    border-left: 6px solid var(--form-active-border);
+    box-shadow: 0 15px 35px var(--form-focus-glow);
+    border-left: 8px solid var(--form-active-border);
+    transform: scale(1.01);
 }
 
 .question-title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     color: var(--form-text);
-    margin-bottom: 15px;
-    font-weight: 500;
+    margin-bottom: 20px;
+    font-weight: 600;
 }
-.asterisk { color: #d93025; }
+.asterisk { color: #ef4444; font-weight: bold; margin-left: 5px; }
 
-/* Input Styles */
+/* Input Styles HTML5 native untuk Form */
 .gf-input {
     width: 100%;
     border: none;
-    border-bottom: 1px solid var(--form-border);
+    border-bottom: 2px solid var(--form-border);
     background: transparent;
-    padding: 10px 0;
+    padding: 12px 0;
     color: var(--form-text);
-    font-size: 1rem;
-    transition: border-color 0.3s;
+    font-size: 1.05rem;
+    transition: border-color 0.3s, background-color 0.3s;
     outline: none;
+    border-radius: 4px 4px 0 0;
+    box-sizing: border-box;
 }
 .gf-input:focus {
     border-bottom: 2px solid var(--form-active-border);
+    background: var(--form-focus-glow);
+    padding-left: 10px;
 }
 
 .gf-radio-group, .gf-checkbox-group {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 16px;
 }
 .gf-option-label {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     color: var(--form-text);
     cursor: pointer;
+    font-size: 1rem;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+.gf-option-label:hover {
+    background: var(--form-bg);
 }
 .gf-radio, .gf-checkbox {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     accent-color: var(--form-active-border);
     cursor: pointer;
 }
 
-/* Linear Scale */
+/* Linear Scale UI */
 .gf-scale-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    padding: 10px 0;
+    padding: 15px 20px;
+    background: var(--form-bg);
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .gf-scale-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    cursor: pointer;
 }
-.gf-scale-label { color: var(--form-text-muted); font-size: 0.85rem; }
+.gf-scale-label { color: var(--form-text); font-size: 1rem; font-weight: bold; }
 
-/* Action Buttons */
+/* Action Buttons Form BEM */
 .gf-btn-submit {
     background: var(--form-active-border);
     color: #fff;
     border: none;
-    padding: 12px 30px;
-    border-radius: 6px;
-    font-weight: 600;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 5px 15px var(--form-focus-glow);
+    white-space: nowrap;
 }
-.gf-btn-submit:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px var(--form-focus-glow);}
+.gf-btn-submit:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 25px var(--form-focus-glow);
+    filter: brightness(1.1);
+}
 .gf-btn-clear {
     background: transparent;
-    color: var(--form-active-border);
-    border: none;
+    color: var(--form-text-muted);
+    border: 1px solid var(--form-border);
+    padding: 12px 20px;
+    border-radius: 10px;
     font-weight: 600;
     cursor: pointer;
-    margin-left: 20px;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+.gf-btn-clear:hover {
+    background: var(--form-bg);
+    color: var(--form-text);
+    border-color: var(--form-text-muted);
 }
 
 /* ================== ADMIN DASHBOARD V2 BUILDER ================== */
 .builder-tabs {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
     background: var(--form-header-bg);
-    padding: 15px 0 0;
+    padding: 15px 20px 0;
     border-bottom: 1px solid var(--form-border);
     position: sticky;
     top: 0;
     z-index: 100;
+    backdrop-filter: blur(20px);
+    width: 100%;
+    box-sizing: border-box;
 }
 .b-tab {
-    padding: 10px 20px;
+    padding: 12px 25px;
     color: var(--form-text-muted);
     cursor: pointer;
-    border-bottom: 3px solid transparent;
-    font-weight: 600;
+    border-bottom: 4px solid transparent;
+    font-weight: 700;
     transition: 0.3s;
+    font-size: 1.05rem;
+    border-radius: 12px 12px 0 0;
 }
+.b-tab:hover { background: var(--form-bg); }
 .b-tab.active {
     color: var(--form-active-border);
     border-bottom-color: var(--form-active-border);
+    background: var(--form-focus-glow);
 }
 
 /* Floating Toolbar */
 .floating-toolbar {
-    position: fixed; /* Simplified from absolute/relative math for stability */
+    position: absolute; 
     background: var(--form-card-bg);
     border: 1px solid var(--form-border);
-    border-radius: 12px;
-    box-shadow: 0 4px 15px var(--card-shadow);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
-    padding: 10px 5px;
-    gap: 15px;
+    padding: 12px 8px;
+    gap: 12px;
     z-index: 50;
-    transition: top 0.3s ease;
+    transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    right: -70px;
 }
+
 .toolbar-btn {
     background: transparent;
     border: none;
     color: var(--form-text-muted);
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     cursor: pointer;
-    width: 35px;
-    height: 35px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: 0.3s;
 }
 .toolbar-btn:hover {
-    background: var(--bg-dark-overlay);
-    color: var(--form-text);
+    background: var(--form-focus-glow);
+    color: var(--form-active-border);
+    transform: scale(1.1);
 }
 
-/* Builder Card specific */
+/* Builder Card specific layout */
 .q-type-select {
-    padding: 10px;
+    padding: 12px 15px;
     border: 1px solid var(--form-border);
-    border-radius: 6px;
-    background: var(--form-card-bg);
+    border-radius: 10px;
+    background: var(--form-bg);
     color: var(--form-text);
-    width: 250px;
-}
-.builder-card-footer {
-    border-top: 1px solid var(--form-border);
-    margin-top: 20px;
-    padding-top: 15px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 15px;
-}
-.toggle-switch {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--form-text);
-    font-size: 0.9rem;
-}
-.switch-input { display: none; }
-.switch-label {
-    width: 40px; height: 20px;
-    background: #ccc;
-    border-radius: 20px;
-    position: relative;
+    width: 100%;
+    font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
 }
+.q-type-select:focus {
+    border-color: var(--form-active-border);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--form-focus-glow);
+}
+
+.builder-card-footer {
+    border-top: 1px solid var(--form-border);
+    margin-top: 25px;
+    padding-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Toggle Switch (Gen Z Modern) */
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--form-text);
+    font-size: 0.95rem;
+}
+.switch-input { display: none; }
+.switch-label {
+    width: 46px; height: 24px;
+    background: #cbd5e1;
+    border-radius: 30px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
 .switch-label::after {
     content: ''; position: absolute;
-    top: 2px; left: 2px; width: 16px; height: 16px;
+    top: 3px; left: 3px; width: 18px; height: 18px;
     background: #fff; border-radius: 50%;
-    transition: 0.3s;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 .switch-input:checked + .switch-label { background: var(--form-active-border); }
-.switch-input:checked + .switch-label::after { transform: translateX(20px); }
+.switch-input:checked + .switch-label::after { transform: translateX(22px); }
 
 /* Settings Layout */
 .setting-group {
     border-bottom: 1px solid var(--form-border);
-    padding: 20px 0;
+    padding: 25px 0;
 }
 .setting-header {
-    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
 }
-.setting-title { font-size: 1.1rem; color: var(--form-text); font-weight: 500;}
-.setting-desc { color: var(--form-text-muted); font-size: 0.9rem; margin-top: 5px;}
+.setting-title { font-size: 1.1rem; color: var(--form-text); font-weight: 700; letter-spacing: -0.3px;}
+.setting-desc { color: var(--form-text-muted); font-size: 0.95rem; margin-top: 8px; line-height: 1.5;}
+
+@media (max-width: 768px) {
+    .floating-toolbar {
+        position: fixed;
+        bottom: 20px;
+        right: 50%;
+        transform: translateX(50%);
+        top: auto !important;
+        flex-direction: row;
+        border-radius: 30px;
+        padding: 5px 15px;
+    }
+}
