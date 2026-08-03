@@ -1,0 +1,300 @@
+/* FILE: public/css/mainV2.css */
+/* CSS Khusus untuk Sistem Form Builder dan Publik BEM KBMFKG UMI (Google Forms Style but Gen-Z Aesthetic) */
+
+:root {
+    --f-bg-page: #f0ebf8; /* Soft purpleish background like GForms */
+    --f-card-bg: #ffffff;
+    --f-text-main: #1f2937;
+    --f-text-mut: #6b7280;
+    --f-primary: #673ab7; /* GForms Purple */
+    --f-primary-light: rgba(103, 58, 183, 0.1);
+    --f-border: #e5e7eb;
+    --f-active-border: #673ab7;
+    --f-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    --f-shadow-active: 0 4px 15px rgba(0,0,0,0.1);
+    --f-font: 'Inter', system-ui, sans-serif;
+    --f-input-bg: transparent;
+    --f-danger: #ef4444;
+}
+
+[data-theme="dark"] {
+    --f-bg-page: #0f172a;
+    --f-card-bg: #1e293b;
+    --f-text-main: #f8fafc;
+    --f-text-mut: #94a3b8;
+    --f-primary: #8b5cf6;
+    --f-primary-light: rgba(139, 92, 246, 0.15);
+    --f-border: #334155;
+    --f-active-border: #8b5cf6;
+    --f-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    --f-shadow-active: 0 8px 25px rgba(0,0,0,0.5);
+    --f-input-bg: #0f172a;
+}
+
+body.form-body {
+    background-color: var(--f-bg-page);
+    color: var(--f-text-main);
+    font-family: var(--f-font);
+    margin: 0; padding: 0;
+    transition: all 0.3s;
+}
+
+/* ================== SHARED CARD SYSTEM ================== */
+.g-card {
+    background: var(--f-card-bg);
+    border: 1px solid var(--f-border);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 15px;
+    box-shadow: var(--f-shadow);
+    transition: all 0.3s ease;
+    position: relative;
+}
+.g-card.active {
+    box-shadow: var(--f-shadow-active);
+    border-left: 6px solid var(--f-primary);
+}
+.g-card-header-top {
+    border-top: 10px solid var(--f-primary);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* Typography */
+.g-title-input {
+    font-size: 2rem;
+    font-weight: 400;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid transparent;
+    background: var(--f-input-bg);
+    color: var(--f-text-main);
+    padding: 5px 0;
+    outline: none;
+    transition: 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+.g-title-input:focus { border-bottom: 2px solid var(--f-primary); }
+
+.g-desc-input {
+    font-size: 0.95rem;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid transparent;
+    background: var(--f-input-bg);
+    color: var(--f-text-mut);
+    padding: 5px 0;
+    margin-top: 10px;
+    outline: none;
+    transition: 0.3s;
+    resize: none;
+}
+.g-desc-input:focus { border-bottom: 1px solid var(--f-primary); color: var(--f-text-main); }
+
+.q-title-input {
+    font-size: 1.1rem;
+    background: var(--f-input-bg);
+    border: none;
+    border-bottom: 1px solid var(--f-border);
+    padding: 12px 15px;
+    color: var(--f-text-main);
+    width: 100%;
+    outline: none;
+    transition: 0.3s;
+    background-color: var(--f-bg-page);
+    border-radius: 6px 6px 0 0;
+}
+.q-title-input:focus { border-bottom: 2px solid var(--f-primary); background-color: var(--f-primary-light); }
+
+/* ================== BUILDER SPECIFIC ================== */
+.builder-container {
+    max-width: 800px;
+    margin: 40px auto;
+    position: relative;
+    padding: 0 20px;
+}
+
+/* Floating Action Bar (Kanan) */
+.floating-toolbar {
+    position: absolute;
+    right: -60px;
+    top: 0;
+    background: var(--f-card-bg);
+    border: 1px solid var(--f-border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    box-shadow: var(--f-shadow);
+    transition: top 0.3s ease;
+}
+@media (max-width: 950px) {
+    .floating-toolbar {
+        position: fixed;
+        bottom: 20px;
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        flex-direction: row;
+        z-index: 1000;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+    }
+}
+.tool-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--f-text-mut);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+}
+.tool-btn:hover { background: var(--f-bg-page); color: var(--f-primary); }
+.tool-btn svg { width: 22px; height: 22px; fill: currentColor; }
+
+/* Question Layout Grid */
+.q-top-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+.q-top-row .input-wrapper { flex: 1; display:flex; gap:10px; align-items:center; }
+.q-type-select {
+    padding: 12px;
+    border: 1px solid var(--f-border);
+    border-radius: 6px;
+    background: var(--f-card-bg);
+    color: var(--f-text-main);
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    width: 200px;
+}
+
+/* Options Builder */
+.option-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.option-icon {
+    color: var(--f-text-mut);
+    font-size: 1.2rem;
+}
+.option-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid transparent;
+    padding: 8px 0;
+    font-size: 0.95rem;
+    background: transparent;
+    color: var(--f-text-main);
+    outline: none;
+    transition: 0.3s;
+}
+.option-input:focus { border-bottom: 1px solid var(--f-primary); }
+.del-opt-btn { background: transparent; border: none; color: var(--f-text-mut); cursor: pointer; padding: 5px; }
+.del-opt-btn:hover { color: var(--f-danger); }
+
+/* Footer Card (Wajib diisi, Copy, Delete) */
+.q-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    border-top: 1px solid var(--f-border);
+    margin-top: 25px;
+    padding-top: 15px;
+}
+.q-footer-btn {
+    background: transparent; border: none; color: var(--f-text-mut); cursor: pointer; padding: 5px; transition: 0.2s;
+}
+.q-footer-btn:hover { color: var(--f-text-main); }
+.q-footer-btn svg { width: 22px; height: 22px; fill: currentColor; }
+.toggle-wrapper { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 500; color: var(--f-text-main); border-left: 1px solid var(--f-border); padding-left: 15px;}
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--f-primary); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* ================== PUBLIC FORM CSS ================== */
+.p-form-header {
+    background: var(--f-card-bg);
+    border-radius: 12px;
+    border-top: 10px solid var(--f-primary);
+    padding: 30px;
+    box-shadow: var(--f-shadow);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+.p-form-title { font-size: 2.2rem; margin-bottom: 10px; color: var(--f-text-main); }
+.p-form-desc { font-size: 1rem; line-height: 1.6; color: var(--f-text-mut); }
+.p-required-text { color: var(--f-danger); font-size: 0.85rem; margin-top: 15px; display: block; border-top: 1px solid var(--f-border); padding-top: 15px;}
+
+.p-q-title { font-size: 1.1rem; color: var(--f-text-main); margin-bottom: 15px; font-weight: 500;}
+.req-star { color: var(--f-danger); margin-left: 5px; }
+
+/* Input Styles for Public */
+.p-input-text {
+    width: 100%; border: none; border-bottom: 1px solid var(--f-border);
+    padding: 10px 0; background: transparent; color: var(--f-text-main); font-size: 1rem; outline: none; transition: 0.3s;
+}
+.p-input-text:focus { border-bottom: 2px solid var(--f-primary); }
+.p-radio-label, .p-check-label {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; font-size: 1rem; color: var(--f-text-main);
+}
+.p-radio-label input[type="radio"], .p-check-label input[type="checkbox"] {
+    width: 20px; height: 20px; accent-color: var(--f-primary); cursor: pointer;
+}
+.p-select {
+    width: 100%; max-width: 300px; padding: 12px; border: 1px solid var(--f-border); border-radius: 6px;
+    background: var(--f-card-bg); color: var(--f-text-main); font-size: 1rem; outline: none; cursor: pointer;
+}
+.p-file-upload {
+    border: 2px dashed var(--f-border); padding: 30px; text-align: center; border-radius: 8px; color: var(--f-text-mut); cursor: pointer; transition: 0.3s; background: var(--f-bg-page);
+}
+.p-file-upload:hover { border-color: var(--f-primary); color: var(--f-primary); }
+.p-img-preview { max-width: 100%; margin-top: 15px; border-radius: 8px; display: none; }
+
+/* Grid / Skala */
+.p-scale-container { display: flex; align-items: center; justify-content: space-between; max-width: 400px; padding: 10px 0;}
+.p-scale-item { display: flex; flex-direction: column; align-items: center; gap: 8px;}
+.p-scale-label { font-size: 0.85rem; color: var(--f-text-mut); }
+
+.p-grid-table { width: 100%; border-collapse: collapse; margin-top: 10px;}
+.p-grid-table th, .p-grid-table td { padding: 15px; text-align: center; border-bottom: 1px solid var(--f-border); }
+.p-grid-table th { background: var(--f-bg-page); color: var(--f-text-mut); font-weight: normal;}
+.p-grid-table td:first-child { text-align: left; font-weight: 500; color: var(--f-text-main);}
+
+.btn-primary { background: var(--f-primary); color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px var(--f-primary-light); }
+.btn-primary:hover { background: #5e35b1; box-shadow: 0 6px 15px var(--f-primary-light); transform: translateY(-2px); }
+.btn-secondary { background: transparent; color: var(--f-primary); border: 1px solid var(--f-border); padding: 12px 25px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+.btn-secondary:hover { background: var(--f-bg-page); }
+
+.progress-bar-container { width: 100%; background: var(--f-border); height: 6px; border-radius: 3px; margin-bottom: 30px; overflow: hidden;}
+.progress-bar-fill { height: 100%; background: var(--f-primary); transition: width 0.4s ease; width: 0%;}
+
+/* ================== ADMIN TABS (Manajemen Form) ================== */
+.f-tabs { display: flex; gap: 20px; border-bottom: 1px solid var(--f-border); margin-bottom: 30px; justify-content: center;}
+.f-tab-btn { background: transparent; border: none; padding: 15px 20px; color: var(--f-text-mut); font-weight: 600; font-size: 1rem; cursor: pointer; border-bottom: 3px solid transparent; transition: 0.3s; }
+.f-tab-btn:hover { color: var(--f-primary); }
+.f-tab-btn.active { color: var(--f-primary); border-bottom: 3px solid var(--f-primary); }
+.f-tab-content { display: none; animation: f-fade 0.4s ease; }
+.f-tab-content.active { display: block; }
+@keyframes f-fade { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* Setting UI */
+.setting-group { background: var(--f-card-bg); border: 1px solid var(--f-border); border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: var(--f-shadow);}
+.setting-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: var(--f-card-bg); border-bottom: 1px solid var(--f-border); }
+.setting-header h3 { margin: 0; font-size: 1.1rem; color: var(--f-text-main); }
+.setting-header p { margin: 5px 0 0 0; font-size: 0.85rem; color: var(--f-text-mut); }
+.setting-body { padding: 20px; background: var(--f-bg-page); }
+.s-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--f-border); }
+.s-row:last-child { border-bottom: none; }
