@@ -299,6 +299,21 @@ app.post('/api/forms/save', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
+// 4x. FIX SUPER UPGRADE: Hapus Form (Delete Endpoint Mutlak)
+app.delete('/api/forms/:id', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const formId = req.params.id;
+        
+        // Menghapus Form dari list Master Database BEM_Forms
+        await redis.hdel('BEM_Forms', formId);
+        // Menghapus Data Jawaban Terkait di Database BEM_Form_Responses
+        await redis.hdel('BEM_Form_Responses', formId);
+        
+        res.status(200).json({ success: true, message: "Form dan respons berhasil dihapus permanen." });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
 // 4. Submit Jawaban Form (Untuk Publik)
 app.post('/api/forms/submit', async (req, res) => {
     try {
