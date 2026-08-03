@@ -14,8 +14,8 @@
     <script src="/js/protect-devtools.js"></script>
 
     <style>
-        /* Override untuk Page Publik Form */
-        body { background: var(--form-bg); }
+        /* Override untuk Page Publik Form agar sejajar 100% dari CSS main.css */
+        body { background: var(--form-bg); display: block; }
         .form-header-banner {
             width: 100%; height: 130px; background: var(--form-active-border);
             border-radius: 16px 16px 0 0; border: 1px solid var(--form-border); border-bottom: none;
@@ -76,7 +76,7 @@
                         const dateStr = deadlineDate.toLocaleString('id-ID', {
                             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
                         });
-                        renderError(`Waktu pengisian formulir ini telah berakhir pada <strong>${dateStr} WITA</strong>.`);
+                        renderError(`Waktu pengisian formulir ini telah berakhir pada <strong style="color:var(--form-text); display:block; margin-top:10px;">${dateStr} WITA</strong>`);
                         return;
                     }
                 }
@@ -107,7 +107,7 @@
             if(formData.settings.deadline) {
                 const dl = new Date(formData.settings.deadline);
                 const strDl = dl.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour:'2-digit', minute:'2-digit'});
-                warningHTML = `<div style="background:rgba(234, 179, 8, 0.1); color:#ca8a04; border:1px solid rgba(234, 179, 8, 0.3); padding:10px 15px; border-radius:10px; margin-top:20px; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px;">⏳ Formulir ini akan ditutup pada: ${strDl}</div>`;
+                warningHTML = `<div style="background:rgba(234, 179, 8, 0.1); color:#ca8a04; border:1px solid rgba(234, 179, 8, 0.3); padding:12px 18px; border-radius:12px; margin-top:20px; font-size:0.95rem; font-weight:700; display:flex; align-items:center; gap:8px;">⏳ Formulir ini akan otomatis ditutup pada: ${strDl} WITA</div>`;
             }
 
             let html = `
