@@ -3,41 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulir Kegiatan - BEM KBMFKG UMI</title>
+    <title>Formulir - BEM KBMFKG UMI</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- DYNAMIC FONTS (AKAN DI LOAD OLEH JS) -->
+    <!-- DYNAMIC FONTS UNTUK THEME RENDERER -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Playfair+Display:wght@500&family=Oswald:wght@500&family=Lora:wght@500&family=Montserrat:wght@500&display=swap" rel="stylesheet">
     
     <!-- MENGGUNAKAN DUA FILE CSS -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
     
-    <!-- PROTECT DEVTOOLS -->
     <script src="/js/protect-devtools.js"></script>
 
     <style>
-        /* TEMA DINAMIS AKAN MENG-OVERRIDE CLASS INI */
-        body { background: var(--form-bg); font-family: var(--form-font-text); display: block; }
-        .form-title { font-family: var(--form-font-header) !important; }
-        .question-title { font-family: var(--form-font-question) !important; }
-        
-        .form-header-banner {
-            width: 100%; height: 140px; background-color: var(--form-active-border);
-            border-radius: 12px 12px 0 0; border: 1px solid var(--form-border); border-bottom: none;
-            position: relative; overflow: hidden;
-            background-size: cover; background-position: center;
+        /* TEMA DINAMIS AKAN MENG-OVERRIDE CLASS INI VIA JAVASCRIPT */
+        body.public-form-body { 
+            background: var(--form-bg); 
+            font-family: var(--form-font-text); 
+            display: block !important; 
         }
     </style>
 </head>
-<body>
+<body class="public-form-body">
     <!-- HEADER STANDAR BEM -->
     <%- include('partials/header.html') %>
 
     <main class="form-wrapper" id="publicFormWrapper">
         <div style="text-align:center; padding: 150px 20px;">
             <div class="loader-ring"></div>
-            <p style="color:var(--form-text-muted); font-size:1.15rem; font-weight:700; margin-top:20px;">Mempersiapkan Formulir Pendaftaran...</p>
+            <p style="color:var(--form-text-muted); font-size:1.1rem; font-weight:700; margin-top:20px;">Mempersiapkan Formulir...</p>
         </div>
     </main>
 
@@ -60,7 +54,7 @@
                 
                 formData = json.data;
                 
-                // Set Theme from JSON
+                // Set Theme from JSON Secara Dinamis ke :root CSS
                 if(formData.theme) {
                     const t = formData.theme;
                     document.documentElement.style.setProperty('--form-active-border', t.color);
@@ -70,10 +64,10 @@
                     document.documentElement.style.setProperty('--form-font-text', `"${t.textFont}", sans-serif`);
                 }
                 
-                // Validasi Status Aktif
-                if(formData.isActive === false) { return renderError("Formulir ini sudah ditutup secara manual dan tidak menerima tanggapan lagi."); }
+                // Validasi Status Aktif BEM Admin
+                if(formData.isActive === false) { return renderError("Formulir ini sudah ditutup dan tidak menerima tanggapan lagi."); }
 
-                // Validasi Deadline Kalender
+                // Validasi Deadline (Jika Ada)
                 if(formData.settings && formData.settings.deadline) {
                     const now = new Date();
                     const deadlineDate = new Date(formData.settings.deadline);
@@ -84,16 +78,14 @@
                 }
 
                 renderFormHTML();
-            } catch(e) {
-                renderError("Terjadi kesalahan jaringan server saat memuat form.");
-            }
+            } catch(e) { renderError("Terjadi kesalahan jaringan saat memuat form."); }
         }
 
         function renderError(msg) {
             document.getElementById('publicFormWrapper').innerHTML = `
-                <div class="form-header-card" style="border-top:10px solid #ef4444; text-align:center; padding: 60px 30px;">
+                <div class="form-header-card" style="border-top:12px solid #ef4444; text-align:center; padding: 60px 30px; box-shadow:0 10px 30px rgba(239,68,68,0.1);">
                     <div style="font-size: 3.5rem; margin-bottom: 20px;">🚫</div>
-                    <h2 class="form-title" style="color:#ef4444; font-size:1.8rem; font-weight:800; margin-bottom:15px;">Akses Ditolak</h2>
+                    <h2 class="form-title" style="color:#ef4444; font-size:1.8rem; font-weight:800; margin-bottom:15px; font-family:var(--form-font-header);">Akses Ditolak</h2>
                     <p class="form-desc" style="font-size:1.1rem; color:var(--form-text);">${msg}</p>
                     <button class="gf-btn-clear" style="margin-top:30px; font-size:1rem; color:#ef4444; background:rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2);" onclick="window.location.href='/'">Kembali ke Beranda</button>
                 </div>
@@ -104,12 +96,11 @@
             const wrapper = document.getElementById('publicFormWrapper');
             const theme = formData.theme || {};
             
-            // Header Image Style
+            // Header Image Cover Style
             let headerImgStyle = theme.headerImage ? `background-image: url('${theme.headerImage}');` : '';
 
-            // Deadline Warning UI
             let warningHTML = '';
-            if(formData.settings.deadline) {
+            if(formData.settings && formData.settings.deadline) {
                 const dl = new Date(formData.settings.deadline);
                 const strDl = dl.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour:'2-digit', minute:'2-digit'});
                 warningHTML = `<div style="background:rgba(234, 179, 8, 0.1); color:#ca8a04; padding:10px 15px; border-radius:8px; margin-top:20px; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px;">⏳ Ditutup otomatis: ${strDl} WITA</div>`;
@@ -118,7 +109,7 @@
             let html = `
                 <form id="submissionForm" onsubmit="submitForm(event)">
                     <div class="form-header-banner" style="${headerImgStyle}"></div>
-                    <div class="form-header-card" style="border-top:none; border-radius: 0 0 12px 12px; margin-top:-1px;">
+                    <div class="form-header-card rounded-top-none">
                         <h1 class="form-title" style="font-size:${theme.headerFontSize || 24}px;">${formData.title}</h1>
                         <p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize || 11}px;">${formData.description}</p>
                         ${warningHTML}
@@ -128,20 +119,20 @@
 
             if (formData.settings.collectEmail === 'input') {
                 html += `
-                    <div class="form-question-card">
-                        <div class="question-title" style="font-size:${theme.questionFontSize || 12}px;">Alamat Email <span class="asterisk">*</span></div>
+                    <div class="form-question-card" style="border-left: 6px solid var(--form-active-border);">
+                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px;">Alamat Email <span class="asterisk">*</span></div>
                         <input type="email" class="gf-input" name="respondent_email" placeholder="Jawaban Anda" required style="font-size:${theme.textFontSize || 11}px;">
                     </div>
                 `;
             }
 
+            // MAPPING BAGIAN (SECTION) & PERTANYAAN
             formData.sections.forEach((sec, sIdx) => {
-                // Multi-section Separator
                 if(formData.sections.length > 1) {
                     html += `
                     <div style="margin-top:30px; position:relative;">
                         <div class="form-section-header">Bagian ${sIdx+1} dari ${formData.sections.length}</div>
-                        <div class="form-header-card" style="border-top: none; border-radius: 0 12px 12px 12px; margin-top:0;">
+                        <div class="form-header-card rounded-top-none" style="border-top: none;">
                             <h2 class="form-title" style="font-size:1.6rem; margin-bottom:5px;">${sec.title}</h2>
                             ${sec.description ? `<p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize}px;">${sec.description}</p>` : ''}
                         </div>
@@ -151,9 +142,9 @@
                 sec.questions.forEach(q => {
                     if(q.type === 'title_only') {
                          html += `
-                         <div class="form-question-card" style="border-left:none; box-shadow:none; background:transparent; padding-bottom:10px;">
-                            <h3 style="font-size:1.4rem; color:var(--form-text); margin-bottom:5px; border-bottom: 1px solid var(--form-border); padding-bottom:10px;">${q.title}</h3>
-                            ${q.image ? `<p style="font-size:${theme.textFontSize}px; color:var(--form-text-muted); margin-top:5px;">${q.image}</p>` : ''}
+                         <div class="form-question-card" style="border-left:none; box-shadow:none; background:transparent; padding:0 30px 10px;">
+                            <h3 class="question-title" style="font-size:1.4rem; color:var(--form-text); margin-bottom:5px; border-bottom: 2px solid var(--form-active-border); padding-bottom:10px;">${q.title}</h3>
+                            ${q.image ? `<p style="font-size:${theme.textFontSize}px; color:var(--form-text-muted); margin-top:5px; white-space:pre-line;">${q.image}</p>` : ''}
                          </div>`;
                          return;
                     }
@@ -201,7 +192,7 @@
 
                     html += `
                     <div class="form-question-card">
-                        <div class="question-title" style="font-size:${theme.questionFontSize || 12}px;">${q.title} ${reqHtml}</div>
+                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px;">${q.title} ${reqHtml}</div>
                         ${inputHtml}
                     </div>
                     `;
@@ -210,8 +201,8 @@
 
             html += `
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-                    <button type="submit" class="gf-btn-submit" id="btnKirim">Kirim</button>
-                    <button type="button" class="gf-btn-clear" onclick="if(confirm('Kosongkan semua jawaban?')) document.getElementById('submissionForm').reset()">Kosongkan formulir</button>
+                    <button type="submit" class="gf-btn-submit" id="btnKirim">Kirim Jawaban</button>
+                    <button type="button" class="gf-btn-clear" onclick="if(confirm('Kosongkan semua jawaban form ini?')) document.getElementById('submissionForm').reset()">Kosongkan formulir</button>
                 </div>
                 </form>
             `;
@@ -219,7 +210,7 @@
             wrapper.innerHTML = html;
         }
 
-        // ================= TRANSAKSI MENGIRIM JAWABAN =================
+        // ================= PENGIRIMAN JAWABAN KE SERVER REDIS =================
         async function submitForm(e) {
             e.preventDefault();
             const btn = document.getElementById('btnKirim');
@@ -241,11 +232,7 @@
                 }
             }
 
-            const payload = {
-                formId: formData.id,
-                email: email,
-                responses: responses
-            };
+            const payload = { formId: formData.id, email: email, responses: responses };
 
             try {
                 const res = await fetch('/api/forms/submit', {
@@ -259,20 +246,19 @@
                     const theme = formData.theme || {};
                     
                     document.getElementById('publicFormWrapper').innerHTML = `
-                        <div class="form-header-banner"></div>
-                        <div class="form-header-card" style="border-top:none; border-radius: 0 0 12px 12px; margin-top:-1px;">
-                            <h1 class="form-title" style="font-size:${theme.headerFontSize || 24}px;">${formData.title}</h1>
-                            <p style="font-size:${theme.textFontSize || 11}px; color:var(--form-text); margin: 20px 0;">${msg}</p>
+                        <div class="form-header-banner" style="background:#10b981;"></div>
+                        <div class="form-header-card rounded-top-none">
+                            <h1 class="form-title" style="font-size:${theme.headerFontSize || 24}px; font-family:var(--form-font-header);">${formData.title}</h1>
+                            <p style="font-size:${theme.textFontSize || 12}px; color:var(--form-text); margin: 25px 0; font-family:var(--form-font-text);">✅ ${msg}</p>
                             
-                            ${formData.settings.editResponse ? `<p style="margin-bottom:10px;"><a href="#" style="color:var(--form-active-border); font-size:${theme.textFontSize || 11}px;">Edit tanggapan Anda</a></p>` : ''}
-                            ${!formData.settings.limitOne ? `<a href="#" onclick="location.reload()" style="color:var(--form-active-border); font-size:${theme.textFontSize || 11}px;">Kirim jawaban lain</a>` : ''}
+                            ${!formData.settings.limitOne ? `<a href="#" onclick="location.reload()" style="color:var(--form-active-border); font-size:${theme.textFontSize || 11}px; text-decoration:none; font-weight:600;">Kirim jawaban lain</a>` : ''}
                         </div>
                     `;
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else { alert("Gagal mengirim jawaban."); }
-            } catch (err) { alert("Kesalahan Jaringan. Database server tidak merespon."); }
+            } catch (err) { alert("Kesalahan Jaringan. Database server menolak request."); }
             
-            btn.innerText = 'Kirim'; btn.disabled = false;
+            btn.innerText = 'Kirim Jawaban'; btn.disabled = false;
         }
     </script>
 </body>
