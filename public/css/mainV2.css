@@ -2,7 +2,7 @@
 /* SUPER UI MODERN GEN-Z UNTUK BEM-FORM & THEME BUILDER */
 
 :root {
-    /* Variabel ini akan di-override via JS Theme Settings */
+    /* DEFAULT THEME BEM-FORM (Bisa di-override oleh JSON settings) */
     --form-bg: #f0ebf8; 
     --form-header-bg: rgba(255, 255, 255, 0.95);
     --form-card-bg: rgba(255, 255, 255, 1);
@@ -12,7 +12,7 @@
     --form-text-muted: #5f6368;
     --form-focus-glow: rgba(103, 58, 183, 0.15);
     
-    /* Font Variabel */
+    /* DEFAULT FONTS */
     --form-font-header: 'Roboto', sans-serif;
     --form-font-question: 'Roboto', sans-serif;
     --form-font-text: 'Roboto', sans-serif;
@@ -26,11 +26,22 @@
     --form-text-muted: #94a3b8;
 }
 
-/* ================== OVERRIDE ALIGNMENT DASAR ================== */
-.admin-v2-body {
+/* ================== PERBAIKAN ALIGNMENT & RESET INLINE ================== */
+.admin-v2-body, .public-form-body {
     background: var(--form-bg) !important;
     display: block !important; 
     font-family: var(--form-font-text);
+    min-height: 100vh;
+    transition: background 0.3s ease;
+}
+
+.admin-v2-container {
+    width: 100%; 
+    max-width: 900px; 
+    margin: 0 auto; 
+    padding: 30px 20px; 
+    box-sizing: border-box; 
+    position: relative;
 }
 
 /* Typography Overrides */
@@ -47,10 +58,14 @@
 }
 
 .form-header-banner {
-    width: 100%; height: 130px; background-color: var(--form-active-border);
+    width: 100%; height: 140px; background-color: var(--form-active-border);
     border-radius: 12px 12px 0 0; border: 1px solid var(--form-border); border-bottom: none;
     position: relative; overflow: hidden;
     background-size: cover; background-position: center;
+}
+.form-header-banner::after {
+    content: ''; position: absolute; width: 100%; height: 100%; top:0; left:0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%); pointer-events: none;
 }
 
 .form-header-card {
@@ -60,17 +75,22 @@
     border-top: 10px solid var(--form-active-border);
     padding: 30px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03); /* Neumorphism Soft Shadow */
     transition: all 0.3s;
     width: 100%;
     box-sizing: border-box;
 }
 
+.form-header-card.rounded-top-none {
+    border-radius: 0 0 12px 12px; margin-top: -1px;
+}
+
 .form-section-header {
     background: var(--form-active-border); color: #fff;
-    display: inline-block; padding: 6px 16px; border-radius: 8px 8px 0 0;
-    font-size: 0.9rem; font-weight: 500; margin-bottom: -1px;
+    display: inline-block; padding: 8px 20px; border-radius: 12px 12px 0 0;
+    font-size: 0.95rem; font-weight: 600; margin-bottom: -1px;
     position: relative; z-index: 10;
+    box-shadow: 0 -2px 10px var(--form-focus-glow);
 }
 
 .form-title {
@@ -84,6 +104,7 @@
     color: var(--form-text-muted);
     font-size: 0.95rem;
     line-height: 1.5;
+    white-space: pre-line;
 }
 
 .required-notice {
@@ -100,30 +121,40 @@
     border: 1px solid var(--form-border);
     padding: 25px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
+    overflow: visible; /* Prevent drag handle clipping */
     width: 100%;
     box-sizing: border-box;
 }
 
 .form-question-card.active {
-    box-shadow: 0 4px 15px var(--card-shadow);
+    box-shadow: 0 8px 25px var(--form-focus-glow);
     border-left: 6px solid var(--form-active-border);
+    transform: scale(1.01);
 }
 
-/* Drag Handle 6 Dots (GForm Style) */
+/* ================== DRAG & DROP UI ================== */
 .drag-handle {
     position: absolute;
-    top: 5px; left: 50%; transform: translateX(-50%);
-    color: #dadce0; font-size: 1.2rem; cursor: grab;
+    top: -5px; left: 50%; transform: translateX(-50%);
+    color: #dadce0; font-size: 1.5rem; cursor: grab;
     opacity: 0; transition: 0.2s;
     letter-spacing: 2px;
     user-select: none;
+    width: 40px; text-align: center;
 }
 .form-question-card.active .drag-handle, .form-question-card:hover .drag-handle {
-    opacity: 1;
+    opacity: 1; color: var(--form-text-muted);
+}
+.form-question-card.dragging {
+    opacity: 0.5; border: 2px dashed var(--form-active-border);
+}
+.drop-placeholder {
+    border: 2px dashed var(--form-active-border) !important;
+    background: var(--form-focus-glow) !important;
+    transform: scale(1.02);
 }
 
 .question-title {
@@ -134,7 +165,7 @@
 }
 .asterisk { color: #d93025; font-weight: bold; margin-left: 5px; }
 
-/* Input Styles HTML5 native untuk Form */
+/* ================== INPUT STYLES (GFORM NATIVE) ================== */
 .gf-input {
     width: 100%; border: none; border-bottom: 1px solid var(--form-border);
     background: transparent; padding: 10px 0; color: var(--form-text);
@@ -151,24 +182,48 @@
 .gf-option-label:hover { background: rgba(0,0,0,0.02); }
 .gf-radio, .gf-checkbox { width: 20px; height: 20px; accent-color: var(--form-active-border); cursor: pointer; }
 
-/* Action Buttons Form BEM */
+/* Action Buttons */
 .gf-btn-submit {
     background: var(--form-active-border); color: #fff; border: none;
     padding: 10px 25px; border-radius: 6px; font-weight: 600; font-size: 0.95rem;
     cursor: pointer; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-.gf-btn-submit:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.15);}
+.gf-btn-submit:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px var(--form-focus-glow);}
+.gf-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .gf-btn-clear {
     background: transparent; color: var(--form-active-border); border: none;
     font-weight: 600; cursor: pointer; padding: 10px; border-radius: 6px;
+    border: 1px solid transparent; transition: 0.3s;
 }
-.gf-btn-clear:hover { background: rgba(0,0,0,0.04); }
+.gf-btn-clear:hover { background: rgba(0,0,0,0.04); border-color: var(--form-border); }
 
 /* ================== ADMIN DASHBOARD V2 BUILDER ================== */
+.header-admin-nav {
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 10px 20px; background: var(--form-header-bg); border-bottom: 1px solid var(--form-border);
+    width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 15px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+.admin-header-main {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--form-header-bg); padding: 25px 30px; border-radius: 12px;
+    border: 1px solid var(--form-border); box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    margin-bottom: 30px; width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 15px;
+}
+.list-form-card {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--form-card-bg); padding: 20px 25px; border-radius: 12px;
+    border: 1px solid var(--form-border); margin-bottom: 15px; width: 100%; 
+    box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    flex-wrap: wrap; gap: 20px; transition: 0.3s;
+}
+.list-form-card:hover { border-color: var(--form-active-border); transform: translateY(-3px); box-shadow: 0 8px 25px var(--form-focus-glow); }
+
 .builder-tabs {
     display: flex; justify-content: center; gap: 10px; background: var(--form-header-bg);
     padding: 10px 20px 0; border-bottom: 1px solid var(--form-border);
-    position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;
+    position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.03); width: 100%; box-sizing: border-box;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
 .b-tab {
     padding: 12px 20px; color: var(--form-text-muted); cursor: pointer;
@@ -176,11 +231,13 @@
 }
 .b-tab:hover { background: rgba(0,0,0,0.02); }
 .b-tab.active { color: var(--form-active-border); border-bottom-color: var(--form-active-border); }
+.tab-content { display: none; margin-top: 10px; width: 100%; }
+.tab-content.active { display: block; animation: fadeInTab 0.4s ease; }
 
 /* Floating Toolbar */
 .floating-toolbar {
     position: absolute; background: var(--form-card-bg); border: 1px solid var(--form-border);
-    border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+    border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column;
     padding: 8px 4px; gap: 8px; z-index: 50; transition: top 0.3s ease; right: -55px;
 }
 .toolbar-btn {
@@ -188,7 +245,7 @@
     cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex;
     justify-content: center; align-items: center; transition: 0.2s;
 }
-.toolbar-btn:hover { background: rgba(0,0,0,0.05); color: var(--form-text); }
+.toolbar-btn:hover { background: rgba(0,0,0,0.05); color: var(--form-text); transform: scale(1.1); }
 
 /* Top Icons (Undo, Redo, Theme, Eye) */
 .top-icon-btn {
@@ -199,64 +256,62 @@
 .top-icon-btn:hover { background: rgba(0,0,0,0.05); color: var(--form-text); }
 .top-icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-/* THEME SIDEBAR (Offcanvas) */
+/* ================== TEMA SIDEBAR OFFCANVAS ================== */
 .theme-sidebar {
     position: fixed; top: 0; right: -350px; width: 320px; height: 100vh;
-    background: var(--form-card-bg); box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-    z-index: 1000; transition: right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: var(--form-card-bg); box-shadow: -5px 0 30px rgba(0,0,0,0.1);
+    z-index: 1000; transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex; flex-direction: column; border-left: 1px solid var(--form-border);
 }
 .theme-sidebar.active { right: 0; }
 .theme-sidebar-header {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 20px; border-bottom: 1px solid var(--form-border);
+    padding: 20px; border-bottom: 1px solid var(--form-border); background: var(--form-header-bg);
 }
 .theme-sidebar-content { padding: 20px; overflow-y: auto; flex: 1; }
-.theme-section-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 15px; color: var(--form-text); }
+.theme-section-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 15px; color: var(--form-text); border-top: 1px solid var(--form-border); padding-top: 20px; }
+.theme-section-title:first-child { border-top: none; padding-top: 0; }
 
 .font-select-group { display: flex; gap: 10px; margin-bottom: 20px; }
 .t-select {
-    padding: 10px; border: 1px solid var(--form-border); border-radius: 4px;
-    background: var(--form-bg); color: var(--form-text); outline: none; font-family: inherit;
+    padding: 10px; border: 1px solid var(--form-border); border-radius: 6px;
+    background: var(--form-bg); color: var(--form-text); outline: none; font-family: inherit; font-weight: 500;
 }
 .color-circle-group { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
 .color-circle {
-    width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
     border: 2px solid transparent; transition: 0.2s; display: flex; align-items:center; justify-content:center;
-    color: #fff; font-size: 1rem;
+    color: #fff; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-.color-circle.active { border-color: var(--form-text); transform: scale(1.1); }
-.color-circle.bg-circle { width: 40px; height: 40px; border: 1px solid var(--form-border); }
+.color-circle:hover { transform: scale(1.1); }
+.color-circle.active { border-color: var(--form-text); transform: scale(1.15); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+.color-circle.bg-circle { width: 45px; height: 45px; border: 1px solid var(--form-border); color: var(--form-text); }
 
-.q-type-select { padding: 10px; border: 1px solid var(--form-border); border-radius: 4px; background: var(--form-bg); color: var(--form-text); width: 200px; outline:none;}
+.q-type-select { padding: 10px; border: 1px solid var(--form-border); border-radius: 6px; background: var(--form-bg); color: var(--form-text); width: 200px; outline:none; font-weight: 500;}
 .builder-card-footer {
     border-top: 1px solid var(--form-border); margin-top: 20px; padding-top: 15px;
     display: flex; justify-content: flex-end; align-items: center; gap: 15px;
 }
 .toggle-switch { display: flex; align-items: center; gap: 10px; color: var(--form-text); font-size: 0.9rem; }
 .switch-input { display: none; }
-.switch-label { width: 36px; height: 18px; background: #ccc; border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; }
-.switch-label::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: 0.3s; }
+.switch-label { width: 38px; height: 20px; background: #cbd5e1; border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+.switch-label::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 .switch-input:checked + .switch-label { background: var(--form-active-border); }
 .switch-input:checked + .switch-label::after { transform: translateX(18px); }
 
 /* Settings Layout */
 .setting-group { border-bottom: 1px solid var(--form-border); padding: 20px 0; }
 .setting-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-.setting-title { font-size: 1.05rem; color: var(--form-text); font-weight: 500;}
+.setting-title { font-size: 1.05rem; color: var(--form-text); font-weight: 600;}
 .setting-desc { color: var(--form-text-muted); font-size: 0.85rem; margin-top: 5px; line-height: 1.4;}
 
 /* Drop placeholder */
-.drop-placeholder {
-    border: 2px dashed var(--form-active-border);
-    border-radius: 12px;
-    background: var(--form-focus-glow);
-    margin-bottom: 15px;
-}
+.drop-placeholder { border: 2px dashed var(--form-active-border); border-radius: 12px; background: var(--form-focus-glow); margin-bottom: 15px; transform: scale(1.02); }
 
 @media (max-width: 768px) {
     .floating-toolbar {
         position: fixed; bottom: 20px; right: 50%; transform: translateX(50%); top: auto !important;
-        flex-direction: row; border-radius: 30px; padding: 5px 15px;
+        flex-direction: row; border-radius: 30px; padding: 5px 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
+    .theme-sidebar { width: 100%; right: -100%; }
 }
