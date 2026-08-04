@@ -49,9 +49,31 @@
             opacity: 0.9 !important;
             border: 1px solid var(--form-active-border) !important;
         }
+
+        /* ================== SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) ================== */
+        .q-menu-dropdown {
+            position: absolute; right: 0; bottom: 55px; z-index: 100;
+            min-width: 260px; padding: 10px; border-radius: 12px;
+            background: var(--form-bg); box-shadow: var(--outer-neumorph);
+            display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--form-border);
+        }
+        .q-menu-item {
+            display: flex; align-items: center; gap: 10px; padding: 12px 15px;
+            cursor: pointer; border-radius: 8px; transition: 0.2s;
+            font-size: 0.95rem; font-weight: 600; color: var(--form-text);
+        }
+        .q-menu-item:hover { 
+            background: rgba(139, 92, 246, 0.1); color: var(--form-active-border); 
+        }
+        
+        /* Layout Baris Validasi */
+        .validation-row { 
+            display: flex; gap: 10px; align-items: center; margin-top: 15px; 
+            padding-top: 15px; border-top: 1px dashed var(--form-border); flex-wrap: wrap;
+        }
     </style>
 </head>
-<body class="admin-v2-body">
+<body class="admin-v2-body" onclick="closeAllQMenus()">
 
     <!-- PROTEKSI KEAMANAN CANVAS -->
     <script src="/js/protect-devtools.js"></script>
@@ -72,7 +94,7 @@
         
         <!-- ICONS (TEMA, PREVIEW, UNDO, REDO) -->
         <div id="builderTopIcons" style="display: none; align-items: center; gap: 8px;">
-            <button class="top-icon-btn neumorph-circle" title="Sesuaikan Tema" onclick="toggleThemeSidebar()">🎨</button>
+            <button class="top-icon-btn neumorph-circle" title="Sesuaikan Tema" onclick="event.stopPropagation(); toggleThemeSidebar()">🎨</button>
             <button class="top-icon-btn neumorph-circle" title="Pratinjau" onclick="previewForm()">👁️</button>
             <button class="top-icon-btn neumorph-circle" id="btnUndo" title="Urungkan (Undo)" onclick="undoState()" disabled>↩</button>
             <button class="top-icon-btn neumorph-circle" id="btnRedo" title="Ulangi (Redo)" onclick="redoState()" disabled>↪</button>
@@ -93,7 +115,7 @@
     </div>
 
     <!-- TEMA SIDEBAR (OFFCANVAS) -->
-    <div class="theme-sidebar glass-panel-heavy" id="themeSidebar">
+    <div class="theme-sidebar glass-panel-heavy" id="themeSidebar" onclick="event.stopPropagation()">
         <div class="theme-sidebar-header">
             <h3 style="margin:0; font-size:1.2rem; font-weight:700; color:var(--form-text);">🎨 Tema Dashboard</h3>
             <button class="top-icon-btn neumorph-circle" onclick="toggleThemeSidebar()">✕</button>
@@ -209,7 +231,7 @@
         <!-- ================= TAB 4: SETELAN ================= -->
         <div id="tab-setelan" class="tab-content">
             
-            <!-- SUPER UPGRADE: UI CARD 1 (SETELAN) -->
+            <!-- UI CARD 1 (SETELAN) -->
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding:15px 30px; margin-bottom: 30px;">
                 <h2 class="form-title" style="font-size:1.8rem; margin:15px 0 25px 0; border-bottom:1px solid var(--form-border); padding-bottom:15px;">Setelan</h2>
                 
@@ -377,7 +399,7 @@
                 </div>
             </div>
 
-            <!-- SUPER UPGRADE: UI CARD 2 (DEFAULT) -->
+            <!-- UI CARD 2 (DEFAULT) -->
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding:15px 30px;">
                 <h2 class="form-title" style="font-size:1.8rem; margin:15px 0 25px 0; border-bottom:1px solid var(--form-border); padding-bottom:15px;">Default</h2>
                 
@@ -392,8 +414,6 @@
                     </div>
                     
                     <div class="accordion-content" id="accFormDefault" style="display:none; margin-top:20px;">
-                        
-                        <!-- FITUR LAMA DIMASUKKAN KESINI -->
                         <div class="setting-header" style="margin-bottom:20px;">
                             <div style="flex:1;">
                                 <div class="setting-title" style="font-size:1rem;">Status Formulir Publik</div>
@@ -405,7 +425,6 @@
                             </div>
                         </div>
 
-                        <!-- KEMBALIKAN FITUR UBAH SLUG URL (PERMINTAAN USER) -->
                         <div class="setting-header" style="margin-bottom:20px;">
                             <div style="flex:1;">
                                 <div class="setting-title" style="font-size:1rem; color:var(--form-active-border);">Custom Link URL (Slug)</div>
@@ -458,7 +477,6 @@
         let activeSecIdx = 0;
         let activeQIdx = -1;
 
-        // Undo Redo Stack Logics
         let historyStack = [];
         let historyPointer = -1;
         let isNavigatingHistory = false;
@@ -475,6 +493,66 @@
             const t = document.getElementById('globalToast');
             t.innerText = msg; t.style.bottom = '30px';
             setTimeout(() => t.style.bottom = '-100px', 3000);
+        }
+
+        // ================= SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) LOGICS =================
+        function toggleQMenu(event, sIdx, qIdx) {
+            event.stopPropagation();
+            const allMenus = document.querySelectorAll('.q-menu-dropdown');
+            const targetMenuId = `q-menu-${sIdx}-${qIdx}`;
+            
+            allMenus.forEach(menu => {
+                if (menu.id !== targetMenuId) menu.style.display = 'none';
+            });
+            
+            const menu = document.getElementById(targetMenuId);
+            if (menu) {
+                menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
+            }
+        }
+
+        function closeAllQMenus() {
+            document.querySelectorAll('.q-menu-dropdown').forEach(menu => menu.style.display = 'none');
+        }
+
+        function toggleQSetting(sIdx, qIdx, settingKey) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            q[settingKey] = !q[settingKey];
+            
+            // Initialization fallbacks when turning ON
+            if (settingKey === 'showValidation' && q[settingKey]) {
+                if(!q.validation) q.validation = { type: 'Teks', condition: 'Berisi', value: '', errorText: '' };
+            }
+            if (settingKey === 'showGoToSection' && q[settingKey]) {
+                if(!q.goToSectionMap) q.goToSectionMap = {};
+                q.options.forEach(opt => { if(!q.goToSectionMap[opt]) q.goToSectionMap[opt] = 'next'; });
+            }
+
+            debouncedSaveState();
+            renderBuilder();
+        }
+
+        function updateQValidation(sIdx, qIdx, key, val) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!q.validation) q.validation = { type: 'Teks', condition: 'Berisi', value: '', errorText: '' };
+            q.validation[key] = val;
+            debouncedSaveState();
+        }
+        
+        function updateQValidationCheck(sIdx, qIdx, condition, val, errText) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!q.validation) q.validation = { condition: 'Pilih paling sedikit', value: '1', errorText: '' };
+            if (condition !== null) q.validation.condition = condition;
+            if (val !== null) q.validation.value = val;
+            if (errText !== null) q.validation.errorText = errText;
+            debouncedSaveState();
+        }
+
+        function updateGoTo(sIdx, qIdx, optIndex, optValue, targetSection) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!q.goToSectionMap) q.goToSectionMap = {};
+            q.goToSectionMap[optValue] = targetSection;
+            debouncedSaveState();
         }
 
         // ================= UNDO / REDO ENGINE =================
@@ -522,12 +600,11 @@
             activeSecIdx = sIdx;
             activeQIdx = qIdx;
             
-            // Hapus status aktif dari semua kartu
             document.querySelectorAll('.form-question-card, .form-header-card').forEach(c => c.classList.remove('active', 'hover-glow'));
             
             if(el) {
                 el.classList.add('active', 'hover-glow');
-                positionToolbar(); // Update posisi toolbar secara presisi
+                positionToolbar();
             }
         }
 
@@ -535,7 +612,6 @@
             const activeEl = document.querySelector('.form-question-card.active, .form-header-card.active');
             const floater = document.getElementById('floater');
             if(activeEl && floater) {
-                // Menyamakan top position dari elemen yang aktif (relatif terhadap parent #builderCanvas)
                 floater.style.top = activeEl.offsetTop + 'px';
             }
         }
@@ -716,7 +792,7 @@
             cont.innerHTML = html;
         }
 
-        // ================= STRUCTURE BUILDER (MERGE OLD & NEW SETTINGS) =================
+        // ================= STRUCTURE BUILDER =================
         const defaultSettingsJSON = { 
             collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '',
             isQuiz: false, quizRelease: 'immediate', quizShowMissed: true, quizShowCorrect: true, quizShowPoints: true, quizDefaultPoints: 0,
@@ -736,7 +812,6 @@
 
         function openFormEditor(id) {
             currentForm = JSON.parse(JSON.stringify(allForms.find(f => f.id === id))); 
-            // Deep merge backward compatibility for old forms without new settings
             currentForm.settings = { ...defaultSettingsJSON, ...(currentForm.settings || {}) };
             if(!currentForm.theme) currentForm.theme = { headerFont: 'Outfit', headerFontSize: 28, questionFont: 'Plus Jakarta Sans', questionFontSize: 14, textFont: 'Plus Jakarta Sans', textFontSize: 12, color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' };
             historyStack = []; historyPointer = -1; saveState(); openEditorUI();
@@ -781,7 +856,6 @@
                     <div style="margin-top:40px; position:relative;">
                         <div class="form-section-header glow-effect">Bagian ${sIdx+1} dari ${currentForm.sections.length}</div>
                         <div class="form-header-card glass-card neumorph-outer ${(activeSecIdx===sIdx && activeQIdx===-1)?'active':''}" style="border-top: none; border-radius: 0 16px 16px 16px; margin-top:0;" onclick="setActive(${sIdx}, -1, this)">
-                            
                             <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:15px; flex-wrap:wrap; gap:15px;">
                                 <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
                                     <div style="display:flex; align-items:center; gap:10px;">
@@ -797,34 +871,127 @@
                     </div>`;
                 }
 
-                // WRAPPER LIST SORTABLE JS UNTUK FITUR DRAG AND DROP SMOOTH
                 html += `<div class="sortable-q-list" id="sort-list-${sIdx}">`;
 
                 sec.questions.forEach((q, qIdx) => {
                     let isActive = (activeSecIdx === sIdx && activeQIdx === qIdx) ? 'active hover-glow' : '';
                     let optionsHtml = '';
                     
-                    // ================= TIPE: PILIHAN / DROPDOWN =================
+                    // ================= INJEKSI DESKRIPSI (Global semua tipe) =================
+                    let descHtml = q.showDescription ? `<input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-bottom:15px;" value="${q.description || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].description=this.value; debouncedSaveState()" placeholder="Deskripsi">` : '';
+
+                    // ================= BUILD MENU HTML BERDASARKAN TIPE =================
+                    let menuItems = `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showDescription')"><span style="width:20px;">${q.showDescription ? '✓' : ''}</span> Deskripsi</div>`;
+
+                    if (q.type === 'jawaban_singkat' || q.type === 'paragraf') {
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')"><span style="width:20px;">${q.showValidation ? '✓' : ''}</span> Validasi jawaban</div>`;
+                        
+                        if (q.showValidation) {
+                            let val = q.validation || { type: 'Teks', condition: 'Berisi', value: '', errorText: '' };
+                            optionsHtml += `
+                            <div class="validation-row">
+                                <select class="t-select inner-neumorph" style="width:110px;" onchange="updateQValidation(${sIdx},${qIdx},'type',this.value); renderBuilder();">
+                                    <option ${val.type==='Angka'?'selected':''}>Angka</option>
+                                    <option ${val.type==='Teks'?'selected':''}>Teks</option>
+                                    <option ${val.type==='Panjang'?'selected':''}>Panjang</option>
+                                    <option ${val.type==='Regular expression'?'selected':''}>Regular expression</option>
+                                </select>
+                                <select class="t-select inner-neumorph" style="width:180px;" onchange="updateQValidation(${sIdx},${qIdx},'condition',this.value)">
+                                    ${val.type === 'Angka' ? `<option ${val.condition==='Lebih dari'?'selected':''}>Lebih dari</option><option ${val.condition==='Kurang dari'?'selected':''}>Kurang dari</option><option ${val.condition==='Sama dengan'?'selected':''}>Sama dengan</option><option ${val.condition==='Antara'?'selected':''}>Antara</option><option ${val.condition==='Adalah angka'?'selected':''}>Adalah angka</option>` : ''}
+                                    ${val.type === 'Teks' ? `<option ${val.condition==='Berisi'?'selected':''}>Berisi</option><option ${val.condition==='Tidak berisi'?'selected':''}>Tidak berisi</option><option ${val.condition==='Alamat email'?'selected':''}>Alamat email</option><option ${val.condition==='URL'?'selected':''}>URL</option>` : ''}
+                                    ${val.type === 'Panjang' ? `<option ${val.condition==='Jumlah karakter maksimum'?'selected':''}>Jumlah karakter maksimum</option><option ${val.condition==='Jumlah karakter minimum'?'selected':''}>Jumlah karakter minimum</option>` : ''}
+                                    ${val.type === 'Regular expression' ? `<option ${val.condition==='Berisi'?'selected':''}>Berisi</option><option ${val.condition==='Tidak berisi'?'selected':''}>Tidak berisi</option><option ${val.condition==='Kecocokan'?'selected':''}>Kecocokan</option>` : ''}
+                                </select>
+                                <input type="text" class="gf-input inner-neumorph" style="width:120px;" placeholder="${val.type==='Panjang'?'Angka':(val.type==='Angka'?'Angka':'Teks')}" value="${val.value || ''}" oninput="updateQValidation(${sIdx},${qIdx},'value',this.value)">
+                                <input type="text" class="gf-input inner-neumorph" style="flex:1; min-width:180px;" placeholder="Teks kesalahan khusus" value="${val.errorText || ''}" oninput="updateQValidation(${sIdx},${qIdx},'errorText',this.value)">
+                                <button class="top-icon-btn neumorph-circle btn-sm text-danger" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')">✕</button>
+                            </div>`;
+                        }
+                    } 
+                    else if (['pilihan_ganda', 'dropdown'].includes(q.type)) {
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showGoToSection')"><span style="width:20px;">${q.showGoToSection ? '✓' : ''}</span> Buka bagian berdasarkan jawaban</div>`;
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px;">${q.shuffleOptions ? '✓' : ''}</span> Acak urutan opsi</div>`;
+                    }
+                    else if (q.type === 'kotak_centang') {
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')"><span style="width:20px;">${q.showValidation ? '✓' : ''}</span> Validasi jawaban</div>`;
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px;">${q.shuffleOptions ? '✓' : ''}</span> Acak urutan opsi</div>`;
+                        
+                        if (q.showValidation) {
+                            let val = q.validation || { condition: 'Pilih paling sedikit', value: '1', errorText: '' };
+                            optionsHtml += `
+                            <div class="validation-row">
+                                <select class="t-select inner-neumorph" style="width:180px;" onchange="updateQValidationCheck(${sIdx},${qIdx},this.value, null, null)">
+                                    <option ${val.condition==='Pilih paling sedikit'?'selected':''}>Pilih paling sedikit</option>
+                                    <option ${val.condition==='Pilih paling banyak'?'selected':''}>Pilih paling banyak</option>
+                                    <option ${val.condition==='Pilih persis'?'selected':''}>Pilih persis</option>
+                                </select>
+                                <input type="number" class="gf-input inner-neumorph" style="width:100px;" placeholder="Angka" value="${val.value || 1}" oninput="updateQValidationCheck(${sIdx},${qIdx},null, this.value, null)">
+                                <input type="text" class="gf-input inner-neumorph" style="flex:1; min-width:180px;" placeholder="Teks kesalahan khusus" value="${val.errorText || ''}" oninput="updateQValidationCheck(${sIdx},${qIdx},null, null, this.value)">
+                                <button class="top-icon-btn neumorph-circle btn-sm text-danger" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')">✕</button>
+                            </div>`;
+                        }
+                    }
+                    else if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'limitOnePerCol')"><span style="width:20px;">${q.limitOnePerCol ? '✓' : ''}</span> Batasi satu jawaban per kolom</div>`;
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px;">${q.shuffleOptions ? '✓' : ''}</span> Acak urutan baris</div>`;
+                    }
+                    else if (q.type === 'tanggal') {
+                        let showYear = q.includeYear !== false;
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'includeTime')"><span style="width:20px;">${q.includeTime ? '✓' : ''}</span> Sertakan waktu</div>`;
+                        menuItems += `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'includeYear')"><span style="width:20px;">${showYear ? '✓' : ''}</span> Sertakan tahun</div>`;
+                    }
+                    else if (q.type === 'waktu') {
+                        menuItems += `<div class="q-menu-item" onclick="q.timeType='waktu'; debouncedSaveState(); renderBuilder();"><span style="width:20px;">${q.timeType !== 'durasi' ? '✓' : ''}</span> Waktu</div>`;
+                        menuItems += `<div class="q-menu-item" onclick="q.timeType='durasi'; debouncedSaveState(); renderBuilder();"><span style="width:20px;">${q.timeType === 'durasi' ? '✓' : ''}</span> Durasi</div>`;
+                    }
+
+                    // ================= INJEKSI LOGIKA OPSI STANDAR =================
                     if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(q.type)) {
-                        optionsHtml = `<div class="gf-radio-group" style="margin-top:15px; display:flex; flex-direction:column; gap:16px;">`;
+                        optionsHtml += `<div class="gf-radio-group" style="margin-top:15px; display:flex; flex-direction:column; gap:16px;">`;
+                        
+                        // Menyiapkan opsi Section untuk GoTo logic
+                        let sectionOpts = `<option value="next">Lanjutkan ke bagian berikut</option><option value="submit">Kirim formulir</option>`;
+                        currentForm.sections.forEach((s, idx) => { 
+                            sectionOpts += `<option value="s${idx}">Buka bagian ${idx+1} (${s.title || 'Tanpa Judul'})</option>`; 
+                        });
+
                         q.options.forEach((opt, oIdx) => {
                             let icon = q.type === 'kotak_centang' ? '<div class="fake-checkbox"></div>' : (q.type==='dropdown' ? `<span class="fake-num">${oIdx+1}.</span>` : '<div class="fake-radio"></div>');
+                            
+                            let goToSelect = '';
+                            if (q.showGoToSection && ['pilihan_ganda', 'dropdown'].includes(q.type)) {
+                                let mapVal = q.goToSectionMap && q.goToSectionMap[opt] ? q.goToSectionMap[opt] : 'next';
+                                goToSelect = `<select class="t-select inner-neumorph" style="width:220px; font-size:0.85rem;" onchange="updateGoTo(${sIdx}, ${qIdx}, ${oIdx}, '${opt}', this.value)">
+                                    ${sectionOpts.replace(`value="${mapVal}"`, `value="${mapVal}" selected`)}
+                                </select>`;
+                            }
+
                             optionsHtml += `
-                            <div style="display:flex; align-items:flex-start; gap:15px;">
+                            <div style="display:flex; align-items:center; gap:15px;">
                                 <span style="margin-top:5px; flex-shrink:0;">${icon}</span>
                                 <input type="text" class="gf-input inner-neumorph" style="padding:10px 15px; font-size:${theme.textFontSize}px; border-radius:8px; flex:1;" value="${opt}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].options[${oIdx}]=this.value; debouncedSaveState()" placeholder="Ketik Opsi ${oIdx+1}">
                                 <button class="top-icon-btn neumorph-circle btn-sm" style="width:38px; height:38px; flex-shrink:0;" onclick="deleteOption(${sIdx},${qIdx},${oIdx})">✕</button>
+                                ${goToSelect}
                             </div>`;
                         });
                         optionsHtml += `<div style="display:flex; align-items:center; gap:15px; margin-top:5px;"><span style="color:#ccc; margin-left:4px;">${q.type === 'kotak_centang' ? '☐' : '○'}</span><button class="gf-btn-clear neumorph-btn" style="margin-left:0; font-weight:600; padding:8px 15px;" onclick="addOption(${sIdx},${qIdx})">➕ Tambahkan Opsi Lain</button></div></div>`;
                     } 
                     
-                    // ================= TIPE: TEXT / LAINNYA =================
-                    else if (q.type === 'paragraf' || q.type === 'jawaban_singkat') { optionsHtml = `<input type="text" class="gf-input inner-neumorph" placeholder="Teks jawaban ${q.type.replace('_',' ')}" disabled style="margin-top:15px; opacity:0.6;">`; } 
-                    else if (q.type === 'tanggal') { optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">📅 Bulan, Hari, Tahun</div>`; }
-                    else if (q.type === 'waktu') { optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px;">⏰ Waktu</div>`; }
+                    else if (q.type === 'paragraf' || q.type === 'jawaban_singkat') { 
+                        optionsHtml += `<input type="text" class="gf-input inner-neumorph" placeholder="Teks jawaban ${q.type.replace('_',' ')}" disabled style="margin-top:15px; opacity:0.6;">`; 
+                    } 
+                    else if (q.type === 'tanggal') { 
+                        let lbl = (q.includeYear !== false) ? 'Bulan, Hari, Tahun' : 'Bulan, Hari';
+                        optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">📅 ${lbl}</div>`; 
+                        if(q.includeTime) {
+                            optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px;">⏰ Waktu</div>`;
+                        }
+                    }
+                    else if (q.type === 'waktu') { 
+                        let lbl = (q.timeType === 'durasi') ? 'Jam : Menit : Detik' : 'Waktu';
+                        optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">⏰ ${lbl}</div>`; 
+                    }
                     
-                    // ================= SUPER UPGRADE: UPLOAD FILE DGN FILTER (GBR 1) =================
                     else if (q.type === 'upload_file') { 
                         let maxFileOpts = [1, 5, 10].map(v => `<option value="${v}" ${q.maxFiles==v?'selected':''}>${v}</option>`).join('');
                         let maxSizeOpts = ['1 MB', '10 MB', '100 MB', '1 GB', '10 GB'].map(v => `<option value="${v}" ${q.maxSize==v?'selected':''}>${v}</option>`).join('');
@@ -837,7 +1004,6 @@
                         ];
 
                         let allowedTypesHtml = '';
-                        // Jika Toggle Pembatas File Diaktifkan
                         if (q.restrictTypes) {
                             if (!q.allowedFileTypes) q.allowedFileTypes = [];
                             let checksHtml = fileTypesArr.map(ft => {
@@ -847,11 +1013,10 @@
                                             <span style="font-size:${theme.textFontSize}px; color:var(--form-text); font-weight:600;">${ft.label}</span>
                                         </label>`;
                             }).join('');
-                            // Membentuk grid kolom 2 seperti Gbr 1
                             allowedTypesHtml = `<div class="glass-panel" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:20px; padding:20px; background:rgba(139, 92, 246, 0.05); border:1px solid rgba(139, 92, 246, 0.2); border-radius:12px;">${checksHtml}</div>`;
                         }
 
-                        optionsHtml = `
+                        optionsHtml += `
                         <div style="margin-top:20px; display:flex; flex-direction:column; gap:20px;">
                             <div style="display:flex; flex-direction:column; border-bottom:1px solid var(--form-border); padding-bottom:15px; gap:10px;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
@@ -874,11 +1039,10 @@
                         </div>`;
                     }
                     
-                    // ================= SUPER UPGRADE: SKALA LINIER (GBR 2) =================
                     else if (q.type === 'skala_linier') {
                         let minOpts = [0,1].map(v => `<option value="${v}" ${q.scaleMin==v?'selected':''}>${v}</option>`).join('');
                         let maxOpts = [2,3,4,5,6,7,8,9,10].map(v => `<option value="${v}" ${q.scaleMax==v?'selected':''}>${v}</option>`).join('');
-                        optionsHtml = `
+                        optionsHtml += `
                         <div style="display:flex; gap:15px; align-items:center; margin-top:20px;">
                             <select class="t-select inner-neumorph" style="width:70px;" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].scaleMin=parseInt(this.value); debouncedSaveState()">${minOpts}</select>
                             <span style="color:var(--form-text-muted); font-weight:600;">sampai</span>
@@ -896,10 +1060,9 @@
                         </div>`;
                     }
                     
-                    // ================= SUPER UPGRADE: RATING (GBR 4) =================
                     else if (q.type === 'rating') {
                         let levelOpts = [3,4,5,6,7,8,9,10].map(v => `<option value="${v}" ${q.ratingLevels==v?'selected':''}>${v}</option>`).join('');
-                        optionsHtml = `
+                        optionsHtml += `
                         <div style="display:flex; gap:15px; align-items:center; margin-top:20px;">
                             <select class="t-select inner-neumorph" style="width:80px;" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].ratingLevels=parseInt(this.value); debouncedSaveState()">${levelOpts}</select>
                             <div class="inner-neumorph" style="padding:10px 15px; display:flex; align-items:center; gap:8px; color:#f59e0b;"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> Bintang</div>
@@ -914,7 +1077,6 @@
                         </div>`;
                     }
 
-                    // ================= SUPER UPGRADE: KISI PILIHAN GANDA & KOTAK CENTANG (GBR 6 & 8) =================
                     else if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
                         let rowsHtml = '';
                         (q.rows || ['Baris 1']).forEach((r, rIdx) => {
@@ -937,13 +1099,13 @@
                         });
                         colsHtml += `<button class="gf-btn-clear neumorph-btn" style="padding:5px 15px; font-size:0.85rem;" onclick="addGridCol(${sIdx},${qIdx})">➕ Tambahkan kolom</button>`;
 
-                        optionsHtml = `<div style="display:flex; gap:30px; margin-top:20px; flex-wrap:wrap;">
+                        optionsHtml += `<div style="display:flex; gap:30px; margin-top:20px; flex-wrap:wrap;">
                             <div style="flex:1; min-width:200px;"><h4 style="font-size:0.9rem; color:var(--form-text); margin-bottom:15px;">Baris</h4>${rowsHtml}</div>
                             <div style="flex:1; min-width:200px;"><h4 style="font-size:0.9rem; color:var(--form-text); margin-bottom:15px;">Kolom</h4>${colsHtml}</div>
                         </div>`;
                     }
 
-                    else { optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; padding:10px;">[Tipe Paragraf]</div>`; }
+                    else { optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; padding:10px;">[Tipe Paragraf]</div>`; }
 
                     if(q.type === 'title_only') {
                         html += `
@@ -983,7 +1145,10 @@
                                 <option value="waktu" ${q.type==='waktu'?'selected':''}>Waktu</option>
                             </select>
                         </div>
+                        
+                        ${descHtml}
                         ${optionsHtml}
+                        
                         <div class="builder-card-footer">
                             <button class="top-icon-btn neumorph-circle" title="Duplikasikan" onclick="duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
                             <button class="top-icon-btn neumorph-circle text-danger" title="Hapus" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
@@ -993,7 +1158,15 @@
                                 <input type="checkbox" id="req-${sIdx}-${qIdx}" class="switch-input" ${q.required?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].required=this.checked; saveState()">
                                 <label for="req-${sIdx}-${qIdx}" class="switch-label"></label>
                             </div>
-                            <button class="top-icon-btn neumorph-circle" style="margin-left:5px;">⋮</button>
+                            
+                            <!-- SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) -->
+                            <div style="position:relative;">
+                                <button class="top-icon-btn neumorph-circle" style="margin-left:5px;" onclick="toggleQMenu(event, ${sIdx}, ${qIdx})">⋮</button>
+                                <div id="q-menu-${sIdx}-${qIdx}" class="q-menu-dropdown inner-neumorph" style="display:none;" onclick="event.stopPropagation()">
+                                    <div style="font-size:0.75rem; color:var(--form-text-muted); padding:5px 10px; margin-bottom:5px; border-bottom:1px solid var(--form-border);">Tampilkan</div>
+                                    ${menuItems}
+                                </div>
+                            </div>
                         </div>
                     </div>`;
                 });
@@ -1004,23 +1177,21 @@
 
             canvas.innerHTML = html; positionToolbar();
 
-            // SUPER UPGRADE: MENGINISIASI SORTABLE JS PADA SETIAP KELOMPOK PERTANYAAN
+            // MENGINISIASI SORTABLE JS PADA SETIAP KELOMPOK PERTANYAAN
             document.querySelectorAll('.sortable-q-list').forEach((el, sIdx) => {
                 new Sortable(el, {
-                    handle: '.drag-handle', // Handle UI pemindah
-                    animation: 300, // Smooth transition millisecond
-                    ghostClass: 'sortable-ghost', // Styling custom saat dipindahkan
-                    dragClass: 'sortable-drag', // Styling custom node melayang
-                    forceFallback: true, // Bypass HTML5 default dragging glitch
+                    handle: '.drag-handle',
+                    animation: 300,
+                    ghostClass: 'sortable-ghost',
+                    dragClass: 'sortable-drag',
+                    forceFallback: true,
                     fallbackClass: 'sortable-drag',
                     onEnd: function(evt) {
                         if (evt.oldIndex !== evt.newIndex) {
-                            // Mengganti Array di State Javascript
                             let questions = currentForm.sections[sIdx].questions;
                             let movedItem = questions.splice(evt.oldIndex, 1)[0];
                             questions.splice(evt.newIndex, 0, movedItem);
                             
-                            // Menyesuaikan ulang Toolbar Kanan & Card yang Aktif
                             activeSecIdx = sIdx;
                             activeQIdx = evt.newIndex;
                             saveState();
@@ -1033,7 +1204,10 @@
 
         // ================= BUILDER ACTIONS =================
         function addQuestion() {
-            const newQ = { id: 'q_'+Date.now(), type: 'pilihan_ganda', title: 'Pertanyaan Baru', image: '', required: false, options: ['Opsi 1'] };
+            const newQ = { 
+                id: 'q_'+Date.now(), type: 'pilihan_ganda', title: 'Pertanyaan Baru', image: '', required: false, options: ['Opsi 1'],
+                showDescription: false, shuffleOptions: false, showGoToSection: false, limitOnePerCol: false, includeTime: false, includeYear: true, timeType: 'waktu'
+            };
             if(activeSecIdx === -1) activeSecIdx = 0;
             if(activeQIdx === -1) { currentForm.sections[activeSecIdx].questions.push(newQ); activeQIdx = currentForm.sections[activeSecIdx].questions.length-1; } 
             else { currentForm.sections[activeSecIdx].questions.splice(activeQIdx + 1, 0, newQ); activeQIdx++; }
@@ -1043,10 +1217,21 @@
             const newSec = { id: 's_'+Date.now(), stepName: 'Tahap Baru', title: 'Bagian Tanpa Judul', description: 'Deskripsi (opsional)', questions: [] };
             currentForm.sections.splice(activeSecIdx + 1, 0, newSec); activeSecIdx++; activeQIdx = -1; saveState(); renderBuilder();
         }
-        function addTitleDesc() { const newQ = { id: 'q_'+Date.now(), type: 'title_only', title: 'Judul Teks', image: '', required: false, options: [] }; currentForm.sections[activeSecIdx].questions.push(newQ); saveState(); renderBuilder(); }
-        function deleteQuestion(sIdx, qIdx) { currentForm.sections[sIdx].questions.splice(qIdx, 1); activeQIdx = -1; saveState(); renderBuilder(); }
-        function duplicateQuestion(sIdx, qIdx) { let q = JSON.parse(JSON.stringify(currentForm.sections[sIdx].questions[qIdx])); q.id = 'q_' + Date.now(); currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, q); activeQIdx = qIdx + 1; saveState(); renderBuilder(); }
-        function deleteSection(sIdx) { if(currentForm.sections.length <= 1) return showToast("Tidak dapat menghapus bagian terakhir."); if(confirm("Hapus bagian ini?")) { currentForm.sections.splice(sIdx, 1); activeSecIdx = 0; activeQIdx = -1; saveState(); renderBuilder(); } }
+        function addTitleDesc() { 
+            const newQ = { id: 'q_'+Date.now(), type: 'title_only', title: 'Judul Teks', image: '', required: false, options: [] }; 
+            currentForm.sections[activeSecIdx].questions.push(newQ); saveState(); renderBuilder(); 
+        }
+        function deleteQuestion(sIdx, qIdx) { 
+            currentForm.sections[sIdx].questions.splice(qIdx, 1); activeQIdx = -1; saveState(); renderBuilder(); 
+        }
+        function duplicateQuestion(sIdx, qIdx) { 
+            let q = JSON.parse(JSON.stringify(currentForm.sections[sIdx].questions[qIdx])); q.id = 'q_' + Date.now(); 
+            currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, q); activeQIdx = qIdx + 1; saveState(); renderBuilder(); 
+        }
+        function deleteSection(sIdx) { 
+            if(currentForm.sections.length <= 1) return showToast("Tidak dapat menghapus bagian terakhir."); 
+            if(confirm("Hapus bagian ini?")) { currentForm.sections.splice(sIdx, 1); activeSecIdx = 0; activeQIdx = -1; saveState(); renderBuilder(); } 
+        }
         
         function changeQType(sIdx, qIdx, type) { 
             let q = currentForm.sections[sIdx].questions[qIdx];
@@ -1061,7 +1246,15 @@
             if(type === 'skala_linier') { q.scaleMin = q.scaleMin || 1; q.scaleMax = q.scaleMax || 5; }
             if(type === 'rating') { q.ratingLevels = q.ratingLevels || 5; }
             if(type === 'upload_file') { q.maxFiles = q.maxFiles || 1; q.maxSize = q.maxSize || '10 MB'; q.allowedFileTypes = []; }
+            if(type === 'tanggal') { q.includeYear = true; }
+            if(type === 'waktu') { q.timeType = 'waktu'; }
             
+            // Reset state spesifik Menu agar bersih setiap ganti tipe
+            q.showValidation = false; 
+            q.showGoToSection = false; 
+            q.shuffleOptions = false; 
+            q.limitOnePerCol = false;
+
             saveState(); renderBuilder(); 
         }
         function addOption(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].options.push('Opsi ' + (currentForm.sections[sIdx].questions[qIdx].options.length + 1)); saveState(); renderBuilder(); }
@@ -1087,7 +1280,7 @@
             saveState(); renderBuilder();
         }
 
-        // ================= SETTINGS V2 (SUPER UPGRADE ACCORDION & KUIS) =================
+        // ================= SETTINGS V2 =================
         function updateSetting(key, val) { currentForm.settings[key] = val; saveState(); }
         function updateRootSetting(key, val) { currentForm[key] = val; saveState(); }
         
@@ -1140,7 +1333,7 @@
                 if(el.value === releaseVal) el.checked = true;
             });
 
-            document.getElementById('setQuizMissed').checked = currentForm.settings.quizShowMissed !== false; // Default true
+            document.getElementById('setQuizMissed').checked = currentForm.settings.quizShowMissed !== false; 
             document.getElementById('setQuizCorrect').checked = currentForm.settings.quizShowCorrect !== false;
             document.getElementById('setQuizPoints').checked = currentForm.settings.quizShowPoints !== false;
             document.getElementById('setQuizDefPoints').value = currentForm.settings.quizDefaultPoints || 0;
