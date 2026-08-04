@@ -26,6 +26,70 @@
         .form-title { font-family: var(--form-font-header) !important; }
         .question-title { font-family: var(--form-font-question) !important; }
         .form-desc, .gf-input, .opt-text, .step-name { font-family: var(--form-font-text) !important; }
+
+        /* UPGRADE: STYLING DESAIN LIVE COUNTDOWN TIMER */
+        .countdown-live-wrapper {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 18px 22px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: var(--outer-neumorph);
+        }
+
+        .countdown-live-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--form-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .countdown-live-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Space Grotesk', monospace, sans-serif !important;
+        }
+
+        .cd-item {
+            background: var(--form-card-bg);
+            border: 1px solid var(--form-border);
+            box-shadow: var(--inner-neumorph);
+            padding: 6px 12px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 48px;
+        }
+
+        .cd-number {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--form-active-border);
+            line-height: 1.1;
+        }
+
+        .cd-text {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--form-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cd-separator {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--form-active-border);
+            animation: pulse 1.5s infinite;
+        }
     </style>
 </head>
 <body class="public-form-body">
@@ -47,6 +111,7 @@
         const slug = pathArray[pathArray.length - 1];
         let formData = null;
         let currentStep = 0; // MULTI-STEP WIZARD LOGIC
+        let countdownTimerInterval = null; // UPGRADE: Countdown Interval Reference
 
         document.addEventListener('DOMContentLoaded', loadPublicForm);
 
@@ -83,11 +148,13 @@
                 }
 
                 renderFormHTML();
-                initAutoSave(); // SUPER UPGRADE: Init AutoSave LocalStorage
+                initAutoSave(); // Init AutoSave LocalStorage
+                initLiveCountdown(); // UPGRADE: Init Live Realtime Countdown
             } catch(e) { renderError("Gangguan Koneksi. Gagal terhubung ke database cloud BEM."); }
         }
 
         function renderError(msg) {
+            if(countdownTimerInterval) clearInterval(countdownTimerInterval);
             document.getElementById('publicFormWrapper').innerHTML = `
                 <div class="form-header-card glass-card neumorph-outer" style="border-top:8px solid #ef4444; text-align:center; padding: 70px 40px; margin-top:50px;">
                     <div class="glow-effect" style="font-size: 4rem; margin-bottom: 25px; display:inline-block; filter: drop-shadow(0 0 20px rgba(239,68,68,0.5));">🛑</div>
@@ -106,14 +173,32 @@
             let headerImgStyle = theme.headerImage ? `background-image: url('${theme.headerImage}');` : 'background: linear-gradient(135deg, var(--form-active-border), transparent);';
             let headerClass = theme.headerImage ? 'has-image' : 'no-image';
 
+            // UPGRADE: REALTIME LIVE COUNTDOWN & BADGE UI
             let warningHTML = '';
             if(settings.deadline) {
                 const dl = new Date(settings.deadline);
                 const strDl = dl.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour:'2-digit', minute:'2-digit'});
-                warningHTML = `<div class="deadline-badge glass-panel glow-effect">⏳ Auto-Close: ${strDl} WITA</div>`;
+                
+                warningHTML = `
+                    <div class="countdown-live-wrapper">
+                        <div class="countdown-live-label">
+                            <span>⏳</span>
+                            <span>Auto-Close: ${strDl} WITA</span>
+                        </div>
+                        <div class="countdown-live-box" id="liveCountdownContainer">
+                            <div class="cd-item"><div class="cd-number" id="cdDays">00</div><div class="cd-text">Hari</div></div>
+                            <span class="cd-separator">:</span>
+                            <div class="cd-item"><div class="cd-number" id="cdHours">00</div><div class="cd-text">Jam</div></div>
+                            <span class="cd-separator">:</span>
+                            <div class="cd-item"><div class="cd-number" id="cdMinutes">00</div><div class="cd-text">Menit</div></div>
+                            <span class="cd-separator">:</span>
+                            <div class="cd-item"><div class="cd-number" id="cdSeconds">00</div><div class="cd-text">Detik</div></div>
+                        </div>
+                    </div>
+                `;
             }
             
-            // SUPER UPGRADE: Indikator Auto-Save
+            // Indikator Auto-Save
             let draftInfoHTML = !settings.disableAutoSave ? `<div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--form-text-muted); margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.2);"><span style="color:#10b981;">☁️</span> Draf disimpan secara otomatis ke browser Anda</div>` : '';
 
             let html = `<form id="submissionForm" onsubmit="submitForm(event)">`;
@@ -142,12 +227,12 @@
                         <h1 class="form-title gradient-text" style="font-size:${theme.headerFontSize || 28}px;">${formData.title}</h1>
                         <p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize || 12}px;">${formData.description}</p>
                         ${warningHTML}
-                        ${settings.collectEmail === 'input' || settings.defaultRequired ? '<div class="required-notice glass-panel">⚠️ Tanda <span class="asterisk">*</span> menunjukkan area wajib isi</div>' : ''}
+                        ${settings.collectEmail === 'input' || settings.defaultRequired ? '<div class="required-notice glass-panel" style="margin-top:20px;">⚠️ Tanda <span class="asterisk">*</span> menunjukkan area wajib isi</div>' : ''}
                         ${draftInfoHTML}
                     </div>
             `;
 
-            // SUPER UPGRADE: Logika Pengumpulan Email Sinkronisasi Kuis
+            // Logika Pengumpulan Email Sinkronisasi Kuis
             const collectEmail = settings.collectEmail || 'none';
             const isQuizManual = settings.isQuiz && settings.quizRelease === 'manual';
             const requireEmail = collectEmail === 'input' || collectEmail === 'verified' || isQuizManual;
@@ -162,7 +247,7 @@
                 `;
             }
 
-            // SUPER UPGRADE: Logika Shuffle Soal
+            // Logika Shuffle Soal
             let renderSections = JSON.parse(JSON.stringify(formData.sections));
             if (settings.shuffleQuestions) {
                 renderSections.forEach(sec => {
@@ -205,13 +290,13 @@
                          return;
                     }
 
-                    // SUPER UPGRADE: Kewajiban Default dari Setelan
+                    // Kewajiban Default dari Setelan
                     let isReq = q.required || settings.defaultRequired;
                     let reqHtml = isReq ? '<span class="asterisk" title="Wajib Diisi">*</span>' : '';
                     let nameAttr = `name="${q.id}"`;
                     let textSize = `font-size:${theme.textFontSize || 12}px;`;
 
-                    // SUPER UPGRADE: Tampilan Poin Kuis
+                    // Tampilan Poin Kuis
                     let pointsHTML = '';
                     if (settings.isQuiz && settings.quizShowPoints !== false) {
                         let pts = q.points !== undefined ? q.points : (settings.quizDefaultPoints || 0);
@@ -268,7 +353,7 @@
                 });
             });
 
-            // SUPER UPGRADE: Fitur Meminta Salinan Jawaban
+            // Fitur Meminta Salinan Jawaban
             if (settings.sendCopy === 'requested' && requireEmail) {
                 html += `
                 <div class="form-question-card glass-card neumorph-outer" style="margin-bottom:30px; padding:25px 35px;">
@@ -284,7 +369,7 @@
 
             html += `</div>`; // TUTUP FORM-STEP TERAKHIR
 
-            // SUPER UPGRADE: Indikator Progress Bar
+            // Indikator Progress Bar
             let progressTextHTML = '';
             if (settings.showProgress && renderSections.length > 1) {
                 progressTextHTML = `<div style="font-size:0.95rem; font-weight:600; color:var(--form-text-muted); text-align:center; flex:1; min-width:150px;" id="progressTextIndicator">Halaman 1 dari ${renderSections.length}</div>`;
@@ -309,6 +394,49 @@
             </form>`;
 
             wrapper.innerHTML = html;
+        }
+
+        // ================= LIVE COUNTDOWN TIMER ENGINE =================
+        function initLiveCountdown() {
+            if(!formData || !formData.settings || !formData.settings.deadline) return;
+
+            const deadlineTime = new Date(formData.settings.deadline).getTime();
+            if(isNaN(deadlineTime)) return;
+
+            // Update timer fungsi internal
+            function updateTimer() {
+                const now = new Date().getTime();
+                const diff = deadlineTime - now;
+
+                if(diff <= 0) {
+                    if(countdownTimerInterval) clearInterval(countdownTimerInterval);
+                    const deadlineDate = new Date(formData.settings.deadline);
+                    const dateStr = deadlineDate.toLocaleString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    renderError(`Batas Waktu Terlampaui. Sistem otomatis menutup formulir pada <strong style="color:var(--form-active-border); display:block; margin-top:15px; font-size:1.4rem;">${dateStr} WITA</strong>`);
+                    return;
+                }
+
+                // Kalkulasi Waktu
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                // Inject UI Element
+                const elDays = document.getElementById('cdDays');
+                const elHours = document.getElementById('cdHours');
+                const elMinutes = document.getElementById('cdMinutes');
+                const elSeconds = document.getElementById('cdSeconds');
+
+                if(elDays) elDays.innerText = String(days).padStart(2, '0');
+                if(elHours) elHours.innerText = String(hours).padStart(2, '0');
+                if(elMinutes) elMinutes.innerText = String(minutes).padStart(2, '0');
+                if(elSeconds) elSeconds.innerText = String(seconds).padStart(2, '0');
+            }
+
+            // Jalankan 1 kali langsung dan hidupkan interval per 1000ms
+            updateTimer();
+            countdownTimerInterval = setInterval(updateTimer, 1000);
         }
 
         // ================= AUTO-SAVE DRAFT ENGINE =================
@@ -404,7 +532,7 @@
                 document.getElementById('btnKirim').style.display = 'none';
             }
             
-            // SUPER UPGRADE: Teks Progress Bar
+            // Teks Progress Bar
             const progInd = document.getElementById('progressTextIndicator');
             if (progInd) { progInd.innerText = `Halaman ${currentStep + 1} dari ${formData.sections.length}`; }
 
@@ -446,7 +574,8 @@
                 const json = await res.json();
                 
                 if (json.success) {
-                    // SUPER UPGRADE: Hapus Draf setelah sukses kirim
+                    if(countdownTimerInterval) clearInterval(countdownTimerInterval);
+                    // Hapus Draf setelah sukses kirim
                     localStorage.removeItem(`bem_form_draft_${formData.id}`);
                     
                     const msg = formData.settings.confirmationMessage || "Jawaban Anda telah dicatat.";
