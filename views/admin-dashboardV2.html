@@ -18,17 +18,6 @@
         .form-title { font-family: var(--form-font-header) !important; }
         .question-title { font-family: var(--form-font-question) !important; }
         .form-desc, .gf-input, .opt-text { font-family: var(--form-font-text) !important; }
-        
-        /* SUPER UPGRADE: Animasi Floating Toolbar */
-        #floater { transition: top 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .toolbar-btn { font-size: 1.2rem; font-weight: 700; font-family: var(--form-font-text); }
-        @media(max-width: 768px) {
-            #floater { 
-                position: fixed !important; top: auto !important; bottom: 20px !important; 
-                left: 50% !important; transform: translateX(-50%) !important; 
-                flex-direction: row !important; padding: 10px 20px !important; z-index: 9999;
-            }
-        }
     </style>
 </head>
 <body class="admin-v2-body">
@@ -163,14 +152,11 @@
                     <!-- Javascript merender pertanyaan disini -->
                 </div>
 
-                <!-- SUPER UPGRADE: Floating Toolbar Mengikuti Posisi Aktif -->
-                <div class="floating-toolbar glass-panel" id="floater" style="position: absolute; right: -75px; top: 0; display:flex; flex-direction:column; gap:12px; padding: 12px 10px !important;">
-                    <button class="toolbar-btn neumorph-circle" onclick="addQuestion()" title="Tambahkan Pertanyaan" style="font-size:1.6rem;">⊕</button>
-                    <button class="toolbar-btn neumorph-circle" title="Impor Pertanyaan" onclick="showToast('Fitur Impor Segera Hadir')">⎘</button>
-                    <button class="toolbar-btn neumorph-circle" onclick="addTitleDesc()" title="Tambahkan Judul dan Deskripsi" style="font-family:serif;">Tt</button>
-                    <button class="toolbar-btn neumorph-circle" title="Tambahkan Gambar" onclick="showToast('Fitur Media Segera Hadir')">🖼️</button>
-                    <button class="toolbar-btn neumorph-circle" title="Tambahkan Video" onclick="showToast('Fitur Media Segera Hadir')">▶️</button>
+                <!-- Floating Toolbar (Tools Kanan) -->
+                <div class="floating-toolbar glass-panel" id="floater">
+                    <button class="toolbar-btn neumorph-circle" onclick="addQuestion()" title="Tambahkan Pertanyaan">⊕</button>
                     <button class="toolbar-btn neumorph-circle" onclick="addSection()" title="Tambahkan Bagian">◫</button>
+                    <button class="toolbar-btn neumorph-circle" onclick="addTitleDesc()" title="Tambahkan Judul dan Deskripsi">Tt</button>
                 </div>
             </div>
         </div>
@@ -598,7 +584,7 @@
 
             if(tabId === 'jawaban') loadResponses();
             if(tabId === 'setelan') renderSettings();
-            if(tabId === 'pertanyaan') setTimeout(() => positionToolbar(), 50); // delay agar offsetTop terhitung akurat
+            if(tabId === 'pertanyaan') setTimeout(() => positionToolbar(), 50); 
         }
 
         function backToMain() {
@@ -749,7 +735,19 @@
         }
         function handleDragEnd(e) { this.classList.remove('dragging'); }
 
-        // ================= CORE FORM BUILDER ENGINE (SUPER UPGRADE) =================
+        // ================= CORE FORM BUILDER ENGINE =================
+        // SUPER UPGRADE: Menyimpan toggle file type secara global agar dapat di-bind via fungsi event inline HTML
+        window.toggleAllowedFileType = function(sIdx, qIdx, ftId, isChecked) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if (!q.allowedFileTypes) q.allowedFileTypes = [];
+            if (isChecked) {
+                if (!q.allowedFileTypes.includes(ftId)) q.allowedFileTypes.push(ftId);
+            } else {
+                q.allowedFileTypes = q.allowedFileTypes.filter(id => id !== ftId);
+            }
+            debouncedSaveState();
+        };
+
         function renderBuilder() {
             const canvas = document.getElementById('builderCanvas');
             const theme = currentForm.theme;
@@ -790,7 +788,6 @@
 
                 sec.questions.forEach((q, qIdx) => {
                     let isActive = (activeSecIdx === sIdx && activeQIdx === qIdx) ? 'active hover-glow' : '';
-                    
                     let optionsHtml = '';
                     
                     // ================= TIPE: PILIHAN / DROPDOWN =================
@@ -813,18 +810,44 @@
                     else if (q.type === 'tanggal') { optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">📅 Bulan, Hari, Tahun</div>`; }
                     else if (q.type === 'waktu') { optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px;">⏰ Waktu</div>`; }
                     
-                    // ================= SUPER UPGRADE: UPLOAD FILE (GBR 1) =================
+                    // ================= SUPER UPGRADE: UPLOAD FILE DGN FILTER (GBR 1) =================
                     else if (q.type === 'upload_file') { 
                         let maxFileOpts = [1, 5, 10].map(v => `<option value="${v}" ${q.maxFiles==v?'selected':''}>${v}</option>`).join('');
                         let maxSizeOpts = ['1 MB', '10 MB', '100 MB', '1 GB', '10 GB'].map(v => `<option value="${v}" ${q.maxSize==v?'selected':''}>${v}</option>`).join('');
+                        
+                        let fileTypesArr = [
+                            { id: 'document', label: 'Dokumen' }, { id: 'presentation', label: 'Presentasi' },
+                            { id: 'spreadsheet', label: 'Spreadsheet' }, { id: 'image', label: 'Gambar' },
+                            { id: 'pdf', label: 'PDF' }, { id: 'photo', label: 'Foto' },
+                            { id: 'video', label: 'Video' }, { id: 'audio', label: 'Audio' }
+                        ];
+
+                        let allowedTypesHtml = '';
+                        // Jika Toggle Pembatas File Diaktifkan
+                        if (q.restrictTypes) {
+                            if (!q.allowedFileTypes) q.allowedFileTypes = [];
+                            let checksHtml = fileTypesArr.map(ft => {
+                                let isChecked = q.allowedFileTypes.includes(ft.id) ? 'checked' : '';
+                                return `<label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                                            <input type="checkbox" class="custom-check" ${isChecked} onchange="toggleAllowedFileType(${sIdx}, ${qIdx}, '${ft.id}', this.checked)">
+                                            <span style="font-size:${theme.textFontSize}px; color:var(--form-text); font-weight:600;">${ft.label}</span>
+                                        </label>`;
+                            }).join('');
+                            // Membentuk grid kolom 2 seperti Gbr 1
+                            allowedTypesHtml = `<div class="glass-panel" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:20px; padding:20px; background:rgba(139, 92, 246, 0.05); border:1px solid rgba(139, 92, 246, 0.2); border-radius:12px;">${checksHtml}</div>`;
+                        }
+
                         optionsHtml = `
                         <div style="margin-top:20px; display:flex; flex-direction:column; gap:20px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--form-border); padding-bottom:15px; flex-wrap:wrap; gap:10px;">
-                                <span style="font-weight:600; color:var(--form-text);">Izinkan hanya jenis file tertentu</span>
-                                <div class="toggle-switch neumorph-switch">
-                                    <input type="checkbox" id="restrict-${sIdx}-${qIdx}" class="switch-input" ${q.restrictTypes?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].restrictTypes=this.checked; debouncedSaveState()">
-                                    <label for="restrict-${sIdx}-${qIdx}" class="switch-label"></label>
+                            <div style="display:flex; flex-direction:column; border-bottom:1px solid var(--form-border); padding-bottom:15px; gap:10px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                                    <span style="font-weight:600; color:var(--form-text);">Izinkan hanya jenis file tertentu</span>
+                                    <div class="toggle-switch neumorph-switch">
+                                        <input type="checkbox" id="restrict-${sIdx}-${qIdx}" class="switch-input" ${q.restrictTypes?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].restrictTypes=this.checked; debouncedSaveState(); renderBuilder();">
+                                        <label for="restrict-${sIdx}-${qIdx}" class="switch-label"></label>
+                                    </div>
                                 </div>
+                                ${allowedTypesHtml}
                             </div>
                             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                                 <span style="font-weight:600; color:var(--form-text);">Jumlah maksimum file</span>
@@ -962,10 +985,7 @@
                 });
             });
 
-            canvas.innerHTML = html; 
-            
-            // Sync Posisi Toolbar secara Halus Setiap Builder Rendered
-            setTimeout(() => positionToolbar(), 50);
+            canvas.innerHTML = html; positionToolbar();
         }
 
         // ================= BUILDER ACTIONS =================
@@ -989,21 +1009,15 @@
             let q = currentForm.sections[sIdx].questions[qIdx];
             q.type = type; 
             
-            // Inisialisasi Data Baru untuk tipe-tipe spesifik saat diganti
+            // Inisialisasi Data Baru untuk tipe-tipe spesifik
             if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(type) && (!q.options || q.options.length === 0)) q.options = ['Opsi 1']; 
             if(['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(type)) {
                 if(!q.rows) q.rows = ['Baris 1'];
                 if(!q.columns) q.columns = ['Kolom 1'];
             }
-            if(type === 'skala_linier') {
-                q.scaleMin = q.scaleMin || 1; q.scaleMax = q.scaleMax || 5;
-            }
-            if(type === 'rating') {
-                q.ratingLevels = q.ratingLevels || 5;
-            }
-            if(type === 'upload_file') {
-                q.maxFiles = q.maxFiles || 1; q.maxSize = q.maxSize || '10 MB';
-            }
+            if(type === 'skala_linier') { q.scaleMin = q.scaleMin || 1; q.scaleMax = q.scaleMax || 5; }
+            if(type === 'rating') { q.ratingLevels = q.ratingLevels || 5; }
+            if(type === 'upload_file') { q.maxFiles = q.maxFiles || 1; q.maxSize = q.maxSize || '10 MB'; q.allowedFileTypes = []; }
             
             saveState(); renderBuilder(); 
         }
