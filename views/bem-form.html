@@ -232,6 +232,15 @@
             return array;
         }
 
+        // Hitung akumulasi poin untuk soal kisi
+        function getQuestionPoints(q) {
+            if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
+                if (!q.rowPoints) return 0;
+                return Object.values(q.rowPoints).reduce((a, b) => a + parseInt(b || 0), 0);
+            }
+            return q.points || 0;
+        }
+
         function renderFormHTML() {
             const wrapper = document.getElementById('publicFormWrapper');
             const theme = formData.theme || {};
@@ -363,10 +372,11 @@
                     let nameAttr = `name="${q.id}"`;
                     let textSize = `font-size:${theme.textFontSize || 12}px;`;
 
-                    // Tampilan Poin Kuis
+                    // Tampilan Poin Kuis (Sync dengan Answer Key mode logic)
                     let pointsHTML = '';
                     if (settings.isQuiz && settings.quizShowPoints !== false) {
-                        let pts = q.points !== undefined ? q.points : (settings.quizDefaultPoints || 0);
+                        let pts = getQuestionPoints(q);
+                        if (pts === 0) pts = settings.quizDefaultPoints || 0;
                         if (pts > 0) {
                             pointsHTML = `<span style="float:right; font-size:0.85rem; background:rgba(139, 92, 246, 0.15); color:var(--form-active-border); padding:4px 10px; border-radius:12px; font-weight:700; display:inline-flex; align-items:center; gap:5px;">⭐ ${pts} Poin</span>`;
                         }
