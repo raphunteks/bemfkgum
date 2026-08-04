@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulir - BEM KBMFKG UMI (Futuristic Edition)</title>
+    <title>Formulir - BEM KBMFKG UMI (Futuristic)</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- DYNAMIC FONTS UNTUK THEME RENDERER AESTHETIC -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Playfair+Display:wght@600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- DYNAMIC FONTS UNTUK THEME RENDERER -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Playfair+Display:wght@500&family=Oswald:wght@500&family=Lora:wght@500&family=Montserrat:wght@500&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
@@ -15,7 +15,6 @@
     <script src="/js/protect-devtools.js"></script>
 
     <style>
-        /* TEMA DINAMIS AKAN MENG-OVERRIDE CLASS INI VIA JAVASCRIPT */
         body.public-form-body { 
             background: var(--form-bg); 
             font-family: var(--form-font-text); 
@@ -24,23 +23,22 @@
     </style>
 </head>
 <body class="public-form-body">
-    <!-- HEADER STANDAR BEM -->
     <%- include('partials/header.html') %>
 
     <main class="form-wrapper" id="publicFormWrapper">
         <div style="text-align:center; padding: 150px 20px;">
             <div class="loader-ring glow-effect" style="border-color:var(--form-active-border); border-top-color:transparent;"></div>
-            <p style="color:var(--form-text); font-size:1.2rem; font-weight:700; margin-top:25px; letter-spacing:1px; animation: pulse 2s infinite;">Memuat Sistem BEM...</p>
+            <p style="color:var(--form-text-muted); font-size:1.1rem; font-weight:700; margin-top:20px; animation: pulse 2s infinite;">Mempersiapkan Formulir...</p>
         </div>
     </main>
 
-    <!-- FOOTER STANDAR BEM -->
     <%- include('partials/footer.html') %>
 
     <script>
         const pathArray = window.location.pathname.split('/');
         const slug = pathArray[pathArray.length - 1];
         let formData = null;
+        let currentStep = 0; // MULTI-STEP LOGIC V2
 
         document.addEventListener('DOMContentLoaded', loadPublicForm);
 
@@ -49,11 +47,11 @@
                 const res = await fetch(`/api/forms/${slug}`);
                 const json = await res.json();
                 
-                if(!json.success || !json.data) { return renderError("Data Anomali! Formulir tidak ditemukan di server atau URL tidak sah."); }
+                if(!json.success || !json.data) { return renderError("Oops! Formulir tidak ditemukan atau URL link Anda tidak valid."); }
                 
                 formData = json.data;
                 
-                // Set Theme Secara Dinamis ke :root CSS
+                // Set Theme from JSON Secara Dinamis
                 if(formData.theme) {
                     const t = formData.theme;
                     document.documentElement.style.setProperty('--form-active-border', t.color);
@@ -63,28 +61,28 @@
                     document.documentElement.style.setProperty('--form-font-text', `"${t.textFont}", sans-serif`);
                 }
                 
-                if(formData.isActive === false) { return renderError("Sesi Berakhir. Formulir ini telah ditutup oleh Administrator BEM."); }
+                if(formData.isActive === false) { return renderError("Formulir ini sudah ditutup dan tidak menerima tanggapan lagi."); }
 
                 if(formData.settings && formData.settings.deadline) {
                     const now = new Date();
                     const deadlineDate = new Date(formData.settings.deadline);
                     if(now > deadlineDate) {
                         const dateStr = deadlineDate.toLocaleString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                        return renderError(`Batas Waktu Terlampaui. Sistem otomatis menutup formulir pada <strong style="color:var(--form-active-border); display:block; margin-top:15px; font-size:1.4rem;">${dateStr} WITA</strong>`);
+                        return renderError(`Waktu pengisian formulir ini telah berakhir pada <strong style="color:var(--form-active-border); display:block; margin-top:10px;">${dateStr} WITA</strong>`);
                     }
                 }
 
                 renderFormHTML();
-            } catch(e) { renderError("Gangguan Koneksi. Gagal terhubung ke database cloud BEM."); }
+            } catch(e) { renderError("Terjadi kesalahan jaringan saat memuat form."); }
         }
 
         function renderError(msg) {
             document.getElementById('publicFormWrapper').innerHTML = `
-                <div class="form-header-card glass-card neumorph-outer" style="border-top:8px solid #ef4444; text-align:center; padding: 70px 40px; margin-top:50px;">
-                    <div class="glow-effect" style="font-size: 4rem; margin-bottom: 25px; display:inline-block; filter: drop-shadow(0 0 20px rgba(239,68,68,0.5));">🛑</div>
-                    <h2 class="form-title" style="color:#ef4444; font-size:2.2rem; font-weight:800; margin-bottom:20px; font-family:var(--form-font-header);">AKSES TERKUNCI</h2>
-                    <p class="form-desc" style="font-size:1.2rem; color:var(--form-text); line-height:1.6;">${msg}</p>
-                    <button class="gf-btn-clear neumorph-btn" style="margin-top:40px; font-size:1.1rem; color:#ef4444;" onclick="window.location.href='/'">🔙 Kembali ke Portal Utama</button>
+                <div class="form-header-card glass-card neumorph-outer" style="border-top:12px solid #ef4444; text-align:center; padding: 60px 30px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🛑</div>
+                    <h2 class="form-title" style="color:#ef4444; font-size:1.8rem; font-weight:800; margin-bottom:15px;">Akses Ditolak</h2>
+                    <p class="form-desc" style="font-size:1.1rem; color:var(--form-text);">${msg}</p>
+                    <button class="gf-btn-clear neumorph-btn" style="margin-top:30px; color:#ef4444;" onclick="window.location.href='/'">Kembali ke Beranda</button>
                 </div>
             `;
         }
@@ -92,67 +90,93 @@
         function renderFormHTML() {
             const wrapper = document.getElementById('publicFormWrapper');
             const theme = formData.theme || {};
-            
-            let headerImgStyle = theme.headerImage ? `background-image: url('${theme.headerImage}');` : 'background: linear-gradient(135deg, var(--form-active-border), transparent);';
-            let headerClass = theme.headerImage ? 'has-image' : 'no-image';
-
+            let headerImgStyle = theme.headerImage ? `background-image: url('${theme.headerImage}');` : '';
             let warningHTML = '';
+            
             if(formData.settings && formData.settings.deadline) {
                 const dl = new Date(formData.settings.deadline);
                 const strDl = dl.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour:'2-digit', minute:'2-digit'});
-                warningHTML = `<div class="deadline-badge glass-panel glow-effect">⏳ Auto-Close: ${strDl} WITA</div>`;
+                warningHTML = `<div class="deadline-badge glass-panel glow-effect" style="color:#ca8a04; border-left:4px solid #ca8a04; margin-top:20px; font-weight:600;">⏳ Auto-Close: ${strDl} WITA</div>`;
             }
 
-            let html = `
-                <form id="submissionForm" onsubmit="submitForm(event)">
-                    <div class="form-header-banner ${headerClass}" style="${headerImgStyle}"></div>
-                    <div class="form-header-card glass-card neumorph-outer rounded-top-none main-hero-card">
-                        <h1 class="form-title gradient-text" style="font-size:${theme.headerFontSize || 28}px;">${formData.title}</h1>
-                        <p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize || 12}px;">${formData.description}</p>
-                        ${warningHTML}
-                        ${formData.settings.collectEmail === 'input' ? '<div class="required-notice glass-panel">⚠️ Tanda <span class="asterisk">*</span> menunjukkan area wajib isi</div>' : ''}
-                    </div>
+            let html = `<form id="submissionForm" onsubmit="submitForm(event)">`;
+
+            // === RENDER TIMELINE STEPPER JIKA ADA >1 SECTIONS ===
+            if (formData.sections.length > 1) {
+                html += `<div class="stepper-wrapper glass-panel neumorph-outer">`;
+                formData.sections.forEach((sec, idx) => {
+                    html += `
+                        <div class="stepper-item ${idx === 0 ? 'active' : ''}" id="stepper-item-${idx}">
+                            <div class="step-counter glow-effect">${idx + 1}</div>
+                            <div class="step-name" style="font-size:${theme.textFontSize}px;">${sec.stepName || 'Tahap '+(idx+1)}</div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            // === RENDER HEADER DAN EMAIL PADA STEP 1 ===
+            html += `<div class="form-step active" id="step-0">`;
+            
+            html += `
+                <div class="form-header-banner" style="${headerImgStyle}"></div>
+                <div class="form-header-card glass-card neumorph-outer rounded-top-none">
+                    <h1 class="form-title gradient-text" style="font-size:${theme.headerFontSize || 28}px;">${formData.title}</h1>
+                    <p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize || 12}px;">${formData.description}</p>
+                    ${warningHTML}
+                    ${formData.settings.collectEmail === 'input' ? `<div class="glass-panel" style="margin-top:20px; color:#ef4444; font-size:0.85rem; font-weight:bold;">* Menunjukkan pertanyaan yang wajib diisi</div>` : ''}
+                </div>
             `;
 
             if (formData.settings.collectEmail === 'input') {
                 html += `
-                    <div class="form-question-card glass-card neumorph-outer email-req-card">
-                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px;">Identitas Digital (Email) <span class="asterisk">*</span></div>
-                        <input type="email" class="gf-input inner-neumorph" name="respondent_email" placeholder="Ketik alamat email Anda..." required style="font-size:${theme.textFontSize || 12}px;">
+                    <div class="form-question-card glass-card neumorph-outer" style="border-left: 6px solid var(--form-active-border);">
+                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px;">Alamat Email <span class="asterisk">*</span></div>
+                        <input type="email" class="gf-input inner-neumorph" name="respondent_email" placeholder="Jawaban Anda" required style="font-size:${theme.textFontSize || 12}px;">
                     </div>
                 `;
             }
 
-            // MAPPING BAGIAN (SECTION) & PERTANYAAN
+            // === RENDER SECTIONS & QUESTIONS DENGAN WIZARD LOGIC ===
             formData.sections.forEach((sec, sIdx) => {
-                if(formData.sections.length > 1) {
+                if(sIdx > 0) {
+                    html += `</div><div class="form-step" id="step-${sIdx}">`; // Tutup div step sblumnya dan buka step baru
+                    
                     html += `
-                    <div class="section-divider-wrapper public-view">
+                    <div style="margin-top:30px; position:relative;">
                         <div class="form-section-header glow-effect">Segmen ${sIdx+1} / ${formData.sections.length}</div>
-                        <div class="form-header-card glass-card neumorph-outer rounded-top-none">
-                            <h2 class="form-title" style="font-size:1.8rem; margin-bottom:10px;">${sec.title}</h2>
+                        <div class="form-header-card glass-card neumorph-outer rounded-top-none" style="border-top: none;">
+                            <h2 class="form-title" style="font-size:1.8rem; margin-bottom:5px;">${sec.title}</h2>
+                            ${sec.description ? `<p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize}px;">${sec.description}</p>` : ''}
+                        </div>
+                    </div>`;
+                } else if (sec.title || sec.description) {
+                    // Jika section 1 punya judul, tambahkan
+                    html += `
+                    <div style="margin-top:30px;">
+                        <div class="form-header-card glass-card neumorph-outer">
+                            <h2 class="form-title" style="font-size:1.6rem; margin-bottom:5px;">${sec.title}</h2>
                             ${sec.description ? `<p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize}px;">${sec.description}</p>` : ''}
                         </div>
                     </div>`;
                 }
 
+                // Pertanyaan
                 sec.questions.forEach(q => {
                     if(q.type === 'title_only') {
                          html += `
                          <div class="form-question-card title-only-card">
-                            <h3 class="question-title gradient-text" style="font-size:1.8rem; margin-bottom:8px; border-bottom: 2px dashed rgba(255,255,255,0.3); padding-bottom:15px;">${q.title}</h3>
-                            ${q.image ? `<p class="form-desc" style="font-size:${theme.textFontSize}px; margin-top:10px; white-space:pre-line;">${q.image}</p>` : ''}
+                            <h3 class="question-title gradient-text" style="font-size:1.4rem; border-bottom: 2px dashed rgba(255,255,255,0.3); padding-bottom:10px;">${q.title}</h3>
+                            ${q.image ? `<p class="form-desc" style="font-size:${theme.textFontSize}px; margin-top:5px; white-space:pre-line;">${q.image}</p>` : ''}
                          </div>`;
                          return;
                     }
 
-                    let reqHtml = q.required ? '<span class="asterisk" title="Wajib Diisi">*</span>' : '';
-                    let inputHtml = '';
-                    let nameAttr = `name="${q.id}"`;
-                    let textSize = `font-size:${theme.textFontSize || 12}px;`;
+                    let reqHtml = q.required ? '<span class="asterisk">*</span>' : '';
+                    let inputHtml = ''; let nameAttr = `name="${q.id}"`; let textSize = `font-size:${theme.textFontSize || 12}px;`;
 
-                    if (q.type === 'jawaban_singkat') { inputHtml = `<input type="text" class="gf-input inner-neumorph" ${nameAttr} placeholder="Ketik jawaban singkat..." style="${textSize}" ${q.required?'required':''}>`; } 
-                    else if (q.type === 'paragraf') { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="3" placeholder="Ketik penjelasan mendetail..." oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'" style="resize:none; overflow:hidden; ${textSize}" ${q.required?'required':''}></textarea>`; }
+                    if (q.type === 'jawaban_singkat') { inputHtml = `<input type="text" class="gf-input inner-neumorph" ${nameAttr} placeholder="Jawaban Anda" style="${textSize}" ${q.required?'required':''}>`; } 
+                    else if (q.type === 'paragraf') { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="3" placeholder="Jawaban Anda" oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'" style="resize:none; overflow:hidden; ${textSize}" ${q.required?'required':''}></textarea>`; }
                     else if (q.type === 'pilihan_ganda') {
                         inputHtml = `<div class="gf-radio-group">`;
                         q.options.forEach(opt => { inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="radio" class="gf-radio custom-radio" ${nameAttr} value="${opt}" ${q.required?'required':''}> <span class="opt-text">${opt}</span></label>`; });
@@ -164,19 +188,19 @@
                         inputHtml += `</div>`;
                     }
                     else if (q.type === 'dropdown') {
-                        inputHtml = `<select class="gf-input inner-neumorph" style="padding:15px; ${textSize}" ${nameAttr} ${q.required?'required':''}>
-                                        <option value="" disabled selected>-- Buka Pilihan --</option>`;
+                        inputHtml = `<select class="gf-input inner-neumorph" style="padding:15px; border-radius:12px; ${textSize}" ${nameAttr} ${q.required?'required':''}>
+                                        <option value="" disabled selected>Pilih salah satu</option>`;
                         q.options.forEach(opt => { inputHtml += `<option value="${opt}">${opt}</option>`; });
                         inputHtml += `</select>`;
                     }
                     else if (q.type === 'upload_file') {
-                        inputHtml = `<input type="file" class="gf-input inner-neumorph file-upload-custom" style="padding:20px; text-align:center; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="file" class="gf-input inner-neumorph" style="padding:15px; border-radius:12px; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
                     }
                     else if (q.type === 'tanggal') {
-                        inputHtml = `<input type="date" class="gf-input inner-neumorph date-custom" style="width:100%; max-width:250px; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="date" class="gf-input inner-neumorph" style="max-width:250px; padding:12px; border-radius:12px; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
                     }
                     else if (q.type === 'waktu') {
-                        inputHtml = `<input type="time" class="gf-input inner-neumorph time-custom" style="width:100%; max-width:180px; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="time" class="gf-input inner-neumorph" style="max-width:150px; padding:12px; border-radius:12px; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
                     }
                     else if (q.type === 'skala_linier' || q.type === 'rating') {
                         inputHtml = `<div class="gf-scale-wrapper inner-neumorph" style="overflow-x:auto;">`;
@@ -185,49 +209,91 @@
                         }
                         inputHtml += `</div>`;
                     }
-                    else { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="4" placeholder="Ketik jawaban..." style="${textSize}" ${q.required?'required':''}></textarea>`; }
+                    else { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="4" placeholder="Jawaban Anda" style="${textSize}" ${q.required?'required':''}></textarea>`; }
 
                     html += `
                     <div class="form-question-card glass-card neumorph-outer">
                         <div class="question-title" style="font-size:${theme.questionFontSize || 14}px;">${q.title} ${reqHtml}</div>
-                        <div class="input-container-morph">${inputHtml}</div>
+                        ${inputHtml}
                     </div>
                     `;
                 });
             });
+            html += `</div>`; // Tutup form-step terakhir
 
+            // === FOOTER ACTIONS MULTI STEP ===
             html += `
-                <div class="form-footer-actions glass-panel">
-                    <button type="submit" class="gf-btn-submit glow-effect btn-lg" id="btnKirim">🚀 Eksekusi Pengiriman</button>
-                    <button type="button" class="gf-btn-clear neumorph-btn text-danger" onclick="if(confirm('Peringatan: Seluruh data inputan akan dilenyapkan. Lanjut?')) document.getElementById('submissionForm').reset()">🧹 Bersihkan Form</button>
+                <div class="form-footer-actions glass-panel" style="margin-top:30px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+                    <button type="button" class="gf-btn-clear neumorph-btn" id="btnPrev" onclick="changeStep(-1)" style="display:none;">🔙 Sebelumnya</button>
+                    
+                    <div style="flex:1;"></div>
+                    
+                    <button type="button" class="gf-btn-submit glow-effect" id="btnNext" onclick="changeStep(1)" style="${formData.sections.length > 1 ? '' : 'display:none;'}">Selanjutnya ➡️</button>
+                    <button type="submit" class="gf-btn-submit glow-effect" id="btnKirim" style="${formData.sections.length > 1 ? 'display:none;' : ''}">Kirim Jawaban 🚀</button>
                 </div>
-                </form>
-            `;
+            </form>`;
 
             wrapper.innerHTML = html;
         }
 
-        // ================= PENGIRIMAN JAWABAN KE SERVER REDIS =================
+        // ================= WIZARD LOGIC =================
+        function changeStep(n) {
+            // Validation Before Next
+            if (n === 1) {
+                const currentStepDiv = document.getElementById(`step-${currentStep}`);
+                const inputs = currentStepDiv.querySelectorAll('input[required], select[required], textarea[required]');
+                for (let el of inputs) {
+                    if (!el.checkValidity()) {
+                        el.reportValidity(); // Tampilkan alert asli dari browser
+                        return;
+                    }
+                }
+            }
+
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            if (document.getElementById(`stepper-item-${currentStep}`)) {
+                document.getElementById(`stepper-item-${currentStep}`).classList.add('completed');
+                document.getElementById(`stepper-item-${currentStep}`).classList.remove('active');
+            }
+
+            currentStep += n;
+
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            if (document.getElementById(`stepper-item-${currentStep}`)) {
+                document.getElementById(`stepper-item-${currentStep}`).classList.add('active');
+                document.getElementById(`stepper-item-${currentStep}`).classList.remove('completed');
+            }
+
+            // Button Logics
+            document.getElementById('btnPrev').style.display = currentStep > 0 ? 'inline-block' : 'none';
+            if (currentStep === formData.sections.length - 1) {
+                document.getElementById('btnNext').style.display = 'none';
+                document.getElementById('btnKirim').style.display = 'inline-block';
+            } else {
+                document.getElementById('btnNext').style.display = 'inline-block';
+                document.getElementById('btnKirim').style.display = 'none';
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================= PENGIRIMAN JAWABAN =================
         async function submitForm(e) {
             e.preventDefault();
             const btn = document.getElementById('btnKirim');
-            btn.innerHTML = '<span class="loader-ring-small"></span> Transmisi Data...'; btn.disabled = true;
-            btn.classList.add('loading-state');
+            btn.innerText = 'Transmisi...'; btn.disabled = true;
 
             const formElement = document.getElementById('submissionForm');
             const formDataObj = new FormData(formElement);
             
-            let responses = {};
-            let email = "";
+            let responses = {}; let email = "";
 
             for (let [key, value] of formDataObj.entries()) {
                 if (key === 'respondent_email') { email = value; continue; }
                 if (responses[key]) {
                     if (!Array.isArray(responses[key])) responses[key] = [responses[key]];
                     responses[key].push(value);
-                } else {
-                    responses[key] = value;
-                }
+                } else { responses[key] = value; }
             }
 
             const payload = { formId: formData.id, email: email, responses: responses };
@@ -244,24 +310,18 @@
                     const theme = formData.theme || {};
                     
                     document.getElementById('publicFormWrapper').innerHTML = `
-                        <div class="form-header-banner success-banner glow-effect" style="background: linear-gradient(135deg, #10b981, #059669);"></div>
-                        <div class="form-header-card glass-card neumorph-outer rounded-top-none text-center" style="padding: 60px 30px;">
-                            <div class="success-icon glow-effect" style="font-size:4rem; margin-bottom:20px; animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);">✨</div>
-                            <h1 class="form-title gradient-text" style="font-size:${theme.headerFontSize || 32}px; font-family:var(--form-font-header);">Sistem Menerima Data</h1>
-                            <p class="success-desc glass-panel" style="font-size:${theme.textFontSize || 14}px; color:var(--form-text); margin: 30px auto; max-width:80%; font-family:var(--form-font-text); border-left: 4px solid #10b981;">${msg}</p>
-                            
-                            ${!formData.settings.limitOne ? `<button onclick="location.reload()" class="gf-btn-clear neumorph-btn" style="margin-top:20px; font-weight:600; color:var(--form-active-border);">🔄 Submit Respon Baru</button>` : ''}
+                        <div class="form-header-banner" style="background:#10b981;"></div>
+                        <div class="form-header-card glass-card neumorph-outer rounded-top-none text-center" style="padding: 50px 20px;">
+                            <h1 class="form-title gradient-text" style="font-size:${theme.headerFontSize || 32}px; font-family:var(--form-font-header);">Sistem Berhasil</h1>
+                            <p style="font-size:${theme.textFontSize || 14}px; color:var(--form-text); margin: 25px 0; font-family:var(--form-font-text);">✅ ${msg}</p>
+                            ${!formData.settings.limitOne ? `<button onclick="location.reload()" class="gf-btn-clear neumorph-btn" style="margin-top:20px;">🔄 Kirim Jawaban Baru</button>` : ''}
                         </div>
                     `;
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else { 
-                    alert("Akses Tertolak. Gagal mengirim ke server.");
-                    btn.innerHTML = '🚀 Eksekusi Pengiriman'; btn.disabled = false; btn.classList.remove('loading-state');
-                }
-            } catch (err) { 
-                alert("Kesalahan Jaringan. Database server menolak request transmisi.");
-                btn.innerHTML = '🚀 Eksekusi Pengiriman'; btn.disabled = false; btn.classList.remove('loading-state');
-            }
+                } else { alert("Gagal mengirim jawaban."); }
+            } catch (err) { alert("Kesalahan Jaringan. Database server menolak request."); }
+            
+            btn.innerText = 'Kirim Jawaban 🚀'; btn.disabled = false;
         }
     </script>
 </body>
