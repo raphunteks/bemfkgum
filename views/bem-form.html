@@ -113,6 +113,15 @@
 
     <!-- GLOBAL EVENT LISTENER UNTUK UI INTERAKTIF (RATING BINTANG & UPLOAD FILE) -->
     <script>
+        // Membantu merender nama file yang telah diunggah / di-drop oleh pengguna pada DOM
+        function updateFileName(input) {
+            const display = input.parentElement.parentElement.querySelector('.file-list-display');
+            if (display) {
+                const files = Array.from(input.files).map(f => f.name).join(', ');
+                display.innerText = files || 'Tidak ada file dipilih.';
+            }
+        }
+
         document.addEventListener('change', function(e) {
             // Logika Rating Bintang Interaktif
             if (e.target && e.target.classList.contains('star-radio')) {
@@ -129,15 +138,6 @@
                         star.setAttribute('stroke', 'currentColor');
                     }
                 });
-            }
-            
-            // Logika Nama File pada Form Upload
-            if (e.target && e.target.classList.contains('file-upload-custom')) {
-                const display = e.target.nextElementSibling;
-                if (display && display.classList.contains('file-list-display')) {
-                    const files = Array.from(e.target.files).map(f => f.name).join(', ');
-                    display.innerText = files || 'Tidak ada file dipilih.';
-                }
             }
         });
     </script>
@@ -366,12 +366,42 @@
                     else if (q.type === 'upload_file') {
                         let maxF = q.maxFiles || 1;
                         let maxS = q.maxSize || '10 MB';
-                        inputHtml = `<div class="inner-neumorph file-drop-zone" style="padding:30px 20px; text-align:center; border: 2px dashed var(--form-active-border) !important; position:relative;">
+                        let acceptAttr = '';
+                        let allowedText = '';
+
+                        // Menyiapkan tag accept=".." sesuai ekstensi file yang diatur di Admin V2
+                        if (q.restrictTypes && q.allowedFileTypes && q.allowedFileTypes.length > 0) {
+                            let acceptArr = [];
+                            let labelArr = [];
+                            const typeMap = {
+                                'document': { ext: '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.txt', label: 'Dokumen' },
+                                'presentation': { ext: '.ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation', label: 'Presentasi' },
+                                'spreadsheet': { ext: '.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv', label: 'Spreadsheet' },
+                                'image': { ext: 'image/*', label: 'Gambar' },
+                                'pdf': { ext: '.pdf,application/pdf', label: 'PDF' },
+                                'photo': { ext: 'image/jpeg,image/png,image/heic,image/jpg', label: 'Foto' },
+                                'video': { ext: 'video/*', label: 'Video' },
+                                'audio': { ext: 'audio/*', label: 'Audio' }
+                            };
+                            q.allowedFileTypes.forEach(ft => {
+                                if (typeMap[ft]) {
+                                    acceptArr.push(typeMap[ft].ext);
+                                    labelArr.push(typeMap[ft].label);
+                                }
+                            });
+                            acceptAttr = `accept="${acceptArr.join(',')}"`;
+                            allowedText = `<div style="font-size:0.8rem; color:var(--form-active-border); font-weight:700; margin-top:5px; padding:5px 15px; background:rgba(139, 92, 246, 0.1); border-radius:8px; display:inline-block;">Format khusus: ${labelArr.join(', ')}</div>`;
+                        }
+
+                        inputHtml = `<div class="inner-neumorph file-drop-zone" style="padding:30px 20px; text-align:center; border: 2px dashed var(--form-active-border) !important; position:relative; cursor:pointer;" onclick="this.querySelector('.file-upload-custom').click()">
                             <div style="font-size:2.5rem; margin-bottom:10px;">☁️</div>
                             <div style="font-weight:700; color:var(--form-text);">Tambahkan file</div>
                             <div style="font-size:0.85rem; color:var(--form-text-muted); margin-bottom:15px;">Maksimal ${maxF} file, ukuran max ${maxS}</div>
-                            <button type="button" class="gf-btn-clear neumorph-btn" onclick="this.nextElementSibling.click()">Pilih File</button>
-                            <input type="file" class="gf-input file-upload-custom" style="display:none;" name="${q.id}" ${isReq?'required':''} ${maxF > 1 ? 'multiple' : ''}>
+                            ${allowedText}
+                            <div style="margin-top:15px;">
+                                <button type="button" class="gf-btn-clear neumorph-btn" onclick="event.stopPropagation(); this.nextElementSibling.click()">Pilih File</button>
+                                <input type="file" class="gf-input file-upload-custom" style="display:none;" name="${q.id}" ${isReq?'required':''} ${maxF > 1 ? 'multiple' : ''} ${acceptAttr} onchange="updateFileName(this)">
+                            </div>
                             <div class="file-list-display" style="margin-top:15px; font-size:0.85rem; color:var(--form-active-border); font-weight:600;"></div>
                         </div>`;
                     }
