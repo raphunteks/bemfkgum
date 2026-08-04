@@ -122,27 +122,30 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
     display: inline-block;
 }
 
-/* ================== WIZARD STEPPER (NEW GBR 1) ================== */
+/* ================== WIZARD STEPPER (NEW GBR 1 & 2) ================== */
 .stepper-wrapper { 
-    display: flex; justify-content: space-between; position: relative; 
+    display: flex; justify-content: space-between; align-items: center; position: relative; 
     padding: 25px 20px !important; margin-bottom: 30px; border-radius: 20px; overflow-x: auto;
 }
 .stepper-item { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; z-index: 1; min-width: 80px;}
 .stepper-item::after { 
-    content: ''; position: absolute; width: 100%; height: 4px; background: var(--form-border); 
-    top: 23px; left: 50%; z-index: -1; transition: 0.5s ease;
+    content: ''; position: absolute; width: 100%; height: 4px; background: rgba(255,255,255,0.1); 
+    top: 20px; left: 50%; z-index: -1; transition: 0.5s ease;
 }
 .stepper-item:last-child::after { display: none; }
 .step-counter { 
-    width: 45px; height: 45px; border-radius: 50%; background: var(--form-card-bg); border: 2px solid var(--form-border); 
-    display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--form-text-muted); 
-    transition: 0.4s; box-shadow: var(--outer-neumorph); margin-bottom: 12px; font-size: 1.1rem;
+    width: 40px; height: 40px; border-radius: 50%; background: #1f2937; border: 3px solid #334155; 
+    display: flex; align-items: center; justify-content: center; font-weight: bold; color: #94a3b8; 
+    transition: 0.4s; margin-bottom: 10px; font-size: 1.1rem;
 }
-.stepper-item.active .step-counter { background: var(--form-active-border); color: #fff; border-color: var(--form-active-border); box-shadow: 0 0 20px var(--form-focus-glow); transform: scale(1.15);}
-.stepper-item.completed .step-counter { background: var(--form-active-border); color: #fff; border-color: var(--form-active-border); }
-.stepper-item.completed::after { background: var(--form-active-border); box-shadow: 0 0 10px var(--form-focus-glow);}
-.step-name { font-weight: 700; color: var(--form-text-muted); text-align: center; white-space: nowrap;}
-.stepper-item.active .step-name, .stepper-item.completed .step-name { color: var(--form-text); }
+.stepper-item.active .step-counter { 
+    border-color: #06b6d4; color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); transform: scale(1.15);
+}
+.stepper-item.completed .step-counter { border-color: #06b6d4; background: #06b6d4; color: #fff; }
+.stepper-item.completed::after { background: #06b6d4; box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);}
+.step-name { font-weight: 700; color: #64748b; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; white-space: nowrap;}
+.stepper-item.active .step-name { color: #06b6d4; }
+.stepper-item.completed .step-name { color: var(--form-text); }
 
 /* WIZARD LOGIC CSS */
 .form-step { display: none; }
@@ -193,10 +196,24 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
 .form-question-card { border-left: 6px solid transparent; }
 .form-question-card.active { border-left-color: var(--form-active-border); }
 
+/* Banner Customizations */
+.form-header-banner {
+    width: 100%; height: 160px;
+    border-radius: 20px 20px 0 0 !important;
+    position: relative; z-index: 2;
+    background-size: cover; background-position: center;
+}
+.form-header-banner::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--form-card-bg) 100%); pointer-events: none;
+}
+.form-header-banner.no-image { height: 12px; border-radius: 20px !important; }
+
 /* Typography */
 .form-title { font-family: var(--form-font-header) !important; font-weight: 700; letter-spacing: -0.5px;}
 .question-title { font-family: var(--form-font-question) !important; font-weight: 600;}
 .form-desc { color: var(--form-text-muted); line-height: 1.7; font-size: 1rem;}
+.asterisk { color: #ef4444; text-shadow: 0 0 5px rgba(239,68,68,0.5); }
 
 /* ================== STRUKTUR THEME SIDEBAR (YANG SEBELUMNYA HILANG) ================== */
 .theme-sidebar {
@@ -253,6 +270,9 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
     box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
     border: 1px solid var(--form-active-border) !important;
 }
+
+/* Custom Dropdown / Select */
+.q-type-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23673ab7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important; background-repeat: no-repeat !important; background-position: right 15px center !important; background-size: 12px auto !important;}
 
 /* ================== FIX RESPONSIVE TEXT RADIO/CHECKBOX (GBR 2) ================== */
 .gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 15px; width: 100%; }
