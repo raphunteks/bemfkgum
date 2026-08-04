@@ -6,12 +6,15 @@
     <title>Manajemen Form | BEM Admin V2</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
+    <!-- SUPER UPGRADE: Load SEMUA Google Fonts Untuk Fitur Tema Aesthetic -->
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600&family=Oswald:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- LOAD CSS -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
 
     <style>
+        /* FIX: Memaksa Font Render secara Realtime di dalam Editor Admin */
         .form-title { font-family: var(--form-font-header) !important; }
         .question-title { font-family: var(--form-font-question) !important; }
         .form-desc, .gf-input, .opt-text { font-family: var(--form-font-text) !important; }
@@ -30,6 +33,7 @@
 </head>
 <body class="admin-v2-body">
 
+    <!-- PROTEKSI KEAMANAN CANVAS -->
     <script src="/js/protect-devtools.js"></script>
     <script>
         const isPreviewEnv = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.origin.includes('preview');
@@ -39,11 +43,14 @@
         }
     </script>
 
+    <!-- Header Panel Atas -->
     <div class="header-admin-nav glass-panel">
         <div style="display:flex; align-items:center; gap: 15px;">
             <button class="gf-btn-clear neumorph-btn" onclick="if(!isPreviewEnv){window.location.href='/admin'}else{alert('Kembali ke Dashboard V1')}" style="padding: 8px 15px;">🏠 Dashboard</button>
             <h2 class="gradient-text" style="font-size:1.4rem; margin:0; font-weight: 700;">BEM-Form Builder</h2>
         </div>
+        
+        <!-- ICONS (TEMA, PREVIEW, UNDO, REDO) -->
         <div id="builderTopIcons" style="display: none; align-items: center; gap: 8px;">
             <button class="top-icon-btn neumorph-circle" title="Sesuaikan Tema" onclick="toggleThemeSidebar()">🎨</button>
             <button class="top-icon-btn neumorph-circle" title="Pratinjau" onclick="previewForm()">👁️</button>
@@ -51,11 +58,13 @@
             <button class="top-icon-btn neumorph-circle" id="btnRedo" title="Ulangi (Redo)" onclick="redoState()" disabled>↪</button>
             <button class="gf-btn-submit glow-effect" style="margin-left: 10px;" onclick="saveFormToDB()">Simpan & Publikasikan</button>
         </div>
+        
         <div id="listTopIcons" style="display: flex; gap: 10px; align-items:center;">
             <button class="gf-btn-clear neumorph-btn text-danger" onclick="localStorage.removeItem('axa_admin_token'); if(!isPreviewEnv){window.location.href='/admin'}else{location.reload();}">Logout</button>
         </div>
     </div>
 
+    <!-- TABS MENU -->
     <div class="builder-tabs glass-panel" id="mainTabs">
         <div class="b-tab active" onclick="switchFormTab('main')" id="tabMain">Daftar Form</div>
         <div class="b-tab" onclick="switchFormTab('pertanyaan')" id="tabPertanyaan" style="display:none;">Pertanyaan</div>
@@ -63,12 +72,14 @@
         <div class="b-tab" onclick="switchFormTab('setelan')" id="tabSetelan" style="display:none;">Setelan Form</div>
     </div>
 
+    <!-- TEMA SIDEBAR (OFFCANVAS) -->
     <div class="theme-sidebar glass-panel-heavy" id="themeSidebar">
         <div class="theme-sidebar-header">
             <h3 style="margin:0; font-size:1.2rem; font-weight:700; color:var(--form-text);">🎨 Tema Dashboard</h3>
             <button class="top-icon-btn neumorph-circle" onclick="toggleThemeSidebar()">✕</button>
         </div>
         <div class="theme-sidebar-content">
+            
             <div class="theme-section-title">Gaya teks</div>
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Header</label>
             <div class="font-select-group">
@@ -79,9 +90,11 @@
                     <option value="Lora">Lora</option><option value="Montserrat">Montserrat</option>
                 </select>
                 <select class="t-select inner-neumorph" style="width:70px;" id="themeHeaderSize" onchange="updateTheme('headerFontSize', this.value)">
-                    <option value="18">18</option><option value="22">22</option><option value="24">24</option><option value="28">28</option><option value="32">32</option>
+                    <option value="18">18</option><option value="22">22</option><option value="24">24</option><option value="28">28</option>
+                    <option value="32">32</option>
                 </select>
             </div>
+            
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Pertanyaan</label>
             <div class="font-select-group">
                 <select class="t-select inner-neumorph" style="flex:1;" id="themeQuestionFont" onchange="updateTheme('questionFont', this.value)">
@@ -89,8 +102,11 @@
                     <option value="Roboto">Roboto</option><option value="Montserrat">Montserrat</option>
                     <option value="Space Grotesk">Space Grotesk</option>
                 </select>
-                <select class="t-select inner-neumorph" style="width:70px;" id="themeQuestionSize" onchange="updateTheme('questionFontSize', this.value)"><option value="12">12</option><option value="14">14</option><option value="16">16</option></select>
+                <select class="t-select inner-neumorph" style="width:70px;" id="themeQuestionSize" onchange="updateTheme('questionFontSize', this.value)">
+                    <option value="12">12</option><option value="14">14</option><option value="16">16</option>
+                </select>
             </div>
+
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Teks Dasar</label>
             <div class="font-select-group">
                 <select class="t-select inner-neumorph" style="flex:1;" id="themeTextFont" onchange="updateTheme('textFont', this.value)">
@@ -98,8 +114,11 @@
                     <option value="Roboto">Roboto</option><option value="Montserrat">Montserrat</option>
                     <option value="Space Grotesk">Space Grotesk</option>
                 </select>
-                <select class="t-select inner-neumorph" style="width:70px;" id="themeTextSize" onchange="updateTheme('textFontSize', this.value)"><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="14">14</option></select>
+                <select class="t-select inner-neumorph" style="width:70px;" id="themeTextSize" onchange="updateTheme('textFontSize', this.value)">
+                    <option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="14">14</option>
+                </select>
             </div>
+            
             <div class="theme-section-title">Header Gambar</div>
             <div class="inner-neumorph" style="padding:20px; text-align:center; border-radius:12px; margin-bottom:20px;">
                 <img id="themeHeaderPreview" src="" style="width:100%; height:100px; object-fit:cover; border-radius:8px; display:none; margin-bottom:10px;">
@@ -107,13 +126,23 @@
                 <button class="gf-btn-clear neumorph-btn" onclick="document.getElementById('themeHeaderUpload').click()" style="width:100%; color:var(--form-active-border);">🖼️ Pilih Gambar</button>
                 <button class="gf-btn-clear text-danger" onclick="removeHeaderImage()" style="margin-top:10px; width:100%; border:none; display:none;" id="btnRmHeader">Hapus</button>
             </div>
-            <div class="theme-section-title">Warna Tema Utama</div><div class="color-circle-group" id="themeColorGrid"></div>
-            <div class="theme-section-title">Warna Latar Belakang</div><div class="color-circle-group" id="themeBgGrid"></div>
+
+            <div class="theme-section-title">Warna Tema Utama</div>
+            <div class="color-circle-group" id="themeColorGrid">
+                <!-- Javascript Injected -->
+            </div>
+
+            <div class="theme-section-title">Warna Latar Belakang</div>
+            <div class="color-circle-group" id="themeBgGrid">
+                <!-- Javascript Injected -->
+            </div>
         </div>
     </div>
 
+    <!-- KONTEN UTAMA DASHBOARD -->
     <div class="admin-v2-container">
-        <!-- TAB MAIN -->
+        
+        <!-- ================= TAB 1: MAIN (DAFTAR FORM) ================= -->
         <div id="tab-main" class="tab-content active">
             <div class="admin-header-main glass-card neumorph-outer">
                 <div>
@@ -122,14 +151,16 @@
                 </div>
                 <button class="gf-btn-submit glow-effect" onclick="createNewForm()" style="border-radius: 30px;">+ Formulir Kosong</button>
             </div>
-            <div id="formListContainer"><div style="text-align:center; padding: 50px; color: var(--form-text-muted);">Memuat...</div></div>
+            <div id="formListContainer">
+                <div style="text-align:center; padding: 50px; color: var(--form-text-muted);">Memuat...</div>
+            </div>
         </div>
 
-        <!-- TAB PERTANYAAN (BUILDER) -->
+        <!-- ================= TAB 2: PERTANYAAN (BUILDER) ================= -->
         <div id="tab-pertanyaan" class="tab-content">
             <div style="display: flex; gap: 20px; position:relative;">
                 <div id="builderCanvas" style="flex: 1; padding-bottom: 150px; width: 100%;">
-                    <!-- Rendered Here -->
+                    <!-- Javascript merender pertanyaan disini -->
                 </div>
 
                 <!-- SUPER UPGRADE: Floating Toolbar Mengikuti Posisi Aktif -->
@@ -144,7 +175,7 @@
             </div>
         </div>
 
-        <!-- TAB JAWABAN -->
+        <!-- ================= TAB 3: JAWABAN ================= -->
         <div id="tab-jawaban" class="tab-content">
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none;">
                 <h2 class="form-title gradient-text" id="respCount" style="font-size:2.2rem; font-weight:700;">0 Tanggapan</h2>
@@ -152,82 +183,144 @@
                     <span style="color:var(--form-text); font-weight:600;">Status: <span style="color:#10b981;">Menerima tanggapan</span></span>
                     <button class="gf-btn-submit glow-effect" onclick="downloadExcel()" style="background: #10b981;">📥 Link ke Spreadsheet (.xlsx)</button>
                 </div>
-                <div id="respList" style="margin-top: 15px; max-height: 500px; overflow-y:auto; color:var(--form-text);"></div>
+                <div id="respList" style="margin-top: 15px; max-height: 500px; overflow-y:auto; color:var(--form-text);">
+                    <!-- List Jawaban Di Render Disini -->
+                </div>
             </div>
         </div>
 
-        <!-- TAB SETELAN -->
+        <!-- ================= TAB 4: SETELAN ================= -->
         <div id="tab-setelan" class="tab-content">
+            
+            <!-- SUPER UPGRADE: UI CARD 1 (SETELAN) -->
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding:15px 30px; margin-bottom: 30px;">
                 <h2 class="form-title" style="font-size:1.8rem; margin:15px 0 25px 0; border-bottom:1px solid var(--form-border); padding-bottom:15px;">Setelan</h2>
                 
+                <!-- KUIS -->
                 <div class="setting-group" style="padding-top:10px;">
                     <div class="setting-header">
                         <div style="flex:1;">
                             <div class="setting-title">Jadikan ini sebagai kuis</div>
-                            <div class="setting-desc">Menetapkan pertanyaan dan poin, serta masukan otomatis</div>
+                            <div class="setting-desc">Menetapkan pertanyaan dan nilai poin, serta menyediakan masukan secara otomatis</div>
                         </div>
                         <div class="toggle-switch neumorph-switch">
                             <input type="checkbox" id="setIsQuiz" class="switch-input" onchange="updateSetting('isQuiz', this.checked); toggleQuizPanel(this.checked)">
                             <label for="setIsQuiz" class="switch-label"></label>
                         </div>
                     </div>
+
+                    <!-- SUB PANEL KUIS -->
                     <div id="quizSubPanel" class="accordion-content" style="display:none; margin-top:20px;">
                         <div class="sub-section-title">Rilis Nilai</div>
                         <div class="gf-radio-group" style="gap:10px; margin-bottom: 25px;">
-                            <label class="gf-option-label" style="padding:10px; border-radius:8px;"><input type="radio" class="custom-radio" name="quizRelease" value="immediate" onchange="updateSetting('quizRelease', this.value)"><span class="opt-text" style="font-weight:600;">Langsung setelah setiap pengiriman</span></label>
-                            <label class="gf-option-label" style="padding:10px; border-radius:8px;"><input type="radio" class="custom-radio" name="quizRelease" value="manual" onchange="updateSetting('quizRelease', this.value)"><span class="opt-text" style="font-weight:600;">Nanti, setelah peninjauan manual <br><span style="font-size:0.85rem; font-weight:normal; color:var(--form-text-muted);">Mengaktifkan pengumpulan email</span></span></label>
+                            <label class="gf-option-label" style="padding:10px; border-radius:8px;">
+                                <input type="radio" class="custom-radio" name="quizRelease" value="immediate" onchange="updateSetting('quizRelease', this.value)">
+                                <span class="opt-text" style="font-weight:600;">Langsung setelah setiap pengiriman</span>
+                            </label>
+                            <label class="gf-option-label" style="padding:10px; border-radius:8px;">
+                                <input type="radio" class="custom-radio" name="quizRelease" value="manual" onchange="updateSetting('quizRelease', this.value)">
+                                <span class="opt-text" style="font-weight:600;">Nanti, setelah peninjauan manual <br><span style="font-size:0.85rem; font-weight:normal; color:var(--form-text-muted);">Mengaktifkan pengumpulan alamat email</span></span>
+                            </label>
                         </div>
+
                         <div class="sub-section-title">Setelan Responden</div>
                         <div class="setting-header" style="margin-bottom:15px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Pertanyaan tak terjawab</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Pertanyaan tak terjawab</div>
+                                <div class="setting-desc">Responden dapat melihat pertanyaan yang tidak dijawab dengan benar</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setQuizMissed" class="switch-input" onchange="updateSetting('quizShowMissed', this.checked)"><label for="setQuizMissed" class="switch-label"></label></div>
                         </div>
                         <div class="setting-header" style="margin-bottom:15px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Jawaban yang benar</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Jawaban yang benar</div>
+                                <div class="setting-desc">Responden dapat melihat jawaban yang benar setelah nilai dirilis</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setQuizCorrect" class="switch-input" onchange="updateSetting('quizShowCorrect', this.checked)"><label for="setQuizCorrect" class="switch-label"></label></div>
                         </div>
                         <div class="setting-header" style="margin-bottom:25px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Nilai poin</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Nilai poin</div>
+                                <div class="setting-desc">Responden dapat melihat poin total dan poin yang diterima untuk setiap jawaban</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setQuizPoints" class="switch-input" onchange="updateSetting('quizShowPoints', this.checked)"><label for="setQuizPoints" class="switch-label"></label></div>
                         </div>
+
                         <div class="sub-section-title">Default Kuis Global</div>
                         <div class="setting-header">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Nilai poin pertanyaan default</div></div>
-                            <div style="display:flex; align-items:center; gap:10px;"><input type="number" class="gf-input inner-neumorph" id="setQuizDefPoints" style="width:70px; text-align:center;" min="0" onchange="updateSetting('quizDefaultPoints', parseInt(this.value))"><span style="font-weight:600; color:var(--form-text-muted);">poin</span></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Nilai poin pertanyaan default</div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <input type="number" class="gf-input inner-neumorph" id="setQuizDefPoints" style="width:70px; text-align:center;" min="0" onchange="updateSetting('quizDefaultPoints', parseInt(this.value))">
+                                <span style="font-weight:600; color:var(--form-text-muted);">poin</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- ACCORDION: JAWABAN -->
                 <div class="setting-group accordion-wrapper">
                     <div class="setting-header accordion-header" onclick="toggleAcc('accJawaban', 'iconJawaban')">
-                        <div style="flex:1; cursor:pointer;"><div class="setting-title">Jawaban</div><div class="setting-desc">Mengelola pengumpulan respons</div></div><span class="acc-icon" id="iconJawaban">▼</span>
+                        <div style="flex:1; cursor:pointer;">
+                            <div class="setting-title">Jawaban</div>
+                            <div class="setting-desc">Mengelola cara respons dikumpulkan dan dilindungi</div>
+                        </div>
+                        <span class="acc-icon" id="iconJawaban">▼</span>
                     </div>
+                    
                     <div class="accordion-content" id="accJawaban" style="display:none; margin-top:20px;">
                         <div class="setting-header" style="margin-bottom:20px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Kumpulkan alamat email</div></div>
-                            <select class="q-type-select inner-neumorph" id="setCollectEmail" onchange="updateSetting('collectEmail', this.value)"><option value="none">Jangan kumpulkan</option><option value="verified">Telah Diverifikasi</option><option value="input">Input responden</option></select>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Kumpulkan alamat email</div>
+                            </div>
+                            <select class="q-type-select inner-neumorph" id="setCollectEmail" onchange="updateSetting('collectEmail', this.value)">
+                                <option value="none">Jangan kumpulkan</option>
+                                <option value="verified">Telah Diverifikasi</option>
+                                <option value="input">Input responden</option>
+                            </select>
                         </div>
+
                         <div class="setting-header" style="margin-bottom:20px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Mengirim salinan jawaban</div></div>
-                            <select class="q-type-select inner-neumorph" id="setSendCopy" onchange="updateSetting('sendCopy', this.value)"><option value="none">Nonaktif</option><option value="requested">Jika diminta</option><option value="always">Selalu</option></select>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Mengirim salinan jawaban responden</div>
+                                <div class="setting-desc">Setelan Kumpulkan alamat email wajib diaktifkan</div>
+                            </div>
+                            <select class="q-type-select inner-neumorph" id="setSendCopy" onchange="updateSetting('sendCopy', this.value)">
+                                <option value="none">Nonaktif</option>
+                                <option value="requested">Jika diminta</option>
+                                <option value="always">Selalu</option>
+                            </select>
                         </div>
+
                         <div class="setting-header" style="margin-bottom:25px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Izinkan pengeditan respons</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Izinkan pengeditan respons</div>
+                                <div class="setting-desc">Respons dapat diubah setelah dikirimkan</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setAllowEdit" class="switch-input" onchange="updateSetting('editResponse', this.checked)"><label for="setAllowEdit" class="switch-label"></label></div>
                         </div>
+
                         <div class="sub-section-title">Perlu Login</div>
                         <div class="setting-header">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Batasi ke 1 jawaban</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Batasi ke 1 jawaban</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setLimitOne" class="switch-input" onchange="updateSetting('limitOne', this.checked)"><label for="setLimitOne" class="switch-label"></label></div>
                         </div>
                     </div>
                 </div>
 
+                <!-- ACCORDION: PRESENTASI -->
                 <div class="setting-group accordion-wrapper" style="border-bottom:none; padding-bottom:0;">
                     <div class="setting-header accordion-header" onclick="toggleAcc('accPresentasi', 'iconPresentasi')">
-                        <div style="flex:1; cursor:pointer;"><div class="setting-title">Presentasi</div><div class="setting-desc">Tampilan formulir dan respons</div></div><span class="acc-icon" id="iconPresentasi">▼</span>
+                        <div style="flex:1; cursor:pointer;">
+                            <div class="setting-title">Presentasi</div>
+                            <div class="setting-desc">Mengelola cara formulir dan respons dipresentasikan.</div>
+                        </div>
+                        <span class="acc-icon" id="iconPresentasi">▼</span>
                     </div>
+                    
                     <div class="accordion-content" id="accPresentasi" style="display:none; margin-top:20px;">
                         <div class="sub-section-title">Presentasi Formulir</div>
                         <div class="setting-header" style="margin-bottom:15px;">
@@ -238,72 +331,117 @@
                             <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Acak urutan pertanyaan</div></div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setShuffle" class="switch-input" onchange="updateSetting('shuffleQuestions', this.checked)"><label for="setShuffle" class="switch-label"></label></div>
                         </div>
+
                         <div class="sub-section-title">Setelah Pengiriman Formulir</div>
                         <div class="setting-header" style="margin-bottom:15px; flex-direction:column; align-items:flex-start;">
-                            <div style="width:100%; display:flex; justify-content:space-between; align-items:center;"><div class="setting-title" style="font-size:1rem;">Konfirmasi pesan</div></div>
+                            <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                                <div class="setting-title" style="font-size:1rem;">Konfirmasi pesan</div>
+                            </div>
                             <input type="text" class="gf-input inner-neumorph" id="setConfMsg" style="margin-top:10px; width:100%;" onchange="updateSetting('confirmationMessage', this.value)" placeholder="Jawaban Anda telah dicatat">
                         </div>
                         <div class="setting-header" style="margin-bottom:15px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Tampilkan link serahkan jawaban lain</div></div>
+                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Tampilkan link untuk menyerahkan jawaban lain</div></div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setShowSubmitAnother" class="switch-input" onchange="updateSetting('showSubmitAnother', this.checked)"><label for="setShowSubmitAnother" class="switch-label"></label></div>
                         </div>
                         <div class="setting-header" style="margin-bottom:25px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Lihat ringkasan hasil</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Lihat ringkasan hasil</div>
+                                <div class="setting-desc">Bagikan ringkasan hasil kepada responden.</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setShowSummary" class="switch-input" onchange="updateSetting('showSummary', this.checked)"><label for="setShowSummary" class="switch-label"></label></div>
                         </div>
+
                         <div class="sub-section-title">Pembatasan</div>
                         <div class="setting-header">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Nonaktifkan simpan-otomatis</div></div>
+                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Nonaktifkan simpan-otomatis untuk semua responden</div></div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setDisableAutoSave" class="switch-input" onchange="updateSetting('disableAutoSave', this.checked)"><label for="setDisableAutoSave" class="switch-label"></label></div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- SUPER UPGRADE: UI CARD 2 (DEFAULT) -->
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding:15px 30px;">
                 <h2 class="form-title" style="font-size:1.8rem; margin:15px 0 25px 0; border-bottom:1px solid var(--form-border); padding-bottom:15px;">Default</h2>
+                
+                <!-- ACCORDION: FORMULIR DEFAULT -->
                 <div class="setting-group accordion-wrapper">
                     <div class="setting-header accordion-header" onclick="toggleAcc('accFormDefault', 'iconFormDefault')">
-                        <div style="flex:1; cursor:pointer;"><div class="setting-title">Formulir default</div></div><span class="acc-icon" id="iconFormDefault">▼</span>
-                    </div>
-                    <div class="accordion-content" id="accFormDefault" style="display:none; margin-top:20px;">
-                        <div class="setting-header" style="margin-bottom:20px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Status Formulir Publik</div></div>
-                            <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setActive" class="switch-input" onchange="updateRootSetting('isActive', this.checked)"><label for="setActive" class="switch-label"></label></div>
+                        <div style="flex:1; cursor:pointer;">
+                            <div class="setting-title">Formulir default</div>
+                            <div class="setting-desc">Setelan diterapkan untuk formulir ini dan formulir baru</div>
                         </div>
+                        <span class="acc-icon" id="iconFormDefault">▼</span>
+                    </div>
+                    
+                    <div class="accordion-content" id="accFormDefault" style="display:none; margin-top:20px;">
+                        
+                        <!-- FITUR LAMA DIMASUKKAN KESINI -->
                         <div class="setting-header" style="margin-bottom:20px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem; color:var(--form-active-border);">Custom Link URL (Slug)</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Status Formulir Publik</div>
+                                <div class="setting-desc">Mengizinkan responden mengisi form ini.</div>
+                            </div>
+                            <div class="toggle-switch neumorph-switch">
+                                <input type="checkbox" id="setActive" class="switch-input" onchange="updateRootSetting('isActive', this.checked)">
+                                <label for="setActive" class="switch-label"></label>
+                            </div>
+                        </div>
+
+                        <!-- KEMBALIKAN FITUR UBAH SLUG URL (PERMINTAAN USER) -->
+                        <div class="setting-header" style="margin-bottom:20px;">
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem; color:var(--form-active-border);">Custom Link URL (Slug)</div>
+                                <div class="setting-desc">Ubah akhiran URL formulir Anda agar lebih rapi.</div>
+                            </div>
                             <input type="text" class="gf-input inner-neumorph" id="setSlug" style="width:250px;" onchange="updateRootSetting('slug', this.value)">
                         </div>
+
                         <div class="setting-header">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem; color:#eab308;">Batas Waktu Pengisian (Deadline) 📅</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem; color:#eab308;">Batas Waktu Pengisian (Deadline) 📅</div>
+                                <div class="setting-desc">Formulir otomatis tertutup pada waktu yang ditentukan.</div>
+                            </div>
                             <input type="datetime-local" class="gf-input inner-neumorph" id="setDeadline" style="width:250px;" onchange="updateSetting('deadline', this.value)">
                         </div>
                     </div>
                 </div>
+
+                <!-- ACCORDION: PERTANYAAN DEFAULT -->
                 <div class="setting-group accordion-wrapper" style="border-bottom:none; padding-bottom:0;">
                     <div class="setting-header accordion-header" onclick="toggleAcc('accQuestionDefault', 'iconQuestionDefault')">
-                        <div style="flex:1; cursor:pointer;"><div class="setting-title">Pertanyaan default</div></div><span class="acc-icon" id="iconQuestionDefault">▼</span>
+                        <div style="flex:1; cursor:pointer;">
+                            <div class="setting-title">Pertanyaan default</div>
+                            <div class="setting-desc">Setelan diterapkan untuk semua pertanyaan</div>
+                        </div>
+                        <span class="acc-icon" id="iconQuestionDefault">▼</span>
                     </div>
+                    
                     <div class="accordion-content" id="accQuestionDefault" style="display:none; margin-top:20px;">
                         <div class="setting-header">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Buat pertanyaan wajib diisi</div></div>
+                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Buat pertanyaan wajib diisi secara default</div></div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setDefaultRequired" class="switch-input" onchange="updateSetting('defaultRequired', this.checked)"><label for="setDefaultRequired" class="switch-label"></label></div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
+
     </div>
 
+    <!-- TOAST Notification -->
     <div class="toast glass-panel glow-effect" id="globalToast" style="position:fixed; bottom:-100px; right:20px; background:var(--form-active-border); color:#fff; padding:15px 30px; border-radius:12px; font-weight:700; transition:0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index:9999;">Notifikasi</div>
 
+    <!-- FULL LOGIC JAVASCRIPT -->
     <script>
+        // ================= GLOBAL STATE & UNDO REDO =================
         let allForms = [];
         let currentForm = null;
         let activeSecIdx = 0;
         let activeQIdx = -1;
 
+        // Undo Redo Stack Logics
         let historyStack = [];
         let historyPointer = -1;
         let isNavigatingHistory = false;
@@ -311,7 +449,10 @@
         const THEME_COLORS = ['#ec4899', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#10b981', '#f59e0b', '#f97316', '#ef4444', '#64748b'];
         const BG_COLORS = ['#fdf2f8', '#f5f3ff', '#eef2ff', '#eff6ff', '#f0f9ff', '#ecfeff', '#f0fdfa', '#ecfdf5', '#fffbeb', '#fff7ed', '#fef2f2', '#f8fafc'];
 
-        document.addEventListener('DOMContentLoaded', () => { loadAllForms(); initThemeGrids(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllForms();
+            initThemeGrids();
+        });
 
         function showToast(msg) {
             const t = document.getElementById('globalToast');
@@ -319,62 +460,88 @@
             setTimeout(() => t.style.bottom = '-100px', 3000);
         }
 
-        // ================= ENGINE UNDO/REDO & EVENT =================
+        // ================= UNDO / REDO ENGINE =================
         function saveState() {
             if(isNavigatingHistory) return;
-            if(historyPointer < historyStack.length - 1) historyStack = historyStack.slice(0, historyPointer + 1);
-            historyStack.push(JSON.stringify(currentForm)); historyPointer++; updateUndoRedoUI();
+            if(historyPointer < historyStack.length - 1) {
+                historyStack = historyStack.slice(0, historyPointer + 1);
+            }
+            historyStack.push(JSON.stringify(currentForm));
+            historyPointer++;
+            updateUndoRedoUI();
         }
+
         function undoState() {
             if(historyPointer > 0) {
-                isNavigatingHistory = true; historyPointer--; currentForm = JSON.parse(historyStack[historyPointer]);
-                applyThemeToDOM(); renderBuilder(); isNavigatingHistory = false; updateUndoRedoUI();
+                isNavigatingHistory = true; historyPointer--;
+                currentForm = JSON.parse(historyStack[historyPointer]);
+                applyThemeToDOM(); renderBuilder();
+                isNavigatingHistory = false; updateUndoRedoUI();
             }
         }
+
         function redoState() {
             if(historyPointer < historyStack.length - 1) {
-                isNavigatingHistory = true; historyPointer++; currentForm = JSON.parse(historyStack[historyPointer]);
-                applyThemeToDOM(); renderBuilder(); isNavigatingHistory = false; updateUndoRedoUI();
+                isNavigatingHistory = true; historyPointer++;
+                currentForm = JSON.parse(historyStack[historyPointer]);
+                applyThemeToDOM(); renderBuilder();
+                isNavigatingHistory = false; updateUndoRedoUI();
             }
         }
+
         function updateUndoRedoUI() {
             document.getElementById('btnUndo').disabled = historyPointer <= 0;
             document.getElementById('btnRedo').disabled = historyPointer >= historyStack.length - 1;
         }
 
         let debounceTimer;
-        function debouncedSaveState() { clearTimeout(debounceTimer); debounceTimer = setTimeout(saveState, 500); }
+        function debouncedSaveState() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(saveState, 500);
+        }
 
         // ================= TRACKING POSISI TOOLBAR (ACTIVE CARD) =================
         function setActive(sIdx, qIdx, el) {
-            activeSecIdx = sIdx; activeQIdx = qIdx;
+            activeSecIdx = sIdx;
+            activeQIdx = qIdx;
+            
+            // Hapus status aktif dari semua kartu
             document.querySelectorAll('.form-question-card, .form-header-card').forEach(c => c.classList.remove('active', 'hover-glow'));
+            
             if(el) {
                 el.classList.add('active', 'hover-glow');
-                positionToolbar();
+                positionToolbar(); // Update posisi toolbar secara presisi
             }
         }
+
         function positionToolbar() {
             const activeEl = document.querySelector('.form-question-card.active, .form-header-card.active');
             const floater = document.getElementById('floater');
             if(activeEl && floater) {
+                // Menyamakan top position dari elemen yang aktif (relatif terhadap parent #builderCanvas)
                 floater.style.top = activeEl.offsetTop + 'px';
             }
         }
 
-        // ================= TEMA =================
+        // ================= THEME ENGINE =================
         function initThemeGrids() {
-            const cGrid = document.getElementById('themeColorGrid'), bGrid = document.getElementById('themeBgGrid');
+            const cGrid = document.getElementById('themeColorGrid');
+            const bGrid = document.getElementById('themeBgGrid');
+            
             THEME_COLORS.forEach((c, i) => {
                 cGrid.innerHTML += `<div class="color-circle neumorph-outer" style="background:${c} !important;" onclick="updateTheme('color', '${c}'); updateTheme('bgColor', '${BG_COLORS[i]}');" id="tc-${c}"></div>`;
                 bGrid.innerHTML += `<div class="color-circle bg-circle inner-neumorph" style="background:${BG_COLORS[i]} !important;" onclick="updateTheme('bgColor', '${BG_COLORS[i]}');" id="tb-${BG_COLORS[i]}"></div>`;
             });
         }
+
         function toggleThemeSidebar() { document.getElementById('themeSidebar').classList.toggle('active'); }
+
         function updateTheme(key, value) { currentForm.theme[key] = value; applyThemeToDOM(); saveState(); }
+
         function applyThemeToDOM() {
             if(!currentForm || !currentForm.theme) return;
             const t = currentForm.theme;
+            
             document.documentElement.style.setProperty('--form-active-border', t.color);
             document.documentElement.style.setProperty('--form-bg', t.bgColor);
             document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont}", sans-serif`);
@@ -386,97 +553,184 @@
             document.getElementById('themeTextFont').value = t.textFont; document.getElementById('themeTextSize').value = t.textFontSize;
 
             document.querySelectorAll('#themeColorGrid .color-circle').forEach(el => el.innerHTML = '');
-            const activeColor = document.getElementById(`tc-${t.color}`); if(activeColor) activeColor.innerHTML = '✓';
-            document.querySelectorAll('#themeBgGrid .color-circle').forEach(el => el.innerHTML = '');
-            const activeBg = document.getElementById(`tb-${t.bgColor}`); if(activeBg) activeBg.innerHTML = '<span style="color:var(--form-active-border); font-weight:bold;">✓</span>';
+            const activeColor = document.getElementById(`tc-${t.color}`);
+            if(activeColor) activeColor.innerHTML = '✓';
 
-            const imgPreview = document.getElementById('themeHeaderPreview'); const btnRm = document.getElementById('btnRmHeader');
-            if(t.headerImage) { imgPreview.src = t.headerImage; imgPreview.style.display = 'block'; btnRm.style.display = 'inline-block'; } 
-            else { imgPreview.src = ''; imgPreview.style.display = 'none'; btnRm.style.display = 'none'; }
+            document.querySelectorAll('#themeBgGrid .color-circle').forEach(el => el.innerHTML = '');
+            const activeBg = document.getElementById(`tb-${t.bgColor}`);
+            if(activeBg) activeBg.innerHTML = '<span style="color:var(--form-active-border); font-weight:bold;">✓</span>';
+
+            const imgPreview = document.getElementById('themeHeaderPreview');
+            const btnRm = document.getElementById('btnRmHeader');
+            if(t.headerImage) {
+                imgPreview.src = t.headerImage; imgPreview.style.display = 'block'; btnRm.style.display = 'inline-block';
+            } else {
+                imgPreview.src = ''; imgPreview.style.display = 'none'; btnRm.style.display = 'none';
+            }
             renderBuilder(); 
         }
-        function handleHeaderImage(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { updateTheme('headerImage', e.target.result); }; reader.readAsDataURL(input.files[0]); } }
+
+        function handleHeaderImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { updateTheme('headerImage', e.target.result); };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
         function removeHeaderImage() { updateTheme('headerImage', ''); }
 
         // ================= NAVIGASI =================
         function switchFormTab(tabId) {
             document.querySelectorAll('.b-tab').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            
             document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.add('active');
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
-            if(tabId === 'main') { document.getElementById('builderTopIcons').style.display = 'none'; document.getElementById('listTopIcons').style.display = 'flex'; document.getElementById('themeSidebar').classList.remove('active'); } 
-            else { document.getElementById('builderTopIcons').style.display = 'flex'; document.getElementById('listTopIcons').style.display = 'none'; }
-            
+            if(tabId === 'main') {
+                document.getElementById('builderTopIcons').style.display = 'none';
+                document.getElementById('listTopIcons').style.display = 'flex';
+                document.getElementById('themeSidebar').classList.remove('active');
+            } else {
+                document.getElementById('builderTopIcons').style.display = 'flex';
+                document.getElementById('listTopIcons').style.display = 'none';
+            }
+
             if(tabId === 'jawaban') loadResponses();
             if(tabId === 'setelan') renderSettings();
-            if(tabId === 'pertanyaan') setTimeout(() => positionToolbar(), 50); 
+            if(tabId === 'pertanyaan') setTimeout(() => positionToolbar(), 50); // delay agar offsetTop terhitung akurat
         }
+
+        function backToMain() {
+            if(currentForm) saveFormToDB(true); 
+            document.getElementById('tabPertanyaan').style.display = 'none'; document.getElementById('tabJawaban').style.display = 'none'; document.getElementById('tabSetelan').style.display = 'none';
+            switchFormTab('main'); currentForm = null; historyStack = []; historyPointer = -1;
+        }
+
         function previewForm() { window.open(`/form/${currentForm.slug}`, '_blank'); }
 
-        // ================= DB CALLS =================
-        async function loadAllForms() { try { const res = await fetch('/api/forms'); const json = await res.json(); allForms = json.data || []; renderFormList(); } catch (e) { showToast("Gagal memuat form"); } }
+        // ================= API CALLS DATABASE (CRUD) =================
+        async function loadAllForms() {
+            try {
+                const res = await fetch('/api/forms');
+                const json = await res.json();
+                allForms = json.data || []; renderFormList();
+            } catch (e) { showToast("Gagal memuat form dari Server Redis."); }
+        }
+
         async function saveFormToDB(isSilent = false) {
             try {
                 const btn = document.querySelector('.gf-btn-submit[onclick="saveFormToDB()"]');
                 if(!isSilent && btn) { btn.innerText = "⏳ Menyimpan..."; btn.disabled = true; }
+
                 const res = await fetch('/api/forms/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(currentForm) });
                 const json = await res.json();
-                if(json.success) { if(!isSilent) showToast("✅ Formulir Tersimpan!"); currentForm.id = json.id; loadAllForms(); }
+                if(json.success) {
+                    if(!isSilent) showToast("✅ Formulir Tersimpan!");
+                    currentForm.id = json.id; loadAllForms(); 
+                }
                 if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
-            } catch (e) { if(!isSilent) showToast("⚠️ Gagal menyimpan!"); }
-        }
-        async function deleteFormDirect(formId) {
-            if(confirm("Hapus form permanen?")) {
-                try { const res = await fetch(`/api/forms/${formId}`, { method: 'DELETE' }); const json = await res.json(); if(json.success) { showToast("🗑️ Terhapus."); loadAllForms(); } } catch(e) {}
+            } catch (e) {
+                if(!isSilent) showToast("⚠️ Gagal menyimpan ke server!");
+                if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
             }
         }
-        async function loadResponses() {
-            document.getElementById('respList').innerHTML = "Memuat tanggapan...";
-            try {
-                const res = await fetch(`/api/forms/${currentForm.id}/responses`); const json = await res.json(); const data = json.data || [];
-                document.getElementById('respCount').innerText = `${data.length} Tanggapan`;
-                let html = '';
-                data.slice().reverse().forEach((r) => { html += `<div class="glass-card inner-neumorph" style="padding:20px; border-radius:12px; margin-bottom:15px; border-left: 4px solid var(--form-active-border);"><div style="color:var(--form-text-muted); font-size:0.85rem; margin-bottom:5px;">🕒 ${new Date(r.timestamp).toLocaleString('id-ID')}</div><strong style="color:var(--form-text); font-size:1.1rem; display:block;">Email: ${r.email || 'Tanpa Email'}</strong></div>`; });
-                document.getElementById('respList').innerHTML = html || "<div style='padding:30px; text-align:center;'>Belum ada data.</div>";
-            } catch(e) {}
+
+        async function deleteFormDirect(formId) {
+            if(confirm("PERINGATAN KRUSIAL: Menghapus form akan membuang semua data jawaban dan konfigurasi secara PERMANEN. Anda Yakin?")) {
+                try {
+                    const res = await fetch(`/api/forms/${formId}`, { method: 'DELETE' });
+                    const json = await res.json();
+                    if(json.success) { showToast("🗑️ Formulir berhasil dihapus permanen."); loadAllForms(); } 
+                    else { throw new Error(); }
+                } catch(e) { showToast("⚠️ Gagal menghapus form dari database."); }
+            }
         }
+
+        async function loadResponses() {
+            document.getElementById('respList').innerHTML = "Memuat tanggapan dari server...";
+            try {
+                const res = await fetch(`/api/forms/${currentForm.id}/responses`);
+                const json = await res.json();
+                const data = json.data || [];
+                document.getElementById('respCount').innerText = `${data.length} Tanggapan`;
+                
+                let html = '';
+                data.slice().reverse().forEach((r) => { 
+                    html += `
+                        <div class="glass-card inner-neumorph" style="padding:20px; border-radius:12px; margin-bottom:15px; border-left: 4px solid var(--form-active-border);">
+                            <div style="color:var(--form-text-muted); font-size:0.85rem; margin-bottom:5px;">🕒 ${new Date(r.timestamp).toLocaleString('id-ID')}</div>
+                            <strong style="color:var(--form-text); font-size:1.1rem; display:block;">Email: ${r.email || 'Tanpa Email'}</strong>
+                        </div>`;
+                });
+                document.getElementById('respList').innerHTML = html || "<div style='padding:30px; text-align:center; color:#888; border:2px dashed var(--form-border); border-radius:12px;'>Menunggu tanggapan masuk.</div>";
+            } catch(e) { document.getElementById('respList').innerHTML = "Gagal memuat data."; }
+        }
+
         function downloadExcel() { window.open(`/api/forms/${currentForm.id}/export`, '_blank'); }
 
-        // ================= RENDERING LIST =================
+        // ================= RENDERING LIST DASHBOARD =================
         function renderFormList() {
             const cont = document.getElementById('formListContainer');
-            if(allForms.length === 0) { cont.innerHTML = "<div class='glass-card inner-neumorph' style='text-align:center; padding:50px;'>Belum ada formulir.</div>"; return; }
+            if(allForms.length === 0) { cont.innerHTML = "<div class='glass-card inner-neumorph' style='text-align:center; padding:50px; border-radius:12px;'>Belum ada formulir. Silahkan buat yang baru.</div>"; return; }
+            
             let html = '';
             [...allForms].reverse().forEach(f => {
-                let deadlineStr = f.settings && f.settings.deadline ? new Date(f.settings.deadline).toLocaleString('id-ID', {day:'numeric', month:'short', year:'numeric'}) : 'Tanpa Batas';
-                html += `<div class="list-form-card glass-card neumorph-outer"><div style="flex:1;"><h3 style="font-size: 1.3rem; margin:0;">${f.title || 'Tanpa Judul'}</h3><div style="display:flex; gap:15px; margin-top:10px;"><span style="font-size:0.85rem; background:var(--form-focus-glow); padding:4px 10px; border-radius:6px;">/form/${f.slug}</span><span style="font-size:0.85rem; color:${f.isActive ? '#10b981' : '#ef4444'};">Status: ${f.isActive ? 'Dibuka' : 'Ditutup'}</span><span style="font-size:0.85rem;">⏳ Deadline: ${deadlineStr}</span></div></div><div style="display:flex; gap: 10px;"><button class="gf-btn-submit glow-effect" onclick="openFormEditor('${f.id}')">✏️ Edit</button><a href="/form/${f.slug}" target="_blank" class="gf-btn-clear neumorph-btn" style="text-decoration:none;">👁️ Buka</a><button class="gf-btn-clear neumorph-btn text-danger" onclick="deleteFormDirect('${f.id}')">🗑️</button></div></div>`;
+                let deadlineStr = 'Tanpa Batas';
+                if(f.settings && f.settings.deadline) { deadlineStr = new Date(f.settings.deadline).toLocaleString('id-ID', {day:'numeric', month:'short', year:'numeric'}); }
+
+                html += `
+                <div class="list-form-card glass-card neumorph-outer">
+                    <div style="flex:1;">
+                        <h3 style="font-size: 1.3rem; color:var(--form-text); margin:0; font-weight:700;">${f.title || 'Formulir Tanpa Judul'}</h3>
+                        <div style="display:flex; align-items:center; gap:15px; margin-top:10px; flex-wrap:wrap;">
+                            <span style="font-size:0.85rem; color:var(--form-active-border); font-weight:600; background:var(--form-focus-glow); padding:4px 10px; border-radius:6px;">/form/${f.slug}</span>
+                            <span style="font-size:0.85rem; color:${f.isActive ? '#10b981' : '#ef4444'}; font-weight:600;"><span style="color:var(--form-text-muted);">Status:</span> ${f.isActive ? 'Dibuka' : 'Ditutup'}</span>
+                            <span style="font-size:0.85rem; color:var(--form-text-muted);"><span style="font-weight:600;">⏳ Deadline:</span> ${deadlineStr}</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
+                        <button class="gf-btn-submit glow-effect" onclick="openFormEditor('${f.id}')" title="Edit Form">✏️ Edit</button>
+                        <a href="/form/${f.slug}" target="_blank" class="gf-btn-clear neumorph-btn" style="text-decoration:none;" title="Pratinjau">👁️ Buka</a>
+                        <button class="gf-btn-clear neumorph-btn text-danger" onclick="deleteFormDirect('${f.id}')" title="Hapus Permanen">🗑️</button>
+                    </div>
+                </div>`;
             });
             cont.innerHTML = html;
         }
 
-        const defaultSettingsJSON = { collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban dicatat.', deadline: '', isQuiz: false, quizRelease: 'immediate', quizShowMissed: true, quizShowCorrect: true, quizShowPoints: true, quizDefaultPoints: 0, sendCopy: 'none', showProgress: false, shuffleQuestions: false, showSubmitAnother: true, showSummary: false, disableAutoSave: false, defaultRequired: false };
+        // ================= STRUCTURE BUILDER (MERGE OLD & NEW SETTINGS) =================
+        const defaultSettingsJSON = { 
+            collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '',
+            isQuiz: false, quizRelease: 'immediate', quizShowMissed: true, quizShowCorrect: true, quizShowPoints: true, quizDefaultPoints: 0,
+            sendCopy: 'none', showProgress: false, shuffleQuestions: false, showSubmitAnother: true, showSummary: false, disableAutoSave: false,
+            defaultRequired: false
+        };
 
         function createNewForm() {
             currentForm = {
-                id: '', slug: `form-${Date.now()}`, title: 'Formulir Tanpa Judul', description: '', isActive: true, settings: JSON.parse(JSON.stringify(defaultSettingsJSON)),
+                id: '', slug: `form-${Date.now()}`, title: 'Formulir Tanpa Judul', description: '', isActive: true,
+                settings: JSON.parse(JSON.stringify(defaultSettingsJSON)),
                 theme: { headerFont: 'Outfit', headerFontSize: 28, questionFont: 'Plus Jakarta Sans', questionFontSize: 14, textFont: 'Plus Jakarta Sans', textFontSize: 12, color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' },
                 sections: [ { id: 's1', stepName: 'Tahap 1', title: 'Bagian 1', description: '', questions: [] } ]
             };
             historyStack = []; historyPointer = -1; saveState(); openEditorUI();
         }
+
         function openFormEditor(id) {
             currentForm = JSON.parse(JSON.stringify(allForms.find(f => f.id === id))); 
+            // Deep merge backward compatibility for old forms without new settings
             currentForm.settings = { ...defaultSettingsJSON, ...(currentForm.settings || {}) };
             if(!currentForm.theme) currentForm.theme = { headerFont: 'Outfit', headerFontSize: 28, questionFont: 'Plus Jakarta Sans', questionFontSize: 14, textFont: 'Plus Jakarta Sans', textFontSize: 12, color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' };
             historyStack = []; historyPointer = -1; saveState(); openEditorUI();
         }
+
         function openEditorUI() {
             document.getElementById('tabPertanyaan').style.display = 'block'; document.getElementById('tabJawaban').style.display = 'block'; document.getElementById('tabSetelan').style.display = 'block';
             applyThemeToDOM(); switchFormTab('pertanyaan');
         }
 
-        // ================= DRAG DROP =================
+        // ================= DRAG AND DROP =================
         let dragSrcEl = null;
         function handleDragStart(e, sIdx, qIdx) { dragSrcEl = { sIdx, qIdx }; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', qIdx); }
         function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect = 'move'; return false; }
@@ -490,7 +744,8 @@
                 let draggedItem = questions.splice(dragSrcEl.qIdx, 1)[0];
                 questions.splice(targetQIdx, 0, draggedItem);
                 activeQIdx = targetQIdx; saveState(); renderBuilder();
-            } return false;
+            }
+            return false;
         }
         function handleDragEnd(e) { this.classList.remove('dragging'); }
 
@@ -501,7 +756,6 @@
             
             let headerImgHtml = theme.headerImage ? `<img src="${theme.headerImage}" style="width:100%; height:130px; object-fit:cover; border-radius:12px 12px 0 0; display:block;">` : '';
             
-            // Header Form (Step 0)
             let html = `
                 <div class="form-header-card glass-card neumorph-outer ${(activeSecIdx===-1 && activeQIdx===-1)?'active':''}" style="padding:0; overflow:hidden; border-top: ${theme.headerImage ? 'none' : '10px solid var(--form-active-border)'};" onclick="setActive(-1, -1, this)">
                     ${headerImgHtml}
@@ -518,6 +772,7 @@
                     <div style="margin-top:40px; position:relative;">
                         <div class="form-section-header glow-effect">Bagian ${sIdx+1} dari ${currentForm.sections.length}</div>
                         <div class="form-header-card glass-card neumorph-outer ${(activeSecIdx===sIdx && activeQIdx===-1)?'active':''}" style="border-top: none; border-radius: 0 16px 16px 16px; margin-top:0;" onclick="setActive(${sIdx}, -1, this)">
+                            
                             <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:15px; flex-wrap:wrap; gap:15px;">
                                 <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
                                     <div style="display:flex; align-items:center; gap:10px;">
@@ -535,6 +790,7 @@
 
                 sec.questions.forEach((q, qIdx) => {
                     let isActive = (activeSecIdx === sIdx && activeQIdx === qIdx) ? 'active hover-glow' : '';
+                    
                     let optionsHtml = '';
                     
                     // ================= TIPE: PILIHAN / DROPDOWN =================
@@ -551,6 +807,7 @@
                         });
                         optionsHtml += `<div style="display:flex; align-items:center; gap:15px; margin-top:5px;"><span style="color:#ccc; margin-left:4px;">${q.type === 'kotak_centang' ? '☐' : '○'}</span><button class="gf-btn-clear neumorph-btn" style="margin-left:0; font-weight:600; padding:8px 15px;" onclick="addOption(${sIdx},${qIdx})">➕ Tambahkan Opsi Lain</button></div></div>`;
                     } 
+                    
                     // ================= TIPE: TEXT / LAINNYA =================
                     else if (q.type === 'paragraf' || q.type === 'jawaban_singkat') { optionsHtml = `<input type="text" class="gf-input inner-neumorph" placeholder="Teks jawaban ${q.type.replace('_',' ')}" disabled style="margin-top:15px; opacity:0.6;">`; } 
                     else if (q.type === 'tanggal') { optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">📅 Bulan, Hari, Tahun</div>`; }
@@ -619,7 +876,7 @@
                             `).join('')}
                         </div>`;
                     }
-                    
+
                     // ================= SUPER UPGRADE: KISI PILIHAN GANDA & KOTAK CENTANG (GBR 6 & 8) =================
                     else if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
                         let rowsHtml = '';
@@ -648,10 +905,9 @@
                             <div style="flex:1; min-width:200px;"><h4 style="font-size:0.9rem; color:var(--form-text); margin-bottom:15px;">Kolom</h4>${colsHtml}</div>
                         </div>`;
                     }
-                    
+
                     else { optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; padding:10px;">[Tipe Paragraf]</div>`; }
 
-                    // Tipe Title Only Render
                     if(q.type === 'title_only') {
                         html += `
                         <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" draggable="true" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}" ondragstart="handleDragStart(event, ${sIdx}, ${qIdx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${sIdx}, ${qIdx})" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
@@ -666,7 +922,6 @@
                         return;
                     }
 
-                    // Tipe Input Render
                     html += `
                     <div class="form-question-card glass-card neumorph-outer ${isActive}" style="margin-bottom:30px;" draggable="true" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}" ondragstart="handleDragStart(event, ${sIdx}, ${qIdx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${sIdx}, ${qIdx})" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
                         <div class="drag-handle" title="Seret untuk memindahkan">⠿</div>
@@ -729,45 +984,109 @@
         function deleteQuestion(sIdx, qIdx) { currentForm.sections[sIdx].questions.splice(qIdx, 1); activeQIdx = -1; saveState(); renderBuilder(); }
         function duplicateQuestion(sIdx, qIdx) { let q = JSON.parse(JSON.stringify(currentForm.sections[sIdx].questions[qIdx])); q.id = 'q_' + Date.now(); currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, q); activeQIdx = qIdx + 1; saveState(); renderBuilder(); }
         function deleteSection(sIdx) { if(currentForm.sections.length <= 1) return showToast("Tidak dapat menghapus bagian terakhir."); if(confirm("Hapus bagian ini?")) { currentForm.sections.splice(sIdx, 1); activeSecIdx = 0; activeQIdx = -1; saveState(); renderBuilder(); } }
+        
         function changeQType(sIdx, qIdx, type) { 
-            let q = currentForm.sections[sIdx].questions[qIdx]; q.type = type; 
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            q.type = type; 
+            
+            // Inisialisasi Data Baru untuk tipe-tipe spesifik saat diganti
             if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(type) && (!q.options || q.options.length === 0)) q.options = ['Opsi 1']; 
-            if(['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(type)) { if(!q.rows) q.rows = ['Baris 1']; if(!q.columns) q.columns = ['Kolom 1']; }
-            if(type === 'skala_linier') { q.scaleMin = q.scaleMin || 1; q.scaleMax = q.scaleMax || 5; }
-            if(type === 'rating') { q.ratingLevels = q.ratingLevels || 5; }
-            if(type === 'upload_file') { q.maxFiles = q.maxFiles || 1; q.maxSize = q.maxSize || '10 MB'; }
+            if(['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(type)) {
+                if(!q.rows) q.rows = ['Baris 1'];
+                if(!q.columns) q.columns = ['Kolom 1'];
+            }
+            if(type === 'skala_linier') {
+                q.scaleMin = q.scaleMin || 1; q.scaleMax = q.scaleMax || 5;
+            }
+            if(type === 'rating') {
+                q.ratingLevels = q.ratingLevels || 5;
+            }
+            if(type === 'upload_file') {
+                q.maxFiles = q.maxFiles || 1; q.maxSize = q.maxSize || '10 MB';
+            }
+            
             saveState(); renderBuilder(); 
         }
         function addOption(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].options.push('Opsi ' + (currentForm.sections[sIdx].questions[qIdx].options.length + 1)); saveState(); renderBuilder(); }
         function deleteOption(sIdx, qIdx, oIdx) { currentForm.sections[sIdx].questions[qIdx].options.splice(oIdx, 1); saveState(); renderBuilder(); }
 
         // Fungsi Penunjang GRID API
-        function addGridRow(sIdx, qIdx) { if(!currentForm.sections[sIdx].questions[qIdx].rows) currentForm.sections[sIdx].questions[qIdx].rows = []; currentForm.sections[sIdx].questions[qIdx].rows.push(`Baris ${currentForm.sections[sIdx].questions[qIdx].rows.length + 1}`); saveState(); renderBuilder(); }
-        function removeGridRow(sIdx, qIdx, rIdx) { currentForm.sections[sIdx].questions[qIdx].rows.splice(rIdx, 1); saveState(); renderBuilder(); }
-        function addGridCol(sIdx, qIdx) { if(!currentForm.sections[sIdx].questions[qIdx].columns) currentForm.sections[sIdx].questions[qIdx].columns = []; currentForm.sections[sIdx].questions[qIdx].columns.push(`Kolom ${currentForm.sections[sIdx].questions[qIdx].columns.length + 1}`); saveState(); renderBuilder(); }
-        function removeGridCol(sIdx, qIdx, cIdx) { currentForm.sections[sIdx].questions[qIdx].columns.splice(cIdx, 1); saveState(); renderBuilder(); }
+        function addGridRow(sIdx, qIdx) {
+            if(!currentForm.sections[sIdx].questions[qIdx].rows) currentForm.sections[sIdx].questions[qIdx].rows = [];
+            currentForm.sections[sIdx].questions[qIdx].rows.push(`Baris ${currentForm.sections[sIdx].questions[qIdx].rows.length + 1}`);
+            saveState(); renderBuilder();
+        }
+        function removeGridRow(sIdx, qIdx, rIdx) {
+            currentForm.sections[sIdx].questions[qIdx].rows.splice(rIdx, 1);
+            saveState(); renderBuilder();
+        }
+        function addGridCol(sIdx, qIdx) {
+            if(!currentForm.sections[sIdx].questions[qIdx].columns) currentForm.sections[sIdx].questions[qIdx].columns = [];
+            currentForm.sections[sIdx].questions[qIdx].columns.push(`Kolom ${currentForm.sections[sIdx].questions[qIdx].columns.length + 1}`);
+            saveState(); renderBuilder();
+        }
+        function removeGridCol(sIdx, qIdx, cIdx) {
+            currentForm.sections[sIdx].questions[qIdx].columns.splice(cIdx, 1);
+            saveState(); renderBuilder();
+        }
 
-        // ================= SETTINGS V2 =================
+        // ================= SETTINGS V2 (SUPER UPGRADE ACCORDION & KUIS) =================
         function updateSetting(key, val) { currentForm.settings[key] = val; saveState(); }
         function updateRootSetting(key, val) { currentForm[key] = val; saveState(); }
+        
         function toggleAcc(contentId, iconId) {
-            const content = document.getElementById(contentId), icon = document.getElementById(iconId);
-            if(content.style.display === "none") { content.style.display = "block"; icon.style.transform = "rotate(180deg)"; } 
-            else { content.style.display = "none"; icon.style.transform = "rotate(0deg)"; }
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            if(content.style.display === "none") {
+                content.style.display = "block"; icon.style.transform = "rotate(180deg)";
+            } else {
+                content.style.display = "none"; icon.style.transform = "rotate(0deg)";
+            }
         }
-        function toggleQuizPanel(isActive) { document.getElementById('quizSubPanel').style.display = isActive ? 'block' : 'none'; }
+
+        function toggleQuizPanel(isActive) {
+            const panel = document.getElementById('quizSubPanel');
+            panel.style.display = isActive ? 'block' : 'none';
+        }
+
         function renderSettings() {
-            document.getElementById('setActive').checked = currentForm.isActive !== false; document.getElementById('setSlug').value = currentForm.slug || '';
-            document.getElementById('setDeadline').value = currentForm.settings.deadline || ''; document.getElementById('setCollectEmail').value = currentForm.settings.collectEmail || 'none';
-            document.getElementById('setSendCopy').value = currentForm.settings.sendCopy || 'none'; document.getElementById('setAllowEdit').checked = currentForm.settings.editResponse || false;
-            document.getElementById('setLimitOne').checked = currentForm.settings.limitOne || false; document.getElementById('setShowProgress').checked = currentForm.settings.showProgress || false;
-            document.getElementById('setShuffle').checked = currentForm.settings.shuffleQuestions || false; document.getElementById('setConfMsg').value = currentForm.settings.confirmationMessage || 'Jawaban dicatat.';
-            document.getElementById('setShowSubmitAnother').checked = currentForm.settings.showSubmitAnother !== false; document.getElementById('setShowSummary').checked = currentForm.settings.showSummary || false;
-            document.getElementById('setDisableAutoSave').checked = currentForm.settings.disableAutoSave || false; document.getElementById('setDefaultRequired').checked = currentForm.settings.defaultRequired || false;
-            const isQuiz = currentForm.settings.isQuiz || false; document.getElementById('setIsQuiz').checked = isQuiz; toggleQuizPanel(isQuiz);
-            document.querySelectorAll(`input[name="quizRelease"]`).forEach(el => { if(el.value === (currentForm.settings.quizRelease || 'immediate')) el.checked = true; });
-            document.getElementById('setQuizMissed').checked = currentForm.settings.quizShowMissed !== false; document.getElementById('setQuizCorrect').checked = currentForm.settings.quizShowCorrect !== false;
-            document.getElementById('setQuizPoints').checked = currentForm.settings.quizShowPoints !== false; document.getElementById('setQuizDefPoints').value = currentForm.settings.quizDefaultPoints || 0;
+            // Root Settings
+            document.getElementById('setActive').checked = currentForm.isActive !== false;
+            document.getElementById('setSlug').value = currentForm.slug || '';
+            
+            // Nested Settings
+            document.getElementById('setDeadline').value = currentForm.settings.deadline || '';
+            document.getElementById('setCollectEmail').value = currentForm.settings.collectEmail || 'none';
+            document.getElementById('setSendCopy').value = currentForm.settings.sendCopy || 'none';
+            document.getElementById('setAllowEdit').checked = currentForm.settings.editResponse || false;
+            document.getElementById('setLimitOne').checked = currentForm.settings.limitOne || false;
+            
+            // Presentasi
+            document.getElementById('setShowProgress').checked = currentForm.settings.showProgress || false;
+            document.getElementById('setShuffle').checked = currentForm.settings.shuffleQuestions || false;
+            document.getElementById('setConfMsg').value = currentForm.settings.confirmationMessage || 'Jawaban Anda telah dicatat.';
+            document.getElementById('setShowSubmitAnother').checked = currentForm.settings.showSubmitAnother !== false; // Default true
+            document.getElementById('setShowSummary').checked = currentForm.settings.showSummary || false;
+            document.getElementById('setDisableAutoSave').checked = currentForm.settings.disableAutoSave || false;
+            
+            // Default
+            document.getElementById('setDefaultRequired').checked = currentForm.settings.defaultRequired || false;
+
+            // Kuis
+            const isQuiz = currentForm.settings.isQuiz || false;
+            document.getElementById('setIsQuiz').checked = isQuiz;
+            toggleQuizPanel(isQuiz);
+            
+            // Radio Buttons Setup (Rilis Nilai)
+            const releaseVal = currentForm.settings.quizRelease || 'immediate';
+            document.querySelectorAll(`input[name="quizRelease"]`).forEach(el => {
+                if(el.value === releaseVal) el.checked = true;
+            });
+
+            document.getElementById('setQuizMissed').checked = currentForm.settings.quizShowMissed !== false; // Default true
+            document.getElementById('setQuizCorrect').checked = currentForm.settings.quizShowCorrect !== false;
+            document.getElementById('setQuizPoints').checked = currentForm.settings.quizShowPoints !== false;
+            document.getElementById('setQuizDefPoints').value = currentForm.settings.quizDefaultPoints || 0;
         }
     </script>
 </body>
