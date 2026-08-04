@@ -95,6 +95,18 @@
         .grid-table-wrapper::-webkit-scrollbar { height: 8px; }
         .grid-table-wrapper::-webkit-scrollbar-thumb { background: var(--form-active-border); border-radius: 4px; }
         .grid-table-wrapper::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+
+        /* SUPER UPGRADE: Validasi UI Classes */
+        .error-message { 
+            color: #ef4444; font-size: 0.85rem; font-weight: 600; 
+            margin-top: 10px; display: none; 
+        }
+        .gf-input:invalid:focus { 
+            border-color: #ef4444 !important; 
+            box-shadow: 0 0 10px rgba(239,68,68,0.3) !important; 
+        }
+        .duration-container { display: flex; gap: 15px; align-items: center; }
+        .duration-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
     </style>
 </head>
 <body class="public-form-body">
@@ -148,6 +160,7 @@
         let formData = null;
         let currentStep = 0; // MULTI-STEP WIZARD LOGIC
         let countdownTimerInterval = null; // UPGRADE: Countdown Interval Reference
+        let manualNextStep = null; // UPGRADE: Variabel untuk Buka Bagian Khusus (GoTo Section)
 
         document.addEventListener('DOMContentLoaded', loadPublicForm);
 
@@ -156,9 +169,12 @@
                 const res = await fetch(`/api/forms/${slug}`);
                 const json = await res.json();
                 
-                if(!json.success || !json.data) { return renderError("Data Anomali! Formulir tidak ditemukan di server atau URL tidak sah."); }
+                if(!json.success || !json.data) { 
+                    return renderError("Data Anomali! Formulir tidak ditemukan di server atau URL tidak sah."); 
+                }
                 
                 formData = json.data;
+                
                 // Memastikan settings terinisialisasi
                 if (!formData.settings) formData.settings = {};
                 
@@ -172,7 +188,9 @@
                     document.documentElement.style.setProperty('--form-font-text', `"${t.textFont}", sans-serif`);
                 }
                 
-                if(formData.isActive === false) { return renderError("Sesi Berakhir. Formulir ini telah ditutup oleh Administrator BEM."); }
+                if(formData.isActive === false) { 
+                    return renderError("Sesi Berakhir. Formulir ini telah ditutup oleh Administrator BEM."); 
+                }
 
                 if(formData.settings.deadline) {
                     const now = new Date();
@@ -186,7 +204,9 @@
                 renderFormHTML();
                 initAutoSave(); // Init AutoSave LocalStorage
                 initLiveCountdown(); // UPGRADE: Init Live Realtime Countdown
-            } catch(e) { renderError("Gangguan Koneksi. Gagal terhubung ke database cloud BEM."); }
+            } catch(e) { 
+                renderError("Gangguan Koneksi. Gagal terhubung ke database cloud BEM."); 
+            }
         }
 
         function renderError(msg) {
@@ -199,6 +219,17 @@
                     <button class="gf-btn-clear neumorph-btn" style="margin-top:40px; font-size:1.1rem; color:#ef4444;" onclick="window.location.href='/'">🔙 Kembali ke Portal Utama</button>
                 </div>
             `;
+        }
+
+        // Helper untuk Shuffle Array (Acak Opsi)
+        function shuffleArray(array) {
+            let currentIndex = array.length,  randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
         }
 
         function renderFormHTML() {
@@ -341,35 +372,73 @@
                         }
                     }
 
+                    // SUPER UPGRADE: Validasi Jawaban Engine (Client Side HTML Attributes)
+                    let inputExtAttr = isReq ? 'required' : '';
+                    if (q.showValidation && q.validation) {
+                        let v = q.validation;
+                        if (q.type === 'jawaban_singkat' || q.type === 'paragraf') {
+                            if (v.type === 'Angka') { 
+                                inputExtAttr += ` type="number" step="any"`; 
+                                if(v.condition === 'Lebih dari') inputExtAttr += ` min="${Number(v.value) + 0.00001}"`; 
+                                else if(v.condition === 'Kurang dari') inputExtAttr += ` max="${Number(v.value) - 0.00001}"`; 
+                            }
+                            if (v.type === 'Panjang') { 
+                                if(v.condition === 'Jumlah karakter maksimum') inputExtAttr += ` maxlength="${v.value}"`; 
+                                else if(v.condition === 'Jumlah karakter minimum') inputExtAttr += ` minlength="${v.value}"`; 
+                            }
+                            if (v.type === 'Regular expression' && v.condition === 'Kecocokan') { 
+                                inputExtAttr += ` pattern="${v.value}"`; 
+                            }
+                        }
+                    }
+
+                    // Acak Urutan Opsi
+                    let renderOpts = (q.options) ? [...q.options] : [];
+                    if (q.shuffleOptions && ['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(q.type)) { 
+                        renderOpts = shuffleArray(renderOpts); 
+                    }
+                    
+                    let renderRows = (q.rows) ? [...q.rows] : [];
+                    if (q.shuffleOptions && ['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) { 
+                        renderRows = shuffleArray(renderRows); 
+                    }
+
                     let inputHtml = '';
-                    if (q.type === 'jawaban_singkat') { inputHtml = `<input type="text" class="gf-input inner-neumorph" ${nameAttr} placeholder="Ketik jawaban singkat..." style="${textSize}" ${isReq?'required':''}>`; } 
-                    else if (q.type === 'paragraf') { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="3" placeholder="Ketik penjelasan mendetail..." oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'" style="resize:none; overflow:hidden; ${textSize}" ${isReq?'required':''}></textarea>`; }
+                    if (q.type === 'jawaban_singkat') { 
+                        inputHtml = `<input type="text" class="gf-input inner-neumorph" ${nameAttr} placeholder="Ketik jawaban singkat..." style="${textSize}" ${inputExtAttr}>`; 
+                    } 
+                    else if (q.type === 'paragraf') { 
+                        inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="3" placeholder="Ketik penjelasan mendetail..." oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'" style="resize:none; overflow:hidden; ${textSize}" ${inputExtAttr}></textarea>`; 
+                    }
                     else if (q.type === 'pilihan_ganda') {
                         inputHtml = `<div class="gf-radio-group" style="display:flex; flex-direction:column; gap:16px;">`;
-                        q.options.forEach(opt => { inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="radio" class="gf-radio custom-radio" ${nameAttr} value="${opt}" ${isReq?'required':''}> <span class="opt-text">${opt}</span></label>`; });
+                        renderOpts.forEach(opt => { 
+                            let targetMapAttr = (q.showGoToSection && q.goToSectionMap && q.goToSectionMap[opt]) ? `data-target="${q.goToSectionMap[opt]}"` : '';
+                            inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="radio" class="gf-radio custom-radio" ${nameAttr} value="${opt}" ${inputExtAttr} ${targetMapAttr}> <span class="opt-text">${opt}</span></label>`; 
+                        });
                         inputHtml += `</div>`;
                     }
                     else if (q.type === 'kotak_centang') {
-                        inputHtml = `<div class="gf-checkbox-group" style="display:flex; flex-direction:column; gap:16px;">`;
-                        q.options.forEach(opt => { inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="checkbox" class="gf-checkbox custom-check" ${nameAttr} value="${opt}"> <span class="opt-text">${opt}</span></label>`; });
-                        inputHtml += `</div>`;
+                        inputHtml = `<div class="gf-checkbox-group" id="group-${q.id}" style="display:flex; flex-direction:column; gap:16px;" ${q.showValidation ? `data-val-cond="${q.validation.condition}" data-val-val="${q.validation.value}" data-val-err="${q.validation.errorText}"` : ''}>`;
+                        renderOpts.forEach(opt => { 
+                            inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="checkbox" class="gf-checkbox custom-check" ${nameAttr} value="${opt}" onchange="checkCheckboxValidation('${q.id}')"> <span class="opt-text">${opt}</span></label>`; 
+                        });
+                        inputHtml += `</div><div id="err-${q.id}" class="error-message"></div>`;
                     }
                     else if (q.type === 'dropdown') {
-                        inputHtml = `<select class="gf-input inner-neumorph" style="padding:15px; border-radius:12px; ${textSize}" ${nameAttr} ${isReq?'required':''}>
-                                        <option value="" disabled selected>-- Buka Pilihan --</option>`;
-                        q.options.forEach(opt => { inputHtml += `<option value="${opt}">${opt}</option>`; });
+                        inputHtml = `<select class="gf-input inner-neumorph" style="padding:15px; border-radius:12px; ${textSize}" ${nameAttr} ${inputExtAttr} onchange="handleDropdownGoTo(this, '${q.id}')"><option value="" disabled selected>-- Buka Pilihan --</option>`;
+                        renderOpts.forEach(opt => { 
+                            let targetMapAttr = (q.showGoToSection && q.goToSectionMap && q.goToSectionMap[opt]) ? `data-target="${q.goToSectionMap[opt]}"` : '';
+                            inputHtml += `<option value="${opt}" ${targetMapAttr}>${opt}</option>`; 
+                        });
                         inputHtml += `</select>`;
                     }
-                    // ========================================================
-                    // SUPER UPGRADE: 5 UI TIPE PERTANYAAN BARU
-                    // ========================================================
                     else if (q.type === 'upload_file') {
                         let maxF = q.maxFiles || 1;
                         let maxS = q.maxSize || '10 MB';
                         let acceptAttr = '';
                         let allowedText = '';
 
-                        // Menyiapkan tag accept=".." sesuai ekstensi file yang diatur di Admin V2
                         if (q.restrictTypes && q.allowedFileTypes && q.allowedFileTypes.length > 0) {
                             let acceptArr = [];
                             let labelArr = [];
@@ -400,16 +469,40 @@
                             ${allowedText}
                             <div style="margin-top:15px;">
                                 <button type="button" class="gf-btn-clear neumorph-btn" onclick="event.stopPropagation(); this.nextElementSibling.click()">Pilih File</button>
-                                <input type="file" class="gf-input file-upload-custom" style="display:none;" name="${q.id}" ${isReq?'required':''} ${maxF > 1 ? 'multiple' : ''} ${acceptAttr} onchange="updateFileName(this)">
+                                <input type="file" class="gf-input file-upload-custom" style="display:none;" name="${q.id}" ${inputExtAttr} ${maxF > 1 ? 'multiple' : ''} ${acceptAttr} onchange="updateFileName(this)">
                             </div>
                             <div class="file-list-display" style="margin-top:15px; font-size:0.85rem; color:var(--form-active-border); font-weight:600;"></div>
                         </div>`;
                     }
                     else if (q.type === 'tanggal') {
-                        inputHtml = `<input type="date" class="gf-input inner-neumorph date-custom" style="width:100%; max-width:250px; ${textSize}" ${nameAttr} ${isReq?'required':''}>`;
+                        if (q.includeYear === false) {
+                            inputHtml = `<div style="display:flex; gap:10px;">
+                                <input type="number" class="gf-input inner-neumorph" placeholder="HH" min="1" max="31" style="width:80px; ${textSize}" name="${q.id}_day" ${inputExtAttr}>
+                                <input type="number" class="gf-input inner-neumorph" placeholder="BB" min="1" max="12" style="width:80px; ${textSize}" name="${q.id}_month" ${inputExtAttr}>
+                            </div>`;
+                        } else {
+                            inputHtml = `<input type="date" class="gf-input inner-neumorph date-custom" style="width:100%; max-width:250px; ${textSize}" ${nameAttr} ${inputExtAttr}>`;
+                        }
+
+                        if (q.includeTime) {
+                            inputHtml += `
+                            <div style="margin-top:15px;">
+                                <label style="font-size:0.85rem; font-weight:600; color:var(--form-text-muted); margin-bottom:5px; display:block;">Waktu</label>
+                                <input type="time" class="gf-input inner-neumorph time-custom" style="width:100%; max-width:180px; ${textSize}" name="${q.id}_time" ${inputExtAttr}>
+                            </div>`;
+                        }
                     }
                     else if (q.type === 'waktu') {
-                        inputHtml = `<input type="time" class="gf-input inner-neumorph time-custom" style="width:100%; max-width:180px; ${textSize}" ${nameAttr} ${isReq?'required':''}>`;
+                        if (q.timeType === 'durasi') {
+                            inputHtml = `
+                            <div class="duration-container">
+                                <div class="duration-item"><input type="number" class="gf-input inner-neumorph" placeholder="00" min="0" style="width:80px; text-align:center;" name="${q.id}_h" ${inputExtAttr}><span style="font-size:0.8rem;">Jam</span></div> : 
+                                <div class="duration-item"><input type="number" class="gf-input inner-neumorph" placeholder="00" min="0" max="59" style="width:80px; text-align:center;" name="${q.id}_m" ${inputExtAttr}><span style="font-size:0.8rem;">Menit</span></div> : 
+                                <div class="duration-item"><input type="number" class="gf-input inner-neumorph" placeholder="00" min="0" max="59" style="width:80px; text-align:center;" name="${q.id}_s" ${inputExtAttr}><span style="font-size:0.8rem;">Detik</span></div>
+                            </div>`;
+                        } else {
+                            inputHtml = `<input type="time" class="gf-input inner-neumorph time-custom" style="width:100%; max-width:180px; ${textSize}" ${nameAttr} ${inputExtAttr}>`;
+                        }
                     }
                     else if (q.type === 'skala_linier') {
                         let min = q.scaleMin || 1;
@@ -417,7 +510,7 @@
                         inputHtml = `<div class="gf-scale-wrapper inner-neumorph" style="overflow-x:auto; padding:20px; display:flex; align-items:flex-end; justify-content:center; gap:25px;">`;
                         if (q.labelMin) inputHtml += `<span style="font-size:0.9rem; font-weight:600; text-align:center; max-width:80px; word-wrap:break-word; color:var(--form-text);">${q.labelMin}</span>`;
                         for(let i=min; i<=max; i++){
-                             inputHtml += `<label class="gf-scale-item" style="display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer;"><span class="gf-scale-label" style="${textSize} font-weight:600; color:var(--form-text-muted);">${i}</span><input type="radio" class="gf-radio custom-radio" name="${q.id}" value="${i}" ${isReq?'required':''}></label>`;
+                             inputHtml += `<label class="gf-scale-item" style="display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer;"><span class="gf-scale-label" style="${textSize} font-weight:600; color:var(--form-text-muted);">${i}</span><input type="radio" class="gf-radio custom-radio" name="${q.id}" value="${i}" ${inputExtAttr}></label>`;
                         }
                         if (q.labelMax) inputHtml += `<span style="font-size:0.9rem; font-weight:600; text-align:center; max-width:80px; word-wrap:break-word; color:var(--form-text);">${q.labelMax}</span>`;
                         inputHtml += `</div>`;
@@ -428,7 +521,7 @@
                         for(let i=1; i<=levels; i++){
                             inputHtml += `
                             <label class="star-label" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                                <input type="radio" class="gf-radio custom-radio star-radio" style="display:none;" name="${q.id}" value="${i}" ${isReq?'required':''}>
+                                <input type="radio" class="gf-radio custom-radio star-radio" style="display:none;" name="${q.id}" value="${i}" ${inputExtAttr}>
                                 <svg class="star-icon" data-value="${i}" viewBox="0 0 24 24" width="35" height="35" stroke="currentColor" stroke-width="2" fill="none" style="color:var(--form-text-muted); transition:0.3s;">
                                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                                 </svg>
@@ -440,11 +533,10 @@
                     else if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
                         let typeInp = q.type === 'kisi_pilihan_ganda' ? 'radio' : 'checkbox';
                         let classInp = q.type === 'kisi_pilihan_ganda' ? 'custom-radio' : 'custom-check';
-                        let rows = q.rows || ['Baris 1'];
                         let cols = q.columns || ['Kolom 1'];
                         
                         inputHtml = `<div class="grid-table-wrapper inner-neumorph" style="overflow-x:auto; border-radius:12px;">
-                            <table style="width:100%; border-collapse:collapse; min-width:500px;">
+                            <table style="width:100%; border-collapse:collapse; min-width:500px;" id="grid-${q.id}">
                                 <thead>
                                     <tr>
                                         <th style="padding:15px; border-bottom:1px solid var(--form-border);"></th>
@@ -452,23 +544,25 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${rows.map((r, rIdx) => `
+                                    ${renderRows.map((r, rIdx) => `
                                     <tr style="background:${rIdx % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.03)'}; border-bottom:1px solid rgba(255,255,255,0.2);">
                                         <td style="padding:15px; font-weight:600; color:var(--form-text);">${r}</td>
-                                        ${cols.map(c => `<td style="padding:15px; text-align:center;"><input type="${typeInp}" name="${q.id}_row_${rIdx}" value="${c}" class="${classInp}" ${isReq?'required':''} style="margin:auto; display:block;"></td>`).join('')}
+                                        ${cols.map(c => `<td style="padding:15px; text-align:center;"><input type="${typeInp}" name="${q.id}_row_${rIdx}" value="${c}" class="${classInp}" ${inputExtAttr} style="margin:auto; display:block;" ${q.limitOnePerCol ? `onchange="enforceGridColLimit('${q.id}', '${c}', this)"` : ''}></td>`).join('')}
                                     </tr>`).join('')}
                                 </tbody>
                             </table>
                         </div>`;
                     }
-                    // ========================================================
-                    else { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="4" placeholder="Ketik jawaban..." style="${textSize}" ${isReq?'required':''}></textarea>`; }
+                    
+                    // Render Deskripsi Publik
+                    let descHtmlPublic = (q.showDescription && q.description) ? `<p class="form-desc" style="white-space: pre-line; margin-bottom:15px; font-size:${theme.textFontSize}px;">${q.description}</p>` : '';
 
                     html += `
-                    <div class="form-question-card glass-card neumorph-outer" style="margin-bottom:30px;">
+                    <div class="form-question-card glass-card neumorph-outer" style="margin-bottom:30px;" id="card-${q.id}">
                         <div class="question-title" style="font-size:${theme.questionFontSize || 14}px; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid rgba(139, 92, 246, 0.2);">
                             ${q.title} ${reqHtml} ${pointsHTML}
                         </div>
+                        ${descHtmlPublic}
                         <div class="input-container-morph" style="margin-top:15px; padding: 5px 0;">${inputHtml}</div>
                     </div>
                     `;
@@ -516,6 +610,55 @@
             </form>`;
 
             wrapper.innerHTML = html;
+        }
+
+        // ================= SUPER UPGRADE: JS VALIDATION & GOTO LOGIC =================
+        function checkCheckboxValidation(qId) {
+            const group = document.getElementById(`group-${qId}`);
+            if(!group) return true;
+            const cond = group.getAttribute('data-val-cond');
+            if(!cond) return true;
+            
+            const val = parseInt(group.getAttribute('data-val-val'));
+            const customErr = group.getAttribute('data-val-err');
+            const errDiv = document.getElementById(`err-${qId}`);
+            const checkedCount = group.querySelectorAll('input[type="checkbox"]:checked').length;
+            
+            let isInvalid = false;
+            let defaultErr = '';
+
+            if(cond === 'Pilih paling sedikit' && checkedCount < val) { isInvalid = true; defaultErr = `Harap pilih minimal ${val} opsi.`; }
+            if(cond === 'Pilih paling banyak' && checkedCount > val) { isInvalid = true; defaultErr = `Harap pilih maksimal ${val} opsi.`; }
+            if(cond === 'Pilih persis' && checkedCount !== val) { isInvalid = true; defaultErr = `Harap pilih tepat ${val} opsi.`; }
+
+            if(isInvalid) {
+                errDiv.innerText = customErr || defaultErr;
+                errDiv.style.display = 'block';
+                return false;
+            } else {
+                errDiv.style.display = 'none';
+                return true;
+            }
+        }
+
+        function enforceGridColLimit(qId, colValue, currentInput) {
+            if(!currentInput.checked) return;
+            const table = document.getElementById(`grid-${qId}`);
+            const allRadios = table.querySelectorAll(`input[type="radio"][value="${colValue}"]`);
+            allRadios.forEach(radio => {
+                if(radio !== currentInput) {
+                    radio.checked = false; // Uncheck dari baris lain di kolom yang sama
+                }
+            });
+        }
+
+        function handleDropdownGoTo(selectEl) {
+            const selectedOpt = selectEl.options[selectEl.selectedIndex];
+            if(selectedOpt && selectedOpt.hasAttribute('data-target')) {
+                manualNextStep = selectedOpt.getAttribute('data-target');
+            } else {
+                manualNextStep = null;
+            }
         }
 
         // ================= LIVE COUNTDOWN TIMER ENGINE =================
@@ -622,6 +765,21 @@
                             return;
                         }
                     }
+                    
+                    // Cek Validasi Checkbox JS Khusus
+                    let chkGroups = currentStepDiv.querySelectorAll('.gf-checkbox-group[data-val-cond]');
+                    for(let grp of chkGroups) {
+                        let qId = grp.id.replace('group-', '');
+                        if(!checkCheckboxValidation(qId)) return; // Stop next step
+                    }
+
+                    // Cek GoToSection dari Radio Button di Step ini (Prioritas)
+                    const radios = currentStepDiv.querySelectorAll('input[type="radio"]:checked');
+                    for (let r of radios) {
+                        if(r.hasAttribute('data-target')) {
+                            manualNextStep = r.getAttribute('data-target');
+                        }
+                    }
                 }
             }
 
@@ -634,7 +792,23 @@
                 oldStepper.classList.remove('active');
             }
 
-            currentStep += n;
+            // Menentukan Step Selanjutnya
+            if (n === 1 && manualNextStep) {
+                if (manualNextStep === 'submit') {
+                    // Paksa kirim formulir
+                    document.getElementById('submissionForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                    return;
+                } else if (manualNextStep.startsWith('s')) {
+                    // Lompat ke step spesifik
+                    let targetIdx = parseInt(manualNextStep.substring(1));
+                    currentStep = targetIdx;
+                } else {
+                    currentStep += n; 
+                }
+                manualNextStep = null; // Reset setelah melompat
+            } else {
+                currentStep += n;
+            }
 
             const newStepDiv = document.getElementById(`step-${currentStep}`);
             if(newStepDiv) newStepDiv.classList.add('active');
@@ -646,7 +820,7 @@
             }
 
             document.getElementById('btnPrev').style.display = currentStep > 0 ? 'inline-block' : 'none';
-            if (currentStep === formData.sections.length - 1) {
+            if (currentStep >= formData.sections.length - 1) {
                 document.getElementById('btnNext').style.display = 'none';
                 document.getElementById('btnKirim').style.display = 'inline-block';
             } else {
@@ -656,7 +830,9 @@
             
             // Teks Progress Bar
             const progInd = document.getElementById('progressTextIndicator');
-            if (progInd) { progInd.innerText = `Halaman ${currentStep + 1} dari ${formData.sections.length}`; }
+            if (progInd) { 
+                progInd.innerText = `Halaman ${currentStep + 1} dari ${formData.sections.length}`; 
+            }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -678,11 +854,28 @@
                 if (key === 'respondent_email') { email = value; continue; }
                 if (key === 'request_copy') continue; // Skip custom fields
                 
+                // Concatenate Date/Time/Duration parts before sending
+                if(key.endsWith('_day') || key.endsWith('_month') || key.endsWith('_h') || key.endsWith('_m') || key.endsWith('_s')) {
+                    let baseKey = key.replace(/(_day|_month|_h|_m|_s)$/, '');
+                    if(!responses[baseKey]) responses[baseKey] = {};
+                    responses[baseKey][key.split('_').pop()] = value;
+                    continue;
+                }
+
                 if (responses[key]) {
                     if (!Array.isArray(responses[key])) responses[key] = [responses[key]];
                     responses[key].push(value);
                 } else {
                     responses[key] = value;
+                }
+            }
+
+            // Clean up custom date/duration JSON objects back to string for backend
+            for(let key in responses) {
+                if(typeof responses[key] === 'object' && !Array.isArray(responses[key])) {
+                    let o = responses[key];
+                    if(o.day !== undefined) responses[key] = `Tanggal: ${o.day}/${o.month}`;
+                    if(o.h !== undefined) responses[key] = `Durasi: ${o.h} Jam, ${o.m} Menit, ${o.s} Detik`;
                 }
             }
 
