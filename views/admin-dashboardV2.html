@@ -9,6 +9,9 @@
     <!-- SUPER UPGRADE: Load SEMUA Google Fonts Untuk Fitur Tema Aesthetic -->
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600&family=Oswald:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- SUPER UPGRADE: SortableJS Untuk Animasi Tarik/Geser UI Card Secara Smooth & Realtime -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
     <!-- LOAD CSS -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
@@ -18,6 +21,34 @@
         .form-title { font-family: var(--form-font-header) !important; }
         .question-title { font-family: var(--form-font-question) !important; }
         .form-desc, .gf-input, .opt-text { font-family: var(--form-font-text) !important; }
+        
+        /* ================== DRAG & DROP SORTABLE JS UPGRADE ================== */
+        .drag-handle {
+            position: absolute; top: -15px !important; left: 50%; transform: translateX(-50%);
+            cursor: grab; opacity: 0; transition: 0.3s; font-size: 1.2rem; letter-spacing: 2px;
+            padding: 2px 15px !important; color: var(--form-text-muted); border-radius: 12px;
+            z-index: 10; background: var(--form-card-bg);
+        }
+        .drag-handle:active { cursor: grabbing; }
+        .form-question-card.active .drag-handle, .form-question-card:hover .drag-handle { 
+            opacity: 1; color: var(--form-text); box-shadow: var(--outer-neumorph) !important; 
+        }
+        
+        /* Kelas Khusus Saat Card Ditarik (Realtime Smooth Drag) */
+        .sortable-ghost { 
+            opacity: 0.3 !important; 
+            background: var(--form-focus-glow) !important; 
+            border: 2px dashed var(--form-active-border) !important; 
+            border-radius: 20px !important; 
+            transform: scale(0.98); 
+        }
+        .sortable-drag { 
+            cursor: grabbing !important; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important; 
+            transform: scale(1.02); 
+            opacity: 0.9 !important;
+            border: 1px solid var(--form-active-border) !important;
+        }
     </style>
 </head>
 <body class="admin-v2-body">
@@ -716,27 +747,7 @@
             applyThemeToDOM(); switchFormTab('pertanyaan');
         }
 
-        // ================= DRAG AND DROP =================
-        let dragSrcEl = null;
-        function handleDragStart(e, sIdx, qIdx) { dragSrcEl = { sIdx, qIdx }; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', qIdx); }
-        function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect = 'move'; return false; }
-        function handleDragEnter(e) { this.classList.add('drop-placeholder'); }
-        function handleDragLeave(e) { this.classList.remove('drop-placeholder'); }
-        function handleDrop(e, targetSIdx, targetQIdx) {
-            if (e.stopPropagation) e.stopPropagation();
-            this.classList.remove('drop-placeholder');
-            if (dragSrcEl && (dragSrcEl.sIdx === targetSIdx && dragSrcEl.qIdx !== targetQIdx)) {
-                let questions = currentForm.sections[targetSIdx].questions;
-                let draggedItem = questions.splice(dragSrcEl.qIdx, 1)[0];
-                questions.splice(targetQIdx, 0, draggedItem);
-                activeQIdx = targetQIdx; saveState(); renderBuilder();
-            }
-            return false;
-        }
-        function handleDragEnd(e) { this.classList.remove('dragging'); }
-
         // ================= CORE FORM BUILDER ENGINE =================
-        // SUPER UPGRADE: Menyimpan toggle file type secara global agar dapat di-bind via fungsi event inline HTML
         window.toggleAllowedFileType = function(sIdx, qIdx, ftId, isChecked) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if (!q.allowedFileTypes) q.allowedFileTypes = [];
@@ -785,6 +796,9 @@
                         </div>
                     </div>`;
                 }
+
+                // WRAPPER LIST SORTABLE JS UNTUK FITUR DRAG AND DROP SMOOTH
+                html += `<div class="sortable-q-list" id="sort-list-${sIdx}">`;
 
                 sec.questions.forEach((q, qIdx) => {
                     let isActive = (activeSecIdx === sIdx && activeQIdx === qIdx) ? 'active hover-glow' : '';
@@ -933,8 +947,8 @@
 
                     if(q.type === 'title_only') {
                         html += `
-                        <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" draggable="true" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}" ondragstart="handleDragStart(event, ${sIdx}, ${qIdx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${sIdx}, ${qIdx})" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
-                            <div class="drag-handle">⠿</div>
+                        <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
+                            <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
                             <input type="text" class="gf-input question-title inner-neumorph" style="font-size:1.4rem; font-weight:700;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; debouncedSaveState()" placeholder="Judul Teks">
                             <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:10px;" value="${q.image || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value; debouncedSaveState()" placeholder="Deskripsi Teks (Opsional)">
                             <div class="builder-card-footer" style="margin-top:15px;">
@@ -946,8 +960,8 @@
                     }
 
                     html += `
-                    <div class="form-question-card glass-card neumorph-outer ${isActive}" style="margin-bottom:30px;" draggable="true" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}" ondragstart="handleDragStart(event, ${sIdx}, ${qIdx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${sIdx}, ${qIdx})" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
-                        <div class="drag-handle" title="Seret untuk memindahkan">⠿</div>
+                    <div class="form-question-card glass-card neumorph-outer ${isActive}" style="margin-bottom:30px;" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
+                        <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
                         <div style="display:flex; gap: 15px; align-items:start; flex-wrap:wrap; margin-top:10px; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid rgba(139, 92, 246, 0.2);">
                             <input type="text" class="gf-input question-title inner-neumorph" style="flex:1; padding:15px; font-size:${theme.questionFontSize}px; margin-bottom:0;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; debouncedSaveState()" placeholder="Pertanyaan">
                             <select class="q-type-select neumorph-btn" style="background:var(--form-card-bg);" onchange="changeQType(${sIdx}, ${qIdx}, this.value)">
@@ -983,9 +997,38 @@
                         </div>
                     </div>`;
                 });
+
+                html += `</div>`; // MENUTUP SORTABLE LIST WRAPPER
+
             });
 
             canvas.innerHTML = html; positionToolbar();
+
+            // SUPER UPGRADE: MENGINISIASI SORTABLE JS PADA SETIAP KELOMPOK PERTANYAAN
+            document.querySelectorAll('.sortable-q-list').forEach((el, sIdx) => {
+                new Sortable(el, {
+                    handle: '.drag-handle', // Handle UI pemindah
+                    animation: 300, // Smooth transition millisecond
+                    ghostClass: 'sortable-ghost', // Styling custom saat dipindahkan
+                    dragClass: 'sortable-drag', // Styling custom node melayang
+                    forceFallback: true, // Bypass HTML5 default dragging glitch
+                    fallbackClass: 'sortable-drag',
+                    onEnd: function(evt) {
+                        if (evt.oldIndex !== evt.newIndex) {
+                            // Mengganti Array di State Javascript
+                            let questions = currentForm.sections[sIdx].questions;
+                            let movedItem = questions.splice(evt.oldIndex, 1)[0];
+                            questions.splice(evt.newIndex, 0, movedItem);
+                            
+                            // Menyesuaikan ulang Toolbar Kanan & Card yang Aktif
+                            activeSecIdx = sIdx;
+                            activeQIdx = evt.newIndex;
+                            saveState();
+                            renderBuilder();
+                        }
+                    }
+                });
+            });
         }
 
         // ================= BUILDER ACTIONS =================
