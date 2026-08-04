@@ -9,7 +9,7 @@
     <!-- Load Google Fonts Untuk Fitur Tema -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Playfair+Display:wght@500&family=Oswald:wght@500&family=Lora:wght@500&family=Montserrat:wght@500&display=swap" rel="stylesheet">
     
-    <!-- LOAD CSS (Inline CSS Dihapus Sepenuhnya) -->
+    <!-- LOAD CSS -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
 </head>
@@ -103,14 +103,10 @@
             </div>
 
             <div class="theme-section-title">Warna Tema Utama</div>
-            <div class="color-circle-group" id="themeColorGrid">
-                <!-- Javascript Injected -->
-            </div>
+            <div class="color-circle-group" id="themeColorGrid"></div>
 
             <div class="theme-section-title">Warna Latar Belakang</div>
-            <div class="color-circle-group" id="themeBgGrid">
-                <!-- Javascript Injected -->
-            </div>
+            <div class="color-circle-group" id="themeBgGrid"></div>
         </div>
     </div>
 
@@ -231,7 +227,7 @@
     <!-- TOAST Notification -->
     <div class="toast glass-panel glow-effect" id="globalToast" style="position:fixed; bottom:-100px; right:20px; background:var(--form-active-border); color:#fff; padding:15px 30px; border-radius:12px; font-weight:700; transition:0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index:9999;">Notifikasi</div>
 
-    <!-- FULL LOGIC JAVASCRIPT (DIAMBIL UTUH DARI KODE ASLI) -->
+    <!-- FULL LOGIC JAVASCRIPT -->
     <script>
         // ================= GLOBAL STATE & UNDO REDO =================
         let allForms = [];
@@ -239,7 +235,6 @@
         let activeSecIdx = 0;
         let activeQIdx = -1;
 
-        // Undo Redo Stack Logics
         let historyStack = [];
         let historyPointer = -1;
         let isNavigatingHistory = false;
@@ -261,39 +256,26 @@
         // ================= UNDO / REDO ENGINE =================
         function saveState() {
             if(isNavigatingHistory) return;
-            // Jika pointer tidak di ujung, potong masa depan
-            if(historyPointer < historyStack.length - 1) {
-                historyStack = historyStack.slice(0, historyPointer + 1);
-            }
+            if(historyPointer < historyStack.length - 1) { historyStack = historyStack.slice(0, historyPointer + 1); }
             historyStack.push(JSON.stringify(currentForm));
-            historyPointer++;
-            updateUndoRedoUI();
+            historyPointer++; updateUndoRedoUI();
         }
-
         function undoState() {
             if(historyPointer > 0) {
-                isNavigatingHistory = true;
-                historyPointer--;
+                isNavigatingHistory = true; historyPointer--;
                 currentForm = JSON.parse(historyStack[historyPointer]);
-                applyThemeToDOM();
-                renderBuilder();
-                isNavigatingHistory = false;
-                updateUndoRedoUI();
+                applyThemeToDOM(); renderBuilder();
+                isNavigatingHistory = false; updateUndoRedoUI();
             }
         }
-
         function redoState() {
             if(historyPointer < historyStack.length - 1) {
-                isNavigatingHistory = true;
-                historyPointer++;
+                isNavigatingHistory = true; historyPointer++;
                 currentForm = JSON.parse(historyStack[historyPointer]);
-                applyThemeToDOM();
-                renderBuilder();
-                isNavigatingHistory = false;
-                updateUndoRedoUI();
+                applyThemeToDOM(); renderBuilder();
+                isNavigatingHistory = false; updateUndoRedoUI();
             }
         }
-
         function updateUndoRedoUI() {
             document.getElementById('btnUndo').disabled = historyPointer <= 0;
             document.getElementById('btnRedo').disabled = historyPointer >= historyStack.length - 1;
@@ -309,41 +291,26 @@
         function initThemeGrids() {
             const cGrid = document.getElementById('themeColorGrid');
             const bGrid = document.getElementById('themeBgGrid');
-            
             THEME_COLORS.forEach((c, i) => {
                 cGrid.innerHTML += `<div class="color-circle neumorph-outer" style="background:${c};" onclick="updateTheme('color', '${c}'); updateTheme('bgColor', '${BG_COLORS[i]}');" id="tc-${c}"></div>`;
                 bGrid.innerHTML += `<div class="color-circle bg-circle inner-neumorph" style="background:${BG_COLORS[i]};" onclick="updateTheme('bgColor', '${BG_COLORS[i]}');" id="tb-${BG_COLORS[i]}"></div>`;
             });
         }
-
         function toggleThemeSidebar() { document.getElementById('themeSidebar').classList.toggle('active'); }
-
-        function updateTheme(key, value) {
-            currentForm.theme[key] = value;
-            applyThemeToDOM();
-            saveState();
-        }
-
+        function updateTheme(key, value) { currentForm.theme[key] = value; applyThemeToDOM(); saveState(); }
         function applyThemeToDOM() {
             if(!currentForm || !currentForm.theme) return;
             const t = currentForm.theme;
-            
-            // Set CSS Root Variables Live Preview
             document.documentElement.style.setProperty('--form-active-border', t.color);
             document.documentElement.style.setProperty('--form-bg', t.bgColor);
             document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont}", sans-serif`);
             document.documentElement.style.setProperty('--form-font-question', `"${t.questionFont}", sans-serif`);
             document.documentElement.style.setProperty('--form-font-text', `"${t.textFont}", sans-serif`);
             
-            // Update Select UI Panels
-            document.getElementById('themeHeaderFont').value = t.headerFont;
-            document.getElementById('themeHeaderSize').value = t.headerFontSize;
-            document.getElementById('themeQuestionFont').value = t.questionFont;
-            document.getElementById('themeQuestionSize').value = t.questionFontSize;
-            document.getElementById('themeTextFont').value = t.textFont;
-            document.getElementById('themeTextSize').value = t.textFontSize;
+            document.getElementById('themeHeaderFont').value = t.headerFont; document.getElementById('themeHeaderSize').value = t.headerFontSize;
+            document.getElementById('themeQuestionFont').value = t.questionFont; document.getElementById('themeQuestionSize').value = t.questionFontSize;
+            document.getElementById('themeTextFont').value = t.textFont; document.getElementById('themeTextSize').value = t.textFontSize;
 
-            // Highlight color circles
             document.querySelectorAll('#themeColorGrid .color-circle').forEach(el => el.innerHTML = '');
             const activeColor = document.getElementById(`tc-${t.color}`);
             if(activeColor) activeColor.innerHTML = '✓';
@@ -352,19 +319,14 @@
             const activeBg = document.getElementById(`tb-${t.bgColor}`);
             if(activeBg) activeBg.innerHTML = '<span style="color:var(--form-active-border); font-weight:bold;">✓</span>';
 
-            // Handle Header Image Display
             const imgPreview = document.getElementById('themeHeaderPreview');
             const btnRm = document.getElementById('btnRmHeader');
             if(t.headerImage) {
-                imgPreview.src = t.headerImage;
-                imgPreview.style.display = 'block';
-                btnRm.style.display = 'inline-block';
+                imgPreview.src = t.headerImage; imgPreview.style.display = 'block'; btnRm.style.display = 'inline-block';
             } else {
-                imgPreview.src = '';
-                imgPreview.style.display = 'none';
-                btnRm.style.display = 'none';
+                imgPreview.src = ''; imgPreview.style.display = 'none'; btnRm.style.display = 'none';
             }
-            renderBuilder(); // Re-render to apply font sizes to inputs
+            renderBuilder(); 
         }
 
         function handleHeaderImage(input) {
@@ -380,7 +342,6 @@
         function switchFormTab(tabId) {
             document.querySelectorAll('.b-tab').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            
             document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.add('active');
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
@@ -400,12 +361,8 @@
 
         function backToMain() {
             if(currentForm) saveFormToDB(true); 
-            document.getElementById('tabPertanyaan').style.display = 'none';
-            document.getElementById('tabJawaban').style.display = 'none';
-            document.getElementById('tabSetelan').style.display = 'none';
-            switchFormTab('main');
-            currentForm = null;
-            historyStack = []; historyPointer = -1; // Reset stack memori
+            document.getElementById('tabPertanyaan').style.display = 'none'; document.getElementById('tabJawaban').style.display = 'none'; document.getElementById('tabSetelan').style.display = 'none';
+            switchFormTab('main'); currentForm = null; historyStack = []; historyPointer = -1;
         }
 
         function previewForm() { window.open(`/form/${currentForm.slug}`, '_blank'); }
@@ -415,8 +372,7 @@
             try {
                 const res = await fetch('/api/forms');
                 const json = await res.json();
-                allForms = json.data || [];
-                renderFormList();
+                allForms = json.data || []; renderFormList();
             } catch (e) { showToast("Gagal memuat form dari Server Redis."); }
         }
 
@@ -432,8 +388,7 @@
                 const json = await res.json();
                 if(json.success) {
                     if(!isSilent) showToast("✅ Formulir Tersimpan!");
-                    currentForm.id = json.id;
-                    loadAllForms(); 
+                    currentForm.id = json.id; loadAllForms(); 
                 }
                 if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
             } catch (e) {
@@ -442,16 +397,13 @@
             }
         }
 
-        // ================= SOLUSI FIX HAPUS FORM =================
         async function deleteFormDirect(formId) {
             if(confirm("PERINGATAN KRUSIAL: Menghapus form akan membuang semua data jawaban dan konfigurasi secara PERMANEN. Anda Yakin?")) {
                 try {
                     const res = await fetch(`/api/forms/${formId}`, { method: 'DELETE' });
                     const json = await res.json();
-                    if(json.success) {
-                        showToast("🗑️ Formulir berhasil dihapus permanen.");
-                        loadAllForms(); // Refresh UI
-                    } else { throw new Error(); }
+                    if(json.success) { showToast("🗑️ Formulir berhasil dihapus permanen."); loadAllForms(); } 
+                    else { throw new Error(); }
                 } catch(e) { showToast("⚠️ Gagal menghapus form dari database."); }
             }
         }
@@ -515,71 +467,50 @@
                 id: '', slug: `form-${Date.now()}`, title: 'Formulir Tanpa Judul', description: '', isActive: true,
                 settings: { collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '' },
                 theme: { headerFont: 'Roboto', headerFontSize: 24, questionFont: 'Roboto', questionFontSize: 12, textFont: 'Roboto', textFontSize: 11, color: '#673ab7', bgColor: '#f0ebf8', headerImage: '' },
-                sections: [ { id: 's1', title: 'Bagian 1', description: '', questions: [] } ]
+                sections: [ { id: 's1', stepName: 'Tahap 1', title: 'Bagian 1', description: '', questions: [] } ]
             };
-            historyStack = []; historyPointer = -1;
-            saveState(); // Simpan kondisi awal
-            openEditorUI();
+            historyStack = []; historyPointer = -1; saveState(); openEditorUI();
         }
 
         function openFormEditor(id) {
-            currentForm = JSON.parse(JSON.stringify(allForms.find(f => f.id === id))); // Deep clone
+            currentForm = JSON.parse(JSON.stringify(allForms.find(f => f.id === id))); 
             if(!currentForm.settings) currentForm.settings = { collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '' };
             if(!currentForm.theme) currentForm.theme = { headerFont: 'Roboto', headerFontSize: 24, questionFont: 'Roboto', questionFontSize: 12, textFont: 'Roboto', textFontSize: 11, color: '#673ab7', bgColor: '#f0ebf8', headerImage: '' };
-            
-            historyStack = []; historyPointer = -1;
-            saveState();
-            openEditorUI();
+            historyStack = []; historyPointer = -1; saveState(); openEditorUI();
         }
 
         function openEditorUI() {
-            document.getElementById('tabPertanyaan').style.display = 'block';
-            document.getElementById('tabJawaban').style.display = 'block';
-            document.getElementById('tabSetelan').style.display = 'block';
-            applyThemeToDOM();
-            switchFormTab('pertanyaan');
+            document.getElementById('tabPertanyaan').style.display = 'block'; document.getElementById('tabJawaban').style.display = 'block'; document.getElementById('tabSetelan').style.display = 'block';
+            applyThemeToDOM(); switchFormTab('pertanyaan');
         }
 
-        // ================= DRAG AND DROP (DRAG N DROP GFORM CLONE) =================
+        // ================= DRAG AND DROP =================
         let dragSrcEl = null;
         function handleDragStart(e, sIdx, qIdx) {
-            dragSrcEl = { sIdx, qIdx };
-            e.target.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', qIdx); // Dummy data requirement
+            dragSrcEl = { sIdx, qIdx }; e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', qIdx);
         }
-        function handleDragOver(e) {
-            if (e.preventDefault) e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            return false;
-        }
+        function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect = 'move'; return false; }
         function handleDragEnter(e) { this.classList.add('drop-placeholder'); }
         function handleDragLeave(e) { this.classList.remove('drop-placeholder'); }
-        
         function handleDrop(e, targetSIdx, targetQIdx) {
             if (e.stopPropagation) e.stopPropagation();
             this.classList.remove('drop-placeholder');
-            
-            // Reordering logic di dalam Section yang sama
             if (dragSrcEl && (dragSrcEl.sIdx === targetSIdx && dragSrcEl.qIdx !== targetQIdx)) {
                 let questions = currentForm.sections[targetSIdx].questions;
                 let draggedItem = questions.splice(dragSrcEl.qIdx, 1)[0];
                 questions.splice(targetQIdx, 0, draggedItem);
-                
-                activeQIdx = targetQIdx; 
-                saveState();
-                renderBuilder();
+                activeQIdx = targetQIdx; saveState(); renderBuilder();
             }
             return false;
         }
         function handleDragEnd(e) { this.classList.remove('dragging'); }
 
-        // ================= CORE FORM BUILDER ENGINE & UI SECTION (GBR 2) =================
+        // ================= CORE FORM BUILDER ENGINE & UI SECTION =================
         function renderBuilder() {
             const canvas = document.getElementById('builderCanvas');
             const theme = currentForm.theme;
             
-            // Render Header Utama Form dengan Image Banner (Jika ada)
             let headerImgHtml = theme.headerImage ? `<img src="${theme.headerImage}" style="width:100%; height:130px; object-fit:cover; border-radius:12px 12px 0 0; display:block;">` : '';
             
             let html = `
@@ -593,15 +524,21 @@
             `;
 
             currentForm.sections.forEach((sec, sIdx) => {
-                // LOGIC GBR 2: Label Bagian 1 dari 2 
+                // SUPER UPGRADE: INPUT UNTUK NAMA LANGKAH (TIMELINE STEPPER)
                 if(currentForm.sections.length > 1) {
                     html += `
                     <div style="margin-top:40px; position:relative;">
                         <div class="form-section-header glow-effect">Bagian ${sIdx+1} dari ${currentForm.sections.length}</div>
                         <div class="form-header-card glass-card neumorph-outer" style="border-top: none; border-radius: 0 16px 16px 16px; margin-top:0;" onclick="setActive(${sIdx}, -1, this)">
-                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:15px;">
-                                <input type="text" class="gf-input form-title inner-neumorph" style="font-size:1.6rem; border:none; margin:0; flex:1;" value="${sec.title}" oninput="currentForm.sections[${sIdx}].title=this.value; debouncedSaveState()" placeholder="Bagian Tanpa Judul">
-                                <button class="top-icon-btn neumorph-circle text-danger" title="Hapus Bagian Ini" style="margin-left:15px;" onclick="deleteSection(${sIdx})">🗑️</button>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:15px; flex-wrap:wrap; gap:15px;">
+                                <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+                                    <div style="display:flex; align-items:center; gap:10px;">
+                                        <span style="font-size:0.8rem; font-weight:700; color:var(--form-text-muted); background:var(--form-bg); padding:4px 10px; border-radius:20px;">TIMELINE LABEL</span>
+                                        <input type="text" class="gf-input inner-neumorph" style="font-size:1rem; padding:8px 12px; flex:1;" value="${sec.stepName || 'Tahap ' + (sIdx+1)}" oninput="currentForm.sections[${sIdx}].stepName=this.value; debouncedSaveState()" placeholder="Contoh: Identitas, Verifikasi, dll">
+                                    </div>
+                                    <input type="text" class="gf-input form-title inner-neumorph" style="font-size:1.6rem; border:none; margin:0;" value="${sec.title}" oninput="currentForm.sections[${sIdx}].title=this.value; debouncedSaveState()" placeholder="Bagian Tanpa Judul">
+                                </div>
+                                <button class="top-icon-btn neumorph-circle text-danger" title="Hapus Bagian Ini" onclick="deleteSection(${sIdx})">🗑️</button>
                             </div>
                             <input type="text" class="gf-input form-desc inner-neumorph" style="font-size:${theme.textFontSize}px; border:none;" value="${sec.description}" oninput="currentForm.sections[${sIdx}].description=this.value; debouncedSaveState()" placeholder="Deskripsi (opsional)">
                         </div>
@@ -638,7 +575,7 @@
                         optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:10px;">⏰ Waktu</div>`;
                     }
                     else if (q.type === 'skala_linier' || q.type === 'rating') {
-                        optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; display:flex; gap:10px; align-items:center; padding:15px;">
+                        optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; display:flex; gap:10px; align-items:center; padding:15px; flex-wrap:wrap;">
                             <span style="font-weight:bold; color:var(--form-text);">1</span> <input type="text" class="gf-input" placeholder="Label Kiri" style="width:120px; background:transparent;"> 
                             <span style="margin:0 10px; color:var(--form-text-muted);">hingga</span> 
                             <span style="font-weight:bold; color:var(--form-text);">5</span> <input type="text" class="gf-input" placeholder="Label Kanan" style="width:120px; background:transparent;">
@@ -646,7 +583,6 @@
                     } 
                     else { optionsHtml = `<div class="inner-neumorph" style="margin-top:15px; padding:10px;">[Tipe Paragraf]</div>`; }
 
-                    // Tipe Judul Only (Sisipkan Teks di Tengah)
                     if(q.type === 'title_only') {
                         html += `
                         <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:10px;" draggable="true" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}"
@@ -662,7 +598,6 @@
                         return;
                     }
 
-                    // Tipe Pertanyaan Normal
                     html += `
                     <div class="form-question-card glass-card neumorph-outer ${isActive}" draggable="true" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}"
                          ondragstart="handleDragStart(event, ${sIdx}, ${qIdx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${sIdx}, ${qIdx})" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
@@ -722,7 +657,8 @@
         }
 
         function addSection() {
-            const newSec = { id: 's_'+Date.now(), title: 'Bagian Tanpa Judul', description: 'Deskripsi (opsional)', questions: [] };
+            // Include stepName in payload explicitly
+            const newSec = { id: 's_'+Date.now(), stepName: 'Tahap Baru', title: 'Bagian Tanpa Judul', description: 'Deskripsi (opsional)', questions: [] };
             currentForm.sections.splice(activeSecIdx + 1, 0, newSec);
             activeSecIdx++; activeQIdx = -1;
             saveState(); renderBuilder();
@@ -730,8 +666,7 @@
 
         function addTitleDesc() {
             const newQ = { id: 'q_'+Date.now(), type: 'title_only', title: 'Judul Teks', image: '', required: false, options: [] };
-            currentForm.sections[activeSecIdx].questions.push(newQ);
-            saveState(); renderBuilder();
+            currentForm.sections[activeSecIdx].questions.push(newQ); saveState(); renderBuilder();
         }
 
         function deleteQuestion(sIdx, qIdx) { currentForm.sections[sIdx].questions.splice(qIdx, 1); activeQIdx = -1; saveState(); renderBuilder(); }
@@ -752,11 +687,9 @@
         function addOption(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].options.push('Opsi ' + (currentForm.sections[sIdx].questions[qIdx].options.length + 1)); saveState(); renderBuilder(); }
         function deleteOption(sIdx, qIdx, oIdx) { currentForm.sections[sIdx].questions[qIdx].options.splice(oIdx, 1); saveState(); renderBuilder(); }
 
-        // ================= SETTINGS (TAB SETELAN) =================
+        // ================= SETTINGS =================
         function updateSetting(key, val) {
-            if(key === 'isActive') currentForm[key] = val;
-            else currentForm.settings[key] = val;
-            saveState();
+            if(key === 'isActive') currentForm[key] = val; else currentForm.settings[key] = val; saveState();
         }
 
         function renderSettings() {
