@@ -2,7 +2,7 @@
 /* =========================================================
 SUPER BIG UPGRADE UI/UX V2 (FUTURISTIC AESTHETIC EDITION)
 DIKOREKSI: Memasukkan kembali seluruh struktur layout absolut
-yang sebelumnya terhapus.
+yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
 =========================================================
 */
 
@@ -122,6 +122,32 @@ yang sebelumnya terhapus.
     display: inline-block;
 }
 
+/* ================== WIZARD STEPPER (NEW GBR 1) ================== */
+.stepper-wrapper { 
+    display: flex; justify-content: space-between; position: relative; 
+    padding: 25px 20px !important; margin-bottom: 30px; border-radius: 20px; overflow-x: auto;
+}
+.stepper-item { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; z-index: 1; min-width: 80px;}
+.stepper-item::after { 
+    content: ''; position: absolute; width: 100%; height: 4px; background: var(--form-border); 
+    top: 23px; left: 50%; z-index: -1; transition: 0.5s ease;
+}
+.stepper-item:last-child::after { display: none; }
+.step-counter { 
+    width: 45px; height: 45px; border-radius: 50%; background: var(--form-card-bg); border: 2px solid var(--form-border); 
+    display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--form-text-muted); 
+    transition: 0.4s; box-shadow: var(--outer-neumorph); margin-bottom: 12px; font-size: 1.1rem;
+}
+.stepper-item.active .step-counter { background: var(--form-active-border); color: #fff; border-color: var(--form-active-border); box-shadow: 0 0 20px var(--form-focus-glow); transform: scale(1.15);}
+.stepper-item.completed .step-counter { background: var(--form-active-border); color: #fff; border-color: var(--form-active-border); }
+.stepper-item.completed::after { background: var(--form-active-border); box-shadow: 0 0 10px var(--form-focus-glow);}
+.step-name { font-weight: 700; color: var(--form-text-muted); text-align: center; white-space: nowrap;}
+.stepper-item.active .step-name, .stepper-item.completed .step-name { color: var(--form-text); }
+
+/* WIZARD LOGIC CSS */
+.form-step { display: none; }
+.form-step.active { display: block; animation: fadeInTab 0.5s ease; }
+
 /* ================== LAYOUT MAIN & CARDS ================== */
 .admin-v2-container, .form-wrapper {
     width: 100%; max-width: 900px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; position: relative;
@@ -228,6 +254,27 @@ yang sebelumnya terhapus.
     border: 1px solid var(--form-active-border) !important;
 }
 
+/* ================== FIX RESPONSIVE TEXT RADIO/CHECKBOX (GBR 2) ================== */
+.gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+.gf-option-label { 
+    display: flex; align-items: flex-start; /* FIX GBR 2: flex-start ensures long text aligns top */
+    gap: 15px; cursor: pointer; transition: 0.2s; padding: 15px 20px; border-radius: 12px;
+}
+.gf-option-label:hover { box-shadow: var(--outer-neumorph) !important; background: rgba(255,255,255,0.6) !important; }
+.opt-text { flex: 1; word-break: break-word; line-height: 1.4; margin-top: 2px;} /* FIX GBR 2: Flex-1 prevents text pushing out */
+
+/* Hidden Inputs & Custom Styling */
+.custom-radio, .custom-check {
+    appearance: none; -webkit-appearance: none; flex-shrink: 0; /* FIX GBR 2: Prevent radio squishing */
+    width: 24px; height: 24px; margin: 0; margin-top: 2px; cursor: pointer; background: rgba(255,255,255,0.2);
+    box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); display: grid; place-content: center; transition: 0.3s;
+}
+.custom-radio { border-radius: 50%; } .custom-check { border-radius: 6px; }
+.custom-radio::before, .custom-check::before { content: ""; width: 12px; height: 12px; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset 1px 1px 3px rgba(255,255,255,0.6), 0 0 10px var(--form-focus-glow); background: var(--form-active-border); }
+.custom-radio::before { border-radius: 50%; } .custom-check::before { border-radius: 3px; }
+.custom-radio:checked::before, .custom-check:checked::before { transform: scale(1); }
+.custom-radio:checked, .custom-check:checked { box-shadow: var(--outer-neumorph); background: rgba(255,255,255,0.9); border-color: var(--form-active-border); }
+
 /* ================== BUTTONS (3D NEUMORPH) ================== */
 .gf-btn-submit {
     background: linear-gradient(135deg, var(--form-active-border), color-mix(in srgb, var(--form-active-border) 80%, black)) !important;
@@ -286,19 +333,26 @@ yang sebelumnya terhapus.
 }
 
 /* Custom Fake Radio/Checkbox for Editor */
-.fake-radio, .fake-checkbox { width: 22px; height: 22px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
+.fake-radio, .fake-checkbox { flex-shrink: 0; width: 22px; height: 22px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
 .fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
-.fake-num { font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; }
+.fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; }
 
 @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Responsive Media Queries */
+/* ================== RESPONSIVE MEDIA QUERIES (FULL MOBILE FIX) ================== */
 @media (max-width: 768px) {
+    .admin-v2-container, .form-wrapper { padding: 20px 10px; }
+    .form-header-card, .form-question-card, .admin-header-main, .list-form-card { padding: 20px; }
     .floating-toolbar {
         position: fixed; bottom: 25px; right: 50%; transform: translateX(50%); top: auto !important;
         flex-direction: row; padding: 10px 20px !important; width: max-content;
     }
     .theme-sidebar { width: 100%; right: -100%; }
-    .form-header-card, .form-question-card { padding: 25px 15px; }
     .setting-header { flex-direction: column; align-items: flex-start; }
+    .header-admin-nav { flex-direction: column; gap: 15px; border-radius: 12px; }
+    .builder-card-footer { justify-content: flex-start; flex-wrap: wrap; }
+    .form-footer-actions { flex-direction: column; gap: 15px; width: 100%;}
+    .form-footer-actions button { width: 100%; margin: 0 !important; }
+    .gf-input, .q-type-select { font-size: 1rem; padding: 12px 15px; }
+    .step-name { font-size: 0.8rem; }
 }
