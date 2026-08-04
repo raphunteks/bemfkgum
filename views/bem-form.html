@@ -46,7 +46,7 @@
         const pathArray = window.location.pathname.split('/');
         const slug = pathArray[pathArray.length - 1];
         let formData = null;
-        let currentStep = 0; // SUPER UPGRADE: MULTI-STEP WIZARD LOGIC
+        let currentStep = 0; // MULTI-STEP WIZARD LOGIC
 
         document.addEventListener('DOMContentLoaded', loadPublicForm);
 
@@ -58,6 +58,8 @@
                 if(!json.success || !json.data) { return renderError("Data Anomali! Formulir tidak ditemukan di server atau URL tidak sah."); }
                 
                 formData = json.data;
+                // Memastikan settings terinisialisasi
+                if (!formData.settings) formData.settings = {};
                 
                 // Set Theme Secara Dinamis ke :root CSS
                 if(formData.theme) {
@@ -71,7 +73,7 @@
                 
                 if(formData.isActive === false) { return renderError("Sesi Berakhir. Formulir ini telah ditutup oleh Administrator BEM."); }
 
-                if(formData.settings && formData.settings.deadline) {
+                if(formData.settings.deadline) {
                     const now = new Date();
                     const deadlineDate = new Date(formData.settings.deadline);
                     if(now > deadlineDate) {
@@ -81,6 +83,7 @@
                 }
 
                 renderFormHTML();
+                initAutoSave(); // SUPER UPGRADE: Init AutoSave LocalStorage
             } catch(e) { renderError("Gangguan Koneksi. Gagal terhubung ke database cloud BEM."); }
         }
 
@@ -98,24 +101,27 @@
         function renderFormHTML() {
             const wrapper = document.getElementById('publicFormWrapper');
             const theme = formData.theme || {};
+            const settings = formData.settings;
             
             let headerImgStyle = theme.headerImage ? `background-image: url('${theme.headerImage}');` : 'background: linear-gradient(135deg, var(--form-active-border), transparent);';
             let headerClass = theme.headerImage ? 'has-image' : 'no-image';
 
             let warningHTML = '';
-            if(formData.settings && formData.settings.deadline) {
-                const dl = new Date(formData.settings.deadline);
+            if(settings.deadline) {
+                const dl = new Date(settings.deadline);
                 const strDl = dl.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour:'2-digit', minute:'2-digit'});
                 warningHTML = `<div class="deadline-badge glass-panel glow-effect">⏳ Auto-Close: ${strDl} WITA</div>`;
             }
+            
+            // SUPER UPGRADE: Indikator Auto-Save
+            let draftInfoHTML = !settings.disableAutoSave ? `<div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--form-text-muted); margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.2);"><span style="color:#10b981;">☁️</span> Draf disimpan secara otomatis ke browser Anda</div>` : '';
 
             let html = `<form id="submissionForm" onsubmit="submitForm(event)">`;
 
-            // === SUPER UPGRADE: RENDER TIMELINE STEPPER JIKA ADA >1 SECTIONS ===
+            // RENDER TIMELINE STEPPER JIKA ADA >1 SECTIONS
             if (formData.sections && formData.sections.length > 1) {
                 html += `<div class="stepper-wrapper glass-panel neumorph-outer" style="margin-bottom:30px;">`;
                 formData.sections.forEach((sec, idx) => {
-                    // Gunakan stepName dari JSON, jika kosong fallback ke "Tahap X"
                     let safeStepName = sec.stepName && sec.stepName.trim() !== '' ? sec.stepName : 'Tahap '+(idx+1);
                     html += `
                         <div class="stepper-item ${idx === 0 ? 'active' : ''}" id="stepper-item-${idx}">
@@ -127,7 +133,7 @@
                 html += `</div>`;
             }
 
-            // === BUNGKUS HEADER DALAM STEP-0 ===
+            // BUNGKUS HEADER DALAM STEP-0
             html += `<div class="form-step active" id="step-0">`;
             
             html += `
@@ -136,34 +142,50 @@
                         <h1 class="form-title gradient-text" style="font-size:${theme.headerFontSize || 28}px;">${formData.title}</h1>
                         <p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize || 12}px;">${formData.description}</p>
                         ${warningHTML}
-                        ${formData.settings.collectEmail === 'input' ? '<div class="required-notice glass-panel">⚠️ Tanda <span class="asterisk">*</span> menunjukkan area wajib isi</div>' : ''}
+                        ${settings.collectEmail === 'input' || settings.defaultRequired ? '<div class="required-notice glass-panel">⚠️ Tanda <span class="asterisk">*</span> menunjukkan area wajib isi</div>' : ''}
+                        ${draftInfoHTML}
                     </div>
             `;
 
-            if (formData.settings.collectEmail === 'input') {
+            // SUPER UPGRADE: Logika Pengumpulan Email Sinkronisasi Kuis
+            const collectEmail = settings.collectEmail || 'none';
+            const isQuizManual = settings.isQuiz && settings.quizRelease === 'manual';
+            const requireEmail = collectEmail === 'input' || collectEmail === 'verified' || isQuizManual;
+
+            if (requireEmail) {
                 html += `
                     <div class="form-question-card glass-card neumorph-outer email-req-card">
-                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px;">Identitas Digital (Email) <span class="asterisk">*</span></div>
+                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px; margin-bottom:10px !important; padding-bottom:5px; border:none;">Identitas Digital (Email) <span class="asterisk">*</span></div>
+                        <div style="font-size:0.85rem; color:var(--form-text-muted); margin-bottom:15px;">Alamat email wajib diisi untuk keamanan data ${settings.sendCopy !== 'none' ? 'dan pengiriman salinan' : ''}.</div>
                         <input type="email" class="gf-input inner-neumorph" name="respondent_email" placeholder="Ketik alamat email Anda..." required style="font-size:${theme.textFontSize || 12}px;">
                     </div>
                 `;
             }
 
+            // SUPER UPGRADE: Logika Shuffle Soal
+            let renderSections = JSON.parse(JSON.stringify(formData.sections));
+            if (settings.shuffleQuestions) {
+                renderSections.forEach(sec => {
+                    for (let i = sec.questions.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [sec.questions[i], sec.questions[j]] = [sec.questions[j], sec.questions[i]];
+                    }
+                });
+            }
+
             // MAPPING BAGIAN (SECTION) & PERTANYAAN
-            formData.sections.forEach((sec, sIdx) => {
-                // SUPER UPGRADE: PECAH STEP JIKA LEBIH DARI 1 SECTION
+            renderSections.forEach((sec, sIdx) => {
                 if(sIdx > 0) {
                     html += `</div><div class="form-step" id="step-${sIdx}">`; 
                     html += `
                     <div class="section-divider-wrapper public-view">
-                        <div class="form-section-header glow-effect">Segmen ${sIdx+1} / ${formData.sections.length}</div>
+                        <div class="form-section-header glow-effect">Segmen ${sIdx+1} / ${renderSections.length}</div>
                         <div class="form-header-card glass-card neumorph-outer rounded-top-none">
                             <h2 class="form-title" style="font-size:1.8rem; margin-bottom:10px;">${sec.title}</h2>
                             ${sec.description ? `<p class="form-desc" style="white-space: pre-line; font-size:${theme.textFontSize}px;">${sec.description}</p>` : ''}
                         </div>
                     </div>`;
                 } else if (sec.title || sec.description) {
-                    // Khusus sIdx === 0 (Step 1) jika ada judul section
                     html += `
                     <div class="section-divider-wrapper public-view">
                         <div class="form-header-card glass-card neumorph-outer">
@@ -183,95 +205,176 @@
                          return;
                     }
 
-                    let reqHtml = q.required ? '<span class="asterisk" title="Wajib Diisi">*</span>' : '';
-                    let inputHtml = '';
+                    // SUPER UPGRADE: Kewajiban Default dari Setelan
+                    let isReq = q.required || settings.defaultRequired;
+                    let reqHtml = isReq ? '<span class="asterisk" title="Wajib Diisi">*</span>' : '';
                     let nameAttr = `name="${q.id}"`;
                     let textSize = `font-size:${theme.textFontSize || 12}px;`;
 
-                    if (q.type === 'jawaban_singkat') { inputHtml = `<input type="text" class="gf-input inner-neumorph" ${nameAttr} placeholder="Ketik jawaban singkat..." style="${textSize}" ${q.required?'required':''}>`; } 
-                    else if (q.type === 'paragraf') { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="3" placeholder="Ketik penjelasan mendetail..." oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'" style="resize:none; overflow:hidden; ${textSize}" ${q.required?'required':''}></textarea>`; }
+                    // SUPER UPGRADE: Tampilan Poin Kuis
+                    let pointsHTML = '';
+                    if (settings.isQuiz && settings.quizShowPoints !== false) {
+                        let pts = q.points !== undefined ? q.points : (settings.quizDefaultPoints || 0);
+                        if (pts > 0) {
+                            pointsHTML = `<span style="float:right; font-size:0.85rem; background:rgba(139, 92, 246, 0.15); color:var(--form-active-border); padding:4px 10px; border-radius:12px; font-weight:700; display:inline-flex; align-items:center; gap:5px;">⭐ ${pts} Poin</span>`;
+                        }
+                    }
+
+                    let inputHtml = '';
+                    if (q.type === 'jawaban_singkat') { inputHtml = `<input type="text" class="gf-input inner-neumorph" ${nameAttr} placeholder="Ketik jawaban singkat..." style="${textSize}" ${isReq?'required':''}>`; } 
+                    else if (q.type === 'paragraf') { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="3" placeholder="Ketik penjelasan mendetail..." oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'" style="resize:none; overflow:hidden; ${textSize}" ${isReq?'required':''}></textarea>`; }
                     else if (q.type === 'pilihan_ganda') {
-                        // UPGRADE SPACING: Menambahkan flex-direction column & gap 16px untuk Gbr 3
                         inputHtml = `<div class="gf-radio-group" style="display:flex; flex-direction:column; gap:16px;">`;
-                        q.options.forEach(opt => { inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="radio" class="gf-radio custom-radio" ${nameAttr} value="${opt}" ${q.required?'required':''}> <span class="opt-text">${opt}</span></label>`; });
+                        q.options.forEach(opt => { inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="radio" class="gf-radio custom-radio" ${nameAttr} value="${opt}" ${isReq?'required':''}> <span class="opt-text">${opt}</span></label>`; });
                         inputHtml += `</div>`;
                     }
                     else if (q.type === 'kotak_centang') {
-                        // UPGRADE SPACING: Menambahkan flex-direction column & gap 16px untuk Gbr 3
                         inputHtml = `<div class="gf-checkbox-group" style="display:flex; flex-direction:column; gap:16px;">`;
                         q.options.forEach(opt => { inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="checkbox" class="gf-checkbox custom-check" ${nameAttr} value="${opt}"> <span class="opt-text">${opt}</span></label>`; });
                         inputHtml += `</div>`;
                     }
                     else if (q.type === 'dropdown') {
-                        inputHtml = `<select class="gf-input inner-neumorph" style="padding:15px; border-radius:12px; ${textSize}" ${nameAttr} ${q.required?'required':''}>
+                        inputHtml = `<select class="gf-input inner-neumorph" style="padding:15px; border-radius:12px; ${textSize}" ${nameAttr} ${isReq?'required':''}>
                                         <option value="" disabled selected>-- Buka Pilihan --</option>`;
                         q.options.forEach(opt => { inputHtml += `<option value="${opt}">${opt}</option>`; });
                         inputHtml += `</select>`;
                     }
                     else if (q.type === 'upload_file') {
-                        inputHtml = `<input type="file" class="gf-input inner-neumorph file-upload-custom" style="padding:20px; text-align:center; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="file" class="gf-input inner-neumorph file-upload-custom" style="padding:20px; text-align:center; ${textSize}" ${nameAttr} ${isReq?'required':''}>`;
                     }
                     else if (q.type === 'tanggal') {
-                        inputHtml = `<input type="date" class="gf-input inner-neumorph date-custom" style="width:100%; max-width:250px; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="date" class="gf-input inner-neumorph date-custom" style="width:100%; max-width:250px; ${textSize}" ${nameAttr} ${isReq?'required':''}>`;
                     }
                     else if (q.type === 'waktu') {
-                        inputHtml = `<input type="time" class="gf-input inner-neumorph time-custom" style="width:100%; max-width:180px; ${textSize}" ${nameAttr} ${q.required?'required':''}>`;
+                        inputHtml = `<input type="time" class="gf-input inner-neumorph time-custom" style="width:100%; max-width:180px; ${textSize}" ${nameAttr} ${isReq?'required':''}>`;
                     }
                     else if (q.type === 'skala_linier' || q.type === 'rating') {
                         inputHtml = `<div class="gf-scale-wrapper inner-neumorph" style="overflow-x:auto;">`;
                         for(let i=1; i<=5; i++){
-                             inputHtml += `<label class="gf-scale-item"><span class="gf-scale-label" style="${textSize}">${i}</span><input type="radio" class="gf-radio custom-radio" ${nameAttr} value="${i}" ${q.required?'required':''}></label>`;
+                             inputHtml += `<label class="gf-scale-item"><span class="gf-scale-label" style="${textSize}">${i}</span><input type="radio" class="gf-radio custom-radio" ${nameAttr} value="${i}" ${isReq?'required':''}></label>`;
                         }
                         inputHtml += `</div>`;
                     }
-                    else { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="4" placeholder="Ketik jawaban..." style="${textSize}" ${q.required?'required':''}></textarea>`; }
+                    else { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="4" placeholder="Ketik jawaban..." style="${textSize}" ${isReq?'required':''}></textarea>`; }
 
-                    // UPGRADE SPACING: Menambahkan Margin Bottom 20px pada Judul Pertanyaan (Gbr 3)
                     html += `
                     <div class="form-question-card glass-card neumorph-outer" style="margin-bottom:30px;">
-                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid rgba(139, 92, 246, 0.2);">${q.title} ${reqHtml}</div>
+                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid rgba(139, 92, 246, 0.2);">
+                            ${q.title} ${reqHtml} ${pointsHTML}
+                        </div>
                         <div class="input-container-morph" style="margin-top:15px; padding: 5px 0;">${inputHtml}</div>
                     </div>
                     `;
                 });
             });
+
+            // SUPER UPGRADE: Fitur Meminta Salinan Jawaban
+            if (settings.sendCopy === 'requested' && requireEmail) {
+                html += `
+                <div class="form-question-card glass-card neumorph-outer" style="margin-bottom:30px; padding:25px 35px;">
+                    <div class="toggle-switch neumorph-switch">
+                        <span style="font-weight:600; color:var(--form-text); flex:1; font-size:${theme.textFontSize}px;">Kirimkan salinan jawaban saya</span>
+                        <input type="checkbox" id="reqCopyAns" name="request_copy" class="switch-input" value="yes">
+                        <label for="reqCopyAns" class="switch-label"></label>
+                    </div>
+                </div>`;
+            } else if (settings.sendCopy === 'always') {
+                html += `<input type="hidden" name="request_copy" value="yes">`;
+            }
+
             html += `</div>`; // TUTUP FORM-STEP TERAKHIR
 
-            // === FOOTER ACTIONS (WIZARD MODE & REGULAR MODE) ===
+            // SUPER UPGRADE: Indikator Progress Bar
+            let progressTextHTML = '';
+            if (settings.showProgress && renderSections.length > 1) {
+                progressTextHTML = `<div style="font-size:0.95rem; font-weight:600; color:var(--form-text-muted); text-align:center; flex:1; min-width:150px;" id="progressTextIndicator">Halaman 1 dari ${renderSections.length}</div>`;
+            }
+
+            // === FOOTER ACTIONS ===
             html += `
-                <div class="form-footer-actions glass-panel" style="margin-top:30px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
-                    <button type="button" class="gf-btn-clear neumorph-btn" id="btnPrev" onclick="changeStep(-1)" style="display:none;">🔙 Sebelumnya</button>
+                <div class="form-footer-actions glass-panel" style="margin-top:30px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
                     
-                    <div style="flex:1;"></div>
+                    <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+                        <button type="button" class="gf-btn-clear neumorph-btn" id="btnPrev" onclick="changeStep(-1)" style="display:none;">🔙 Sebelumnya</button>
+                        ${!settings.disableAutoSave ? `<button type="button" class="gf-btn-clear text-danger" onclick="clearFormDraft()" style="border:none; box-shadow:none; background:transparent; font-size:0.95rem; font-weight:600;">Hapus formulir</button>` : ''}
+                    </div>
                     
-                    <!-- Tombol Selanjutnya Tampil Jika Sections > 1 -->
-                    <button type="button" class="gf-btn-submit glow-effect btn-lg" id="btnNext" onclick="changeStep(1)" style="${formData.sections && formData.sections.length > 1 ? '' : 'display:none;'}">Selanjutnya ➡️</button>
+                    ${progressTextHTML}
                     
-                    <!-- Tombol Kirim Tampil Jika Section Hanya 1 atau Berada di Step Terakhir -->
-                    <button type="submit" class="gf-btn-submit glow-effect btn-lg" id="btnKirim" style="${formData.sections && formData.sections.length > 1 ? 'display:none;' : ''}">🚀 Kirim form Anda</button>
+                    <div style="display:flex; gap:15px; align-items:center;">
+                        <button type="button" class="gf-btn-submit glow-effect btn-lg" id="btnNext" onclick="changeStep(1)" style="${renderSections.length > 1 ? '' : 'display:none;'}">Selanjutnya ➡️</button>
+                        <button type="submit" class="gf-btn-submit glow-effect btn-lg" id="btnKirim" style="${renderSections.length > 1 ? 'display:none;' : ''}">🚀 Eksekusi Pengiriman</button>
+                    </div>
                 </div>
             </form>`;
 
             wrapper.innerHTML = html;
         }
 
+        // ================= AUTO-SAVE DRAFT ENGINE =================
+        function initAutoSave() {
+            if (!formData || !formData.settings) return;
+            if (formData.settings.disableAutoSave) return;
+            
+            const formElement = document.getElementById('submissionForm');
+            if (!formElement) return;
+
+            const draftKey = `bem_form_draft_${formData.id}`;
+            const draft = JSON.parse(localStorage.getItem(draftKey) || '{}');
+            
+            // Render ulang data tersimpan
+            for (let key in draft) {
+                const inputs = formElement.querySelectorAll(`[name="${key}"]`);
+                if (!inputs.length) continue;
+                
+                if (inputs[0].type === 'radio') {
+                    inputs.forEach(r => { if(r.value === draft[key]) r.checked = true; });
+                } else if (inputs[0].type === 'checkbox') {
+                    const values = Array.isArray(draft[key]) ? draft[key] : [draft[key]];
+                    inputs.forEach(c => { if(values.includes(c.value)) c.checked = true; });
+                } else {
+                    inputs[0].value = draft[key];
+                }
+            }
+
+            // Dengarkan setiap input perubahan
+            formElement.addEventListener('input', (e) => {
+                const target = e.target;
+                if (!target.name) return;
+                
+                const currentDraft = JSON.parse(localStorage.getItem(draftKey) || '{}');
+                if (target.type === 'checkbox') {
+                    const checked = Array.from(formElement.querySelectorAll(`[name="${target.name}"]:checked`)).map(c => c.value);
+                    currentDraft[target.name] = checked;
+                } else {
+                    currentDraft[target.name] = target.value;
+                }
+                localStorage.setItem(draftKey, JSON.stringify(currentDraft));
+            });
+        }
+
+        function clearFormDraft() {
+            if(confirm("PERINGATAN: Apakah Anda yakin ingin menghapus semua jawaban dan membersihkan formulir ini?")) {
+                localStorage.removeItem(`bem_form_draft_${formData.id}`);
+                location.reload();
+            }
+        }
+
         // ================= WIZARD LOGIC (STEPPER HORIZONTAL) =================
         function changeStep(n) {
-            // Validasi Input Sebelum Melanjutkan
             if (n === 1) {
                 const currentStepDiv = document.getElementById(`step-${currentStep}`);
                 if(currentStepDiv) {
                     const inputs = currentStepDiv.querySelectorAll('input[required], select[required], textarea[required]');
                     for (let el of inputs) {
                         if (!el.checkValidity()) {
-                            el.reportValidity(); // Memunculkan popup error asli browser
+                            el.reportValidity(); 
                             return;
                         }
                     }
                 }
             }
 
-            // Hapus Status Aktif dari Step Lama
             const oldStepDiv = document.getElementById(`step-${currentStep}`);
             if(oldStepDiv) oldStepDiv.classList.remove('active');
             
@@ -281,10 +384,8 @@
                 oldStepper.classList.remove('active');
             }
 
-            // Pindah Step
             currentStep += n;
 
-            // Tambah Status Aktif pada Step Baru
             const newStepDiv = document.getElementById(`step-${currentStep}`);
             if(newStepDiv) newStepDiv.classList.add('active');
             
@@ -294,7 +395,6 @@
                 newStepper.classList.remove('completed');
             }
 
-            // Atur Visibilitas Tombol Navigasi
             document.getElementById('btnPrev').style.display = currentStep > 0 ? 'inline-block' : 'none';
             if (currentStep === formData.sections.length - 1) {
                 document.getElementById('btnNext').style.display = 'none';
@@ -303,8 +403,11 @@
                 document.getElementById('btnNext').style.display = 'inline-block';
                 document.getElementById('btnKirim').style.display = 'none';
             }
+            
+            // SUPER UPGRADE: Teks Progress Bar
+            const progInd = document.getElementById('progressTextIndicator');
+            if (progInd) { progInd.innerText = `Halaman ${currentStep + 1} dari ${formData.sections.length}`; }
 
-            // Gulir layar kembali ke atas saat pindah step
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -323,6 +426,8 @@
 
             for (let [key, value] of formDataObj.entries()) {
                 if (key === 'respondent_email') { email = value; continue; }
+                if (key === 'request_copy') continue; // Skip custom fields
+                
                 if (responses[key]) {
                     if (!Array.isArray(responses[key])) responses[key] = [responses[key]];
                     responses[key].push(value);
@@ -341,7 +446,11 @@
                 const json = await res.json();
                 
                 if (json.success) {
+                    // SUPER UPGRADE: Hapus Draf setelah sukses kirim
+                    localStorage.removeItem(`bem_form_draft_${formData.id}`);
+                    
                     const msg = formData.settings.confirmationMessage || "Jawaban Anda telah dicatat.";
+                    const showAnother = formData.settings.showSubmitAnother !== false && !formData.settings.limitOne;
                     const theme = formData.theme || {};
                     
                     document.getElementById('publicFormWrapper').innerHTML = `
@@ -349,9 +458,12 @@
                         <div class="form-header-card glass-card neumorph-outer rounded-top-none text-center" style="padding: 60px 30px;">
                             <div class="success-icon glow-effect" style="font-size:4rem; margin-bottom:20px; animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);">✨</div>
                             <h1 class="form-title gradient-text" style="font-size:${theme.headerFontSize || 32}px; font-family:var(--form-font-header);">Sistem Menerima Data</h1>
-                            <p class="success-desc glass-panel" style="font-size:${theme.textFontSize || 14}px; color:var(--form-text); margin: 30px auto; max-width:80%; font-family:var(--form-font-text); border-left: 4px solid #10b981;">${msg}</p>
+                            <p class="success-desc glass-panel" style="font-size:${theme.textFontSize || 14}px; color:var(--form-text); margin: 30px auto; max-width:80%; font-family:var(--form-font-text); border-left: 4px solid #10b981; white-space:pre-line;">${msg}</p>
                             
-                            ${!formData.settings.limitOne ? `<button onclick="location.reload()" class="gf-btn-clear neumorph-btn" style="margin-top:20px; font-weight:600; color:var(--form-active-border);">🔄 Submit Respon Baru</button>` : ''}
+                            <div style="display:flex; justify-content:center; gap:15px; margin-top:30px; flex-wrap:wrap;">
+                                ${showAnother ? `<button onclick="location.reload()" class="gf-btn-clear neumorph-btn" style="font-weight:600; color:var(--form-active-border);">🔄 Submit Respon Baru</button>` : ''}
+                                ${formData.settings.showSummary ? `<button onclick="alert('Fitur Ringkasan dalam Pengembangan')" class="gf-btn-clear neumorph-btn" style="font-weight:600; color:#10b981;">📊 Lihat Ringkasan</button>` : ''}
+                            </div>
                         </div>
                     `;
                     window.scrollTo({ top: 0, behavior: 'smooth' });
