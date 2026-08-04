@@ -302,6 +302,17 @@ app.post('/api/forms/save', async (req, res) => {
                 }
             });
         }
+
+        // SUPER UPGRADE: Validasi Objek Settings (Untuk Kuis, Default, Presentasi dll) agar tersimpan utuh di Redis
+        if (!formData.settings) formData.settings = {};
+        const defaultFormSettings = {
+            collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '',
+            isQuiz: false, quizRelease: 'immediate', quizShowMissed: true, quizShowCorrect: true, quizShowPoints: true, quizDefaultPoints: 0,
+            sendCopy: 'none', showProgress: false, shuffleQuestions: false, showSubmitAnother: true, showSummary: false, disableAutoSave: false,
+            defaultRequired: false
+        };
+        // Menggabungkan settings yang masuk dengan default jika ada atribut baru yang kosong
+        formData.settings = { ...defaultFormSettings, ...formData.settings };
         
         await redis.hset('BEM_Forms', { [formData.id]: JSON.stringify(formData) });
         res.status(200).json({ success: true, message: "Form berhasil disimpan", id: formData.id });
