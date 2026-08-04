@@ -183,7 +183,7 @@ const defaultKontak = {
     email: "admin@bemkbmfkgumi.com",
     wa: "+62 813-4879-1099",
     waName: "Silvyananda",
-    mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
+    mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
 
 // SEED DATA BARU: RADAR BEM WIDGETS
@@ -397,10 +397,21 @@ app.get('/api/forms/:id/export', async (req, res) => {
                 sec.questions.forEach(q => {
                     // Abaikan tipe non-input
                     if(q.type !== 'title_only') {
-                        let ans = resp.answers[q.id];
-                        // Jika jawabannya berbentuk array (seperti kotak centang), gabungkan dengan koma
-                        if(Array.isArray(ans)) ans = ans.join(', '); 
-                        row[q.title || "Pertanyaan Tanpa Judul"] = ans || "";
+                        // SUPER UPGRADE: Flatten nilai dari Matrix Grid (Baris x Kolom) menjadi Multi Kolom Excel
+                        if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
+                            if (q.rows && Array.isArray(q.rows)) {
+                                q.rows.forEach((rowName, rIdx) => {
+                                    let ans = resp.answers[`${q.id}_row_${rIdx}`];
+                                    if(Array.isArray(ans)) ans = ans.join(', '); 
+                                    row[`${q.title || "Grid"} [${rowName}]`] = ans || "";
+                                });
+                            }
+                        } else {
+                            let ans = resp.answers[q.id];
+                            // Jika jawabannya berbentuk array (seperti kotak centang), gabungkan dengan koma
+                            if(Array.isArray(ans)) ans = ans.join(', '); 
+                            row[q.title || "Pertanyaan Tanpa Judul"] = ans || "";
+                        }
                     }
                 });
             });
@@ -424,7 +435,6 @@ app.get('/api/forms/:id/export', async (req, res) => {
         res.status(500).send("Gagal menggenerate File Excel Server.");
     }
 });
-
 
 // ============================================================================
 // DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR (CMS V1 - UTUH)
@@ -727,7 +737,6 @@ ${xmlUrls}
         res.status(500).send("Internal Server Error generating Sitemap");
     }
 });
-
 
 // ================= API CMS ENDPOINTS (CMS V1 - UTUH) =================
 app.get('/api/content', async (req, res) => {
