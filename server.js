@@ -294,6 +294,15 @@ app.post('/api/forms/save', async (req, res) => {
         formData.slug = formData.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         if(!formData.id) formData.id = `FRM-${Date.now()}`;
         
+        // SUPER UPGRADE: Validasi & Inject Default Step Name untuk sistem Timeline/Wizard
+        if(formData.sections && Array.isArray(formData.sections)) {
+            formData.sections.forEach((sec, idx) => {
+                if(!sec.stepName || sec.stepName.trim() === '') {
+                    sec.stepName = `Tahap ${idx + 1}`; // Automatis memberikan label database
+                }
+            });
+        }
+        
         await redis.hset('BEM_Forms', { [formData.id]: JSON.stringify(formData) });
         res.status(200).json({ success: true, message: "Form berhasil disimpan", id: formData.id });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
