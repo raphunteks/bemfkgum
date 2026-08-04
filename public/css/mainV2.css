@@ -1,8 +1,8 @@
 /* FILE: public/css/mainV2.css */
 /* =========================================================
 SUPER BIG UPGRADE UI/UX V2 (FUTURISTIC AESTHETIC EDITION)
-Styles: Glassmorphism, Neumorphism, Aurora Borealis (Mesh Gradient),
-Skeuomorphism (Inputs), Fluent Design (Glow), and Soft UI.
+DIKOREKSI: Memasukkan kembali seluruh struktur layout absolut
+yang sebelumnya terhapus.
 =========================================================
 */
 
@@ -27,7 +27,7 @@ Skeuomorphism (Inputs), Fluent Design (Glow), and Soft UI.
     --inner-neumorph: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light), inset 1px 1px 1px rgba(255,255,255,0.5);
     --outer-neumorph: 6px 6px 16px var(--shadow-dark), -6px -6px 16px var(--shadow-light), inset 1px 1px 2px rgba(255,255,255,0.7);
     
-    /* DEFAULT FONTS */
+    /* DEFAULT FONTS (FALLBACK IF GOOGLE FONTS NOT LOADED) */
     --form-font-header: 'Outfit', sans-serif;
     --form-font-question: 'Plus Jakarta Sans', sans-serif;
     --form-font-text: 'Plus Jakarta Sans', sans-serif;
@@ -50,6 +50,7 @@ Skeuomorphism (Inputs), Fluent Design (Glow), and Soft UI.
     display: block !important; 
     font-family: var(--form-font-text);
     min-height: 100vh;
+    margin: 0;
     position: relative;
     z-index: 1;
     overflow-x: hidden;
@@ -101,16 +102,14 @@ Skeuomorphism (Inputs), Fluent Design (Glow), and Soft UI.
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .inner-neumorph {
-    background: rgba(255,255,255,0.2) !important;
+    background: rgba(255,255,255,0.3) !important;
     box-shadow: var(--inner-neumorph) !important;
-    border: 1px solid rgba(255,255,255,0.3) !important;
+    border: 1px solid rgba(255,255,255,0.4) !important;
     border-radius: 12px !important;
 }
 [data-theme="dark"] .inner-neumorph { background: rgba(0,0,0,0.15) !important; border-color: rgba(255,255,255,0.05) !important; }
 
-.glow-effect {
-    box-shadow: 0 0 20px var(--form-focus-glow) !important;
-}
+.glow-effect { box-shadow: 0 0 20px var(--form-focus-glow) !important; }
 .hover-glow:hover {
     box-shadow: var(--outer-neumorph), 0 0 25px var(--form-focus-glow) !important;
     border-color: var(--form-active-border) !important;
@@ -123,17 +122,19 @@ Skeuomorphism (Inputs), Fluent Design (Glow), and Soft UI.
     display: inline-block;
 }
 
-/* ================== LAYOUT & CARDS ================== */
+/* ================== LAYOUT MAIN & CARDS ================== */
 .admin-v2-container, .form-wrapper {
-    width: 100%; max-width: 900px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box;
+    width: 100%; max-width: 900px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; position: relative;
 }
 
-/* Admin Specific */
+/* ADMIN HEADER NAV */
 .header-admin-nav {
     display: flex; justify-content: space-between; align-items: center; 
     padding: 12px 25px; margin: 15px; border-radius: 20px;
     position: sticky; top: 15px; z-index: 1000;
 }
+
+/* TABS MENU */
 .builder-tabs {
     display: flex; justify-content: center; gap: 15px; margin: 0 15px 30px;
     padding: 10px; border-radius: 20px;
@@ -142,178 +143,156 @@ Skeuomorphism (Inputs), Fluent Design (Glow), and Soft UI.
     padding: 12px 25px; color: var(--form-text-muted); cursor: pointer;
     border-radius: 12px; font-weight: 600; transition: 0.3s; font-size: 0.95rem;
 }
-.b-tab:hover { background: rgba(255,255,255,0.3); }
+.b-tab:hover { background: rgba(255,255,255,0.4); }
 .b-tab.active {
     background: var(--form-active-border); color: #fff;
     box-shadow: 0 5px 15px var(--form-focus-glow);
 }
+.tab-content { display: none; width: 100%; }
+.tab-content.active { display: block; animation: fadeInTab 0.4s ease; }
 
-/* Cards Form Builder & Public */
-.form-header-card, .form-question-card, .list-form-card, .admin-header-main {
+/* KARTU FORM (LIST & BUILDER) */
+.admin-header-main {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
+    padding: 30px; margin-bottom: 30px;
+}
+.list-form-card {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
+    padding: 25px; margin-bottom: 20px;
+}
+.form-header-card, .form-question-card {
     padding: 35px; margin-bottom: 25px; width: 100%; box-sizing: border-box; position: relative;
 }
-.form-header-card { border-top: 8px solid var(--form-active-border) !important; }
+.form-header-card { border-top: 10px solid var(--form-active-border) !important; }
 .form-question-card { border-left: 6px solid transparent; }
 .form-question-card.active { border-left-color: var(--form-active-border); }
-.form-question-card.title-only-card { border: none !important; background: transparent !important; box-shadow: none !important; padding: 10px 30px; }
-
-/* Banner Customizations */
-.form-header-banner {
-    width: 100%; height: 160px;
-    border-radius: 20px 20px 0 0 !important;
-    position: relative; z-index: 2;
-    background-size: cover; background-position: center;
-}
-.form-header-banner::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--form-card-bg) 100%); pointer-events: none;
-}
-.form-header-banner.no-image { height: 12px; border-radius: 20px !important; }
 
 /* Typography */
 .form-title { font-family: var(--form-font-header) !important; font-weight: 700; letter-spacing: -0.5px;}
 .question-title { font-family: var(--form-font-question) !important; font-weight: 600;}
 .form-desc { color: var(--form-text-muted); line-height: 1.7; font-size: 1rem;}
-.asterisk { color: #ef4444; text-shadow: 0 0 5px rgba(239,68,68,0.5); }
 
-/* ================== INPUTS SKEUOMORPHISM (NEUMORPH + GLASS) ================== */
-.gf-input, .t-select, .q-type-select {
-    width: 100%; padding: 15px 20px; color: var(--form-text); outline: none;
-    font-family: var(--form-font-text); font-size: 1.05rem; transition: 0.3s;
+/* ================== STRUKTUR THEME SIDEBAR (YANG SEBELUMNYA HILANG) ================== */
+.theme-sidebar {
+    position: fixed; top: 0; right: -380px; width: 350px; height: 100vh;
+    z-index: 10000; transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex; flex-direction: column;
+    border-left: 1px solid var(--form-border);
 }
-.gf-input:focus, .t-select:focus, .q-type-select:focus {
-    background: rgba(255,255,255,0.5) !important;
-    box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
-    border-color: var(--form-active-border) !important;
+.theme-sidebar.active { right: 0; }
+.theme-sidebar-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 25px; border-bottom: 1px solid var(--form-border);
 }
+.theme-sidebar-content { padding: 25px; overflow-y: auto; flex: 1; }
 
-/* Custom Dropdown / Select */
-.q-type-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23673ab7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important; background-repeat: no-repeat !important; background-position: right 15px center !important; background-size: 12px auto !important;}
+.theme-section-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 15px; color: var(--form-text); border-top: 1px solid var(--form-border); padding-top: 20px; }
+.theme-section-title:first-child { border-top: none; padding-top: 0; }
 
-/* ================== CUSTOM RADIO & CHECKBOX (FUTURISTIC) ================== */
-.gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 15px; }
-.option-row, .gf-option-label { display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s;}
-.gf-option-label { padding: 12px 20px; border-radius: 12px; }
-.gf-option-label:hover { box-shadow: var(--outer-neumorph) !important; background: rgba(255,255,255,0.6) !important; }
-
-/* The Native Hidden Inputs */
-.custom-radio, .custom-check {
-    appearance: none; -webkit-appearance: none;
-    width: 24px; height: 24px; margin:0; cursor: pointer;
-    background: rgba(255,255,255,0.2);
-    box-shadow: var(--inner-neumorph);
-    border: 1px solid var(--form-border);
-    display: grid; place-content: center; transition: 0.3s;
+.font-select-group { display: flex; gap: 10px; margin-bottom: 20px; }
+.color-circle-group { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+.color-circle { 
+    width: 38px; height: 38px; border-radius: 50%; cursor: pointer; 
+    transition: 0.2s; display: flex; align-items:center; justify-content:center; 
+    color: #fff; font-size: 1rem; border: 2px solid transparent;
 }
-.custom-radio { border-radius: 50%; }
-.custom-check { border-radius: 6px; }
+.color-circle.bg-circle { width: 45px; height: 45px; color: var(--form-text); }
+.t-select { padding: 12px; font-weight: 600; color: var(--form-text); }
 
-.custom-radio::before, .custom-check::before {
-    content: ""; width: 12px; height: 12px;
-    transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: inset 1px 1px 3px rgba(255,255,255,0.6), 0 0 10px var(--form-focus-glow);
-    background: var(--form-active-border);
-}
-.custom-radio::before { border-radius: 50%; }
-.custom-check::before { border-radius: 3px; }
 
-.custom-radio:checked::before, .custom-check:checked::before { transform: scale(1); }
-.custom-radio:checked, .custom-check:checked {
-    box-shadow: var(--outer-neumorph); background: rgba(255,255,255,0.9); border-color: var(--form-active-border);
+/* ================== FLOATING TOOLBAR ================== */
+.floating-toolbar {
+    position: absolute; right: -70px; top: 0; display: flex; flex-direction: column; gap: 12px;
+    border-radius: 30px !important; padding: 12px 8px !important; z-index: 50; transition: top 0.4s;
 }
-
-/* Fake visually inputs in Builder */
-.fake-radio { width: 20px; height: 20px; border-radius: 50%; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
-.fake-checkbox { width: 20px; height: 20px; border-radius: 5px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
-.fake-num { font-weight: 700; color: var(--form-text-muted); width: 20px; text-align: center; }
-
-/* ================== BUTTONS (3D NEUMORPH) ================== */
-.gf-btn-submit {
-    background: linear-gradient(135deg, var(--form-active-border), color-mix(in srgb, var(--form-active-border) 80%, black)) !important;
-    color: #fff !important; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
-    box-shadow: 6px 6px 15px var(--shadow-dark), -6px -6px 15px var(--shadow-light), inset 1px 1px 2px rgba(255,255,255,0.4) !important;
-    border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.2) !important;
-    padding: 12px 25px; cursor: pointer; transition: 0.3s;
-}
-.gf-btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light), 0 0 25px var(--form-focus-glow) !important;
-}
-.gf-btn-submit:disabled { opacity: 0.6; filter: grayscale(1); cursor: not-allowed; transform: none;}
-
-.neumorph-btn {
-    background: var(--form-card-bg) !important;
-    box-shadow: var(--outer-neumorph) !important;
-    border: 1px solid var(--form-border) !important;
-    color: var(--form-text); font-weight: 600; padding: 10px 20px; border-radius: 12px;
-    cursor: pointer; transition: 0.3s;
-}
-.neumorph-btn:hover { background: rgba(255,255,255,0.7) !important; color: var(--form-active-border); transform: translateY(-1px); }
-.text-danger { color: #ef4444 !important; } .text-danger:hover { color: #dc2626 !important; box-shadow: 0 0 15px rgba(239,68,68,0.3) !important; }
-
-.neumorph-circle {
-    width: 45px; height: 45px; border-radius: 50% !important; display: grid; place-content: center;
-    background: var(--form-card-bg) !important; box-shadow: var(--outer-neumorph) !important;
-    border: 1px solid var(--form-border) !important; cursor: pointer; transition: 0.3s; color: var(--form-text-muted);
-}
-.neumorph-circle:hover { color: var(--form-active-border); transform: scale(1.1); }
 
 /* ================== DRAG & DROP UI ================== */
 .drag-handle {
     position: absolute; top: -15px !important; left: 50%; transform: translateX(-50%);
-    cursor: grab; opacity: 0.3; transition: 0.3s; font-size: 1.2rem; letter-spacing: 2px;
-    padding: 2px 15px !important; color: var(--form-text-muted);
+    cursor: grab; opacity: 0; transition: 0.3s; font-size: 1.2rem; letter-spacing: 2px;
+    padding: 2px 15px !important; color: var(--form-text-muted); border-radius: 12px;
 }
-.form-question-card.active .drag-handle, .form-question-card:hover .drag-handle { opacity: 1; color: var(--form-active-border); box-shadow: var(--outer-neumorph) !important;}
-.form-question-card.dragging { opacity: 0.4; transform: scale(0.98); }
-.drop-placeholder { border: 2px dashed var(--form-active-border) !important; background: var(--form-focus-glow) !important; border-radius: 20px; margin-bottom: 20px; }
+.form-question-card.active .drag-handle, .form-question-card:hover .drag-handle { opacity: 1; color: var(--form-text); box-shadow: var(--outer-neumorph) !important;}
+.form-question-card.dragging { opacity: 0.4; border: 2px dashed var(--form-active-border); transform: scale(0.98); }
+.drop-placeholder { border: 2px dashed var(--form-active-border) !important; background: var(--form-focus-glow) !important; border-radius: 20px; margin-bottom: 25px; transform: scale(1.02); }
 
-/* ================== SWITCH TOGGLES (FLUENT) ================== */
-.neumorph-switch { display: flex; align-items: center; gap: 15px; font-weight: 600;}
+
+/* ================== INPUTS SKEUOMORPHISM (NEUMORPH + GLASS) ================== */
+.gf-input, .q-type-select {
+    width: 100%; padding: 15px 20px; color: var(--form-text); outline: none; border: none;
+    font-family: var(--form-font-text); font-size: 1.05rem; transition: 0.3s; box-sizing: border-box;
+}
+.gf-input:focus, .t-select:focus, .q-type-select:focus {
+    background: rgba(255,255,255,0.7) !important;
+    box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
+    border: 1px solid var(--form-active-border) !important;
+}
+
+/* ================== BUTTONS (3D NEUMORPH) ================== */
+.gf-btn-submit {
+    background: linear-gradient(135deg, var(--form-active-border), color-mix(in srgb, var(--form-active-border) 80%, black)) !important;
+    color: #fff !important; font-weight: 700; border: none;
+    box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light), inset 1px 1px 2px rgba(255,255,255,0.4) !important;
+    border-radius: 12px; padding: 12px 25px; cursor: pointer; transition: 0.3s;
+}
+.gf-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 15px var(--shadow-dark), -6px -6px 15px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important;
+}
+.gf-btn-clear, .neumorph-btn {
+    background: var(--form-card-bg); border: 1px solid var(--form-border);
+    box-shadow: var(--outer-neumorph); color: var(--form-text);
+    font-weight: 600; padding: 10px 20px; border-radius: 12px; cursor: pointer; transition: 0.3s;
+}
+.neumorph-btn:hover { background: rgba(255,255,255,0.7); color: var(--form-active-border); transform: translateY(-1px); }
+
+.top-icon-btn, .neumorph-circle {
+    width: 45px; height: 45px; border-radius: 50%; display: flex; align-items:center; justify-content:center;
+    background: var(--form-card-bg); box-shadow: var(--outer-neumorph); border: 1px solid var(--form-border);
+    cursor: pointer; transition: 0.3s; color: var(--form-text-muted); font-size: 1.2rem;
+}
+.neumorph-circle:hover { color: var(--form-active-border); transform: scale(1.1); }
+.top-icon-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none;}
+
+
+/* ================== SWITCH TOGGLES ================== */
+.toggle-switch, .neumorph-switch { display: flex; align-items: center; gap: 15px; font-weight: 600; color: var(--form-text);}
 .switch-input { display: none; }
 .switch-label {
     width: 46px; height: 24px; border-radius: 30px; position: relative; cursor: pointer; transition: 0.4s;
-    background: rgba(255,255,255,0.2) !important; box-shadow: var(--inner-neumorph) !important; border: 1px solid var(--form-border);
+    background: rgba(255,255,255,0.4); box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border);
 }
 .switch-label::after {
     content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
-    background: #fff; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.2) !important;
+    background: #fff; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
-.switch-input:checked + .switch-label { background: var(--form-active-border) !important; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.3) !important; }
+.switch-input:checked + .switch-label { background: var(--form-active-border); box-shadow: inset 2px 2px 6px rgba(0,0,0,0.3); }
 .switch-input:checked + .switch-label::after { transform: translateX(22px); }
 
-/* ================== MISC / LAYOUTING HELPERS ================== */
-.floating-toolbar {
-    position: absolute; right: -70px; top: 0; display: flex; flex-direction: column; gap: 12px;
-    border-radius: 30px !important; padding: 12px 8px !important; z-index: 50; transition: 0.4s;
-}
-.flex-between { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
-.flex-1 { flex: 1; }
-.text-center { text-align: center; }
+/* Settings Layout Fixed */
+.setting-group { border-bottom: 1px solid var(--form-border); padding: 25px 0; }
+.setting-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+.setting-title { font-size: 1.1rem; color: var(--form-text); font-weight: 700;}
+.setting-desc { color: var(--form-text-muted); font-size: 0.9rem; margin-top: 5px; line-height: 1.5;}
 
-.section-divider-wrapper { margin-top: 50px; position: relative; }
 .form-section-header {
     background: var(--form-active-border); color: #fff; display: inline-block;
-    padding: 10px 25px; border-radius: 20px 20px 0 0; font-weight: 700; font-size: 1rem;
+    padding: 10px 25px; border-radius: 16px 16px 0 0; font-weight: 700;
     position: relative; z-index: 10; margin-bottom: -5px; letter-spacing: 0.5px;
 }
-.badge-glass { padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; }
+.builder-card-footer {
+    display: flex; justify-content: flex-end; align-items: center; gap: 12px;
+    border-top: 1px solid var(--form-border); margin-top: 25px; padding-top: 20px;
+}
 
-.form-footer-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+/* Custom Fake Radio/Checkbox for Editor */
+.fake-radio, .fake-checkbox { width: 22px; height: 22px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
+.fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
+.fake-num { font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; }
 
-/* Custom Loading Spinner */
-.loader-ring { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: var(--form-active-border); animation: spin 1s ease-in-out infinite; margin: 0 auto;}
-.loader-ring-small { display: inline-block; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 8px; vertical-align: middle;}
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Scrollbar Aesthetic */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
-::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--form-active-border); }
-
-/* Responsive Adjustments */
+/* Responsive Media Queries */
 @media (max-width: 768px) {
     .floating-toolbar {
         position: fixed; bottom: 25px; right: 50%; transform: translateX(50%); top: auto !important;
@@ -321,8 +300,5 @@ Skeuomorphism (Inputs), Fluent Design (Glow), and Soft UI.
     }
     .theme-sidebar { width: 100%; right: -100%; }
     .form-header-card, .form-question-card { padding: 25px 15px; }
-    .question-header-row { flex-direction: column; }
-    .q-type-select { width: 100%; margin-top: 10px; }
-    .form-footer-actions { flex-direction: column; gap: 15px; }
-    .form-footer-actions button { width: 100%; }
+    .setting-header { flex-direction: column; align-items: flex-start; }
 }
