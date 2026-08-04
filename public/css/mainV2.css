@@ -1,8 +1,8 @@
 /* FILE: public/css/mainV2.css */
 /* =========================================================
 SUPER BIG UPGRADE UI/UX V2 (FUTURISTIC AESTHETIC EDITION)
-DIKOREKSI: Memasukkan kembali seluruh struktur layout absolut
-yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
+DIKOREKSI: Mengembalikan layout absolut yang hilang, FIX warna 
+tema yang transparan, FIX spasi & render Font pada soal/opsi.
 =========================================================
 */
 
@@ -102,12 +102,12 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .inner-neumorph {
-    background: rgba(255,255,255,0.3) !important;
+    background: rgba(255,255,255,0.3); /* FIX: Menghapus !important agar JS warna palet di Sidebar Tema berfungsi maksimal (Gbr 1 & Gbr 4) */
     box-shadow: var(--inner-neumorph) !important;
     border: 1px solid rgba(255,255,255,0.4) !important;
     border-radius: 12px !important;
 }
-[data-theme="dark"] .inner-neumorph { background: rgba(0,0,0,0.15) !important; border-color: rgba(255,255,255,0.05) !important; }
+[data-theme="dark"] .inner-neumorph { background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.05) !important; }
 
 .glow-effect { box-shadow: 0 0 20px var(--form-focus-glow) !important; }
 .hover-glow:hover {
@@ -122,7 +122,7 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
     display: inline-block;
 }
 
-/* ================== WIZARD STEPPER (NEW GBR 1 & 2) ================== */
+/* ================== WIZARD STEPPER (NEW) ================== */
 .stepper-wrapper { 
     display: flex; justify-content: space-between; align-items: center; position: relative; 
     padding: 25px 20px !important; margin-bottom: 30px; border-radius: 20px; overflow-x: auto;
@@ -189,8 +189,11 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
     display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
     padding: 25px; margin-bottom: 20px;
 }
+
+/* FIX GBR 3 (Jarak Soal Terlalu Dempet): Menambahkan margin-bottom 30px dan padding 35px */
 .form-header-card, .form-question-card {
-    padding: 35px; margin-bottom: 25px; width: 100%; box-sizing: border-box; position: relative;
+    padding: 35px; margin-bottom: 30px !important; width: 100%; box-sizing: border-box; position: relative;
+    border-radius: 20px !important;
 }
 .form-header-card { border-top: 10px solid var(--form-active-border) !important; }
 .form-question-card { border-left: 6px solid transparent; }
@@ -211,11 +214,19 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
 
 /* Typography */
 .form-title { font-family: var(--form-font-header) !important; font-weight: 700; letter-spacing: -0.5px;}
-.question-title { font-family: var(--form-font-question) !important; font-weight: 600;}
+
+/* FIX GBR 3 (Question Title terlalu dekat dengan Opsi Jawaban): Penambahan margin dan padding bottom */
+.question-title { 
+    font-family: var(--form-font-question) !important; 
+    font-weight: 600; 
+    margin-bottom: 20px !important; 
+    padding-bottom: 15px; 
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2); 
+}
 .form-desc { color: var(--form-text-muted); line-height: 1.7; font-size: 1rem;}
 .asterisk { color: #ef4444; text-shadow: 0 0 5px rgba(239,68,68,0.5); }
 
-/* ================== STRUKTUR THEME SIDEBAR (YANG SEBELUMNYA HILANG) ================== */
+/* ================== STRUKTUR THEME SIDEBAR ================== */
 .theme-sidebar {
     position: fixed; top: 0; right: -380px; width: 350px; height: 100vh;
     z-index: 10000; transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -274,18 +285,22 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
 /* Custom Dropdown / Select */
 .q-type-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23673ab7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important; background-repeat: no-repeat !important; background-position: right 15px center !important; background-size: 12px auto !important;}
 
-/* ================== FIX RESPONSIVE TEXT RADIO/CHECKBOX (GBR 2) ================== */
-.gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+/* ================== FIX RESPONSIVE TEXT RADIO/CHECKBOX (GBR 2 & 3) ================== */
+.gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+
+/* FIX GBR 3 (Responsive Tumpang Tindih): align-items flex-start menjaga checkbox/radio tetap diatas teks yang panjang */
 .gf-option-label { 
-    display: flex; align-items: flex-start; /* FIX GBR 2: flex-start ensures long text aligns top */
+    display: flex; align-items: flex-start; 
     gap: 15px; cursor: pointer; transition: 0.2s; padding: 15px 20px; border-radius: 12px;
 }
 .gf-option-label:hover { box-shadow: var(--outer-neumorph) !important; background: rgba(255,255,255,0.6) !important; }
-.opt-text { flex: 1; word-break: break-word; line-height: 1.4; margin-top: 2px;} /* FIX GBR 2: Flex-1 prevents text pushing out */
+
+/* FIX GBR 3 (Teks Opsi Menempel): Word break agar tulisan jatuh kebawah secara proporsional */
+.opt-text { flex: 1; word-break: break-word; line-height: 1.5; margin-top: 2px;} 
 
 /* Hidden Inputs & Custom Styling */
 .custom-radio, .custom-check {
-    appearance: none; -webkit-appearance: none; flex-shrink: 0; /* FIX GBR 2: Prevent radio squishing */
+    appearance: none; -webkit-appearance: none; flex-shrink: 0; /* FIX GBR 2: Prevent radio squishing (menjadi lonjong gepeng) */
     width: 24px; height: 24px; margin: 0; margin-top: 2px; cursor: pointer; background: rgba(255,255,255,0.2);
     box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); display: grid; place-content: center; transition: 0.3s;
 }
@@ -294,6 +309,12 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
 .custom-radio::before { border-radius: 50%; } .custom-check::before { border-radius: 3px; }
 .custom-radio:checked::before, .custom-check:checked::before { transform: scale(1); }
 .custom-radio:checked, .custom-check:checked { box-shadow: var(--outer-neumorph); background: rgba(255,255,255,0.9); border-color: var(--form-active-border); }
+
+/* Fake visually inputs in Builder Admin V2 */
+.fake-radio, .fake-checkbox { flex-shrink: 0; width: 24px; height: 24px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); margin-top: 2px; }
+.fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
+.fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; margin-top: 2px; }
+
 
 /* ================== BUTTONS (3D NEUMORPH) ================== */
 .gf-btn-submit {
@@ -352,17 +373,12 @@ yang sebelumnya terhapus + Tambahan Timeline Stepper & Fix Responsive.
     border-top: 1px solid var(--form-border); margin-top: 25px; padding-top: 20px;
 }
 
-/* Custom Fake Radio/Checkbox for Editor */
-.fake-radio, .fake-checkbox { flex-shrink: 0; width: 22px; height: 22px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
-.fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
-.fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; }
-
 @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ================== RESPONSIVE MEDIA QUERIES (FULL MOBILE FIX) ================== */
 @media (max-width: 768px) {
     .admin-v2-container, .form-wrapper { padding: 20px 10px; }
-    .form-header-card, .form-question-card, .admin-header-main, .list-form-card { padding: 20px; }
+    .form-header-card, .form-question-card, .admin-header-main, .list-form-card { padding: 25px 20px; }
     .floating-toolbar {
         position: fixed; bottom: 25px; right: 50%; transform: translateX(50%); top: auto !important;
         flex-direction: row; padding: 10px 20px !important; width: max-content;
