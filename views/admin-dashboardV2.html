@@ -71,6 +71,33 @@
             display: flex; gap: 10px; align-items: center; margin-top: 15px; 
             padding-top: 15px; border-top: 1px dashed var(--form-border); flex-wrap: wrap;
         }
+
+        /* ================== SUPER UPGRADE: KUNCI JAWABAN (ANSWER KEY MODE) ================== */
+        .answer-key-mode {
+            border-top: 6px solid var(--form-active-border) !important;
+            border-left: 6px solid transparent !important;
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, var(--form-card-bg) 100%) !important;
+        }
+        .answer-key-header { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; 
+            border-bottom: 1px solid var(--form-border); padding-bottom: 15px; flex-wrap: wrap; gap:15px;
+        }
+        .answer-key-title { 
+            font-size: 1.4rem; font-weight: 700; color: var(--form-text); font-family: var(--form-font-question); flex: 1;
+        }
+        .points-input { 
+            width: 80px; text-align: center; font-size: 1.2rem; font-weight: bold; padding: 10px; color: var(--form-active-border);
+        }
+        .correct-option-btn {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 15px 20px; border-radius: 12px; cursor: pointer; border: 1px solid var(--form-border);
+            margin-bottom: 15px; transition: 0.2s; background: rgba(255,255,255,0.4);
+        }
+        .correct-option-btn:hover { background: rgba(255,255,255,0.8); box-shadow: var(--outer-neumorph); }
+        .correct-option-btn.selected { background: rgba(16, 185, 129, 0.1); border-color: #10b981; border-width: 2px; }
+        .correct-check { color: #10b981; font-weight: bold; font-size: 1.5rem; display: none; }
+        .correct-option-btn.selected .correct-check { display: block; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
     </style>
 </head>
 <body class="admin-v2-body" onclick="closeAllQMenus()">
@@ -469,6 +496,18 @@
     <!-- TOAST Notification -->
     <div class="toast glass-panel glow-effect" id="globalToast" style="position:fixed; bottom:-100px; right:20px; background:var(--form-active-border); color:#fff; padding:15px 30px; border-radius:12px; font-weight:700; transition:0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index:9999;">Notifikasi</div>
 
+    <!-- SUPER UPGRADE: MODAL TAMBAH MASUKAN JAWABAN (FEEDBACK) -->
+    <div id="feedbackModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.5);" onclick="closeFeedbackModal()">
+        <div class="glass-card neumorph-outer" style="width:100%; max-width:600px; padding:30px; background:var(--form-bg); border-radius:16px;" onclick="event.stopPropagation()">
+            <h3 style="margin-top:0; font-size:1.4rem; color:var(--form-text); border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:20px;">Tambahkan masukan</h3>
+            <textarea id="feedbackInput" class="gf-input inner-neumorph" rows="6" placeholder="Berikan masukan untuk jawaban responden..." style="font-size:1rem;"></textarea>
+            <div style="display:flex; justify-content:flex-end; gap:15px; margin-top:25px;">
+                <button class="gf-btn-clear neumorph-btn" onclick="closeFeedbackModal()">Batal</button>
+                <button class="gf-btn-submit glow-effect" onclick="saveFeedback()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- FULL LOGIC JAVASCRIPT -->
     <script>
         // ================= GLOBAL STATE & UNDO REDO =================
@@ -553,6 +592,100 @@
             if(!q.goToSectionMap) q.goToSectionMap = {};
             q.goToSectionMap[optValue] = targetSection;
             debouncedSaveState();
+        }
+
+        // ================= SUPER UPGRADE: ANSWER KEY LOGICS =================
+        function getQuestionPoints(q) {
+            if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
+                if (!q.rowPoints) return 0;
+                return Object.values(q.rowPoints).reduce((a, b) => a + parseInt(b || 0), 0);
+            }
+            return q.points || 0;
+        }
+
+        function updateCorrectAns(sIdx, qIdx, i, val) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!q.correctAnswers) q.correctAnswers = [];
+            q.correctAnswers[i] = val;
+            debouncedSaveState();
+        }
+        function addCorrectAns(sIdx, qIdx, val) {
+            if(!val.trim()) return;
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!q.correctAnswers) q.correctAnswers = [];
+            q.correctAnswers.push(val.trim());
+            debouncedSaveState();
+            renderBuilder();
+        }
+        function removeCorrectAns(sIdx, qIdx, i) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(q.correctAnswers) q.correctAnswers.splice(i, 1);
+            debouncedSaveState();
+            renderBuilder();
+        }
+
+        function toggleCorrectAns(sIdx, qIdx, opt) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!q.correctAnswers) q.correctAnswers = [];
+            
+            if (q.type === 'pilihan_ganda' || q.type === 'dropdown') {
+                q.correctAnswers = [opt]; // Hanya satu yg benar untuk tipe radio/dropdown
+            } else {
+                // Checkbox bisa multiple
+                let idx = q.correctAnswers.indexOf(opt);
+                if(idx > -1) q.correctAnswers.splice(idx, 1);
+                else q.correctAnswers.push(opt);
+            }
+            debouncedSaveState();
+            renderBuilder();
+        }
+
+        function toggleGridCorrectAns(sIdx, qIdx, rIdx, colVal, type) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!q.gridCorrectAnswers) q.gridCorrectAnswers = {};
+            if(!q.gridCorrectAnswers[rIdx]) q.gridCorrectAnswers[rIdx] = [];
+            
+            let arr = q.gridCorrectAnswers[rIdx];
+            if (type === 'kisi_pilihan_ganda') {
+                q.gridCorrectAnswers[rIdx] = [colVal];
+            } else {
+                let idx = arr.indexOf(colVal);
+                if(idx > -1) arr.splice(idx, 1);
+                else arr.push(colVal);
+            }
+            debouncedSaveState();
+            renderBuilder();
+        }
+
+        function updateGridRowPoints(sIdx, qIdx, rIdx, val) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!q.rowPoints) q.rowPoints = {};
+            q.rowPoints[rIdx] = parseInt(val) || 0;
+            debouncedSaveState();
+        }
+
+        // --- Feedback Modal ---
+        let activeFeedbackSIdx = -1;
+        let activeFeedbackQIdx = -1;
+
+        function openFeedbackModal(sIdx, qIdx) {
+            activeFeedbackSIdx = sIdx;
+            activeFeedbackQIdx = qIdx;
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            document.getElementById('feedbackInput').value = q.feedback || '';
+            document.getElementById('feedbackModal').style.display = 'flex';
+        }
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'none';
+        }
+        function saveFeedback() {
+            if (activeFeedbackSIdx > -1 && activeFeedbackQIdx > -1) {
+                let val = document.getElementById('feedbackInput').value;
+                currentForm.sections[activeFeedbackSIdx].questions[activeFeedbackQIdx].feedback = val;
+                debouncedSaveState();
+                renderBuilder();
+            }
+            closeFeedbackModal();
         }
 
         // ================= UNDO / REDO ENGINE =================
@@ -880,6 +1013,132 @@
                     // ================= INJEKSI DESKRIPSI (Global semua tipe) =================
                     let descHtml = q.showDescription ? `<input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-bottom:15px;" value="${q.description || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].description=this.value; debouncedSaveState()" placeholder="Deskripsi">` : '';
 
+                    // ================= RENDER TIPE: TITLE ONLY =================
+                    if(q.type === 'title_only') {
+                        html += `
+                        <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
+                            <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
+                            <input type="text" class="gf-input question-title inner-neumorph" style="font-size:1.4rem; font-weight:700;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; debouncedSaveState()" placeholder="Judul Teks">
+                            <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:10px;" value="${q.image || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value; debouncedSaveState()" placeholder="Deskripsi Teks (Opsional)">
+                            <div class="builder-card-footer" style="margin-top:15px; justify-content:flex-end;">
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <button class="top-icon-btn neumorph-circle" onclick="duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
+                                    <button class="top-icon-btn neumorph-circle text-danger" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
+                                </div>
+                            </div>
+                        </div>`;
+                        return;
+                    }
+
+                    // ================= SUPER UPGRADE: MODE KUNCI JAWABAN =================
+                    if (q.isAnswerKeyMode) {
+                        let akHtml = '';
+                        
+                        // Header for Answer Key
+                        if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
+                            akHtml += `<div class="answer-key-header">
+                                <div class="answer-key-title">${q.title || 'Pertanyaan'}</div>
+                            </div>`;
+                        } else {
+                            akHtml += `<div class="answer-key-header">
+                                <div class="answer-key-title">${q.title || 'Pertanyaan'}</div>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <input type="number" class="gf-input inner-neumorph points-input" value="${q.points || 0}" min="0" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].points=parseInt(this.value); debouncedSaveState();"> <span style="font-weight:600;">poin</span>
+                                </div>
+                            </div>`;
+                        }
+
+                        // Body for Answer Key
+                        if (q.type === 'jawaban_singkat') {
+                            let corrAns = q.correctAnswers || [];
+                            akHtml += `<div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; color:var(--form-text-muted);">Daftar jawaban yang benar:</div>`;
+                            corrAns.forEach((ans, i) => {
+                                akHtml += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                    <input type="text" class="gf-input inner-neumorph" value="${ans}" onchange="updateCorrectAns(${sIdx}, ${qIdx}, ${i}, this.value)">
+                                    <button class="top-icon-btn neumorph-circle btn-sm" style="width:35px;height:35px;" onclick="removeCorrectAns(${sIdx}, ${qIdx}, ${i})">✕</button>
+                                </div>`;
+                            });
+                            akHtml += `<input type="text" class="gf-input inner-neumorph" placeholder="Tambahkan jawaban yang benar..." onchange="addCorrectAns(${sIdx}, ${qIdx}, this.value); this.value='';">`;
+                            akHtml += `<label style="display:flex; align-items:center; gap:10px; margin-top:20px; cursor:pointer;">
+                                <input type="checkbox" class="custom-check" ${q.markOtherIncorrect ? 'checked' : ''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].markOtherIncorrect=this.checked; debouncedSaveState();">
+                                <span style="font-size:0.95rem; font-weight:600; color:var(--form-text);">Tandai semua jawaban tidak benar lainnya</span>
+                            </label>`;
+                        } 
+                        else if (['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(q.type)) {
+                            akHtml += `<div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 15px; color:var(--form-text-muted);">Pilih jawaban yang benar:</div>`;
+                            let corrAns = q.correctAnswers || [];
+                            (q.options || []).forEach(opt => {
+                                let isSel = corrAns.includes(opt);
+                                let iconType = q.type === 'kotak_centang' ? 'fake-checkbox' : 'fake-radio';
+                                akHtml += `
+                                <div class="correct-option-btn ${isSel ? 'selected' : ''}" onclick="toggleCorrectAns(${sIdx}, ${qIdx}, '${opt}')">
+                                    <div style="display:flex; align-items:center; gap:15px;">
+                                        <span class="${iconType}"></span>
+                                        <span style="font-size:1.05rem;">${opt}</span>
+                                    </div>
+                                    <span class="correct-check">✓</span>
+                                </div>`;
+                            });
+                        }
+                        else if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
+                            let gCorr = q.gridCorrectAnswers || {};
+                            let rPts = q.rowPoints || {};
+                            let cols = q.columns || ['Kolom 1'];
+                            let rows = q.rows || ['Baris 1'];
+                            
+                            akHtml += `<div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 15px; color:var(--form-text-muted);">Pilih jawaban yang benar:</div>`;
+                            akHtml += `<div class="grid-table-wrapper inner-neumorph" style="overflow-x:auto; border-radius:12px; padding:15px;">
+                                <table style="width:100%; border-collapse:collapse; min-width:500px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="padding:10px; border-bottom:1px solid var(--form-border);"></th>
+                                            ${cols.map(c => `<th style="padding:10px; border-bottom:1px solid var(--form-border); text-align:center; font-weight:600; color:var(--form-text);">${c}</th>`).join('')}
+                                            <th style="padding:10px; border-bottom:1px solid var(--form-border); text-align:center; width:80px;">Poin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${rows.map((r, rIdx) => `
+                                        <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                                            <td style="padding:15px 10px; font-weight:600; color:var(--form-text);">${r}</td>
+                                            ${cols.map((c, cIdx) => {
+                                                let isSel = gCorr[rIdx] && gCorr[rIdx].includes(c);
+                                                let selStyle = isSel ? 'color:#10b981;' : 'color:var(--form-border);';
+                                                let shape = q.type==='kisi_pilihan_ganda' ? (isSel?'◉':'○') : (isSel?'☑':'☐');
+                                                return `<td style="padding:15px 10px; text-align:center; cursor:pointer; font-size:1.5rem; transition:0.2s; ${selStyle}" onclick="toggleGridCorrectAns(${sIdx}, ${qIdx}, ${rIdx}, '${c}', '${q.type}')">${shape}</td>`;
+                                            }).join('')}
+                                            <td style="padding:15px 10px;">
+                                                <input type="number" class="gf-input inner-neumorph points-input" value="${rPts[rIdx] || 0}" min="0" onchange="updateGridRowPoints(${sIdx}, ${qIdx}, ${rIdx}, this.value)" style="width:60px; padding:8px;">
+                                            </td>
+                                        </tr>`).join('')}
+                                    </tbody>
+                                </table>
+                            </div>`;
+                        }
+
+                        // Feedback preview if exists
+                        if (q.feedback) {
+                            akHtml += `<div style="margin-top:20px; padding:15px; border-radius:12px; background:rgba(139, 92, 246, 0.05); border:1px solid rgba(139, 92, 246, 0.2);">
+                                <div style="font-weight:700; color:var(--form-active-border); margin-bottom:5px; font-size:0.85rem; text-transform:uppercase;">Masukan Jawaban:</div>
+                                <div style="font-size:0.95rem; color:var(--form-text); white-space:pre-line;">${q.feedback}</div>
+                            </div>`;
+                        }
+
+                        // Footer Answer Key
+                        akHtml += `<div class="builder-card-footer" style="justify-content:space-between; margin-top:25px;">
+                            <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px;" onclick="openFeedbackModal(${sIdx}, ${qIdx})">
+                                📋 ${q.feedback ? 'Edit masukan jawaban' : 'Tambahkan masukan jawaban'}
+                            </button>
+                            <button class="gf-btn-submit glow-effect" style="padding:10px 25px; border-radius:30px;" onclick="currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=false; renderBuilder();">Selesai</button>
+                        </div>`;
+
+                        html += `
+                        <div class="form-question-card glass-card neumorph-outer ${isActive} answer-key-mode" style="margin-bottom:30px;" id="q-${sIdx}-${qIdx}">
+                            ${akHtml}
+                        </div>`;
+                        return; // Skip the normal rendering for this card
+                    }
+
+
                     // ================= BUILD MENU HTML BERDASARKAN TIPE =================
                     let menuItems = `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showDescription')"><span style="width:20px;">${q.showDescription ? '✓' : ''}</span> Deskripsi</div>`;
 
@@ -1107,20 +1366,6 @@
 
                     else { optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; padding:10px;">[Tipe Paragraf]</div>`; }
 
-                    if(q.type === 'title_only') {
-                        html += `
-                        <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
-                            <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
-                            <input type="text" class="gf-input question-title inner-neumorph" style="font-size:1.4rem; font-weight:700;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; debouncedSaveState()" placeholder="Judul Teks">
-                            <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:10px;" value="${q.image || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value; debouncedSaveState()" placeholder="Deskripsi Teks (Opsional)">
-                            <div class="builder-card-footer" style="margin-top:15px;">
-                                <button class="top-icon-btn neumorph-circle" onclick="duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
-                                <button class="top-icon-btn neumorph-circle text-danger" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
-                            </div>
-                        </div>`;
-                        return;
-                    }
-
                     html += `
                     <div class="form-question-card glass-card neumorph-outer ${isActive}" style="margin-bottom:30px;" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
                         <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
@@ -1149,22 +1394,32 @@
                         ${descHtml}
                         ${optionsHtml}
                         
-                        <div class="builder-card-footer">
-                            <button class="top-icon-btn neumorph-circle" title="Duplikasikan" onclick="duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
-                            <button class="top-icon-btn neumorph-circle text-danger" title="Hapus" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
-                            <div style="width:2px; height:25px; background:var(--form-border); margin:0 10px;"></div>
-                            <div class="toggle-switch neumorph-switch">
-                                <span style="font-weight:600; color:var(--form-text);">Wajib diisi</span>
-                                <input type="checkbox" id="req-${sIdx}-${qIdx}" class="switch-input" ${q.required?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].required=this.checked; saveState()">
-                                <label for="req-${sIdx}-${qIdx}" class="switch-label"></label>
-                            </div>
+                        <div class="builder-card-footer" style="justify-content:space-between;">
                             
-                            <!-- SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) -->
-                            <div style="position:relative;">
-                                <button class="top-icon-btn neumorph-circle" style="margin-left:5px;" onclick="toggleQMenu(event, ${sIdx}, ${qIdx})">⋮</button>
-                                <div id="q-menu-${sIdx}-${qIdx}" class="q-menu-dropdown inner-neumorph" style="display:none;" onclick="event.stopPropagation()">
-                                    <div style="font-size:0.75rem; color:var(--form-text-muted); padding:5px 10px; margin-bottom:5px; border-bottom:1px solid var(--form-border);">Tampilkan</div>
-                                    ${menuItems}
+                            <div style="display:flex; align-items:center;">
+                                <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px; font-size:0.95rem; display:flex; align-items:center; gap:8px;" onclick="currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=true; renderBuilder();">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                                    Kunci jawaban (${getQuestionPoints(q)} poin)
+                                </button>
+                            </div>
+
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <button class="top-icon-btn neumorph-circle" title="Duplikasikan" onclick="duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
+                                <button class="top-icon-btn neumorph-circle text-danger" title="Hapus" onclick="deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
+                                <div style="width:2px; height:25px; background:var(--form-border); margin:0 10px;"></div>
+                                <div class="toggle-switch neumorph-switch">
+                                    <span style="font-weight:600; color:var(--form-text);">Wajib diisi</span>
+                                    <input type="checkbox" id="req-${sIdx}-${qIdx}" class="switch-input" ${q.required?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].required=this.checked; saveState()">
+                                    <label for="req-${sIdx}-${qIdx}" class="switch-label"></label>
+                                </div>
+                                
+                                <!-- SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) -->
+                                <div style="position:relative;">
+                                    <button class="top-icon-btn neumorph-circle" style="margin-left:5px;" onclick="toggleQMenu(event, ${sIdx}, ${qIdx})">⋮</button>
+                                    <div id="q-menu-${sIdx}-${qIdx}" class="q-menu-dropdown inner-neumorph" style="display:none;" onclick="event.stopPropagation()">
+                                        <div style="font-size:0.75rem; color:var(--form-text-muted); padding:5px 10px; margin-bottom:5px; border-bottom:1px solid var(--form-border);">Tampilkan</div>
+                                        ${menuItems}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1200,143 +1455,6 @@
                     }
                 });
             });
-        }
-
-        // ================= BUILDER ACTIONS =================
-        function addQuestion() {
-            const newQ = { 
-                id: 'q_'+Date.now(), type: 'pilihan_ganda', title: 'Pertanyaan Baru', image: '', required: false, options: ['Opsi 1'],
-                showDescription: false, shuffleOptions: false, showGoToSection: false, limitOnePerCol: false, includeTime: false, includeYear: true, timeType: 'waktu'
-            };
-            if(activeSecIdx === -1) activeSecIdx = 0;
-            if(activeQIdx === -1) { currentForm.sections[activeSecIdx].questions.push(newQ); activeQIdx = currentForm.sections[activeSecIdx].questions.length-1; } 
-            else { currentForm.sections[activeSecIdx].questions.splice(activeQIdx + 1, 0, newQ); activeQIdx++; }
-            saveState(); renderBuilder();
-        }
-        function addSection() {
-            const newSec = { id: 's_'+Date.now(), stepName: 'Tahap Baru', title: 'Bagian Tanpa Judul', description: 'Deskripsi (opsional)', questions: [] };
-            currentForm.sections.splice(activeSecIdx + 1, 0, newSec); activeSecIdx++; activeQIdx = -1; saveState(); renderBuilder();
-        }
-        function addTitleDesc() { 
-            const newQ = { id: 'q_'+Date.now(), type: 'title_only', title: 'Judul Teks', image: '', required: false, options: [] }; 
-            currentForm.sections[activeSecIdx].questions.push(newQ); saveState(); renderBuilder(); 
-        }
-        function deleteQuestion(sIdx, qIdx) { 
-            currentForm.sections[sIdx].questions.splice(qIdx, 1); activeQIdx = -1; saveState(); renderBuilder(); 
-        }
-        function duplicateQuestion(sIdx, qIdx) { 
-            let q = JSON.parse(JSON.stringify(currentForm.sections[sIdx].questions[qIdx])); q.id = 'q_' + Date.now(); 
-            currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, q); activeQIdx = qIdx + 1; saveState(); renderBuilder(); 
-        }
-        function deleteSection(sIdx) { 
-            if(currentForm.sections.length <= 1) return showToast("Tidak dapat menghapus bagian terakhir."); 
-            if(confirm("Hapus bagian ini?")) { currentForm.sections.splice(sIdx, 1); activeSecIdx = 0; activeQIdx = -1; saveState(); renderBuilder(); } 
-        }
-        
-        function changeQType(sIdx, qIdx, type) { 
-            let q = currentForm.sections[sIdx].questions[qIdx];
-            q.type = type; 
-            
-            // Inisialisasi Data Baru untuk tipe-tipe spesifik
-            if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(type) && (!q.options || q.options.length === 0)) q.options = ['Opsi 1']; 
-            if(['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(type)) {
-                if(!q.rows) q.rows = ['Baris 1'];
-                if(!q.columns) q.columns = ['Kolom 1'];
-            }
-            if(type === 'skala_linier') { q.scaleMin = q.scaleMin || 1; q.scaleMax = q.scaleMax || 5; }
-            if(type === 'rating') { q.ratingLevels = q.ratingLevels || 5; }
-            if(type === 'upload_file') { q.maxFiles = q.maxFiles || 1; q.maxSize = q.maxSize || '10 MB'; q.allowedFileTypes = []; }
-            if(type === 'tanggal') { q.includeYear = true; }
-            if(type === 'waktu') { q.timeType = 'waktu'; }
-            
-            // Reset state spesifik Menu agar bersih setiap ganti tipe
-            q.showValidation = false; 
-            q.showGoToSection = false; 
-            q.shuffleOptions = false; 
-            q.limitOnePerCol = false;
-
-            saveState(); renderBuilder(); 
-        }
-        function addOption(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].options.push('Opsi ' + (currentForm.sections[sIdx].questions[qIdx].options.length + 1)); saveState(); renderBuilder(); }
-        function deleteOption(sIdx, qIdx, oIdx) { currentForm.sections[sIdx].questions[qIdx].options.splice(oIdx, 1); saveState(); renderBuilder(); }
-
-        // Fungsi Penunjang GRID API
-        function addGridRow(sIdx, qIdx) {
-            if(!currentForm.sections[sIdx].questions[qIdx].rows) currentForm.sections[sIdx].questions[qIdx].rows = [];
-            currentForm.sections[sIdx].questions[qIdx].rows.push(`Baris ${currentForm.sections[sIdx].questions[qIdx].rows.length + 1}`);
-            saveState(); renderBuilder();
-        }
-        function removeGridRow(sIdx, qIdx, rIdx) {
-            currentForm.sections[sIdx].questions[qIdx].rows.splice(rIdx, 1);
-            saveState(); renderBuilder();
-        }
-        function addGridCol(sIdx, qIdx) {
-            if(!currentForm.sections[sIdx].questions[qIdx].columns) currentForm.sections[sIdx].questions[qIdx].columns = [];
-            currentForm.sections[sIdx].questions[qIdx].columns.push(`Kolom ${currentForm.sections[sIdx].questions[qIdx].columns.length + 1}`);
-            saveState(); renderBuilder();
-        }
-        function removeGridCol(sIdx, qIdx, cIdx) {
-            currentForm.sections[sIdx].questions[qIdx].columns.splice(cIdx, 1);
-            saveState(); renderBuilder();
-        }
-
-        // ================= SETTINGS V2 =================
-        function updateSetting(key, val) { currentForm.settings[key] = val; saveState(); }
-        function updateRootSetting(key, val) { currentForm[key] = val; saveState(); }
-        
-        function toggleAcc(contentId, iconId) {
-            const content = document.getElementById(contentId);
-            const icon = document.getElementById(iconId);
-            if(content.style.display === "none") {
-                content.style.display = "block"; icon.style.transform = "rotate(180deg)";
-            } else {
-                content.style.display = "none"; icon.style.transform = "rotate(0deg)";
-            }
-        }
-
-        function toggleQuizPanel(isActive) {
-            const panel = document.getElementById('quizSubPanel');
-            panel.style.display = isActive ? 'block' : 'none';
-        }
-
-        function renderSettings() {
-            // Root Settings
-            document.getElementById('setActive').checked = currentForm.isActive !== false;
-            document.getElementById('setSlug').value = currentForm.slug || '';
-            
-            // Nested Settings
-            document.getElementById('setDeadline').value = currentForm.settings.deadline || '';
-            document.getElementById('setCollectEmail').value = currentForm.settings.collectEmail || 'none';
-            document.getElementById('setSendCopy').value = currentForm.settings.sendCopy || 'none';
-            document.getElementById('setAllowEdit').checked = currentForm.settings.editResponse || false;
-            document.getElementById('setLimitOne').checked = currentForm.settings.limitOne || false;
-            
-            // Presentasi
-            document.getElementById('setShowProgress').checked = currentForm.settings.showProgress || false;
-            document.getElementById('setShuffle').checked = currentForm.settings.shuffleQuestions || false;
-            document.getElementById('setConfMsg').value = currentForm.settings.confirmationMessage || 'Jawaban Anda telah dicatat.';
-            document.getElementById('setShowSubmitAnother').checked = currentForm.settings.showSubmitAnother !== false; // Default true
-            document.getElementById('setShowSummary').checked = currentForm.settings.showSummary || false;
-            document.getElementById('setDisableAutoSave').checked = currentForm.settings.disableAutoSave || false;
-            
-            // Default
-            document.getElementById('setDefaultRequired').checked = currentForm.settings.defaultRequired || false;
-
-            // Kuis
-            const isQuiz = currentForm.settings.isQuiz || false;
-            document.getElementById('setIsQuiz').checked = isQuiz;
-            toggleQuizPanel(isQuiz);
-            
-            // Radio Buttons Setup (Rilis Nilai)
-            const releaseVal = currentForm.settings.quizRelease || 'immediate';
-            document.querySelectorAll(`input[name="quizRelease"]`).forEach(el => {
-                if(el.value === releaseVal) el.checked = true;
-            });
-
-            document.getElementById('setQuizMissed').checked = currentForm.settings.quizShowMissed !== false; 
-            document.getElementById('setQuizCorrect').checked = currentForm.settings.quizShowCorrect !== false;
-            document.getElementById('setQuizPoints').checked = currentForm.settings.quizShowPoints !== false;
-            document.getElementById('setQuizDefPoints').value = currentForm.settings.quizDefaultPoints || 0;
         }
     </script>
 </body>
