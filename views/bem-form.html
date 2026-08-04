@@ -6,8 +6,8 @@
     <title>Formulir - BEM KBMFKG UMI (Futuristic Edition)</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- DYNAMIC FONTS UNTUK THEME RENDERER AESTHETIC -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Playfair+Display:wght@600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- SUPER UPGRADE: DYNAMIC FONTS MEMUAT SELURUH FONT DARI ADMIN DASHBOARD -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600&family=Oswald:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
@@ -21,6 +21,11 @@
             font-family: var(--form-font-text); 
             display: block !important; 
         }
+        
+        /* FORCE FONT RENDERING FIX MENGGUNAKAN VARIABEL CSS */
+        .form-title { font-family: var(--form-font-header) !important; }
+        .question-title { font-family: var(--form-font-question) !important; }
+        .form-desc, .gf-input, .opt-text, .step-name { font-family: var(--form-font-text) !important; }
     </style>
 </head>
 <body class="public-form-body">
@@ -83,7 +88,7 @@
             document.getElementById('publicFormWrapper').innerHTML = `
                 <div class="form-header-card glass-card neumorph-outer" style="border-top:8px solid #ef4444; text-align:center; padding: 70px 40px; margin-top:50px;">
                     <div class="glow-effect" style="font-size: 4rem; margin-bottom: 25px; display:inline-block; filter: drop-shadow(0 0 20px rgba(239,68,68,0.5));">🛑</div>
-                    <h2 class="form-title" style="color:#ef4444; font-size:2.2rem; font-weight:800; margin-bottom:20px; font-family:var(--form-font-header);">AKSES TERKUNCI</h2>
+                    <h2 class="form-title" style="color:#ef4444; font-size:2.2rem; font-weight:800; margin-bottom:20px;">AKSES TERKUNCI</h2>
                     <p class="form-desc" style="font-size:1.2rem; color:var(--form-text); line-height:1.6;">${msg}</p>
                     <button class="gf-btn-clear neumorph-btn" style="margin-top:40px; font-size:1.1rem; color:#ef4444;" onclick="window.location.href='/'">🔙 Kembali ke Portal Utama</button>
                 </div>
@@ -186,17 +191,19 @@
                     if (q.type === 'jawaban_singkat') { inputHtml = `<input type="text" class="gf-input inner-neumorph" ${nameAttr} placeholder="Ketik jawaban singkat..." style="${textSize}" ${q.required?'required':''}>`; } 
                     else if (q.type === 'paragraf') { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="3" placeholder="Ketik penjelasan mendetail..." oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'" style="resize:none; overflow:hidden; ${textSize}" ${q.required?'required':''}></textarea>`; }
                     else if (q.type === 'pilihan_ganda') {
-                        inputHtml = `<div class="gf-radio-group">`;
+                        // UPGRADE SPACING: Menambahkan flex-direction column & gap 16px untuk Gbr 3
+                        inputHtml = `<div class="gf-radio-group" style="display:flex; flex-direction:column; gap:16px;">`;
                         q.options.forEach(opt => { inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="radio" class="gf-radio custom-radio" ${nameAttr} value="${opt}" ${q.required?'required':''}> <span class="opt-text">${opt}</span></label>`; });
                         inputHtml += `</div>`;
                     }
                     else if (q.type === 'kotak_centang') {
-                        inputHtml = `<div class="gf-checkbox-group">`;
+                        // UPGRADE SPACING: Menambahkan flex-direction column & gap 16px untuk Gbr 3
+                        inputHtml = `<div class="gf-checkbox-group" style="display:flex; flex-direction:column; gap:16px;">`;
                         q.options.forEach(opt => { inputHtml += `<label class="gf-option-label glass-panel" style="${textSize}"><input type="checkbox" class="gf-checkbox custom-check" ${nameAttr} value="${opt}"> <span class="opt-text">${opt}</span></label>`; });
                         inputHtml += `</div>`;
                     }
                     else if (q.type === 'dropdown') {
-                        inputHtml = `<select class="gf-input inner-neumorph" style="padding:15px; ${textSize}" ${nameAttr} ${q.required?'required':''}>
+                        inputHtml = `<select class="gf-input inner-neumorph" style="padding:15px; border-radius:12px; ${textSize}" ${nameAttr} ${q.required?'required':''}>
                                         <option value="" disabled selected>-- Buka Pilihan --</option>`;
                         q.options.forEach(opt => { inputHtml += `<option value="${opt}">${opt}</option>`; });
                         inputHtml += `</select>`;
@@ -219,10 +226,11 @@
                     }
                     else { inputHtml = `<textarea class="gf-input inner-neumorph" ${nameAttr} rows="4" placeholder="Ketik jawaban..." style="${textSize}" ${q.required?'required':''}></textarea>`; }
 
+                    // UPGRADE SPACING: Menambahkan Margin Bottom 20px pada Judul Pertanyaan (Gbr 3)
                     html += `
-                    <div class="form-question-card glass-card neumorph-outer">
-                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px;">${q.title} ${reqHtml}</div>
-                        <div class="input-container-morph">${inputHtml}</div>
+                    <div class="form-question-card glass-card neumorph-outer" style="margin-bottom:30px;">
+                        <div class="question-title" style="font-size:${theme.questionFontSize || 14}px; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid rgba(139, 92, 246, 0.2);">${q.title} ${reqHtml}</div>
+                        <div class="input-container-morph" style="margin-top:15px; padding: 5px 0;">${inputHtml}</div>
                     </div>
                     `;
                 });
