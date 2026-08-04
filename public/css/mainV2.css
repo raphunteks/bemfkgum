@@ -3,6 +3,7 @@
 SUPER BIG UPGRADE UI/UX V2 (FUTURISTIC AESTHETIC EDITION)
 DIKOREKSI: Mengembalikan layout absolut yang hilang, FIX warna 
 tema yang transparan, FIX spasi & render Font pada soal/opsi.
++ UPGRADE BARU: Dukungan Penuh Menu Accordion & Sub-Panel (Setelan Form)
 =========================================================
 */
 
@@ -363,6 +364,16 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .setting-title { font-size: 1.1rem; color: var(--form-text); font-weight: 700;}
 .setting-desc { color: var(--form-text-muted); font-size: 0.9rem; margin-top: 5px; line-height: 1.5;}
 
+/* ================== ACCORDION SETTINGS (NEW GBR SETELAN) ================== */
+.accordion-wrapper { border-bottom: 1px solid var(--form-border); }
+.accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 25px 0; cursor: pointer; transition: 0.3s; }
+.accordion-header:hover { opacity: 0.8; }
+.accordion-content { padding-bottom: 25px; padding-left: 20px; border-left: 2px solid rgba(139, 92, 246, 0.3); margin-left: 5px; animation: slideDown 0.3s ease; }
+.acc-icon { font-size: 1.2rem; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: var(--form-text-muted); }
+.sub-section-title { font-size: 0.85rem; font-weight: 700; color: var(--form-text-muted); text-transform: uppercase; margin: 30px 0 15px; letter-spacing: 1px;}
+
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
 .form-section-header {
     background: var(--form-active-border); color: #fff; display: inline-block;
     padding: 10px 25px; border-radius: 16px 16px 0 0; font-weight: 700;
@@ -372,6 +383,11 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     display: flex; justify-content: flex-end; align-items: center; gap: 12px;
     border-top: 1px solid var(--form-border); margin-top: 25px; padding-top: 20px;
 }
+
+/* Custom Fake Radio/Checkbox for Editor */
+.fake-radio, .fake-checkbox { flex-shrink: 0; width: 22px; height: 22px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
+.fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
+.fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; }
 
 @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -391,4 +407,5 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     .form-footer-actions button { width: 100%; margin: 0 !important; }
     .gf-input, .q-type-select { font-size: 1rem; padding: 12px 15px; }
     .step-name { font-size: 0.8rem; }
+    .accordion-content { padding-left: 10px; border-left: 1px solid rgba(139, 92, 246, 0.3); margin-left: 0;}
 }
