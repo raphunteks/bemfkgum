@@ -251,6 +251,7 @@ app.get('/proker-deskripsi/:slug', (req, res) => res.render('proker-deskripsi'))
 app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proker-detail/${req.query.id}`) : res.render('proker-detail'));
 app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
 
+
 // ============================================================================
 // SUPER BIG UPGRADE BARU: ROUTES BEM-FORM & ADMIN DASHBOARD V2
 // ============================================================================
@@ -258,10 +259,74 @@ app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
 app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.slug }));
 
 // ============================================================================
-// SUPER BIG UPGRADE BARU: API ENDPOINTS BEM-FORM
+// SUPER BIG UPGRADE: API SYSTEM UPLOAD FILE REALTIME (REDIS BACKED)
+// Menerima Base64 dari frontend, menyimpannya, lalu mereturn URL Absolut
 // ============================================================================
 
-// 1. Ambil semua form (Untuk Daftar di Admin)
+// POST Endpoint Untuk Upload File dari Form BEM
+app.post('/api/upload', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { filename, base64 } = req.body;
+        
+        if(!filename || !base64) return res.status(400).json({ success: false, message: "File kosong atau tidak valid." });
+        
+        // 🔒 SAFETY CHECK: Upstash Redis free-tier strict 1MB Request Limit Guard
+        // Kalkulasi kasar ukuran Base64 string ke bytes
+        const sizeInBytes = Buffer.byteLength(base64, 'utf8');
+        if (sizeInBytes > 1048000) { 
+            console.warn(`⚠️ Peringatan Kapasitas: File ${filename} mendekati/melebihi batas Upstash 1MB. (Size: ${sizeInBytes} bytes)`);
+            // Jika Anda menggunakan akun Upstash gratis, baris di atas sangat penting agar Anda tahu jika suatu saat error 'Payload Too Large'
+        }
+
+        // Membersihkan nama file untuk URL yang SEO friendly
+        const safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
+        const fileId = `FILE-${Date.now()}`;
+        
+        // Simpan File ke Redis Hash khusus (BEM_Files)
+        await redis.hset('BEM_Files', { [fileId]: JSON.stringify({ filename: safeName, data: base64 }) });
+        
+        // Buat Link URL Otomatis
+        const fileUrl = `/api/uploads/${fileId}/${safeName}`;
+        res.status(200).json({ success: true, url: fileUrl });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ success: false, message: "Gagal memproses file upload." });
+    }
+});
+
+// GET Endpoint Untuk Menampilkan/Download File yang Diupload
+app.get('/api/uploads/:fileId/:filename', async (req, res) => {
+    try {
+        if(!redis) return res.status(503).send("Server Storage Offline");
+        const fileDataStr = await redis.hget('BEM_Files', req.params.fileId);
+        
+        if(!fileDataStr) return res.status(404).send("File tidak ditemukan.");
+        const fileObj = JSON.parse(fileDataStr);
+        
+        // Membaca Tipe MIME dari Base64 (contoh: data:image/png;base64,....)
+        const matches = fileObj.data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        
+        if (matches && matches.length === 3) {
+            const buffer = Buffer.from(matches[2], 'base64');
+            res.type(matches[1]);
+            // Header tambahan untuk download jika bukan gambar
+            if(!matches[1].startsWith('image/')) {
+                res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename}"`);
+            }
+            res.send(buffer);
+        } else {
+            res.status(400).send("Format file korup.");
+        }
+    } catch(e) {
+        res.status(500).send("Gagal memuat file.");
+    }
+});
+
+// ============================================================================
+// API ENDPOINTS BEM-FORM (CRUD & SUBMIT)
+// ============================================================================
+
 app.get('/api/forms', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -271,7 +336,6 @@ app.get('/api/forms', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
-// 2. Ambil 1 form berdasarkan Slug (Untuk halaman Publik bem-form.html)
 app.get('/api/forms/:slug', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -284,7 +348,6 @@ app.get('/api/forms/:slug', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
-// 3. Simpan / Update Form (Untuk Admin V2)
 app.post('/api/forms/save', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -319,7 +382,7 @@ app.post('/api/forms/save', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-// 4x. FIX SUPER UPGRADE: Hapus Form (Delete Endpoint Mutlak)
+// FIX SUPER UPGRADE: Hapus Form (Delete Endpoint Mutlak)
 app.delete('/api/forms/:id', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -334,7 +397,7 @@ app.delete('/api/forms/:id', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-// 4. Submit Jawaban Form (Untuk Publik)
+// Submit Jawaban Form (Untuk Publik)
 app.post('/api/forms/submit', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -435,7 +498,11 @@ app.post('/api/forms/submit', async (req, res) => {
     }
 });
 
-// 5. Ambil Daftar Jawaban (Untuk Admin V2)
+// ============================================================================
+// SUPER BIG UPGRADE: CRUD JAWABAN (EDIT & DELETE SPECIFIC RESPONSE)
+// ============================================================================
+
+// Ambil Daftar Jawaban (Untuk Admin V2)
 app.get('/api/forms/:id/responses', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -444,7 +511,47 @@ app.get('/api/forms/:id/responses', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
-// 6. EXPORT KE EXCEL (.XLSX) (Untuk Admin V2)
+// UPDATE Jawaban Tertentu (Realtime Edit dari Admin V2)
+app.put('/api/forms/:formId/responses/:resId', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { formId, resId } = req.params;
+        const { answers, email } = req.body;
+        
+        let existingResp = safeParse(await redis.hget('BEM_Form_Responses', formId), []);
+        let index = existingResp.findIndex(r => r.id === resId);
+        
+        if(index === -1) return res.status(404).json({ success: false, message: "Data respon tidak ditemukan." });
+        
+        // Memperbarui Array
+        if(email !== undefined) existingResp[index].email = email;
+        if(answers !== undefined) existingResp[index].answers = answers;
+        // Opsional: Recalculate Kuis Points dapat diletakkan di sini nantinya jika dibutuhkan.
+
+        await redis.hset('BEM_Form_Responses', { [formId]: JSON.stringify(existingResp) });
+        res.status(200).json({ success: true, message: "Jawaban berhasil diperbarui." });
+    } catch(e) {
+        res.status(500).json({ success: false, message: "Gagal memperbarui jawaban." });
+    }
+});
+
+// HAPUS Jawaban Tertentu
+app.delete('/api/forms/:formId/responses/:resId', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { formId, resId } = req.params;
+        
+        let existingResp = safeParse(await redis.hget('BEM_Form_Responses', formId), []);
+        existingResp = existingResp.filter(r => r.id !== resId); // Buang response spesifik
+        
+        await redis.hset('BEM_Form_Responses', { [formId]: JSON.stringify(existingResp) });
+        res.status(200).json({ success: true, message: "Jawaban berhasil dihapus." });
+    } catch(e) {
+        res.status(500).json({ success: false, message: "Gagal menghapus jawaban." });
+    }
+});
+
+// EXPORT KE EXCEL (.XLSX) (Untuk Admin V2)
 app.get('/api/forms/:id/export', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -903,6 +1010,39 @@ app.post('/api/content/:type', async (req, res) => {
     }
 });
 
+// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS =================
+app.get('/api/admin/stats', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        
+        // Count Forms
+        const forms = await redis.hgetall('BEM_Forms') || {};
+        const totalForms = Object.keys(forms).length;
+        
+        // Count Responses
+        let totalResponses = 0;
+        const allResponses = await redis.hgetall('BEM_Form_Responses') || {};
+        Object.values(allResponses).forEach(r => {
+            let arr = safeParse(r, []);
+            totalResponses += arr.length;
+        });
+        
+        // Count Interactions
+        const aspirasi = await redis.hgetall('Aspirations') || {};
+        const totalAspirasi = Object.keys(aspirasi).length;
+        
+        const pesan = await redis.hgetall('Messages') || {};
+        const totalPesan = Object.keys(pesan).length;
+        
+        res.status(200).json({ 
+            success: true, 
+            data: { totalForms, totalResponses, totalAspirasi, totalPesan }
+        });
+    } catch (e) {
+        res.status(500).json({ success: false, message: "Gagal mengambil statistik." });
+    }
+});
+
 // ================= API ENDPOINTS: TRANSAKSIONAL =================
 app.get('/api/interactions', async (req, res) => {
     try {
@@ -959,6 +1099,12 @@ app.post('/api/admin/auth', (req, res) => {
   } else {
     res.status(401).json({ success: false, message: 'Kredensial salah!' });
   }
+});
+
+// SUPER UPGRADE: GLOBAL ERROR HANDLER
+app.use((err, req, res, next) => {
+    console.error("🔥 Server Error Intercepted:", err.stack);
+    res.status(500).json({ success: false, message: "Terjadi kesalahan internal server." });
 });
 
 const PORT = process.env.PORT || 3000;
