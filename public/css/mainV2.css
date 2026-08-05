@@ -420,23 +420,130 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .custom-radio:checked::before { transform: scale(1); }
 .custom-radio:checked { box-shadow: var(--outer-neumorph); background: rgba(255,255,255,0.9); border-color: var(--form-active-border); }
 
-/* Checkbox Checkmark (UPGRADED) */
+/* Checkbox Checkmark (SUPER UPGRADED - CLEARER & THICKER) */
 .custom-check::before {
     content: "";
-    width: 6px; height: 11px;
+    width: 7px;   /* Diperlebar */
+    height: 13px; /* Dipertinggi */
     border: solid white;
-    border-width: 0 3px 3px 0;
+    border-width: 0 4px 4px 0; /* SUPER TEBAL (4px) agar sangat jelas */
     transform: rotate(45deg) scale(0);
     transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    margin-top: -2px; /* adjust centering */
+    margin-top: -3px; /* Kalibrasi Center Presisi */
+    margin-left: 1px;
+    filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.3)); /* Efek kedalaman pada ceklis putih */
 }
 .custom-check:checked {
     background: var(--form-active-border) !important;
     border-color: var(--form-active-border) !important;
-    box-shadow: 0 0 15px var(--form-focus-glow);
+    box-shadow: 0 0 15px var(--form-focus-glow), var(--outer-neumorph);
 }
 .custom-check:checked::before {
     transform: rotate(45deg) scale(1);
+}
+
+/* ================== SUPER UPGRADE: CUSTOM GLASSMORPHISM SELECT ================== */
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+    width: 100%;
+}
+.custom-select-display {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: var(--form-card-bg) !important;
+}
+.custom-select-display:hover {
+    box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
+    border-color: var(--form-active-border) !important;
+    transform: translateY(-1px);
+}
+.custom-select-wrapper.open .custom-select-display {
+    border-color: var(--form-active-border) !important;
+    box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important;
+    transform: translateY(1px);
+}
+.custom-select-wrapper.open .custom-select-display .arrow {
+    transform: rotate(180deg);
+}
+
+.custom-select-options {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 16px !important;
+    padding: 12px;
+    animation: dropInPremium 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(40px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(40px) saturate(150%) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.5) inset !important;
+    border: 1px solid var(--form-border);
+}
+[data-theme="dark"] .custom-select-options {
+    background: rgba(15, 23, 42, 0.85) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05) inset !important;
+}
+
+/* Custom Scrollbar for Dropdown Options */
+.custom-select-options::-webkit-scrollbar { width: 6px; }
+.custom-select-options::-webkit-scrollbar-track { background: transparent; }
+.custom-select-options::-webkit-scrollbar-thumb { background: var(--form-active-border); border-radius: 10px; }
+
+.custom-select-option {
+    padding: 15px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    font-weight: 600;
+    color: var(--form-text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.custom-select-option::before {
+    content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; 
+    background: var(--form-active-border); transform: scaleY(0); transition: 0.3s;
+}
+.custom-select-option:hover {
+    background: var(--form-focus-glow);
+    color: var(--form-active-border);
+    transform: translateX(5px);
+}
+.custom-select-option:hover::before { transform: scaleY(0.7); border-radius: 0 4px 4px 0;}
+
+.custom-select-option.selected {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--form-active-border);
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05);
+}
+.custom-select-option.selected::before { transform: scaleY(1); border-radius: 0 4px 4px 0; }
+.custom-select-option.selected::after {
+    content: "✓"; position: absolute; right: 15px; font-weight: 800; font-size: 1.2rem;
+}
+
+.custom-select-optgroup {
+    padding: 12px 15px 8px;
+    font-size: 0.75rem;
+    color: var(--form-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1px dashed var(--form-border);
+    margin-bottom: 8px;
+    margin-top: 8px;
+    font-weight: 800;
+}
+.custom-select-optgroup:first-child { margin-top: 0; }
+
+@keyframes dropInPremium { 
+    from { opacity: 0; transform: translateY(-20px) scale(0.95); filter: blur(10px); } 
+    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
 }
 
 /* Fake visually inputs in Builder Admin V2 */
