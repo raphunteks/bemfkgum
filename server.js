@@ -3,7 +3,7 @@ const express = require('express');
 const { Redis } = require('@upstash/redis');
 const cors = require('cors');
 const path = require('path');
-const xlsx = require('xlsx');
+const xlsx = require('xlsx'); // PACKAGE BARU UNTUK EXPORT EXCEL FORM
 require('dotenv').config();
 
 const app = express();
@@ -162,7 +162,7 @@ const defaultFilosofi = {
     logo: [
         { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
         { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." },
-        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan dosis salah ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
+        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan শারীরিক ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
         { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah yang ada." },
         { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." },
         { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." },
@@ -302,23 +302,35 @@ app.get('/api/uploads/:fileId/:filename', async (req, res) => {
         const fileDataStr = await redis.hget('BEM_Files', req.params.fileId);
         
         if(!fileDataStr) return res.status(404).send("File tidak ditemukan.");
-        const fileObj = JSON.parse(fileDataStr);
         
-        // Membaca Tipe MIME dari Base64 (contoh: data:image/png;base64,....)
-        const matches = fileObj.data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        // BUG FIX UTAMA: Gunakan safeParse agar tidak crash jika Redis sudah auto-parse jadi object
+        const fileObj = safeParse(fileDataStr, null);
+        if(!fileObj || !fileObj.data) return res.status(400).send("Data file korup.");
         
-        if (matches && matches.length === 3) {
-            const buffer = Buffer.from(matches[2], 'base64');
-            res.type(matches[1]);
-            // Header tambahan untuk download jika bukan gambar
-            if(!matches[1].startsWith('image/')) {
-                res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename}"`);
-            }
-            res.send(buffer);
-        } else {
-            res.status(400).send("Format file korup.");
+        // MENGHINDARI REGEX CATASTROPHIC BACKTRACKING PADA STRING BESAR
+        // Kita pecah menggunakan pemisah koma
+        const parts = fileObj.data.split(',');
+        if (parts.length !== 2) return res.status(400).send("Format Base64 tidak valid.");
+        
+        let mimeType = 'application/octet-stream';
+        // Ambil header MIME dengan Regex yang hanya memeriksa bagian depannya saja
+        const headerMatch = parts[0].match(/^data:(.*?);base64/);
+        if (headerMatch && headerMatch[1]) {
+            mimeType = headerMatch[1];
         }
+
+        const base64Data = parts[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        res.type(mimeType);
+        
+        // Header tambahan untuk download jika bukan gambar
+        if(!mimeType.startsWith('image/')) {
+            res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename}"`);
+        }
+        res.send(buffer);
     } catch(e) {
+        console.error("Error Loading File:", e);
         res.status(500).send("Gagal memuat file.");
     }
 });
