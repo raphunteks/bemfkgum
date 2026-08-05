@@ -3,7 +3,7 @@ const express = require('express');
 const { Redis } = require('@upstash/redis');
 const cors = require('cors');
 const path = require('path');
-const xlsx = require('xlsx'); // PACKAGE BARU UNTUK EXPORT EXCEL FORM
+const xlsx = require('xlsx');
 require('dotenv').config();
 
 const app = express();
