@@ -625,7 +625,7 @@
             initPublicCustomSelects();
         }
 
-        // ================= SUPER BIG UPGRADE: UI CUSTOM DROPDOWN (GLASSMORPHISM) =================
+        // ================= SUPER BIG UPGRADE: UI CUSTOM DROPDOWN (GLASSMORPHISM SMART Z-INDEX) =================
         function initPublicCustomSelects() {
             document.querySelectorAll('.input-container-morph select').forEach(nativeSelect => {
                 // Hindari duplikasi jika sudah pernah dibuat
@@ -662,7 +662,6 @@
                 let optionsList = document.createElement('div');
                 optionsList.className = 'custom-select-options glass-panel-heavy neumorph-outer';
                 optionsList.style.display = 'none';
-                optionsList.style.marginTop = '10px';
 
                 Array.from(nativeSelect.options).forEach(opt => {
                     if (opt.disabled || opt.value === "") return; // Lewati placeholder di daftar pilihan
@@ -684,9 +683,11 @@
                         spanTxt.style.color = 'var(--form-active-border)';
                         spanTxt.style.fontWeight = '700';
 
-                        // 3. Tutup menu & set state
+                        // 3. Tutup menu & reset Z-Index Kartu
                         optionsList.style.display = 'none';
                         wrapper.classList.remove('open');
+                        let parentCard = wrapper.closest('.form-question-card');
+                        if(parentCard) parentCard.style.zIndex = '1';
                         
                         optionsList.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
                         optDiv.classList.add('selected');
@@ -694,18 +695,46 @@
                     optionsList.appendChild(optDiv);
                 });
 
-                // Logika Buka/Tutup Menu
+                // Logika Buka/Tutup Menu dengan SMART Z-INDEX & COLLISION DETECTION
                 display.onclick = (e) => {
                     e.stopPropagation();
-                    // Tutup dropdown lain yang sedang terbuka
+                    
+                    // Tutup dropdown lain yang sedang terbuka dan kembalikan z-index kartunya
                     document.querySelectorAll('.custom-select-options').forEach(el => {
-                        if(el !== optionsList) { el.style.display = 'none'; el.parentElement.classList.remove('open'); }
+                        if(el !== optionsList) { 
+                            el.style.display = 'none'; 
+                            el.parentElement.classList.remove('open'); 
+                            let otherCard = el.closest('.form-question-card');
+                            if(otherCard) otherCard.style.zIndex = '1';
+                        }
                     });
 
                     let isOpen = optionsList.style.display === 'block';
-                    optionsList.style.display = isOpen ? 'none' : 'block';
-                    if(isOpen) wrapper.classList.remove('open');
-                    else wrapper.classList.add('open');
+                    let parentCard = wrapper.closest('.form-question-card');
+
+                    if(isOpen) {
+                        optionsList.style.display = 'none';
+                        wrapper.classList.remove('open');
+                        if(parentCard) parentCard.style.zIndex = '1'; // Reset Z-index saat ditutup
+                    } else {
+                        optionsList.style.display = 'block';
+                        wrapper.classList.add('open');
+                        if(parentCard) parentCard.style.zIndex = '9999'; // BOOSTER Z-INDEX! Bawa kartu ke layer paling depan
+
+                        // SMART POSITIONING (Jika di HP layar bawah mentok, buka dropdown ke atas)
+                        let rect = optionsList.getBoundingClientRect();
+                        if (rect.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
+                            optionsList.style.top = 'auto';
+                            optionsList.style.bottom = '100%';
+                            optionsList.style.marginBottom = '10px';
+                            optionsList.style.marginTop = '0';
+                        } else {
+                            optionsList.style.top = 'calc(100% + 10px)';
+                            optionsList.style.bottom = 'auto';
+                            optionsList.style.marginBottom = '0';
+                            optionsList.style.marginTop = '0';
+                        }
+                    }
                 };
 
                 wrapper.appendChild(display);
@@ -713,11 +742,13 @@
                 nativeSelect.parentNode.insertBefore(wrapper, nativeSelect.nextSibling);
             });
 
-            // Klik dimanapun untuk menutup dropdown
+            // Klik dimanapun di layar untuk menutup dropdown dan mereset Z-Index
             document.addEventListener('click', () => {
                 document.querySelectorAll('.custom-select-options').forEach(el => {
                     el.style.display = 'none';
                     el.parentElement.classList.remove('open');
+                    let parentCard = el.closest('.form-question-card');
+                    if(parentCard) parentCard.style.zIndex = '1';
                 });
             });
         }
