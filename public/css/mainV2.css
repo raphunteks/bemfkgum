@@ -1,9 +1,9 @@
 /* FILE: public/css/mainV2.css */
 /* =========================================================
 SUPER BIG UPGRADE UI/UX V2 (FUTURISTIC AESTHETIC EDITION)
-DIKOREKSI: Mengembalikan layout absolut yang hilang, FIX warna 
-tema yang transparan, FIX spasi & render Font pada soal/opsi.
-+ UPGRADE BARU: Dukungan Penuh Menu Accordion & Sub-Panel (Setelan Form)
++ FIX EVENT BUBBLING & TRASH BUTTON
++ GLASSMORPHISM DROPDOWN UPGRADE
++ HIGH CONTRAST CHECKBOX, RADIO, & TOGGLE SWITCH
 =========================================================
 */
 
@@ -15,9 +15,9 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     --form-text-muted: #64748b;
     
     /* GLASSMORPHISM & NEUMORPHISM VARIABLES (CORE AESTHETIC) */
-    --form-card-bg: rgba(255, 255, 255, 0.45);
+    --form-card-bg: rgba(255, 255, 255, 0.55); 
     --form-header-bg: rgba(255, 255, 255, 0.35);
-    --form-border: rgba(255, 255, 255, 0.6);
+    --form-border: rgba(255, 255, 255, 0.8);
     --form-focus-glow: rgba(139, 92, 246, 0.4);
     
     --glass-blur: blur(24px);
@@ -61,26 +61,17 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 /* Glowing Orbs Animation */
 .admin-v2-body::before, .public-form-body::before,
 .admin-v2-body::after, .public-form-body::after {
-    content: '';
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(100px);
-    z-index: -1;
-    opacity: 0.35;
-    pointer-events: none;
+    content: ''; position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.35; pointer-events: none;
 }
 .admin-v2-body::before, .public-form-body::before {
-    top: -20%; left: -10%;
-    width: 60vw; height: 60vw;
+    top: -20%; left: -10%; width: 60vw; height: 60vw;
     background: radial-gradient(circle, var(--form-active-border) 0%, transparent 60%);
     animation: drift-orb1 25s infinite alternate ease-in-out;
 }
 .admin-v2-body::after, .public-form-body::after {
-    bottom: -15%; right: -15%;
-    width: 55vw; height: 55vw;
+    bottom: -15%; right: -15%; width: 55vw; height: 55vw;
     background: radial-gradient(circle, var(--form-active-border) 0%, transparent 60%);
-    animation: drift-orb2 20s infinite alternate ease-in-out;
-    animation-delay: -5s;
+    animation: drift-orb2 20s infinite alternate ease-in-out; animation-delay: -5s;
 }
 
 @keyframes drift-orb1 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(15vw, 15vh) scale(1.3); } }
@@ -94,7 +85,7 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     border: 1px solid var(--form-border) !important;
 }
 .glass-panel { border-radius: 16px !important; padding: 15px; }
-.glass-panel-heavy { background: rgba(255,255,255,0.7) !important; backdrop-filter: blur(30px) !important; }
+.glass-panel-heavy { background: rgba(255,255,255,0.85) !important; backdrop-filter: blur(30px) !important; }
 [data-theme="dark"] .glass-panel-heavy { background: rgba(15,23,42,0.8) !important; }
 
 .neumorph-outer {
@@ -103,12 +94,12 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .inner-neumorph {
-    background: rgba(255,255,255,0.3); /* FIX: Menghapus !important agar JS warna palet di Sidebar Tema berfungsi maksimal (Gbr 1 & Gbr 4) */
+    background: rgba(255,255,255,0.4); 
     box-shadow: var(--inner-neumorph) !important;
-    border: 1px solid rgba(255,255,255,0.4) !important;
+    border: 1px solid rgba(255,255,255,0.6) !important;
     border-radius: 12px !important;
 }
-[data-theme="dark"] .inner-neumorph { background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.05) !important; }
+[data-theme="dark"] .inner-neumorph { background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.1) !important; }
 
 .glow-effect { box-shadow: 0 0 20px var(--form-focus-glow) !important; }
 .hover-glow:hover {
@@ -118,80 +109,39 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 }
 .gradient-text {
     background: linear-gradient(135deg, var(--form-active-border), #10b981);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;
 }
 
-/* ================== WIZARD STEPPER (NEW) ================== */
+/* ================== WIZARD STEPPER ================== */
 .stepper-wrapper { 
     display: flex; justify-content: space-between; align-items: center; position: relative; 
     padding: 25px 20px !important; margin-bottom: 30px; border-radius: 20px; overflow-x: auto;
 }
 .stepper-item { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; z-index: 1; min-width: 80px;}
-.stepper-item::after { 
-    content: ''; position: absolute; width: 100%; height: 4px; background: rgba(255,255,255,0.1); 
-    top: 20px; left: 50%; z-index: -1; transition: 0.5s ease;
-}
+.stepper-item::after { content: ''; position: absolute; width: 100%; height: 4px; background: rgba(255,255,255,0.1); top: 20px; left: 50%; z-index: -1; transition: 0.5s ease; }
 .stepper-item:last-child::after { display: none; }
-.step-counter { 
-    width: 40px; height: 40px; border-radius: 50%; background: #1f2937; border: 3px solid #334155; 
-    display: flex; align-items: center; justify-content: center; font-weight: bold; color: #94a3b8; 
-    transition: 0.4s; margin-bottom: 10px; font-size: 1.1rem;
-}
-.stepper-item.active .step-counter { 
-    border-color: #06b6d4; color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); transform: scale(1.15);
-}
+.step-counter { width: 40px; height: 40px; border-radius: 50%; background: #1f2937; border: 3px solid #334155; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #94a3b8; transition: 0.4s; margin-bottom: 10px; font-size: 1.1rem; }
+.stepper-item.active .step-counter { border-color: #06b6d4; color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); transform: scale(1.15); }
 .stepper-item.completed .step-counter { border-color: #06b6d4; background: #06b6d4; color: #fff; }
 .stepper-item.completed::after { background: #06b6d4; box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);}
 .step-name { font-weight: 700; color: #64748b; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; white-space: nowrap;}
 .stepper-item.active .step-name { color: #06b6d4; }
 .stepper-item.completed .step-name { color: var(--form-text); }
-
-/* WIZARD LOGIC CSS */
 .form-step { display: none; }
 .form-step.active { display: block; animation: fadeInTab 0.5s ease; }
 
 /* ================== LAYOUT MAIN & CARDS ================== */
-.admin-v2-container, .form-wrapper {
-    width: 100%; max-width: 900px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; position: relative;
-}
-
-/* ADMIN HEADER NAV */
-.header-admin-nav {
-    display: flex; justify-content: space-between; align-items: center; 
-    padding: 12px 25px; margin: 15px; border-radius: 20px;
-    position: sticky; top: 15px; z-index: 1000;
-}
-
-/* TABS MENU */
-.builder-tabs {
-    display: flex; justify-content: center; gap: 15px; margin: 0 15px 30px;
-    padding: 10px; border-radius: 20px;
-}
-.b-tab {
-    padding: 12px 25px; color: var(--form-text-muted); cursor: pointer;
-    border-radius: 12px; font-weight: 600; transition: 0.3s; font-size: 0.95rem;
-}
+.admin-v2-container, .form-wrapper { width: 100%; max-width: 900px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; position: relative; }
+.header-admin-nav { display: flex; justify-content: space-between; align-items: center; padding: 12px 25px; margin: 15px; border-radius: 20px; position: sticky; top: 15px; z-index: 1000; }
+.builder-tabs { display: flex; justify-content: center; gap: 15px; margin: 0 15px 30px; padding: 10px; border-radius: 20px; }
+.b-tab { padding: 12px 25px; color: var(--form-text-muted); cursor: pointer; border-radius: 12px; font-weight: 600; transition: 0.3s; font-size: 0.95rem; }
 .b-tab:hover { background: rgba(255,255,255,0.4); }
-.b-tab.active {
-    background: var(--form-active-border); color: #fff;
-    box-shadow: 0 5px 15px var(--form-focus-glow);
-}
+.b-tab.active { background: var(--form-active-border); color: #fff; box-shadow: 0 5px 15px var(--form-focus-glow); }
 .tab-content { display: none; width: 100%; }
 .tab-content.active { display: block; animation: fadeInTab 0.4s ease; }
+.admin-header-main { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding: 30px; margin-bottom: 30px; }
+.list-form-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding: 25px; margin-bottom: 20px; }
 
-/* KARTU FORM (LIST & BUILDER) */
-.admin-header-main {
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-    padding: 30px; margin-bottom: 30px;
-}
-.list-form-card {
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-    padding: 25px; margin-bottom: 20px;
-}
-
-/* FIX GBR 3 (Jarak Soal Terlalu Dempet): Menambahkan margin-bottom 30px dan padding 35px */
 .form-header-card, .form-question-card {
     padding: 35px; margin-bottom: 30px !important; width: 100%; box-sizing: border-box; position: relative;
     border-radius: 20px !important;
@@ -200,162 +150,165 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .form-question-card { border-left: 6px solid transparent; }
 .form-question-card.active { border-left-color: var(--form-active-border); }
 
-/* Banner Customizations */
-.form-header-banner {
-    width: 100%; height: 160px;
-    border-radius: 20px 20px 0 0 !important;
-    position: relative; z-index: 2;
-    background-size: cover; background-position: center;
-}
-.form-header-banner::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--form-card-bg) 100%); pointer-events: none;
-}
+.form-header-banner { width: 100%; height: 160px; border-radius: 20px 20px 0 0 !important; position: relative; z-index: 2; background-size: cover; background-position: center; }
+.form-header-banner::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--form-card-bg) 100%); pointer-events: none; }
 .form-header-banner.no-image { height: 12px; border-radius: 20px !important; }
 
-/* Typography */
 .form-title { font-family: var(--form-font-header) !important; font-weight: 700; letter-spacing: -0.5px;}
-
-/* FIX GBR 3 (Question Title terlalu dekat dengan Opsi Jawaban): Penambahan margin dan padding bottom */
-.question-title { 
-    font-family: var(--form-font-question) !important; 
-    font-weight: 600; 
-    margin-bottom: 20px !important; 
-    padding-bottom: 15px; 
-    border-bottom: 1px solid rgba(139, 92, 246, 0.2); 
-}
+.question-title { font-family: var(--form-font-question) !important; font-weight: 600; margin-bottom: 20px !important; padding-bottom: 15px; border-bottom: 1px solid rgba(139, 92, 246, 0.2); }
 .form-desc { color: var(--form-text-muted); line-height: 1.7; font-size: 1rem;}
-.asterisk { color: #ef4444; text-shadow: 0 0 5px rgba(239,68,68,0.5); }
+.asterisk { color: #ef4444; text-shadow: 0 0 5px rgba(239,68,68,0.5); font-weight: bold; }
 
 /* ================== STRUKTUR THEME SIDEBAR ================== */
-.theme-sidebar {
-    position: fixed; top: 0; right: -380px; width: 350px; height: 100vh;
-    z-index: 10000; transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex; flex-direction: column;
-    border-left: 1px solid var(--form-border);
-}
+.theme-sidebar { position: fixed; top: 0; right: -380px; width: 350px; height: 100vh; z-index: 10000; transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; border-left: 1px solid var(--form-border); }
 .theme-sidebar.active { right: 0; }
-.theme-sidebar-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 25px; border-bottom: 1px solid var(--form-border);
-}
+.theme-sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; border-bottom: 1px solid var(--form-border); }
 .theme-sidebar-content { padding: 25px; overflow-y: auto; flex: 1; }
-
 .theme-section-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 15px; color: var(--form-text); border-top: 1px solid var(--form-border); padding-top: 20px; }
 .theme-section-title:first-child { border-top: none; padding-top: 0; }
-
 .font-select-group { display: flex; gap: 10px; margin-bottom: 20px; }
 .color-circle-group { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
-.color-circle { 
-    width: 38px; height: 38px; border-radius: 50%; cursor: pointer; 
-    transition: 0.2s; display: flex; align-items:center; justify-content:center; 
-    color: #fff; font-size: 1rem; border: 2px solid transparent;
-}
+.color-circle { width: 38px; height: 38px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items:center; justify-content:center; color: #fff; font-size: 1rem; border: 2px solid transparent; }
 .color-circle.bg-circle { width: 45px; height: 45px; color: var(--form-text); }
-.t-select { padding: 12px; font-weight: 600; color: var(--form-text); }
 
 
 /* ================== FLOATING TOOLBAR ================== */
-.floating-toolbar {
-    position: absolute; right: -70px; top: 0; display: flex; flex-direction: column; gap: 12px;
-    border-radius: 30px !important; padding: 12px 8px !important; z-index: 50; transition: top 0.4s;
-}
-
-/* ================== DRAG & DROP UI ================== */
-.drag-handle {
-    position: absolute; top: -15px !important; left: 50%; transform: translateX(-50%);
-    cursor: grab; opacity: 0; transition: 0.3s; font-size: 1.2rem; letter-spacing: 2px;
-    padding: 2px 15px !important; color: var(--form-text-muted); border-radius: 12px;
-}
-.form-question-card.active .drag-handle, .form-question-card:hover .drag-handle { opacity: 1; color: var(--form-text); box-shadow: var(--outer-neumorph) !important;}
-.form-question-card.dragging { opacity: 0.4; border: 2px dashed var(--form-active-border); transform: scale(0.98); }
-.drop-placeholder { border: 2px dashed var(--form-active-border) !important; background: var(--form-focus-glow) !important; border-radius: 20px; margin-bottom: 25px; transform: scale(1.02); }
+.floating-toolbar { position: absolute; right: -70px; top: 0; display: flex; flex-direction: column; gap: 12px; border-radius: 30px !important; padding: 12px 8px !important; z-index: 50; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
 
-/* ================== INPUTS SKEUOMORPHISM (NEUMORPH + GLASS) ================== */
-.gf-input, .q-type-select {
+/* ================== SUPER UPGRADE: AESTHETIC DROPDOWN & INPUTS ================== */
+.gf-input {
     width: 100%; padding: 15px 20px; color: var(--form-text); outline: none; border: none;
     font-family: var(--form-font-text); font-size: 1.05rem; transition: 0.3s; box-sizing: border-box;
 }
-.gf-input:focus, .t-select:focus, .q-type-select:focus {
-    background: rgba(255,255,255,0.7) !important;
+.gf-input:focus {
+    background: rgba(255,255,255,0.8) !important;
     box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
     border: 1px solid var(--form-active-border) !important;
 }
 
-/* Custom Dropdown / Select */
-.q-type-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23673ab7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important; background-repeat: no-repeat !important; background-position: right 15px center !important; background-size: 12px auto !important;}
-
-/* ================== FIX RESPONSIVE TEXT RADIO/CHECKBOX (GBR 2 & 3) ================== */
-.gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-
-/* FIX GBR 3 (Responsive Tumpang Tindih): align-items flex-start menjaga checkbox/radio tetap diatas teks yang panjang */
-.gf-option-label { 
-    display: flex; align-items: flex-start; 
-    gap: 15px; cursor: pointer; transition: 0.2s; padding: 15px 20px; border-radius: 12px;
+/* Glassmorphism Dropdown Override */
+.q-type-select, .t-select {
+    appearance: none; -webkit-appearance: none;
+    background-color: rgba(255,255,255,0.45) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 12px !important;
+    padding: 12px 45px 12px 15px !important; /* Spasi aman untuk icon panah */
+    color: var(--form-text) !important;
+    font-weight: 600 !important;
+    font-family: var(--form-font-text) !important;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.03), inset 1px 1px 2px rgba(255,255,255,0.8) !important;
+    /* Custom SVG Arrow Aesthetic */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important; 
+    background-position: right 15px center !important; 
+    background-size: 16px !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
-.gf-option-label:hover { box-shadow: var(--outer-neumorph) !important; background: rgba(255,255,255,0.6) !important; }
+.q-type-select:hover, .t-select:hover {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    border-color: var(--form-active-border) !important;
+    transform: translateY(-1px);
+}
+.q-type-select:focus, .t-select:focus {
+    outline: none !important;
+    border-color: var(--form-active-border) !important;
+    box-shadow: 0 0 0 4px var(--form-focus-glow), inset 1px 1px 3px rgba(0,0,0,0.05) !important;
+}
+/* Style dropdown options */
+.q-type-select option, .t-select option { 
+    background-color: var(--form-bg); color: var(--form-text); font-weight: 600; 
+}
+/* Dark mode Dropdown */
+[data-theme="dark"] .q-type-select, [data-theme="dark"] .t-select { 
+    background-color: rgba(15, 23, 42, 0.6) !important; 
+    border-color: rgba(255,255,255,0.15) !important; 
+    color: #fff !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important; 
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.1) !important;
+}
 
-/* FIX GBR 3 (Teks Opsi Menempel): Word break agar tulisan jatuh kebawah secara proporsional */
+
+/* ================== SUPER UPGRADE: KONTRAST RADIO/CHECKBOX DIPERJELAS ================== */
+.gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+.gf-option-label { display: flex; align-items: flex-start; gap: 15px; cursor: pointer; transition: 0.2s; padding: 15px 20px; border-radius: 12px; }
+.gf-option-label:hover { box-shadow: var(--outer-neumorph) !important; background: rgba(255,255,255,0.6) !important; }
 .opt-text { flex: 1; word-break: break-word; line-height: 1.5; margin-top: 2px;} 
 
-/* Hidden Inputs & Custom Styling */
-.custom-radio, .custom-check {
-    appearance: none; -webkit-appearance: none; flex-shrink: 0; /* FIX GBR 2: Prevent radio squishing (menjadi lonjong gepeng) */
-    width: 24px; height: 24px; margin: 0; margin-top: 2px; cursor: pointer; background: rgba(255,255,255,0.2);
-    box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); display: grid; place-content: center; transition: 0.3s;
+/* Core Structural Checkbox / Radio Base */
+.custom-radio, .custom-check, .fake-radio, .fake-checkbox {
+    appearance: none; -webkit-appearance: none; flex-shrink: 0;
+    width: 24px; height: 24px; margin: 0; margin-top: 2px; cursor: pointer; 
+    background: rgba(255,255,255,0.8); /* Solid white base */
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1), 1px 1px 3px rgba(255,255,255,0.5); 
+    border: 2px solid #94a3b8; /* Border abu-abu tegas & jelas */
+    display: grid; place-content: center; transition: 0.25s ease-in-out;
 }
-.custom-radio { border-radius: 50%; } .custom-check { border-radius: 6px; }
-.custom-radio::before, .custom-check::before { content: ""; width: 12px; height: 12px; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset 1px 1px 3px rgba(255,255,255,0.6), 0 0 10px var(--form-focus-glow); background: var(--form-active-border); }
-.custom-radio::before { border-radius: 50%; } .custom-check::before { border-radius: 3px; }
-.custom-radio:checked::before, .custom-check:checked::before { transform: scale(1); }
-.custom-radio:checked, .custom-check:checked { box-shadow: var(--outer-neumorph); background: rgba(255,255,255,0.9); border-color: var(--form-active-border); }
+.custom-radio, .fake-radio { border-radius: 50%; } 
+.custom-check, .fake-checkbox { border-radius: 6px; }
 
-/* Fake visually inputs in Builder Admin V2 */
-.fake-radio, .fake-checkbox { flex-shrink: 0; width: 24px; height: 24px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); margin-top: 2px; }
-.fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
-.fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; margin-top: 2px; }
+/* Dark mode Checkbox / Radio Base */
+[data-theme="dark"] .custom-radio, [data-theme="dark"] .custom-check,
+[data-theme="dark"] .fake-radio, [data-theme="dark"] .fake-checkbox {
+    background: rgba(15, 23, 42, 0.6); border: 2px solid #64748b; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Checked State Styles */
+.custom-radio:checked, .custom-check:checked { 
+    background: var(--form-active-border); 
+    border-color: var(--form-active-border); 
+    box-shadow: 0 0 12px var(--form-focus-glow); 
+}
+
+/* Checkmark Graphic for Checkbox */
+.custom-check::before, .fake-checkbox::before { 
+    content: ""; width: 14px; height: 14px; transform: scale(0); transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E"); 
+    background-size: contain; background-position: center; background-repeat: no-repeat;
+}
+.custom-check:checked::before { transform: scale(1); }
+
+/* Dot Graphic for Radio */
+.custom-radio::before, .fake-radio::before { 
+    content: ""; width: 10px; height: 10px; transform: scale(0); transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    background: white; border-radius: 50%; 
+}
+.custom-radio:checked::before { transform: scale(1); }
+
+.fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; margin-top: 2px; font-size: 1.1rem;}
 
 
 /* ================== BUTTONS (3D NEUMORPH) ================== */
-.gf-btn-submit {
-    background: linear-gradient(135deg, var(--form-active-border), color-mix(in srgb, var(--form-active-border) 80%, black)) !important;
-    color: #fff !important; font-weight: 700; border: none;
-    box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light), inset 1px 1px 2px rgba(255,255,255,0.4) !important;
-    border-radius: 12px; padding: 12px 25px; cursor: pointer; transition: 0.3s;
-}
-.gf-btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 6px 6px 15px var(--shadow-dark), -6px -6px 15px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important;
-}
-.gf-btn-clear, .neumorph-btn {
-    background: var(--form-card-bg); border: 1px solid var(--form-border);
-    box-shadow: var(--outer-neumorph); color: var(--form-text);
-    font-weight: 600; padding: 10px 20px; border-radius: 12px; cursor: pointer; transition: 0.3s;
-}
-.neumorph-btn:hover { background: rgba(255,255,255,0.7); color: var(--form-active-border); transform: translateY(-1px); }
+.gf-btn-submit { background: linear-gradient(135deg, var(--form-active-border), color-mix(in srgb, var(--form-active-border) 80%, black)) !important; color: #fff !important; font-weight: 700; border: none; box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light), inset 1px 1px 2px rgba(255,255,255,0.4) !important; border-radius: 12px; padding: 12px 25px; cursor: pointer; transition: 0.3s; }
+.gf-btn-submit:hover { transform: translateY(-2px); box-shadow: 6px 6px 15px var(--shadow-dark), -6px -6px 15px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important; }
+.gf-btn-clear, .neumorph-btn { background: var(--form-card-bg); border: 1px solid var(--form-border); box-shadow: var(--outer-neumorph); color: var(--form-text); font-weight: 600; padding: 10px 20px; border-radius: 12px; cursor: pointer; transition: 0.3s; }
+.neumorph-btn:hover { background: rgba(255,255,255,0.9); color: var(--form-active-border); transform: translateY(-1px); }
 
 .top-icon-btn, .neumorph-circle {
     width: 45px; height: 45px; border-radius: 50%; display: flex; align-items:center; justify-content:center;
     background: var(--form-card-bg); box-shadow: var(--outer-neumorph); border: 1px solid var(--form-border);
     cursor: pointer; transition: 0.3s; color: var(--form-text-muted); font-size: 1.2rem;
 }
-.neumorph-circle:hover { color: var(--form-active-border); transform: scale(1.1); }
+.neumorph-circle:hover { color: var(--form-active-border); transform: scale(1.1); background: #fff;}
 .top-icon-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none;}
 
 
-/* ================== SWITCH TOGGLES ================== */
+/* ================== SWITCH TOGGLES (UPGRADED CONTRAST) ================== */
 .toggle-switch, .neumorph-switch { display: flex; align-items: center; gap: 15px; font-weight: 600; color: var(--form-text);}
 .switch-input { display: none; }
 .switch-label {
-    width: 46px; height: 24px; border-radius: 30px; position: relative; cursor: pointer; transition: 0.4s;
-    background: rgba(255,255,255,0.4); box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border);
+    width: 48px; height: 26px; border-radius: 30px; position: relative; cursor: pointer; transition: 0.4s;
+    background: rgba(0,0,0,0.18); /* Diperjelas saat Off (Lebih gelap) */
+    box-shadow: inset 2px 2px 6px rgba(0,0,0,0.2); border: 1px solid rgba(0,0,0,0.1);
 }
 .switch-label::after {
-    content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
-    background: #fff; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
-.switch-input:checked + .switch-label { background: var(--form-active-border); box-shadow: inset 2px 2px 6px rgba(0,0,0,0.3); }
+.switch-input:checked + .switch-label { background: var(--form-active-border); box-shadow: inset 2px 2px 6px rgba(0,0,0,0.3); border-color: var(--form-active-border);}
 .switch-input:checked + .switch-label::after { transform: translateX(22px); }
 
 /* Settings Layout Fixed */
@@ -364,7 +317,7 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .setting-title { font-size: 1.1rem; color: var(--form-text); font-weight: 700;}
 .setting-desc { color: var(--form-text-muted); font-size: 0.9rem; margin-top: 5px; line-height: 1.5;}
 
-/* ================== ACCORDION SETTINGS (NEW GBR SETELAN) ================== */
+/* ================== ACCORDION SETTINGS ================== */
 .accordion-wrapper { border-bottom: 1px solid var(--form-border); }
 .accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 25px 0; cursor: pointer; transition: 0.3s; }
 .accordion-header:hover { opacity: 0.8; }
@@ -381,13 +334,8 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 }
 .builder-card-footer {
     display: flex; justify-content: flex-end; align-items: center; gap: 12px;
-    border-top: 1px solid var(--form-border); margin-top: 25px; padding-top: 20px;
+    border-top: 1px solid var(--form-border); margin-top: 25px; padding-top: 20px; flex-wrap: wrap;
 }
-
-/* Custom Fake Radio/Checkbox for Editor */
-.fake-radio, .fake-checkbox { flex-shrink: 0; width: 22px; height: 22px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
-.fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
-.fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; }
 
 @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -405,7 +353,7 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     .builder-card-footer { justify-content: flex-start; flex-wrap: wrap; }
     .form-footer-actions { flex-direction: column; gap: 15px; width: 100%;}
     .form-footer-actions button { width: 100%; margin: 0 !important; }
-    .gf-input, .q-type-select { font-size: 1rem; padding: 12px 15px; }
+    .gf-input, .q-type-select, .t-select { font-size: 1rem; padding: 12px 15px; }
     .step-name { font-size: 0.8rem; }
     .accordion-content { padding-left: 10px; border-left: 1px solid rgba(139, 92, 246, 0.3); margin-left: 0;}
 }
