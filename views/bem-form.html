@@ -620,6 +620,106 @@
             </form>`;
 
             wrapper.innerHTML = html;
+            
+            // SUPER BIG UPGRADE: Inisiasi Custom Dropdown Glassmorphism setelah HTML dirender
+            initPublicCustomSelects();
+        }
+
+        // ================= SUPER BIG UPGRADE: UI CUSTOM DROPDOWN (GLASSMORPHISM) =================
+        function initPublicCustomSelects() {
+            document.querySelectorAll('.input-container-morph select').forEach(nativeSelect => {
+                // Hindari duplikasi jika sudah pernah dibuat
+                if(nativeSelect.nextElementSibling && nativeSelect.nextElementSibling.classList.contains('custom-select-wrapper')) return;
+
+                // Sembunyikan select bawaan yang jelek
+                nativeSelect.style.display = 'none';
+
+                let wrapper = document.createElement('div');
+                wrapper.className = 'custom-select-wrapper';
+                wrapper.style.width = '100%';
+
+                // Membuat Kotak Tampilan (Display)
+                let display = document.createElement('div');
+                display.className = 'custom-select-display inner-neumorph';
+                
+                // Ambil nilai terpilih atau placeholder
+                let selOpt = nativeSelect.options[nativeSelect.selectedIndex];
+                let text = selOpt ? selOpt.text : '-- Buka Pilihan --';
+                let isPlaceholder = text.includes('--');
+                
+                let textColor = isPlaceholder ? 'var(--form-text-muted)' : 'var(--form-active-border)';
+                let fontWeight = isPlaceholder ? '500' : '700';
+
+                display.innerHTML = `<span style="font-weight:${fontWeight}; font-size: 1.05rem; color: ${textColor}; transition: 0.3s; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</span>
+                                     <span class="arrow" style="color:var(--form-active-border); font-size:0.8rem; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-left: 15px;">▼</span>`;
+                
+                display.style.padding = '15px 20px';
+                display.style.display = 'flex';
+                display.style.justifyContent = 'space-between';
+                display.style.alignItems = 'center';
+
+                // Membuat Daftar Opsi (Dropdown List)
+                let optionsList = document.createElement('div');
+                optionsList.className = 'custom-select-options glass-panel-heavy neumorph-outer';
+                optionsList.style.display = 'none';
+                optionsList.style.marginTop = '10px';
+
+                Array.from(nativeSelect.options).forEach(opt => {
+                    if (opt.disabled || opt.value === "") return; // Lewati placeholder di daftar pilihan
+
+                    let optDiv = document.createElement('div');
+                    optDiv.className = 'custom-select-option';
+                    optDiv.innerText = opt.text;
+                    if(opt.selected) optDiv.classList.add('selected');
+
+                    optDiv.onclick = (e) => {
+                        e.stopPropagation();
+                        // 1. Update native select & trigger event agar logika Wizard/GoTo jalan
+                        nativeSelect.value = opt.value;
+                        nativeSelect.dispatchEvent(new Event('change'));
+                        
+                        // 2. Update UI Tampilan
+                        let spanTxt = display.querySelector('span:first-child');
+                        spanTxt.innerText = opt.text;
+                        spanTxt.style.color = 'var(--form-active-border)';
+                        spanTxt.style.fontWeight = '700';
+
+                        // 3. Tutup menu & set state
+                        optionsList.style.display = 'none';
+                        wrapper.classList.remove('open');
+                        
+                        optionsList.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+                        optDiv.classList.add('selected');
+                    };
+                    optionsList.appendChild(optDiv);
+                });
+
+                // Logika Buka/Tutup Menu
+                display.onclick = (e) => {
+                    e.stopPropagation();
+                    // Tutup dropdown lain yang sedang terbuka
+                    document.querySelectorAll('.custom-select-options').forEach(el => {
+                        if(el !== optionsList) { el.style.display = 'none'; el.parentElement.classList.remove('open'); }
+                    });
+
+                    let isOpen = optionsList.style.display === 'block';
+                    optionsList.style.display = isOpen ? 'none' : 'block';
+                    if(isOpen) wrapper.classList.remove('open');
+                    else wrapper.classList.add('open');
+                };
+
+                wrapper.appendChild(display);
+                wrapper.appendChild(optionsList);
+                nativeSelect.parentNode.insertBefore(wrapper, nativeSelect.nextSibling);
+            });
+
+            // Klik dimanapun untuk menutup dropdown
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.custom-select-options').forEach(el => {
+                    el.style.display = 'none';
+                    el.parentElement.classList.remove('open');
+                });
+            });
         }
 
         // ================= SUPER UPGRADE: JS VALIDATION & GOTO LOGIC =================
