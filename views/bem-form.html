@@ -614,7 +614,7 @@
                     
                     <div style="display:flex; gap:15px; align-items:center;">
                         <button type="button" class="gf-btn-submit glow-effect btn-lg" id="btnNext" onclick="changeStep(1)" style="${renderSections.length > 1 ? '' : 'display:none;'}">Selanjutnya ➡️</button>
-                        <button type="submit" class="gf-btn-submit glow-effect btn-lg" id="btnKirim" style="${renderSections.length > 1 ? 'display:none;' : ''}">🚀 Eksekusi Pengiriman</button>
+                        <button type="submit" class="gf-btn-submit glow-effect btn-lg" id="btnKirim" style="${renderSections.length > 1 ? 'display:none;' : ''}">🚀 Kirim form</button>
                     </div>
                 </div>
             </form>`;
@@ -991,42 +991,74 @@
             let responses = {};
             let email = "";
 
-            for (let [key, value] of formDataObj.entries()) {
-                if (key === 'respondent_email') { email = value; continue; }
-                if (key === 'request_copy') continue; // Skip custom fields
-                
-                // Concatenate Date/Time/Duration parts before sending
-                if(key.endsWith('_day') || key.endsWith('_month') || key.endsWith('_h') || key.endsWith('_m') || key.endsWith('_s')) {
-                    let baseKey = key.replace(/(_day|_month|_h|_m|_s)$/, '');
-                    if(!responses[baseKey]) responses[baseKey] = {};
-                    responses[baseKey][key.split('_').pop()] = value;
-                    continue;
-                }
-
-                if (responses[key]) {
-                    if (!Array.isArray(responses[key])) responses[key] = [responses[key]];
-                    responses[key].push(value);
-                } else {
-                    responses[key] = value;
-                }
-            }
-
-            // Clean up custom date/duration JSON objects back to string for backend
-            for(let key in responses) {
-                if(typeof responses[key] === 'object' && !Array.isArray(responses[key])) {
-                    let o = responses[key];
-                    if(o.day !== undefined) responses[key] = `Tanggal: ${o.day}/${o.month}`;
-                    if(o.h !== undefined) responses[key] = `Durasi: ${o.h} Jam, ${o.m} Menit, ${o.s} Detik`;
-                }
-            }
-
-            const payload = { formId: formData.id, email: email, responses: responses };
+            // Helper untuk memproses file ke Base64 (Kapasitas Server Terbatas Upstash JSON Limit)
+            const readFileAsBase64 = (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(`[FILE: ${file.name}] ${reader.result}`);
+                    reader.onerror = error => reject(error);
+                    reader.readAsDataURL(file);
+                });
+            };
 
             try {
+                for (let [key, value] of formDataObj.entries()) {
+                    if (key === 'respondent_email') { email = value; continue; }
+                    if (key === 'request_copy') continue;
+
+                    let finalValue = value;
+
+                    // FIX SUPER PENTING: Tangani Objek File agar tidak merusak format payload JSON (Menghindari Bad Request 500)
+                    if (value instanceof File) {
+                        if (value.name === '' || value.size === 0) continue; // Abaikan input file yang kosong
+                        
+                        // Validasi ukuran dari frontend (Mencegah payload JSON > 5MB meledakkan Upstash Redis Free Tier)
+                        if (value.size > 5 * 1024 * 1024) {
+                            alert(`Gagal: File "${value.name}" terlalu besar. Maksimal 5MB per file.`);
+                            btn.innerHTML = '🚀 Kirim form'; btn.disabled = false; btn.classList.remove('loading-state');
+                            return; // Batalkan proses kirim secara menyeluruh
+                        }
+                        
+                        try {
+                            finalValue = await readFileAsBase64(value);
+                        } catch (errFile) {
+                            console.error("Gagal membaca file secara asinkron", errFile);
+                            continue; // Lanjutkan tanpa file yang gagal dibaca ini
+                        }
+                    }
+
+                    // Gabungkan Format Kalender & Jam Khusus
+                    if(key.endsWith('_day') || key.endsWith('_month') || key.endsWith('_h') || key.endsWith('_m') || key.endsWith('_s')) {
+                        let baseKey = key.replace(/(_day|_month|_h|_m|_s)$/, '');
+                        if(!responses[baseKey]) responses[baseKey] = {};
+                        responses[baseKey][key.split('_').pop()] = finalValue;
+                        continue;
+                    }
+
+                    if (responses[key]) {
+                        if (!Array.isArray(responses[key])) responses[key] = [responses[key]];
+                        responses[key].push(finalValue);
+                    } else {
+                        responses[key] = finalValue;
+                    }
+                }
+
+                // Clean up custom date/duration JSON objects back to string for backend
+                for(let key in responses) {
+                    if(typeof responses[key] === 'object' && !Array.isArray(responses[key])) {
+                        let o = responses[key];
+                        if(o.day !== undefined) responses[key] = `Tanggal: ${o.day}/${o.month}`;
+                        if(o.h !== undefined) responses[key] = `Durasi: ${o.h} Jam, ${o.m} Menit, ${o.s} Detik`;
+                    }
+                }
+
+                const payload = { formId: formData.id, email: email, responses: responses };
+
                 const res = await fetch('/api/forms/submit', {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
                 });
+                
                 const json = await res.json();
                 
                 if (json.success) {
@@ -1053,12 +1085,13 @@
                     `;
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else { 
-                    alert("Akses Tertolak. Gagal mengirim ke server.");
-                    btn.innerHTML = '🚀 Eksekusi Pengiriman'; btn.disabled = false; btn.classList.remove('loading-state');
+                    // Tampilkan pesan error ASLI dari backend, bukan sekedar tulisan akses tertolak statis
+                    alert(json.message || "Akses Tertolak. Terdapat kesalahan saat memproses formulir di server.");
+                    btn.innerHTML = '🚀 Kirim form'; btn.disabled = false; btn.classList.remove('loading-state');
                 }
             } catch (err) { 
-                alert("Kesalahan Jaringan. Database server menolak request transmisi.");
-                btn.innerHTML = '🚀 Eksekusi Pengiriman'; btn.disabled = false; btn.classList.remove('loading-state');
+                alert("Kesalahan Jaringan: Database cloud BEM tidak merespons atau file yang disertakan terlampau berat sehingga memutus koneksi.");
+                btn.innerHTML = '🚀 Kirim form'; btn.disabled = false; btn.classList.remove('loading-state');
             }
         }
     </script>
