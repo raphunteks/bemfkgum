@@ -166,7 +166,17 @@
 
         async function loadPublicForm() {
             try {
-                const res = await fetch(`/api/forms/${slug}`);
+                // SUPER UPGRADE FIX: Cache Buster & Headers - Memaksa Chrome mengabaikan cache lama yang korup!
+                const res = await fetch(`/api/forms/${slug}?nocache=${new Date().getTime()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                
+                if (!res.ok) throw new Error(`Server BEM membalas dengan status HTTP ${res.status}`);
+                
                 const json = await res.json();
                 
                 if(!json.success || !json.data) { 
@@ -205,7 +215,11 @@
                 initAutoSave(); // Init AutoSave LocalStorage
                 initLiveCountdown(); // UPGRADE: Init Live Realtime Countdown
             } catch(e) { 
-                renderError("Gangguan Koneksi. Gagal terhubung ke database cloud BEM."); 
+                // SUPER UPGRADE FIX: Detailed Error & Hard Reset Button
+                console.error("Terjadi Kesalahan Akses Klien:", e);
+                renderError(`Gangguan Koneksi atau Memori Browser Penuh / Korup.<br>
+                             <span style="font-size:0.85rem; font-weight:normal; opacity:0.8;">[Log Detail: ${e.message}]</span><br>
+                             <button class="gf-btn-clear neumorph-btn glow-effect" style="margin-top:25px; color:#ef4444; border-color:#ef4444; font-weight:700;" onclick="localStorage.clear(); sessionStorage.clear(); window.location.reload(true);">🔄 Hapus Cache & Muat Ulang Formulir</button>`); 
             }
         }
 
@@ -215,8 +229,8 @@
                 <div class="form-header-card glass-card neumorph-outer" style="border-top:8px solid #ef4444; text-align:center; padding: 70px 40px; margin-top:50px;">
                     <div class="glow-effect" style="font-size: 4rem; margin-bottom: 25px; display:inline-block; filter: drop-shadow(0 0 20px rgba(239,68,68,0.5));">🛑</div>
                     <h2 class="form-title" style="color:#ef4444; font-size:2.2rem; font-weight:800; margin-bottom:20px;">AKSES TERKUNCI</h2>
-                    <p class="form-desc" style="font-size:1.2rem; color:var(--form-text); line-height:1.6;">${msg}</p>
-                    <button class="gf-btn-clear neumorph-btn" style="margin-top:40px; font-size:1.1rem; color:#ef4444;" onclick="window.location.href='/'">🔙 Kembali ke Portal Utama</button>
+                    <div class="form-desc" style="font-size:1.2rem; color:var(--form-text); line-height:1.6;">${msg}</div>
+                    <button class="gf-btn-clear neumorph-btn" style="margin-top:40px; font-size:1.1rem; color:var(--form-text-muted);" onclick="window.location.href='/'">🔙 Kembali ke Portal Utama</button>
                 </div>
             `;
         }
