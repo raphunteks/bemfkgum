@@ -6,169 +6,31 @@
     <title>Manajemen Form | BEM Admin V2</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- SUPER UPGRADE: Load SEMUA Google Fonts Untuk Fitur Tema Aesthetic -->
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600&family=Oswald:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SUPER UPGRADE: Load SEMUA Google Fonts Lengkap (20+ Fonts) & Seluruh Ketebalan (100-900) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Caveat:wght@400..700&family=Comfortaa:wght@300..700&family=EB+Garamond:wght@400..800&family=Lexend:wght@100..900&family=Lobster&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Oswald:wght@200..700&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Outfit:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&family=Spectral:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     
-    <!-- SUPER UPGRADE: SortableJS Untuk Animasi Tarik/Geser UI Card Secara Smooth & Realtime -->
+    <!-- Script Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Untuk Ringkasan -->
 
     <!-- LOAD CSS -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
 
     <style>
-        /* FIX: Memaksa Font Render secara Realtime di dalam Editor Admin */
-        .form-title { font-family: var(--form-font-header) !important; }
-        .question-title { font-family: var(--form-font-question) !important; }
-        .form-desc, .gf-input, .opt-text { font-family: var(--form-font-text) !important; }
-        
-        /* FIX Z-INDEX UTAMA AGAR KARTU BISA MENAMPILKAN DROPDOWN KELUAR BATAS */
-        .form-question-card, .form-header-card { position: relative; z-index: 1; transition: z-index 0s; }
-
-        /* ================== DRAG & DROP SORTABLE JS UPGRADE ================== */
-        .drag-handle {
-            position: absolute; top: -15px !important; left: 50%; transform: translateX(-50%);
-            cursor: grab; opacity: 0; transition: 0.3s; font-size: 1.2rem; letter-spacing: 2px;
-            padding: 2px 15px !important; color: var(--form-text-muted); border-radius: 12px;
-            z-index: 10; background: var(--form-card-bg);
-        }
-        .drag-handle:active { cursor: grabbing; }
-        .form-question-card.active .drag-handle, .form-question-card:hover .drag-handle { 
-            opacity: 1; color: var(--form-text); box-shadow: var(--outer-neumorph) !important; 
-        }
-        
-        /* Kelas Khusus Saat Card Ditarik (Realtime Smooth Drag) */
-        .sortable-ghost { 
-            opacity: 0.3 !important; 
-            background: var(--form-focus-glow) !important; 
-            border: 2px dashed var(--form-active-border) !important; 
-            border-radius: 20px !important; 
-            transform: scale(0.98); 
-        }
-        .sortable-drag { 
-            cursor: grabbing !important; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important; 
-            transform: scale(1.02); 
-            opacity: 0.9 !important;
-            border: 1px solid var(--form-active-border) !important;
-        }
-
-        /* ================== SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) ================== */
-        .q-menu-dropdown {
-            position: absolute; right: 0; bottom: 55px; z-index: 100;
-            min-width: 260px; padding: 10px; border-radius: 12px;
-            background: var(--form-bg); box-shadow: var(--outer-neumorph);
-            display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--form-border);
-        }
-        .q-menu-item {
-            display: flex; align-items: center; gap: 10px; padding: 12px 15px;
-            cursor: pointer; border-radius: 8px; transition: 0.2s;
-            font-size: 0.95rem; font-weight: 600; color: var(--form-text);
-        }
-        .q-menu-item:hover { 
-            background: rgba(139, 92, 246, 0.1); color: var(--form-active-border); 
-        }
-        
-        /* Layout Baris Validasi */
-        .validation-row { 
-            display: flex; gap: 10px; align-items: center; margin-top: 15px; 
-            padding-top: 15px; border-top: 1px dashed var(--form-border); flex-wrap: wrap;
-        }
-
-        /* ================== SUPER UPGRADE: KUNCI JAWABAN (ANSWER KEY MODE) ================== */
-        .answer-key-mode {
-            border-top: 6px solid var(--form-active-border) !important;
-            border-left: 6px solid transparent !important;
-            background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, var(--form-card-bg) 100%) !important;
-        }
-        .answer-key-header { 
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; 
-            border-bottom: 1px solid var(--form-border); padding-bottom: 15px; flex-wrap: wrap; gap:15px;
-        }
-        .answer-key-title { 
-            font-size: 1.4rem; font-weight: 700; color: var(--form-text); font-family: var(--form-font-question); flex: 1;
-        }
-        .points-input { 
-            width: 80px; text-align: center; font-size: 1.2rem; font-weight: bold; padding: 10px; color: var(--form-active-border);
-        }
-        .correct-option-btn {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 15px 20px; border-radius: 12px; cursor: pointer; border: 1px solid var(--form-border);
-            margin-bottom: 15px; transition: 0.2s; background: rgba(255,255,255,0.4);
-        }
-        .correct-option-btn:hover { background: rgba(255,255,255,0.8); box-shadow: var(--outer-neumorph); }
-        .correct-option-btn.selected { background: rgba(16, 185, 129, 0.1); border-color: #10b981; border-width: 2px; }
-        .correct-check { color: #10b981; font-weight: bold; font-size: 1.5rem; display: none; }
-        .correct-option-btn.selected .correct-check { display: block; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
-
-        /* ================== SUPER BIG UPGRADE: CUSTOM GLASSMORPHISM SELECT (ANTI-HILANG) ================== */
-        .custom-select-wrapper { position: relative; user-select: none; width: 100%; }
-        .custom-select-display {
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: var(--form-card-bg) !important; display: flex; justify-content: space-between; align-items: center;
-        }
-        .custom-select-display:hover {
-            box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
-            border-color: var(--form-active-border) !important; transform: translateY(-1px);
-        }
-        .custom-select-wrapper.open .custom-select-display {
-            border-color: var(--form-active-border) !important;
-            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important;
-            transform: translateY(1px);
-        }
-        .custom-select-wrapper.open .custom-select-display .arrow { transform: rotate(180deg); }
-        
-        .custom-select-options {
-            position: absolute; top: calc(100% + 10px); left: 0; right: 0; z-index: 99999;
-            max-height: 350px; overflow-y: auto; border-radius: 16px !important; padding: 12px;
-            animation: dropInPremium 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: rgba(255, 255, 255, 0.85) !important; backdrop-filter: blur(40px) saturate(150%) !important;
-            -webkit-backdrop-filter: blur(40px) saturate(150%) !important;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.5) inset !important;
-            border: 1px solid var(--form-border);
-        }
-        [data-theme="dark"] .custom-select-options {
-            background: rgba(15, 23, 42, 0.95) !important;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05) inset !important;
-        }
-        .custom-select-options::-webkit-scrollbar { width: 6px; }
-        .custom-select-options::-webkit-scrollbar-track { background: transparent; }
-        .custom-select-options::-webkit-scrollbar-thumb { background: var(--form-active-border); border-radius: 10px; }
-        
-        .custom-select-option {
-            padding: 12px 18px; border-radius: 12px; cursor: pointer; transition: 0.2s ease-in-out;
-            font-weight: 600; color: var(--form-text); display: flex; align-items: center; gap: 10px;
-            position: relative; overflow: hidden; font-size: 0.95rem;
-        }
-        .custom-select-option::before {
-            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; 
-            background: var(--form-active-border); transform: scaleY(0); transition: 0.3s;
-        }
-        .custom-select-option:hover { background: var(--form-focus-glow); color: var(--form-active-border); transform: translateX(5px); }
-        .custom-select-option:hover::before { transform: scaleY(0.7); border-radius: 0 4px 4px 0;}
-        .custom-select-option.selected { background: rgba(139, 92, 246, 0.15); color: var(--form-active-border); box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05); }
-        .custom-select-option.selected::before { transform: scaleY(1); border-radius: 0 4px 4px 0; }
-        .custom-select-option.selected::after { content: "✓"; position: absolute; right: 15px; font-weight: 800; font-size: 1.2rem; }
-        
-        .custom-select-optgroup {
-            height: 1px; background: var(--form-border); margin: 8px 10px; opacity: 0.5;
-        }
-        
-        @keyframes dropInPremium { 
-            from { opacity: 0; transform: translateY(-20px) scale(0.95); filter: blur(10px); } 
-            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
-        }
-
-        /* CUSTOM SCROLLBAR FOR ADMIN V2 */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--form-bg); }
-        ::-webkit-scrollbar-thumb { background: var(--form-active-border); border-radius: 10px; }
+        /* Membersihkan CSS Inline ke mainV2.css */
+        /* Custom UI Khusus Halaman Admin Ini */
+        .chart-container { background: var(--form-card-bg); border: 1px solid var(--form-border); border-radius: 16px; padding: 20px; box-shadow: var(--inner-neumorph); margin-bottom: 25px; }
+        .pagination-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .pagination-controls button { padding: 8px 15px; border-radius: 8px; font-weight: bold; background: var(--form-bg); border: 1px solid var(--form-active-border); color: var(--form-active-border); cursor: pointer; transition: 0.2s;}
+        .pagination-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination-controls button:hover:not(:disabled) { background: var(--form-active-border); color: #fff; }
     </style>
 </head>
 <body class="admin-v2-body" onclick="closeAllQMenus()">
 
-    <!-- PROTEKSI KEAMANAN CANVAS -->
     <script src="/js/protect-devtools.js"></script>
     <script>
         const isPreviewEnv = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.origin.includes('preview');
@@ -185,7 +47,6 @@
             <h2 class="gradient-text" style="font-size:1.4rem; margin:0; font-weight: 700;">BEM-Form Builder</h2>
         </div>
         
-        <!-- ICONS (TEMA, PREVIEW, UNDO, REDO) -->
         <div id="builderTopIcons" style="display: none; align-items: center; gap: 8px;">
             <button class="top-icon-btn neumorph-circle" title="Sesuaikan Tema" onclick="event.stopPropagation(); toggleThemeSidebar()">🎨</button>
             <button class="top-icon-btn neumorph-circle" title="Pratinjau" onclick="previewForm()">👁️</button>
@@ -216,41 +77,52 @@
         <div class="theme-sidebar-content">
             
             <div class="theme-section-title">Gaya teks</div>
+            
+            <!-- HEADER FONTS -->
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Header</label>
             <div class="font-select-group">
-                <select class="t-select inner-neumorph" style="flex:1;" id="themeHeaderFont" onchange="updateTheme('headerFont', this.value)">
-                    <option value="Outfit">Outfit</option><option value="Playfair Display">Playfair</option>
-                    <option value="Space Grotesk">Space Grotesk</option><option value="Plus Jakarta Sans">Jakarta Sans</option>
-                    <option value="Roboto">Roboto</option><option value="Oswald">Oswald</option>
-                    <option value="Lora">Lora</option><option value="Montserrat">Montserrat</option>
+                <select class="t-select inner-neumorph" id="themeHeaderFont" onchange="updateTheme('headerFont', this.value)">
+                    <!-- Dige-generate via JS -->
                 </select>
                 <select class="t-select inner-neumorph" style="width:70px;" id="themeHeaderSize" onchange="updateTheme('headerFontSize', this.value)">
-                    <option value="18">18</option><option value="22">22</option><option value="24">24</option><option value="28">28</option>
-                    <option value="32">32</option>
+                    <option value="18">18</option><option value="22">22</option><option value="24">24</option><option value="28">28</option><option value="32">32</option><option value="36">36</option>
+                </select>
+            </div>
+            <div class="font-select-group">
+                <select class="t-select inner-neumorph" id="themeHeaderWeight" onchange="updateTheme('headerFontWeight', this.value)">
+                    <!-- Dige-generate via JS -->
                 </select>
             </div>
             
+            <!-- QUESTION FONTS -->
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Pertanyaan</label>
             <div class="font-select-group">
-                <select class="t-select inner-neumorph" style="flex:1;" id="themeQuestionFont" onchange="updateTheme('questionFont', this.value)">
-                    <option value="Plus Jakarta Sans">Jakarta Sans</option><option value="Outfit">Outfit</option>
-                    <option value="Roboto">Roboto</option><option value="Montserrat">Montserrat</option>
-                    <option value="Space Grotesk">Space Grotesk</option>
+                <select class="t-select inner-neumorph" id="themeQuestionFont" onchange="updateTheme('questionFont', this.value)">
+                    <!-- Dige-generate via JS -->
                 </select>
                 <select class="t-select inner-neumorph" style="width:70px;" id="themeQuestionSize" onchange="updateTheme('questionFontSize', this.value)">
-                    <option value="12">12</option><option value="14">14</option><option value="16">16</option>
+                    <option value="12">12</option><option value="14">14</option><option value="16">16</option><option value="18">18</option>
+                </select>
+            </div>
+            <div class="font-select-group">
+                <select class="t-select inner-neumorph" id="themeQuestionWeight" onchange="updateTheme('questionFontWeight', this.value)">
+                    <!-- Dige-generate via JS -->
                 </select>
             </div>
 
+            <!-- TEXT FONTS -->
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Teks Dasar</label>
             <div class="font-select-group">
-                <select class="t-select inner-neumorph" style="flex:1;" id="themeTextFont" onchange="updateTheme('textFont', this.value)">
-                    <option value="Plus Jakarta Sans">Jakarta Sans</option><option value="Outfit">Outfit</option>
-                    <option value="Roboto">Roboto</option><option value="Montserrat">Montserrat</option>
-                    <option value="Space Grotesk">Space Grotesk</option>
+                <select class="t-select inner-neumorph" id="themeTextFont" onchange="updateTheme('textFont', this.value)">
+                    <!-- Dige-generate via JS -->
                 </select>
                 <select class="t-select inner-neumorph" style="width:70px;" id="themeTextSize" onchange="updateTheme('textFontSize', this.value)">
                     <option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="14">14</option>
+                </select>
+            </div>
+            <div class="font-select-group">
+                <select class="t-select inner-neumorph" id="themeTextWeight" onchange="updateTheme('textFontWeight', this.value)">
+                    <!-- Dige-generate via JS -->
                 </select>
             </div>
             
@@ -263,14 +135,10 @@
             </div>
 
             <div class="theme-section-title">Warna Tema Utama</div>
-            <div class="color-circle-group" id="themeColorGrid">
-                <!-- Javascript Injected -->
-            </div>
+            <div class="color-circle-group" id="themeColorGrid"></div>
 
             <div class="theme-section-title">Warna Latar Belakang</div>
-            <div class="color-circle-group" id="themeBgGrid">
-                <!-- Javascript Injected -->
-            </div>
+            <div class="color-circle-group" id="themeBgGrid"></div>
         </div>
     </div>
 
@@ -307,14 +175,53 @@
             </div>
         </div>
 
-        <!-- ================= TAB 3: JAWABAN (CRUD REALTIME UPGRADE) ================= -->
+        <!-- ================= TAB 3: JAWABAN (SUPER UPGRADE 4 SUB TABS) ================= -->
         <div id="tab-jawaban" class="tab-content">
-            <div class="form-header-card glass-card neumorph-outer" style="border-top:none;">
-                <h2 class="form-title gradient-text" id="respCount" style="font-size:2.2rem; font-weight:700;">0 Tanggapan</h2>
-                <div style="margin-top: 25px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--form-border); padding-bottom:15px; flex-wrap: wrap; gap:15px;">
-                    <span style="color:var(--form-text); font-weight:600;">Status: <span style="color:#10b981;">Menerima tanggapan</span></span>
-                    <button class="gf-btn-submit glow-effect" onclick="downloadExcel()" style="background: #10b981;">📥 Link ke Spreadsheet (.xlsx)</button>
+            <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom: 20px;">
+                    <h2 class="form-title gradient-text" id="respCount" style="font-size:2.2rem; font-weight:700; margin:0;">0 Tanggapan</h2>
+                    <button class="gf-btn-submit glow-effect" onclick="downloadExcel()" style="background: #10b981;">📥 Spreadsheet (.xlsx)</button>
                 </div>
+                
+                <!-- SUB NAVIGASI JAWABAN -->
+                <div class="res-sub-tabs">
+                    <div class="res-sub-tab active" onclick="switchResTab('ringkasan')">Ringkasan</div>
+                    <div class="res-sub-tab" onclick="switchResTab('pertanyaan')">Pertanyaan</div>
+                    <div class="res-sub-tab" onclick="switchResTab('individual')">Individual</div>
+                    <div class="res-sub-tab" onclick="switchResTab('crud')">Data Master (CRUD)</div>
+                </div>
+            </div>
+
+            <!-- KONTEN: RINGKASAN (CHART.JS) -->
+            <div id="res-ringkasan" class="res-content-pane active">
+                <div id="ringkasanContainer">Memuat grafik statistik...</div>
+            </div>
+
+            <!-- KONTEN: PERTANYAAN -->
+            <div id="res-pertanyaan" class="res-content-pane">
+                <div class="form-header-card glass-card neumorph-outer" style="padding: 20px;">
+                    <select id="qSelector" class="gf-input inner-neumorph" style="font-weight:bold; color:var(--form-active-border);" onchange="renderJawabanPertanyaan(this.value)">
+                        <option value="">-- Pilih Pertanyaan --</option>
+                    </select>
+                </div>
+                <div id="pertanyaanContainer" style="margin-top:20px;"></div>
+            </div>
+
+            <!-- KONTEN: INDIVIDUAL -->
+            <div id="res-individual" class="res-content-pane">
+                <div class="form-header-card glass-card neumorph-outer" style="padding: 20px; display:flex; justify-content:space-between; align-items:center;">
+                    <div class="pagination-controls">
+                        <button onclick="changeIndiv(-1)" id="btnIndivPrev">❮</button>
+                        <span id="indivLabel" style="font-weight:bold; color:var(--form-text);">0 dari 0</span>
+                        <button onclick="changeIndiv(1)" id="btnIndivNext">❯</button>
+                    </div>
+                    <button class="gf-btn-clear neumorph-btn" onclick="window.print()">🖨️ Cetak Jawaban</button>
+                </div>
+                <div id="individualContainer" style="margin-top:20px;"></div>
+            </div>
+
+            <!-- KONTEN: CRUD DATA MASTER -->
+            <div id="res-crud" class="res-content-pane">
                 <div id="respList" style="margin-top: 15px; max-height: 800px; overflow-y:auto; color:var(--form-text); padding-right:10px;">
                     <!-- List Jawaban Di Render Disini -->
                 </div>
@@ -323,7 +230,6 @@
 
         <!-- ================= TAB 4: SETELAN ================= -->
         <div id="tab-setelan" class="tab-content">
-            
             <!-- UI CARD 1 (SETELAN) -->
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding:15px 30px; margin-bottom: 30px;">
                 <h2 class="form-title" style="font-size:1.8rem; margin:15px 0 25px 0; border-bottom:1px solid var(--form-border); padding-bottom:15px;">Setelan</h2>
@@ -604,9 +510,30 @@
         
         let currentResponses = []; // State Untuk Data Jawaban
         let currentEditingRes = null; // Pointer Edit Respon
+        let currentIndivIndex = 0; // Pointer Tab Individual
+        
+        let chartInstances = []; // Untuk manajemen hapus chart canvas
 
         const THEME_COLORS = ['#ec4899', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#10b981', '#f59e0b', '#f97316', '#ef4444', '#64748b'];
         const BG_COLORS = ['#fdf2f8', '#f5f3ff', '#eef2ff', '#eff6ff', '#f0f9ff', '#ecfeff', '#f0fdfa', '#ecfdf5', '#fffbeb', '#fff7ed', '#fef2f2', '#f8fafc'];
+        
+        // SUPER UPGRADE: DICTIONARY FONT (Sistem & Google Web Fonts)
+        const FONT_OPTIONS = [
+            "Times New Roman", "Calibri", "Arial", "Century Gothic", 
+            "Amatic SC", "Caveat", "Comfortaa", "Comic Sans MS", "Courier New",
+            "EB Garamond", "Georgia", "Impact", "Lexend", "Lobster", "Lora",
+            "Merriweather", "Montserrat", "Nunito", "Oswald", "Pacifico",
+            "Playfair Display", "Plus Jakarta Sans", "Outfit", "Roboto",
+            "Roboto Mono", "Roboto Serif", "Space Grotesk", "Spectral"
+        ];
+        
+        // SUPER UPGRADE: DICTIONARY FONT WEIGHTS
+        const WEIGHT_OPTIONS = [
+            {val: "200", label: "Ekstra Halus"}, {val: "300", label: "Halus"},
+            {val: "400", label: "Biasa"}, {val: "500", label: "Sedang"},
+            {val: "600", label: "Semi Tebal"}, {val: "700", label: "Tebal"},
+            {val: "800", label: "Ekstra Tebal"}, {val: "900", label: "Hitam"}
+        ];
 
         document.addEventListener('DOMContentLoaded', () => {
             loadAllForms();
@@ -617,6 +544,206 @@
             const t = document.getElementById('globalToast');
             t.innerText = msg; t.style.bottom = '30px';
             setTimeout(() => t.style.bottom = '-100px', 3000);
+        }
+
+        // ================= SUPER UPGRADE: SUB TABS JAWABAN (GOOGLE FORMS STYLE) =================
+        function switchResTab(tabId) {
+            document.querySelectorAll('.res-sub-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.res-content-pane').forEach(el => el.classList.remove('active'));
+            
+            document.querySelector(`.res-sub-tab[onclick="switchResTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(`res-${tabId}`).classList.add('active');
+            
+            if(tabId === 'ringkasan') renderRingkasan();
+            if(tabId === 'pertanyaan') renderQDropdown();
+            if(tabId === 'individual') renderIndividualResponse();
+        }
+
+        // 1. FUNGSI RINGKASAN (CHART.JS)
+        function renderRingkasan() {
+            const container = document.getElementById('ringkasanContainer');
+            if(currentResponses.length === 0) {
+                container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted); border:2px dashed var(--form-border); border-radius:12px;'>Belum ada tanggapan untuk diringkas.</div>";
+                return;
+            }
+
+            // Hapus chart lama agar tidak numpuk
+            chartInstances.forEach(c => c.destroy());
+            chartInstances = [];
+            
+            let html = '';
+            currentForm.sections.forEach(sec => {
+                sec.questions.forEach((q, idx) => {
+                    if (q.type === 'title_only' || q.type === 'upload_file' || q.type === 'tanggal' || q.type === 'waktu' || q.type === 'jawaban_singkat' || q.type === 'paragraf') return;
+                    
+                    html += `<div class="chart-container">
+                                <h3 style="font-size:1.1rem; color:var(--form-text); margin-bottom:15px; border-bottom:1px solid var(--form-border); padding-bottom:10px;">${q.title}</h3>
+                                <div style="position: relative; height:300px; width:100%; display:flex; justify-content:center;">
+                                    <canvas id="chart-${q.id}"></canvas>
+                                </div>
+                             </div>`;
+                });
+            });
+            
+            if(html === '') html = "<div style='padding:30px; text-align:center; color:var(--form-text-muted);'>Tidak ada pertanyaan pilihan/opsi untuk dibuat grafik.</div>";
+            container.innerHTML = html;
+
+            // Generate Data untuk masing-masing chart
+            currentForm.sections.forEach(sec => {
+                sec.questions.forEach(q => {
+                    if (q.type === 'title_only' || q.type === 'upload_file' || q.type === 'tanggal' || q.type === 'waktu' || q.type === 'jawaban_singkat' || q.type === 'paragraf') return;
+                    
+                    let canvas = document.getElementById(`chart-${q.id}`);
+                    if(!canvas) return;
+
+                    let labels = q.options || q.columns || ["1","2","3","4","5"]; // Fallback for rating/scale
+                    if(q.type === 'skala_linier') {
+                        labels = []; for(let i=(q.scaleMin||1); i<=(q.scaleMax||5); i++) labels.push(i.toString());
+                    } else if (q.type === 'rating') {
+                        labels = []; for(let i=1; i<=(q.ratingLevels||5); i++) labels.push(i.toString());
+                    }
+
+                    let dataCounts = new Array(labels.length).fill(0);
+                    
+                    currentResponses.forEach(res => {
+                        let ans = res.answers[q.id];
+                        if(!ans) return;
+                        
+                        if(Array.isArray(ans)) {
+                            ans.forEach(a => {
+                                let idx = labels.indexOf(a);
+                                if(idx > -1) dataCounts[idx]++;
+                            });
+                        } else {
+                            let idx = labels.indexOf(ans.toString());
+                            if(idx > -1) dataCounts[idx]++;
+                        }
+                    });
+
+                    // Random Warna
+                    let bgColors = labels.map(() => `hsla(${~~(Math.random() * 360)}, 70%, 60%, 0.6)`);
+                    let borderColors = bgColors.map(c => c.replace('0.6', '1'));
+
+                    let chartType = (q.type === 'pilihan_ganda' || q.type === 'dropdown') ? 'pie' : 'bar';
+                    
+                    let newChart = new Chart(canvas, {
+                        type: chartType,
+                        data: {
+                            labels: labels,
+                            datasets: [{ label: 'Jumlah Jawaban', data: dataCounts, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                    });
+                    chartInstances.push(newChart);
+                });
+            });
+        }
+
+        // 2. FUNGSI VIEW BERDASARKAN PERTANYAAN
+        function renderQDropdown() {
+            let sel = document.getElementById('qSelector');
+            sel.innerHTML = '<option value="">-- Pilih Pertanyaan --</option>';
+            currentForm.sections.forEach(sec => {
+                sec.questions.forEach(q => {
+                    if(q.type === 'title_only') return;
+                    sel.innerHTML += `<option value="${q.id}">${q.title}</option>`;
+                });
+            });
+            document.getElementById('pertanyaanContainer').innerHTML = "<div style='text-align:center; padding:30px; color:var(--form-text-muted);'>Pilih pertanyaan dari dropdown di atas.</div>";
+        }
+        
+        window.renderJawabanPertanyaan = function(qId) {
+            const container = document.getElementById('pertanyaanContainer');
+            if(!qId) { container.innerHTML = ''; return; }
+            
+            let html = '';
+            currentResponses.forEach((res, i) => {
+                let ans = res.answers[qId];
+                if(ans) {
+                    let displayAns = Array.isArray(ans) ? ans.join(', ') : ans;
+                    if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
+                        if(ans.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) displayAns = `<img src="${ans}" style="max-height:100px; border-radius:8px;">`;
+                        else displayAns = `<a href="${ans}" target="_blank" class="gf-btn-clear neumorph-btn" style="padding:5px 10px; font-size:0.85rem; text-decoration:none;">📥 File Dokumen</a>`;
+                    }
+                    html += `<div class="glass-card inner-neumorph" style="padding:15px; margin-bottom:10px;">
+                                <div style="font-size:0.8rem; color:var(--form-text-muted); margin-bottom:5px;">Responden ${i+1} (${res.email || 'Anonim'})</div>
+                                <div style="font-size:1.05rem; color:var(--form-text); font-weight:500;">${displayAns}</div>
+                             </div>`;
+                }
+            });
+            container.innerHTML = html || "<div style='padding:20px; text-align:center; color:var(--form-text-muted);'>Belum ada jawaban untuk pertanyaan ini.</div>";
+        }
+
+        // 3. FUNGSI VIEW INDIVIDUAL (SEPERTI GOOGLE FORM)
+        window.changeIndiv = function(dir) {
+            currentIndivIndex += dir;
+            if(currentIndivIndex < 0) currentIndivIndex = 0;
+            if(currentIndivIndex >= currentResponses.length) currentIndivIndex = currentResponses.length - 1;
+            renderIndividualResponse();
+        }
+
+        function renderIndividualResponse() {
+            const container = document.getElementById('individualContainer');
+            const lbl = document.getElementById('indivLabel');
+            
+            if(currentResponses.length === 0) {
+                lbl.innerText = "0 dari 0";
+                container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted);'>Belum ada tanggapan.</div>";
+                return;
+            }
+            
+            lbl.innerText = `${currentIndivIndex + 1} dari ${currentResponses.length}`;
+            document.getElementById('btnIndivPrev').disabled = currentIndivIndex === 0;
+            document.getElementById('btnIndivNext').disabled = currentIndivIndex === currentResponses.length - 1;
+
+            let res = currentResponses[currentIndivIndex];
+            
+            // Build UI mirip Public Form
+            let html = `<div style="margin-bottom:20px; text-align:center;">
+                <div style="font-size:1.1rem; color:var(--form-text); font-weight:700;">Waktu: ${new Date(res.timestamp).toLocaleString('id-ID')}</div>
+                <div style="color:var(--form-active-border); font-weight:bold;">Email: ${res.email || 'Tanpa Email'}</div>
+                ${res.score !== null ? `<div style="font-size:1.2rem; font-weight:800; color:#10b981; margin-top:10px;">Skor: ${res.score} / ${res.maxScore}</div>` : ''}
+            </div>`;
+
+            currentForm.sections.forEach((sec, sIdx) => {
+                html += `<div class="form-header-card glass-card neumorph-outer" style="border-top:5px solid var(--form-active-border); margin-bottom:20px; padding:20px;">
+                            <h2 style="margin:0; color:var(--form-text);">${sec.title || `Bagian ${sIdx+1}`}</h2>
+                         </div>`;
+                
+                sec.questions.forEach(q => {
+                    if(q.type === 'title_only') return;
+                    
+                    let ans = res.answers[q.id];
+                    let displayAns = `<div style="color:var(--form-text-muted); font-style:italic;">Tidak ada jawaban</div>`;
+                    
+                    if(ans) {
+                        if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
+                            displayAns = '<ul style="margin:0; padding-left:20px;">';
+                            q.rows.forEach((r, rIdx) => {
+                                let rAns = res.answers[`${q.id}_row_${rIdx}`];
+                                let rVal = Array.isArray(rAns) ? rAns.join(', ') : (rAns||'-');
+                                displayAns += `<li><strong>${r}</strong>: <span style="color:var(--form-active-border);">${rVal}</span></li>`;
+                            });
+                            displayAns += '</ul>';
+                        } else {
+                            let textAns = Array.isArray(ans) ? ans.join(', ') : ans;
+                            if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
+                                if(ans.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) displayAns = `<img src="${ans}" style="max-width:100%; max-height:200px; border-radius:8px;">`;
+                                else displayAns = `<a href="${ans}" target="_blank">${ans}</a>`;
+                            } else {
+                                displayAns = `<div style="font-size:1.1rem; color:var(--form-text); font-weight:600; padding:10px; background:var(--form-bg); border-radius:8px; border:1px solid var(--form-border);">${textAns}</div>`;
+                            }
+                        }
+                    }
+
+                    html += `<div class="form-question-card glass-card neumorph-outer" style="margin-bottom:20px; padding:20px;">
+                                <div style="font-size:1rem; font-weight:700; color:var(--form-text); margin-bottom:15px;">${q.title}</div>
+                                ${displayAns}
+                             </div>`;
+                });
+            });
+            
+            container.innerHTML = html;
         }
 
         // ================= SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) LOGICS =================
@@ -742,11 +869,8 @@
         }
 
         // --- Feedback Modal ---
-        let activeFeedbackSIdx = -1;
-        let activeFeedbackQIdx = -1;
         function openFeedbackModal(sIdx, qIdx) {
-            activeFeedbackSIdx = sIdx;
-            activeFeedbackQIdx = qIdx;
+            activeFeedbackSIdx = sIdx; activeFeedbackQIdx = qIdx;
             let q = currentForm.sections[sIdx].questions[qIdx];
             document.getElementById('feedbackInput').value = q.feedback || '';
             document.getElementById('feedbackModal').style.display = 'flex';
@@ -764,9 +888,7 @@
         // ================= UNDO / REDO ENGINE =================
         function saveState() {
             if(isNavigatingHistory) return;
-            if(historyPointer < historyStack.length - 1) {
-                historyStack = historyStack.slice(0, historyPointer + 1);
-            }
+            if(historyPointer < historyStack.length - 1) { historyStack = historyStack.slice(0, historyPointer + 1); }
             historyStack.push(JSON.stringify(currentForm));
             historyPointer++; updateUndoRedoUI();
         }
@@ -793,18 +915,14 @@
 
         let debounceTimer;
         function debouncedSaveState() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(saveState, 500);
+            clearTimeout(debounceTimer); debounceTimer = setTimeout(saveState, 500);
         }
 
         // ================= TRACKING POSISI TOOLBAR (ACTIVE CARD) =================
         function setActive(sIdx, qIdx, el) {
             activeSecIdx = sIdx; activeQIdx = qIdx;
             document.querySelectorAll('.form-question-card, .form-header-card').forEach(c => c.classList.remove('active', 'hover-glow'));
-            if(el) {
-                el.classList.add('active', 'hover-glow');
-                positionToolbar();
-            }
+            if(el) { el.classList.add('active', 'hover-glow'); positionToolbar(); }
         }
 
         function positionToolbar() {
@@ -813,7 +931,7 @@
             if(activeEl && floater) floater.style.top = activeEl.offsetTop + 'px';
         }
 
-        // ================= THEME ENGINE =================
+        // ================= SUPER UPGRADE: THEME ENGINE (FONTS & WEIGHTS) =================
         function initThemeGrids() {
             const cGrid = document.getElementById('themeColorGrid');
             const bGrid = document.getElementById('themeBgGrid');
@@ -821,7 +939,22 @@
                 cGrid.innerHTML += `<div class="color-circle neumorph-outer" style="background:${c} !important;" onclick="updateTheme('color', '${c}'); updateTheme('bgColor', '${BG_COLORS[i]}');" id="tc-${c}"></div>`;
                 bGrid.innerHTML += `<div class="color-circle bg-circle inner-neumorph" style="background:${BG_COLORS[i]} !important;" onclick="updateTheme('bgColor', '${BG_COLORS[i]}');" id="tb-${BG_COLORS[i]}"></div>`;
             });
+
+            // Inject Font Options
+            let fontOptsHtml = '';
+            FONT_OPTIONS.forEach(f => fontOptsHtml += `<option value="${f}">${f}</option>`);
+            document.getElementById('themeHeaderFont').innerHTML = fontOptsHtml;
+            document.getElementById('themeQuestionFont').innerHTML = fontOptsHtml;
+            document.getElementById('themeTextFont').innerHTML = fontOptsHtml;
+
+            // Inject Weight Options
+            let weightOptsHtml = '';
+            WEIGHT_OPTIONS.forEach(w => weightOptsHtml += `<option value="${w.val}">${w.label}</option>`);
+            document.getElementById('themeHeaderWeight').innerHTML = weightOptsHtml;
+            document.getElementById('themeQuestionWeight').innerHTML = weightOptsHtml;
+            document.getElementById('themeTextWeight').innerHTML = weightOptsHtml;
         }
+
         function toggleThemeSidebar() { document.getElementById('themeSidebar').classList.toggle('active'); }
         function updateTheme(key, value) { currentForm.theme[key] = value; applyThemeToDOM(); saveState(); }
 
@@ -829,16 +962,33 @@
             if(!currentForm || !currentForm.theme) return;
             const t = currentForm.theme;
             
-            document.documentElement.style.setProperty('--form-active-border', t.color);
-            document.documentElement.style.setProperty('--form-bg', t.bgColor);
-            document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont}", sans-serif`);
-            document.documentElement.style.setProperty('--form-font-question', `"${t.questionFont}", sans-serif`);
-            document.documentElement.style.setProperty('--form-font-text', `"${t.textFont}", sans-serif`);
+            // Set CSS Variables
+            document.documentElement.style.setProperty('--form-active-border', t.color || '#8b5cf6');
+            document.documentElement.style.setProperty('--form-bg', t.bgColor || '#f5f3ff');
             
-            document.getElementById('themeHeaderFont').value = t.headerFont; document.getElementById('themeHeaderSize').value = t.headerFontSize;
-            document.getElementById('themeQuestionFont').value = t.questionFont; document.getElementById('themeQuestionSize').value = t.questionFontSize;
-            document.getElementById('themeTextFont').value = t.textFont; document.getElementById('themeTextSize').value = t.textFontSize;
+            document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont || 'Outfit'}", sans-serif`);
+            document.documentElement.style.setProperty('--form-weight-header', t.headerFontWeight || '700');
+            
+            document.documentElement.style.setProperty('--form-font-question', `"${t.questionFont || 'Plus Jakarta Sans'}", sans-serif`);
+            document.documentElement.style.setProperty('--form-weight-question', t.questionFontWeight || '600');
+            
+            document.documentElement.style.setProperty('--form-font-text', `"${t.textFont || 'Plus Jakarta Sans'}", sans-serif`);
+            document.documentElement.style.setProperty('--form-weight-text', t.textFontWeight || '400');
+            
+            // Sync Selectors
+            document.getElementById('themeHeaderFont').value = t.headerFont || 'Outfit';
+            document.getElementById('themeHeaderSize').value = t.headerFontSize || 28;
+            document.getElementById('themeHeaderWeight').value = t.headerFontWeight || '700';
 
+            document.getElementById('themeQuestionFont').value = t.questionFont || 'Plus Jakarta Sans';
+            document.getElementById('themeQuestionSize').value = t.questionFontSize || 14;
+            document.getElementById('themeQuestionWeight').value = t.questionFontWeight || '600';
+
+            document.getElementById('themeTextFont').value = t.textFont || 'Plus Jakarta Sans';
+            document.getElementById('themeTextSize').value = t.textFontSize || 12;
+            document.getElementById('themeTextWeight').value = t.textFontWeight || '400';
+
+            // Sync Color Selection
             document.querySelectorAll('#themeColorGrid .color-circle').forEach(el => el.innerHTML = '');
             const activeColor = document.getElementById(`tc-${t.color}`);
             if(activeColor) activeColor.innerHTML = '✓';
@@ -847,6 +997,7 @@
             const activeBg = document.getElementById(`tb-${t.bgColor}`);
             if(activeBg) activeBg.innerHTML = '<span style="color:var(--form-active-border); font-weight:bold;">✓</span>';
 
+            // Sync Image
             const imgPreview = document.getElementById('themeHeaderPreview');
             const btnRm = document.getElementById('btnRmHeader');
             if(t.headerImage) {
@@ -944,6 +1095,15 @@
                 
                 document.getElementById('respCount').innerText = `${currentResponses.length} Tanggapan`;
                 
+                // Memicu Render Tab Sub Navigasi yang aktif (Default: Ringkasan)
+                let activeSubTab = document.querySelector('.res-sub-tab.active');
+                if(activeSubTab) {
+                    activeSubTab.click();
+                } else {
+                    switchResTab('ringkasan');
+                }
+
+                // Render Tab CRUD
                 let html = '';
                 currentResponses.slice().reverse().forEach((r) => { 
                     html += `
@@ -1148,7 +1308,7 @@
             document.getElementById('editResModal').style.display = 'none';
         }
 
-        // DOWNLOAD EXCEL EXPORT (NO CHANGE NEEDED HERE, CONTROLLED BY SERVER.JS)
+        // DOWNLOAD EXCEL EXPORT
         function downloadExcel() { window.open(`/api/forms/${currentForm.id}/export`, '_blank'); }
 
         // ================= RENDERING LIST DASHBOARD =================
@@ -1193,7 +1353,12 @@
             currentForm = {
                 id: '', slug: `form-${Date.now()}`, title: 'Formulir Tanpa Judul', description: '', isActive: true,
                 settings: JSON.parse(JSON.stringify(defaultSettingsJSON)),
-                theme: { headerFont: 'Outfit', headerFontSize: 28, questionFont: 'Plus Jakarta Sans', questionFontSize: 14, textFont: 'Plus Jakarta Sans', textFontSize: 12, color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' },
+                theme: { 
+                    headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: '700',
+                    questionFont: 'Plus Jakarta Sans', questionFontSize: 14, questionFontWeight: '600',
+                    textFont: 'Plus Jakarta Sans', textFontSize: 12, textFontWeight: '400',
+                    color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' 
+                },
                 sections: [ { id: 's1', stepName: 'Tahap 1', title: 'Bagian 1', description: '', questions: [] } ]
             };
             historyStack = []; historyPointer = -1; saveState(); openEditorUI();
@@ -1202,14 +1367,19 @@
         function openFormEditor(id) {
             currentForm = JSON.parse(JSON.stringify(allForms.find(f => f.id === id))); 
             currentForm.settings = { ...defaultSettingsJSON, ...(currentForm.settings || {}) };
-            if(!currentForm.theme) currentForm.theme = { headerFont: 'Outfit', headerFontSize: 28, questionFont: 'Plus Jakarta Sans', questionFontSize: 14, textFont: 'Plus Jakarta Sans', textFontSize: 12, color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' };
+            if(!currentForm.theme) currentForm.theme = { 
+                headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: '700',
+                questionFont: 'Plus Jakarta Sans', questionFontSize: 14, questionFontWeight: '600',
+                textFont: 'Plus Jakarta Sans', textFontSize: 12, textFontWeight: '400',
+                color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' 
+            };
             historyStack = []; historyPointer = -1; saveState(); openEditorUI();
         }
 
         function openEditorUI() {
             document.getElementById('tabPertanyaan').style.display = 'block'; document.getElementById('tabJawaban').style.display = 'block'; document.getElementById('tabSetelan').style.display = 'block';
             applyThemeToDOM(); switchFormTab('pertanyaan');
-            initCustomSelects(); // SUPER UPGRADE: Init dropdowns statis saat pertama kali buka
+            initCustomSelects(); 
         }
 
         // ================= SUPER BIG UPGRADE: CUSTOM GLASSMORPHISM SELECT (ANTI-HILANG) =================
@@ -1228,7 +1398,7 @@
                 if (nativeSelect.style.width) wrapper.style.width = nativeSelect.style.width;
                 if (nativeSelect.style.flex) wrapper.style.flex = nativeSelect.style.flex;
                 
-                // Copy kelas desain untuk Kotak Display (tampilan yang terlihat)
+                // Copy kelas desain untuk Kotak Display
                 let extraClasses = Array.from(nativeSelect.classList).filter(c => c !== 'q-type-select' && c !== 't-select' && c !== 'inner-neumorph').join(' ');
                 let display = document.createElement('div');
                 display.className = 'custom-select-display inner-neumorph ' + extraClasses;
@@ -1237,7 +1407,6 @@
                 let selOpt = nativeSelect.options[nativeSelect.selectedIndex];
                 let text = selOpt ? selOpt.text : 'Pilih...';
                 
-                // Buat struktur HTML Display Dropdown (dengan pointer-events none agar klik di teks tetap kena wrapper parent)
                 display.innerHTML = `<span style="font-weight:700; font-size:1rem; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none;">${text}</span> <span class="arrow" style="margin-left:10px; transition:0.3s; pointer-events:none;">▼</span>`;
                 display.style.padding = nativeSelect.classList.contains('q-type-select') ? '15px 20px' : '10px 15px';
                 
@@ -1251,6 +1420,7 @@
                     if(child.tagName === 'OPTGROUP') {
                        let grp = document.createElement('div');
                        grp.className = 'custom-select-optgroup';
+                       grp.innerText = child.label || '---';
                        optionsList.appendChild(grp);
                     } else if (child.tagName === 'OPTION') {
                         let optDiv = document.createElement('div');
@@ -1262,14 +1432,12 @@
                         optDiv.onclick = (e) => {
                             e.stopPropagation();
                             nativeSelect.value = child.value;
-                            // Pancarkan event 'change' agar logika JS Builder Form terpicu otomatis (changeQType, dll)
                             nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
                             
                             display.querySelector('span').innerText = child.text;
                             optionsList.style.display = 'none';
                             wrapper.classList.remove('open');
                             
-                            // Normalisasi Z-Index Parent
                             let parentCard = wrapper.closest('.form-question-card, .form-header-card, .theme-sidebar-content');
                             if(parentCard) parentCard.style.zIndex = '1';
                             
@@ -1284,7 +1452,6 @@
                 display.onclick = (e) => {
                     e.stopPropagation();
                     
-                    // 1. Tutup menu lain yang sedang terbuka di layar
                     document.querySelectorAll('.custom-select-options').forEach(el => {
                         if(el !== optionsList) { 
                             el.style.display = 'none'; 
@@ -1298,30 +1465,19 @@
                     let parentCard = wrapper.closest('.form-question-card, .form-header-card, .theme-sidebar-content');
 
                     if(isOpen) {
-                        // Tutup
                         optionsList.style.display = 'none';
                         wrapper.classList.remove('open');
                         if(parentCard) parentCard.style.zIndex = '1';
                     } else {
-                        // Buka
                         optionsList.style.display = 'block';
                         wrapper.classList.add('open');
-                        if(parentCard) parentCard.style.zIndex = '99999'; // BOOSTER Z-INDEX (Melampaui semua elemen)
+                        if(parentCard) parentCard.style.zIndex = '99999';
 
-                        // Smart Positioning (Collision Detection): Jika layar bawah tidak muat, buka menu ke ATAS
                         let rect = optionsList.getBoundingClientRect();
                         if (rect.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
-                            optionsList.style.top = 'auto';
-                            optionsList.style.bottom = '100%';
-                            optionsList.style.marginBottom = '10px';
-                            optionsList.style.marginTop = '0';
-                            optionsList.style.transformOrigin = 'bottom center';
+                            optionsList.style.top = 'auto'; optionsList.style.bottom = '100%'; optionsList.style.marginBottom = '10px'; optionsList.style.marginTop = '0'; optionsList.style.transformOrigin = 'bottom center';
                         } else {
-                            optionsList.style.top = 'calc(100% + 10px)';
-                            optionsList.style.bottom = 'auto';
-                            optionsList.style.marginBottom = '0';
-                            optionsList.style.marginTop = '0';
-                            optionsList.style.transformOrigin = 'top center';
+                            optionsList.style.top = 'calc(100% + 10px)'; optionsList.style.bottom = 'auto'; optionsList.style.marginBottom = '0'; optionsList.style.marginTop = '0'; optionsList.style.transformOrigin = 'top center';
                         }
                     }
                 };
@@ -1331,7 +1487,6 @@
                 nativeSelect.parentNode.insertBefore(wrapper, nativeSelect.nextSibling);
             });
 
-            // Global Click Listener: Jika user klik di area kosong, tutup dropdown yang terbuka
             if(!window.customSelectListenerAttached) {
                 document.addEventListener('click', () => {
                     document.querySelectorAll('.custom-select-options').forEach(el => {
@@ -1368,9 +1523,7 @@
             const { s, q } = getSafeIndices();
             const newQ = defaultQuestion();
             currentForm.sections[s].questions.splice(q + 1, 0, newQ);
-            activeQIdx = q + 1;
-            debouncedSaveState();
-            renderBuilder();
+            activeQIdx = q + 1; debouncedSaveState(); renderBuilder();
         }
 
         function duplicateQuestion(sIdx, qIdx) {
@@ -1378,137 +1531,82 @@
             const newQ = JSON.parse(JSON.stringify(qToCopy));
             newQ.id = 'q_' + genId(); 
             currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, newQ);
-            activeQIdx = qIdx + 1;
-            debouncedSaveState();
-            renderBuilder();
+            activeQIdx = qIdx + 1; debouncedSaveState(); renderBuilder();
         }
 
         function deleteQuestion(sIdx, qIdx) {
             currentForm.sections[sIdx].questions.splice(qIdx, 1);
-            if(activeQIdx >= currentForm.sections[sIdx].questions.length) {
-                activeQIdx = currentForm.sections[sIdx].questions.length - 1;
-            }
-            debouncedSaveState();
-            renderBuilder();
+            if(activeQIdx >= currentForm.sections[sIdx].questions.length) { activeQIdx = currentForm.sections[sIdx].questions.length - 1; }
+            debouncedSaveState(); renderBuilder();
         }
 
         function addSection() {
             const newSec = {
-                id: 's_' + genId(),
-                stepName: `Tahap ${currentForm.sections.length + 1}`,
-                title: 'Bagian Tanpa Judul',
-                description: '',
-                questions: [defaultQuestion()]
+                id: 's_' + genId(), stepName: `Tahap ${currentForm.sections.length + 1}`, title: 'Bagian Tanpa Judul', description: '', questions: [defaultQuestion()]
             };
             currentForm.sections.splice(activeSecIdx + 1, 0, newSec);
-            activeSecIdx++;
-            activeQIdx = 0;
-            debouncedSaveState();
-            renderBuilder();
+            activeSecIdx++; activeQIdx = 0; debouncedSaveState(); renderBuilder();
         }
 
         function deleteSection(sIdx) {
             if(currentForm.sections.length <= 1) return showToast("Minimal harus ada 1 bagian (section).");
             currentForm.sections.splice(sIdx, 1);
-            if(activeSecIdx >= currentForm.sections.length) {
-                activeSecIdx = currentForm.sections.length - 1;
-            }
-            activeQIdx = -1;
-            debouncedSaveState();
-            renderBuilder();
+            if(activeSecIdx >= currentForm.sections.length) { activeSecIdx = currentForm.sections.length - 1; }
+            activeQIdx = -1; debouncedSaveState(); renderBuilder();
         }
 
         function addTitleDesc() {
             const { s, q } = getSafeIndices();
             const newQ = { id: 'q_' + genId(), type: 'title_only', title: 'Judul Teks', image: '' };
             currentForm.sections[s].questions.splice(q + 1, 0, newQ);
-            activeQIdx = q + 1;
-            debouncedSaveState();
-            renderBuilder();
+            activeQIdx = q + 1; debouncedSaveState(); renderBuilder();
         }
 
         function addOption(sIdx, qIdx) {
             currentForm.sections[sIdx].questions[qIdx].options.push(`Opsi ${currentForm.sections[sIdx].questions[qIdx].options.length + 1}`);
-            debouncedSaveState();
-            renderBuilder();
+            debouncedSaveState(); renderBuilder();
         }
 
         function deleteOption(sIdx, qIdx, oIdx) {
-            if(currentForm.sections[sIdx].questions[qIdx].options.length <= 1) return; // Minimal 1 opsi
+            if(currentForm.sections[sIdx].questions[qIdx].options.length <= 1) return;
             currentForm.sections[sIdx].questions[qIdx].options.splice(oIdx, 1);
-            debouncedSaveState();
-            renderBuilder();
+            debouncedSaveState(); renderBuilder();
         }
 
         function changeQType(sIdx, qIdx, newType) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             q.type = newType;
             
-            // Ensure necessary fields exist based on type transition
             if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(newType)) {
                 if(!q.options || q.options.length === 0) q.options = ['Opsi 1'];
             }
             if(['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(newType)) {
-                if(!q.rows) q.rows = ['Baris 1'];
-                if(!q.columns) q.columns = ['Kolom 1'];
+                if(!q.rows) q.rows = ['Baris 1']; if(!q.columns) q.columns = ['Kolom 1'];
             }
             if(newType === 'upload_file') {
-                if(!q.maxFiles) q.maxFiles = 1;
-                if(!q.maxSize) q.maxSize = '10 MB';
+                if(!q.maxFiles) q.maxFiles = 1; if(!q.maxSize) q.maxSize = '10 MB';
             }
             if(newType === 'skala_linier') {
-                if(q.scaleMin === undefined) q.scaleMin = 1;
-                if(!q.scaleMax) q.scaleMax = 5;
+                if(q.scaleMin === undefined) q.scaleMin = 1; if(!q.scaleMax) q.scaleMax = 5;
             }
             if(newType === 'rating') {
                 if(!q.ratingLevels) q.ratingLevels = 5;
             }
-            debouncedSaveState();
-            renderBuilder();
+            debouncedSaveState(); renderBuilder();
         }
         
-        // Grid Question Helpers
-        function addGridRow(sIdx, qIdx) {
-            currentForm.sections[sIdx].questions[qIdx].rows.push(`Baris ${currentForm.sections[sIdx].questions[qIdx].rows.length + 1}`);
-            debouncedSaveState(); renderBuilder();
-        }
-        function removeGridRow(sIdx, qIdx, rIdx) {
-             if(currentForm.sections[sIdx].questions[qIdx].rows.length <= 1) return;
-             currentForm.sections[sIdx].questions[qIdx].rows.splice(rIdx, 1);
-             debouncedSaveState(); renderBuilder();
-        }
-        function addGridCol(sIdx, qIdx) {
-            currentForm.sections[sIdx].questions[qIdx].columns.push(`Kolom ${currentForm.sections[sIdx].questions[qIdx].columns.length + 1}`);
-            debouncedSaveState(); renderBuilder();
-        }
-        function removeGridCol(sIdx, qIdx, cIdx) {
-             if(currentForm.sections[sIdx].questions[qIdx].columns.length <= 1) return;
-             currentForm.sections[sIdx].questions[qIdx].columns.splice(cIdx, 1);
-             debouncedSaveState(); renderBuilder();
-        }
+        function addGridRow(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].rows.push(`Baris ${currentForm.sections[sIdx].questions[qIdx].rows.length + 1}`); debouncedSaveState(); renderBuilder(); }
+        function removeGridRow(sIdx, qIdx, rIdx) { if(currentForm.sections[sIdx].questions[qIdx].rows.length <= 1) return; currentForm.sections[sIdx].questions[qIdx].rows.splice(rIdx, 1); debouncedSaveState(); renderBuilder(); }
+        function addGridCol(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].columns.push(`Kolom ${currentForm.sections[sIdx].questions[qIdx].columns.length + 1}`); debouncedSaveState(); renderBuilder(); }
+        function removeGridCol(sIdx, qIdx, cIdx) { if(currentForm.sections[sIdx].questions[qIdx].columns.length <= 1) return; currentForm.sections[sIdx].questions[qIdx].columns.splice(cIdx, 1); debouncedSaveState(); renderBuilder(); }
 
-        // Settings Menu Helpers
-        function updateRootSetting(key, value) {
-            currentForm[key] = value;
-            debouncedSaveState();
-        }
-        function updateSetting(key, value) {
-            currentForm.settings[key] = value;
-            debouncedSaveState();
-        }
-        function toggleQuizPanel(show) {
-            document.getElementById('quizSubPanel').style.display = show ? 'block' : 'none';
-        }
+        function updateRootSetting(key, value) { currentForm[key] = value; debouncedSaveState(); }
+        function updateSetting(key, value) { currentForm.settings[key] = value; debouncedSaveState(); }
+        function toggleQuizPanel(show) { document.getElementById('quizSubPanel').style.display = show ? 'block' : 'none'; }
         function toggleAcc(contentId, iconId) {
-            const content = document.getElementById(contentId);
-            const icon = document.getElementById(iconId);
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                icon.style.transform = 'rotate(180deg)';
-            } else {
-                content.style.display = 'none';
-                icon.style.transform = 'rotate(0deg)';
-            }
+            const content = document.getElementById(contentId); const icon = document.getElementById(iconId);
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.style.transform = 'rotate(180deg)'; } 
+            else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; }
         }
         
         function renderSettings() {
@@ -1547,23 +1645,18 @@
                     const fmt = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
                     document.getElementById('setDeadline').value = fmt;
                 }
-            } else {
-                document.getElementById('setDeadline').value = '';
-            }
+            } else { document.getElementById('setDeadline').value = ''; }
             
             document.getElementById('setDefaultRequired').checked = s.defaultRequired;
 
-            initCustomSelects(); // Memicu ulang select design pada halaman settings
+            initCustomSelects(); 
         }
 
         window.toggleAllowedFileType = function(sIdx, qIdx, ftId, isChecked) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if (!q.allowedFileTypes) q.allowedFileTypes = [];
-            if (isChecked) {
-                if (!q.allowedFileTypes.includes(ftId)) q.allowedFileTypes.push(ftId);
-            } else {
-                q.allowedFileTypes = q.allowedFileTypes.filter(id => id !== ftId);
-            }
+            if (isChecked) { if (!q.allowedFileTypes.includes(ftId)) q.allowedFileTypes.push(ftId); } 
+            else { q.allowedFileTypes = q.allowedFileTypes.filter(id => id !== ftId); }
             debouncedSaveState();
         };
 
@@ -1610,10 +1703,8 @@
                     let isActive = (activeSecIdx === sIdx && activeQIdx === qIdx) ? 'active hover-glow' : '';
                     let optionsHtml = '';
                     
-                    // ================= INJEKSI DESKRIPSI (Global semua tipe) =================
                     let descHtml = q.showDescription ? `<input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-bottom:15px;" value="${q.description || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].description=this.value; debouncedSaveState()" placeholder="Deskripsi">` : '';
 
-                    // ================= RENDER TIPE: TITLE ONLY =================
                     if(q.type === 'title_only') {
                         html += `
                         <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" onclick="setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
@@ -1630,15 +1721,10 @@
                         return;
                     }
 
-                    // ================= SUPER UPGRADE: MODE KUNCI JAWABAN =================
                     if (q.isAnswerKeyMode) {
                         let akHtml = '';
-                        
-                        // Header for Answer Key
                         if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
-                            akHtml += `<div class="answer-key-header">
-                                <div class="answer-key-title">${q.title || 'Pertanyaan'}</div>
-                            </div>`;
+                            akHtml += `<div class="answer-key-header"><div class="answer-key-title">${q.title || 'Pertanyaan'}</div></div>`;
                         } else {
                             akHtml += `<div class="answer-key-header">
                                 <div class="answer-key-title">${q.title || 'Pertanyaan'}</div>
@@ -1648,7 +1734,6 @@
                             </div>`;
                         }
 
-                        // Body for Answer Key
                         if (q.type === 'jawaban_singkat') {
                             let corrAns = q.correctAnswers || [];
                             akHtml += `<div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; color:var(--form-text-muted);">Daftar jawaban yang benar:</div>`;
@@ -1715,7 +1800,6 @@
                             </div>`;
                         }
 
-                        // Feedback preview if exists
                         if (q.feedback) {
                             akHtml += `<div style="margin-top:20px; padding:15px; border-radius:12px; background:rgba(139, 92, 246, 0.05); border:1px solid rgba(139, 92, 246, 0.2);">
                                 <div style="font-weight:700; color:var(--form-active-border); margin-bottom:5px; font-size:0.85rem; text-transform:uppercase;">Masukan Jawaban:</div>
@@ -1723,7 +1807,6 @@
                             </div>`;
                         }
 
-                        // Footer Answer Key
                         akHtml += `<div class="builder-card-footer" style="justify-content:space-between; margin-top:25px;">
                             <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px;" onclick="openFeedbackModal(${sIdx}, ${qIdx})">
                                 📋 ${q.feedback ? 'Edit masukan jawaban' : 'Tambahkan masukan jawaban'}
@@ -1731,15 +1814,11 @@
                             <button class="gf-btn-submit glow-effect" style="padding:10px 25px; border-radius:30px;" onclick="currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=false; renderBuilder();">Selesai</button>
                         </div>`;
 
-                        html += `
-                        <div class="form-question-card glass-card neumorph-outer ${isActive} answer-key-mode" style="margin-bottom:30px;" id="q-${sIdx}-${qIdx}">
-                            ${akHtml}
-                        </div>`;
-                        return; // Skip the normal rendering for this card
+                        html += `<div class="form-question-card glass-card neumorph-outer ${isActive} answer-key-mode" style="margin-bottom:30px;" id="q-${sIdx}-${qIdx}">${akHtml}</div>`;
+                        return;
                     }
 
 
-                    // ================= BUILD MENU HTML BERDASARKAN TIPE =================
                     let menuItems = `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showDescription')"><span style="width:20px;">${q.showDescription ? '✓' : ''}</span> Deskripsi</div>`;
 
                     if (q.type === 'jawaban_singkat' || q.type === 'paragraf') {
@@ -1804,19 +1883,14 @@
                         menuItems += `<div class="q-menu-item" onclick="q.timeType='durasi'; debouncedSaveState(); renderBuilder();"><span style="width:20px;">${q.timeType === 'durasi' ? '✓' : ''}</span> Durasi</div>`;
                     }
 
-                    // ================= INJEKSI LOGIKA OPSI STANDAR =================
                     if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(q.type)) {
                         optionsHtml += `<div class="gf-radio-group" style="margin-top:15px; display:flex; flex-direction:column; gap:16px;">`;
                         
-                        // Menyiapkan opsi Section untuk GoTo logic
                         let sectionOpts = `<option value="next">Lanjutkan ke bagian berikut</option><option value="submit">Kirim formulir</option>`;
-                        currentForm.sections.forEach((s, idx) => { 
-                            sectionOpts += `<option value="s${idx}">Buka bagian ${idx+1} (${s.title || 'Tanpa Judul'})</option>`; 
-                        });
+                        currentForm.sections.forEach((s, idx) => { sectionOpts += `<option value="s${idx}">Buka bagian ${idx+1} (${s.title || 'Tanpa Judul'})</option>`; });
 
                         q.options.forEach((opt, oIdx) => {
                             let icon = q.type === 'kotak_centang' ? '<div class="fake-checkbox"></div>' : (q.type==='dropdown' ? `<span class="fake-num">${oIdx+1}.</span>` : '<div class="fake-radio"></div>');
-                            
                             let goToSelect = '';
                             if (q.showGoToSection && ['pilihan_ganda', 'dropdown'].includes(q.type)) {
                                 let mapVal = q.goToSectionMap && q.goToSectionMap[opt] ? q.goToSectionMap[opt] : 'next';
@@ -1824,7 +1898,6 @@
                                     ${sectionOpts.replace(`value="${mapVal}"`, `value="${mapVal}" selected`)}
                                 </select>`;
                             }
-
                             optionsHtml += `
                             <div style="display:flex; align-items:center; gap:15px;">
                                 <span style="margin-top:5px; flex-shrink:0;">${icon}</span>
@@ -1842,9 +1915,7 @@
                     else if (q.type === 'tanggal') { 
                         let lbl = (q.includeYear !== false) ? 'Bulan, Hari, Tahun' : 'Bulan, Hari';
                         optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">📅 ${lbl}</div>`; 
-                        if(q.includeTime) {
-                            optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px;">⏰ Waktu</div>`;
-                        }
+                        if(q.includeTime) optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px;">⏰ Waktu</div>`;
                     }
                     else if (q.type === 'waktu') { 
                         let lbl = (q.timeType === 'durasi') ? 'Jam : Menit : Detik' : 'Waktu';
@@ -1856,10 +1927,8 @@
                         let maxSizeOpts = ['1 MB', '10 MB', '100 MB', '1 GB', '10 GB'].map(v => `<option value="${v}" ${q.maxSize==v?'selected':''}>${v}</option>`).join('');
                         
                         let fileTypesArr = [
-                            { id: 'document', label: 'Dokumen' }, { id: 'presentation', label: 'Presentasi' },
-                            { id: 'spreadsheet', label: 'Spreadsheet' }, { id: 'image', label: 'Gambar' },
-                            { id: 'pdf', label: 'PDF' }, { id: 'photo', label: 'Foto' },
-                            { id: 'video', label: 'Video' }, { id: 'audio', label: 'Audio' }
+                            { id: 'document', label: 'Dokumen' }, { id: 'presentation', label: 'Presentasi' }, { id: 'spreadsheet', label: 'Spreadsheet' }, { id: 'image', label: 'Gambar' },
+                            { id: 'pdf', label: 'PDF' }, { id: 'photo', label: 'Foto' }, { id: 'video', label: 'Video' }, { id: 'audio', label: 'Audio' }
                         ];
 
                         let allowedTypesHtml = '';
@@ -1867,10 +1936,7 @@
                             if (!q.allowedFileTypes) q.allowedFileTypes = [];
                             let checksHtml = fileTypesArr.map(ft => {
                                 let isChecked = q.allowedFileTypes.includes(ft.id) ? 'checked' : '';
-                                return `<label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-                                            <input type="checkbox" class="custom-check" ${isChecked} onchange="toggleAllowedFileType(${sIdx}, ${qIdx}, '${ft.id}', this.checked)">
-                                            <span style="font-size:${theme.textFontSize}px; color:var(--form-text); font-weight:600;">${ft.label}</span>
-                                        </label>`;
+                                return `<label style="display:flex; align-items:center; gap:10px; cursor:pointer;"><input type="checkbox" class="custom-check" ${isChecked} onchange="toggleAllowedFileType(${sIdx}, ${qIdx}, '${ft.id}', this.checked)"><span style="font-size:${theme.textFontSize}px; color:var(--form-text); font-weight:600;">${ft.label}</span></label>`;
                             }).join('');
                             allowedTypesHtml = `<div class="glass-panel" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:20px; padding:20px; background:rgba(139, 92, 246, 0.05); border:1px solid rgba(139, 92, 246, 0.2); border-radius:12px;">${checksHtml}</div>`;
                         }
@@ -2013,7 +2079,6 @@
                                     <label for="req-${sIdx}-${qIdx}" class="switch-label"></label>
                                 </div>
                                 
-                                <!-- SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) -->
                                 <div style="position:relative;">
                                     <button class="top-icon-btn neumorph-circle" style="margin-left:5px;" onclick="toggleQMenu(event, ${sIdx}, ${qIdx})">⋮</button>
                                     <div id="q-menu-${sIdx}-${qIdx}" class="q-menu-dropdown inner-neumorph" style="display:none;" onclick="event.stopPropagation()">
@@ -2026,37 +2091,27 @@
                     </div>`;
                 });
 
-                html += `</div>`; // MENUTUP SORTABLE LIST WRAPPER
+                html += `</div>`; 
 
             });
 
             canvas.innerHTML = html; positionToolbar();
 
-            // MENGINISIASI SORTABLE JS PADA SETIAP KELOMPOK PERTANYAAN
             document.querySelectorAll('.sortable-q-list').forEach((el, sIdx) => {
                 new Sortable(el, {
-                    handle: '.drag-handle',
-                    animation: 300,
-                    ghostClass: 'sortable-ghost',
-                    dragClass: 'sortable-drag',
-                    forceFallback: true,
-                    fallbackClass: 'sortable-drag',
+                    handle: '.drag-handle', animation: 300, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', forceFallback: true, fallbackClass: 'sortable-drag',
                     onEnd: function(evt) {
                         if (evt.oldIndex !== evt.newIndex) {
                             let questions = currentForm.sections[sIdx].questions;
                             let movedItem = questions.splice(evt.oldIndex, 1)[0];
                             questions.splice(evt.newIndex, 0, movedItem);
-                            
-                            activeSecIdx = sIdx;
-                            activeQIdx = evt.newIndex;
-                            saveState();
-                            renderBuilder();
+                            activeSecIdx = sIdx; activeQIdx = evt.newIndex; saveState(); renderBuilder();
                         }
                     }
                 });
             });
 
-            initCustomSelects(); // SUPER UPGRADE: Init custom dropdowns pada setiap render builder
+            initCustomSelects(); 
         }
     </script>
 </body>
