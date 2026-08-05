@@ -260,7 +260,6 @@ app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.s
 
 // ============================================================================
 // SUPER BIG UPGRADE: API SYSTEM UPLOAD FILE REALTIME (REDIS BACKED)
-// Menerima Base64 dari frontend, menyimpannya, lalu mereturn URL Absolut
 // ============================================================================
 
 // POST Endpoint Untuk Upload File dari Form BEM
@@ -272,22 +271,22 @@ app.post('/api/upload', async (req, res) => {
         if(!filename || !base64) return res.status(400).json({ success: false, message: "File kosong atau tidak valid." });
         
         // 🔒 SAFETY CHECK: Upstash Redis free-tier strict 1MB Request Limit Guard
-        // Kalkulasi kasar ukuran Base64 string ke bytes
         const sizeInBytes = Buffer.byteLength(base64, 'utf8');
         if (sizeInBytes > 1048000) { 
             console.warn(`⚠️ Peringatan Kapasitas: File ${filename} mendekati/melebihi batas Upstash 1MB. (Size: ${sizeInBytes} bytes)`);
-            // Jika Anda menggunakan akun Upstash gratis, baris di atas sangat penting agar Anda tahu jika suatu saat error 'Payload Too Large'
         }
 
-        // Membersihkan nama file untuk URL yang SEO friendly
-        const safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
-        const fileId = `FILE-${Date.now()}`;
+        // Membersihkan nama file
+        let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
         
-        // Simpan File ke Redis Hash khusus (BEM_Files)
-        await redis.hset('BEM_Files', { [fileId]: JSON.stringify({ filename: safeName, data: base64 }) });
+        // UPGRADE: Hilangkan "FILE-ID" folder structure, ganti nama filenya agar unique dengan timestamp
+        const uniqueFilename = `${Date.now()}-${safeName}`;
         
-        // Buat Link URL Otomatis
-        const fileUrl = `/api/uploads/${fileId}/${safeName}`;
+        // Simpan File ke Redis menggunakan `uniqueFilename` langsung sebagai Key-nya
+        await redis.hset('BEM_Files', { [uniqueFilename]: JSON.stringify({ filename: safeName, data: base64 }) });
+        
+        // URL Sederhana & Bersih -> /api/uploads/123456789-namafile.jpg
+        const fileUrl = `/api/uploads/${uniqueFilename}`;
         res.status(200).json({ success: true, url: fileUrl });
     } catch (e) {
         console.error(e);
@@ -295,25 +294,25 @@ app.post('/api/upload', async (req, res) => {
     }
 });
 
-// GET Endpoint Untuk Menampilkan/Download File yang Diupload
-app.get('/api/uploads/:fileId/:filename', async (req, res) => {
+// GET Endpoint Untuk Menampilkan/Download File (URL BERSIH 1 TINGKAT)
+app.get('/api/uploads/:filename', async (req, res) => {
     try {
         if(!redis) return res.status(503).send("Server Storage Offline");
-        const fileDataStr = await redis.hget('BEM_Files', req.params.fileId);
+        
+        // Mencari file berdasarkan Key filename yang langsung masuk
+        const fileDataStr = await redis.hget('BEM_Files', req.params.filename);
         
         if(!fileDataStr) return res.status(404).send("File tidak ditemukan.");
         
-        // BUG FIX UTAMA: Gunakan safeParse agar tidak crash jika Redis sudah auto-parse jadi object
+        // BUG FIX UTAMA: Gunakan safeParse agar tidak crash
         const fileObj = safeParse(fileDataStr, null);
         if(!fileObj || !fileObj.data) return res.status(400).send("Data file korup.");
         
         // MENGHINDARI REGEX CATASTROPHIC BACKTRACKING PADA STRING BESAR
-        // Kita pecah menggunakan pemisah koma
         const parts = fileObj.data.split(',');
         if (parts.length !== 2) return res.status(400).send("Format Base64 tidak valid.");
         
         let mimeType = 'application/octet-stream';
-        // Ambil header MIME dengan Regex yang hanya memeriksa bagian depannya saja
         const headerMatch = parts[0].match(/^data:(.*?);base64/);
         if (headerMatch && headerMatch[1]) {
             mimeType = headerMatch[1];
@@ -326,6 +325,7 @@ app.get('/api/uploads/:fileId/:filename', async (req, res) => {
         
         // Header tambahan untuk download jika bukan gambar
         if(!mimeType.startsWith('image/')) {
+            // Gunakan fileObj.filename (nama asli tanpa timestamp) agar saat diunduh namanya rapi
             res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename}"`);
         }
         res.send(buffer);
