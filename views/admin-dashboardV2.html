@@ -526,6 +526,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadAllForms();
             initThemeGrids();
+            
+            // Custom Select handler for outside clicks
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.custom-select-options').forEach(el => {
+                    el.style.display = 'none';
+                    el.parentElement.classList.remove('open');
+                });
+            });
         });
 
         function showToast(msg) {
@@ -778,6 +786,18 @@
             document.getElementById('themeQuestionFont').value = t.questionFont; document.getElementById('themeQuestionSize').value = t.questionFontSize;
             document.getElementById('themeTextFont').value = t.textFont; document.getElementById('themeTextSize').value = t.textFontSize;
 
+            // Sync custom selects display for sidebar
+            document.querySelectorAll('#themeSidebar select').forEach(sel => {
+                if(sel.nextElementSibling && sel.nextElementSibling.classList.contains('custom-select-wrapper')) {
+                    let text = sel.options[sel.selectedIndex]?.text || '';
+                    sel.nextElementSibling.querySelector('.custom-select-display span').innerText = text;
+                    sel.nextElementSibling.querySelectorAll('.custom-select-option').forEach(o => {
+                        o.classList.remove('selected');
+                        if(o.innerText === text) o.classList.add('selected');
+                    });
+                }
+            });
+
             document.querySelectorAll('#themeColorGrid .color-circle').forEach(el => el.innerHTML = '');
             const activeColor = document.getElementById(`tc-${t.color}`);
             if(activeColor) activeColor.innerHTML = '✓';
@@ -953,6 +973,90 @@
         function openEditorUI() {
             document.getElementById('tabPertanyaan').style.display = 'block'; document.getElementById('tabJawaban').style.display = 'block'; document.getElementById('tabSetelan').style.display = 'block';
             applyThemeToDOM(); switchFormTab('pertanyaan');
+            initCustomSelects(); // SUPER UPGRADE: Init dropdowns statis
+        }
+
+        // ================= SUPER UPGRADE: CUSTOM GLASSMORPHISM SELECT =================
+        function initCustomSelects() {
+            // Target all custom aesthetic selects
+            document.querySelectorAll('select.q-type-select, select.t-select').forEach(nativeSelect => {
+                // Jangan buat ulang jika sudah ada
+                if(nativeSelect.nextElementSibling && nativeSelect.nextElementSibling.classList.contains('custom-select-wrapper')) return;
+
+                nativeSelect.style.display = 'none';
+                
+                let wrapper = document.createElement('div');
+                wrapper.className = 'custom-select-wrapper';
+                if (nativeSelect.classList.contains('q-type-select')) wrapper.classList.add('is-q-type');
+                
+                // Set flex / width sesuai inline style native
+                wrapper.style.cssText = nativeSelect.style.cssText;
+                if(wrapper.style.display === 'none') return; // abaikan jika aslinya hidden
+                
+                let display = document.createElement('div');
+                display.className = 'custom-select-display inner-neumorph ' + Array.from(nativeSelect.classList).filter(c => c !== 'q-type-select' && c !== 't-select' && c !== 'inner-neumorph').join(' ');
+                
+                // Cari selected option
+                let selOpt = nativeSelect.options[nativeSelect.selectedIndex];
+                let text = selOpt ? selOpt.text : 'Pilih...';
+                
+                display.innerHTML = `<span style="font-weight:600; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</span> <span class="arrow" style="margin-left:10px;">▼</span>`;
+                display.style.display = 'flex';
+                display.style.justifyContent = 'space-between';
+                display.style.alignItems = 'center';
+                if(nativeSelect.classList.contains('q-type-select')) {
+                    display.style.padding = '15px 20px';
+                } else {
+                    display.style.padding = '10px 15px';
+                }
+
+                let optionsList = document.createElement('div');
+                optionsList.className = 'custom-select-options glass-panel-heavy neumorph-outer';
+                optionsList.style.display = 'none';
+                
+                Array.from(nativeSelect.children).forEach((child) => {
+                    if(child.tagName === 'OPTGROUP') {
+                       let grp = document.createElement('div');
+                       grp.className = 'custom-select-optgroup';
+                       grp.innerText = child.label;
+                       optionsList.appendChild(grp);
+                    } else if (child.tagName === 'OPTION') {
+                        let optDiv = document.createElement('div');
+                        optDiv.className = 'custom-select-option';
+                        if(child.selected) optDiv.classList.add('selected');
+                        optDiv.innerText = child.text;
+                        optDiv.onclick = (e) => {
+                            e.stopPropagation();
+                            nativeSelect.value = child.value;
+                            nativeSelect.dispatchEvent(new Event('change'));
+                            
+                            display.querySelector('span').innerText = child.text;
+                            optionsList.style.display = 'none';
+                            wrapper.classList.remove('open');
+                            
+                            optionsList.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+                            optDiv.classList.add('selected');
+                        };
+                        optionsList.appendChild(optDiv);
+                    }
+                });
+
+                display.onclick = (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.custom-select-options').forEach(el => {
+                        if(el !== optionsList) { el.style.display = 'none'; el.parentElement.classList.remove('open'); }
+                    });
+                    
+                    let isOpen = optionsList.style.display === 'block';
+                    optionsList.style.display = isOpen ? 'none' : 'block';
+                    if(isOpen) wrapper.classList.remove('open');
+                    else wrapper.classList.add('open');
+                };
+
+                wrapper.appendChild(display);
+                wrapper.appendChild(optionsList);
+                nativeSelect.parentNode.insertBefore(wrapper, nativeSelect.nextSibling);
+            });
         }
 
         // ================= CORE FORM BUILDER ENGINE & MISSING CRUD FUNCTIONS INJECTED =================
@@ -1162,6 +1266,18 @@
             }
             
             document.getElementById('setDefaultRequired').checked = s.defaultRequired;
+
+            // Sync custom selects in settings
+            document.querySelectorAll('#tab-setelan select').forEach(sel => {
+                if(sel.nextElementSibling && sel.nextElementSibling.classList.contains('custom-select-wrapper')) {
+                    let text = sel.options[sel.selectedIndex]?.text || '';
+                    sel.nextElementSibling.querySelector('.custom-select-display span').innerText = text;
+                    sel.nextElementSibling.querySelectorAll('.custom-select-option').forEach(o => {
+                        o.classList.remove('selected');
+                        if(o.innerText === text) o.classList.add('selected');
+                    });
+                }
+            });
         }
 
         window.toggleAllowedFileType = function(sIdx, qIdx, ftId, isChecked) {
@@ -1663,6 +1779,8 @@
                     }
                 });
             });
+
+            initCustomSelects(); // SUPER UPGRADE: Init custom dropdowns pada setiap render builder
         }
     </script>
 </body>
