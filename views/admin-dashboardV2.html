@@ -159,6 +159,11 @@
             from { opacity: 0; transform: translateY(-20px) scale(0.95); filter: blur(10px); } 
             to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
         }
+
+        /* CUSTOM SCROLLBAR FOR ADMIN V2 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--form-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--form-active-border); border-radius: 10px; }
     </style>
 </head>
 <body class="admin-v2-body" onclick="closeAllQMenus()">
@@ -302,7 +307,7 @@
             </div>
         </div>
 
-        <!-- ================= TAB 3: JAWABAN ================= -->
+        <!-- ================= TAB 3: JAWABAN (CRUD REALTIME UPGRADE) ================= -->
         <div id="tab-jawaban" class="tab-content">
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none;">
                 <h2 class="form-title gradient-text" id="respCount" style="font-size:2.2rem; font-weight:700;">0 Tanggapan</h2>
@@ -310,7 +315,7 @@
                     <span style="color:var(--form-text); font-weight:600;">Status: <span style="color:#10b981;">Menerima tanggapan</span></span>
                     <button class="gf-btn-submit glow-effect" onclick="downloadExcel()" style="background: #10b981;">📥 Link ke Spreadsheet (.xlsx)</button>
                 </div>
-                <div id="respList" style="margin-top: 15px; max-height: 500px; overflow-y:auto; color:var(--form-text);">
+                <div id="respList" style="margin-top: 15px; max-height: 800px; overflow-y:auto; color:var(--form-text); padding-right:10px;">
                     <!-- List Jawaban Di Render Disini -->
                 </div>
             </div>
@@ -557,7 +562,7 @@
     <!-- TOAST Notification -->
     <div class="toast glass-panel glow-effect" id="globalToast" style="position:fixed; bottom:-100px; right:20px; background:var(--form-active-border); color:#fff; padding:15px 30px; border-radius:12px; font-weight:700; transition:0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index:9999;">Notifikasi</div>
 
-    <!-- SUPER UPGRADE: MODAL TAMBAH MASUKAN JAWABAN (FEEDBACK) -->
+    <!-- MODAL TAMBAH MASUKAN JAWABAN (FEEDBACK) KUIS -->
     <div id="feedbackModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.5);" onclick="closeFeedbackModal()">
         <div class="glass-card neumorph-outer" style="width:100%; max-width:600px; padding:30px; background:var(--form-bg); border-radius:16px;" onclick="event.stopPropagation()">
             <h3 style="margin-top:0; font-size:1.4rem; color:var(--form-text); border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:20px;">Tambahkan masukan</h3>
@@ -565,6 +570,22 @@
             <div style="display:flex; justify-content:flex-end; gap:15px; margin-top:25px;">
                 <button class="gf-btn-clear neumorph-btn" onclick="closeFeedbackModal()">Batal</button>
                 <button class="gf-btn-submit glow-effect" onclick="saveFeedback()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUPER BIG UPGRADE: MODAL CRUD EDIT JAWABAN RESPONDEN (REALTIME) -->
+    <div id="editResModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.5);" onclick="closeEditResModal()">
+        <div class="glass-card neumorph-outer" style="width:100%; max-width:800px; max-height:90vh; overflow-y:auto; padding:30px; background:var(--form-bg); border-radius:16px;" onclick="event.stopPropagation()">
+            <h3 style="margin-top:0; font-size:1.6rem; color:var(--form-text); border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:20px;">✏️ Edit Jawaban Responden</h3>
+            
+            <div id="editResFormContainer" style="padding-right:10px;">
+                <!-- Auto Generated form fields by Javascript -->
+            </div>
+            
+            <div style="display:flex; justify-content:flex-end; gap:15px; margin-top:25px; position:sticky; bottom:-30px; padding:15px 0; background:var(--form-bg); border-top:1px solid var(--form-border);">
+                <button class="gf-btn-clear neumorph-btn" onclick="closeEditResModal()">Batal</button>
+                <button class="gf-btn-submit glow-effect" id="btnSaveEditRes" onclick="saveEditedResponse()">Simpan Perubahan</button>
             </div>
         </div>
     </div>
@@ -580,6 +601,9 @@
         let historyStack = [];
         let historyPointer = -1;
         let isNavigatingHistory = false;
+        
+        let currentResponses = []; // State Untuk Data Jawaban
+        let currentEditingRes = null; // Pointer Edit Respon
 
         const THEME_COLORS = ['#ec4899', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#10b981', '#f59e0b', '#f97316', '#ef4444', '#64748b'];
         const BG_COLORS = ['#fdf2f8', '#f5f3ff', '#eef2ff', '#eff6ff', '#f0f9ff', '#ecfeff', '#f0fdfa', '#ecfdf5', '#fffbeb', '#fff7ed', '#fef2f2', '#f8fafc'];
@@ -587,8 +611,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadAllForms();
             initThemeGrids();
-            
-            // Event listener klik diluar untuk custom select dipindah ke dalam initCustomSelects
         });
 
         function showToast(msg) {
@@ -621,7 +643,6 @@
             let q = currentForm.sections[sIdx].questions[qIdx];
             q[settingKey] = !q[settingKey];
             
-            // Initialization fallbacks when turning ON
             if (settingKey === 'showValidation' && q[settingKey]) {
                 if(!q.validation) q.validation = { type: 'Teks', condition: 'Berisi', value: '', errorText: '' };
             }
@@ -629,9 +650,7 @@
                 if(!q.goToSectionMap) q.goToSectionMap = {};
                 q.options.forEach(opt => { if(!q.goToSectionMap[opt]) q.goToSectionMap[opt] = 'next'; });
             }
-
-            debouncedSaveState();
-            renderBuilder();
+            debouncedSaveState(); renderBuilder();
         }
 
         function updateQValidation(sIdx, qIdx, key, val) {
@@ -677,14 +696,12 @@
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.correctAnswers) q.correctAnswers = [];
             q.correctAnswers.push(val.trim());
-            debouncedSaveState();
-            renderBuilder();
+            debouncedSaveState(); renderBuilder();
         }
         function removeCorrectAns(sIdx, qIdx, i) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(q.correctAnswers) q.correctAnswers.splice(i, 1);
-            debouncedSaveState();
-            renderBuilder();
+            debouncedSaveState(); renderBuilder();
         }
 
         function toggleCorrectAns(sIdx, qIdx, opt) {
@@ -692,15 +709,13 @@
             if(!q.correctAnswers) q.correctAnswers = [];
             
             if (q.type === 'pilihan_ganda' || q.type === 'dropdown') {
-                q.correctAnswers = [opt]; // Hanya satu yg benar untuk tipe radio/dropdown
+                q.correctAnswers = [opt];
             } else {
-                // Checkbox bisa multiple
                 let idx = q.correctAnswers.indexOf(opt);
                 if(idx > -1) q.correctAnswers.splice(idx, 1);
                 else q.correctAnswers.push(opt);
             }
-            debouncedSaveState();
-            renderBuilder();
+            debouncedSaveState(); renderBuilder();
         }
 
         function toggleGridCorrectAns(sIdx, qIdx, rIdx, colVal, type) {
@@ -716,8 +731,7 @@
                 if(idx > -1) arr.splice(idx, 1);
                 else arr.push(colVal);
             }
-            debouncedSaveState();
-            renderBuilder();
+            debouncedSaveState(); renderBuilder();
         }
 
         function updateGridRowPoints(sIdx, qIdx, rIdx, val) {
@@ -730,7 +744,6 @@
         // --- Feedback Modal ---
         let activeFeedbackSIdx = -1;
         let activeFeedbackQIdx = -1;
-
         function openFeedbackModal(sIdx, qIdx) {
             activeFeedbackSIdx = sIdx;
             activeFeedbackQIdx = qIdx;
@@ -738,15 +751,12 @@
             document.getElementById('feedbackInput').value = q.feedback || '';
             document.getElementById('feedbackModal').style.display = 'flex';
         }
-        function closeFeedbackModal() {
-            document.getElementById('feedbackModal').style.display = 'none';
-        }
+        function closeFeedbackModal() { document.getElementById('feedbackModal').style.display = 'none'; }
         function saveFeedback() {
             if (activeFeedbackSIdx > -1 && activeFeedbackQIdx > -1) {
                 let val = document.getElementById('feedbackInput').value;
                 currentForm.sections[activeFeedbackSIdx].questions[activeFeedbackQIdx].feedback = val;
-                debouncedSaveState();
-                renderBuilder();
+                debouncedSaveState(); renderBuilder();
             }
             closeFeedbackModal();
         }
@@ -758,10 +768,8 @@
                 historyStack = historyStack.slice(0, historyPointer + 1);
             }
             historyStack.push(JSON.stringify(currentForm));
-            historyPointer++;
-            updateUndoRedoUI();
+            historyPointer++; updateUndoRedoUI();
         }
-
         function undoState() {
             if(historyPointer > 0) {
                 isNavigatingHistory = true; historyPointer--;
@@ -770,7 +778,6 @@
                 isNavigatingHistory = false; updateUndoRedoUI();
             }
         }
-
         function redoState() {
             if(historyPointer < historyStack.length - 1) {
                 isNavigatingHistory = true; historyPointer++;
@@ -779,7 +786,6 @@
                 isNavigatingHistory = false; updateUndoRedoUI();
             }
         }
-
         function updateUndoRedoUI() {
             document.getElementById('btnUndo').disabled = historyPointer <= 0;
             document.getElementById('btnRedo').disabled = historyPointer >= historyStack.length - 1;
@@ -793,11 +799,8 @@
 
         // ================= TRACKING POSISI TOOLBAR (ACTIVE CARD) =================
         function setActive(sIdx, qIdx, el) {
-            activeSecIdx = sIdx;
-            activeQIdx = qIdx;
-            
+            activeSecIdx = sIdx; activeQIdx = qIdx;
             document.querySelectorAll('.form-question-card, .form-header-card').forEach(c => c.classList.remove('active', 'hover-glow'));
-            
             if(el) {
                 el.classList.add('active', 'hover-glow');
                 positionToolbar();
@@ -807,24 +810,19 @@
         function positionToolbar() {
             const activeEl = document.querySelector('.form-question-card.active, .form-header-card.active');
             const floater = document.getElementById('floater');
-            if(activeEl && floater) {
-                floater.style.top = activeEl.offsetTop + 'px';
-            }
+            if(activeEl && floater) floater.style.top = activeEl.offsetTop + 'px';
         }
 
         // ================= THEME ENGINE =================
         function initThemeGrids() {
             const cGrid = document.getElementById('themeColorGrid');
             const bGrid = document.getElementById('themeBgGrid');
-            
             THEME_COLORS.forEach((c, i) => {
                 cGrid.innerHTML += `<div class="color-circle neumorph-outer" style="background:${c} !important;" onclick="updateTheme('color', '${c}'); updateTheme('bgColor', '${BG_COLORS[i]}');" id="tc-${c}"></div>`;
                 bGrid.innerHTML += `<div class="color-circle bg-circle inner-neumorph" style="background:${BG_COLORS[i]} !important;" onclick="updateTheme('bgColor', '${BG_COLORS[i]}');" id="tb-${BG_COLORS[i]}"></div>`;
             });
         }
-
         function toggleThemeSidebar() { document.getElementById('themeSidebar').classList.toggle('active'); }
-
         function updateTheme(key, value) { currentForm.theme[key] = value; applyThemeToDOM(); saveState(); }
 
         function applyThemeToDOM() {
@@ -898,7 +896,7 @@
 
         function previewForm() { window.open(`/form/${currentForm.slug}`, '_blank'); }
 
-        // ================= API CALLS DATABASE (CRUD) =================
+        // ================= API CALLS DATABASE (CRUD FORMS) =================
         async function loadAllForms() {
             try {
                 const res = await fetch('/api/forms');
@@ -936,26 +934,221 @@
             }
         }
 
+        // ================= SUPER BIG UPGRADE: CRUD JAWABAN REALTIME (ADMIN V2) =================
         async function loadResponses() {
             document.getElementById('respList').innerHTML = "Memuat tanggapan dari server...";
             try {
                 const res = await fetch(`/api/forms/${currentForm.id}/responses`);
                 const json = await res.json();
-                const data = json.data || [];
-                document.getElementById('respCount').innerText = `${data.length} Tanggapan`;
+                currentResponses = json.data || []; // Simpan ke Global State
+                
+                document.getElementById('respCount').innerText = `${currentResponses.length} Tanggapan`;
                 
                 let html = '';
-                data.slice().reverse().forEach((r) => { 
+                currentResponses.slice().reverse().forEach((r) => { 
                     html += `
-                        <div class="glass-card inner-neumorph" style="padding:20px; border-radius:12px; margin-bottom:15px; border-left: 4px solid var(--form-active-border);">
-                            <div style="color:var(--form-text-muted); font-size:0.85rem; margin-bottom:5px;">🕒 ${new Date(r.timestamp).toLocaleString('id-ID')}</div>
-                            <strong style="color:var(--form-text); font-size:1.1rem; display:block;">Email: ${r.email || 'Tanpa Email'}</strong>
+                        <div class="glass-card inner-neumorph" style="padding:25px; border-radius:12px; margin-bottom:20px; border-left: 5px solid var(--form-active-border);">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+                                <div>
+                                    <div style="color:var(--form-text-muted); font-size:0.85rem; margin-bottom:8px; font-weight:600;">🕒 Waktu Submit: ${new Date(r.timestamp).toLocaleString('id-ID')}</div>
+                                    <strong style="color:var(--form-text); font-size:1.1rem; display:block; letter-spacing:0.5px;">✉️ ${r.email || 'Responden Tanpa Email'}</strong>
+                                    ${r.score !== null ? `<div style="margin-top:8px; font-weight:800; font-size:1.1rem; color:var(--form-active-border); background:var(--form-focus-glow); padding:5px 12px; border-radius:8px; display:inline-block;">⭐ Skor: ${r.score} / ${r.maxScore}</div>` : ''}
+                                </div>
+                                <div style="display:flex; gap:10px;">
+                                    <button onclick="editResponse('${r.id}')" class="gf-btn-clear neumorph-btn" style="padding:8px 15px; font-size:0.85rem; display:flex; align-items:center; gap:5px;">✏️ Edit</button>
+                                    <button onclick="deleteResponse('${r.id}')" class="gf-btn-clear neumorph-btn text-danger" style="padding:8px 15px; font-size:0.85rem; display:flex; align-items:center; gap:5px;">🗑️ Hapus</button>
+                                </div>
+                            </div>
+                            <div style="margin-top:20px; padding-top:20px; border-top:1px dashed var(--form-border);">
+                                ${renderAnswersSummary(r.answers)}
+                            </div>
                         </div>`;
                 });
-                document.getElementById('respList').innerHTML = html || "<div style='padding:30px; text-align:center; color:#888; border:2px dashed var(--form-border); border-radius:12px;'>Menunggu tanggapan masuk.</div>";
+                document.getElementById('respList').innerHTML = html || "<div style='padding:40px; text-align:center; color:#888; border:2px dashed var(--form-border); border-radius:12px; font-size:1.1rem;'>Belum ada tanggapan masuk.</div>";
             } catch(e) { document.getElementById('respList').innerHTML = "Gagal memuat data."; }
         }
 
+        // FUNGSI UNTUK MERENDER JAWABAN BESERTA PREVIEW GAMBAR/FILE
+        function renderAnswersSummary(answers) {
+            let html = '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:15px;">';
+            currentForm.sections.forEach(sec => {
+                sec.questions.forEach(q => {
+                    if(q.type === 'title_only') return;
+                    
+                    if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
+                        if (q.rows) {
+                            q.rows.forEach((rowName, rIdx) => {
+                                let ans = answers[`${q.id}_row_${rIdx}`];
+                                if(ans !== undefined && ans !== null && ans !== '') {
+                                    html += `<div style="background:var(--form-card-bg); padding:15px; border-radius:12px; border:1px solid var(--form-border); box-shadow:var(--inner-neumorph);">
+                                        <div style="font-size:0.8rem; color:var(--form-text-muted); font-weight:800; text-transform:uppercase; margin-bottom:8px;">${q.title} <br><span style="color:var(--form-active-border);">[ ${rowName} ]</span></div>
+                                        <div style="font-size:1rem; color:var(--form-text); font-weight:600;">${Array.isArray(ans) ? ans.join(', ') : ans}</div>
+                                    </div>`;
+                                }
+                            });
+                        }
+                    } else {
+                        let ans = answers[q.id];
+                        if(ans !== undefined && ans !== null && ans !== '') {
+                            let displayAns = ans;
+                            
+                            // Deteksi Otomatis Jika itu adalah URL Upload dari Sistem BEM
+                            if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
+                                if(ans.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) {
+                                    displayAns = `<a href="${ans}" target="_blank" style="display:block; margin-top:10px;"><img src="${ans}" style="max-height:150px; max-width:100%; object-fit:contain; border-radius:10px; box-shadow:var(--outer-neumorph); transition:0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></a>`;
+                                } else {
+                                    displayAns = `<a href="${ans}" target="_blank" class="gf-btn-clear neumorph-btn" style="display:inline-block; margin-top:8px; color:var(--form-active-border); font-size:0.85rem; padding:6px 12px; text-decoration:none;">📥 Unduh / Buka File</a>`;
+                                }
+                            } else if(Array.isArray(ans)) {
+                                 let arrHtml = [];
+                                 ans.forEach(a => {
+                                     if(typeof a === 'string' && a.includes('/api/uploads/')) {
+                                        if(a.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) {
+                                            arrHtml.push(`<a href="${a}" target="_blank" style="display:inline-block; margin:5px 5px 0 0;"><img src="${a}" style="height:80px; border-radius:8px; box-shadow:var(--outer-neumorph);"></a>`);
+                                        } else {
+                                            arrHtml.push(`<a href="${a}" target="_blank" class="gf-btn-clear neumorph-btn" style="display:inline-block; margin:5px 5px 0 0; color:var(--form-active-border); font-size:0.85rem; padding:6px 12px; text-decoration:none;">📥 Unduh</a>`);
+                                        }
+                                     } else {
+                                         arrHtml.push(a);
+                                     }
+                                 });
+                                 displayAns = arrHtml.join('<br>');
+                            }
+
+                            html += `<div style="background:var(--form-card-bg); padding:15px; border-radius:12px; border:1px solid var(--form-border); box-shadow:var(--inner-neumorph);">
+                                <div style="font-size:0.8rem; color:var(--form-text-muted); font-weight:800; text-transform:uppercase; margin-bottom:8px;">${q.title}</div>
+                                <div style="font-size:1rem; color:var(--form-text); word-break:break-word; font-weight:500;">${displayAns}</div>
+                            </div>`;
+                        }
+                    }
+                });
+            });
+            html += '</div>';
+            return html;
+        }
+
+        // BUKA MODAL EDIT RESPON
+        function editResponse(resId) {
+            currentEditingRes = currentResponses.find(r => r.id === resId);
+            if(!currentEditingRes) return;
+            
+            let html = '';
+            html += `<div style="margin-bottom:20px; padding:15px; background:var(--form-card-bg); border-radius:12px; box-shadow:var(--inner-neumorph);">
+                <label style="font-size:0.85rem; font-weight:800; color:var(--form-text-muted); text-transform:uppercase; display:block; margin-bottom:8px;">Email Responden</label>
+                <input type="text" id="editResEmail" class="gf-input inner-neumorph" value="${currentEditingRes.email || ''}" style="background:rgba(255,255,255,0.7) !important;">
+            </div>`;
+            
+            currentForm.sections.forEach(sec => {
+                sec.questions.forEach(q => {
+                    if(q.type === 'title_only') return;
+                    
+                    if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
+                        if(q.rows) {
+                            q.rows.forEach((rName, rIdx) => {
+                                let key = `${q.id}_row_${rIdx}`;
+                                let val = currentEditingRes.answers[key] || '';
+                                let displayVal = Array.isArray(val) ? val.join(', ') : val;
+                                html += `<div style="margin-bottom:20px; padding:15px; background:var(--form-card-bg); border-radius:12px; border:1px solid var(--form-border);">
+                                    <label style="font-size:0.85rem; font-weight:800; color:var(--form-text-muted); display:block; margin-bottom:8px;">${q.title} <span style="color:var(--form-active-border);">[${rName}]</span></label>
+                                    <input type="text" class="gf-input inner-neumorph edit-res-input" data-key="${key}" data-type="${q.type}" value="${displayVal}" style="background:rgba(255,255,255,0.7) !important;">
+                                </div>`;
+                            });
+                        }
+                    } else {
+                        let val = currentEditingRes.answers[q.id] || '';
+                        let isFile = typeof val === 'string' && val.includes('/api/uploads/');
+                        let isFileArr = Array.isArray(val) && val.some(v => typeof v === 'string' && v.includes('/api/uploads/'));
+                        
+                        if (isFile || isFileArr) {
+                            html += `<div style="margin-bottom:20px; padding:15px; background:var(--form-card-bg); border-radius:12px; border:1px solid var(--form-border);">
+                                <label style="font-size:0.85rem; font-weight:800; color:var(--form-text-muted); display:block; margin-bottom:8px;">${q.title} <span style="color:#ef4444;">(System File Links)</span></label>
+                                <textarea class="gf-input inner-neumorph edit-res-input" data-key="${q.id}" data-type="array_or_string" rows="2" style="background:rgba(255,255,255,0.7) !important;">${Array.isArray(val) ? val.join('\n') : val}</textarea>
+                                <div style="font-size:0.75rem; color:var(--form-text-muted); margin-top:5px;">⚠️ Pisahkan dengan baris baru (Enter) jika link lebih dari satu.</div>
+                            </div>`;
+                        } else {
+                            let displayVal = Array.isArray(val) ? val.join(', ') : val;
+                            html += `<div style="margin-bottom:20px; padding:15px; background:var(--form-card-bg); border-radius:12px; border:1px solid var(--form-border);">
+                                <label style="font-size:0.85rem; font-weight:800; color:var(--form-text-muted); display:block; margin-bottom:8px;">${q.title}</label>
+                                <textarea class="gf-input inner-neumorph edit-res-input" data-key="${q.id}" data-type="${q.type}" rows="2" style="background:rgba(255,255,255,0.7) !important;">${displayVal}</textarea>
+                            </div>`;
+                        }
+                    }
+                });
+            });
+            
+            document.getElementById('editResFormContainer').innerHTML = html;
+            document.getElementById('editResModal').style.display = 'flex';
+        }
+
+        // SIMPAN EDIT RESPON KE SERVER (REALTIME)
+        async function saveEditedResponse() {
+            if(!currentEditingRes) return;
+            document.getElementById('btnSaveEditRes').innerText = "⏳ Menyimpan...";
+            
+            let updatedAnswers = { ...currentEditingRes.answers };
+            let newEmail = document.getElementById('editResEmail').value;
+            
+            document.querySelectorAll('.edit-res-input').forEach(inp => {
+                let key = inp.getAttribute('data-key');
+                let type = inp.getAttribute('data-type');
+                let val = inp.value;
+                
+                if (type === 'kotak_centang' || type === 'kisi_kotak_centang') {
+                    updatedAnswers[key] = val.split(',').map(s => s.trim()).filter(s => s !== '');
+                } else if (type === 'array_or_string') {
+                    let lines = val.split('\n').map(s => s.trim()).filter(s => s !== '');
+                    if(lines.length > 1) updatedAnswers[key] = lines;
+                    else if(lines.length === 1) updatedAnswers[key] = lines[0];
+                    else updatedAnswers[key] = '';
+                } else {
+                    updatedAnswers[key] = val;
+                }
+            });
+            
+            try {
+                const res = await fetch(`/api/forms/${currentForm.id}/responses/${currentEditingRes.id}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: newEmail, answers: updatedAnswers })
+                });
+                const json = await res.json();
+                if(json.success) {
+                    showToast("✅ Jawaban berhasil diupdate!");
+                    closeEditResModal();
+                    loadResponses();
+                } else {
+                    alert(json.message || "Gagal update jawaban di server.");
+                }
+            } catch(e) {
+                alert("Kesalahan Koneksi. Gagal terhubung ke Database.");
+            } finally {
+                document.getElementById('btnSaveEditRes').innerText = "Simpan Perubahan";
+            }
+        }
+
+        // HAPUS RESPON PERMANEN
+        async function deleteResponse(resId) {
+            if(confirm("PERINGATAN: Yakin ingin menghapus jawaban ini secara PERMANEN dari database?")) {
+                try {
+                    const res = await fetch(`/api/forms/${currentForm.id}/responses/${resId}`, { method: 'DELETE' });
+                    const json = await res.json();
+                    if(json.success) {
+                        showToast("🗑️ Jawaban berhasil dihapus!");
+                        loadResponses();
+                    } else {
+                        alert(json.message);
+                    }
+                } catch(e) {
+                    alert("Kesalahan Koneksi. Gagal menghubungi server.");
+                }
+            }
+        }
+
+        function closeEditResModal() {
+            document.getElementById('editResModal').style.display = 'none';
+        }
+
+        // DOWNLOAD EXCEL EXPORT (NO CHANGE NEEDED HERE, CONTROLLED BY SERVER.JS)
         function downloadExcel() { window.open(`/api/forms/${currentForm.id}/export`, '_blank'); }
 
         // ================= RENDERING LIST DASHBOARD =================
@@ -1152,7 +1345,7 @@
             }
         }
 
-        // ================= CORE FORM BUILDER ENGINE & MISSING CRUD FUNCTIONS INJECTED =================
+        // ================= CORE FORM BUILDER ENGINE =================
         const genId = () => Math.random().toString(36).substr(2, 9);
 
         function getSafeIndices() {
