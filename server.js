@@ -341,22 +341,98 @@ app.post('/api/forms/submit', async (req, res) => {
         const { formId, responses, email } = req.body;
         const resId = `RES-${Date.now()}`;
         
+        // SUPER UPGRADE: AMBIL DATA FORM UNTUK VALIDASI BACKEND & AUTO-GRADING
+        const forms = await redis.hgetall('BEM_Forms') || {};
+        const parsedForms = Object.values(forms).map(item => safeParse(item, {}));
+        const formObj = parsedForms.find(f => f.id === formId);
+
+        if (!formObj) return res.status(404).json({ success: false, message: "Formulir tidak valid atau telah dihapus." });
+
+        // 1. VALIDASI DEADLINE & STATUS (BACKEND SECURITY)
+        if (formObj.isActive === false) return res.status(403).json({ success: false, message: "Formulir telah ditutup oleh Admin." });
+        if (formObj.settings && formObj.settings.deadline) {
+            if (new Date() > new Date(formObj.settings.deadline)) {
+                return res.status(403).json({ success: false, message: "Batas waktu pengisian formulir telah berlalu." });
+            }
+        }
+
+        let existingResp = safeParse(await redis.hget('BEM_Form_Responses', formId), []);
+
+        // 2. VALIDASI BATASI 1 JAWABAN (LIMIT ONE RESPONSE)
+        if (formObj.settings && formObj.settings.limitOne && email) {
+            const hasAnswered = existingResp.some(r => r.email === email);
+            if (hasAnswered) {
+                return res.status(403).json({ success: false, message: "Akses ditolak: Email ini sudah digunakan untuk mengisi formulir." });
+            }
+        }
+
+        // 3. AUTO-GRADING SYSTEM (MESIN PENILAIAN KUIS)
+        let totalScore = 0;
+        let maxScore = 0;
+        let isQuiz = formObj.settings && formObj.settings.isQuiz;
+
+        if (isQuiz && formObj.sections) {
+            formObj.sections.forEach(sec => {
+                if(sec.questions) {
+                    sec.questions.forEach(q => {
+                        let pts = parseInt(q.points) || formObj.settings.quizDefaultPoints || 0;
+                        let ans = responses[q.id];
+
+                        if (['pilihan_ganda', 'dropdown', 'jawaban_singkat'].includes(q.type)) {
+                            maxScore += pts;
+                            if (q.correctAnswers && q.correctAnswers.includes(ans)) {
+                                totalScore += pts;
+                            }
+                        } else if (q.type === 'kotak_centang') {
+                            maxScore += pts;
+                            let ansArr = Array.isArray(ans) ? ans : [ans];
+                            let corrArr = q.correctAnswers || [];
+                            // Syarat benar: Jumlah jawaban sama dan semua elemen cocok
+                            let isCorrect = ansArr.length > 0 && ansArr.length === corrArr.length && corrArr.every(c => ansArr.includes(c));
+                            if (isCorrect) totalScore += pts;
+                        } else if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
+                            if(q.rows) {
+                                q.rows.forEach((r, rIdx) => {
+                                    let rowPts = (q.rowPoints && q.rowPoints[rIdx]) ? parseInt(q.rowPoints[rIdx]) : 0;
+                                    maxScore += rowPts;
+                                    
+                                    let rAns = responses[`${q.id}_row_${rIdx}`];
+                                    let rAnsArr = Array.isArray(rAns) ? rAns : [rAns];
+                                    let rCorrArr = (q.gridCorrectAnswers && q.gridCorrectAnswers[rIdx]) ? q.gridCorrectAnswers[rIdx] : [];
+                                    
+                                    if (q.type === 'kisi_pilihan_ganda') {
+                                        if (rCorrArr.includes(rAns)) totalScore += rowPts;
+                                    } else {
+                                        let isCorrect = rAnsArr.length > 0 && rAnsArr.length === rCorrArr.length && rCorrArr.every(c => rAnsArr.includes(c));
+                                        if (isCorrect) totalScore += rowPts;
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
         const payload = {
             id: resId, 
             formId: formId, 
             email: email,
             timestamp: new Date().toISOString(),
-            answers: responses
+            answers: responses,
+            score: isQuiz ? totalScore : null,
+            maxScore: isQuiz ? maxScore : null
         };
         
-        // Simpan ke HASH BEM_Form_Responses, kita kelompokkan dengan Key = formId (Array)
-        let existingResp = await redis.hget('BEM_Form_Responses', formId);
-        existingResp = safeParse(existingResp, []);
+        // Simpan ke HASH BEM_Form_Responses
         existingResp.push(payload);
         
         await redis.hset('BEM_Form_Responses', { [formId]: JSON.stringify(existingResp) });
         res.status(200).json({ success: true, message: "Jawaban berhasil dikirim!" });
-    } catch (e) { res.status(500).json({ success: false }); }
+    } catch (e) { 
+        console.error(e);
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server internal." }); 
+    }
 });
 
 // 5. Ambil Daftar Jawaban (Untuk Admin V2)
@@ -392,6 +468,11 @@ app.get('/api/forms/:id/export', async (req, res) => {
                 "Email Responden": resp.email || "-"
             };
             
+            // SUPER UPGRADE: Tambahkan Kolom Skor Jika Ini Adalah Kuis
+            if (form.settings && form.settings.isQuiz) {
+                row["Skor Total"] = `${resp.score !== null ? resp.score : 0} / ${resp.maxScore || 0}`;
+            }
+
             // Memetakan ID Pertanyaan dengan Judul Pertanyaannya
             form.sections.forEach(sec => {
                 sec.questions.forEach(q => {
