@@ -6,17 +6,31 @@
     <title>Manajemen Form | BEM Admin V2</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- SortableJS & Chart.js -->
+    <!-- SUPER UPGRADE: Load SEMUA Google Fonts Lengkap (20+ Fonts) & Seluruh Ketebalan (100-900) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Caveat:wght@400..700&family=Comfortaa:wght@300..700&family=EB+Garamond:wght@400..800&family=Lexend:wght@100..900&family=Lobster&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Oswald:wght@200..700&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Outfit:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&family=Spectral:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    
+    <!-- Script Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Untuk Ringkasan -->
 
-    <!-- LOAD CSS UTAMA -->
+    <!-- LOAD CSS -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
+
+    <style>
+        /* Membersihkan CSS Inline ke mainV2.css */
+        /* Custom UI Khusus Halaman Admin Ini */
+        .chart-container { background: var(--form-card-bg); border: 1px solid var(--form-border); border-radius: 16px; padding: 20px; box-shadow: var(--inner-neumorph); margin-bottom: 25px; }
+        .pagination-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .pagination-controls button { padding: 8px 15px; border-radius: 8px; font-weight: bold; background: var(--form-bg); border: 1px solid var(--form-active-border); color: var(--form-active-border); cursor: pointer; transition: 0.2s;}
+        .pagination-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination-controls button:hover:not(:disabled) { background: var(--form-active-border); color: #fff; }
+    </style>
 </head>
 <body class="admin-v2-body" onclick="closeAllQMenus()">
 
-    <!-- PROTEKSI KEAMANAN CANVAS -->
     <script src="/js/protect-devtools.js"></script>
     <script>
         const isPreviewEnv = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.origin.includes('preview');
@@ -54,7 +68,7 @@
         <div class="b-tab" onclick="switchFormTab('setelan')" id="tabSetelan" style="display:none;">Setelan Form</div>
     </div>
 
-    <!-- TEMA SIDEBAR (OFFCANVAS) DENGAN CUSTOM FONT PICKER (BERAT FONT) -->
+    <!-- TEMA SIDEBAR (OFFCANVAS) -->
     <div class="theme-sidebar glass-panel-heavy" id="themeSidebar" onclick="event.stopPropagation()">
         <div class="theme-sidebar-header">
             <h3 style="margin:0; font-size:1.2rem; font-weight:700; color:var(--form-text);">🎨 Tema Dashboard</h3>
@@ -63,42 +77,46 @@
         <div class="theme-sidebar-content">
             
             <div class="theme-section-title">Gaya teks</div>
+            
+            <!-- HEADER FONTS -->
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Header</label>
             <div class="font-select-group">
-                <div class="custom-font-picker" id="picker-header">
-                    <div class="cfp-display" onclick="toggleFP('header', event)">
-                        <span id="display-header">Outfit</span>
+                <div class="custom-font-picker" id="picker-headerFont">
+                    <div class="cfp-display" onclick="toggleFP('headerFont', event)">
+                        <span id="display-headerFont">Outfit</span>
                         <span class="arrow">▼</span>
                     </div>
-                    <div class="cfp-dropdown" id="drop-header"></div>
+                    <div class="cfp-dropdown" id="drop-headerFont"></div>
                 </div>
                 <select class="t-select inner-neumorph" style="width:70px; height:46px;" id="themeHeaderSize" onchange="updateTheme('headerFontSize', this.value)">
-                    <option value="18">18</option><option value="22">22</option><option value="24">24</option><option value="28">28</option><option value="32">32</option>
+                    <option value="18">18</option><option value="22">22</option><option value="24">24</option><option value="28">28</option><option value="32">32</option><option value="36">36</option>
                 </select>
             </div>
             
+            <!-- QUESTION FONTS -->
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Pertanyaan</label>
             <div class="font-select-group">
-                <div class="custom-font-picker" id="picker-question">
-                    <div class="cfp-display" onclick="toggleFP('question', event)">
-                        <span id="display-question">Plus Jakarta Sans</span>
+                <div class="custom-font-picker" id="picker-questionFont">
+                    <div class="cfp-display" onclick="toggleFP('questionFont', event)">
+                        <span id="display-questionFont">Plus Jakarta Sans</span>
                         <span class="arrow">▼</span>
                     </div>
-                    <div class="cfp-dropdown" id="drop-question"></div>
+                    <div class="cfp-dropdown" id="drop-questionFont"></div>
                 </div>
                 <select class="t-select inner-neumorph" style="width:70px; height:46px;" id="themeQuestionSize" onchange="updateTheme('questionFontSize', this.value)">
-                    <option value="12">12</option><option value="14">14</option><option value="16">16</option>
+                    <option value="12">12</option><option value="14">14</option><option value="16">16</option><option value="18">18</option>
                 </select>
             </div>
 
+            <!-- TEXT FONTS -->
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Teks Dasar</label>
             <div class="font-select-group">
-                <div class="custom-font-picker" id="picker-text">
-                    <div class="cfp-display" onclick="toggleFP('text', event)">
-                        <span id="display-text">Plus Jakarta Sans</span>
+                <div class="custom-font-picker" id="picker-textFont">
+                    <div class="cfp-display" onclick="toggleFP('textFont', event)">
+                        <span id="display-textFont">Plus Jakarta Sans</span>
                         <span class="arrow">▼</span>
                     </div>
-                    <div class="cfp-dropdown" id="drop-text"></div>
+                    <div class="cfp-dropdown" id="drop-textFont"></div>
                 </div>
                 <select class="t-select inner-neumorph" style="width:70px; height:46px;" id="themeTextSize" onchange="updateTheme('textFontSize', this.value)">
                     <option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="14">14</option>
@@ -154,12 +172,12 @@
             </div>
         </div>
 
-        <!-- ================= TAB 3: JAWABAN (DENGAN 4 SUB-TABS BARU) ================= -->
+        <!-- ================= TAB 3: JAWABAN (SUPER UPGRADE 4 SUB TABS) ================= -->
         <div id="tab-jawaban" class="tab-content">
-            <div class="form-header-card glass-card neumorph-outer" style="border-top:none;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+            <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom: 20px;">
                     <h2 class="form-title gradient-text" id="respCount" style="font-size:2.2rem; font-weight:700; margin:0;">0 Tanggapan</h2>
-                    <button class="gf-btn-submit glow-effect" onclick="downloadExcel()" style="background: #10b981;">📥 Ekspor ke Excel (.xlsx)</button>
+                    <button class="gf-btn-submit glow-effect" onclick="downloadExcel()" style="background: #10b981;">📥 Spreadsheet (.xlsx)</button>
                 </div>
                 
                 <!-- JAWABAN SUB-TABS MENU -->
@@ -169,61 +187,65 @@
                     <div class="j-tab" onclick="switchJTab('individual')" id="j-tab-individual">Individual</div>
                     <div class="j-tab" onclick="switchJTab('kelola')" id="j-tab-kelola">Kelola Tanggapan</div>
                 </div>
+            </div>
 
-                <!-- SUB TAB: RINGKASAN (CHARTS) -->
-                <div id="j-ringkasan" class="j-content active">
-                    <div id="quiz-stats-container" style="display:none; gap:15px; margin-bottom:25px; flex-wrap:wrap;">
-                        <div class="glass-panel" style="flex:1; text-align:center;">
-                            <div style="font-size:0.9rem; color:var(--form-text-muted); font-weight:600;">Rata-rata</div>
-                            <div style="font-size:1.5rem; font-weight:700; color:var(--form-active-border);" id="stat-avg">0</div>
-                        </div>
-                        <div class="glass-panel" style="flex:1; text-align:center;">
-                            <div style="font-size:0.9rem; color:var(--form-text-muted); font-weight:600;">Median</div>
-                            <div style="font-size:1.5rem; font-weight:700; color:var(--form-active-border);" id="stat-med">0</div>
-                        </div>
-                        <div class="glass-panel" style="flex:1; text-align:center;">
-                            <div style="font-size:0.9rem; color:var(--form-text-muted); font-weight:600;">Rentang</div>
-                            <div style="font-size:1.5rem; font-weight:700; color:var(--form-active-border);" id="stat-range">0 - 0</div>
-                        </div>
+            <!-- KONTEN: RINGKASAN (CHART.JS) -->
+            <div id="j-ringkasan" class="j-content active">
+                <div id="quiz-stats-container" style="display:none; gap:15px; margin-bottom:25px; flex-wrap:wrap;">
+                    <div class="glass-panel" style="flex:1; text-align:center;">
+                        <div style="font-size:0.9rem; color:var(--form-text-muted); font-weight:600;">Rata-rata</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:var(--form-active-border);" id="stat-avg">0</div>
                     </div>
-                    <div id="charts-container"></div>
-                </div>
-
-                <!-- SUB TAB: PERTANYAAN -->
-                <div id="j-pertanyaan" class="j-content">
-                    <select id="q-select-dropdown" class="gf-input inner-neumorph" style="margin-bottom:20px; font-weight:600;" onchange="renderAnswersByQuestion(this.value)"></select>
-                    <div id="q-answers-list"></div>
-                </div>
-
-                <!-- SUB TAB: INDIVIDUAL (PRINTABLE) -->
-                <div id="j-individual" class="j-content">
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.05); padding:10px 20px; border-radius:12px; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
-                        <div style="display:flex; align-items:center; gap:15px;">
-                            <button class="top-icon-btn neumorph-circle" onclick="changeIndividual(-1)">❮</button>
-                            <span style="font-weight:700; color:var(--form-text);" id="ind-counter">0 dari 0</span>
-                            <button class="top-icon-btn neumorph-circle" onclick="changeIndividual(1)">❯</button>
-                        </div>
-                        <div style="display:flex; gap:10px;">
-                            <button class="gf-btn-clear neumorph-btn" style="display:flex; align-items:center; gap:5px; padding:8px 15px;" onclick="printIndividual()">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg> Cetak
-                            </button>
-                            <button class="gf-btn-clear neumorph-btn text-danger" style="display:flex; align-items:center; gap:5px; padding:8px 15px;" onclick="deleteCurrentIndividual()">🗑️ Hapus</button>
-                        </div>
+                    <div class="glass-panel" style="flex:1; text-align:center;">
+                        <div style="font-size:0.9rem; color:var(--form-text-muted); font-weight:600;">Median</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:var(--form-active-border);" id="stat-med">0</div>
                     </div>
-                    <div id="ind-form-preview" style="min-height:400px; padding:10px;"></div>
+                    <div class="glass-panel" style="flex:1; text-align:center;">
+                        <div style="font-size:0.9rem; color:var(--form-text-muted); font-weight:600;">Rentang</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:var(--form-active-border);" id="stat-range">0 - 0</div>
+                    </div>
                 </div>
+                <div id="charts-container"></div>
+            </div>
 
-                <!-- SUB TAB: KELOLA (CRUD ASLI) -->
-                <div id="j-kelola" class="j-content">
-                    <div id="respList" style="max-height: 600px; overflow-y:auto; padding-right:10px;"></div>
+            <!-- KONTEN: PERTANYAAN -->
+            <div id="j-pertanyaan" class="j-content">
+                <div class="form-header-card glass-card neumorph-outer" style="padding: 20px;">
+                    <select id="qSelector" class="gf-input inner-neumorph" style="font-weight:bold; color:var(--form-active-border);" onchange="renderJawabanPertanyaan(this.value)">
+                        <option value="">-- Pilih Pertanyaan --</option>
+                    </select>
                 </div>
+                <div id="pertanyaanContainer" style="margin-top:20px;"></div>
+            </div>
 
+            <!-- KONTEN: INDIVIDUAL -->
+            <div id="j-individual" class="j-content">
+                <div class="form-header-card glass-card neumorph-outer print-hidden" style="padding: 20px; display:flex; justify-content:space-between; align-items:center;">
+                    <div class="pagination-controls">
+                        <button onclick="changeIndiv(-1)" id="btnIndivPrev">❮</button>
+                        <span id="indivLabel" style="font-weight:bold; color:var(--form-text);">0 dari 0</span>
+                        <button onclick="changeIndiv(1)" id="btnIndivNext">❯</button>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="gf-btn-clear neumorph-btn" style="display:flex; align-items:center; gap:5px; padding:8px 15px;" onclick="printIndividual()">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg> Cetak
+                        </button>
+                        <button class="gf-btn-clear neumorph-btn text-danger" style="display:flex; align-items:center; gap:5px; padding:8px 15px;" onclick="deleteCurrentIndividual()">🗑️ Hapus</button>
+                    </div>
+                </div>
+                <div id="individualContainer" style="margin-top:20px;"></div>
+            </div>
+
+            <!-- KONTEN: CRUD DATA MASTER -->
+            <div id="j-kelola" class="j-content">
+                <div id="respList" style="margin-top: 15px; max-height: 800px; overflow-y:auto; color:var(--form-text); padding-right:10px;">
+                    <!-- List Jawaban Di Render Disini -->
+                </div>
             </div>
         </div>
 
         <!-- ================= TAB 4: SETELAN ================= -->
         <div id="tab-setelan" class="tab-content">
-            
             <!-- UI CARD 1 (SETELAN) -->
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding:15px 30px; margin-bottom: 30px;">
                 <h2 class="form-title" style="font-size:1.8rem; margin:15px 0 25px 0; border-bottom:1px solid var(--form-border); padding-bottom:15px;">Setelan</h2>
@@ -496,14 +518,15 @@
         
         let currentResponses = []; 
         let currentEditingRes = null; 
+        let currentIndivIndex = 0; // Pointer Tab Individual
         
-        let chartInstances = {}; // Untuk Ringkasan Chart
+        let chartInstances = {}; // Untuk manajemen hapus chart canvas
 
         const THEME_COLORS = ['#ec4899', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#10b981', '#f59e0b', '#f97316', '#ef4444', '#64748b'];
         const BG_COLORS = ['#fdf2f8', '#f5f3ff', '#eef2ff', '#eff6ff', '#f0f9ff', '#ecfeff', '#f0fdfa', '#ecfdf5', '#fffbeb', '#fff7ed', '#fef2f2', '#f8fafc'];
-
+        
         // ================= SUPER UPGRADE: DATABASE LIST FONT & BOBOT =================
-        const fontsList = [
+        const FONT_OPTIONS = [
             { name: "Arial", type: "system" }, { name: "Times New Roman", type: "system" }, { name: "Calibri", type: "system" }, { name: "Century Gothic", type: "system" }, { name: "Comic Sans MS", type: "system" }, { name: "Courier New", type: "system" }, { name: "Georgia", type: "system" }, { name: "Impact", type: "system" },
             { name: "Amatic SC", type: "google", weights: [400, 700] },
             { name: "Caveat", type: "google", weights: [400, 500, 600, 700] },
@@ -518,24 +541,25 @@
             { name: "Oswald", type: "google", weights: [200, 300, 400, 500, 600, 700] },
             { name: "Pacifico", type: "google", weights: [400] },
             { name: "Playfair Display", type: "google", weights: [400, 500, 600, 700, 800, 900] },
+            { name: "Plus Jakarta Sans", type: "google", weights: [200, 300, 400, 500, 600, 700, 800] },
+            { name: "Outfit", type: "google", weights: [100, 200, 300, 400, 500, 600, 700, 800, 900] },
             { name: "Roboto", type: "google", weights: [100, 300, 400, 500, 700, 900] },
             { name: "Roboto Mono", type: "google", weights: [100, 200, 300, 400, 500, 600, 700] },
             { name: "Roboto Serif", type: "google", weights: [100, 200, 300, 400, 500, 600, 700, 800, 900] },
-            { name: "Spectral", type: "google", weights: [200, 300, 400, 500, 600, 700, 800] },
-            { name: "Plus Jakarta Sans", type: "google", weights: [200, 300, 400, 500, 600, 700, 800] },
-            { name: "Outfit", type: "google", weights: [100, 200, 300, 400, 500, 600, 700, 800, 900] }
+            { name: "Space Grotesk", type: "google", weights: [300, 400, 500, 600, 700] },
+            { name: "Spectral", type: "google", weights: [200, 300, 400, 500, 600, 700, 800] }
         ];
-
-        const weightNames = { 100: "Ekstra Halus", 200: "Ekstra Halus", 300: "Halus", 400: "Biasa", 500: "Sedang", 600: "Semi Tebal", 700: "Tebal", 800: "Ekstra Tebal", 900: "Hitam" };
+        
+        const WEIGHT_NAMES = { 100: "Ekstra Halus", 200: "Ekstra Halus", 300: "Halus", 400: "Biasa", 500: "Sedang", 600: "Semi Tebal", 700: "Tebal", 800: "Ekstra Tebal", 900: "Hitam" };
 
         document.addEventListener('DOMContentLoaded', () => {
             loadAllForms();
             initThemeGrids();
-            renderFontPicker('header');
-            renderFontPicker('question');
-            renderFontPicker('text');
+            renderFontPicker('headerFont');
+            renderFontPicker('questionFont');
+            renderFontPicker('textFont');
             
-            // Klik dimanapun untuk menutup font picker
+            // Klik dimanapun untuk menutup flyout menu
             document.addEventListener('click', () => {
                 document.querySelectorAll('.cfp-dropdown').forEach(el => el.classList.remove('show'));
             });
@@ -547,19 +571,31 @@
             setTimeout(() => t.style.bottom = '-100px', 3000);
         }
 
-        // ================= JAWABAN TABS LOGIC (RINGKASAN, DLL) =================
+        // ================= SUPER UPGRADE: SUB TABS JAWABAN (GOOGLE FORMS STYLE) =================
         function switchJTab(tabId) {
-            document.querySelectorAll('.j-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.j-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(`j-tab-${tabId}`).classList.add('active');
-            document.getElementById(`j-${tabId}`).classList.add('active');
+            document.querySelectorAll('.j-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.j-content').forEach(el => el.classList.remove('active'));
             
-            if (tabId === 'ringkasan') renderRingkasan();
-            if (tabId === 'pertanyaan') populateQDropdown();
-            if (tabId === 'individual') renderIndividual(0);
+            let tabBtn = document.getElementById(`j-tab-${tabId}`);
+            if(tabBtn) tabBtn.classList.add('active');
+            
+            let tabContent = document.getElementById(`j-${tabId}`);
+            if(tabContent) tabContent.classList.add('active');
+            
+            if(tabId === 'ringkasan') renderRingkasan();
+            if(tabId === 'pertanyaan') renderQDropdown();
+            if(tabId === 'individual') renderIndividualResponse();
         }
 
+        // 1. FUNGSI RINGKASAN (CHART.JS)
         function renderRingkasan() {
+            const container = document.getElementById('charts-container');
+            if(currentResponses.length === 0) {
+                container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted); border:2px dashed var(--form-border); border-radius:12px;'>Belum ada tanggapan untuk diringkas.</div>";
+                document.getElementById('quiz-stats-container').style.display = 'none';
+                return;
+            }
+
             if(currentForm.settings.isQuiz && currentResponses.length > 0) {
                 document.getElementById('quiz-stats-container').style.display = 'flex';
                 let scores = currentResponses.map(r => r.score || 0).sort((a,b)=>a-b);
@@ -572,189 +608,200 @@
                 document.getElementById('quiz-stats-container').style.display = 'none';
             }
 
+            // Hapus chart lama agar tidak numpuk
+            Object.values(chartInstances).forEach(c => c.destroy());
+            chartInstances = {};
+            
             let html = '';
             let questionsToChart = [];
             
             currentForm.sections.forEach(sec => {
-                sec.questions.forEach(q => {
-                    if(q.type !== 'title_only') {
-                        html += `<div class="glass-panel" style="margin-bottom:20px;">
-                            <h4 style="font-size:1.1rem; margin-bottom:15px; color:var(--form-text);">${q.title}</h4>
-                            <div style="font-size:0.85rem; color:var(--form-text-muted); margin-bottom:15px;">${currentResponses.length} jawaban</div>
-                            <div id="chart-wrap-${q.id}" style="position:relative; height:300px; width:100%;">
-                                <canvas id="chart-${q.id}"></canvas>
-                            </div>
-                        </div>`;
-                        questionsToChart.push(q);
-                    }
+                sec.questions.forEach((q, idx) => {
+                    if (q.type === 'title_only' || q.type === 'upload_file' || q.type === 'tanggal' || q.type === 'waktu' || q.type === 'jawaban_singkat' || q.type === 'paragraf') return;
+                    
+                    html += `<div class="chart-container">
+                                <h3 style="font-size:1.1rem; color:var(--form-text); margin-bottom:15px; border-bottom:1px solid var(--form-border); padding-bottom:10px;">${q.title}</h3>
+                                <div style="position: relative; height:300px; width:100%; display:flex; justify-content:center;">
+                                    <canvas id="chart-${q.id}"></canvas>
+                                </div>
+                             </div>`;
+                    questionsToChart.push(q);
                 });
             });
-            document.getElementById('charts-container').innerHTML = html;
             
+            if(html === '') html = "<div style='padding:30px; text-align:center; color:var(--form-text-muted);'>Tidak ada pertanyaan pilihan/opsi untuk dibuat grafik.</div>";
+            container.innerHTML = html;
+
+            // Generate Data untuk masing-masing chart
             questionsToChart.forEach(q => {
                 let canvas = document.getElementById(`chart-${q.id}`);
-                if(chartInstances[q.id]) chartInstances[q.id].destroy();
+                if(!canvas) return;
+
+                let labels = q.options || q.columns || ["1","2","3","4","5"]; // Fallback for rating/scale
+                if(q.type === 'skala_linier') {
+                    labels = []; for(let i=(q.scaleMin||1); i<=(q.scaleMax||5); i++) labels.push(i.toString());
+                } else if (q.type === 'rating') {
+                    labels = []; for(let i=1; i<=(q.ratingLevels||5); i++) labels.push(i.toString());
+                }
+
+                let dataCounts = new Array(labels.length).fill(0);
                 
-                let isChoice = ['pilihan_ganda', 'kotak_centang', 'dropdown', 'skala_linier', 'rating'].includes(q.type);
-                
-                if (isChoice) {
-                    let tally = {};
-                    currentResponses.forEach(r => {
-                        let ans = r.answers[q.id];
-                        if(ans) {
-                            if(Array.isArray(ans)) {
-                                ans.forEach(a => { tally[a] = (tally[a]||0)+1; });
-                            } else {
-                                tally[ans] = (tally[ans]||0)+1;
-                            }
-                        }
-                    });
+                currentResponses.forEach(res => {
+                    let ans = res.answers[q.id];
+                    if(!ans) return;
                     
-                    let labels = Object.keys(tally);
-                    let data = Object.values(tally);
-                    
-                    if(labels.length > 0) {
-                        chartInstances[q.id] = new Chart(canvas, {
-                            type: q.type === 'pilihan_ganda' || q.type === 'dropdown' ? 'pie' : 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [{ label: 'Jumlah Responden', data: data, backgroundColor: THEME_COLORS, borderWidth: 1, borderRadius: 4 }]
-                            },
-                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+                    if(Array.isArray(ans)) {
+                        ans.forEach(a => {
+                            let idx = labels.indexOf(a);
+                            if(idx > -1) dataCounts[idx]++;
                         });
                     } else {
-                        document.getElementById(`chart-wrap-${q.id}`).innerHTML = '<div style="text-align:center; padding:50px; color:#888;">Belum ada data untuk di visualisasikan.</div>';
-                    }
-                } else {
-                    let listHtml = '<ul style="padding-left:0; list-style:none; color:var(--form-text);">';
-                    let limit = Math.min(5, currentResponses.length);
-                    for(let i=0; i<limit; i++) {
-                        let ans = currentResponses[i].answers[q.id];
-                        if(ans) {
-                            let displayAns = typeof ans === 'string' && ans.includes('/api/uploads/') ? '<a href="'+ans+'" target="_blank" style="color:var(--form-active-border);">[Download File Terlampir]</a>' : ans;
-                            listHtml += `<li style="margin-bottom:8px; padding:12px 15px; background:rgba(0,0,0,0.03); border:1px solid var(--form-border); border-radius:8px;">${displayAns}</li>`;
-                        }
-                    }
-                    if(currentResponses.length > 5) listHtml += `<li style="text-align:center; margin-top:10px;"><a href="#" style="color:var(--form-active-border); font-weight:600; text-decoration:none;" onclick="switchJTab('pertanyaan'); document.getElementById('q-select-dropdown').value='${q.id}'; renderAnswersByQuestion('${q.id}')">Lihat semua ${currentResponses.length} jawaban...</a></li>`;
-                    if(limit === 0) listHtml = '<div style="text-align:center; padding:50px; color:#888;">Belum ada jawaban.</div>';
-                    listHtml += '</ul>';
-                    document.getElementById(`chart-wrap-${q.id}`).innerHTML = listHtml;
-                    document.getElementById(`chart-wrap-${q.id}`).style.height = 'auto';
-                }
-            });
-        }
-
-        function populateQDropdown() {
-            let html = '';
-            currentForm.sections.forEach(sec => {
-                sec.questions.forEach(q => {
-                    if(q.type !== 'title_only') {
-                        html += `<option value="${q.id}">${q.title}</option>`;
+                        let idx = labels.indexOf(ans.toString());
+                        if(idx > -1) dataCounts[idx]++;
                     }
                 });
+
+                // Random Warna
+                let bgColors = labels.map(() => `hsla(${~~(Math.random() * 360)}, 70%, 60%, 0.6)`);
+                let borderColors = bgColors.map(c => c.replace('0.6', '1'));
+
+                let chartType = (q.type === 'pilihan_ganda' || q.type === 'dropdown') ? 'pie' : 'bar';
+                
+                let newChart = new Chart(canvas, {
+                    type: chartType,
+                    data: {
+                        labels: labels,
+                        datasets: [{ label: 'Jumlah Jawaban', data: dataCounts, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+                chartInstances[q.id] = newChart;
             });
-            document.getElementById('q-select-dropdown').innerHTML = html;
-            if(html) renderAnswersByQuestion(document.getElementById('q-select-dropdown').value);
         }
 
-        function renderAnswersByQuestion(qId) {
-            let html = '';
-            currentResponses.forEach(r => {
-                let ans = r.answers[qId];
-                if(ans) {
-                    let displayAns = typeof ans === 'string' && ans.includes('/api/uploads/') ? `<a href="${ans}" target="_blank" style="color:var(--form-active-border);">Download File</a>` : (Array.isArray(ans) ? ans.join(', ') : ans);
-                    html += `<div class="glass-panel" style="margin-bottom:10px; background:rgba(255,255,255,0.4);">
-                        <div style="font-size:0.8rem; color:var(--form-text-muted); margin-bottom:5px;">🕒 ${new Date(r.timestamp).toLocaleString()} - <span style="color:var(--form-active-border); font-weight:700;">${r.email || 'Tanpa Email'}</span></div>
-                        <div style="font-weight:600; font-size:1.05rem;">${displayAns}</div>
-                    </div>`;
-                }
-            });
-            if(!html) html = '<div class="glass-panel text-center" style="padding:40px; color:#888;">Belum ada jawaban spesifik untuk pertanyaan ini.</div>';
-            document.getElementById('q-answers-list').innerHTML = html;
-        }
-
-        let currentIndIndex = 0;
-        function renderIndividual(index) {
-            if(currentResponses.length === 0) {
-                document.getElementById('ind-counter').innerText = '0 dari 0';
-                document.getElementById('ind-form-preview').innerHTML = '<div class="text-center" style="padding:50px; color:#888; font-size:1.2rem;">Belum ada tanggapan masuk.</div>';
-                return;
-            }
-            if(index < 0) index = currentResponses.length - 1;
-            if(index >= currentResponses.length) index = 0;
-            currentIndIndex = index;
-            
-            document.getElementById('ind-counter').innerText = `${index + 1} dari ${currentResponses.length}`;
-            
-            let res = currentResponses[index];
-            let html = `
-                <div style="border-bottom:2px dashed var(--form-border); padding-bottom:15px; margin-bottom:20px;">
-                    <h3 style="margin:0 0 10px 0; font-family:var(--form-font-header); font-size:1.8rem; color:var(--form-text);">${currentForm.title}</h3>
-                    <div style="font-size:1.1rem; color:var(--form-text-muted);"><strong>Email:</strong> ${res.email || '-'}</div>
-                    <div style="font-size:1.1rem; color:var(--form-text-muted);"><strong>Waktu:</strong> ${new Date(res.timestamp).toLocaleString('id-ID')}</div>
-                    ${currentForm.settings.isQuiz ? `<div style="font-size:1.1rem; color:var(--form-active-border); font-weight:700;">⭐ Skor: ${res.score} / ${res.maxScore}</div>` : ''}
-                </div>
-            `;
-            
+        // 2. FUNGSI VIEW BERDASARKAN PERTANYAAN
+        function renderQDropdown() {
+            let sel = document.getElementById('qSelector');
+            sel.innerHTML = '<option value="">-- Pilih Pertanyaan --</option>';
             currentForm.sections.forEach(sec => {
-                html += `<div style="margin-bottom:30px;"><h4 style="margin-bottom:15px; background:var(--form-active-border); color:#fff; padding:10px 15px; border-radius:8px;">${sec.title}</h4>`;
                 sec.questions.forEach(q => {
                     if(q.type === 'title_only') return;
-                    let ans = res.answers[q.id];
-                    let displayAns = '-';
-                    if(ans) {
-                        if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
-                            if(ans.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
-                                displayAns = `<img src="${ans}" style="max-height:200px; border-radius:12px; box-shadow:var(--outer-neumorph);">`;
-                            } else {
-                                displayAns = `<a href="${ans}" target="_blank" style="color:var(--form-active-border); font-weight:700;">[Buka File Terlampir]</a>`;
-                            }
-                        } else if(Array.isArray(ans)) {
-                            displayAns = ans.join(', ');
-                        } else {
-                            displayAns = ans;
-                        }
+                    sel.innerHTML += `<option value="${q.id}">${q.title}</option>`;
+                });
+            });
+            document.getElementById('pertanyaanContainer').innerHTML = "<div style='text-align:center; padding:30px; color:var(--form-text-muted);'>Pilih pertanyaan dari dropdown di atas.</div>";
+        }
+        
+        window.renderJawabanPertanyaan = function(qId) {
+            const container = document.getElementById('pertanyaanContainer');
+            if(!qId) { container.innerHTML = ''; return; }
+            
+            let html = '';
+            currentResponses.forEach((res, i) => {
+                let ans = res.answers[qId];
+                if(ans) {
+                    let displayAns = Array.isArray(ans) ? ans.join(', ') : ans;
+                    if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
+                        if(ans.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) displayAns = `<img src="${ans}" style="max-height:100px; border-radius:8px;">`;
+                        else displayAns = `<a href="${ans}" target="_blank" class="gf-btn-clear neumorph-btn" style="padding:5px 10px; font-size:0.85rem; text-decoration:none;">📥 File Dokumen</a>`;
                     }
+                    html += `<div class="glass-card inner-neumorph" style="padding:15px; margin-bottom:10px;">
+                                <div style="font-size:0.8rem; color:var(--form-text-muted); margin-bottom:5px;">Responden ${i+1} (${res.email || 'Anonim'})</div>
+                                <div style="font-size:1.05rem; color:var(--form-text); font-weight:500;">${displayAns}</div>
+                             </div>`;
+                }
+            });
+            container.innerHTML = html || "<div style='padding:20px; text-align:center; color:var(--form-text-muted);'>Belum ada jawaban untuk pertanyaan ini.</div>";
+        }
+
+        // 3. FUNGSI VIEW INDIVIDUAL (SEPERTI GOOGLE FORM)
+        window.changeIndiv = function(dir) {
+            currentIndivIndex += dir;
+            if(currentIndivIndex < 0) currentIndivIndex = 0;
+            if(currentIndivIndex >= currentResponses.length) currentIndivIndex = currentResponses.length - 1;
+            renderIndividualResponse();
+        }
+
+        function renderIndividualResponse() {
+            const container = document.getElementById('individualContainer');
+            const lbl = document.getElementById('indivLabel');
+            
+            if(currentResponses.length === 0) {
+                lbl.innerText = "0 dari 0";
+                container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted); border:2px dashed var(--form-border); border-radius:12px;'>Belum ada tanggapan.</div>";
+                return;
+            }
+            
+            lbl.innerText = `${currentIndivIndex + 1} dari ${currentResponses.length}`;
+            document.getElementById('btnIndivPrev').disabled = currentIndivIndex === 0;
+            document.getElementById('btnIndivNext').disabled = currentIndivIndex === currentResponses.length - 1;
+
+            let res = currentResponses[currentIndivIndex];
+            
+            // Build UI mirip Public Form
+            let html = `<div style="margin-bottom:20px; text-align:center; padding-bottom:15px; border-bottom:2px dashed var(--form-border);">
+                <h3 style="margin:0 0 10px 0; font-family:var(--form-font-header); font-size:1.8rem; color:var(--form-text);">${currentForm.title}</h3>
+                <div style="font-size:1.1rem; color:var(--form-text); font-weight:600;">Waktu: ${new Date(res.timestamp).toLocaleString('id-ID')}</div>
+                <div style="color:var(--form-active-border); font-weight:bold;">Email: ${res.email || 'Tanpa Email'}</div>
+                ${res.score !== null ? `<div style="font-size:1.2rem; font-weight:800; color:#10b981; margin-top:10px;">Skor: ${res.score} / ${res.maxScore}</div>` : ''}
+            </div>`;
+
+            currentForm.sections.forEach((sec, sIdx) => {
+                html += `<div style="margin-bottom:30px;">
+                            <div class="form-header-card glass-card neumorph-outer" style="border-top:5px solid var(--form-active-border); margin-bottom:20px; padding:20px;">
+                                <h2 style="margin:0; color:var(--form-text);">${sec.title || `Bagian ${sIdx+1}`}</h2>
+                            </div>`;
+                
+                sec.questions.forEach(q => {
+                    if(q.type === 'title_only') return;
                     
-                    if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
-                        displayAns = '';
-                        if(q.rows) {
+                    let ans = res.answers[q.id];
+                    let displayAns = `<div style="color:var(--form-text-muted); font-style:italic;">Tidak ada jawaban</div>`;
+                    
+                    if(ans) {
+                        if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
+                            displayAns = '<ul style="margin:0; padding-left:20px;">';
                             q.rows.forEach((rName, rIdx) => {
                                 let rowAns = res.answers[`${q.id}_row_${rIdx}`];
-                                let rDisplay = Array.isArray(rowAns) ? rowAns.join(', ') : (rowAns || '-');
-                                displayAns += `<div style="margin-bottom:8px; display:flex; gap:10px;"><span style="color:var(--form-text-muted); min-width:150px;">${rName} :</span> <strong style="color:var(--form-text);">${rDisplay}</strong></div>`;
+                                let rVal = Array.isArray(rowAns) ? rowAns.join(', ') : (rowAns||'-');
+                                displayAns += `<li><strong>${rName}</strong>: <span style="color:var(--form-active-border);">${rVal}</span></li>`;
                             });
+                            displayAns += '</ul>';
+                        } else {
+                            let textAns = Array.isArray(ans) ? ans.join(', ') : ans;
+                            if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
+                                if(ans.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) displayAns = `<img src="${ans}" style="max-width:100%; max-height:200px; border-radius:8px;">`;
+                                else displayAns = `<a href="${ans}" target="_blank" style="color:var(--form-active-border); font-weight:700;">[Buka File Terlampir]</a>`;
+                            } else {
+                                displayAns = `<div style="font-size:1.1rem; color:var(--form-text); font-weight:600; padding:10px; background:var(--form-bg); border-radius:8px; border:1px solid var(--form-border);">${textAns}</div>`;
+                            }
                         }
                     }
 
-                    html += `<div style="margin-bottom:20px;">
-                        <div style="font-weight:700; font-size:1.05rem; margin-bottom:8px; color:var(--form-text); font-family:var(--form-font-question);">${q.title}</div>
-                        <div style="padding:15px; background:rgba(255,255,255,0.5); border-radius:12px; border:1px solid var(--form-border); min-height:40px; color:var(--form-text); font-family:var(--form-font-text); font-size:1.05rem;">${displayAns}</div>
-                    </div>`;
+                    html += `<div class="form-question-card glass-card neumorph-outer" style="margin-bottom:20px; padding:20px;">
+                                <div style="font-size:1.1rem; font-weight:700; color:var(--form-text); margin-bottom:15px; font-family:var(--form-font-question);">${q.title}</div>
+                                ${displayAns}
+                             </div>`;
                 });
                 html += `</div>`;
             });
-            document.getElementById('ind-form-preview').innerHTML = html;
+            container.innerHTML = html;
         }
 
-        function changeIndividual(dir) { renderIndividual(currentIndIndex + dir); }
-
+        // Print via CSS @media print tanpa me-reload/merusak body HTML
         function printIndividual() {
-            let printContents = document.getElementById('ind-form-preview').innerHTML;
-            let originalContents = document.body.innerHTML;
-            document.body.innerHTML = `<div class="print-area public-form-body" style="padding:40px; color:#000; background:#fff !important; min-height:100vh;">${printContents}</div>`;
+            const container = document.getElementById('j-individual');
+            container.classList.add('print-area');
             window.print();
-            document.body.innerHTML = originalContents;
-            window.location.reload(); 
+            container.classList.remove('print-area');
         }
 
         function deleteCurrentIndividual() {
             if(currentResponses.length > 0) {
-                deleteResponse(currentResponses[currentIndIndex].id);
+                deleteResponse(currentResponses[currentIndivIndex].id);
                 setTimeout(() => switchJTab('individual'), 500);
             }
         }
-
 
         // ================= FONT ENGINE & CUSTOM FONT PICKER (FLYOUT) =================
         function toggleFP(type, event) {
@@ -767,9 +814,9 @@
 
         function renderFontPicker(type) {
             let html = '';
-            fontsList.forEach(f => {
+            FONT_OPTIONS.forEach(f => {
                 if(f.type === 'google') {
-                    let subItems = f.weights.map(w => `<div class="cfp-subitem" style="font-family:'${f.name}', sans-serif; font-weight:${w};" onclick="selectFont('${type}', '${f.name}', ${w}, event)">${weightNames[w]} (${w})</div>`).join('');
+                    let subItems = f.weights.map(w => `<div class="cfp-subitem" style="font-family:'${f.name}', sans-serif; font-weight:${w};" onclick="selectFont('${type}', '${f.name}', ${w}, event)">${WEIGHT_NAMES[w]} (${w})</div>`).join('');
                     html += `<div class="cfp-item" style="font-family:'${f.name}', sans-serif;">${f.name} <span style="font-size:0.6rem; color:var(--form-active-border);">►</span> <div class="cfp-submenu">${subItems}</div></div>`;
                 } else {
                     html += `<div class="cfp-item" style="font-family:'${f.name}', sans-serif;" onclick="selectFont('${type}', '${f.name}', 400, event)">${f.name}</div>`;
@@ -781,16 +828,16 @@
         function selectFont(type, fontName, weight, event) {
             event.stopPropagation();
             loadDynamicFont(fontName, weight);
-            updateTheme(`${type}Font`, fontName);
-            updateTheme(`${type}FontWeight`, weight);
+            updateTheme(`${type}`, fontName); // Type disini "headerFont", "questionFont", dll
+            updateTheme(`${type.replace('Font','')}FontWeight`, weight); 
             
-            document.getElementById(`display-${type}`).innerHTML = `<span>${fontName} - ${weightNames[weight] || 'Biasa'}</span> <span class="arrow">▼</span>`;
+            document.getElementById(`display-${type}`).innerHTML = `<span>${fontName} - ${WEIGHT_NAMES[weight] || 'Biasa'}</span> <span class="arrow">▼</span>`;
             document.getElementById(`drop-${type}`).classList.remove('show');
         }
 
         function loadDynamicFont(fontName, weight) {
             if(!fontName) return;
-            const isGoogle = ["Amatic SC", "Caveat", "Comfortaa", "EB Garamond", "Lexend", "Lobster", "Lora", "Merriweather", "Montserrat", "Nunito", "Oswald", "Pacifico", "Playfair Display", "Roboto", "Roboto Mono", "Roboto Serif", "Spectral", "Plus Jakarta Sans", "Outfit"].includes(fontName);
+            const isGoogle = ["Amatic SC", "Caveat", "Comfortaa", "EB Garamond", "Lexend", "Lobster", "Lora", "Merriweather", "Montserrat", "Nunito", "Oswald", "Pacifico", "Playfair Display", "Roboto", "Roboto Mono", "Roboto Serif", "Space Grotesk", "Spectral", "Plus Jakarta Sans", "Outfit"].includes(fontName);
             if(isGoogle) {
                 const id = `font-${fontName.replace(/\s+/g, '')}-${weight}`;
                 if(!document.getElementById(id)) {
@@ -996,18 +1043,18 @@
             if(!currentForm || !currentForm.theme) return;
             const t = currentForm.theme;
             
-            document.documentElement.style.setProperty('--form-active-border', t.color);
-            document.documentElement.style.setProperty('--form-bg', t.bgColor);
+            document.documentElement.style.setProperty('--form-active-border', t.color || '#8b5cf6');
+            document.documentElement.style.setProperty('--form-bg', t.bgColor || '#f5f3ff');
             
             // FONT BINDING SECARA GLOBAL
-            document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont}", sans-serif`);
-            document.documentElement.style.setProperty('--form-font-header-weight', t.headerFontWeight || 700);
+            document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont || 'Outfit'}", sans-serif`);
+            document.documentElement.style.setProperty('--form-font-header-weight', t.headerFontWeight || '700');
             
-            document.documentElement.style.setProperty('--form-font-question', `"${t.questionFont}", sans-serif`);
-            document.documentElement.style.setProperty('--form-font-question-weight', t.questionFontWeight || 600);
+            document.documentElement.style.setProperty('--form-font-question', `"${t.questionFont || 'Plus Jakarta Sans'}", sans-serif`);
+            document.documentElement.style.setProperty('--form-font-question-weight', t.questionFontWeight || '600');
             
-            document.documentElement.style.setProperty('--form-font-text', `"${t.textFont}", sans-serif`);
-            document.documentElement.style.setProperty('--form-font-text-weight', t.textFontWeight || 400);
+            document.documentElement.style.setProperty('--form-font-text', `"${t.textFont || 'Plus Jakarta Sans'}", sans-serif`);
+            document.documentElement.style.setProperty('--form-font-text-weight', t.textFontWeight || '400');
             
             // Load Font Engine
             loadDynamicFont(t.headerFont, t.headerFontWeight || 700);
@@ -1015,13 +1062,13 @@
             loadDynamicFont(t.textFont, t.textFontWeight || 400);
 
             // Update UI Dropdown Label
-            if(document.getElementById('display-header')) document.getElementById('display-header').innerHTML = `<span>${t.headerFont} - ${weightNames[t.headerFontWeight||700] || 'Biasa'}</span> <span class="arrow">▼</span>`;
-            if(document.getElementById('display-question')) document.getElementById('display-question').innerHTML = `<span>${t.questionFont} - ${weightNames[t.questionFontWeight||600] || 'Biasa'}</span> <span class="arrow">▼</span>`;
-            if(document.getElementById('display-text')) document.getElementById('display-text').innerHTML = `<span>${t.textFont} - ${weightNames[t.textFontWeight||400] || 'Biasa'}</span> <span class="arrow">▼</span>`;
+            if(document.getElementById('display-headerFont')) document.getElementById('display-headerFont').innerHTML = `<span>${t.headerFont} - ${WEIGHT_NAMES[t.headerFontWeight||700] || 'Biasa'}</span> <span class="arrow">▼</span>`;
+            if(document.getElementById('display-questionFont')) document.getElementById('display-questionFont').innerHTML = `<span>${t.questionFont} - ${WEIGHT_NAMES[t.questionFontWeight||600] || 'Biasa'}</span> <span class="arrow">▼</span>`;
+            if(document.getElementById('display-textFont')) document.getElementById('display-textFont').innerHTML = `<span>${t.textFont} - ${WEIGHT_NAMES[t.textFontWeight||400] || 'Biasa'}</span> <span class="arrow">▼</span>`;
 
-            document.getElementById('themeHeaderSize').value = t.headerFontSize;
-            document.getElementById('themeQuestionSize').value = t.questionFontSize;
-            document.getElementById('themeTextSize').value = t.textFontSize;
+            document.getElementById('themeHeaderSize').value = t.headerFontSize || 28;
+            document.getElementById('themeQuestionSize').value = t.questionFontSize || 14;
+            document.getElementById('themeTextSize').value = t.textFontSize || 12;
 
             document.querySelectorAll('#themeColorGrid .color-circle').forEach(el => el.innerHTML = '');
             const activeColor = document.getElementById(`tc-${t.color}`);
@@ -1098,7 +1145,16 @@
                 
                 document.getElementById('respCount').innerText = `${currentResponses.length} Tanggapan`;
                 
-                // MENGISI CRUD ASLI
+                // Memicu Render Tab Sub Navigasi yang aktif (Default: Ringkasan)
+                let activeSubTab = document.querySelector('.j-tab.active');
+                if(activeSubTab) {
+                    let tabId = activeSubTab.id.replace('j-tab-', '');
+                    switchJTab(tabId);
+                } else {
+                    switchJTab('ringkasan');
+                }
+
+                // Render Tab CRUD
                 let html = '';
                 currentResponses.slice().reverse().forEach((r) => { 
                     html += `
@@ -1117,15 +1173,6 @@
                         </div>`;
                 });
                 document.getElementById('respList').innerHTML = html || "<div style='padding:40px; text-align:center; color:#888; border:2px dashed var(--form-border); border-radius:12px; font-size:1.1rem;'>Belum ada tanggapan masuk.</div>";
-                
-                // Memicu Update pada Sub-Tab yang sedang aktif
-                const activeJTab = document.querySelector('.j-tab.active');
-                if(activeJTab) {
-                    if(activeJTab.id === 'j-tab-ringkasan') renderRingkasan();
-                    if(activeJTab.id === 'j-tab-pertanyaan') renderAnswersByQuestion(document.getElementById('q-select-dropdown').value);
-                    if(activeJTab.id === 'j-tab-individual') renderIndividual(currentIndIndex);
-                }
-
             } catch(e) { document.getElementById('respList').innerHTML = "Gagal memuat data."; }
         }
 
@@ -1246,8 +1293,14 @@
             }
         }
 
+        function closeEditResModal() {
+            document.getElementById('editResModal').style.display = 'none';
+        }
+
+        // DOWNLOAD EXCEL EXPORT
         function downloadExcel() { window.open(`/api/forms/${currentForm.id}/export`, '_blank'); }
 
+        // ================= RENDERING LIST DASHBOARD =================
         function renderFormList() {
             const cont = document.getElementById('formListContainer');
             if(allForms.length === 0) { cont.innerHTML = "<div class='glass-card inner-neumorph' style='text-align:center; padding:50px; border-radius:12px;'>Belum ada formulir. Silahkan buat yang baru.</div>"; return; }
@@ -1288,7 +1341,12 @@
             currentForm = {
                 id: '', slug: `form-${Date.now()}`, title: 'Formulir Tanpa Judul', description: '', isActive: true,
                 settings: JSON.parse(JSON.stringify(defaultSettingsJSON)),
-                theme: { headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: 700, questionFont: 'Plus Jakarta Sans', questionFontSize: 14, questionFontWeight: 600, textFont: 'Plus Jakarta Sans', textFontSize: 12, textFontWeight: 400, color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' },
+                theme: { 
+                    headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: '700',
+                    questionFont: 'Plus Jakarta Sans', questionFontSize: 14, questionFontWeight: '600',
+                    textFont: 'Plus Jakarta Sans', textFontSize: 12, textFontWeight: '400',
+                    color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' 
+                },
                 sections: [ { id: 's1', stepName: 'Tahap 1', title: 'Bagian 1', description: '', questions: [] } ]
             };
             historyStack = []; historyPointer = -1; saveState(); openEditorUI();
@@ -1297,7 +1355,12 @@
         function openFormEditor(id) {
             currentForm = JSON.parse(JSON.stringify(allForms.find(f => f.id === id))); 
             currentForm.settings = { ...defaultSettingsJSON, ...(currentForm.settings || {}) };
-            if(!currentForm.theme) currentForm.theme = { headerFont: 'Outfit', headerFontSize: 28, questionFont: 'Plus Jakarta Sans', questionFontSize: 14, textFont: 'Plus Jakarta Sans', textFontSize: 12, color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' };
+            if(!currentForm.theme) currentForm.theme = { 
+                headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: '700',
+                questionFont: 'Plus Jakarta Sans', questionFontSize: 14, questionFontWeight: '600',
+                textFont: 'Plus Jakarta Sans', textFontSize: 12, textFontWeight: '400',
+                color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' 
+            };
             historyStack = []; historyPointer = -1; saveState(); openEditorUI();
         }
 
@@ -1307,34 +1370,45 @@
             initCustomSelects(); 
         }
 
+        // ================= SUPER BIG UPGRADE: CUSTOM GLASSMORPHISM SELECT (ANTI-HILANG) =================
         function initCustomSelects() {
             document.querySelectorAll('select.q-type-select, select.t-select').forEach(nativeSelect => {
+                // Hindari pembuatan ganda
                 if(nativeSelect.nextElementSibling && nativeSelect.nextElementSibling.classList.contains('custom-select-wrapper')) return;
+
+                // Sembunyikan native select
                 nativeSelect.style.display = 'none';
                 
                 let wrapper = document.createElement('div');
                 wrapper.className = 'custom-select-wrapper';
+                
+                // Copy ukuran dari native select
                 if (nativeSelect.style.width) wrapper.style.width = nativeSelect.style.width;
                 if (nativeSelect.style.flex) wrapper.style.flex = nativeSelect.style.flex;
                 
+                // Copy kelas desain untuk Kotak Display
                 let extraClasses = Array.from(nativeSelect.classList).filter(c => c !== 'q-type-select' && c !== 't-select' && c !== 'inner-neumorph').join(' ');
                 let display = document.createElement('div');
                 display.className = 'custom-select-display inner-neumorph ' + extraClasses;
                 
+                // Ambil nilai opsi yang sedang aktif
                 let selOpt = nativeSelect.options[nativeSelect.selectedIndex];
                 let text = selOpt ? selOpt.text : 'Pilih...';
                 
                 display.innerHTML = `<span style="font-weight:700; font-size:1rem; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none;">${text}</span> <span class="arrow" style="margin-left:10px; transition:0.3s; pointer-events:none;">▼</span>`;
                 display.style.padding = nativeSelect.classList.contains('q-type-select') ? '15px 20px' : '10px 15px';
                 
+                // Buat Kotak Daftar Pilihan (Menu Melayang)
                 let optionsList = document.createElement('div');
                 optionsList.className = 'custom-select-options';
                 optionsList.style.display = 'none';
                 
+                // Parsing anak dari native select (<option> dan <optgroup>)
                 Array.from(nativeSelect.children).forEach((child) => {
                     if(child.tagName === 'OPTGROUP') {
                        let grp = document.createElement('div');
                        grp.className = 'custom-select-optgroup';
+                       grp.innerText = child.label || '---';
                        optionsList.appendChild(grp);
                     } else if (child.tagName === 'OPTION') {
                         let optDiv = document.createElement('div');
@@ -1342,6 +1416,7 @@
                         if(child.selected) optDiv.classList.add('selected');
                         optDiv.innerText = child.text;
                         
+                        // Event saat user mengklik opsi di menu dropdown
                         optDiv.onclick = (e) => {
                             e.stopPropagation();
                             nativeSelect.value = child.value;
@@ -1361,8 +1436,10 @@
                     }
                 });
 
+                // Event Buka Tutup Menu Dropdown
                 display.onclick = (e) => {
                     e.stopPropagation();
+                    
                     document.querySelectorAll('.custom-select-options').forEach(el => {
                         if(el !== optionsList) { 
                             el.style.display = 'none'; 
@@ -1386,15 +1463,9 @@
 
                         let rect = optionsList.getBoundingClientRect();
                         if (rect.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
-                            optionsList.style.top = 'auto';
-                            optionsList.style.bottom = '100%';
-                            optionsList.style.marginBottom = '10px';
-                            optionsList.style.transformOrigin = 'bottom center';
+                            optionsList.style.top = 'auto'; optionsList.style.bottom = '100%'; optionsList.style.marginBottom = '10px'; optionsList.style.marginTop = '0'; optionsList.style.transformOrigin = 'bottom center';
                         } else {
-                            optionsList.style.top = 'calc(100% + 10px)';
-                            optionsList.style.bottom = 'auto';
-                            optionsList.style.marginBottom = '0';
-                            optionsList.style.transformOrigin = 'top center';
+                            optionsList.style.top = 'calc(100% + 10px)'; optionsList.style.bottom = 'auto'; optionsList.style.marginBottom = '0'; optionsList.style.marginTop = '0'; optionsList.style.transformOrigin = 'top center';
                         }
                     }
                 };
@@ -1417,6 +1488,7 @@
             }
         }
 
+        // ================= CORE FORM BUILDER ENGINE =================
         const genId = () => Math.random().toString(36).substr(2, 9);
 
         function getSafeIndices() {
@@ -1426,14 +1498,20 @@
             return { s, q };
         }
 
-        const defaultQuestion = () => ({ id: 'q_' + genId(), type: 'pilihan_ganda', title: 'Pertanyaan', description: '', required: currentForm.settings.defaultRequired || false, options: ['Opsi 1'] });
+        const defaultQuestion = () => ({
+            id: 'q_' + genId(),
+            type: 'pilihan_ganda',
+            title: 'Pertanyaan',
+            description: '',
+            required: currentForm.settings.defaultRequired || false,
+            options: ['Opsi 1']
+        });
 
         function addQuestion() {
             const { s, q } = getSafeIndices();
             const newQ = defaultQuestion();
             currentForm.sections[s].questions.splice(q + 1, 0, newQ);
-            activeQIdx = q + 1;
-            debouncedSaveState(); renderBuilder();
+            activeQIdx = q + 1; debouncedSaveState(); renderBuilder();
         }
 
         function duplicateQuestion(sIdx, qIdx) {
@@ -1441,8 +1519,7 @@
             const newQ = JSON.parse(JSON.stringify(qToCopy));
             newQ.id = 'q_' + genId(); 
             currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, newQ);
-            activeQIdx = qIdx + 1;
-            debouncedSaveState(); renderBuilder();
+            activeQIdx = qIdx + 1; debouncedSaveState(); renderBuilder();
         }
 
         function deleteQuestion(sIdx, qIdx) {
@@ -1452,26 +1529,25 @@
         }
 
         function addSection() {
-            const newSec = { id: 's_' + genId(), stepName: `Tahap ${currentForm.sections.length + 1}`, title: 'Bagian Tanpa Judul', description: '', questions: [defaultQuestion()] };
+            const newSec = {
+                id: 's_' + genId(), stepName: `Tahap ${currentForm.sections.length + 1}`, title: 'Bagian Tanpa Judul', description: '', questions: [defaultQuestion()]
+            };
             currentForm.sections.splice(activeSecIdx + 1, 0, newSec);
-            activeSecIdx++; activeQIdx = 0;
-            debouncedSaveState(); renderBuilder();
+            activeSecIdx++; activeQIdx = 0; debouncedSaveState(); renderBuilder();
         }
 
         function deleteSection(sIdx) {
             if(currentForm.sections.length <= 1) return showToast("Minimal harus ada 1 bagian (section).");
             currentForm.sections.splice(sIdx, 1);
             if(activeSecIdx >= currentForm.sections.length) { activeSecIdx = currentForm.sections.length - 1; }
-            activeQIdx = -1;
-            debouncedSaveState(); renderBuilder();
+            activeQIdx = -1; debouncedSaveState(); renderBuilder();
         }
 
         function addTitleDesc() {
             const { s, q } = getSafeIndices();
             const newQ = { id: 'q_' + genId(), type: 'title_only', title: 'Judul Teks', image: '' };
             currentForm.sections[s].questions.splice(q + 1, 0, newQ);
-            activeQIdx = q + 1;
-            debouncedSaveState(); renderBuilder();
+            activeQIdx = q + 1; debouncedSaveState(); renderBuilder();
         }
 
         function addOption(sIdx, qIdx) {
@@ -1488,6 +1564,7 @@
         function changeQType(sIdx, qIdx, newType) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             q.type = newType;
+            
             if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(newType)) {
                 if(!q.options || q.options.length === 0) q.options = ['Opsi 1'];
             }
@@ -1500,7 +1577,9 @@
             if(newType === 'skala_linier') {
                 if(q.scaleMin === undefined) q.scaleMin = 1; if(!q.scaleMax) q.scaleMax = 5;
             }
-            if(newType === 'rating') { if(!q.ratingLevels) q.ratingLevels = 5; }
+            if(newType === 'rating') {
+                if(!q.ratingLevels) q.ratingLevels = 5;
+            }
             debouncedSaveState(); renderBuilder();
         }
         
@@ -1508,6 +1587,66 @@
         function removeGridRow(sIdx, qIdx, rIdx) { if(currentForm.sections[sIdx].questions[qIdx].rows.length <= 1) return; currentForm.sections[sIdx].questions[qIdx].rows.splice(rIdx, 1); debouncedSaveState(); renderBuilder(); }
         function addGridCol(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].columns.push(`Kolom ${currentForm.sections[sIdx].questions[qIdx].columns.length + 1}`); debouncedSaveState(); renderBuilder(); }
         function removeGridCol(sIdx, qIdx, cIdx) { if(currentForm.sections[sIdx].questions[qIdx].columns.length <= 1) return; currentForm.sections[sIdx].questions[qIdx].columns.splice(cIdx, 1); debouncedSaveState(); renderBuilder(); }
+
+        function updateRootSetting(key, value) { currentForm[key] = value; debouncedSaveState(); }
+        function updateSetting(key, value) { currentForm.settings[key] = value; debouncedSaveState(); }
+        function toggleQuizPanel(show) { document.getElementById('quizSubPanel').style.display = show ? 'block' : 'none'; }
+        function toggleAcc(contentId, iconId) {
+            const content = document.getElementById(contentId); const icon = document.getElementById(iconId);
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.style.transform = 'rotate(180deg)'; } 
+            else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; }
+        }
+        
+        function renderSettings() {
+            if(!currentForm) return;
+            const s = currentForm.settings;
+            document.getElementById('setIsQuiz').checked = s.isQuiz;
+            toggleQuizPanel(s.isQuiz);
+            
+            if(s.quizRelease) {
+                const el = document.querySelector(`input[name="quizRelease"][value="${s.quizRelease}"]`);
+                if(el) el.checked = true;
+            }
+            document.getElementById('setQuizMissed').checked = s.quizShowMissed;
+            document.getElementById('setQuizCorrect').checked = s.quizShowCorrect;
+            document.getElementById('setQuizPoints').checked = s.quizShowPoints;
+            document.getElementById('setQuizDefPoints').value = s.quizDefaultPoints || 0;
+            
+            document.getElementById('setCollectEmail').value = s.collectEmail || 'none';
+            document.getElementById('setSendCopy').value = s.sendCopy || 'none';
+            document.getElementById('setAllowEdit').checked = s.editResponse;
+            document.getElementById('setLimitOne').checked = s.limitOne;
+            
+            document.getElementById('setShowProgress').checked = s.showProgress;
+            document.getElementById('setShuffle').checked = s.shuffleQuestions;
+            document.getElementById('setConfMsg').value = s.confirmationMessage || '';
+            document.getElementById('setShowSubmitAnother').checked = s.showSubmitAnother;
+            document.getElementById('setShowSummary').checked = s.showSummary;
+            document.getElementById('setDisableAutoSave').checked = s.disableAutoSave;
+            
+            document.getElementById('setActive').checked = currentForm.isActive;
+            document.getElementById('setSlug').value = currentForm.slug || '';
+            if(s.deadline) {
+                const d = new Date(s.deadline);
+                if(!isNaN(d.getTime())) {
+                    const pad = n => n < 10 ? '0'+n : n;
+                    const fmt = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                    document.getElementById('setDeadline').value = fmt;
+                }
+            } else { document.getElementById('setDeadline').value = ''; }
+            
+            document.getElementById('setDefaultRequired').checked = s.defaultRequired;
+
+            initCustomSelects(); 
+        }
+
+        window.toggleAllowedFileType = function(sIdx, qIdx, ftId, isChecked) {
+            let q = currentForm.sections[sIdx].questions[qIdx];
+            if (!q.allowedFileTypes) q.allowedFileTypes = [];
+            if (isChecked) { if (!q.allowedFileTypes.includes(ftId)) q.allowedFileTypes.push(ftId); } 
+            else { q.allowedFileTypes = q.allowedFileTypes.filter(id => id !== ftId); }
+            debouncedSaveState();
+        };
 
         function renderBuilder() {
             const canvas = document.getElementById('builderCanvas');
@@ -1666,12 +1805,10 @@
                             <button class="gf-btn-submit glow-effect" style="padding:10px 25px; border-radius:30px;" onclick="currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=false; renderBuilder();">Selesai</button>
                         </div>`;
 
-                        html += `
-                        <div class="form-question-card glass-card neumorph-outer ${isActive} answer-key-mode" style="margin-bottom:30px;" id="q-${sIdx}-${qIdx}">
-                            ${akHtml}
-                        </div>`;
-                        return; 
+                        html += `<div class="form-question-card glass-card neumorph-outer ${isActive} answer-key-mode" style="margin-bottom:30px;" id="q-${sIdx}-${qIdx}">${akHtml}</div>`;
+                        return;
                     }
+
 
                     let menuItems = `<div class="q-menu-item" onclick="toggleQSetting(${sIdx}, ${qIdx}, 'showDescription')"><span style="width:20px;">${q.showDescription ? '✓' : ''}</span> Deskripsi</div>`;
 
@@ -1741,9 +1878,7 @@
                         optionsHtml += `<div class="gf-radio-group" style="margin-top:15px; display:flex; flex-direction:column; gap:16px;">`;
                         
                         let sectionOpts = `<option value="next">Lanjutkan ke bagian berikut</option><option value="submit">Kirim formulir</option>`;
-                        currentForm.sections.forEach((s, idx) => { 
-                            sectionOpts += `<option value="s${idx}">Buka bagian ${idx+1} (${s.title || 'Tanpa Judul'})</option>`; 
-                        });
+                        currentForm.sections.forEach((s, idx) => { sectionOpts += `<option value="s${idx}">Buka bagian ${idx+1} (${s.title || 'Tanpa Judul'})</option>`; });
 
                         q.options.forEach((opt, oIdx) => {
                             let icon = q.type === 'kotak_centang' ? '<div class="fake-checkbox"></div>' : (q.type==='dropdown' ? `<span class="fake-num">${oIdx+1}.</span>` : '<div class="fake-radio"></div>');
@@ -1773,9 +1908,7 @@
                     else if (q.type === 'tanggal') { 
                         let lbl = (q.includeYear !== false) ? 'Bulan, Hari, Tahun' : 'Bulan, Hari';
                         optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">📅 ${lbl}</div>`; 
-                        if(q.includeTime) {
-                            optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px;">⏰ Waktu</div>`;
-                        }
+                        if(q.includeTime) optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px;">⏰ Waktu</div>`;
                     }
                     else if (q.type === 'waktu') { 
                         let lbl = (q.timeType === 'durasi') ? 'Jam : Menit : Detik' : 'Waktu';
@@ -1787,10 +1920,8 @@
                         let maxSizeOpts = ['1 MB', '10 MB', '100 MB', '1 GB', '10 GB'].map(v => `<option value="${v}" ${q.maxSize==v?'selected':''}>${v}</option>`).join('');
                         
                         let fileTypesArr = [
-                            { id: 'document', label: 'Dokumen' }, { id: 'presentation', label: 'Presentasi' },
-                            { id: 'spreadsheet', label: 'Spreadsheet' }, { id: 'image', label: 'Gambar' },
-                            { id: 'pdf', label: 'PDF' }, { id: 'photo', label: 'Foto' },
-                            { id: 'video', label: 'Video' }, { id: 'audio', label: 'Audio' }
+                            { id: 'document', label: 'Dokumen' }, { id: 'presentation', label: 'Presentasi' }, { id: 'spreadsheet', label: 'Spreadsheet' }, { id: 'image', label: 'Gambar' },
+                            { id: 'pdf', label: 'PDF' }, { id: 'photo', label: 'Foto' }, { id: 'video', label: 'Video' }, { id: 'audio', label: 'Audio' }
                         ];
 
                         let allowedTypesHtml = '';
@@ -1798,10 +1929,7 @@
                             if (!q.allowedFileTypes) q.allowedFileTypes = [];
                             let checksHtml = fileTypesArr.map(ft => {
                                 let isChecked = q.allowedFileTypes.includes(ft.id) ? 'checked' : '';
-                                return `<label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-                                            <input type="checkbox" class="custom-check" ${isChecked} onchange="toggleAllowedFileType(${sIdx}, ${qIdx}, '${ft.id}', this.checked)">
-                                            <span style="font-size:${theme.textFontSize}px; color:var(--form-text); font-weight:600;">${ft.label}</span>
-                                        </label>`;
+                                return `<label style="display:flex; align-items:center; gap:10px; cursor:pointer;"><input type="checkbox" class="custom-check" ${isChecked} onchange="toggleAllowedFileType(${sIdx}, ${qIdx}, '${ft.id}', this.checked)"><span style="font-size:${theme.textFontSize}px; color:var(--form-text); font-weight:600;">${ft.label}</span></label>`;
                             }).join('');
                             allowedTypesHtml = `<div class="glass-panel" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:20px; padding:20px; background:rgba(139, 92, 246, 0.05); border:1px solid rgba(139, 92, 246, 0.2); border-radius:12px;">${checksHtml}</div>`;
                         }
@@ -1944,7 +2072,6 @@
                                     <label for="req-${sIdx}-${qIdx}" class="switch-label"></label>
                                 </div>
                                 
-                                <!-- SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) -->
                                 <div style="position:relative;">
                                     <button class="top-icon-btn neumorph-circle" style="margin-left:5px;" onclick="toggleQMenu(event, ${sIdx}, ${qIdx})">⋮</button>
                                     <div id="q-menu-${sIdx}-${qIdx}" class="q-menu-dropdown inner-neumorph" style="display:none;" onclick="event.stopPropagation()">
