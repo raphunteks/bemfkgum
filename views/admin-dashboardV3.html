@@ -129,6 +129,7 @@
 
             <div class="glass-card">
                 <h3 style="margin-top:0;">Gaya Tombol (30 Bentuk & 30 Efek)</h3>
+                
                 <label class="input-label">Bentuk Tombol (Shapes)</label>
                 <div class="scroll-grid" style="margin-bottom:25px;" id="grid-shapes">
                     <!-- Injected by JS -->
@@ -236,6 +237,28 @@
         </div>
     </div>
 </div>
+
+<!-- SUCCESS MODAL (CUSTOM POPUP UNTUK SAVE) -->
+<div id="successModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
+    <div class="glass-card neumorph-outer" style="width:100%; max-width:420px; text-align:center; padding:40px 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div style="font-size:4rem; margin-bottom:15px; animation: bounceIn 1s;">✨</div>
+        <h2 style="font-family:'Outfit', sans-serif; color:var(--text-main); margin-top:0; font-size:1.6rem;">Publikasi Berhasil!</h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px;">Halaman BEM-Linktree Anda telah tersimpan dan siap dibagikan ke publik.</p>
+        
+        <div class="modal-link-box" id="modal-link-text">
+            https://bemkbmfkgumi.com/link/slug
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-top:25px; flex-wrap:wrap;">
+            <button class="btn-outline" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="copyModalLink()">📋 Salin Tautan</button>
+            <button class="btn-primary" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="openModalLink()">👁️ Buka Halaman</button>
+        </div>
+        <button class="btn-danger" style="margin-top:15px; width:100%; background:transparent; color:var(--text-muted); border:1px solid var(--border-color); font-weight:600;" onclick="closeSuccessModal()">Tutup</button>
+    </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="globalToast">Notifikasi</div>
 
 <script>
     // ================= 50+ AESTHETIC GEN Z FONTS =================
@@ -444,7 +467,7 @@
         }
     }
 
-    // ================= LIST MANAGEMENT =================
+    // ================= LIST MANAGEMENT & COPY =================
     async function loadAllLinktrees() {
         const container = document.getElementById('linktree-list-container');
         container.innerHTML = "<div style='text-align:center; padding:50px; color:var(--text-muted);'>Memuat daftar Linktree dari server...</div>";
@@ -461,15 +484,17 @@
 
             let html = '';
             [...allLinktrees].reverse().forEach(tree => {
+                const linkUrl = `${window.location.origin}/link/${tree.slug}`;
                 html += `
                 <div class="list-linktree-card">
                     <div style="flex:1;">
                         <h3 style="margin:0 0 5px 0; font-size:1.3rem;">${tree.profile?.title || 'Tanpa Judul'}</h3>
-                        <a href="/link/${tree.slug}" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:600; font-size:0.9rem;">/link/${tree.slug}</a>
+                        <a href="${linkUrl}" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:600; font-size:0.9rem;">${linkUrl}</a>
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button class="btn-outline" onclick="openLinktreeEditor('${tree.id}')">✏️ Edit</button>
-                        <a href="/link/${tree.slug}" target="_blank" class="btn-outline" style="text-decoration:none;">👁️ Buka</a>
+                        <button class="btn-outline" onclick="copyToClipboard('${linkUrl}')">📋 Salin</button>
+                        <a href="${linkUrl}" target="_blank" class="btn-outline" style="text-decoration:none;">👁️ Buka</a>
                         <button class="btn-danger" onclick="deleteLinktree('${tree.id}')">🗑️</button>
                     </div>
                 </div>`;
@@ -505,12 +530,44 @@
                 const res = await fetch(`/api/linktrees/${id}`, { method: 'DELETE' });
                 const json = await res.json();
                 if(json.success) {
-                    alert("Berhasil dihapus!");
+                    showToast("🗑️ Berhasil dihapus!");
                     loadAllLinktrees();
                 }
             } catch (e) {
                 alert("Gagal menghapus.");
             }
+        }
+    }
+
+    // ================= CLIPBOARD UTILITY =================
+    function showToast(msg) {
+        const t = document.getElementById('globalToast');
+        if(!t) return;
+        t.innerText = msg; t.style.bottom = '30px';
+        setTimeout(() => t.style.bottom = '-100px', 3000);
+    }
+
+    function copyToClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("✅ Tautan berhasil disalin!");
+            });
+        } else {
+            // Fallback for non-https or restricted environments
+            let textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("✅ Tautan berhasil disalin!");
+            } catch (err) {
+                alert("Gagal menyalin tautan.");
+            }
+            document.body.removeChild(textArea);
         }
     }
 
@@ -882,7 +939,29 @@
         screen.innerHTML = html;
     }
 
-    // ================= API SAVE LOGIC =================
+    // ================= MODAL & API SAVE LOGIC =================
+    function openModalLink() {
+        if(state.slug) {
+            window.open(`${window.location.origin}/link/${state.slug}`, '_blank');
+        }
+    }
+
+    function copyModalLink() {
+        const url = `${window.location.origin}/link/${state.slug}`;
+        copyToClipboard(url);
+    }
+
+    function showSuccessModal(url) {
+        document.getElementById('modal-link-text').innerText = url;
+        document.getElementById('successModal').style.display = 'flex';
+    }
+
+    function closeSuccessModal() {
+        document.getElementById('successModal').style.display = 'none';
+        loadAllLinktrees(); // Muat ulang list
+        switchTab('list');  // Kembali ke tab list setelah sukses
+    }
+
     async function saveLinktree() {
         try {
             const btn = document.getElementById('btn-global-action');
@@ -897,7 +976,8 @@
             const data = await res.json();
             if(data.success) {
                 state = data.data; 
-                alert("✅ Sukses! Linktree berhasil dipublikasikan di: /link/" + state.slug);
+                // Tampilkan Modal Success Custom bukan bawaan Browser Chrome
+                showSuccessModal(`${window.location.origin}/link/${state.slug}`);
             } else {
                 alert("Gagal: " + data.message);
             }
@@ -911,5 +991,9 @@
     }
 
 </script>
+
+<!-- Script Protect DevTools -->
+<script src="/js/protect-devtools.js"></script>
+
 </body>
 </html>
