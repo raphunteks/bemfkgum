@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linktree BEM KBMFKG UMI</title>
+    
+    <!-- Load Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/mainV3.css">
+</head>
+<body>
+
+<div class="public-linktree-wrapper" id="page-wrapper">
+    <div class="public-container" id="public-screen">
+        <div style="text-align:center; padding: 100px 20px;">
+            <p style="font-weight:700; opacity:0.7;">Memuat Linktree...</p>
+        </div>
+        <!-- Konten akan dirender melalui JavaScript -->
+    </div>
+</div>
+
+<script>
+    // Ambil Slug dari URL (misal: /link/kabinet-baru)
+    const pathArray = window.location.pathname.split('/');
+    const slug = pathArray[pathArray.length - 1];
+
+    document.addEventListener('DOMContentLoaded', loadLinktreeData);
+
+    async function loadLinktreeData() {
+        try {
+            const res = await fetch(`/api/linktrees/${slug}`);
+            const json = await res.json();
+            
+            if(!json.success || !json.data) {
+                renderError();
+                return;
+            }
+
+            renderPublicLinktree(json.data);
+        } catch (error) {
+            renderError();
+        }
+    }
+
+    function renderError() {
+        document.getElementById('public-screen').innerHTML = `
+            <div class="glass-card" style="text-align:center; margin-top:50px;">
+                <h2 style="color:#ef4444;">Halaman Tidak Ditemukan</h2>
+                <p>Linktree yang Anda cari tidak ada atau URL salah.</p>
+                <a href="/" class="btn-primary" style="display:inline-block; margin-top:20px; text-decoration:none;">Kembali ke Beranda</a>
+            </div>
+        `;
+    }
+
+    function loadGoogleFont(fontFamilyStr) {
+        if(!fontFamilyStr) return;
+        let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
+        const linkId = `font-${fontName.replace(/\s+/g, '')}`;
+        if(!document.getElementById(linkId)) {
+            const link = document.createElement('link');
+            link.id = linkId; link.rel = 'stylesheet';
+            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700&display=swap`;
+            document.head.appendChild(link);
+        }
+    }
+
+    function renderPublicLinktree(data) {
+        const wrapper = document.getElementById('page-wrapper');
+        const screen = document.getElementById('public-screen');
+        const t = data.theme;
+
+        // 1. Setup Meta Title (SEO Dasar)
+        if(data.settings && data.settings.seoTitle) {
+            document.title = data.settings.seoTitle;
+        } else if (data.profile && data.profile.title) {
+            document.title = data.profile.title;
+        }
+
+        // 2. Terapkan Background ke Seluruh Wrapper Layar
+        if(t.bgType === 'color') {
+            wrapper.style.background = t.bgColor;
+        } else if (t.bgType === 'gradient') {
+            wrapper.style.background = `linear-gradient(135deg, ${t.bgColor}, #ffffff)`;
+        } else if (t.bgType === 'image' && t.bgImage) {
+            wrapper.style.background = `url('${t.bgImage}') no-repeat center center / cover`;
+        }
+
+        // 3. Load Fonts
+        loadGoogleFont(t.fontTitle);
+        loadGoogleFont(t.fontButton);
+
+        // 4. Render HTML Struktur Persis Seperti Live Preview
+        wrapper.style.color = t.textColor;
+        
+        let html = '';
+
+        // Profile Section
+        html += `<img id="pv-profile-img" src="${data.profile.image || 'https://via.placeholder.com/100'}" alt="Profile">`;
+        html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${data.profile.title || '@namaprofil'}</h2>`;
+        html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${data.profile.bio || ''}</p>`;
+
+        // Link Buttons Logic
+        let btnCssObj = `font-family:${t.fontButton}; `;
+        
+        if (t.btnType === 'filled') {
+            btnCssObj += `background-color:${t.btnColor}; color:#fff; border:none; `;
+        } else if (t.btnType === 'outline') {
+            btnCssObj += `background-color:transparent; color:${t.textColor}; border:2px solid ${t.btnColor}; `;
+        } else if (t.btnType === 'neumorph') {
+            btnCssObj += `background-color:rgba(255,255,255,0.4); color:${t.textColor}; border:1px solid rgba(255,255,255,0.6); box-shadow: 4px 4px 10px rgba(0,0,0,0.05), inset 1px 1px 1px rgba(255,255,255,0.5); backdrop-filter:blur(10px); `;
+        }
+
+        html += `<div id="pv-links-container" style="margin-top:40px;">`;
+        if(data.links && Array.isArray(data.links)) {
+            data.links.forEach(l => {
+                if(l.active) {
+                    html += `<a href="${l.url || '#'}" target="_blank" class="pv-btn btn-shape-${t.btnShape}" style="${btnCssObj}">${l.title || 'Untitled Link'}</a>`;
+                }
+            });
+        }
+        html += `</div>`;
+
+        // Socials Logic
+        const s = data.socials || {};
+        if(s.instagram || s.tiktok || s.whatsapp || s.email) {
+            html += `<div id="pv-socials" style="margin-top:50px;">`;
+            if(s.instagram) html += `<a href="${s.instagram}" class="pv-social-icon" style="color:${t.textColor}">📸</a>`;
+            if(s.tiktok) html += `<a href="${s.tiktok}" class="pv-social-icon" style="color:${t.textColor}">🎵</a>`;
+            if(s.whatsapp) html += `<a href="https://wa.me/${s.whatsapp}" class="pv-social-icon" style="color:${t.textColor}">💬</a>`;
+            if(s.email) html += `<a href="mailto:${s.email}" class="pv-social-icon" style="color:${t.textColor}">✉️</a>`;
+            html += `</div>`;
+        }
+
+        // Watermark Footer BEM (Optional)
+        html += `<div style="text-align:center; margin-top:60px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton}; color:${t.textColor}">Powered by BEM KBMFKG UMI</div>`;
+
+        screen.innerHTML = html;
+    }
+</script>
+</body>
+</html>
