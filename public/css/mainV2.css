@@ -4,6 +4,8 @@ SUPER BIG UPGRADE UI/UX V2 (FUTURISTIC AESTHETIC EDITION)
 DIKOREKSI: Mengembalikan layout absolut yang hilang, FIX warna 
 tema yang transparan, FIX spasi & render Font pada soal/opsi.
 + UPGRADE BARU: Dukungan Penuh Menu Accordion & Sub-Panel (Setelan Form)
++ UPGRADE BARU: Integrasi Sub-Tab Jawaban (Ringkasan, Pertanyaan, Individual)
++ UPGRADE BARU: Custom Font Picker with Weights & Categories
 =========================================================
 */
 
@@ -30,8 +32,11 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     
     /* DEFAULT FONTS (FALLBACK IF GOOGLE FONTS NOT LOADED) */
     --form-font-header: 'Outfit', sans-serif;
+    --form-font-header-weight: 700;
     --form-font-question: 'Plus Jakarta Sans', sans-serif;
+    --form-font-question-weight: 600;
     --form-font-text: 'Plus Jakarta Sans', sans-serif;
+    --form-font-text-weight: 400;
 }
 
 /* DARK MODE FROSTED GLASS OVERRIDES */
@@ -103,7 +108,7 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .inner-neumorph {
-    background: rgba(255,255,255,0.3); /* FIX: Menghapus !important agar JS warna palet di Sidebar Tema berfungsi maksimal (Gbr 1 & Gbr 4) */
+    background: rgba(255,255,255,0.3);
     box-shadow: var(--inner-neumorph) !important;
     border: 1px solid rgba(255,255,255,0.4) !important;
     border-radius: 12px !important;
@@ -123,7 +128,12 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     display: inline-block;
 }
 
-/* ================== WIZARD STEPPER (NEW) ================== */
+/* ================== GLOBAL TYPOGRAPHY BINDING ================== */
+.form-title { font-family: var(--form-font-header) !important; font-weight: var(--form-font-header-weight, 700) !important; letter-spacing: -0.5px;}
+.question-title { font-family: var(--form-font-question) !important; font-weight: var(--form-font-question-weight, 600) !important; margin-bottom: 20px !important; padding-bottom: 15px; border-bottom: 1px solid rgba(139, 92, 246, 0.2); }
+.form-desc, .gf-input, .opt-text, .step-name { font-family: var(--form-font-text) !important; font-weight: var(--form-font-text-weight, 400) !important; }
+
+/* ================== WIZARD STEPPER ================== */
 .stepper-wrapper { 
     display: flex; justify-content: space-between; align-items: center; position: relative; 
     padding: 25px 20px !important; margin-bottom: 30px; border-radius: 20px; overflow-x: auto;
@@ -148,7 +158,6 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .stepper-item.active .step-name { color: #06b6d4; }
 .stepper-item.completed .step-name { color: var(--form-text); }
 
-/* WIZARD LOGIC CSS */
 .form-step { display: none; }
 .form-step.active { display: block; animation: fadeInTab 0.5s ease; }
 
@@ -157,14 +166,12 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     width: 100%; max-width: 900px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; position: relative;
 }
 
-/* ADMIN HEADER NAV */
 .header-admin-nav {
     display: flex; justify-content: space-between; align-items: center; 
     padding: 12px 25px; margin: 15px; border-radius: 20px;
     position: sticky; top: 15px; z-index: 1000;
 }
 
-/* TABS MENU */
 .builder-tabs {
     display: flex; justify-content: center; gap: 15px; margin: 0 15px 30px;
     padding: 10px; border-radius: 20px;
@@ -181,7 +188,6 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .tab-content { display: none; width: 100%; }
 .tab-content.active { display: block; animation: fadeInTab 0.4s ease; }
 
-/* KARTU FORM (LIST & BUILDER) */
 .admin-header-main {
     display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
     padding: 30px; margin-bottom: 30px;
@@ -191,16 +197,14 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     padding: 25px; margin-bottom: 20px;
 }
 
-/* FIX GBR 3 (Jarak Soal Terlalu Dempet): Menambahkan margin-bottom 30px dan padding 35px */
 .form-header-card, .form-question-card {
     padding: 35px; margin-bottom: 30px !important; width: 100%; box-sizing: border-box; position: relative;
-    border-radius: 20px !important;
+    border-radius: 20px !important; z-index: 1; transition: z-index 0s;
 }
 .form-header-card { border-top: 10px solid var(--form-active-border) !important; }
 .form-question-card { border-left: 6px solid transparent; }
-.form-question-card.active { border-left-color: var(--form-active-border); }
+.form-question-card.active { border-left-color: var(--form-active-border); z-index: 10; }
 
-/* Banner Customizations */
 .form-header-banner {
     width: 100%; height: 160px;
     border-radius: 20px 20px 0 0 !important;
@@ -213,21 +217,49 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 }
 .form-header-banner.no-image { height: 12px; border-radius: 20px !important; }
 
-/* Typography */
-.form-title { font-family: var(--form-font-header) !important; font-weight: 700; letter-spacing: -0.5px;}
 
-/* FIX GBR 3 (Question Title terlalu dekat dengan Opsi Jawaban): Penambahan margin dan padding bottom */
-.question-title { 
-    font-family: var(--form-font-question) !important; 
-    font-weight: 600; 
-    margin-bottom: 20px !important; 
-    padding-bottom: 15px; 
-    border-bottom: 1px solid rgba(139, 92, 246, 0.2); 
+/* ================== NEW: CUSTOM FONT PICKER (FLYOUT CATEGORIES) ================== */
+.custom-font-picker { position: relative; width: 100%; }
+.cfp-display { 
+    background: var(--form-card-bg); padding: 12px 15px; border-radius: 12px; 
+    border: 1px solid var(--form-border); display: flex; justify-content: space-between; 
+    cursor: pointer; font-size: 0.95rem; font-weight: 600; box-shadow: var(--inner-neumorph); transition: 0.3s;
 }
-.form-desc { color: var(--form-text-muted); line-height: 1.7; font-size: 1rem;}
-.asterisk { color: #ef4444; text-shadow: 0 0 5px rgba(239,68,68,0.5); }
+.cfp-display:hover { border-color: var(--form-active-border); }
+.cfp-dropdown {
+    position: absolute; top: 100%; left: 0; right: 0; background: var(--form-bg);
+    border: 1px solid var(--form-border); box-shadow: var(--outer-neumorph);
+    border-radius: 12px; max-height: 250px; overflow-y: auto; z-index: 99999;
+    display: none; padding: 5px 0; margin-top: 5px;
+}
+.cfp-dropdown.show { display: block; animation: dropInPremium 0.3s ease; }
+.cfp-item {
+    padding: 10px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    transition: 0.2s; position: relative; font-size: 0.95rem; color: var(--form-text);
+}
+.cfp-item:hover { background: var(--form-focus-glow); color: var(--form-active-border); }
+.cfp-submenu {
+    position: absolute; left: 100%; top: 0; background: var(--form-bg); border-radius: 12px;
+    box-shadow: var(--outer-neumorph); border: 1px solid var(--form-border); min-width: 150px;
+    display: none; padding: 5px 0; z-index: 100000; margin-left: 5px;
+}
+.cfp-item:hover .cfp-submenu { display: block; animation: popIn 0.2s ease; }
+.cfp-subitem { padding: 10px 15px; cursor: pointer; transition: 0.2s; font-size: 0.85rem; color: var(--form-text); }
+.cfp-subitem:hover { background: var(--form-focus-glow); color: var(--form-active-border); }
 
-/* ================== STRUKTUR THEME SIDEBAR ================== */
+@keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+/* ================== NEW: JAWABAN TABS (RINGKASAN, PERTANYAAN, INDIVIDUAL) ================== */
+.j-tabs { display: flex; border-bottom: 2px solid rgba(139, 92, 246, 0.2); margin-bottom: 25px; overflow-x: auto; scrollbar-width: none; }
+.j-tabs::-webkit-scrollbar { display: none; }
+.j-tab { padding: 12px 25px; cursor: pointer; color: var(--form-text-muted); font-weight: 700; border-bottom: 3px solid transparent; transition: 0.3s; white-space: nowrap; margin-bottom: -2px; }
+.j-tab:hover { color: var(--form-active-border); background: rgba(139, 92, 246, 0.05); border-radius: 8px 8px 0 0; }
+.j-tab.active { color: var(--form-active-border); border-bottom-color: var(--form-active-border); }
+.j-content { display: none; }
+.j-content.active { display: block; animation: fadeInTab 0.4s ease; }
+
+
+/* ================== THEME SIDEBAR ================== */
 .theme-sidebar {
     position: fixed; top: 0; right: -380px; width: 350px; height: 100vh;
     z-index: 10000; transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -266,16 +298,35 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     position: absolute; top: -15px !important; left: 50%; transform: translateX(-50%);
     cursor: grab; opacity: 0; transition: 0.3s; font-size: 1.2rem; letter-spacing: 2px;
     padding: 2px 15px !important; color: var(--form-text-muted); border-radius: 12px;
+    z-index: 10; background: var(--form-card-bg);
 }
 .form-question-card.active .drag-handle, .form-question-card:hover .drag-handle { opacity: 1; color: var(--form-text); box-shadow: var(--outer-neumorph) !important;}
-.form-question-card.dragging { opacity: 0.4; border: 2px dashed var(--form-active-border); transform: scale(0.98); }
-.drop-placeholder { border: 2px dashed var(--form-active-border) !important; background: var(--form-focus-glow) !important; border-radius: 20px; margin-bottom: 25px; transform: scale(1.02); }
+.sortable-ghost { opacity: 0.3 !important; background: var(--form-focus-glow) !important; border: 2px dashed var(--form-active-border) !important; border-radius: 20px !important; transform: scale(0.98); }
+.sortable-drag { cursor: grabbing !important; box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important; transform: scale(1.02); opacity: 0.9 !important; border: 1px solid var(--form-active-border) !important; }
+
+
+/* ================== MENU OPTIONS & ANSWER KEY ================== */
+.q-menu-dropdown { position: absolute; right: 0; bottom: 55px; z-index: 100; min-width: 260px; padding: 10px; border-radius: 12px; background: var(--form-bg); box-shadow: var(--outer-neumorph); display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--form-border); }
+.q-menu-item { display: flex; align-items: center; gap: 10px; padding: 12px 15px; cursor: pointer; border-radius: 8px; transition: 0.2s; font-size: 0.95rem; font-weight: 600; color: var(--form-text); }
+.q-menu-item:hover { background: rgba(139, 92, 246, 0.1); color: var(--form-active-border); }
+.validation-row { display: flex; gap: 10px; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--form-border); flex-wrap: wrap; }
+
+.answer-key-mode { border-top: 6px solid var(--form-active-border) !important; border-left: 6px solid transparent !important; background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, var(--form-card-bg) 100%) !important; }
+.answer-key-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--form-border); padding-bottom: 15px; flex-wrap: wrap; gap:15px; }
+.answer-key-title { font-size: 1.4rem; font-weight: 700; color: var(--form-text); font-family: var(--form-font-question); flex: 1; }
+.points-input { width: 80px; text-align: center; font-size: 1.2rem; font-weight: bold; padding: 10px; color: var(--form-active-border); }
+.correct-option-btn { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border-radius: 12px; cursor: pointer; border: 1px solid var(--form-border); margin-bottom: 15px; transition: 0.2s; background: rgba(255,255,255,0.4); }
+.correct-option-btn:hover { background: rgba(255,255,255,0.8); box-shadow: var(--outer-neumorph); }
+.correct-option-btn.selected { background: rgba(16, 185, 129, 0.1); border-color: #10b981; border-width: 2px; }
+.correct-check { color: #10b981; font-weight: bold; font-size: 1.5rem; display: none; }
+.correct-option-btn.selected .correct-check { display: block; animation: popInCheck 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popInCheck { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
 
 
 /* ================== INPUTS SKEUOMORPHISM (NEUMORPH + GLASS) ================== */
 .gf-input, .q-type-select {
     width: 100%; padding: 15px 20px; color: var(--form-text); outline: none; border: none;
-    font-family: var(--form-font-text); font-size: 1.05rem; transition: 0.3s; box-sizing: border-box;
+    font-size: 1.05rem; transition: 0.3s; box-sizing: border-box;
 }
 .gf-input:focus, .t-select:focus, .q-type-select:focus {
     background: rgba(255,255,255,0.7) !important;
@@ -293,125 +344,83 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 }
 
 /* ================== SUPER UPGRADE: CUSTOM GLASSMORPHISM SELECT ================== */
-.custom-select-wrapper {
-    position: relative;
-    user-select: none;
-    width: 100%;
-}
+.custom-select-wrapper { position: relative; user-select: none; width: 100%; }
 .custom-select-display {
-    cursor: pointer;
-    transition: 0.3s;
+    cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     background: var(--form-card-bg) !important;
 }
 .custom-select-display:hover {
-    box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 10px var(--form-focus-glow) !important;
-    border-color: var(--form-active-border) !important;
+    box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
+    border-color: var(--form-active-border) !important; transform: translateY(-1px);
 }
 .custom-select-wrapper.open .custom-select-display {
     border-color: var(--form-active-border) !important;
-    box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
+    box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important;
+    transform: translateY(1px);
 }
-.custom-select-display .arrow {
-    font-size: 0.8rem;
-    transition: transform 0.3s;
-    color: var(--form-active-border);
-}
-.custom-select-wrapper.open .custom-select-display .arrow {
-    transform: rotate(180deg);
-}
+.custom-select-wrapper.open .custom-select-display .arrow { transform: rotate(180deg); }
 
 .custom-select-options {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 0;
-    right: 0;
-    z-index: 9999;
-    max-height: 280px;
-    overflow-y: auto;
-    border-radius: 16px !important;
-    padding: 10px;
-    animation: dropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(40px) !important;
-    -webkit-backdrop-filter: blur(40px) !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+    position: absolute; top: calc(100% + 10px); left: 0; right: 0; z-index: 99999;
+    max-height: 280px; overflow-y: auto; border-radius: 16px !important; padding: 12px;
+    animation: dropInPremium 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(255, 255, 255, 0.85) !important; backdrop-filter: blur(40px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(40px) saturate(150%) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.5) inset !important;
     border: 1px solid var(--form-border);
 }
 [data-theme="dark"] .custom-select-options {
-    background: rgba(15, 23, 42, 0.85) !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5) !important;
+    background: rgba(15, 23, 42, 0.95) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05) inset !important;
 }
-
-/* Custom Scrollbar for Options */
-.custom-select-options::-webkit-scrollbar { width: 6px; }
-.custom-select-options::-webkit-scrollbar-track { background: transparent; }
-.custom-select-options::-webkit-scrollbar-thumb { background: var(--form-active-border); border-radius: 10px; }
+.custom-select-options::-webkit-scrollbar, .grid-table-wrapper::-webkit-scrollbar, ::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-select-options::-webkit-scrollbar-track, .grid-table-wrapper::-webkit-scrollbar-track, ::-webkit-scrollbar-track { background: transparent; }
+.custom-select-options::-webkit-scrollbar-thumb, .grid-table-wrapper::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb { background: var(--form-active-border); border-radius: 10px; }
 
 .custom-select-option {
-    padding: 12px 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.2s;
-    font-weight: 600;
-    color: var(--form-text);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    padding: 12px 18px; border-radius: 12px; cursor: pointer; transition: 0.2s ease-in-out;
+    font-weight: 600; color: var(--form-text); display: flex; align-items: center; gap: 10px;
+    position: relative; overflow: hidden; font-size: 0.95rem;
 }
-.custom-select-option:hover {
-    background: var(--form-focus-glow);
-    color: var(--form-active-border);
-    transform: translateX(5px);
+.custom-select-option::before {
+    content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; 
+    background: var(--form-active-border); transform: scaleY(0); transition: 0.3s;
 }
-.custom-select-option.selected {
-    background: rgba(139, 92, 246, 0.15);
-    color: var(--form-active-border);
-}
-.custom-select-option.selected::before {
-    content: "✓";
-    font-weight: bold;
-    font-size: 1.1rem;
-}
+.custom-select-option:hover { background: var(--form-focus-glow); color: var(--form-active-border); transform: translateX(5px); }
+.custom-select-option:hover::before { transform: scaleY(0.7); border-radius: 0 4px 4px 0;}
+.custom-select-option.selected { background: rgba(139, 92, 246, 0.15); color: var(--form-active-border); box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05); }
+.custom-select-option.selected::before { transform: scaleY(1); border-radius: 0 4px 4px 0; }
+.custom-select-option.selected::after { content: "✓"; position: absolute; right: 15px; font-weight: 800; font-size: 1.2rem; }
+
 .custom-select-optgroup {
-    padding: 10px 15px;
-    font-size: 0.75rem;
-    color: var(--form-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: 1px dashed var(--form-border);
-    margin-bottom: 5px;
-    margin-top: 5px;
+    padding: 10px 15px; font-size: 0.75rem; color: var(--form-text-muted);
+    text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px dashed var(--form-border);
+    margin-bottom: 8px; margin-top: 8px; font-weight: 800;
 }
 .custom-select-optgroup:first-child { margin-top: 0; }
 
-@keyframes dropIn { 
-    from { opacity: 0; transform: translateY(-15px) scale(0.95); } 
-    to { opacity: 1; transform: translateY(0) scale(1); } 
+@keyframes dropInPremium { 
+    from { opacity: 0; transform: translateY(-20px) scale(0.95); filter: blur(10px); } 
+    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
 }
 
-/* ================== FIX RESPONSIVE TEXT RADIO/CHECKBOX (GBR 2 & 3) ================== */
+/* ================== FIX RESPONSIVE TEXT RADIO/CHECKBOX ================== */
 .gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-
-/* FIX GBR 3 (Responsive Tumpang Tindih): align-items flex-start menjaga checkbox/radio tetap diatas teks yang panjang */
 .gf-option-label { 
-    display: flex; align-items: flex-start; 
-    gap: 15px; cursor: pointer; transition: 0.2s; padding: 15px 20px; border-radius: 12px;
+    display: flex; align-items: flex-start; gap: 15px; cursor: pointer; transition: 0.2s; padding: 15px 20px; border-radius: 12px;
 }
 .gf-option-label:hover { box-shadow: var(--outer-neumorph) !important; background: rgba(255,255,255,0.6) !important; }
-
-/* FIX GBR 3 (Teks Opsi Menempel): Word break agar tulisan jatuh kebawah secara proporsional */
 .opt-text { flex: 1; word-break: break-word; line-height: 1.5; margin-top: 2px;} 
 
 /* Hidden Inputs & Custom Styling */
 .custom-radio, .custom-check {
-    appearance: none; -webkit-appearance: none; flex-shrink: 0; /* FIX GBR 2: Prevent radio squishing (menjadi lonjong gepeng) */
+    appearance: none; -webkit-appearance: none; flex-shrink: 0;
     width: 24px; height: 24px; margin: 0; margin-top: 2px; cursor: pointer; background: rgba(255,255,255,0.4);
     box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); display: grid; place-content: center; transition: 0.3s;
     position: relative;
 }
 .custom-radio { border-radius: 50%; } .custom-check { border-radius: 6px; }
 
-/* Radio Button Inner Circle */
 .custom-radio::before { 
     content: ""; width: 12px; height: 12px; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     box-shadow: inset 1px 1px 3px rgba(255,255,255,0.6), 0 0 10px var(--form-focus-glow); background: var(--form-active-border); 
@@ -420,131 +429,13 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .custom-radio:checked::before { transform: scale(1); }
 .custom-radio:checked { box-shadow: var(--outer-neumorph); background: rgba(255,255,255,0.9); border-color: var(--form-active-border); }
 
-/* Checkbox Checkmark (SUPER UPGRADED - CLEARER & THICKER) */
 .custom-check::before {
-    content: "";
-    width: 7px;   /* Diperlebar */
-    height: 13px; /* Dipertinggi */
-    border: solid white;
-    border-width: 0 4px 4px 0; /* SUPER TEBAL (4px) agar sangat jelas */
-    transform: rotate(45deg) scale(0);
-    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    margin-top: -3px; /* Kalibrasi Center Presisi */
-    margin-left: 1px;
-    filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.3)); /* Efek kedalaman pada ceklis putih */
+    content: ""; width: 7px; height: 13px; border: solid white; border-width: 0 4px 4px 0;
+    transform: rotate(45deg) scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: -3px; margin-left: 1px; filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.3));
 }
-.custom-check:checked {
-    background: var(--form-active-border) !important;
-    border-color: var(--form-active-border) !important;
-    box-shadow: 0 0 15px var(--form-focus-glow), var(--outer-neumorph);
-}
-.custom-check:checked::before {
-    transform: rotate(45deg) scale(1);
-}
-
-/* ================== SUPER UPGRADE: CUSTOM GLASSMORPHISM SELECT ================== */
-.custom-select-wrapper {
-    position: relative;
-    user-select: none;
-    width: 100%;
-}
-.custom-select-display {
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    background: var(--form-card-bg) !important;
-}
-.custom-select-display:hover {
-    box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light), 0 0 15px var(--form-focus-glow) !important;
-    border-color: var(--form-active-border) !important;
-    transform: translateY(-1px);
-}
-.custom-select-wrapper.open .custom-select-display {
-    border-color: var(--form-active-border) !important;
-    box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important;
-    transform: translateY(1px);
-}
-.custom-select-wrapper.open .custom-select-display .arrow {
-    transform: rotate(180deg);
-}
-
-.custom-select-options {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 0;
-    right: 0;
-    z-index: 9999;
-    max-height: 300px;
-    overflow-y: auto;
-    border-radius: 16px !important;
-    padding: 12px;
-    animation: dropInPremium 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(40px) saturate(150%) !important;
-    -webkit-backdrop-filter: blur(40px) saturate(150%) !important;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.5) inset !important;
-    border: 1px solid var(--form-border);
-}
-[data-theme="dark"] .custom-select-options {
-    background: rgba(15, 23, 42, 0.85) !important;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05) inset !important;
-}
-
-/* Custom Scrollbar for Dropdown Options */
-.custom-select-options::-webkit-scrollbar { width: 6px; }
-.custom-select-options::-webkit-scrollbar-track { background: transparent; }
-.custom-select-options::-webkit-scrollbar-thumb { background: var(--form-active-border); border-radius: 10px; }
-
-.custom-select-option {
-    padding: 15px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.2s ease-in-out;
-    font-weight: 600;
-    color: var(--form-text);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-    overflow: hidden;
-}
-.custom-select-option::before {
-    content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; 
-    background: var(--form-active-border); transform: scaleY(0); transition: 0.3s;
-}
-.custom-select-option:hover {
-    background: var(--form-focus-glow);
-    color: var(--form-active-border);
-    transform: translateX(5px);
-}
-.custom-select-option:hover::before { transform: scaleY(0.7); border-radius: 0 4px 4px 0;}
-
-.custom-select-option.selected {
-    background: rgba(139, 92, 246, 0.15);
-    color: var(--form-active-border);
-    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05);
-}
-.custom-select-option.selected::before { transform: scaleY(1); border-radius: 0 4px 4px 0; }
-.custom-select-option.selected::after {
-    content: "✓"; position: absolute; right: 15px; font-weight: 800; font-size: 1.2rem;
-}
-
-.custom-select-optgroup {
-    padding: 12px 15px 8px;
-    font-size: 0.75rem;
-    color: var(--form-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    border-bottom: 1px dashed var(--form-border);
-    margin-bottom: 8px;
-    margin-top: 8px;
-    font-weight: 800;
-}
-.custom-select-optgroup:first-child { margin-top: 0; }
-
-@keyframes dropInPremium { 
-    from { opacity: 0; transform: translateY(-20px) scale(0.95); filter: blur(10px); } 
-    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
-}
+.custom-check:checked { background: var(--form-active-border) !important; border-color: var(--form-active-border) !important; box-shadow: 0 0 15px var(--form-focus-glow), var(--outer-neumorph); }
+.custom-check:checked::before { transform: rotate(45deg) scale(1); }
 
 /* Fake visually inputs in Builder Admin V2 */
 .fake-radio, .fake-checkbox { flex-shrink: 0; width: 24px; height: 24px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); margin-top: 2px; }
@@ -559,10 +450,8 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light), inset 1px 1px 2px rgba(255,255,255,0.4) !important;
     border-radius: 12px; padding: 12px 25px; cursor: pointer; transition: 0.3s;
 }
-.gf-btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 6px 6px 15px var(--shadow-dark), -6px -6px 15px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important;
-}
+.gf-btn-submit:hover { transform: translateY(-2px); box-shadow: 6px 6px 15px var(--shadow-dark), -6px -6px 15px var(--shadow-light), 0 0 20px var(--form-focus-glow) !important; }
+
 .gf-btn-clear, .neumorph-btn {
     background: var(--form-card-bg); border: 1px solid var(--form-border);
     box-shadow: var(--outer-neumorph); color: var(--form-text);
@@ -579,7 +468,7 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .top-icon-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none;}
 
 
-/* ================== SWITCH TOGGLES ================== */
+/* ================== SWITCH TOGGLES & ACCORDION ================== */
 .toggle-switch, .neumorph-switch { display: flex; align-items: center; gap: 15px; font-weight: 600; color: var(--form-text);}
 .switch-input { display: none; }
 .switch-label {
@@ -593,20 +482,17 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .switch-input:checked + .switch-label { background: var(--form-active-border); box-shadow: inset 2px 2px 6px rgba(0,0,0,0.3); }
 .switch-input:checked + .switch-label::after { transform: translateX(22px); }
 
-/* Settings Layout Fixed */
 .setting-group { border-bottom: 1px solid var(--form-border); padding: 25px 0; }
 .setting-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
 .setting-title { font-size: 1.1rem; color: var(--form-text); font-weight: 700;}
 .setting-desc { color: var(--form-text-muted); font-size: 0.9rem; margin-top: 5px; line-height: 1.5;}
 
-/* ================== ACCORDION SETTINGS (NEW GBR SETELAN) ================== */
 .accordion-wrapper { border-bottom: 1px solid var(--form-border); }
 .accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 25px 0; cursor: pointer; transition: 0.3s; }
 .accordion-header:hover { opacity: 0.8; }
 .accordion-content { padding-bottom: 25px; padding-left: 20px; border-left: 2px solid rgba(139, 92, 246, 0.3); margin-left: 5px; animation: slideDown 0.3s ease; }
 .acc-icon { font-size: 1.2rem; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: var(--form-text-muted); }
 .sub-section-title { font-size: 0.85rem; font-weight: 700; color: var(--form-text-muted); text-transform: uppercase; margin: 30px 0 15px; letter-spacing: 1px;}
-
 @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 .form-section-header {
@@ -618,15 +504,24 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     display: flex; justify-content: flex-end; align-items: center; gap: 12px;
     border-top: 1px solid var(--form-border); margin-top: 25px; padding-top: 20px;
 }
-
-/* Custom Fake Radio/Checkbox for Editor */
-.fake-radio, .fake-checkbox { flex-shrink: 0; width: 22px; height: 22px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); }
-.fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
-.fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; }
-
 @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ================== RESPONSIVE MEDIA QUERIES (FULL MOBILE FIX) ================== */
+/* ================== PUBLIC FORM EXTRAS ================== */
+.countdown-live-wrapper { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border-radius: 16px; padding: 18px 22px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-shadow: var(--outer-neumorph); }
+.countdown-live-label { font-size: 0.95rem; font-weight: 700; color: var(--form-text); display: flex; align-items: center; gap: 8px; }
+.countdown-live-box { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', monospace, sans-serif !important; }
+.cd-item { background: var(--form-card-bg); border: 1px solid var(--form-border); box-shadow: var(--inner-neumorph); padding: 6px 12px; border-radius: 10px; text-align: center; min-width: 48px; }
+.cd-number { font-size: 1.15rem; font-weight: 800; color: var(--form-active-border); line-height: 1.1; }
+.cd-text { font-size: 0.65rem; font-weight: 600; color: var(--form-text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.cd-separator { font-size: 1.2rem; font-weight: 800; color: var(--form-active-border); animation: pulse 1.5s infinite; }
+.duration-container { display: flex; gap: 15px; align-items: center; }
+.duration-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+
+/* ERROR MESSAGES */
+.error-message { color: #ef4444; font-size: 0.85rem; font-weight: 600; margin-top: 10px; display: none; }
+.gf-input:invalid:focus { border-color: #ef4444 !important; box-shadow: 0 0 10px rgba(239,68,68,0.3) !important; }
+
+/* RESPONSIVE FIXES */
 @media (max-width: 768px) {
     .admin-v2-container, .form-wrapper { padding: 20px 10px; }
     .form-header-card, .form-question-card, .admin-header-main, .list-form-card { padding: 25px 20px; }
@@ -634,3 +529,13 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
         position: fixed; bottom: 25px; right: 50%; transform: translateX(50%); top: auto !important;
         flex-direction: row; padding: 10px 20px !important; width: max-content;
     }
+}
+
+/* ================== PRINT MEDIA QUERY (SUB-TAB INDIVIDUAL) ================== */
+@media print { 
+    body * { visibility: hidden; } 
+    .print-area, .print-area * { visibility: visible; } 
+    .print-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; color: #000; box-shadow: none; border: none; padding: 0 !important;} 
+    .print-area .form-question-card { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
+    .print-area .form-title { color: #000 !important; }
+}
