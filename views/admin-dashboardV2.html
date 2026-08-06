@@ -20,15 +20,35 @@
     <link rel="stylesheet" href="/css/mainV2.css">
 
     <style>
-        /* INLINE CSS OVERRIDES: Isolasi Font Super Ketat */
-        /* Hanya untuk Judul Form & Judul Segmen */
-        .form-title, .form-section-header { font-family: var(--form-font-header) !important; font-weight: var(--form-font-header-weight, 700) !important; letter-spacing: -0.5px;}
+        /* ============================================================
+           ISOLASI FONT SUPER KETAT (CSS SPECIFICITY OVERRIDES)
+           ============================================================ */
+           
+        /* 1. FONT HEADER: Mutlak hanya untuk Judul Utama Form */
+        input.form-title, h1.form-title, h2.form-title, .form-title { 
+            font-family: var(--form-font-header) !important; 
+            font-weight: var(--form-font-header-weight, 700) !important; 
+            letter-spacing: -0.5px;
+        }
         
-        /* Hanya untuk Judul Pertanyaan (di dalam Card / Builder) */
-        .question-title { font-family: var(--form-font-question) !important; font-weight: var(--form-font-question-weight, 600) !important; margin-bottom: 20px !important; padding-bottom: 15px; border-bottom: 1px solid rgba(139, 92, 246, 0.2); }
+        /* 2. FONT PERTANYAAN: Mutlak hanya untuk Teks Judul Soal di Builder */
+        input.question-title, div.question-title, h3.question-title, .question-title { 
+            font-family: var(--form-font-question) !important; 
+            font-weight: var(--form-font-question-weight, 600) !important; 
+            margin-bottom: 20px !important; 
+            padding-bottom: 15px; 
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2); 
+        }
         
-        /* Teks Dasar untuk Isi Opsi, Paragraf, Deskripsi, UI Dashboard Umum */
-        .form-desc, .gf-input, .opt-text, .step-name, body.admin-v2-body, .custom-select-option, .cfp-text { font-family: var(--form-font-text) !important; font-weight: var(--form-font-text-weight, 400); }
+        /* 3. FONT TEKS DASAR: Untuk Deskripsi, Isian Input, Dropdown, Menu, dll */
+        body.admin-v2-body, 
+        textarea.form-desc, .form-desc,
+        .gf-input:not(.form-title):not(.question-title), /* Pastikan tidak menimpa title */
+        .opt-text, .step-name, .custom-select-option, .cfp-text,
+        .setting-title, .setting-desc, .q-menu-item, select { 
+            font-family: var(--form-font-text) !important; 
+            font-weight: var(--form-font-text-weight, 400); 
+        }
 
         /* Custom UI Khusus Halaman Admin Ini */
         .chart-container { background: var(--form-card-bg); border: 1px solid var(--form-border); border-radius: 16px; padding: 20px; box-shadow: var(--inner-neumorph); margin-bottom: 25px; }
@@ -117,7 +137,6 @@
             <div class="font-select-group">
                 <div class="custom-font-picker" id="picker-headerFont">
                     <div class="cfp-display" onclick="window.toggleFP('headerFont', event)">
-                        <!-- FIX: Spans dipisah agar innerHTML dari JS tidak double arrow -->
                         <span id="display-headerFont" class="cfp-text">Outfit - Biasa</span>
                         <span class="arrow">▼</span>
                     </div>
@@ -562,14 +581,16 @@
         
         // ================= SUPER UPGRADE: DATABASE LIST FONT & BOBOT =================
         const FONT_OPTIONS = [
-            { name: "Arial", type: "system" }, 
+            // SYSTEM FONTS - HARUS TAMPIL DI BAWAH KATEGORI TERBARU
+            { name: "Times New Roman", type: "system" }, 
             { name: "Calibri", type: "system" }, 
+            { name: "Arial", type: "system" }, 
             { name: "Century Gothic", type: "system" }, 
             { name: "Comic Sans MS", type: "system" }, 
             { name: "Courier New", type: "system" }, 
             { name: "Georgia", type: "system" }, 
             { name: "Impact", type: "system" },
-            { name: "Times New Roman", type: "system" }, 
+            // GOOGLE FONTS
             { name: "Amatic SC", type: "google", weights: [400, 700] },
             { name: "Caveat", type: "google", weights: [400, 500, 600, 700] },
             { name: "Comfortaa", type: "google", weights: [300, 400, 500, 600, 700] },
@@ -915,9 +936,19 @@
         }
 
         window.renderFontPicker = function(type) {
-            let html = '';
+            // FIX MENU FONT: Tambahkan Pemisah Estetik untuk kategori TERBARU (Sistem Font)
+            let html = '<div style="padding: 12px 15px 8px; font-size: 0.75rem; color: var(--form-text-muted); font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">TERBARU</div>';
+            let addedDivider = false;
+
             FONT_OPTIONS.forEach(f => {
                 let isGoogle = f.type === 'google';
+                
+                // Pembatas Garis setelah font terbaru / sistem
+                if (isGoogle && !addedDivider) {
+                    html += '<div style="height: 1px; background: var(--form-border); margin: 8px 15px;"></div>';
+                    addedDivider = true;
+                }
+
                 if(isGoogle && f.weights && f.weights.length > 1) {
                     let subItems = f.weights.map(w => `<div class="cfp-subitem" style="font-family:'${f.name}', sans-serif; font-weight:${w};" onclick="window.selectFont('${type}', '${f.name}', ${w}, event)"><span>${WEIGHT_NAMES[w]}</span></div>`).join('');
                     
