@@ -177,7 +177,7 @@
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding-bottom:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom: 20px;">
                     <h2 class="form-title gradient-text" id="respCount" style="font-size:2.2rem; font-weight:700; margin:0;">0 Tanggapan</h2>
-                    <button class="gf-btn-submit glow-effect" onclick="downloadExcel()" style="background: #10b981;">📥 Spreadsheet (.xlsx)</button>
+                    <button class="gf-btn-submit glow-effect" onclick="downloadExcel()" style="background: #10b981;">📥 Ekspor ke Excel (.xlsx)</button>
                 </div>
                 
                 <!-- JAWABAN SUB-TABS MENU -->
@@ -571,7 +571,7 @@
             setTimeout(() => t.style.bottom = '-100px', 3000);
         }
 
-        // ================= SUPER UPGRADE: SUB TABS JAWABAN (GOOGLE FORMS STYLE) =================
+        // ================= SUPER UPGRADE: SUB TABS JAWABAN (DEFENSIVE PROGRAMMING) =================
         function switchJTab(tabId) {
             document.querySelectorAll('.j-tab').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.j-content').forEach(el => el.classList.remove('active'));
@@ -582,16 +582,28 @@
             let tabContent = document.getElementById(`j-${tabId}`);
             if(tabContent) tabContent.classList.add('active');
             
-            if(tabId === 'ringkasan') renderRingkasan();
-            if(tabId === 'pertanyaan') renderQDropdown();
-            if(tabId === 'individual') renderIndividualResponse();
+            // PENGAMAN: Menggunakan Try...Catch untuk mencegah satu tab error mematikan tab lain
+            try {
+                if(tabId === 'ringkasan') renderRingkasan();
+                if(tabId === 'pertanyaan') renderQDropdown();
+                if(tabId === 'individual') renderIndividualResponse();
+            } catch (error) {
+                console.error("Kesalahan saat merender tab: " + tabId, error);
+            }
         }
 
-        // 1. FUNGSI RINGKASAN (CHART.JS)
+        // 1. FUNGSI RINGKASAN (CHART.JS) DENGAN PENGAMAN ANTI-CRASH
         function renderRingkasan() {
             const container = document.getElementById('charts-container');
             if(currentResponses.length === 0) {
                 container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted); border:2px dashed var(--form-border); border-radius:12px;'>Belum ada tanggapan untuk diringkas.</div>";
+                document.getElementById('quiz-stats-container').style.display = 'none';
+                return;
+            }
+
+            // PENGAMAN 1: Cek apakah library Chart.js berhasil di-load oleh browser
+            if (typeof Chart === 'undefined') {
+                container.innerHTML = "<div style='padding:30px; text-align:center; color:#ef4444; border:1px solid #ef4444; border-radius:12px; background:rgba(239, 68, 68, 0.05); margin-top:20px;'>⚠️ Peringatan: Library grafik (Chart.js) gagal dimuat.<br>Silakan periksa koneksi internet Anda atau matikan Ad-Blocker untuk melihat ringkasan visual.</div>";
                 document.getElementById('quiz-stats-container').style.display = 'none';
                 return;
             }
@@ -608,8 +620,12 @@
                 document.getElementById('quiz-stats-container').style.display = 'none';
             }
 
-            // Hapus chart lama agar tidak numpuk
-            Object.values(chartInstances).forEach(c => c.destroy());
+            // PENGAMAN 2: Hapus chart lama dengan aman tanpa menyebabkan Reference Error
+            try {
+                Object.values(chartInstances).forEach(c => {
+                    if (c && typeof c.destroy === 'function') c.destroy();
+                });
+            } catch (err) {}
             chartInstances = {};
             
             let html = '';
@@ -647,7 +663,8 @@
                 let dataCounts = new Array(labels.length).fill(0);
                 
                 currentResponses.forEach(res => {
-                    let ans = res.answers[q.id];
+                    let answers = res.answers || {}; // Pengaman
+                    let ans = answers[q.id];
                     if(!ans) return;
                     
                     if(Array.isArray(ans)) {
@@ -698,7 +715,8 @@
             
             let html = '';
             currentResponses.forEach((res, i) => {
-                let ans = res.answers[qId];
+                let answers = res.answers || {}; // Pengaman null object
+                let ans = answers[qId];
                 if(ans) {
                     let displayAns = Array.isArray(ans) ? ans.join(', ') : ans;
                     if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
@@ -737,6 +755,8 @@
             document.getElementById('btnIndivNext').disabled = currentIndivIndex === currentResponses.length - 1;
 
             let res = currentResponses[currentIndivIndex];
+            if (!res) return; // Pengaman
+            let answers = res.answers || {}; // Pengaman
             
             // Build UI mirip Public Form
             let html = `<div style="margin-bottom:20px; text-align:center; padding-bottom:15px; border-bottom:2px dashed var(--form-border);">
@@ -755,17 +775,19 @@
                 sec.questions.forEach(q => {
                     if(q.type === 'title_only') return;
                     
-                    let ans = res.answers[q.id];
+                    let ans = answers[q.id];
                     let displayAns = `<div style="color:var(--form-text-muted); font-style:italic;">Tidak ada jawaban</div>`;
                     
                     if(ans) {
-                        if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
+                        if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
                             displayAns = '<ul style="margin:0; padding-left:20px;">';
-                            q.rows.forEach((rName, rIdx) => {
-                                let rowAns = res.answers[`${q.id}_row_${rIdx}`];
-                                let rVal = Array.isArray(rowAns) ? rowAns.join(', ') : (rowAns||'-');
-                                displayAns += `<li><strong>${rName}</strong>: <span style="color:var(--form-active-border);">${rVal}</span></li>`;
-                            });
+                            if(q.rows) {
+                                q.rows.forEach((rName, rIdx) => {
+                                    let rowAns = answers[`${q.id}_row_${rIdx}`];
+                                    let rVal = Array.isArray(rowAns) ? rowAns.join(', ') : (rowAns||'-');
+                                    displayAns += `<li><strong>${rName}</strong>: <span style="color:var(--form-active-border);">${rVal}</span></li>`;
+                                });
+                            }
                             displayAns += '</ul>';
                         } else {
                             let textAns = Array.isArray(ans) ? ans.join(', ') : ans;
@@ -802,6 +824,7 @@
                 setTimeout(() => switchJTab('individual'), 500);
             }
         }
+
 
         // ================= FONT ENGINE & CUSTOM FONT PICKER (FLYOUT) =================
         function toggleFP(type, event) {
@@ -1136,6 +1159,65 @@
             }
         }
 
+        // FUNGSI PENGAMAN: Mencegah error saat parsing data jawaban
+        function renderAnswersSummary(answers) {
+            if (!answers) answers = {}; // PENGAMAN: Jika answers null/undefined
+            let html = '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:15px;">';
+            currentForm.sections.forEach(sec => {
+                sec.questions.forEach(q => {
+                    if(q.type === 'title_only') return;
+                    
+                    if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
+                        if (q.rows) {
+                            q.rows.forEach((rowName, rIdx) => {
+                                let ans = answers[`${q.id}_row_${rIdx}`];
+                                if(ans !== undefined && ans !== null && ans !== '') {
+                                    html += `<div style="background:var(--form-card-bg); padding:15px; border-radius:12px; border:1px solid var(--form-border); box-shadow:var(--inner-neumorph);">
+                                        <div style="font-size:0.8rem; color:var(--form-text-muted); font-weight:800; text-transform:uppercase; margin-bottom:8px;">${q.title} <br><span style="color:var(--form-active-border);">[ ${rowName} ]</span></div>
+                                        <div style="font-size:1rem; color:var(--form-text); font-weight:600;">${Array.isArray(ans) ? ans.join(', ') : ans}</div>
+                                    </div>`;
+                                }
+                            });
+                        }
+                    } else {
+                        let ans = answers[q.id];
+                        if(ans !== undefined && ans !== null && ans !== '') {
+                            let displayAns = ans;
+                            
+                            if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
+                                if(ans.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) {
+                                    displayAns = `<a href="${ans}" target="_blank" style="display:block; margin-top:10px;"><img src="${ans}" style="max-height:150px; max-width:100%; object-fit:contain; border-radius:10px; box-shadow:var(--outer-neumorph); transition:0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></a>`;
+                                } else {
+                                    displayAns = `<a href="${ans}" target="_blank" class="gf-btn-clear neumorph-btn" style="display:inline-block; margin-top:8px; color:var(--form-active-border); font-size:0.85rem; padding:6px 12px; text-decoration:none;">📥 Unduh / Buka File</a>`;
+                                }
+                            } else if(Array.isArray(ans)) {
+                                 let arrHtml = [];
+                                 ans.forEach(a => {
+                                     if(typeof a === 'string' && a.includes('/api/uploads/')) {
+                                        if(a.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) {
+                                            arrHtml.push(`<a href="${a}" target="_blank" style="display:inline-block; margin:5px 5px 0 0;"><img src="${a}" style="height:80px; border-radius:8px; box-shadow:var(--outer-neumorph);"></a>`);
+                                        } else {
+                                            arrHtml.push(`<a href="${a}" target="_blank" class="gf-btn-clear neumorph-btn" style="display:inline-block; margin:5px 5px 0 0; color:var(--form-active-border); font-size:0.85rem; padding:6px 12px; text-decoration:none;">📥 Unduh</a>`);
+                                        }
+                                     } else {
+                                         arrHtml.push(a);
+                                     }
+                                 });
+                                 displayAns = arrHtml.join('<br>');
+                            }
+
+                            html += `<div style="background:var(--form-card-bg); padding:15px; border-radius:12px; border:1px solid var(--form-border); box-shadow:var(--inner-neumorph);">
+                                <div style="font-size:0.8rem; color:var(--form-text-muted); font-weight:800; text-transform:uppercase; margin-bottom:8px;">${q.title}</div>
+                                <div style="font-size:1rem; color:var(--form-text); word-break:break-word; font-weight:500;">${displayAns}</div>
+                            </div>`;
+                        }
+                    }
+                });
+            });
+            html += '</div>';
+            return html;
+        }
+
         async function loadResponses() {
             document.getElementById('respList').innerHTML = "<div style='text-align:center; padding:30px;'>Memuat tanggapan dari server...</div>";
             try {
@@ -1170,10 +1252,16 @@
                                     <button onclick="deleteResponse('${r.id}')" class="gf-btn-clear neumorph-btn text-danger" style="padding:8px 15px; font-size:0.85rem; display:flex; align-items:center; gap:5px;">🗑️ Hapus</button>
                                 </div>
                             </div>
+                            <div style="margin-top:20px; padding-top:20px; border-top:1px dashed var(--form-border);">
+                                ${renderAnswersSummary(r.answers)}
+                            </div>
                         </div>`;
                 });
                 document.getElementById('respList').innerHTML = html || "<div style='padding:40px; text-align:center; color:#888; border:2px dashed var(--form-border); border-radius:12px; font-size:1.1rem;'>Belum ada tanggapan masuk.</div>";
-            } catch(e) { document.getElementById('respList').innerHTML = "Gagal memuat data."; }
+            } catch(e) { 
+                console.error("Gagal Render LoadResponses: ", e);
+                document.getElementById('respList').innerHTML = "Gagal memuat data. Periksa konsol."; 
+            }
         }
 
         // BUKA MODAL EDIT RESPON
@@ -1187,6 +1275,8 @@
                 <input type="text" id="editResEmail" class="gf-input inner-neumorph" value="${currentEditingRes.email || ''}" style="background:rgba(255,255,255,0.7) !important;">
             </div>`;
             
+            let answers = currentEditingRes.answers || {}; // Pengaman
+            
             currentForm.sections.forEach(sec => {
                 sec.questions.forEach(q => {
                     if(q.type === 'title_only') return;
@@ -1195,7 +1285,7 @@
                         if(q.rows) {
                             q.rows.forEach((rName, rIdx) => {
                                 let key = `${q.id}_row_${rIdx}`;
-                                let val = currentEditingRes.answers[key] || '';
+                                let val = answers[key] || '';
                                 let displayVal = Array.isArray(val) ? val.join(', ') : val;
                                 html += `<div style="margin-bottom:20px; padding:15px; background:var(--form-card-bg); border-radius:12px; border:1px solid var(--form-border);">
                                     <label style="font-size:0.85rem; font-weight:800; color:var(--form-text-muted); display:block; margin-bottom:8px;">${q.title} <span style="color:var(--form-active-border);">[${rName}]</span></label>
@@ -1204,7 +1294,7 @@
                             });
                         }
                     } else {
-                        let val = currentEditingRes.answers[q.id] || '';
+                        let val = answers[q.id] || '';
                         let isFile = typeof val === 'string' && val.includes('/api/uploads/');
                         let isFileArr = Array.isArray(val) && val.some(v => typeof v === 'string' && v.includes('/api/uploads/'));
                         
