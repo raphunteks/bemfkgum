@@ -43,7 +43,7 @@
         /* 3. FONT TEKS DASAR: Untuk Deskripsi, Isian Input, Dropdown, Menu, dll */
         body.admin-v2-body, 
         textarea.form-desc, .form-desc,
-        .gf-input:not(.form-title):not(.question-title), /* Pastikan tidak menimpa title */
+        .gf-input:not(.form-title):not(.question-title), 
         .opt-text, .step-name, .custom-select-option, .cfp-text,
         .setting-title, .setting-desc, .q-menu-item, select { 
             font-family: var(--form-font-text) !important; 
@@ -85,7 +85,6 @@
 </head>
 <body class="admin-v2-body" onclick="window.closeAllQMenus()">
 
-    <script src="/js/protect-devtools.js"></script>
     <script>
         const isPreviewEnv = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.origin.includes('preview');
         if (!localStorage.getItem('axa_admin_token')) {
@@ -97,7 +96,7 @@
     <!-- Header Panel Atas -->
     <div class="header-admin-nav glass-panel">
         <div style="display:flex; align-items:center; gap: 15px;">
-            <button class="gf-btn-clear neumorph-btn" onclick="if(!isPreviewEnv){window.location.href='/admin'}else{alert('Kembali ke Dashboard V1')}" style="padding: 8px 15px;">🏠 Dashboard</button>
+            <button class="gf-btn-clear neumorph-btn" onclick="if(!isPreviewEnv){window.location.href='/admin'}else{window.showCustomAlert('Kembali ke Dashboard V1')}" style="padding: 8px 15px;">🏠 Dashboard</button>
             <h2 class="gradient-text form-title" style="font-size:1.4rem; margin:0; font-weight: 700;">BEM-Form Builder</h2>
         </div>
         
@@ -535,8 +534,50 @@
 
     </div>
 
-    <!-- MODAL & NOTIFICATIONS -->
-    <div class="toast glass-panel glow-effect" id="globalToast" style="position:fixed; bottom:-100px; right:20px; background:var(--form-active-border); color:#fff; padding:15px 30px; border-radius:12px; font-weight:700; transition:0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index:9999;">Notifikasi</div>
+    <!-- MODAL NOTIFICATIONS -->
+    <div class="toast glass-panel glow-effect" id="globalToast" style="position:fixed; bottom:-100px; right:20px; background:var(--form-active-border); color:#fff; padding:15px 30px; border-radius:12px; font-weight:700; transition:0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index:99999;">Notifikasi</div>
+
+    <!-- CUSTOM SUCCESS MODAL (GLASSMORPHISM) -->
+    <div id="successModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
+        <div class="glass-card neumorph-outer" style="width:100%; max-width:420px; text-align:center; padding:40px 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <div style="font-size:4rem; margin-bottom:15px; animation: bounceIn 1s;">✨</div>
+            <h2 class="form-title" style="color:var(--form-text); margin-top:0; font-size:1.6rem;">Publikasi Berhasil!</h2>
+            <p style="color:var(--form-text-muted); font-size:0.95rem; margin-bottom:20px;">Formulir Anda telah tersimpan dan siap dibagikan ke publik.</p>
+            
+            <div class="modal-link-box" id="modal-link-text">
+                https://bemkbmfkgumi.com/form/slug
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-top:25px; flex-wrap:wrap;">
+                <button class="gf-btn-clear neumorph-btn" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="copyModalLink()">📋 Salin</button>
+                <button class="gf-btn-submit glow-effect" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px;" onclick="openModalLink()">👁️ Buka</button>
+            </div>
+            <button class="gf-btn-clear text-danger" style="margin-top:15px; width:100%; font-weight:600; background:transparent; border:1px solid var(--form-border);" onclick="closeSuccessModal()">Tutup</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM ALERT MODAL -->
+    <div id="customAlertModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10002; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
+        <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:30px; animation: popIn 0.3s ease;">
+            <div style="font-size:3rem; margin-bottom:15px;">⚠️</div>
+            <h3 class="form-title" style="color:var(--form-text); margin-top:0; margin-bottom:15px;">Pemberitahuan</h3>
+            <p id="customAlertMessage" style="color:var(--form-text-muted); font-size:1rem; margin-bottom:25px;"></p>
+            <button class="gf-btn-submit glow-effect" style="width:100%;" onclick="closeCustomAlert()">Mengerti</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM MODAL -->
+    <div id="customConfirmModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10003; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
+        <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:30px; animation: popIn 0.3s ease;">
+            <div style="font-size:3rem; margin-bottom:15px;">❓</div>
+            <h3 class="form-title" style="color:var(--form-text); margin-top:0; margin-bottom:15px;">Konfirmasi</h3>
+            <p id="customConfirmMessage" style="color:var(--form-text-muted); font-size:1rem; margin-bottom:25px;"></p>
+            <div style="display:flex; gap:10px;">
+                <button class="gf-btn-clear neumorph-btn" style="flex:1;" onclick="closeCustomConfirm(false)">Batal</button>
+                <button class="gf-btn-submit glow-effect" style="flex:1; background:#ef4444; box-shadow:0 0 15px rgba(239,68,68,0.4);" onclick="closeCustomConfirm(true)">Yakin</button>
+            </div>
+        </div>
+    </div>
 
     <div id="feedbackModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.5);" onclick="window.closeFeedbackModal()">
         <div class="glass-card neumorph-outer" style="width:100%; max-width:600px; padding:30px; background:var(--form-bg); border-radius:16px;" onclick="event.stopPropagation()">
@@ -615,11 +656,79 @@
         
         const WEIGHT_NAMES = { 100: "Ekstra Halus", 200: "Ekstra Halus", 300: "Halus", 400: "Biasa", 500: "Sedang", 600: "Semi Tebal", 700: "Tebal", 800: "Ekstra Tebal", 900: "Hitam" };
 
+        // ================= CUSTOM MODALS & CLIPBOARD =================
         window.showToast = function(msg) {
             const t = document.getElementById('globalToast');
             if(!t) return;
             t.innerText = msg; t.style.bottom = '30px';
             setTimeout(() => t.style.bottom = '-100px', 3000);
+        }
+
+        window.copyToClipboard = function(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    window.showToast("✅ Tautan berhasil disalin!");
+                });
+            } else {
+                let textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    window.showToast("✅ Tautan berhasil disalin!");
+                } catch (err) {
+                    window.showCustomAlert("Gagal menyalin tautan.");
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+
+        window.showSuccessModal = function(url) {
+            document.getElementById('modal-link-text').innerText = url;
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        window.closeSuccessModal = function() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        window.openModalLink = function() {
+            if(window.currentForm && window.currentForm.slug) {
+                window.open(`${window.location.origin}/form/${window.currentForm.slug}`, '_blank');
+            }
+        }
+
+        window.copyModalLink = function() {
+            const url = `${window.location.origin}/form/${window.currentForm.slug}`;
+            window.copyToClipboard(url);
+        }
+
+        window.showCustomAlert = function(msg) {
+            document.getElementById('customAlertMessage').innerText = msg;
+            document.getElementById('customAlertModal').style.display = 'flex';
+        }
+
+        window.closeCustomAlert = function() {
+            document.getElementById('customAlertModal').style.display = 'none';
+        }
+
+        let confirmCallback = null;
+        window.showCustomConfirm = function(msg, callback) {
+            document.getElementById('customConfirmMessage').innerText = msg;
+            document.getElementById('customConfirmModal').style.display = 'flex';
+            confirmCallback = callback;
+        }
+
+        window.closeCustomConfirm = function(isConfirmed) {
+            document.getElementById('customConfirmModal').style.display = 'none';
+            if(isConfirmed && typeof confirmCallback === 'function') {
+                confirmCallback();
+            }
+            confirmCallback = null;
         }
 
         // ================= SUPER UPGRADE PENGAMAN: GLOBAL TAB SWITCHER =================
@@ -916,7 +1025,6 @@
                 let rect = el.getBoundingClientRect();
                 sub.style.display = 'block';
                 sub.style.top = rect.top + 'px';
-                // FIX MENU HILANG: Ubah orientasi dari kanan ke kiri sehingga muncul rapat ke area hover parent
                 sub.style.left = 'auto';
                 sub.style.right = (window.innerWidth - rect.left) + 'px';
             }
@@ -936,14 +1044,12 @@
         }
 
         window.renderFontPicker = function(type) {
-            // FIX MENU FONT: Tambahkan Pemisah Estetik untuk kategori TERBARU (Sistem Font)
             let html = '<div style="padding: 12px 15px 8px; font-size: 0.75rem; color: var(--form-text-muted); font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">TERBARU</div>';
             let addedDivider = false;
 
             FONT_OPTIONS.forEach(f => {
                 let isGoogle = f.type === 'google';
                 
-                // Pembatas Garis setelah font terbaru / sistem
                 if (isGoogle && !addedDivider) {
                     html += '<div style="height: 1px; background: var(--form-border); margin: 8px 15px;"></div>';
                     addedDivider = true;
@@ -965,7 +1071,6 @@
             if(wrap) wrap.innerHTML = html;
         }
 
-        // FIX INNERHTML DOUBLE ARROW PADA JAVASCRIPT DISPLAY PICKER
         window.selectFont = function(type, fontName, weight, event) {
             event.stopPropagation();
             window.loadDynamicFont(fontName, weight);
@@ -980,7 +1085,6 @@
             let isGoogle = FONT_OPTIONS.find(o => o.name === fontName)?.type === 'google';
             let weightStr = (weight === 400 || !isGoogle) ? '' : ` - ${WEIGHT_NAMES[weight]}`;
             
-            // HANYA MENGGANTI TEXT SAJA AGAR PANAH HTML TIDAK TERTUMPUK
             let dispText = document.getElementById(`display-${type}`);
             if(dispText) dispText.innerText = `${fontName}${weightStr}`;
             
@@ -1229,7 +1333,6 @@
             window.loadDynamicFont(t.questionFont, t.questionFontWeight || 600);
             window.loadDynamicFont(t.textFont, t.textFontWeight || 400);
 
-            // FIX: Hanya mengubah Teks nya, bukan panahnya. Mencegah error layout menumpuk
             let dHF = document.getElementById('display-headerFont');
             if(dHF) dHF.innerText = `${t.headerFont || 'Outfit'} - ${WEIGHT_NAMES[t.headerFontWeight||700] || 'Biasa'}`;
             
@@ -1292,26 +1395,29 @@
                 const res = await fetch('/api/forms/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(window.currentForm) });
                 const json = await res.json();
                 if(json.success) {
-                    if(!isSilent) window.showToast("✅ Formulir Tersimpan!");
+                    if(!isSilent) {
+                        window.showToast("✅ Formulir Tersimpan!");
+                        window.showSuccessModal(`${window.location.origin}/form/${window.currentForm.slug}`);
+                    }
                     window.currentForm.id = json.id; window.loadAllForms(); 
                 }
                 if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
             } catch (e) {
-                if(!isSilent) window.showToast("⚠️ Gagal menyimpan ke server!");
+                if(!isSilent) window.showCustomAlert("⚠️ Gagal menyimpan ke server!");
                 const btn = document.querySelector('.gf-btn-submit[onclick="window.saveFormToDB()"]');
                 if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
             }
         }
 
         window.deleteFormDirect = async function(formId) {
-            if(confirm("PERINGATAN KRUSIAL: Menghapus form akan membuang semua data jawaban dan konfigurasi secara PERMANEN. Anda Yakin?")) {
+            window.showCustomConfirm("PERINGATAN KRUSIAL: Menghapus form akan membuang semua data jawaban dan konfigurasi secara PERMANEN. Anda Yakin?", async function() {
                 try {
                     const res = await fetch(`/api/forms/${formId}`, { method: 'DELETE' });
                     const json = await res.json();
                     if(json.success) { window.showToast("🗑️ Formulir berhasil dihapus permanen."); window.loadAllForms(); } 
                     else { throw new Error(); }
-                } catch(e) { window.showToast("⚠️ Gagal menghapus form dari database."); }
-            }
+                } catch(e) { window.showCustomAlert("⚠️ Gagal menghapus form dari database."); }
+            });
         }
 
         window.renderAnswersSummary = function(answers) {
@@ -1508,17 +1614,17 @@
                     window.closeEditResModal();
                     window.loadResponses();
                 } else {
-                    alert(json.message || "Gagal update jawaban di server.");
+                    window.showCustomAlert(json.message || "Gagal update jawaban di server.");
                 }
             } catch(e) {
-                alert("Kesalahan Koneksi. Gagal terhubung ke Database.");
+                window.showCustomAlert("Kesalahan Koneksi. Gagal terhubung ke Database.");
             } finally {
                 document.getElementById('btnSaveEditRes').innerText = "Simpan Perubahan";
             }
         }
 
         window.deleteResponse = async function(resId) {
-            if(confirm("PERINGATAN: Yakin ingin menghapus jawaban ini secara PERMANEN dari database?")) {
+            window.showCustomConfirm("PERINGATAN: Yakin ingin menghapus jawaban ini secara PERMANEN dari database?", async function() {
                 try {
                     const res = await fetch(`/api/forms/${window.currentForm.id}/responses/${resId}`, { method: 'DELETE' });
                     const json = await res.json();
@@ -1526,12 +1632,12 @@
                         window.showToast("🗑️ Jawaban berhasil dihapus!");
                         window.loadResponses();
                     } else {
-                        alert(json.message);
+                        window.showCustomAlert(json.message);
                     }
                 } catch(e) {
-                    alert("Kesalahan Koneksi. Gagal menghubungi server.");
+                    window.showCustomAlert("Kesalahan Koneksi. Gagal menghubungi server.");
                 }
-            }
+            });
         }
 
         window.closeEditResModal = function() {
@@ -1548,6 +1654,8 @@
             [...window.allForms].reverse().forEach(f => {
                 let deadlineStr = 'Tanpa Batas';
                 if(f.settings && f.settings.deadline) { deadlineStr = new Date(f.settings.deadline).toLocaleString('id-ID', {day:'numeric', month:'short', year:'numeric'}); }
+                
+                const formUrl = `${window.location.origin}/form/${f.slug}`;
 
                 html += `
                 <div class="list-form-card glass-card neumorph-outer">
@@ -1561,7 +1669,8 @@
                     </div>
                     <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
                         <button class="gf-btn-submit glow-effect" onclick="window.openFormEditor('${f.id}')" title="Edit Form">✏️ Edit</button>
-                        <a href="/form/${f.slug}" target="_blank" class="gf-btn-clear neumorph-btn" style="text-decoration:none;" title="Pratinjau">👁️ Buka</a>
+                        <a href="${formUrl}" target="_blank" class="gf-btn-clear neumorph-btn" style="text-decoration:none;" title="Pratinjau">👁️ Buka</a>
+                        <button class="gf-btn-clear neumorph-btn" onclick="window.copyToClipboard('${formUrl}')" title="Salin Link">📋 Salin</button>
                         <button class="gf-btn-clear neumorph-btn text-danger" onclick="window.deleteFormDirect('${f.id}')" title="Hapus Permanen">🗑️</button>
                     </div>
                 </div>`;
@@ -2386,5 +2495,8 @@
             });
         });
     </script>
+    
+    <!-- Script Protect DevTools -->
+    <script src="/js/protect-devtools.js"></script>
 </body>
 </html>
