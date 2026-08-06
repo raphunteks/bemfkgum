@@ -162,7 +162,7 @@ const defaultFilosofi = {
     logo: [
         { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
         { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." },
-        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan শারীরিক ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
+        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan dosis salah ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
         { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah yang ada." },
         { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." },
         { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." },
@@ -378,7 +378,7 @@ app.post('/api/forms/save', async (req, res) => {
             });
         }
 
-        // SUPER UPGRADE: Validasi Objek Settings (Untuk Kuis, Default, Presentasi dll) agar tersimpan utuh di Redis
+        // SUPER UPGRADE PENGAMAN: Injeksi Struktur Default Untuk Kompatibilitas Versi Lama
         if (!formData.settings) formData.settings = {};
         const defaultFormSettings = {
             collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '',
@@ -388,6 +388,16 @@ app.post('/api/forms/save', async (req, res) => {
         };
         // Menggabungkan settings yang masuk dengan default jika ada atribut baru yang kosong
         formData.settings = { ...defaultFormSettings, ...formData.settings };
+
+        // SUPER UPGRADE: Injeksi Default Theme & Font Weights
+        if(!formData.theme) formData.theme = {};
+        const defaultTheme = {
+            headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: 700,
+            questionFont: 'Plus Jakarta Sans', questionFontSize: 14, questionFontWeight: 600,
+            textFont: 'Plus Jakarta Sans', textFontSize: 12, textFontWeight: 400,
+            color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: ''
+        };
+        formData.theme = { ...defaultTheme, ...formData.theme };
         
         await redis.hset('BEM_Forms', { [formData.id]: JSON.stringify(formData) });
         res.status(200).json({ success: true, message: "Form berhasil disimpan", id: formData.id });
