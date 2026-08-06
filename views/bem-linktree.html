@@ -245,9 +245,11 @@
                     if(l.icon) {
                         if(l.icon.startsWith('svg:')) {
                             let k = l.icon.split(':')[1];
-                            if(svgIconsCollection[k]) renderIcon = `<div class="link-icon-thumbnail svg-icon" style="color:inherit;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[k]}</svg></div>`;
+                            if(svgIconsCollection[k]) {
+                                renderIcon = `<div class="pv-link-icon svg-icon" style="color:inherit;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[k]}</svg></div>`;
+                            }
                         } else {
-                            renderIcon = `<img src="${l.icon}" class="link-icon-thumbnail">`;
+                            renderIcon = `<img src="${l.icon}" class="pv-link-icon">`;
                         }
                     }
 
@@ -260,7 +262,7 @@
         }
         html += `</div>`;
 
-        // Socials Logic (Dynamic SVG Vectors)
+        // Socials Logic
         if(data.socials && data.socials.length > 0) {
             html += `<div id="pv-socials" style="margin-top:50px;">`;
             data.socials.forEach(s => {
@@ -289,6 +291,7 @@
     }
 </script>
 
+<!-- Script Protect DevTools -->
 <script src="/js/protect-devtools.js"></script>
 
 </body>
