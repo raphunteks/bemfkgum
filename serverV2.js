@@ -37,6 +37,7 @@ try {
     console.error("⚠️ Peringatan: Redis gagal inisiasi.", error.message);
 }
 
+// Utility: Safe JSON Parser
 const safeParse = (data, fallbackData) => {
     if (!data) return fallbackData;
     try {
@@ -52,6 +53,8 @@ app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
 // ================= RUTE FRONTEND PUBLIK DENGAN SSR SEO =================
 app.get('/link/:slug', async (req, res) => {
     const slug = req.params.slug;
+    
+    // Default SEO Fallback
     let seoData = {
         title: 'BEM KBMFKG UMI - Linktree',
         desc: 'Tautan resmi dan informasi terbaru dari BEM KBMFKG UMI.',
@@ -59,6 +62,7 @@ app.get('/link/:slug', async (req, res) => {
         url: `https://bemkbmfkgumi.com/link/${slug}`
     };
 
+    // Ekstrak Data dari Redis untuk Injeksi Meta Tag (Gold Standard SEO)
     try {
         if(redis) {
             const trees = await redis.hgetall('BEM_Linktrees') || {};
@@ -77,8 +81,10 @@ app.get('/link/:slug', async (req, res) => {
         console.error("Gagal memuat SSR SEO:", e);
     }
 
+    // Render EJS HTML dan lemparkan variabel seoData ke dalamnya
     res.render('bem-linktree', { slug: slug, seo: seoData });
 });
+
 
 // ================= ENDPOINT API UPLOAD GAMBAR =================
 app.post('/api/upload', async (req, res) => {
