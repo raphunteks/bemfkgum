@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BEM-Linktree Builder V3</title>
-    
-    <!-- Load Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <!-- Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -16,19 +12,20 @@
 </head>
 <body>
 
-<!-- CLASS list-mode AKTIF DEFAULT AGAR MUNCUL FULL SCREEN KE KIRI -->
 <div class="builder-layout list-mode" id="main-layout">
     
     <!-- LEFT: EDITOR PANEL -->
     <div class="editor-panel">
         
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
-            <h1 style="margin:0; font-family:'Outfit', sans-serif;">BEM-Linktree <span style="color:var(--primary)">Builder</span></h1>
-            <!-- Tombol Ini Akan Berubah Berdasarkan Mode -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px; flex-wrap:wrap; gap:15px;">
+            <div style="display:flex; align-items:center; gap:15px;">
+                <img src="/img/bemfkgumi.png" style="width:40px; height:40px;">
+                <h1 style="margin:0; font-family:'Inter', sans-serif;">BEM-Linktree <span style="color:var(--primary)">Builder</span></h1>
+            </div>
             <button class="btn-primary" id="btn-global-action" onclick="createNewLinktree()">+ Buat Linktree Baru</button>
         </div>
 
-        <div class="tabs-wrapper glass-card" style="padding:10px; margin-bottom:20px;" id="tabs-container">
+        <div class="tabs-wrapper glass-card" id="tabs-container">
             <div class="tab-btn active" onclick="switchTab('list')">📋 Daftar Linktree</div>
             <div class="tab-btn editor-only" onclick="switchTab('links')" style="display:none;">🔗 Links</div>
             <div class="tab-btn editor-only" onclick="switchTab('appearance')" style="display:none;">🎨 Appearance</div>
@@ -39,8 +36,8 @@
         <div id="tab-list" class="tab-content active">
             <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
                 <div>
-                    <h3 style="margin:0;">Manajemen Linktree</h3>
-                    <p style="color:var(--text-muted); font-size:0.9rem; margin:5px 0 0;">Kelola semua halaman Link in Bio Anda di sini.</p>
+                    <h3 style="margin:0; font-family:'Inter', sans-serif;">Manajemen Linktree</h3>
+                    <p style="color:var(--text-muted); font-size:0.95rem; margin:8px 0 0;">Kelola semua halaman Link in Bio (BEM) Anda di sini.</p>
                 </div>
             </div>
             
@@ -53,53 +50,43 @@
         <div id="tab-links" class="tab-content">
             <!-- Profile Section -->
             <div class="glass-card">
-                <h3 style="margin-top:0;">Profil</h3>
-                <div style="display:flex; gap:20px; align-items:center; margin-bottom:20px;">
-                    <img id="edit-profile-img-preview" src="https://via.placeholder.com/100" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
-                    <div>
-                        <input type="file" id="upload-profile-img" accept="image/*" style="display:none;" onchange="handleImageUpload(this, 'profile')">
-                        <button class="btn-outline" onclick="document.getElementById('upload-profile-img').click()">Pilih Gambar</button>
+                <h3 style="margin-top:0;">Profil Utama</h3>
+                <div style="display:flex; gap:25px; align-items:center; margin-bottom:25px;">
+                    <img id="edit-profile-img-preview" src="/img/bemfkgumi.png" style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid var(--primary); box-shadow:var(--outer-neumorph);">
+                    <div style="flex:1;">
+                        <input type="file" id="upload-profile-img" accept="image/*,.heic,.jpeg,.png,.jpg,.webp" style="display:none;" onchange="handleImageUpload(this, 'profile')">
+                        <button class="btn-outline" onclick="document.getElementById('upload-profile-img').click()">Ubah Foto Profil</button>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin:8px 0 0;">Format didukung: JPG, PNG, WEBP, HEIC. Max 5MB.</p>
                     </div>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Nama Profil</label>
-                    <input type="text" class="gf-input" id="inp-title" oninput="updateState('profile', 'title', this.value)" placeholder="@namakabinet">
+                    <label class="input-label">Nama Profil (Judul)</label>
+                    <input type="text" class="gf-input" id="inp-title" oninput="updateState('profile', 'title', this.value)" placeholder="Misal: BEM KBMFKG UMI">
                 </div>
                 <div class="input-group">
                     <label class="input-label">Bio Singkat</label>
-                    <textarea class="gf-input" id="inp-bio" rows="2" oninput="updateState('profile', 'bio', this.value)" placeholder="Tulis deskripsi singkat..."></textarea>
+                    <textarea class="gf-input" id="inp-bio" rows="3" oninput="updateState('profile', 'bio', this.value)" placeholder="Tulis deskripsi atau slogan kabinet..."></textarea>
                 </div>
             </div>
 
             <!-- Links Section -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="margin:0;">Daftar Tautan</h3>
-                <button class="btn-primary" onclick="addLink()">+ Tambah Link</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; margin-top:40px;">
+                <h3 style="margin:0;">Daftar Tautan Utama</h3>
+                <button class="btn-primary" style="padding:10px 20px;" onclick="addLink()">+ Tambah Link</button>
             </div>
             
             <div id="links-container">
                 <!-- Links will be rendered here -->
             </div>
 
-            <!-- Socials Section -->
-            <div class="glass-card">
-                <h3 style="margin-top:0;">Sosial Media</h3>
-                <div class="input-group">
-                    <label class="input-label">Instagram URL</label>
-                    <input type="url" class="gf-input" id="inp-ig" oninput="updateState('socials', 'instagram', this.value)" placeholder="https://instagram.com/...">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">TikTok URL</label>
-                    <input type="url" class="gf-input" id="inp-tk" oninput="updateState('socials', 'tiktok', this.value)" placeholder="https://tiktok.com/@...">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">WhatsApp Number</label>
-                    <input type="text" class="gf-input" id="inp-wa" oninput="updateState('socials', 'whatsapp', this.value)" placeholder="628123456789">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Email Address</label>
-                    <input type="email" class="gf-input" id="inp-email" oninput="updateState('socials', 'email', this.value)" placeholder="email@domain.com">
-                </div>
+            <!-- DYNAMIC Socials Section -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; margin-top:40px;">
+                <h3 style="margin:0;">Ikon Sosial Media</h3>
+                <button class="btn-primary" style="padding:10px 20px; background:#10b981;" onclick="addSocial()">+ Tambah Sosmed</button>
+            </div>
+
+            <div class="glass-card" id="socials-container">
+                <!-- Dynamic Socials Input rendered here -->
             </div>
         </div>
 
@@ -107,69 +94,63 @@
         <div id="tab-appearance" class="tab-content">
             <div class="glass-card">
                 <h3 style="margin-top:0;">Latar Belakang (Background)</h3>
-                <select class="gf-input" id="inp-bg-type" onchange="updateState('theme', 'bgType', this.value)" style="margin-bottom:15px;">
+                <select class="gf-input" id="inp-bg-type" onchange="updateState('theme', 'bgType', this.value)" style="margin-bottom:20px;">
                     <option value="color">Warna Solid</option>
                     <option value="gradient">Gradient Linear</option>
-                    <option value="image">Gambar Custom</option>
+                    <option value="image">Gambar Wallpaper Custom</option>
                 </select>
                 
                 <div id="bg-color-picker" class="input-group">
                     <label class="input-label">Pilih Warna Base</label>
-                    <input type="color" id="inp-bg-color" oninput="updateState('theme', 'bgColor', this.value)" style="width:100%; height:50px; border-radius:12px; cursor:pointer;">
+                    <input type="color" id="inp-bg-color" oninput="updateState('theme', 'bgColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
 
                 <div id="bg-image-picker" class="input-group" style="display:none;">
                     <label class="input-label">Upload Gambar Background</label>
-                    <input type="file" id="upload-bg-img" accept="image/*" style="display:none;" onchange="handleImageUpload(this, 'bg')">
-                    <button class="btn-outline" style="width:100%;" onclick="document.getElementById('upload-bg-img').click()">Pilih Wallpaper</button>
+                    <input type="file" id="upload-bg-img" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'bg')">
+                    <div style="display:flex; gap:15px; align-items:center;">
+                        <button class="btn-outline" style="flex:1;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper Baru</button>
+                        <button class="btn-danger" onclick="removeBgImage()" title="Hapus Gambar">🗑️</button>
+                    </div>
+                    <div id="bg-filename" style="font-size:0.85rem; color:var(--primary); margin-top:10px; font-weight:600;"></div>
                 </div>
             </div>
 
             <div class="glass-card">
-                <h3 style="margin-top:0;">Gaya Tombol (Button)</h3>
+                <h3 style="margin-top:0;">Gaya Tombol (Button Styles)</h3>
                 <label class="input-label">Bentuk Tombol</label>
-                <div class="grid-selector" style="margin-bottom:20px;">
-                    <div class="selector-item btn-shape-sel" data-val="square" onclick="selectThemeOpt('btnShape', 'square')">Kotak</div>
-                    <div class="selector-item btn-shape-sel" data-val="rounded" onclick="selectThemeOpt('btnShape', 'rounded')">Rounded</div>
-                    <div class="selector-item btn-shape-sel active" data-val="pill" onclick="selectThemeOpt('btnShape', 'pill')">Pill</div>
+                <div class="grid-selector" style="margin-bottom:25px;">
+                    <div class="selector-item btn-shape-sel" data-val="square" onclick="selectThemeOpt('btnShape', 'square')">Kotak Tajam</div>
+                    <div class="selector-item btn-shape-sel" data-val="rounded" onclick="selectThemeOpt('btnShape', 'rounded')">Rounded Soft</div>
+                    <div class="selector-item btn-shape-sel active" data-val="pill" onclick="selectThemeOpt('btnShape', 'pill')">Pill (Kapsul)</div>
                 </div>
 
-                <label class="input-label">Tipe Tombol</label>
-                <div class="grid-selector" style="margin-bottom:20px;">
-                    <div class="selector-item btn-type-sel active" data-val="filled" onclick="selectThemeOpt('btnType', 'filled')">Filled</div>
-                    <div class="selector-item btn-type-sel" data-val="outline" onclick="selectThemeOpt('btnType', 'outline')">Outline</div>
-                    <div class="selector-item btn-type-sel" data-val="neumorph" onclick="selectThemeOpt('btnType', 'neumorph')">Soft Shadow</div>
+                <label class="input-label">Tipe Pewarnaan Tombol</label>
+                <div class="grid-selector" style="margin-bottom:25px;">
+                    <div class="selector-item btn-type-sel active" data-val="filled" onclick="selectThemeOpt('btnType', 'filled')">Filled Solid</div>
+                    <div class="selector-item btn-type-sel" data-val="outline" onclick="selectThemeOpt('btnType', 'outline')">Outline Lines</div>
+                    <div class="selector-item btn-type-sel" data-val="neumorph" onclick="selectThemeOpt('btnType', 'neumorph')">Glass / Neumorph</div>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">Warna Tombol</label>
-                    <input type="color" id="inp-btn-color" oninput="updateState('theme', 'btnColor', this.value)" style="width:100%; height:50px; border-radius:12px; cursor:pointer;">
+                    <label class="input-label">Warna Tombol (Button Color)</label>
+                    <input type="color" id="inp-btn-color" oninput="updateState('theme', 'btnColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
                 <div class="input-group">
                     <label class="input-label">Warna Teks Tombol & Profil</label>
-                    <input type="color" id="inp-text-color" oninput="updateState('theme', 'textColor', this.value)" style="width:100%; height:50px; border-radius:12px; cursor:pointer;">
+                    <input type="color" id="inp-text-color" oninput="updateState('theme', 'textColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
             </div>
 
             <div class="glass-card">
-                <h3 style="margin-top:0;">Tipografi (Fonts)</h3>
+                <h3 style="margin-top:0;">Tipografi (30+ Aesthetic Fonts)</h3>
                 <div class="input-group">
-                    <label class="input-label">Font Judul</label>
-                    <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value); loadGoogleFont(this.value);">
-                        <option value="'Outfit', sans-serif">Outfit</option>
-                        <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
-                        <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-                        <option value="'Times New Roman', serif">Times New Roman</option>
-                    </select>
+                    <label class="input-label">Font Judul Utama</label>
+                    <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value);"></select>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Font Tombol</label>
-                    <select class="gf-input" id="inp-font-btn" onchange="updateState('theme', 'fontButton', this.value); loadGoogleFont(this.value);">
-                        <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
-                        <option value="'Outfit', sans-serif">Outfit</option>
-                        <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-                        <option value="'Arial', sans-serif">Arial</option>
-                    </select>
+                    <label class="input-label">Font Tombol & Bio</label>
+                    <select class="gf-input" id="inp-font-btn" onchange="updateState('theme', 'fontButton', this.value);"></select>
                 </div>
             </div>
         </div>
@@ -177,17 +158,22 @@
         <!-- TAB 3: SETTINGS -->
         <div id="tab-settings" class="tab-content">
             <div class="glass-card">
-                <h3 style="margin-top:0;">Pengaturan Publikasi</h3>
+                <h3 style="margin-top:0;">Pengaturan Publikasi & SEO</h3>
                 <div class="input-group">
                     <label class="input-label">Custom URL (Slug)</label>
-                    <div style="display:flex; align-items:center; background:rgba(255,255,255,0.4); border:1px solid var(--border-color); border-radius:12px; padding-left:15px; box-shadow:var(--inner-neumorph);">
-                        <span style="color:var(--text-muted); font-weight:600;">/link/</span>
-                        <input type="text" style="border:none; background:transparent; padding:14px; outline:none; font-size:1rem; flex:1;" id="inp-slug" oninput="updateState('slug', null, this.value)" placeholder="nama-kabinet">
+                    <div style="display:flex; align-items:center; background:rgba(255,255,255,0.6); border:2px solid var(--border-color); border-radius:16px; padding-left:15px; box-shadow:var(--inner-neumorph); transition:0.3s;" onfocusin="this.style.borderColor='var(--primary)'" onfocusout="this.style.borderColor='var(--border-color)'">
+                        <span style="color:var(--text-muted); font-weight:700;">/link/</span>
+                        <input type="text" style="border:none; background:transparent; padding:16px 14px; outline:none; font-size:1.05rem; flex:1; font-weight:600; color:var(--text-main);" id="inp-slug" oninput="updateState('slug', null, this.value)" placeholder="nama-kabinet-2026">
                     </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Pastikan slug ini unik. URL Anda akan menjadi: bemkbmfkgumi.com/link/slug-anda</p>
                 </div>
+                
+                <div style="border-top:1px dashed var(--border-color); margin:30px 0;"></div>
+                
+                <h4 style="margin-top:0; color:var(--primary);">Search Engine Optimization (SEO)</h4>
                 <div class="input-group">
-                    <label class="input-label">SEO Meta Title</label>
-                    <input type="text" class="gf-input" id="inp-seo-title" oninput="updateState('settings', 'seoTitle', this.value)" placeholder="Judul untuk Google">
+                    <label class="input-label">Meta Title (Judul Google)</label>
+                    <input type="text" class="gf-input" id="inp-seo-title" oninput="updateState('settings', 'seoTitle', this.value)" placeholder="Misal: Linktree Resmi BEM FKG UMI">
                 </div>
             </div>
         </div>
@@ -207,10 +193,33 @@
 </div>
 
 <script>
+    // ================= 30+ AESTHETIC FONTS LIBRARY =================
+    const fontLibrary = [
+        "Inter", "Poppins", "Outfit", "Plus Jakarta Sans", "Space Grotesk", 
+        "Montserrat", "Roboto", "Open Sans", "Lato", "Oswald", 
+        "Raleway", "Playfair Display", "Merriweather", "Lora", "PT Sans", 
+        "Nunito", "Rubik", "Work Sans", "Quicksand", "Syne", 
+        "Cabinet Grotesk", "Manrope", "DM Sans", "Jost", "Epilogue", 
+        "Archivo", "Sora", "Urbanist", "Space Mono", "Fira Code", "Times New Roman"
+    ];
+
+    // ================= SVG SOCIAL ICONS MAP =================
+    const socialIconsMap = {
+        'instagram': '<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>',
+        'tiktok': '<path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.37-3.46-5.7-.02-1.43.3-2.84 1-4.04 1.25-2.08 3.59-3.4 6-3.45.02 1.37-.01 2.74.02 4.11-1.19-.07-2.39.31-3.25 1.16-.76.71-1.17 1.77-1.1 2.84.05 1.05.59 2.05 1.43 2.65 1.01.76 2.45.89 3.63.38.86-.36 1.47-1.14 1.63-2.05.08-.5.06-1.02.06-1.52.01-5.78-.02-11.56.02-17.34z"/>',
+        'whatsapp': '<path d="M11.968 0C5.358 0 .002 5.36.002 11.97c0 2.12.553 4.195 1.606 6.012L.031 24l6.155-1.616c1.768.966 3.75 1.476 5.782 1.476 6.61 0 11.97-5.36 11.97-11.972C23.938 5.36 18.578 0 11.968 0zm6.544 17.202c-.273.766-1.583 1.472-2.193 1.545-.584.071-1.355.205-4.238-.99-3.486-1.442-5.76-5.02-5.934-5.253-.173-.233-1.417-1.883-1.417-3.59 0-1.707.886-2.545 1.202-2.881.316-.336.69-.42 .919-.42.23 0 .459.001.661.011.216.01.503-.083.786.596.287.69.977 2.38.977 2.38s.114.282-.03.563c-.143.282-.258.468-.517.766-.258.298-.535.632-.764.887-.245.27-.506.56-.226 1.05.281.49 1.246 2.068 2.668 3.484 1.838 1.829 3.393 2.4 3.882 2.632.489.232.775.186 1.063-.14.288-.326 1.233-1.442 1.564-1.936.33-.493.66-.412 1.106-.238.446.175 2.814 1.328 3.288 1.563.475.235.792.35.907.545.115.195.115 1.13-.158 1.896z"/>',
+        'email': '<path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/>',
+        'x': '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>',
+        'youtube': '<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>',
+        'threads': '<path d="M14.61 21.05c-1.39.9-3.23 1.34-5.32 1.34-3.14 0-5.71-1-7.46-2.9C.1 17.61-.31 15.02-.31 11.97c0-2.92.51-5.38 1.53-7.37 1.05-2.04 2.65-3.32 4.79-3.32 1.83 0 3.3.84 4.41 2.54 1.13 1.73 1.69 4.18 1.69 7.31v1.65H5.8c.03 2.15.57 3.82 1.63 5 1.07 1.2 2.5 1.8 4.29 1.8 1.19 0 2.22-.26 3.08-.77a6.97 6.97 0 0 0 2.2-2.03l1.83 1.28c-.85 1.3-2.26 2.3-4.22 3zm-2.45-12.72c0-2.07-.37-3.6-1.12-4.57-.75-.98-1.75-1.48-2.99-1.48-1.22 0-2.22.51-3 1.52-.77 1.03-1.18 2.56-1.24 4.58h8.35v-.05zm9.14 5.95v-9h-2.31v9.06c0 1.28-.27 2.21-.81 2.78-.54.58-1.34.86-2.41.86-1.11 0-1.92-.29-2.44-.86-.51-.57-.77-1.5-.77-2.79v-9.05H10.1v9c0 2.05.58 3.59 1.73 4.62 1.15 1.04 2.8 1.56 4.96 1.56 2.11 0 3.73-.5 4.88-1.5 1.15-1 1.72-2.51 1.72-4.52z"/>',
+        'spotify': '<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.394-.682.525-1.08.275-2.97-1.815-6.705-2.22-11.115-1.215-.465.105-.915-.18-1.02-.645-.105-.465.18-.915.645-1.02 4.83-1.11 8.97-.645 12.285 1.38.39.24.525.675.285 1.225zm1.44-3.24c-.3.495-.915.645-1.41.345-3.39-2.085-8.625-2.655-12.435-1.455-.555.18-1.155-.135-1.335-.69-.18-.555.135-1.155.69-1.335 4.38-1.38 10.23-.735 14.16 1.665.495.3.645.915.33 1.47zm.135-3.405c-4.065-2.415-10.785-2.64-14.67-1.455-.675.21-1.395-.165-1.605-.84-.21-.675.165-1.395.84-1.605 4.53-1.38 11.955-1.11 16.68 1.695.6.36.81 1.14.45 1.74-.36.6-1.14.81-1.695.465z"/>',
+        'linkedin': '<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>',
+        'facebook': '<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>'
+    };
+
     // ================= GLOBAL STATE =================
     let allLinktrees = [];
     
-    // Default Empty State
     const defaultState = {
         id: '',
         slug: `kabinet-${Date.now()}`,
@@ -222,9 +231,8 @@
         links: [
             { id: 'l1', title: 'Website Resmi', url: 'https://bemkbmfkgumi.com', active: true }
         ],
-        socials: {
-            instagram: '', tiktok: '', whatsapp: '', email: ''
-        },
+        // Diubah menjadi array untuk multi sosial media yang dinamis
+        socials: [],
         theme: {
             bgType: 'color', // color, gradient, image
             bgColor: '#f8fafc',
@@ -245,8 +253,34 @@
 
     // ================= LIFECYCLE =================
     window.onload = () => {
+        populateFontSelectors();
         loadAllLinktrees();
     };
+
+    function populateFontSelectors() {
+        let html = '';
+        fontLibrary.forEach(font => {
+            html += `<option value="'${font}', sans-serif">${font}</option>`;
+        });
+        document.getElementById('inp-font-title').innerHTML = html;
+        document.getElementById('inp-font-btn').innerHTML = html;
+        
+        // Setup initial default
+        document.getElementById('inp-font-title').value = "'Outfit', sans-serif";
+        document.getElementById('inp-font-btn').value = "'Plus Jakarta Sans', sans-serif";
+    }
+
+    function loadGoogleFont(fontFamilyStr) {
+        if(!fontFamilyStr) return;
+        let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
+        const linkId = `font-${fontName.replace(/\s+/g, '')}`;
+        if(!document.getElementById(linkId)) {
+            const link = document.createElement('link');
+            link.id = linkId; link.rel = 'stylesheet';
+            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700&display=swap`;
+            document.head.appendChild(link);
+        }
+    }
 
     // ================= TAB CONTROLLER =================
     function switchTab(tabId) {
@@ -258,7 +292,6 @@
         
         document.getElementById(`tab-${tabId}`).classList.add('active');
 
-        // Logic UI Split Screen (List vs Editor)
         const layout = document.getElementById('main-layout');
         const editorTabs = document.querySelectorAll('.editor-only');
         const globalBtn = document.getElementById('btn-global-action');
@@ -269,7 +302,7 @@
             globalBtn.innerText = "+ Buat Linktree Baru";
             globalBtn.setAttribute('onclick', 'createNewLinktree()');
             globalBtn.className = 'btn-primary';
-            loadAllLinktrees(); // refresh list
+            loadAllLinktrees(); 
         } else {
             layout.classList.remove('list-mode');
             editorTabs.forEach(t => t.style.display = 'block');
@@ -277,7 +310,6 @@
             globalBtn.setAttribute('onclick', 'saveLinktree()');
             globalBtn.className = 'btn-primary glow-effect';
             
-            // Populasikan form dengan data State Saat Ini
             populateEditorForm();
             renderLivePreview();
         }
@@ -330,8 +362,9 @@
         if(found) {
             state = JSON.parse(JSON.stringify(found));
             
-            // Pengaman struktur objek jika struktur dari database lama kurang lengkap
-            if(!state.socials) state.socials = { instagram:'', tiktok:'', whatsapp:'', email:'' };
+            // Format Array Check untuk dukungan data sosial media yg baru
+            if(!Array.isArray(state.socials)) state.socials = [];
+            
             if(!state.theme) state.theme = { ...defaultState.theme };
             if(!state.settings) state.settings = { ...defaultState.settings };
             
@@ -357,19 +390,19 @@
     // ================= STATE UPDATER & BINDING =================
     function populateEditorForm() {
         // Tab 1
-        document.getElementById('edit-profile-img-preview').src = state.profile.image || 'https://via.placeholder.com/100';
+        document.getElementById('edit-profile-img-preview').src = state.profile.image || '/img/bemfkgumi.png';
         document.getElementById('inp-title').value = state.profile.title || '';
         document.getElementById('inp-bio').value = state.profile.bio || '';
-        document.getElementById('inp-ig').value = state.socials.instagram || '';
-        document.getElementById('inp-tk').value = state.socials.tiktok || '';
-        document.getElementById('inp-wa').value = state.socials.whatsapp || '';
-        document.getElementById('inp-email').value = state.socials.email || '';
 
         // Tab 2
         document.getElementById('inp-bg-type').value = state.theme.bgType || 'color';
         document.getElementById('inp-bg-color').value = state.theme.bgColor || '#f8fafc';
         document.getElementById('bg-color-picker').style.display = (state.theme.bgType === 'image') ? 'none' : 'block';
         document.getElementById('bg-image-picker').style.display = (state.theme.bgType === 'image') ? 'block' : 'none';
+        
+        let fileDisplay = document.getElementById('bg-filename');
+        if(state.theme.bgType === 'image' && state.theme.bgImage) fileDisplay.innerText = "Sistem menggunakan background gambar Anda.";
+        else fileDisplay.innerText = "";
 
         document.getElementById('inp-btn-color').value = state.theme.btnColor || '#8b5cf6';
         document.getElementById('inp-text-color').value = state.theme.textColor || '#0f172a';
@@ -379,16 +412,19 @@
 
         // Button Theme Selected Visual
         document.querySelectorAll('.btn-shape-sel').forEach(el => el.classList.remove('active'));
-        document.querySelector(`.btn-shape-sel[data-val="${state.theme.btnShape || 'pill'}"]`).classList.add('active');
+        let shapeEl = document.querySelector(`.btn-shape-sel[data-val="${state.theme.btnShape || 'pill'}"]`);
+        if(shapeEl) shapeEl.classList.add('active');
 
         document.querySelectorAll('.btn-type-sel').forEach(el => el.classList.remove('active'));
-        document.querySelector(`.btn-type-sel[data-val="${state.theme.btnType || 'filled'}"]`).classList.add('active');
+        let typeEl = document.querySelector(`.btn-type-sel[data-val="${state.theme.btnType || 'filled'}"]`);
+        if(typeEl) typeEl.classList.add('active');
 
         // Tab 3
         document.getElementById('inp-slug').value = state.slug || '';
         document.getElementById('inp-seo-title').value = state.settings.seoTitle || '';
 
         renderLinksEditor();
+        renderSocialsEditor();
     }
 
     function updateState(category, key, value) {
@@ -416,7 +452,9 @@
         renderLivePreview();
     }
 
-    // ================= LINK MANAGEMENT =================
+    // ================= MAIN LINKS MANAGEMENT =================
+    function genId() { return Math.random().toString(36).substr(2, 9); }
+
     function addLink() {
         state.links.unshift({ id: 'l_'+genId(), title: 'Link Baru', url: '', active: true });
         renderLinksEditor();
@@ -445,8 +483,8 @@
             <div class="link-item" data-id="${l.id}">
                 <div class="drag-handle">⠿</div>
                 <div style="flex:1;">
-                    <input type="text" class="gf-input" style="padding:10px; margin-bottom:10px; font-weight:bold;" value="${l.title}" oninput="updateLink('${l.id}', 'title', this.value)" placeholder="Judul Link">
-                    <input type="url" class="gf-input" style="padding:10px; font-size:0.9rem;" value="${l.url}" oninput="updateLink('${l.id}', 'url', this.value)" placeholder="https://url...">
+                    <input type="text" class="gf-input" style="padding:14px; margin-bottom:12px; font-weight:700;" value="${l.title}" oninput="updateLink('${l.id}', 'title', this.value)" placeholder="Judul Link">
+                    <input type="url" class="gf-input" style="padding:12px 14px; font-size:0.9rem;" value="${l.url}" oninput="updateLink('${l.id}', 'url', this.value)" placeholder="https://url-anda.com">
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
                     <label class="toggle-switch">
@@ -461,7 +499,7 @@
 
         new Sortable(container, {
             handle: '.drag-handle',
-            animation: 200,
+            animation: 250,
             onEnd: function(evt) {
                 const item = state.links.splice(evt.oldIndex, 1)[0];
                 state.links.splice(evt.newIndex, 0, item);
@@ -469,6 +507,63 @@
             }
         });
     }
+
+    // ================= DYNAMIC SOCIAL MEDIA MANAGEMENT =================
+    function addSocial() {
+        state.socials.push({ id: 's_'+genId(), platform: 'instagram', url: '' });
+        renderSocialsEditor();
+        renderLivePreview();
+    }
+
+    function deleteSocial(id) {
+        state.socials = state.socials.filter(s => s.id !== id);
+        renderSocialsEditor();
+        renderLivePreview();
+    }
+
+    function updateSocial(id, key, value) {
+        let soc = state.socials.find(s => s.id === id);
+        if(soc) {
+            soc[key] = value;
+            renderLivePreview();
+        }
+    }
+
+    function renderSocialsEditor() {
+        const container = document.getElementById('socials-container');
+        if(state.socials.length === 0) {
+            container.innerHTML = `<div style="text-align:center; color:var(--text-muted);">Belum ada sosial media yang ditambahkan.</div>`;
+            return;
+        }
+
+        const platformOpts = `
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="email">Email</option>
+            <option value="x">X (Twitter)</option>
+            <option value="youtube">YouTube</option>
+            <option value="threads">Threads</option>
+            <option value="spotify">Spotify</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="facebook">Facebook</option>
+        `;
+
+        let html = '';
+        state.socials.forEach(s => {
+            let optStr = platformOpts.replace(`value="${s.platform}"`, `value="${s.platform}" selected`);
+            html += `
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px dashed var(--border-color);">
+                <select class="gf-input" style="width:140px; padding:10px;" onchange="updateSocial('${s.id}', 'platform', this.value)">
+                    ${optStr}
+                </select>
+                <input type="text" class="gf-input" style="flex:1; padding:10px;" value="${s.url}" oninput="updateSocial('${s.id}', 'url', this.value)" placeholder="URL Sosmed">
+                <button class="btn-danger" style="padding:10px 15px;" onclick="deleteSocial('${s.id}')">✕</button>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
 
     // ================= FILE UPLOAD =================
     async function handleImageUpload(input, type) {
@@ -493,6 +588,7 @@
                             document.getElementById('edit-profile-img-preview').src = state.profile.image;
                         } else if (type === 'bg') {
                             state.theme.bgImage = window.location.origin + data.url;
+                            document.getElementById('bg-filename').innerText = "✅ Background Berhasil Diunggah.";
                         }
                         renderLivePreview();
                     }
@@ -503,12 +599,20 @@
                         document.getElementById('edit-profile-img-preview').src = base64;
                     } else if (type === 'bg') {
                         state.theme.bgImage = base64;
+                        document.getElementById('bg-filename').innerText = "✅ Background Berhasil Digunakan (Local).";
                     }
                     renderLivePreview();
                 }
             };
             reader.readAsDataURL(file);
         }
+    }
+
+    function removeBgImage() {
+        state.theme.bgImage = '';
+        document.getElementById('bg-filename').innerText = "Background Gambar Dihapus.";
+        document.getElementById('upload-bg-img').value = "";
+        renderLivePreview();
     }
 
     // ================= LIVE PREVIEW RENDERER =================
@@ -523,14 +627,20 @@
             screen.style.background = `linear-gradient(135deg, ${t.bgColor}, #ffffff)`;
         } else if (t.bgType === 'image' && t.bgImage) {
             screen.style.background = `url('${t.bgImage}') no-repeat center center / cover`;
+        } else {
+            screen.style.background = t.bgColor;
         }
 
         screen.style.color = t.textColor;
         
         let html = '';
 
+        // Load Font Secara Dinamis
+        loadGoogleFont(t.fontTitle);
+        loadGoogleFont(t.fontButton);
+
         // Profile Section
-        html += `<img id="pv-profile-img" src="${state.profile.image || 'https://via.placeholder.com/100'}" alt="Profile">`;
+        html += `<img id="pv-profile-img" src="${state.profile.image || '/img/bemfkgumi.png'}" alt="Profile">`;
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${state.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
@@ -553,30 +663,24 @@
         });
         html += `</div>`;
 
-        // Socials Logic
-        const s = state.socials || {};
-        if(s.instagram || s.tiktok || s.whatsapp || s.email) {
+        // Socials Logic (Dynamic SVG Vectors)
+        if(state.socials && state.socials.length > 0) {
             html += `<div id="pv-socials">`;
-            if(s.instagram) html += `<a href="${s.instagram}" class="pv-social-icon" style="color:${t.textColor}">📸</a>`;
-            if(s.tiktok) html += `<a href="${s.tiktok}" class="pv-social-icon" style="color:${t.textColor}">🎵</a>`;
-            if(s.whatsapp) html += `<a href="https://wa.me/${s.whatsapp}" class="pv-social-icon" style="color:${t.textColor}">💬</a>`;
-            if(s.email) html += `<a href="mailto:${s.email}" class="pv-social-icon" style="color:${t.textColor}">✉️</a>`;
+            state.socials.forEach(s => {
+                if(s.url && socialIconsMap[s.platform]) {
+                    let fullUrl = s.url;
+                    if(s.platform === 'whatsapp' && !s.url.includes('wa.me')) fullUrl = `https://wa.me/${s.url}`;
+                    if(s.platform === 'email' && !s.url.includes('mailto:')) fullUrl = `mailto:${s.url}`;
+                    
+                    html += `<a href="${fullUrl}" target="_blank" class="pv-social-icon" style="color:${t.textColor}">
+                                <svg viewBox="0 0 24 24">${socialIconsMap[s.platform]}</svg>
+                             </a>`;
+                }
+            });
             html += `</div>`;
         }
 
         screen.innerHTML = html;
-    }
-
-    function loadGoogleFont(fontFamilyStr) {
-        if(!fontFamilyStr) return;
-        let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
-        const linkId = `font-${fontName.replace(/\s+/g, '')}`;
-        if(!document.getElementById(linkId)) {
-            const link = document.createElement('link');
-            link.id = linkId; link.rel = 'stylesheet';
-            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700&display=swap`;
-            document.head.appendChild(link);
-        }
     }
 
     // ================= API SAVE LOGIC =================
@@ -593,7 +697,6 @@
 
             const data = await res.json();
             if(data.success) {
-                // Perbarui state dengan data yang baru saja disave (dapat ID yang sama dll)
                 state = data.data; 
                 alert("✅ Sukses! Linktree berhasil dipublikasikan di: /link/" + state.slug);
             } else {
