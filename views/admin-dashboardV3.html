@@ -6,12 +6,18 @@
     <title>BEM-Linktree Builder V3</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
+    <!-- Load Google Fonts Awal (Sisanya di-load asinkron via JS) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <!-- Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <link rel="stylesheet" href="/css/mainV3.css">
 </head>
 <body>
 
+<!-- CLASS list-mode AKTIF DEFAULT AGAR MUNCUL FULL SCREEN KE KIRI -->
 <div class="builder-layout list-mode" id="main-layout">
     
     <!-- LEFT: EDITOR PANEL -->
@@ -107,12 +113,19 @@
 
                 <div id="bg-image-picker" class="input-group" style="display:none;">
                     <label class="input-label">Upload Gambar Background</label>
-                    <input type="file" id="upload-bg-img" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'bg')">
-                    <div style="display:flex; gap:15px; align-items:center;">
-                        <button class="btn-outline" style="flex:1;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper Baru</button>
-                        <button class="btn-danger" onclick="removeBgImage()" title="Hapus Gambar">🗑️</button>
+                    <div style="display:flex; gap:15px; align-items:center; background:rgba(255,255,255,0.5); padding:15px; border-radius:16px; border:1px solid var(--border-color); box-shadow:var(--inner-neumorph);">
+                        <!-- Thumbnail Preview Area -->
+                        <div id="bg-preview-box" style="width:80px; height:120px; border-radius:12px; border:2px dashed var(--primary); display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(139,92,246,0.1); flex-shrink:0;">
+                            <span style="font-size:1.5rem; opacity:0.5;">🖼️</span>
+                        </div>
+                        <div style="flex:1;">
+                            <input type="file" id="upload-bg-img" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'bg')">
+                            <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper Baru</button>
+                            <button class="btn-danger" style="width:100%; padding:10px; background:#ef4444;" onclick="removeBgImage()" title="Hapus Gambar">🗑️ Hapus Gambar</button>
+                        </div>
                     </div>
-                    <div id="bg-filename" style="font-size:0.85rem; color:var(--primary); margin-top:10px; font-weight:600;"></div>
+                    <div id="bg-filename" style="font-size:0.85rem; color:var(--primary); margin-top:10px; font-weight:600; text-align:center;"></div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Tips: Sistem otomatis memberi efek Glass Overlay agar teks tetap terbaca.</p>
                 </div>
             </div>
 
@@ -146,11 +159,11 @@
                 <h3 style="margin-top:0;">Tipografi (30+ Aesthetic Fonts)</h3>
                 <div class="input-group">
                     <label class="input-label">Font Judul Utama</label>
-                    <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value);"></select>
+                    <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value); loadGoogleFont(this.value);"></select>
                 </div>
                 <div class="input-group">
                     <label class="input-label">Font Tombol & Bio</label>
-                    <select class="gf-input" id="inp-font-btn" onchange="updateState('theme', 'fontButton', this.value);"></select>
+                    <select class="gf-input" id="inp-font-btn" onchange="updateState('theme', 'fontButton', this.value); loadGoogleFont(this.value);"></select>
                 </div>
             </div>
         </div>
@@ -200,7 +213,8 @@
         "Raleway", "Playfair Display", "Merriweather", "Lora", "PT Sans", 
         "Nunito", "Rubik", "Work Sans", "Quicksand", "Syne", 
         "Cabinet Grotesk", "Manrope", "DM Sans", "Jost", "Epilogue", 
-        "Archivo", "Sora", "Urbanist", "Space Mono", "Fira Code", "Times New Roman"
+        "Archivo", "Sora", "Urbanist", "Space Mono", "Fira Code", "Times New Roman",
+        "Arial", "Calibri", "Comic Sans MS", "Impact"
     ];
 
     // ================= SVG SOCIAL ICONS MAP =================
@@ -231,16 +245,15 @@
         links: [
             { id: 'l1', title: 'Website Resmi', url: 'https://bemkbmfkgumi.com', active: true }
         ],
-        // Diubah menjadi array untuk multi sosial media yang dinamis
         socials: [],
         theme: {
-            bgType: 'color', // color, gradient, image
+            bgType: 'color', 
             bgColor: '#f8fafc',
             bgImage: '',
             fontTitle: "'Outfit', sans-serif",
             fontButton: "'Plus Jakarta Sans', sans-serif",
-            btnShape: 'pill', // square, rounded, pill
-            btnType: 'filled', // filled, outline, neumorph
+            btnShape: 'pill', 
+            btnType: 'filled', 
             btnColor: '#8b5cf6',
             textColor: '#0f172a'
         },
@@ -273,6 +286,10 @@
     function loadGoogleFont(fontFamilyStr) {
         if(!fontFamilyStr) return;
         let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
+        // Fallback filter untuk font bawaan sistem yang tidak perlu di-fetch
+        const sysFonts = ['Arial', 'Calibri', 'Comic Sans MS', 'Impact', 'Times New Roman'];
+        if(sysFonts.includes(fontName)) return;
+
         const linkId = `font-${fontName.replace(/\s+/g, '')}`;
         if(!document.getElementById(linkId)) {
             const link = document.createElement('link');
@@ -362,9 +379,7 @@
         if(found) {
             state = JSON.parse(JSON.stringify(found));
             
-            // Format Array Check untuk dukungan data sosial media yg baru
             if(!Array.isArray(state.socials)) state.socials = [];
-            
             if(!state.theme) state.theme = { ...defaultState.theme };
             if(!state.settings) state.settings = { ...defaultState.settings };
             
@@ -400,9 +415,16 @@
         document.getElementById('bg-color-picker').style.display = (state.theme.bgType === 'image') ? 'none' : 'block';
         document.getElementById('bg-image-picker').style.display = (state.theme.bgType === 'image') ? 'block' : 'none';
         
+        let previewBox = document.getElementById('bg-preview-box');
         let fileDisplay = document.getElementById('bg-filename');
-        if(state.theme.bgType === 'image' && state.theme.bgImage) fileDisplay.innerText = "Sistem menggunakan background gambar Anda.";
-        else fileDisplay.innerText = "";
+        
+        if(state.theme.bgType === 'image' && state.theme.bgImage) {
+            fileDisplay.innerText = "Sistem menggunakan background gambar Anda.";
+            previewBox.innerHTML = `<img src="${state.theme.bgImage}" style="width:100%; height:100%; object-fit:cover;">`;
+        } else {
+            fileDisplay.innerText = "";
+            previewBox.innerHTML = `<span style="font-size:1.5rem; opacity:0.5;">🖼️</span>`;
+        }
 
         document.getElementById('inp-btn-color').value = state.theme.btnColor || '#8b5cf6';
         document.getElementById('inp-text-color').value = state.theme.textColor || '#0f172a';
@@ -410,7 +432,6 @@
         document.getElementById('inp-font-title').value = state.theme.fontTitle || "'Outfit', sans-serif";
         document.getElementById('inp-font-btn').value = state.theme.fontButton || "'Plus Jakarta Sans', sans-serif";
 
-        // Button Theme Selected Visual
         document.querySelectorAll('.btn-shape-sel').forEach(el => el.classList.remove('active'));
         let shapeEl = document.querySelector(`.btn-shape-sel[data-val="${state.theme.btnShape || 'pill'}"]`);
         if(shapeEl) shapeEl.classList.add('active');
@@ -589,6 +610,7 @@
                         } else if (type === 'bg') {
                             state.theme.bgImage = window.location.origin + data.url;
                             document.getElementById('bg-filename').innerText = "✅ Background Berhasil Diunggah.";
+                            document.getElementById('bg-preview-box').innerHTML = `<img src="${state.theme.bgImage}" style="width:100%; height:100%; object-fit:cover;">`;
                         }
                         renderLivePreview();
                     }
@@ -600,6 +622,7 @@
                     } else if (type === 'bg') {
                         state.theme.bgImage = base64;
                         document.getElementById('bg-filename').innerText = "✅ Background Berhasil Digunakan (Local).";
+                        document.getElementById('bg-preview-box').innerHTML = `<img src="${state.theme.bgImage}" style="width:100%; height:100%; object-fit:cover;">`;
                     }
                     renderLivePreview();
                 }
@@ -612,6 +635,7 @@
         state.theme.bgImage = '';
         document.getElementById('bg-filename').innerText = "Background Gambar Dihapus.";
         document.getElementById('upload-bg-img').value = "";
+        document.getElementById('bg-preview-box').innerHTML = `<span style="font-size:1.5rem; opacity:0.5;">🖼️</span>`;
         renderLivePreview();
     }
 
@@ -620,22 +644,26 @@
         const screen = document.getElementById('live-preview-screen');
         const t = state.theme;
 
-        // Setup Background
+        // Overlay & Background Logic
         if(t.bgType === 'color') {
             screen.style.background = t.bgColor;
+            screen.classList.remove('has-bg-image');
         } else if (t.bgType === 'gradient') {
             screen.style.background = `linear-gradient(135deg, ${t.bgColor}, #ffffff)`;
+            screen.classList.remove('has-bg-image');
         } else if (t.bgType === 'image' && t.bgImage) {
+            // Kita serahkan overlay transparan diurus oleh CSS (.mockup-screen.has-bg-image::before)
             screen.style.background = `url('${t.bgImage}') no-repeat center center / cover`;
+            screen.classList.add('has-bg-image');
         } else {
             screen.style.background = t.bgColor;
+            screen.classList.remove('has-bg-image');
         }
 
         screen.style.color = t.textColor;
         
         let html = '';
 
-        // Load Font Secara Dinamis
         loadGoogleFont(t.fontTitle);
         loadGoogleFont(t.fontButton);
 
@@ -663,7 +691,7 @@
         });
         html += `</div>`;
 
-        // Socials Logic (Dynamic SVG Vectors)
+        // Socials Logic
         if(state.socials && state.socials.length > 0) {
             html += `<div id="pv-socials">`;
             state.socials.forEach(s => {
