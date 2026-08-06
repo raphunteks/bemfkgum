@@ -17,7 +17,6 @@
 </head>
 <body>
 
-<!-- CLASS list-mode AKTIF DEFAULT AGAR MUNCUL FULL SCREEN KE KIRI -->
 <div class="builder-layout list-mode" id="main-layout">
     
     <!-- LEFT: EDITOR PANEL -->
@@ -46,7 +45,6 @@
                     <p style="color:var(--text-muted); font-size:0.95rem; margin:8px 0 0;">Kelola semua halaman Link in Bio (BEM) Anda di sini.</p>
                 </div>
             </div>
-            
             <div id="linktree-list-container">
                 <div style="text-align:center; padding:50px; color:var(--text-muted);">Memuat daftar Linktree...</div>
             </div>
@@ -62,7 +60,7 @@
                     <div style="flex:1;">
                         <input type="file" id="upload-profile-img" accept="image/*,.heic,.jpeg,.png,.jpg,.webp" style="display:none;" onchange="handleImageUpload(this, 'profile')">
                         <button class="btn-outline" onclick="document.getElementById('upload-profile-img').click()">Ubah Foto Profil</button>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin:8px 0 0;">Format didukung: JPG, PNG, WEBP, HEIC. Max 5MB.</p>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin:8px 0 0;">Format: JPG, PNG, WEBP, HEIC. Max 5MB.</p>
                     </div>
                 </div>
                 <div class="input-group">
@@ -80,20 +78,14 @@
                 <h3 style="margin:0;">Daftar Tautan Utama</h3>
                 <button class="btn-primary" style="padding:10px 20px;" onclick="addLink()">+ Tambah Link</button>
             </div>
-            
-            <div id="links-container">
-                <!-- Links will be rendered here -->
-            </div>
+            <div id="links-container"></div>
 
-            <!-- DYNAMIC Socials Section -->
+            <!-- Socials Section -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; margin-top:40px;">
                 <h3 style="margin:0;">Ikon Sosial Media</h3>
                 <button class="btn-primary" style="padding:10px 20px; background:#10b981;" onclick="addSocial()">+ Tambah Sosmed</button>
             </div>
-
-            <div class="glass-card" id="socials-container">
-                <!-- Dynamic Socials Input rendered here -->
-            </div>
+            <div class="glass-card" id="socials-container"></div>
         </div>
 
         <!-- TAB 2: APPEARANCE -->
@@ -114,14 +106,13 @@
                 <div id="bg-image-picker" class="input-group" style="display:none;">
                     <label class="input-label">Upload Gambar Background</label>
                     <div style="display:flex; gap:15px; align-items:center; background:rgba(255,255,255,0.5); padding:15px; border-radius:16px; border:1px solid var(--border-color); box-shadow:var(--inner-neumorph);">
-                        <!-- Thumbnail Preview Area -->
                         <div id="bg-preview-box" style="width:80px; height:120px; border-radius:12px; border:2px dashed var(--primary); display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(139,92,246,0.1); flex-shrink:0;">
                             <span style="font-size:1.5rem; opacity:0.5;">🖼️</span>
                         </div>
                         <div style="flex:1;">
                             <input type="file" id="upload-bg-img" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'bg')">
-                            <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper Baru</button>
-                            <button class="btn-danger" style="width:100%; padding:10px; background:#ef4444;" onclick="removeBgImage()" title="Hapus Gambar">🗑️ Hapus Gambar</button>
+                            <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper</button>
+                            <button class="btn-danger" style="width:100%; padding:10px;" onclick="removeBgImage()">🗑️ Hapus Gambar</button>
                         </div>
                     </div>
                     <div id="bg-filename" style="font-size:0.85rem; color:var(--primary); margin-top:10px; font-weight:600; text-align:center;"></div>
@@ -130,23 +121,54 @@
             </div>
 
             <div class="glass-card">
-                <h3 style="margin-top:0;">Gaya Tombol (Button Styles)</h3>
-                <label class="input-label">Bentuk Tombol</label>
-                <div class="grid-selector" style="margin-bottom:25px;">
-                    <div class="selector-item btn-shape-sel" data-val="square" onclick="selectThemeOpt('btnShape', 'square')">Kotak Tajam</div>
-                    <div class="selector-item btn-shape-sel" data-val="rounded" onclick="selectThemeOpt('btnShape', 'rounded')">Rounded Soft</div>
-                    <div class="selector-item btn-shape-sel active" data-val="pill" onclick="selectThemeOpt('btnShape', 'pill')">Pill (Kapsul)</div>
+                <h3 style="margin-top:0;">Gaya Tombol (15+ Button Styles)</h3>
+                
+                <label class="input-label">Bentuk Tombol (Shapes)</label>
+                <div class="scroll-grid" style="margin-bottom:25px;">
+                    <div class="selector-item btn-shape-sel" data-val="square" onclick="selectThemeOpt('btnShape', 'square')">Kotak</div>
+                    <div class="selector-item btn-shape-sel" data-val="rounded" onclick="selectThemeOpt('btnShape', 'rounded')">Rounded</div>
+                    <div class="selector-item btn-shape-sel active" data-val="pill" onclick="selectThemeOpt('btnShape', 'pill')">Pill / Kapsul</div>
+                    <div class="selector-item btn-shape-sel" data-val="leaf-right" onclick="selectThemeOpt('btnShape', 'leaf-right')">Daun Kanan</div>
+                    <div class="selector-item btn-shape-sel" data-val="leaf-left" onclick="selectThemeOpt('btnShape', 'leaf-left')">Daun Kiri</div>
+                    <div class="selector-item btn-shape-sel" data-val="arch-up" onclick="selectThemeOpt('btnShape', 'arch-up')">Kubah Atas</div>
+                    <div class="selector-item btn-shape-sel" data-val="arch-down" onclick="selectThemeOpt('btnShape', 'arch-down')">Kubah Bawah</div>
+                    <div class="selector-item btn-shape-sel" data-val="arch-left" onclick="selectThemeOpt('btnShape', 'arch-left')">Kubah Kiri</div>
+                    <div class="selector-item btn-shape-sel" data-val="arch-right" onclick="selectThemeOpt('btnShape', 'arch-right')">Kubah Kanan</div>
+                    <div class="selector-item btn-shape-sel" data-val="sharp-mix" onclick="selectThemeOpt('btnShape', 'sharp-mix')">Sudut Mix 1</div>
+                    <div class="selector-item btn-shape-sel" data-val="sharp-mix-alt" onclick="selectThemeOpt('btnShape', 'sharp-mix-alt')">Sudut Mix 2</div>
+                    <div class="selector-item btn-shape-sel" data-val="barrel" onclick="selectThemeOpt('btnShape', 'barrel')">Tong 1</div>
+                    <div class="selector-item btn-shape-sel" data-val="barrel-alt" onclick="selectThemeOpt('btnShape', 'barrel-alt')">Tong 2</div>
+                    <div class="selector-item btn-shape-sel" data-val="blob1" onclick="selectThemeOpt('btnShape', 'blob1')">Soft Blob 1</div>
+                    <div class="selector-item btn-shape-sel" data-val="blob2" onclick="selectThemeOpt('btnShape', 'blob2')">Soft Blob 2</div>
+                    <div class="selector-item btn-shape-sel" data-val="slant" onclick="selectThemeOpt('btnShape', 'slant')">Miring Kanan</div>
+                    <div class="selector-item btn-shape-sel" data-val="slant-alt" onclick="selectThemeOpt('btnShape', 'slant-alt')">Miring Kiri</div>
+                    <div class="selector-item btn-shape-sel" data-val="oval" onclick="selectThemeOpt('btnShape', 'oval')">Oval Lebar</div>
                 </div>
 
-                <label class="input-label">Tipe Pewarnaan Tombol</label>
-                <div class="grid-selector" style="margin-bottom:25px;">
+                <label class="input-label">Tipe Pewarnaan & Efek (Types)</label>
+                <div class="scroll-grid" style="margin-bottom:25px;">
                     <div class="selector-item btn-type-sel active" data-val="filled" onclick="selectThemeOpt('btnType', 'filled')">Filled Solid</div>
                     <div class="selector-item btn-type-sel" data-val="outline" onclick="selectThemeOpt('btnType', 'outline')">Outline Lines</div>
-                    <div class="selector-item btn-type-sel" data-val="neumorph" onclick="selectThemeOpt('btnType', 'neumorph')">Glass / Neumorph</div>
+                    <div class="selector-item btn-type-sel" data-val="neumorph" onclick="selectThemeOpt('btnType', 'neumorph')">Neumorph / Glass</div>
+                    <div class="selector-item btn-type-sel" data-val="soft" onclick="selectThemeOpt('btnType', 'soft')">Soft Tint</div>
+                    <div class="selector-item btn-type-sel" data-val="ghost" onclick="selectThemeOpt('btnType', 'ghost')">Ghost Text</div>
+                    <div class="selector-item btn-type-sel" data-val="gradient-x" onclick="selectThemeOpt('btnType', 'gradient-x')">Gradient X</div>
+                    <div class="selector-item btn-type-sel" data-val="gradient-y" onclick="selectThemeOpt('btnType', 'gradient-y')">Gradient Y</div>
+                    <div class="selector-item btn-type-sel" data-val="3d" onclick="selectThemeOpt('btnType', '3d')">3D Extrude</div>
+                    <div class="selector-item btn-type-sel" data-val="shadow-hard" onclick="selectThemeOpt('btnType', 'shadow-hard')">Shadow Hard</div>
+                    <div class="selector-item btn-type-sel" data-val="shadow-soft" onclick="selectThemeOpt('btnType', 'shadow-soft')">Shadow Blur</div>
+                    <div class="selector-item btn-type-sel" data-val="neon" onclick="selectThemeOpt('btnType', 'neon')">Cyber Neon</div>
+                    <div class="selector-item btn-type-sel" data-val="retro" onclick="selectThemeOpt('btnType', 'retro')">Retro Pop</div>
+                    <div class="selector-item btn-type-sel" data-val="glass" onclick="selectThemeOpt('btnType', 'glass')">Pure Glass</div>
+                    <div class="selector-item btn-type-sel" data-val="wireframe" onclick="selectThemeOpt('btnType', 'wireframe')">Wireframe Dashed</div>
+                    <div class="selector-item btn-type-sel" data-val="brutalism" onclick="selectThemeOpt('btnType', 'brutalism')">Brutalism Box</div>
+                    <div class="selector-item btn-type-sel" data-val="glow" onclick="selectThemeOpt('btnType', 'glow')">Glow Aura</div>
+                    <div class="selector-item btn-type-sel" data-val="elegant" onclick="selectThemeOpt('btnType', 'elegant')">Dark Elegant</div>
+                    <div class="selector-item btn-type-sel" data-val="metallic" onclick="selectThemeOpt('btnType', 'metallic')">Metallic Silver</div>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">Warna Tombol (Button Color)</label>
+                    <label class="input-label">Warna Tombol Utama</label>
                     <input type="color" id="inp-btn-color" oninput="updateState('theme', 'btnColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
                 <div class="input-group">
@@ -159,11 +181,18 @@
                 <h3 style="margin-top:0;">Tipografi (30+ Aesthetic Fonts)</h3>
                 <div class="input-group">
                     <label class="input-label">Font Judul Utama</label>
-                    <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value); loadGoogleFont(this.value);"></select>
+                    <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value); updateFontPreview();"></select>
                 </div>
                 <div class="input-group">
                     <label class="input-label">Font Tombol & Bio</label>
-                    <select class="gf-input" id="inp-font-btn" onchange="updateState('theme', 'fontButton', this.value); loadGoogleFont(this.value);"></select>
+                    <select class="gf-input" id="inp-font-btn" onchange="updateState('theme', 'fontButton', this.value); updateFontPreview();"></select>
+                </div>
+                
+                <!-- KOTAK PREVIEW FONT REALTIME -->
+                <div id="font-preview-box" style="margin-top:20px; padding:25px; border-radius:16px; background:rgba(255,255,255,0.7); box-shadow:var(--inner-neumorph); border:1px solid var(--border-color); text-align:center;">
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px; font-weight:700;">LIVE FONT PREVIEW</p>
+                    <h2 id="preview-text-title" style="margin:0 0 10px; font-size:1.8rem; color:var(--text-main);">Headline Profil BEM</h2>
+                    <div id="preview-text-btn" style="display:inline-block; padding:10px 25px; border-radius:50px; background:var(--primary); color:#fff; font-size:1rem;">Tombol Link Ini</div>
                 </div>
             </div>
         </div>
@@ -171,21 +200,31 @@
         <!-- TAB 3: SETTINGS -->
         <div id="tab-settings" class="tab-content">
             <div class="glass-card">
-                <h3 style="margin-top:0;">Pengaturan Publikasi & SEO</h3>
+                <h3 style="margin-top:0;">URL Publikasi (Slug)</h3>
                 <div class="input-group">
-                    <label class="input-label">Custom URL (Slug)</label>
-                    <div style="display:flex; align-items:center; background:rgba(255,255,255,0.6); border:2px solid var(--border-color); border-radius:16px; padding-left:15px; box-shadow:var(--inner-neumorph); transition:0.3s;" onfocusin="this.style.borderColor='var(--primary)'" onfocusout="this.style.borderColor='var(--border-color)'">
+                    <div style="display:flex; align-items:center; background:rgba(255,255,255,0.6); border:2px solid var(--border-color); border-radius:16px; padding-left:15px; box-shadow:var(--inner-neumorph); transition:0.3s;">
                         <span style="color:var(--text-muted); font-weight:700;">/link/</span>
-                        <input type="text" style="border:none; background:transparent; padding:16px 14px; outline:none; font-size:1.05rem; flex:1; font-weight:600; color:var(--text-main);" id="inp-slug" oninput="updateState('slug', null, this.value)" placeholder="nama-kabinet-2026">
+                        <input type="text" style="border:none; background:transparent; padding:16px 14px; outline:none; font-size:1.05rem; flex:1; font-weight:600; color:var(--text-main);" id="inp-slug" oninput="updateState('slug', null, this.value)" placeholder="nama-kabinet">
                     </div>
-                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Pastikan slug ini unik. URL Anda akan menjadi: bemkbmfkgumi.com/link/slug-anda</p>
                 </div>
                 
                 <div style="border-top:1px dashed var(--border-color); margin:30px 0;"></div>
                 
-                <h4 style="margin-top:0; color:var(--primary);">Search Engine Optimization (SEO)</h4>
+                <h3 style="margin-top:0; color:var(--primary);">Pengaturan Watermark / Footer</h3>
                 <div class="input-group">
-                    <label class="input-label">Meta Title (Judul Google)</label>
+                    <label class="input-label">Teks Footer Bawah</label>
+                    <input type="text" class="gf-input" id="inp-footer-text" oninput="updateState('settings', 'footerText', this.value)" placeholder="Powered by BEM KBMFKG UMI (Dept. Infocom)">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">URL / Link Tujuan Footer</label>
+                    <input type="url" class="gf-input" id="inp-footer-url" oninput="updateState('settings', 'footerUrl', this.value)" placeholder="https://www.bemkbmfkgumi.com/ourteam">
+                </div>
+
+                <div style="border-top:1px dashed var(--border-color); margin:30px 0;"></div>
+
+                <h3 style="margin-top:0; color:var(--primary);">Search Engine Optimization (SEO)</h3>
+                <div class="input-group">
+                    <label class="input-label">Meta Title (Judul Tab Google)</label>
                     <input type="text" class="gf-input" id="inp-seo-title" oninput="updateState('settings', 'seoTitle', this.value)" placeholder="Misal: Linktree Resmi BEM FKG UMI">
                 </div>
             </div>
@@ -258,7 +297,9 @@
             textColor: '#0f172a'
         },
         settings: {
-            seoTitle: ''
+            seoTitle: '',
+            footerText: 'Powered by BEM KBMFKG UMI (Dept. Infocom)',
+            footerUrl: 'https://www.bemkbmfkgumi.com/ourteam'
         }
     };
 
@@ -278,7 +319,6 @@
         document.getElementById('inp-font-title').innerHTML = html;
         document.getElementById('inp-font-btn').innerHTML = html;
         
-        // Setup initial default
         document.getElementById('inp-font-title').value = "'Outfit', sans-serif";
         document.getElementById('inp-font-btn').value = "'Plus Jakarta Sans', sans-serif";
     }
@@ -286,7 +326,6 @@
     function loadGoogleFont(fontFamilyStr) {
         if(!fontFamilyStr) return;
         let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
-        // Fallback filter untuk font bawaan sistem yang tidak perlu di-fetch
         const sysFonts = ['Arial', 'Calibri', 'Comic Sans MS', 'Impact', 'Times New Roman'];
         if(sysFonts.includes(fontName)) return;
 
@@ -297,6 +336,14 @@
             link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700&display=swap`;
             document.head.appendChild(link);
         }
+    }
+
+    function updateFontPreview() {
+        const titleFont = document.getElementById('inp-font-title').value;
+        const btnFont = document.getElementById('inp-font-btn').value;
+        
+        document.getElementById('preview-text-title').style.fontFamily = titleFont;
+        document.getElementById('preview-text-btn').style.fontFamily = btnFont;
     }
 
     // ================= TAB CONTROLLER =================
@@ -431,6 +478,7 @@
         
         document.getElementById('inp-font-title').value = state.theme.fontTitle || "'Outfit', sans-serif";
         document.getElementById('inp-font-btn').value = state.theme.fontButton || "'Plus Jakarta Sans', sans-serif";
+        updateFontPreview(); // Panggil initial preview font
 
         document.querySelectorAll('.btn-shape-sel').forEach(el => el.classList.remove('active'));
         let shapeEl = document.querySelector(`.btn-shape-sel[data-val="${state.theme.btnShape || 'pill'}"]`);
@@ -443,6 +491,8 @@
         // Tab 3
         document.getElementById('inp-slug').value = state.slug || '';
         document.getElementById('inp-seo-title').value = state.settings.seoTitle || '';
+        document.getElementById('inp-footer-text').value = state.settings.footerText || defaultState.settings.footerText;
+        document.getElementById('inp-footer-url').value = state.settings.footerUrl || defaultState.settings.footerUrl;
 
         renderLinksEditor();
         renderSocialsEditor();
@@ -652,7 +702,6 @@
             screen.style.background = `linear-gradient(135deg, ${t.bgColor}, #ffffff)`;
             screen.classList.remove('has-bg-image');
         } else if (t.bgType === 'image' && t.bgImage) {
-            // Kita serahkan overlay transparan diurus oleh CSS (.mockup-screen.has-bg-image::before)
             screen.style.background = `url('${t.bgImage}') no-repeat center center / cover`;
             screen.classList.add('has-bg-image');
         } else {
@@ -672,15 +721,31 @@
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${state.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
-        // Link Buttons Logic
+        // Link Buttons Logic (18 TYPES CSS GENERATOR)
         let btnCssObj = `font-family:${t.fontButton}; `;
+        let bg = t.btnColor;
+        let txt = t.textColor;
         
-        if (t.btnType === 'filled') {
-            btnCssObj += `background-color:${t.btnColor}; color:#fff; border:none; `;
-        } else if (t.btnType === 'outline') {
-            btnCssObj += `background-color:transparent; color:${t.textColor}; border:2px solid ${t.btnColor}; `;
-        } else if (t.btnType === 'neumorph') {
-            btnCssObj += `background-color:rgba(255,255,255,0.4); color:${t.textColor}; border:1px solid rgba(255,255,255,0.6); box-shadow: 4px 4px 10px rgba(0,0,0,0.05), inset 1px 1px 1px rgba(255,255,255,0.5); backdrop-filter:blur(10px); `;
+        switch(t.btnType) {
+            case 'filled': btnCssObj += `background:${bg}; color:#fff; border:none;`; break;
+            case 'outline': btnCssObj += `background:transparent; color:${txt}; border:2px solid ${bg};`; break;
+            case 'neumorph': btnCssObj += `background:rgba(255,255,255,0.4); color:${txt}; border:1px solid rgba(255,255,255,0.6); box-shadow: 4px 4px 10px rgba(0,0,0,0.05), inset 1px 1px 1px rgba(255,255,255,0.5); backdrop-filter:blur(10px);`; break;
+            case 'soft': btnCssObj += `background:${bg}33; color:${bg}; border:none;`; break;
+            case 'ghost': btnCssObj += `background:transparent; color:${txt}; border:none; text-decoration:underline;`; break;
+            case 'gradient-x': btnCssObj += `background:linear-gradient(90deg, ${bg}, #ffffff); color:#000; border:none;`; break;
+            case 'gradient-y': btnCssObj += `background:linear-gradient(180deg, ${bg}, #000000); color:#fff; border:none;`; break;
+            case '3d': btnCssObj += `background:${bg}; color:#fff; border:none; border-bottom:4px solid ${txt};`; break;
+            case 'shadow-hard': btnCssObj += `background:${bg}; color:#fff; border:2px solid ${txt}; box-shadow: 5px 5px 0px ${txt};`; break;
+            case 'shadow-soft': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: 0 10px 20px ${bg}80;`; break;
+            case 'neon': btnCssObj += `background:transparent; color:${bg}; border:2px solid ${bg}; box-shadow: 0 0 10px ${bg}, inset 0 0 10px ${bg};`; break;
+            case 'retro': btnCssObj += `background:#fef08a; color:#000; border:3px solid #000; box-shadow: 4px 4px 0px #000;`; break;
+            case 'glass': btnCssObj += `background:rgba(255,255,255,0.1); color:${txt}; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(20px);`; break;
+            case 'wireframe': btnCssObj += `background:transparent; color:${txt}; border:2px dashed ${bg};`; break;
+            case 'brutalism': btnCssObj += `background:${bg}; color:#000; border:3px solid #000; box-shadow: 6px 6px 0px #000; border-radius:0 !important;`; break;
+            case 'glow': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: 0 0 25px ${bg};`; break;
+            case 'elegant': btnCssObj += `background:#0f172a; color:#eab308; border:1px solid #eab308;`; break;
+            case 'metallic': btnCssObj += `background:linear-gradient(135deg, #e2e8f0, #94a3b8); color:#0f172a; border:1px solid #cbd5e1; box-shadow:inset 2px 2px 5px #fff;`; break;
+            default: btnCssObj += `background:${bg}; color:#fff; border:none;`;
         }
 
         html += `<div id="pv-links-container">`;
@@ -707,6 +772,14 @@
             });
             html += `</div>`;
         }
+        
+        // Footer Watermark Logic (Dinamis dari state)
+        const fText = state.settings.footerText || defaultState.settings.footerText;
+        const fUrl = state.settings.footerUrl || defaultState.settings.footerUrl;
+        
+        html += `<div style="text-align:center; margin-top:50px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton};">
+                    <a href="${fUrl}" target="_blank" style="color:${t.textColor}; text-decoration:none;">${fText}</a>
+                 </div>`;
 
         screen.innerHTML = html;
     }
