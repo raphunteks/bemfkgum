@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 
-// Konfigurasi CORS & Limit Body-Parser
+// Konfigurasi CORS & Limit Body-Parser (Super Tinggi untuk Base64 Wallpaper)
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -62,7 +62,6 @@ app.get('/link/:slug', async (req, res) => {
         url: `https://bemkbmfkgumi.com/link/${slug}`
     };
 
-    // Ekstrak Data dari Redis untuk Injeksi Meta Tag (Gold Standard SEO)
     try {
         if(redis) {
             const trees = await redis.hgetall('BEM_Linktrees') || {};
@@ -72,7 +71,6 @@ app.get('/link/:slug', async (req, res) => {
             if(tree) {
                 seoData.title = tree.settings?.seoTitle || tree.profile?.title || seoData.title;
                 seoData.desc = tree.profile?.bio || seoData.desc;
-                // Pastikan image URL absolut jika menggunakan path lokal
                 let img = tree.profile?.image || seoData.image;
                 if(img.startsWith('/')) img = `https://bemkbmfkgumi.com${img}`;
                 seoData.image = img;
@@ -82,12 +80,11 @@ app.get('/link/:slug', async (req, res) => {
         console.error("Gagal memuat SSR SEO:", e);
     }
 
-    // Render EJS HTML dan lemparkan variabel seoData ke dalamnya
     res.render('bem-linktree', { slug: slug, seo: seoData });
 });
 
 
-// ================= ENDPOINT API UPLOAD =================
+// ================= ENDPOINT API UPLOAD GAMBAR =================
 app.post('/api/upload', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
