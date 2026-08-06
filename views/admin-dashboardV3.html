@@ -6,7 +6,7 @@
     <title>BEM-Linktree Builder V3</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- Load Google Fonts Awal (Sisanya di-load asinkron via JS) -->
+    <!-- Load Google Fonts Awal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -45,6 +45,7 @@
                     <p style="color:var(--text-muted); font-size:0.95rem; margin:8px 0 0;">Kelola semua halaman Link in Bio (BEM) Anda di sini.</p>
                 </div>
             </div>
+            
             <div id="linktree-list-container">
                 <div style="text-align:center; padding:50px; color:var(--text-muted);">Memuat daftar Linktree...</div>
             </div>
@@ -78,14 +79,20 @@
                 <h3 style="margin:0;">Daftar Tautan Utama</h3>
                 <button class="btn-primary" style="padding:10px 20px;" onclick="addLink()">+ Tambah Link</button>
             </div>
-            <div id="links-container"></div>
+            
+            <div id="links-container">
+                <!-- Links will be rendered here -->
+            </div>
 
-            <!-- Socials Section -->
+            <!-- DYNAMIC Socials Section -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; margin-top:40px;">
                 <h3 style="margin:0;">Ikon Sosial Media</h3>
                 <button class="btn-primary" style="padding:10px 20px; background:#10b981;" onclick="addSocial()">+ Tambah Sosmed</button>
             </div>
-            <div class="glass-card" id="socials-container"></div>
+
+            <div class="glass-card" id="socials-container">
+                <!-- Dynamic Socials Input rendered here -->
+            </div>
         </div>
 
         <!-- TAB 2: APPEARANCE -->
@@ -111,8 +118,8 @@
                         </div>
                         <div style="flex:1;">
                             <input type="file" id="upload-bg-img" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'bg')">
-                            <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper</button>
-                            <button class="btn-danger" style="width:100%; padding:10px;" onclick="removeBgImage()">🗑️ Hapus Gambar</button>
+                            <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper Baru</button>
+                            <button class="btn-danger" style="width:100%; padding:10px; background:#ef4444;" onclick="removeBgImage()" title="Hapus Gambar">🗑️ Hapus Gambar</button>
                         </div>
                     </div>
                     <div id="bg-filename" style="font-size:0.85rem; color:var(--primary); margin-top:10px; font-weight:600; text-align:center;"></div>
@@ -121,56 +128,28 @@
             </div>
 
             <div class="glass-card">
-                <h3 style="margin-top:0;">Gaya Tombol (15+ Button Styles)</h3>
-                
+                <h3 style="margin-top:0;">Gaya Tombol (30 Bentuk & 30 Efek)</h3>
                 <label class="input-label">Bentuk Tombol (Shapes)</label>
-                <div class="scroll-grid" style="margin-bottom:25px;">
-                    <div class="selector-item btn-shape-sel" data-val="square" onclick="selectThemeOpt('btnShape', 'square')">Kotak</div>
-                    <div class="selector-item btn-shape-sel" data-val="rounded" onclick="selectThemeOpt('btnShape', 'rounded')">Rounded</div>
-                    <div class="selector-item btn-shape-sel active" data-val="pill" onclick="selectThemeOpt('btnShape', 'pill')">Pill / Kapsul</div>
-                    <div class="selector-item btn-shape-sel" data-val="leaf-right" onclick="selectThemeOpt('btnShape', 'leaf-right')">Daun Kanan</div>
-                    <div class="selector-item btn-shape-sel" data-val="leaf-left" onclick="selectThemeOpt('btnShape', 'leaf-left')">Daun Kiri</div>
-                    <div class="selector-item btn-shape-sel" data-val="arch-up" onclick="selectThemeOpt('btnShape', 'arch-up')">Kubah Atas</div>
-                    <div class="selector-item btn-shape-sel" data-val="arch-down" onclick="selectThemeOpt('btnShape', 'arch-down')">Kubah Bawah</div>
-                    <div class="selector-item btn-shape-sel" data-val="arch-left" onclick="selectThemeOpt('btnShape', 'arch-left')">Kubah Kiri</div>
-                    <div class="selector-item btn-shape-sel" data-val="arch-right" onclick="selectThemeOpt('btnShape', 'arch-right')">Kubah Kanan</div>
-                    <div class="selector-item btn-shape-sel" data-val="sharp-mix" onclick="selectThemeOpt('btnShape', 'sharp-mix')">Sudut Mix 1</div>
-                    <div class="selector-item btn-shape-sel" data-val="sharp-mix-alt" onclick="selectThemeOpt('btnShape', 'sharp-mix-alt')">Sudut Mix 2</div>
-                    <div class="selector-item btn-shape-sel" data-val="barrel" onclick="selectThemeOpt('btnShape', 'barrel')">Tong 1</div>
-                    <div class="selector-item btn-shape-sel" data-val="barrel-alt" onclick="selectThemeOpt('btnShape', 'barrel-alt')">Tong 2</div>
-                    <div class="selector-item btn-shape-sel" data-val="blob1" onclick="selectThemeOpt('btnShape', 'blob1')">Soft Blob 1</div>
-                    <div class="selector-item btn-shape-sel" data-val="blob2" onclick="selectThemeOpt('btnShape', 'blob2')">Soft Blob 2</div>
-                    <div class="selector-item btn-shape-sel" data-val="slant" onclick="selectThemeOpt('btnShape', 'slant')">Miring Kanan</div>
-                    <div class="selector-item btn-shape-sel" data-val="slant-alt" onclick="selectThemeOpt('btnShape', 'slant-alt')">Miring Kiri</div>
-                    <div class="selector-item btn-shape-sel" data-val="oval" onclick="selectThemeOpt('btnShape', 'oval')">Oval Lebar</div>
+                <div class="scroll-grid" style="margin-bottom:25px;" id="grid-shapes">
+                    <!-- Injected by JS -->
                 </div>
 
                 <label class="input-label">Tipe Pewarnaan & Efek (Types)</label>
-                <div class="scroll-grid" style="margin-bottom:25px;">
-                    <div class="selector-item btn-type-sel active" data-val="filled" onclick="selectThemeOpt('btnType', 'filled')">Filled Solid</div>
-                    <div class="selector-item btn-type-sel" data-val="outline" onclick="selectThemeOpt('btnType', 'outline')">Outline Lines</div>
-                    <div class="selector-item btn-type-sel" data-val="neumorph" onclick="selectThemeOpt('btnType', 'neumorph')">Neumorph / Glass</div>
-                    <div class="selector-item btn-type-sel" data-val="soft" onclick="selectThemeOpt('btnType', 'soft')">Soft Tint</div>
-                    <div class="selector-item btn-type-sel" data-val="ghost" onclick="selectThemeOpt('btnType', 'ghost')">Ghost Text</div>
-                    <div class="selector-item btn-type-sel" data-val="gradient-x" onclick="selectThemeOpt('btnType', 'gradient-x')">Gradient X</div>
-                    <div class="selector-item btn-type-sel" data-val="gradient-y" onclick="selectThemeOpt('btnType', 'gradient-y')">Gradient Y</div>
-                    <div class="selector-item btn-type-sel" data-val="3d" onclick="selectThemeOpt('btnType', '3d')">3D Extrude</div>
-                    <div class="selector-item btn-type-sel" data-val="shadow-hard" onclick="selectThemeOpt('btnType', 'shadow-hard')">Shadow Hard</div>
-                    <div class="selector-item btn-type-sel" data-val="shadow-soft" onclick="selectThemeOpt('btnType', 'shadow-soft')">Shadow Blur</div>
-                    <div class="selector-item btn-type-sel" data-val="neon" onclick="selectThemeOpt('btnType', 'neon')">Cyber Neon</div>
-                    <div class="selector-item btn-type-sel" data-val="retro" onclick="selectThemeOpt('btnType', 'retro')">Retro Pop</div>
-                    <div class="selector-item btn-type-sel" data-val="glass" onclick="selectThemeOpt('btnType', 'glass')">Pure Glass</div>
-                    <div class="selector-item btn-type-sel" data-val="wireframe" onclick="selectThemeOpt('btnType', 'wireframe')">Wireframe Dashed</div>
-                    <div class="selector-item btn-type-sel" data-val="brutalism" onclick="selectThemeOpt('btnType', 'brutalism')">Brutalism Box</div>
-                    <div class="selector-item btn-type-sel" data-val="glow" onclick="selectThemeOpt('btnType', 'glow')">Glow Aura</div>
-                    <div class="selector-item btn-type-sel" data-val="elegant" onclick="selectThemeOpt('btnType', 'elegant')">Dark Elegant</div>
-                    <div class="selector-item btn-type-sel" data-val="metallic" onclick="selectThemeOpt('btnType', 'metallic')">Metallic Silver</div>
+                <div class="scroll-grid" style="margin-bottom:25px;" id="grid-types">
+                    <!-- Injected by JS -->
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">Warna Tombol Utama</label>
                     <input type="color" id="inp-btn-color" oninput="updateState('theme', 'btnColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
+                
+                <!-- Otomatis Muncul via JS jika tipe membutuhkan Border -->
+                <div class="input-group" id="border-color-wrapper" style="display:none;">
+                    <label class="input-label">Warna Tombol Border (Khusus Outline/Shadow)</label>
+                    <input type="color" id="inp-border-color" oninput="updateState('theme', 'borderColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
+                </div>
+
                 <div class="input-group">
                     <label class="input-label">Warna Teks Tombol & Profil</label>
                     <input type="color" id="inp-text-color" oninput="updateState('theme', 'textColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
@@ -178,7 +157,7 @@
             </div>
 
             <div class="glass-card">
-                <h3 style="margin-top:0;">Tipografi (30+ Aesthetic Fonts)</h3>
+                <h3 style="margin-top:0;">Tipografi (50+ Aesthetic Gen Z Fonts)</h3>
                 <div class="input-group">
                     <label class="input-label">Font Judul Utama</label>
                     <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value); updateFontPreview();"></select>
@@ -192,7 +171,7 @@
                 <div id="font-preview-box" style="margin-top:20px; padding:25px; border-radius:16px; background:rgba(255,255,255,0.7); box-shadow:var(--inner-neumorph); border:1px solid var(--border-color); text-align:center;">
                     <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px; font-weight:700;">LIVE FONT PREVIEW</p>
                     <h2 id="preview-text-title" style="margin:0 0 10px; font-size:1.8rem; color:var(--text-main);">Headline Profil BEM</h2>
-                    <div id="preview-text-btn" style="display:inline-block; padding:10px 25px; border-radius:50px; background:var(--primary); color:#fff; font-size:1rem;">Tombol Link Ini</div>
+                    <div id="preview-text-btn" style="display:inline-block; padding:10px 25px; border-radius:50px; background:var(--primary); color:#fff; font-size:1rem;">Teks Tombol & Paragraf</div>
                 </div>
             </div>
         </div>
@@ -202,7 +181,7 @@
             <div class="glass-card">
                 <h3 style="margin-top:0;">URL Publikasi (Slug)</h3>
                 <div class="input-group">
-                    <div style="display:flex; align-items:center; background:rgba(255,255,255,0.6); border:2px solid var(--border-color); border-radius:16px; padding-left:15px; box-shadow:var(--inner-neumorph); transition:0.3s;">
+                    <div style="display:flex; align-items:center; background:rgba(255,255,255,0.6); border:2px solid var(--border-color); border-radius:16px; padding-left:15px; box-shadow:var(--inner-neumorph); transition:0.3s;" onfocusin="this.style.borderColor='var(--primary)'" onfocusout="this.style.borderColor='var(--border-color)'">
                         <span style="color:var(--text-muted); font-weight:700;">/link/</span>
                         <input type="text" style="border:none; background:transparent; padding:16px 14px; outline:none; font-size:1.05rem; flex:1; font-weight:600; color:var(--text-main);" id="inp-slug" oninput="updateState('slug', null, this.value)" placeholder="nama-kabinet">
                     </div>
@@ -215,9 +194,14 @@
                     <label class="input-label">Teks Footer Bawah</label>
                     <input type="text" class="gf-input" id="inp-footer-text" oninput="updateState('settings', 'footerText', this.value)" placeholder="Powered by BEM KBMFKG UMI (Dept. Infocom)">
                 </div>
+                
                 <div class="input-group">
-                    <label class="input-label">URL / Link Tujuan Footer</label>
-                    <input type="url" class="gf-input" id="inp-footer-url" oninput="updateState('settings', 'footerUrl', this.value)" placeholder="https://www.bemkbmfkgumi.com/ourteam">
+                    <label class="input-label">URL / Link Tujuan Footer (Terkunci)</label>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="url" class="gf-input" id="inp-footer-url" readonly oninput="updateState('settings', 'footerUrl', this.value)" placeholder="https://www.bemkbmfkgumi.com/ourteam">
+                        <button class="btn-outline" style="white-space:nowrap; padding:14px 20px;" onclick="unlockFooterUrl()">🔒 Buka Akses</button>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">URL Footer dikunci untuk menjaga standarisasi. Butuh PIN untuk mengubah.</p>
                 </div>
 
                 <div style="border-top:1px dashed var(--border-color); margin:30px 0;"></div>
@@ -234,8 +218,17 @@
 
     <!-- RIGHT: LIVE PREVIEW PANEL -->
     <div class="preview-panel">
-        <div class="mockup-frame">
+        <!-- Device Toggle -->
+        <div class="device-toggle">
+            <button class="device-btn active" id="btn-device-mobile" onclick="toggleDevicePreview('mobile')">📱 Mobile</button>
+            <button class="device-btn" id="btn-device-desktop" onclick="toggleDevicePreview('desktop')">💻 Desktop</button>
+        </div>
+
+        <div class="mockup-frame is-mobile" id="mockup-container">
             <div class="notch"></div>
+            <div class="macos-bar">
+                <div class="macos-dot dot-red"></div><div class="macos-dot dot-yellow"></div><div class="macos-dot dot-green"></div>
+            </div>
             <!-- SCROLLABLE SCREEN -->
             <div class="mockup-screen" id="live-preview-screen">
                 <!-- Content Injected via JS -->
@@ -245,7 +238,7 @@
 </div>
 
 <script>
-    // ================= 30+ AESTHETIC FONTS LIBRARY =================
+    // ================= 50+ AESTHETIC GEN Z FONTS =================
     const fontLibrary = [
         "Inter", "Poppins", "Outfit", "Plus Jakarta Sans", "Space Grotesk", 
         "Montserrat", "Roboto", "Open Sans", "Lato", "Oswald", 
@@ -253,7 +246,38 @@
         "Nunito", "Rubik", "Work Sans", "Quicksand", "Syne", 
         "Cabinet Grotesk", "Manrope", "DM Sans", "Jost", "Epilogue", 
         "Archivo", "Sora", "Urbanist", "Space Mono", "Fira Code", "Times New Roman",
-        "Arial", "Calibri", "Comic Sans MS", "Impact"
+        "Arial", "Calibri", "Comic Sans MS", "Impact", "Bebas Neue", "Cormorant",
+        "Lexend", "Clash Display", "Unbounded", "Archivo Black", "Instrument Sans",
+        "Bricolage Grotesque", "Josefin Sans", "Cinzel", "Righteous", "Anton",
+        "Pacifico", "Lobster", "Caveat", "Amatic SC"
+    ];
+
+    // ================= 30 BUTTON SHAPES =================
+    const buttonShapes = [
+        {val: "square", name: "Kotak Tajam"}, {val: "rounded", name: "Rounded Soft"}, {val: "pill", name: "Pill / Kapsul"},
+        {val: "leaf-right", name: "Daun Kanan"}, {val: "leaf-left", name: "Daun Kiri"}, {val: "arch-up", name: "Kubah Atas"},
+        {val: "arch-down", name: "Kubah Bawah"}, {val: "arch-left", name: "Kubah Kiri"}, {val: "arch-right", name: "Kubah Kanan"},
+        {val: "sharp-mix", name: "Sudut Mix 1"}, {val: "sharp-mix-alt", name: "Sudut Mix 2"}, {val: "barrel", name: "Tong 1"},
+        {val: "barrel-alt", name: "Tong 2"}, {val: "blob1", name: "Soft Blob 1"}, {val: "blob2", name: "Soft Blob 2"},
+        {val: "slant", name: "Miring Kanan"}, {val: "slant-alt", name: "Miring Kiri"}, {val: "oval", name: "Oval Lebar"},
+        {val: "hexagon", name: "Hexagon"}, {val: "octagon", name: "Octagon"}, {val: "parallelogram", name: "Jajar Genjang"},
+        {val: "cut-tr", name: "Potong Kanan Atas"}, {val: "cut-bl", name: "Potong Kiri Bawah"}, {val: "ticket", name: "Karcis / Tiket"},
+        {val: "folded", name: "Lipatan Kertas"}, {val: "shield", name: "Perisai Bawah"}, {val: "bubble-top", name: "Bubble Atas"},
+        {val: "bubble-bottom", name: "Bubble Bawah"}, {val: "diagonal", name: "Potongan Diagonal"}, {val: "diamond", name: "Berlian Lebar"}
+    ];
+
+    // ================= 30 BUTTON TYPES =================
+    const buttonTypes = [
+        {val: "filled", name: "Filled Solid"}, {val: "outline", name: "Outline Lines", needBorder: true}, {val: "neumorph", name: "Glass / Neumorph"},
+        {val: "soft", name: "Soft Tint"}, {val: "ghost", name: "Ghost Text"}, {val: "gradient-x", name: "Gradient X"},
+        {val: "gradient-y", name: "Gradient Y"}, {val: "3d", name: "3D Extrude"}, {val: "shadow-hard", name: "Shadow Hard", needBorder: true},
+        {val: "shadow-soft", name: "Shadow Soft Blur"}, {val: "neon", name: "Cyber Neon", needBorder: true}, {val: "retro", name: "Retro Pop", needBorder: true},
+        {val: "glass", name: "Pure Glass"}, {val: "wireframe", name: "Wireframe Dashed", needBorder: true}, {val: "brutalism", name: "Brutalism Box", needBorder: true},
+        {val: "glow", name: "Glow Aura"}, {val: "elegant", name: "Dark Elegant", needBorder: true}, {val: "metallic", name: "Metallic Silver", needBorder: true},
+        {val: "mesh", name: "Gradient Mesh"}, {val: "duotone", name: "Duotone Soft"}, {val: "holographic", name: "Holographic 3D"},
+        {val: "dark-neu", name: "Dark Neumorphism"}, {val: "frosted", name: "Frosted Edge"}, {val: "minimal", name: "Minimalist Line", needBorder: true},
+        {val: "thick-border", name: "Thick Border", needBorder: true}, {val: "shadow-pop", name: "Shadow Pop", needBorder: true}, {val: "inner-glow", name: "Inner Shadow Glow"},
+        {val: "candy", name: "Candy Pop Color"}, {val: "midnight", name: "Midnight Glow", needBorder: true}, {val: "velvet", name: "Velvet Matte"}
     ];
 
     // ================= SVG SOCIAL ICONS MAP =================
@@ -294,6 +318,7 @@
             btnShape: 'pill', 
             btnType: 'filled', 
             btnColor: '#8b5cf6',
+            borderColor: '#0f172a',
             textColor: '#0f172a'
         },
         settings: {
@@ -307,20 +332,35 @@
 
     // ================= LIFECYCLE =================
     window.onload = () => {
-        populateFontSelectors();
+        populateSelectors();
         loadAllLinktrees();
     };
 
-    function populateFontSelectors() {
-        let html = '';
+    function populateSelectors() {
+        // 1. Populate Fonts
+        let fontHtml = '';
         fontLibrary.forEach(font => {
-            html += `<option value="'${font}', sans-serif">${font}</option>`;
+            fontHtml += `<option value="'${font}', sans-serif">${font}</option>`;
         });
-        document.getElementById('inp-font-title').innerHTML = html;
-        document.getElementById('inp-font-btn').innerHTML = html;
+        document.getElementById('inp-font-title').innerHTML = fontHtml;
+        document.getElementById('inp-font-btn').innerHTML = fontHtml;
         
         document.getElementById('inp-font-title').value = "'Outfit', sans-serif";
         document.getElementById('inp-font-btn').value = "'Plus Jakarta Sans', sans-serif";
+
+        // 2. Populate Shapes
+        let shapesHtml = '';
+        buttonShapes.forEach(sh => {
+            shapesHtml += `<div class="selector-item btn-shape-sel" data-val="${sh.val}" onclick="selectThemeOpt('btnShape', '${sh.val}')">${sh.name}</div>`;
+        });
+        document.getElementById('grid-shapes').innerHTML = shapesHtml;
+
+        // 3. Populate Types
+        let typesHtml = '';
+        buttonTypes.forEach(ty => {
+            typesHtml += `<div class="selector-item btn-type-sel" data-val="${ty.val}" onclick="selectThemeOpt('btnType', '${ty.val}')">${ty.name}</div>`;
+        });
+        document.getElementById('grid-types').innerHTML = typesHtml;
     }
 
     function loadGoogleFont(fontFamilyStr) {
@@ -333,7 +373,7 @@
         if(!document.getElementById(linkId)) {
             const link = document.createElement('link');
             link.id = linkId; link.rel = 'stylesheet';
-            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700&display=swap`;
+            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700;800&display=swap`;
             document.head.appendChild(link);
         }
     }
@@ -344,6 +384,31 @@
         
         document.getElementById('preview-text-title').style.fontFamily = titleFont;
         document.getElementById('preview-text-btn').style.fontFamily = btnFont;
+    }
+
+    function toggleDevicePreview(mode) {
+        document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-device-${mode}`).classList.add('active');
+        
+        const frame = document.getElementById('mockup-container');
+        if(mode === 'desktop') {
+            frame.classList.remove('is-mobile');
+            frame.classList.add('is-desktop');
+        } else {
+            frame.classList.remove('is-desktop');
+            frame.classList.add('is-mobile');
+        }
+    }
+
+    // ================= PIN LOCK FOOTER URL =================
+    function unlockFooterUrl() {
+        let pin = prompt("Keamanan Khusus BEM:\nMasukkan PIN Admin (3 Digit) untuk mengubah Link Default BEM:");
+        if (pin === "999") {
+            document.getElementById('inp-footer-url').removeAttribute('readonly');
+            alert("Akses dibuka. Anda dapat mengedit URL Footer.");
+        } else {
+            alert("PIN Salah! Akses ditolak.");
+        }
     }
 
     // ================= TAB CONTROLLER =================
@@ -474,11 +539,12 @@
         }
 
         document.getElementById('inp-btn-color').value = state.theme.btnColor || '#8b5cf6';
+        document.getElementById('inp-border-color').value = state.theme.borderColor || '#0f172a';
         document.getElementById('inp-text-color').value = state.theme.textColor || '#0f172a';
         
         document.getElementById('inp-font-title').value = state.theme.fontTitle || "'Outfit', sans-serif";
         document.getElementById('inp-font-btn').value = state.theme.fontButton || "'Plus Jakarta Sans', sans-serif";
-        updateFontPreview(); // Panggil initial preview font
+        updateFontPreview(); 
 
         document.querySelectorAll('.btn-shape-sel').forEach(el => el.classList.remove('active'));
         let shapeEl = document.querySelector(`.btn-shape-sel[data-val="${state.theme.btnShape || 'pill'}"]`);
@@ -486,16 +552,31 @@
 
         document.querySelectorAll('.btn-type-sel').forEach(el => el.classList.remove('active'));
         let typeEl = document.querySelector(`.btn-type-sel[data-val="${state.theme.btnType || 'filled'}"]`);
-        if(typeEl) typeEl.classList.add('active');
+        if(typeEl) {
+            typeEl.classList.add('active');
+            checkBorderColorVisibility(state.theme.btnType || 'filled');
+        }
 
         // Tab 3
         document.getElementById('inp-slug').value = state.slug || '';
         document.getElementById('inp-seo-title').value = state.settings.seoTitle || '';
         document.getElementById('inp-footer-text').value = state.settings.footerText || defaultState.settings.footerText;
         document.getElementById('inp-footer-url').value = state.settings.footerUrl || defaultState.settings.footerUrl;
+        
+        // Pastikan footer selalu terkunci saat di-load
+        document.getElementById('inp-footer-url').setAttribute('readonly', true);
 
         renderLinksEditor();
         renderSocialsEditor();
+    }
+
+    function checkBorderColorVisibility(typeVal) {
+        const tObj = buttonTypes.find(t => t.val === typeVal);
+        if(tObj && tObj.needBorder) {
+            document.getElementById('border-color-wrapper').style.display = 'block';
+        } else {
+            document.getElementById('border-color-wrapper').style.display = 'none';
+        }
     }
 
     function updateState(category, key, value) {
@@ -519,6 +600,10 @@
         let selClass = key === 'btnShape' ? '.btn-shape-sel' : '.btn-type-sel';
         document.querySelectorAll(selClass).forEach(el => el.classList.remove('active'));
         document.querySelector(`${selClass}[data-val="${value}"]`).classList.add('active');
+        
+        if (key === 'btnType') {
+            checkBorderColorVisibility(value);
+        }
         
         renderLivePreview();
     }
@@ -721,30 +806,43 @@
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${state.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
-        // Link Buttons Logic (18 TYPES CSS GENERATOR)
+        // Link Buttons Logic (30 TYPES CSS GENERATOR)
         let btnCssObj = `font-family:${t.fontButton}; `;
         let bg = t.btnColor;
+        let borderC = t.borderColor || '#0f172a';
         let txt = t.textColor;
         
         switch(t.btnType) {
             case 'filled': btnCssObj += `background:${bg}; color:#fff; border:none;`; break;
-            case 'outline': btnCssObj += `background:transparent; color:${txt}; border:2px solid ${bg};`; break;
+            case 'outline': btnCssObj += `background:transparent; color:${txt}; border:2px solid ${borderC};`; break;
             case 'neumorph': btnCssObj += `background:rgba(255,255,255,0.4); color:${txt}; border:1px solid rgba(255,255,255,0.6); box-shadow: 4px 4px 10px rgba(0,0,0,0.05), inset 1px 1px 1px rgba(255,255,255,0.5); backdrop-filter:blur(10px);`; break;
             case 'soft': btnCssObj += `background:${bg}33; color:${bg}; border:none;`; break;
             case 'ghost': btnCssObj += `background:transparent; color:${txt}; border:none; text-decoration:underline;`; break;
             case 'gradient-x': btnCssObj += `background:linear-gradient(90deg, ${bg}, #ffffff); color:#000; border:none;`; break;
             case 'gradient-y': btnCssObj += `background:linear-gradient(180deg, ${bg}, #000000); color:#fff; border:none;`; break;
-            case '3d': btnCssObj += `background:${bg}; color:#fff; border:none; border-bottom:4px solid ${txt};`; break;
-            case 'shadow-hard': btnCssObj += `background:${bg}; color:#fff; border:2px solid ${txt}; box-shadow: 5px 5px 0px ${txt};`; break;
-            case 'shadow-soft': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: 0 10px 20px ${bg}80;`; break;
-            case 'neon': btnCssObj += `background:transparent; color:${bg}; border:2px solid ${bg}; box-shadow: 0 0 10px ${bg}, inset 0 0 10px ${bg};`; break;
-            case 'retro': btnCssObj += `background:#fef08a; color:#000; border:3px solid #000; box-shadow: 4px 4px 0px #000;`; break;
+            case '3d': btnCssObj += `background:${bg}; color:#fff; border:none; border-bottom:4px solid ${borderC}; transform:translateY(-2px);`; break;
+            case 'shadow-hard': btnCssObj += `background:${bg}; color:#fff; border:2px solid ${borderC}; box-shadow: 6px 6px 0px ${borderC};`; break;
+            case 'shadow-soft': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: 0 10px 25px ${bg}80;`; break;
+            case 'neon': btnCssObj += `background:transparent; color:${bg}; border:2px solid ${borderC}; box-shadow: 0 0 10px ${borderC}, inset 0 0 10px ${borderC}; text-shadow: 0 0 5px ${bg};`; break;
+            case 'retro': btnCssObj += `background:${bg}; color:#000; border:3px solid ${borderC}; box-shadow: 4px 4px 0px ${borderC};`; break;
             case 'glass': btnCssObj += `background:rgba(255,255,255,0.1); color:${txt}; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(20px);`; break;
-            case 'wireframe': btnCssObj += `background:transparent; color:${txt}; border:2px dashed ${bg};`; break;
-            case 'brutalism': btnCssObj += `background:${bg}; color:#000; border:3px solid #000; box-shadow: 6px 6px 0px #000; border-radius:0 !important;`; break;
+            case 'wireframe': btnCssObj += `background:transparent; color:${txt}; border:2px dashed ${borderC};`; break;
+            case 'brutalism': btnCssObj += `background:${bg}; color:#000; border:3px solid ${borderC}; box-shadow: 6px 6px 0px ${borderC}; border-radius:0 !important;`; break;
             case 'glow': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: 0 0 25px ${bg};`; break;
-            case 'elegant': btnCssObj += `background:#0f172a; color:#eab308; border:1px solid #eab308;`; break;
-            case 'metallic': btnCssObj += `background:linear-gradient(135deg, #e2e8f0, #94a3b8); color:#0f172a; border:1px solid #cbd5e1; box-shadow:inset 2px 2px 5px #fff;`; break;
+            case 'elegant': btnCssObj += `background:#0f172a; color:${bg}; border:1px solid ${borderC};`; break;
+            case 'metallic': btnCssObj += `background:linear-gradient(135deg, #e2e8f0, #94a3b8); color:#0f172a; border:1px solid ${borderC}; box-shadow:inset 2px 2px 5px #fff;`; break;
+            case 'mesh': btnCssObj += `background:radial-gradient(circle at top left, ${bg}, transparent), radial-gradient(circle at bottom right, #fff, transparent); background-color:#e2e8f0; color:#000; border:none;`; break;
+            case 'duotone': btnCssObj += `background:linear-gradient(45deg, ${bg}, #fcd34d); color:#fff; border:none;`; break;
+            case 'holographic': btnCssObj += `background:linear-gradient(135deg, #fbcfe8, #c4b5fd, #86efac); color:#0f172a; border:none; box-shadow:0 10px 20px rgba(0,0,0,0.1);`; break;
+            case 'dark-neu': btnCssObj += `background:#1e293b; color:${bg}; border:1px solid #334155; box-shadow: 5px 5px 10px #0f172a, -5px -5px 10px #334155;`; break;
+            case 'frosted': btnCssObj += `background:rgba(255,255,255,0.2); color:${txt}; border:1px solid rgba(255,255,255,0.6); border-top:1px solid #fff; border-left:1px solid #fff; backdrop-filter:blur(15px); box-shadow:0 8px 32px rgba(0,0,0,0.1);`; break;
+            case 'minimal': btnCssObj += `background:transparent; color:${txt}; border-bottom:2px solid ${borderC}; border-radius:0 !important; padding-left:0; padding-right:0;`; break;
+            case 'thick-border': btnCssObj += `background:transparent; color:${txt}; border:4px solid ${borderC}; font-weight:900;`; break;
+            case 'shadow-pop': btnCssObj += `background:${bg}; color:#fff; border:2px solid ${borderC}; box-shadow: 4px 4px 0px rgba(0,0,0,0.1);`; break;
+            case 'inner-glow': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: inset 0 0 15px rgba(255,255,255,0.8);`; break;
+            case 'candy': btnCssObj += `background:linear-gradient(to right, #fbcfe8, #f9a8d4); color:#be185d; border:none; box-shadow: 0 10px 15px #fbcfe8;`; break;
+            case 'midnight': btnCssObj += `background:#020617; color:${bg}; border:1px solid ${borderC}; box-shadow: 0 0 15px ${bg}40;`; break;
+            case 'velvet': btnCssObj += `background:${bg}; color:#fff; border:none; opacity:0.9; filter:saturate(1.2);`; break;
             default: btnCssObj += `background:${bg}; color:#fff; border:none;`;
         }
 
