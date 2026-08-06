@@ -16,23 +16,41 @@
 </head>
 <body>
 
-<div class="builder-layout">
+<!-- CLASS list-mode AKTIF DEFAULT AGAR MUNCUL FULL SCREEN KE KIRI -->
+<div class="builder-layout list-mode" id="main-layout">
+    
     <!-- LEFT: EDITOR PANEL -->
     <div class="editor-panel">
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
             <h1 style="margin:0; font-family:'Outfit', sans-serif;">BEM-Linktree <span style="color:var(--primary)">Builder</span></h1>
-            <button class="btn-primary" onclick="saveLinktree()">🚀 Publikasikan</button>
+            <!-- Tombol Ini Akan Berubah Berdasarkan Mode -->
+            <button class="btn-primary" id="btn-global-action" onclick="createNewLinktree()">+ Buat Linktree Baru</button>
         </div>
 
-        <div class="tabs-wrapper glass-card" style="padding:10px; margin-bottom:20px;">
-            <div class="tab-btn active" onclick="switchTab('links')">🔗 Links</div>
-            <div class="tab-btn" onclick="switchTab('appearance')">🎨 Appearance</div>
-            <div class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</div>
+        <div class="tabs-wrapper glass-card" style="padding:10px; margin-bottom:20px;" id="tabs-container">
+            <div class="tab-btn active" onclick="switchTab('list')">📋 Daftar Linktree</div>
+            <div class="tab-btn editor-only" onclick="switchTab('links')" style="display:none;">🔗 Links</div>
+            <div class="tab-btn editor-only" onclick="switchTab('appearance')" style="display:none;">🎨 Appearance</div>
+            <div class="tab-btn editor-only" onclick="switchTab('settings')" style="display:none;">⚙️ Settings</div>
+        </div>
+
+        <!-- TAB 0: DAFTAR LINKTREE -->
+        <div id="tab-list" class="tab-content active">
+            <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h3 style="margin:0;">Manajemen Linktree</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin:5px 0 0;">Kelola semua halaman Link in Bio Anda di sini.</p>
+                </div>
+            </div>
+            
+            <div id="linktree-list-container">
+                <div style="text-align:center; padding:50px; color:var(--text-muted);">Memuat daftar Linktree...</div>
+            </div>
         </div>
 
         <!-- TAB 1: LINKS -->
-        <div id="tab-links" class="tab-content active">
+        <div id="tab-links" class="tab-content">
             <!-- Profile Section -->
             <div class="glass-card">
                 <h3 style="margin-top:0;">Profil</h3>
@@ -77,6 +95,10 @@
                 <div class="input-group">
                     <label class="input-label">WhatsApp Number</label>
                     <input type="text" class="gf-input" id="inp-wa" oninput="updateState('socials', 'whatsapp', this.value)" placeholder="628123456789">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Email Address</label>
+                    <input type="email" class="gf-input" id="inp-email" oninput="updateState('socials', 'email', this.value)" placeholder="email@domain.com">
                 </div>
             </div>
         </div>
@@ -133,7 +155,7 @@
                 <h3 style="margin-top:0;">Tipografi (Fonts)</h3>
                 <div class="input-group">
                     <label class="input-label">Font Judul</label>
-                    <select class="gf-input" onchange="updateState('theme', 'fontTitle', this.value); loadGoogleFont(this.value);">
+                    <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value); loadGoogleFont(this.value);">
                         <option value="'Outfit', sans-serif">Outfit</option>
                         <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
                         <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
@@ -142,7 +164,7 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label">Font Tombol</label>
-                    <select class="gf-input" onchange="updateState('theme', 'fontButton', this.value); loadGoogleFont(this.value);">
+                    <select class="gf-input" id="inp-font-btn" onchange="updateState('theme', 'fontButton', this.value); loadGoogleFont(this.value);">
                         <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
                         <option value="'Outfit', sans-serif">Outfit</option>
                         <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
@@ -178,20 +200,7 @@
             <div class="notch"></div>
             <!-- SCROLLABLE SCREEN -->
             <div class="mockup-screen" id="live-preview-screen">
-                
                 <!-- Content Injected via JS -->
-                <img id="pv-profile-img" src="https://via.placeholder.com/100" alt="Profile">
-                <h2 id="pv-title">Nama Profil</h2>
-                <p id="pv-bio">Bio singkat akan tampil di sini</p>
-
-                <div id="pv-links-container">
-                    <!-- Buttons Rendered Here -->
-                </div>
-
-                <div id="pv-socials">
-                    <!-- Social Icons Rendered Here -->
-                </div>
-
             </div>
         </div>
     </div>
@@ -199,20 +208,22 @@
 
 <script>
     // ================= GLOBAL STATE =================
-    let state = {
+    let allLinktrees = [];
+    
+    // Default Empty State
+    const defaultState = {
         id: '',
-        slug: 'kabinet-baru',
+        slug: `kabinet-${Date.now()}`,
         profile: {
-            image: 'https://via.placeholder.com/100',
+            image: '/img/bemfkgumi.png',
             title: '@bemfkgumi',
             bio: 'Tautan resmi BEM KBMFKG UMI'
         },
         links: [
-            { id: 'l1', title: 'Website Resmi', url: 'https://bemkbmfkgumi.com', active: true },
-            { id: 'l2', title: 'Pendaftaran Kepanitiaan', url: '', active: true }
+            { id: 'l1', title: 'Website Resmi', url: 'https://bemkbmfkgumi.com', active: true }
         ],
         socials: {
-            instagram: '', tiktok: '', whatsapp: ''
+            instagram: '', tiktok: '', whatsapp: '', email: ''
         },
         theme: {
             bgType: 'color', // color, gradient, image
@@ -230,16 +241,156 @@
         }
     };
 
+    let state = JSON.parse(JSON.stringify(defaultState));
+
+    // ================= LIFECYCLE =================
+    window.onload = () => {
+        loadAllLinktrees();
+    };
+
     // ================= TAB CONTROLLER =================
     function switchTab(tabId) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         
-        document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`).classList.add('active');
+        let targetBtn = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`);
+        if(targetBtn) targetBtn.classList.add('active');
+        
         document.getElementById(`tab-${tabId}`).classList.add('active');
+
+        // Logic UI Split Screen (List vs Editor)
+        const layout = document.getElementById('main-layout');
+        const editorTabs = document.querySelectorAll('.editor-only');
+        const globalBtn = document.getElementById('btn-global-action');
+
+        if (tabId === 'list') {
+            layout.classList.add('list-mode');
+            editorTabs.forEach(t => t.style.display = 'none');
+            globalBtn.innerText = "+ Buat Linktree Baru";
+            globalBtn.setAttribute('onclick', 'createNewLinktree()');
+            globalBtn.className = 'btn-primary';
+            loadAllLinktrees(); // refresh list
+        } else {
+            layout.classList.remove('list-mode');
+            editorTabs.forEach(t => t.style.display = 'block');
+            globalBtn.innerText = "🚀 Simpan & Publikasi";
+            globalBtn.setAttribute('onclick', 'saveLinktree()');
+            globalBtn.className = 'btn-primary glow-effect';
+            
+            // Populasikan form dengan data State Saat Ini
+            populateEditorForm();
+            renderLivePreview();
+        }
     }
 
-    // ================= STATE UPDATER =================
+    // ================= LIST MANAGEMENT =================
+    async function loadAllLinktrees() {
+        const container = document.getElementById('linktree-list-container');
+        container.innerHTML = "<div style='text-align:center; padding:50px; color:var(--text-muted);'>Memuat daftar Linktree dari server...</div>";
+        try {
+            const res = await fetch('/api/linktrees');
+            const json = await res.json();
+            
+            allLinktrees = json.data || [];
+            
+            if(allLinktrees.length === 0) {
+                container.innerHTML = "<div class='glass-card' style='text-align:center; padding:50px;'>Belum ada Linktree yang dibuat.</div>";
+                return;
+            }
+
+            let html = '';
+            [...allLinktrees].reverse().forEach(tree => {
+                html += `
+                <div class="list-linktree-card">
+                    <div style="flex:1;">
+                        <h3 style="margin:0 0 5px 0; font-size:1.3rem;">${tree.profile?.title || 'Tanpa Judul'}</h3>
+                        <a href="/link/${tree.slug}" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:600; font-size:0.9rem;">/link/${tree.slug}</a>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn-outline" onclick="openLinktreeEditor('${tree.id}')">✏️ Edit</button>
+                        <a href="/link/${tree.slug}" target="_blank" class="btn-outline" style="text-decoration:none;">👁️ Buka</a>
+                        <button class="btn-danger" onclick="deleteLinktree('${tree.id}')">🗑️</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        } catch (e) {
+            container.innerHTML = "<div style='text-align:center; padding:50px; color:#ef4444;'>Gagal memuat data dari server.</div>";
+        }
+    }
+
+    function createNewLinktree() {
+        state = JSON.parse(JSON.stringify(defaultState));
+        state.slug = `kabinet-${Date.now()}`;
+        switchTab('links');
+    }
+
+    function openLinktreeEditor(id) {
+        const found = allLinktrees.find(t => t.id === id);
+        if(found) {
+            state = JSON.parse(JSON.stringify(found));
+            
+            // Pengaman struktur objek jika struktur dari database lama kurang lengkap
+            if(!state.socials) state.socials = { instagram:'', tiktok:'', whatsapp:'', email:'' };
+            if(!state.theme) state.theme = { ...defaultState.theme };
+            if(!state.settings) state.settings = { ...defaultState.settings };
+            
+            switchTab('links');
+        }
+    }
+
+    async function deleteLinktree(id) {
+        if(confirm("Apakah Anda yakin ingin menghapus Linktree ini secara permanen?")) {
+            try {
+                const res = await fetch(`/api/linktrees/${id}`, { method: 'DELETE' });
+                const json = await res.json();
+                if(json.success) {
+                    alert("Berhasil dihapus!");
+                    loadAllLinktrees();
+                }
+            } catch (e) {
+                alert("Gagal menghapus.");
+            }
+        }
+    }
+
+    // ================= STATE UPDATER & BINDING =================
+    function populateEditorForm() {
+        // Tab 1
+        document.getElementById('edit-profile-img-preview').src = state.profile.image || 'https://via.placeholder.com/100';
+        document.getElementById('inp-title').value = state.profile.title || '';
+        document.getElementById('inp-bio').value = state.profile.bio || '';
+        document.getElementById('inp-ig').value = state.socials.instagram || '';
+        document.getElementById('inp-tk').value = state.socials.tiktok || '';
+        document.getElementById('inp-wa').value = state.socials.whatsapp || '';
+        document.getElementById('inp-email').value = state.socials.email || '';
+
+        // Tab 2
+        document.getElementById('inp-bg-type').value = state.theme.bgType || 'color';
+        document.getElementById('inp-bg-color').value = state.theme.bgColor || '#f8fafc';
+        document.getElementById('bg-color-picker').style.display = (state.theme.bgType === 'image') ? 'none' : 'block';
+        document.getElementById('bg-image-picker').style.display = (state.theme.bgType === 'image') ? 'block' : 'none';
+
+        document.getElementById('inp-btn-color').value = state.theme.btnColor || '#8b5cf6';
+        document.getElementById('inp-text-color').value = state.theme.textColor || '#0f172a';
+        
+        document.getElementById('inp-font-title').value = state.theme.fontTitle || "'Outfit', sans-serif";
+        document.getElementById('inp-font-btn').value = state.theme.fontButton || "'Plus Jakarta Sans', sans-serif";
+
+        // Button Theme Selected Visual
+        document.querySelectorAll('.btn-shape-sel').forEach(el => el.classList.remove('active'));
+        document.querySelector(`.btn-shape-sel[data-val="${state.theme.btnShape || 'pill'}"]`).classList.add('active');
+
+        document.querySelectorAll('.btn-type-sel').forEach(el => el.classList.remove('active'));
+        document.querySelector(`.btn-type-sel[data-val="${state.theme.btnType || 'filled'}"]`).classList.add('active');
+
+        // Tab 3
+        document.getElementById('inp-slug').value = state.slug || '';
+        document.getElementById('inp-seo-title').value = state.settings.seoTitle || '';
+
+        renderLinksEditor();
+    }
+
     function updateState(category, key, value) {
         if (category === 'slug') {
             state.slug = value.toLowerCase().replace(/[^a-z0-9-]/g, '');
@@ -247,7 +398,6 @@
             state[category][key] = value;
         }
 
-        // Toggle UI Background Picker
         if(category === 'theme' && key === 'bgType') {
             document.getElementById('bg-color-picker').style.display = (value === 'color' || value === 'gradient') ? 'block' : 'none';
             document.getElementById('bg-image-picker').style.display = value === 'image' ? 'block' : 'none';
@@ -267,8 +417,6 @@
     }
 
     // ================= LINK MANAGEMENT =================
-    function genId() { return Math.random().toString(36).substr(2, 9); }
-
     function addLink() {
         state.links.unshift({ id: 'l_'+genId(), title: 'Link Baru', url: '', active: true });
         renderLinksEditor();
@@ -311,7 +459,6 @@
         });
         container.innerHTML = html;
 
-        // Re-init Sortable
         new Sortable(container, {
             handle: '.drag-handle',
             animation: 200,
@@ -333,7 +480,6 @@
             reader.onload = async (e) => {
                 const base64 = e.target.result;
                 
-                // Panggil API (Diasumsikan serverV2.js berjalan)
                 try {
                     const res = await fetch('/api/upload', {
                         method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -352,7 +498,6 @@
                     }
                 } catch(err) {
                     console.error("Gagal Upload via API. Menggunakan Base64 Local.");
-                    // Fallback to local base64 for preview if server offline
                     if (type === 'profile') {
                         state.profile.image = base64;
                         document.getElementById('edit-profile-img-preview').src = base64;
@@ -371,7 +516,7 @@
         const screen = document.getElementById('live-preview-screen');
         const t = state.theme;
 
-        // 1. Setup Background
+        // Setup Background
         if(t.bgType === 'color') {
             screen.style.background = t.bgColor;
         } else if (t.bgType === 'gradient') {
@@ -380,13 +525,12 @@
             screen.style.background = `url('${t.bgImage}') no-repeat center center / cover`;
         }
 
-        // 2. Setup Base Styles (Color/Fonts)
         screen.style.color = t.textColor;
         
         let html = '';
 
         // Profile Section
-        html += `<img id="pv-profile-img" src="${state.profile.image}" alt="Profile">`;
+        html += `<img id="pv-profile-img" src="${state.profile.image || 'https://via.placeholder.com/100'}" alt="Profile">`;
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${state.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
@@ -410,12 +554,13 @@
         html += `</div>`;
 
         // Socials Logic
-        const s = state.socials;
-        if(s.instagram || s.tiktok || s.whatsapp) {
+        const s = state.socials || {};
+        if(s.instagram || s.tiktok || s.whatsapp || s.email) {
             html += `<div id="pv-socials">`;
             if(s.instagram) html += `<a href="${s.instagram}" class="pv-social-icon" style="color:${t.textColor}">📸</a>`;
             if(s.tiktok) html += `<a href="${s.tiktok}" class="pv-social-icon" style="color:${t.textColor}">🎵</a>`;
             if(s.whatsapp) html += `<a href="https://wa.me/${s.whatsapp}" class="pv-social-icon" style="color:${t.textColor}">💬</a>`;
+            if(s.email) html += `<a href="mailto:${s.email}" class="pv-social-icon" style="color:${t.textColor}">✉️</a>`;
             html += `</div>`;
         }
 
@@ -423,7 +568,7 @@
     }
 
     function loadGoogleFont(fontFamilyStr) {
-        // Ekstrak nama font (cth: "'Outfit', sans-serif" -> "Outfit")
+        if(!fontFamilyStr) return;
         let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
         const linkId = `font-${fontName.replace(/\s+/g, '')}`;
         if(!document.getElementById(linkId)) {
@@ -437,7 +582,7 @@
     // ================= API SAVE LOGIC =================
     async function saveLinktree() {
         try {
-            const btn = document.querySelector('.btn-primary[onclick="saveLinktree()"]');
+            const btn = document.getElementById('btn-global-action');
             btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
 
             const res = await fetch('/api/linktrees/save', {
@@ -448,32 +593,20 @@
 
             const data = await res.json();
             if(data.success) {
-                state.id = data.id; // update ID if new
+                // Perbarui state dengan data yang baru saja disave (dapat ID yang sama dll)
+                state = data.data; 
                 alert("✅ Sukses! Linktree berhasil dipublikasikan di: /link/" + state.slug);
             } else {
                 alert("Gagal: " + data.message);
             }
-            btn.innerText = "🚀 Publikasikan"; btn.disabled = false;
+            btn.innerText = "🚀 Simpan & Publikasi"; btn.disabled = false;
         } catch(e) {
             console.error(e);
-            alert("Terjadi kesalahan jaringan.");
-            document.querySelector('.btn-primary[onclick="saveLinktree()"]').innerText = "🚀 Publikasikan";
-            document.querySelector('.btn-primary[onclick="saveLinktree()"]').disabled = false;
+            alert("Terjadi kesalahan jaringan saat menyimpan data.");
+            const btn = document.getElementById('btn-global-action');
+            btn.innerText = "🚀 Simpan & Publikasi"; btn.disabled = false;
         }
     }
-
-    // Initialize UI
-    window.onload = () => {
-        // Set initial Input Values
-        document.getElementById('inp-title').value = state.profile.title;
-        document.getElementById('inp-bio').value = state.profile.bio;
-        document.getElementById('inp-btn-color').value = state.theme.btnColor;
-        document.getElementById('inp-bg-color').value = state.theme.bgColor;
-        document.getElementById('inp-slug').value = state.slug;
-        
-        renderLinksEditor();
-        renderLivePreview();
-    };
 
 </script>
 </body>
