@@ -135,15 +135,31 @@
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${data.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${data.profile.bio || ''}</p>`;
 
-        // Link Buttons Logic
+        // Link Buttons Logic (18 TYPES CSS GENERATOR)
         let btnCssObj = `font-family:${t.fontButton}; `;
+        let bg = t.btnColor;
+        let txt = t.textColor;
         
-        if (t.btnType === 'filled') {
-            btnCssObj += `background-color:${t.btnColor}; color:#fff; border:none; `;
-        } else if (t.btnType === 'outline') {
-            btnCssObj += `background-color:transparent; color:${t.textColor}; border:2px solid ${t.btnColor}; `;
-        } else if (t.btnType === 'neumorph') {
-            btnCssObj += `background-color:rgba(255,255,255,0.4); color:${t.textColor}; border:1px solid rgba(255,255,255,0.6); box-shadow: 4px 4px 10px rgba(0,0,0,0.05), inset 1px 1px 1px rgba(255,255,255,0.5); backdrop-filter:blur(10px); `;
+        switch(t.btnType) {
+            case 'filled': btnCssObj += `background:${bg}; color:#fff; border:none;`; break;
+            case 'outline': btnCssObj += `background:transparent; color:${txt}; border:2px solid ${bg};`; break;
+            case 'neumorph': btnCssObj += `background:rgba(255,255,255,0.4); color:${txt}; border:1px solid rgba(255,255,255,0.6); box-shadow: 4px 4px 10px rgba(0,0,0,0.05), inset 1px 1px 1px rgba(255,255,255,0.5); backdrop-filter:blur(10px);`; break;
+            case 'soft': btnCssObj += `background:${bg}33; color:${bg}; border:none;`; break;
+            case 'ghost': btnCssObj += `background:transparent; color:${txt}; border:none; text-decoration:underline;`; break;
+            case 'gradient-x': btnCssObj += `background:linear-gradient(90deg, ${bg}, #ffffff); color:#000; border:none;`; break;
+            case 'gradient-y': btnCssObj += `background:linear-gradient(180deg, ${bg}, #000000); color:#fff; border:none;`; break;
+            case '3d': btnCssObj += `background:${bg}; color:#fff; border:none; border-bottom:4px solid ${txt};`; break;
+            case 'shadow-hard': btnCssObj += `background:${bg}; color:#fff; border:2px solid ${txt}; box-shadow: 5px 5px 0px ${txt};`; break;
+            case 'shadow-soft': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: 0 10px 20px ${bg}80;`; break;
+            case 'neon': btnCssObj += `background:transparent; color:${bg}; border:2px solid ${bg}; box-shadow: 0 0 10px ${bg}, inset 0 0 10px ${bg};`; break;
+            case 'retro': btnCssObj += `background:#fef08a; color:#000; border:3px solid #000; box-shadow: 4px 4px 0px #000;`; break;
+            case 'glass': btnCssObj += `background:rgba(255,255,255,0.1); color:${txt}; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(20px);`; break;
+            case 'wireframe': btnCssObj += `background:transparent; color:${txt}; border:2px dashed ${bg};`; break;
+            case 'brutalism': btnCssObj += `background:${bg}; color:#000; border:3px solid #000; box-shadow: 6px 6px 0px #000; border-radius:0 !important;`; break;
+            case 'glow': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: 0 0 25px ${bg};`; break;
+            case 'elegant': btnCssObj += `background:#0f172a; color:#eab308; border:1px solid #eab308;`; break;
+            case 'metallic': btnCssObj += `background:linear-gradient(135deg, #e2e8f0, #94a3b8); color:#0f172a; border:1px solid #cbd5e1; box-shadow:inset 2px 2px 5px #fff;`; break;
+            default: btnCssObj += `background:${bg}; color:#fff; border:none;`;
         }
 
         html += `<div id="pv-links-container" style="margin-top:40px;">`;
@@ -173,9 +189,12 @@
             html += `</div>`;
         }
 
-        // Watermark Footer BEM
-        html += `<div style="text-align:center; margin-top:80px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton}; color:${t.textColor}; padding-bottom:30px;">
-                    Powered by BEM KBMFKG UMI
+        // Footer Watermark Logic (Dinamis dari state)
+        const fText = data.settings?.footerText || "Powered by BEM KBMFKG UMI (Dept. Infocom)";
+        const fUrl = data.settings?.footerUrl || "https://www.bemkbmfkgumi.com/ourteam";
+
+        html += `<div style="text-align:center; margin-top:80px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton}; padding-bottom:30px;">
+                    <a href="${fUrl}" target="_blank" style="color:${t.textColor}; text-decoration:none;">${fText}</a>
                  </div>`;
 
         screen.innerHTML = html;
