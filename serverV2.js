@@ -72,6 +72,7 @@ app.get('/link/:slug', async (req, res) => {
             if(tree) {
                 seoData.title = tree.settings?.seoTitle || tree.profile?.title || seoData.title;
                 seoData.desc = tree.profile?.bio || seoData.desc;
+                // Pastikan image URL absolut jika menggunakan path lokal
                 let img = tree.profile?.image || seoData.image;
                 if(img.startsWith('/')) img = `https://bemkbmfkgumi.com${img}`;
                 seoData.image = img;
@@ -86,7 +87,7 @@ app.get('/link/:slug', async (req, res) => {
 });
 
 
-// ================= ENDPOINT API UPLOAD GAMBAR =================
+// ================= ENDPOINT API UPLOAD =================
 app.post('/api/upload', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -102,6 +103,7 @@ app.post('/api/upload', async (req, res) => {
         const fileUrl = `/api/uploads/${uniqueFilename}`;
         res.status(200).json({ success: true, url: fileUrl });
     } catch (e) {
+        console.error(e);
         res.status(500).json({ success: false, message: "Gagal memproses file upload." });
     }
 });
@@ -164,7 +166,9 @@ app.post('/api/linktrees/save', async (req, res) => {
         const treeArr = Object.values(trees).map(item => safeParse(item, {}));
         const isSlugTaken = treeArr.some(t => t.slug === payload.slug && t.id !== payload.id);
         
-        if(isSlugTaken) payload.slug = payload.slug + '-' + Math.floor(Math.random() * 1000); 
+        if(isSlugTaken) {
+            payload.slug = payload.slug + '-' + Math.floor(Math.random() * 1000); 
+        }
         
         await redis.hset('BEM_Linktrees', { [payload.id]: JSON.stringify(payload) });
         res.status(200).json({ success: true, message: "Linktree disimpan!", data: payload });
