@@ -6,6 +6,11 @@
     <title>Formulir - BEM KBMFKG UMI (Futuristic Edition)</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
+    <!-- SUPER UPGRADE: Load SEMUA Google Fonts Lengkap (20+ Fonts) & Seluruh Ketebalan (100-900) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Caveat:wght@400..700&family=Comfortaa:wght@300..700&family=EB+Garamond:wght@400..800&family=Lexend:wght@100..900&family=Lobster&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Oswald:wght@200..700&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Outfit:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&family=Spectral:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
     
@@ -150,7 +155,7 @@
         // ================= SUPER UPGRADE: DYNAMIC FONTS ENGINE =================
         function loadDynamicFont(fontName, weight) {
             if(!fontName) return;
-            const isGoogle = ["Amatic SC", "Caveat", "Comfortaa", "EB Garamond", "Lexend", "Lobster", "Lora", "Merriweather", "Montserrat", "Nunito", "Oswald", "Pacifico", "Playfair Display", "Roboto", "Roboto Mono", "Roboto Serif", "Spectral", "Plus Jakarta Sans", "Outfit"].includes(fontName);
+            const isGoogle = ["Amatic SC", "Caveat", "Comfortaa", "EB Garamond", "Lexend", "Lobster", "Lora", "Merriweather", "Montserrat", "Nunito", "Oswald", "Pacifico", "Playfair Display", "Roboto", "Roboto Mono", "Roboto Serif", "Space Grotesk", "Spectral", "Plus Jakarta Sans", "Outfit"].includes(fontName);
             if(isGoogle) {
                 const id = `font-${fontName.replace(/\s+/g, '')}-${weight}`;
                 if(!document.getElementById(id)) {
@@ -289,12 +294,10 @@
                 `;
             }
             
-            // Indikator Auto-Save
             let draftInfoHTML = !settings.disableAutoSave ? `<div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--form-text-muted); margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.2);"><span style="color:#10b981;">☁️</span> Draf disimpan secara otomatis ke browser Anda</div>` : '';
 
             let html = `<form id="submissionForm" onsubmit="submitForm(event)">`;
 
-            // RENDER TIMELINE STEPPER JIKA ADA >1 SECTIONS
             if (formData.sections && formData.sections.length > 1) {
                 html += `<div class="stepper-wrapper glass-panel neumorph-outer" style="margin-bottom:30px;">`;
                 formData.sections.forEach((sec, idx) => {
@@ -309,7 +312,6 @@
                 html += `</div>`;
             }
 
-            // BUNGKUS HEADER DALAM STEP-0
             html += `<div class="form-step active" id="step-0">`;
             
             html += `
@@ -323,7 +325,6 @@
                     </div>
             `;
 
-            // Logika Pengumpulan Email Sinkronisasi Kuis
             const collectEmail = settings.collectEmail || 'none';
             const isQuizManual = settings.isQuiz && settings.quizRelease === 'manual';
             const requireEmail = collectEmail === 'input' || collectEmail === 'verified' || isQuizManual;
@@ -338,7 +339,6 @@
                 `;
             }
 
-            // Logika Shuffle Soal
             let renderSections = JSON.parse(JSON.stringify(formData.sections));
             if (settings.shuffleQuestions) {
                 renderSections.forEach(sec => {
@@ -349,7 +349,6 @@
                 });
             }
 
-            // MAPPING BAGIAN (SECTION) & PERTANYAAN
             renderSections.forEach((sec, sIdx) => {
                 if(sIdx > 0) {
                     html += `</div><div class="form-step" id="step-${sIdx}">`; 
@@ -381,13 +380,11 @@
                          return;
                     }
 
-                    // Kewajiban Default dari Setelan
                     let isReq = q.required || settings.defaultRequired;
                     let reqHtml = isReq ? '<span class="asterisk" title="Wajib Diisi">*</span>' : '';
                     let nameAttr = `name="${q.id}"`;
                     let textSize = `font-size:${theme.textFontSize || 12}px;`;
 
-                    // Tampilan Poin Kuis (Sync dengan Answer Key mode logic)
                     let pointsHTML = '';
                     if (settings.isQuiz && settings.quizShowPoints !== false) {
                         let pts = getQuestionPoints(q);
@@ -397,7 +394,6 @@
                         }
                     }
 
-                    // SUPER UPGRADE: Validasi Jawaban Engine (Client Side HTML Attributes)
                     let inputExtAttr = isReq ? 'required' : '';
                     if (q.showValidation && q.validation) {
                         let v = q.validation;
@@ -417,7 +413,6 @@
                         }
                     }
 
-                    // Acak Urutan Opsi
                     let renderOpts = (q.options) ? [...q.options] : [];
                     if (q.shuffleOptions && ['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(q.type)) { 
                         renderOpts = shuffleArray(renderOpts); 
@@ -579,7 +574,6 @@
                         </div>`;
                     }
                     
-                    // Render Deskripsi Publik
                     let descHtmlPublic = (q.showDescription && q.description) ? `<p class="form-desc" style="white-space: pre-line; margin-bottom:15px; font-size:${theme.textFontSize}px;">${q.description}</p>` : '';
 
                     html += `
@@ -594,7 +588,6 @@
                 });
             });
 
-            // Fitur Meminta Salinan Jawaban
             if (settings.sendCopy === 'requested' && requireEmail) {
                 html += `
                 <div class="form-question-card glass-card neumorph-outer" style="margin-bottom:30px; padding:25px 35px;">
@@ -608,15 +601,13 @@
                 html += `<input type="hidden" name="request_copy" value="yes">`;
             }
 
-            html += `</div>`; // TUTUP FORM-STEP TERAKHIR
+            html += `</div>`; 
 
-            // Indikator Progress Bar
             let progressTextHTML = '';
             if (settings.showProgress && renderSections.length > 1) {
                 progressTextHTML = `<div style="font-size:0.95rem; font-weight:600; color:var(--form-text-muted); text-align:center; flex:1; min-width:150px;" id="progressTextIndicator">Halaman 1 dari ${renderSections.length}</div>`;
             }
 
-            // === FOOTER ACTIONS ===
             html += `
                 <div class="form-footer-actions glass-panel" style="margin-top:30px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
                     
@@ -636,28 +627,22 @@
 
             wrapper.innerHTML = html;
             
-            // SUPER BIG UPGRADE: Inisiasi Custom Dropdown Glassmorphism setelah HTML dirender
             initPublicCustomSelects();
         }
 
-        // ================= SUPER BIG UPGRADE: UI CUSTOM DROPDOWN (GLASSMORPHISM SMART Z-INDEX) =================
         function initPublicCustomSelects() {
             document.querySelectorAll('.input-container-morph select').forEach(nativeSelect => {
-                // Hindari duplikasi jika sudah pernah dibuat
                 if(nativeSelect.nextElementSibling && nativeSelect.nextElementSibling.classList.contains('custom-select-wrapper')) return;
 
-                // Sembunyikan select bawaan yang jelek
                 nativeSelect.style.display = 'none';
 
                 let wrapper = document.createElement('div');
                 wrapper.className = 'custom-select-wrapper';
                 wrapper.style.width = '100%';
 
-                // Membuat Kotak Tampilan (Display)
                 let display = document.createElement('div');
                 display.className = 'custom-select-display inner-neumorph';
                 
-                // Ambil nilai terpilih atau placeholder
                 let selOpt = nativeSelect.options[nativeSelect.selectedIndex];
                 let text = selOpt ? selOpt.text : '-- Buka Pilihan --';
                 let isPlaceholder = text.includes('--');
@@ -673,13 +658,12 @@
                 display.style.justifyContent = 'space-between';
                 display.style.alignItems = 'center';
 
-                // Membuat Daftar Opsi (Dropdown List)
                 let optionsList = document.createElement('div');
                 optionsList.className = 'custom-select-options glass-panel-heavy neumorph-outer';
                 optionsList.style.display = 'none';
 
                 Array.from(nativeSelect.options).forEach(opt => {
-                    if (opt.disabled || opt.value === "") return; // Lewati placeholder di daftar pilihan
+                    if (opt.disabled || opt.value === "") return;
 
                     let optDiv = document.createElement('div');
                     optDiv.className = 'custom-select-option';
@@ -688,17 +672,14 @@
 
                     optDiv.onclick = (e) => {
                         e.stopPropagation();
-                        // 1. Update native select & trigger event agar logika Wizard/GoTo jalan
                         nativeSelect.value = opt.value;
                         nativeSelect.dispatchEvent(new Event('change'));
                         
-                        // 2. Update UI Tampilan
                         let spanTxt = display.querySelector('span:first-child');
                         spanTxt.innerText = opt.text;
                         spanTxt.style.color = 'var(--form-active-border)';
                         spanTxt.style.fontWeight = '700';
 
-                        // 3. Tutup menu & reset Z-Index Kartu
                         optionsList.style.display = 'none';
                         wrapper.classList.remove('open');
                         let parentCard = wrapper.closest('.form-question-card');
@@ -710,11 +691,9 @@
                     optionsList.appendChild(optDiv);
                 });
 
-                // Logika Buka/Tutup Menu dengan SMART Z-INDEX & COLLISION DETECTION
                 display.onclick = (e) => {
                     e.stopPropagation();
                     
-                    // Tutup dropdown lain yang sedang terbuka dan kembalikan z-index kartunya
                     document.querySelectorAll('.custom-select-options').forEach(el => {
                         if(el !== optionsList) { 
                             el.style.display = 'none'; 
@@ -730,13 +709,12 @@
                     if(isOpen) {
                         optionsList.style.display = 'none';
                         wrapper.classList.remove('open');
-                        if(parentCard) parentCard.style.zIndex = '1'; // Reset Z-index saat ditutup
+                        if(parentCard) parentCard.style.zIndex = '1'; 
                     } else {
                         optionsList.style.display = 'block';
                         wrapper.classList.add('open');
-                        if(parentCard) parentCard.style.zIndex = '9999'; // BOOSTER Z-INDEX! Bawa kartu ke layer paling depan
+                        if(parentCard) parentCard.style.zIndex = '9999'; 
 
-                        // SMART POSITIONING (Jika di HP layar bawah mentok, buka dropdown ke atas)
                         let rect = optionsList.getBoundingClientRect();
                         if (rect.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
                             optionsList.style.top = 'auto';
@@ -757,7 +735,6 @@
                 nativeSelect.parentNode.insertBefore(wrapper, nativeSelect.nextSibling);
             });
 
-            // Klik dimanapun di layar untuk menutup dropdown dan mereset Z-Index
             document.addEventListener('click', () => {
                 document.querySelectorAll('.custom-select-options').forEach(el => {
                     el.style.display = 'none';
@@ -768,7 +745,6 @@
             });
         }
 
-        // ================= SUPER UPGRADE: JS VALIDATION & GOTO LOGIC =================
         function checkCheckboxValidation(qId) {
             const group = document.getElementById(`group-${qId}`);
             if(!group) return true;
@@ -803,7 +779,7 @@
             const allRadios = table.querySelectorAll(`input[type="radio"][value="${colValue}"]`);
             allRadios.forEach(radio => {
                 if(radio !== currentInput) {
-                    radio.checked = false; // Uncheck dari baris lain di kolom yang sama
+                    radio.checked = false; 
                 }
             });
         }
@@ -817,14 +793,12 @@
             }
         }
 
-        // ================= LIVE COUNTDOWN TIMER ENGINE =================
         function initLiveCountdown() {
             if(!formData || !formData.settings || !formData.settings.deadline) return;
 
             const deadlineTime = new Date(formData.settings.deadline).getTime();
             if(isNaN(deadlineTime)) return;
 
-            // Update timer fungsi internal
             function updateTimer() {
                 const now = new Date().getTime();
                 const diff = deadlineTime - now;
@@ -837,13 +811,11 @@
                     return;
                 }
 
-                // Kalkulasi Waktu
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                // Inject UI Element
                 const elDays = document.getElementById('cdDays');
                 const elHours = document.getElementById('cdHours');
                 const elMinutes = document.getElementById('cdMinutes');
@@ -855,12 +827,10 @@
                 if(elSeconds) elSeconds.innerText = String(seconds).padStart(2, '0');
             }
 
-            // Jalankan 1 kali langsung dan hidupkan interval per 1000ms
             updateTimer();
             countdownTimerInterval = setInterval(updateTimer, 1000);
         }
 
-        // ================= AUTO-SAVE DRAFT ENGINE =================
         function initAutoSave() {
             if (!formData || !formData.settings) return;
             if (formData.settings.disableAutoSave) return;
@@ -871,7 +841,6 @@
             const draftKey = `bem_form_draft_${formData.id}`;
             const draft = JSON.parse(localStorage.getItem(draftKey) || '{}');
             
-            // Render ulang data tersimpan
             for (let key in draft) {
                 const inputs = formElement.querySelectorAll(`[name="${key}"]`);
                 if (!inputs.length) continue;
@@ -886,7 +855,6 @@
                 }
             }
 
-            // Dengarkan setiap input perubahan
             formElement.addEventListener('input', (e) => {
                 const target = e.target;
                 if (!target.name) return;
@@ -909,7 +877,6 @@
             }
         }
 
-        // ================= WIZARD LOGIC (STEPPER HORIZONTAL) =================
         function changeStep(n) {
             if (n === 1) {
                 const currentStepDiv = document.getElementById(`step-${currentStep}`);
@@ -922,14 +889,12 @@
                         }
                     }
                     
-                    // Cek Validasi Checkbox JS Khusus
                     let chkGroups = currentStepDiv.querySelectorAll('.gf-checkbox-group[data-val-cond]');
                     for(let grp of chkGroups) {
                         let qId = grp.id.replace('group-', '');
-                        if(!checkCheckboxValidation(qId)) return; // Stop next step
+                        if(!checkCheckboxValidation(qId)) return; 
                     }
 
-                    // Cek GoToSection dari Radio Button di Step ini (Prioritas)
                     const radios = currentStepDiv.querySelectorAll('input[type="radio"]:checked');
                     for (let r of radios) {
                         if(r.hasAttribute('data-target')) {
@@ -948,20 +913,17 @@
                 oldStepper.classList.remove('active');
             }
 
-            // Menentukan Step Selanjutnya
             if (n === 1 && manualNextStep) {
                 if (manualNextStep === 'submit') {
-                    // Paksa kirim formulir
                     document.getElementById('submissionForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
                     return;
                 } else if (manualNextStep.startsWith('s')) {
-                    // Lompat ke step spesifik
                     let targetIdx = parseInt(manualNextStep.substring(1));
                     currentStep = targetIdx;
                 } else {
                     currentStep += n; 
                 }
-                manualNextStep = null; // Reset setelah melompat
+                manualNextStep = null; 
             } else {
                 currentStep += n;
             }
@@ -984,7 +946,6 @@
                 document.getElementById('btnKirim').style.display = 'none';
             }
             
-            // Teks Progress Bar
             const progInd = document.getElementById('progressTextIndicator');
             if (progInd) { 
                 progInd.innerText = `Halaman ${currentStep + 1} dari ${formData.sections.length}`; 
@@ -993,7 +954,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ================= SUPER BIG UPGRADE: PENGIRIMAN JAWABAN (DENGAN SYSTEM UPLOAD FILE) =================
         async function submitForm(e) {
             e.preventDefault();
             const btn = document.getElementById('btnKirim');
@@ -1006,29 +966,25 @@
             let responses = {};
             let email = "";
 
-            // Helper untuk mengkonversi file menjadi raw Base64 Data String
             const readFileAsBase64 = (file) => {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result); // Mengirim Raw Data Base64
+                    reader.onload = () => resolve(reader.result); 
                     reader.onerror = error => reject(error);
                     reader.readAsDataURL(file);
                 });
             };
 
             try {
-                // Loop semua input dan proses satu per satu (termasuk upload file)
                 for (let [key, value] of formDataObj.entries()) {
                     if (key === 'respondent_email') { email = value; continue; }
                     if (key === 'request_copy') continue;
 
                     let finalValue = value;
 
-                    // PROSES UPLOAD FILE KE SERVER LALU AMBIL URL-NYA
                     if (value instanceof File) {
-                        if (value.name === '' || value.size === 0) continue; // Abaikan jika input kosong
+                        if (value.name === '' || value.size === 0) continue; 
                         
-                        // Validasi 5MB
                         if (value.size > 5 * 1024 * 1024) {
                             alert(`Gagal: File "${value.name}" terlalu besar. Maksimal 5MB per file.`);
                             btn.innerHTML = '🚀 Kirim form'; btn.disabled = false; btn.classList.remove('loading-state');
@@ -1037,7 +993,6 @@
                         
                         try {
                             const rawBase64 = await readFileAsBase64(value);
-                            // Upload Ke Server (Endpoint Baru)
                             const uploadReq = await fetch('/api/upload', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -1046,7 +1001,6 @@
                             const uploadRes = await uploadReq.json();
                             
                             if(uploadRes.success) {
-                                // Ganti nilai file fisik dengan URL Absolute Database
                                 finalValue = window.location.origin + uploadRes.url;
                             } else {
                                 throw new Error("Server menolak file.");
@@ -1059,7 +1013,6 @@
                         }
                     }
 
-                    // Gabungkan Format Kalender & Jam Khusus
                     if(key.endsWith('_day') || key.endsWith('_month') || key.endsWith('_h') || key.endsWith('_m') || key.endsWith('_s')) {
                         let baseKey = key.replace(/(_day|_month|_h|_m|_s)$/, '');
                         if(!responses[baseKey]) responses[baseKey] = {};
@@ -1075,7 +1028,6 @@
                     }
                 }
 
-                // Clean up custom date/duration JSON objects back to string for backend
                 for(let key in responses) {
                     if(typeof responses[key] === 'object' && !Array.isArray(responses[key])) {
                         let o = responses[key];
@@ -1095,7 +1047,6 @@
                 
                 if (json.success) {
                     if(countdownTimerInterval) clearInterval(countdownTimerInterval);
-                    // Hapus Draf setelah sukses kirim
                     localStorage.removeItem(`bem_form_draft_${formData.id}`);
                     
                     const msg = formData.settings.confirmationMessage || "Jawaban Anda telah dicatat.";
