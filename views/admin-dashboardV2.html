@@ -13,13 +13,19 @@
     
     <!-- Script Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Untuk Ringkasan -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- LOAD CSS UTAMA -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
 
     <style>
+        /* INLINE CSS OVERRIDES: Memaksa Render Font Aktif Seketika */
+        .form-title { font-family: var(--form-font-header) !important; font-weight: var(--form-font-header-weight, 700) !important; letter-spacing: -0.5px;}
+        .question-title { font-family: var(--form-font-question) !important; font-weight: var(--form-font-question-weight, 600) !important; margin-bottom: 20px !important; padding-bottom: 15px; border-bottom: 1px solid rgba(139, 92, 246, 0.2); }
+        .form-desc, .gf-input, .opt-text, .step-name { font-family: var(--form-font-text) !important; font-weight: var(--form-font-text-weight, 400) !important; }
+        body.admin-v2-body { font-family: var(--form-font-text) !important; }
+
         /* Custom UI Khusus Halaman Admin Ini */
         .chart-container { background: var(--form-card-bg); border: 1px solid var(--form-border); border-radius: 16px; padding: 20px; box-shadow: var(--inner-neumorph); margin-bottom: 25px; }
         .pagination-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
@@ -27,16 +33,13 @@
         .pagination-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
         .pagination-controls button:hover:not(:disabled) { background: var(--form-active-border); color: #fff; }
         
-        /* PENGAMAN KLIK TABS: Mencegah Overlay dari Aurora Background */
         .builder-tabs { position: relative; z-index: 100; }
         .b-tab { position: relative; z-index: 101; cursor: pointer; }
 
-        /* ================== SOLUSI KONKRET: FIX CSS FONT FLYOUT MENU ================== */
-        /* Hapus hover display block bawaan CSS untuk diserahkan 100% ke Javascript agar koordinat akurat */
+        /* FIX CSS FONT FLYOUT MENU */
         .cfp-item.has-submenu:hover .cfp-submenu { display: none; }
-        
         .cfp-submenu {
-            position: fixed !important; /* Wajib Fixed agar tidak terpotong (clipped) oleh sidebar dropdown auto-scroll */
+            position: fixed !important; 
             background: var(--form-bg) !important;
             border-radius: 12px !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
@@ -44,25 +47,13 @@
             min-width: 160px !important;
             display: none; 
             padding: 8px 0 !important;
-            z-index: 999999 !important; /* Booster Tinggi */
+            z-index: 999999 !important; 
         }
         [data-theme="dark"] .cfp-submenu { box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; }
-        
         .cfp-subitem {
-            padding: 10px 18px !important;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.9rem !important;
-            color: var(--form-text) !important;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 10px 18px !important; cursor: pointer; transition: 0.2s; font-size: 0.9rem !important; color: var(--form-text) !important; display: flex; align-items: center; justify-content: space-between;
         }
-        .cfp-subitem:hover {
-            background: var(--form-focus-glow) !important;
-            color: var(--form-active-border) !important;
-            padding-left: 22px !important; /* Efek Indentasi Estetik */
-        }
+        .cfp-subitem:hover { background: var(--form-focus-glow) !important; color: var(--form-active-border) !important; padding-left: 22px !important; }
     </style>
 </head>
 <body class="admin-v2-body" onclick="window.closeAllQMenus()">
@@ -96,7 +87,7 @@
         </div>
     </div>
 
-    <!-- TABS MENU (ANTI-CRASH GUARANTEED) -->
+    <!-- TABS MENU -->
     <div class="builder-tabs glass-panel" id="mainTabs">
         <div class="b-tab active" onclick="window.switchFormTab('main')" id="tabMain">Daftar Form</div>
         <div class="b-tab" onclick="window.switchFormTab('pertanyaan')" id="tabPertanyaan" style="display:none;">Pertanyaan</div>
@@ -467,19 +458,19 @@
 
     <!-- LOGIC JAVASCRIPT GLOBAL BINDING (ANTI-CRASH) -->
     <script>
-        var allForms = [];
-        var currentForm = null;
-        var activeSecIdx = 0;
-        var activeQIdx = -1;
+        window.allForms = [];
+        window.currentForm = null;
+        window.activeSecIdx = 0;
+        window.activeQIdx = -1;
 
-        var historyStack = [];
-        var historyPointer = -1;
-        var isNavigatingHistory = false;
+        window.historyStack = [];
+        window.historyPointer = -1;
+        window.isNavigatingHistory = false;
         
-        var currentResponses = []; 
-        var currentEditingRes = null; 
-        var currentIndivIndex = 0; 
-        var chartInstances = {}; 
+        window.currentResponses = []; 
+        window.currentEditingRes = null; 
+        window.currentIndivIndex = 0; 
+        window.chartInstances = {}; 
 
         const THEME_COLORS = ['#ec4899', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#10b981', '#f59e0b', '#f97316', '#ef4444', '#64748b'];
         const BG_COLORS = ['#fdf2f8', '#f5f3ff', '#eef2ff', '#eff6ff', '#f0f9ff', '#ecfeff', '#f0fdfa', '#ecfdf5', '#fffbeb', '#fff7ed', '#fef2f2', '#f8fafc'];
@@ -513,6 +504,7 @@
 
         window.showToast = function(msg) {
             const t = document.getElementById('globalToast');
+            if(!t) return;
             t.innerText = msg; t.style.bottom = '30px';
             setTimeout(() => t.style.bottom = '-100px', 3000);
         }
@@ -530,13 +522,12 @@
                 if(tabContent) tabContent.classList.add('active');
                 
                 if(tabId === 'main') {
-                    document.getElementById('builderTopIcons').style.display = 'none';
-                    document.getElementById('listTopIcons').style.display = 'flex';
-                    let ts = document.getElementById('themeSidebar');
-                    if(ts) ts.classList.remove('active');
+                    let bTop = document.getElementById('builderTopIcons'); if(bTop) bTop.style.display = 'none';
+                    let lTop = document.getElementById('listTopIcons'); if(lTop) lTop.style.display = 'flex';
+                    let ts = document.getElementById('themeSidebar'); if(ts) ts.classList.remove('active');
                 } else {
-                    document.getElementById('builderTopIcons').style.display = 'flex';
-                    document.getElementById('listTopIcons').style.display = 'none';
+                    let bTop = document.getElementById('builderTopIcons'); if(bTop) bTop.style.display = 'flex';
+                    let lTop = document.getElementById('listTopIcons'); if(lTop) lTop.style.display = 'none';
                 }
 
                 if(tabId === 'jawaban') { try { window.loadResponses(); } catch(e) { console.error("Error Jawaban", e); } }
@@ -567,122 +558,134 @@
         };
 
         window.renderRingkasan = function() {
-            const container = document.getElementById('charts-container');
-            if(currentResponses.length === 0) {
-                container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted); border:2px dashed var(--form-border); border-radius:12px;'>Belum ada tanggapan untuk diringkas.</div>";
-                document.getElementById('quiz-stats-container').style.display = 'none';
-                return;
-            }
-
-            if (typeof Chart === 'undefined') {
-                container.innerHTML = "<div style='padding:30px; text-align:center; color:#ef4444; border:1px solid #ef4444; border-radius:12px; background:rgba(239, 68, 68, 0.05); margin-top:20px;'>⚠️ Peringatan: Library grafik (Chart.js) gagal dimuat.<br>Silakan periksa koneksi internet Anda atau matikan pemblokir iklan (Ad-Blocker) untuk melihat ringkasan visual.</div>";
-                document.getElementById('quiz-stats-container').style.display = 'none';
-                return;
-            }
-
-            if(currentForm.settings.isQuiz && currentResponses.length > 0) {
-                document.getElementById('quiz-stats-container').style.display = 'flex';
-                let scores = currentResponses.map(r => r.score || 0).sort((a,b)=>a-b);
-                let sum = scores.reduce((a,b)=>a+b, 0);
-                document.getElementById('stat-avg').innerText = (sum / scores.length).toFixed(2);
-                let mid = Math.floor(scores.length / 2);
-                document.getElementById('stat-med').innerText = scores.length % 2 !== 0 ? scores[mid] : ((scores[mid - 1] + scores[mid]) / 2).toFixed(1);
-                document.getElementById('stat-range').innerText = `${scores[0]} - ${scores[scores.length-1]}`;
-            } else {
-                document.getElementById('quiz-stats-container').style.display = 'none';
-            }
-
             try {
-                Object.values(chartInstances).forEach(c => {
-                    if (c && typeof c.destroy === 'function') c.destroy();
-                });
-            } catch (err) {}
-            chartInstances = {};
-            
-            let html = '';
-            let questionsToChart = [];
-            
-            currentForm.sections.forEach(sec => {
-                sec.questions.forEach((q, idx) => {
-                    if (q.type === 'title_only' || q.type === 'upload_file' || q.type === 'tanggal' || q.type === 'waktu' || q.type === 'jawaban_singkat' || q.type === 'paragraf') return;
-                    
-                    html += `<div class="chart-container">
-                                <h3 style="font-size:1.1rem; color:var(--form-text); margin-bottom:15px; border-bottom:1px solid var(--form-border); padding-bottom:10px;">${q.title}</h3>
-                                <div style="position: relative; height:300px; width:100%; display:flex; justify-content:center;">
-                                    <canvas id="chart-${q.id}"></canvas>
-                                </div>
-                             </div>`;
-                    questionsToChart.push(q);
-                });
-            });
-            
-            if(html === '') html = "<div style='padding:30px; text-align:center; color:var(--form-text-muted);'>Tidak ada pertanyaan pilihan/opsi untuk dibuat grafik.</div>";
-            container.innerHTML = html;
-
-            questionsToChart.forEach(q => {
-                let canvas = document.getElementById(`chart-${q.id}`);
-                if(!canvas) return;
-
-                let labels = q.options || q.columns || ["1","2","3","4","5"]; 
-                if(q.type === 'skala_linier') {
-                    labels = []; for(let i=(q.scaleMin||1); i<=(q.scaleMax||5); i++) labels.push(i.toString());
-                } else if (q.type === 'rating') {
-                    labels = []; for(let i=1; i<=(q.ratingLevels||5); i++) labels.push(i.toString());
+                const container = document.getElementById('charts-container');
+                if(!container) return;
+                
+                if(window.currentResponses.length === 0) {
+                    container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted); border:2px dashed var(--form-border); border-radius:12px;'>Belum ada tanggapan untuk diringkas.</div>";
+                    let qStats = document.getElementById('quiz-stats-container');
+                    if(qStats) qStats.style.display = 'none';
+                    return;
                 }
 
-                let dataCounts = new Array(labels.length).fill(0);
+                if (typeof Chart === 'undefined') {
+                    container.innerHTML = "<div style='padding:30px; text-align:center; color:#ef4444; border:1px solid #ef4444; border-radius:12px; background:rgba(239, 68, 68, 0.05); margin-top:20px;'>⚠️ Peringatan: Library grafik (Chart.js) gagal dimuat.<br>Silakan periksa koneksi internet Anda atau matikan pemblokir iklan (Ad-Blocker) untuk melihat ringkasan visual.</div>";
+                    let qStats = document.getElementById('quiz-stats-container');
+                    if(qStats) qStats.style.display = 'none';
+                    return;
+                }
+
+                if(window.currentForm.settings.isQuiz && window.currentResponses.length > 0) {
+                    let qStats = document.getElementById('quiz-stats-container');
+                    if(qStats) qStats.style.display = 'flex';
+                    let scores = window.currentResponses.map(r => r.score || 0).sort((a,b)=>a-b);
+                    let sum = scores.reduce((a,b)=>a+b, 0);
+                    let sAvg = document.getElementById('stat-avg'); if(sAvg) sAvg.innerText = (sum / scores.length).toFixed(2);
+                    let mid = Math.floor(scores.length / 2);
+                    let sMed = document.getElementById('stat-med'); if(sMed) sMed.innerText = scores.length % 2 !== 0 ? scores[mid] : ((scores[mid - 1] + scores[mid]) / 2).toFixed(1);
+                    let sRange = document.getElementById('stat-range'); if(sRange) sRange.innerText = `${scores[0]} - ${scores[scores.length-1]}`;
+                } else {
+                    let qStats = document.getElementById('quiz-stats-container');
+                    if(qStats) qStats.style.display = 'none';
+                }
+
+                try {
+                    Object.values(window.chartInstances).forEach(c => {
+                        if (c && typeof c.destroy === 'function') c.destroy();
+                    });
+                } catch (err) {}
+                window.chartInstances = {};
                 
-                currentResponses.forEach(res => {
-                    let answers = res.answers || {}; 
-                    let ans = answers[q.id];
-                    if(!ans) return;
-                    
-                    if(Array.isArray(ans)) {
-                        ans.forEach(a => {
-                            let idx = labels.indexOf(a);
-                            if(idx > -1) dataCounts[idx]++;
-                        });
-                    } else {
-                        let idx = labels.indexOf(ans.toString());
-                        if(idx > -1) dataCounts[idx]++;
+                let html = '';
+                let questionsToChart = [];
+                
+                window.currentForm.sections.forEach(sec => {
+                    sec.questions.forEach((q, idx) => {
+                        if (q.type === 'title_only' || q.type === 'upload_file' || q.type === 'tanggal' || q.type === 'waktu' || q.type === 'jawaban_singkat' || q.type === 'paragraf') return;
+                        
+                        html += `<div class="chart-container">
+                                    <h3 style="font-size:1.1rem; color:var(--form-text); margin-bottom:15px; border-bottom:1px solid var(--form-border); padding-bottom:10px;">${q.title}</h3>
+                                    <div style="position: relative; height:300px; width:100%; display:flex; justify-content:center;">
+                                        <canvas id="chart-${q.id}"></canvas>
+                                    </div>
+                                 </div>`;
+                        questionsToChart.push(q);
+                    });
+                });
+                
+                if(html === '') html = "<div style='padding:30px; text-align:center; color:var(--form-text-muted);'>Tidak ada pertanyaan pilihan/opsi untuk dibuat grafik.</div>";
+                container.innerHTML = html;
+
+                questionsToChart.forEach(q => {
+                    let canvas = document.getElementById(`chart-${q.id}`);
+                    if(!canvas) return;
+
+                    let labels = q.options || q.columns || ["1","2","3","4","5"]; 
+                    if(q.type === 'skala_linier') {
+                        labels = []; for(let i=(q.scaleMin||1); i<=(q.scaleMax||5); i++) labels.push(i.toString());
+                    } else if (q.type === 'rating') {
+                        labels = []; for(let i=1; i<=(q.ratingLevels||5); i++) labels.push(i.toString());
                     }
-                });
 
-                let bgColors = labels.map(() => `hsla(${~~(Math.random() * 360)}, 70%, 60%, 0.6)`);
-                let borderColors = bgColors.map(c => c.replace('0.6', '1'));
+                    let dataCounts = new Array(labels.length).fill(0);
+                    
+                    window.currentResponses.forEach(res => {
+                        let answers = res.answers || {}; 
+                        let ans = answers[q.id];
+                        if(!ans) return;
+                        
+                        if(Array.isArray(ans)) {
+                            ans.forEach(a => {
+                                let idx = labels.indexOf(a);
+                                if(idx > -1) dataCounts[idx]++;
+                            });
+                        } else {
+                            let idx = labels.indexOf(ans.toString());
+                            if(idx > -1) dataCounts[idx]++;
+                        }
+                    });
 
-                let chartType = (q.type === 'pilihan_ganda' || q.type === 'dropdown') ? 'pie' : 'bar';
-                
-                let newChart = new Chart(canvas, {
-                    type: chartType,
-                    data: {
-                        labels: labels,
-                        datasets: [{ label: 'Jumlah Jawaban', data: dataCounts, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                    let bgColors = labels.map(() => `hsla(${~~(Math.random() * 360)}, 70%, 60%, 0.6)`);
+                    let borderColors = bgColors.map(c => c.replace('0.6', '1'));
+
+                    let chartType = (q.type === 'pilihan_ganda' || q.type === 'dropdown') ? 'pie' : 'bar';
+                    
+                    let newChart = new Chart(canvas, {
+                        type: chartType,
+                        data: {
+                            labels: labels,
+                            datasets: [{ label: 'Jumlah Jawaban', data: dataCounts, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                    });
+                    window.chartInstances[q.id] = newChart;
                 });
-                chartInstances[q.id] = newChart;
-            });
+            } catch(e) {
+                console.error("Render Ringkasan Gagal", e);
+            }
         }
 
         window.renderQDropdown = function() {
             let sel = document.getElementById('qSelector');
+            if(!sel) return;
             sel.innerHTML = '<option value="">-- Pilih Pertanyaan --</option>';
-            currentForm.sections.forEach(sec => {
+            window.currentForm.sections.forEach(sec => {
                 sec.questions.forEach(q => {
                     if(q.type === 'title_only') return;
                     sel.innerHTML += `<option value="${q.id}">${q.title}</option>`;
                 });
             });
-            document.getElementById('pertanyaanContainer').innerHTML = "<div style='text-align:center; padding:30px; color:var(--form-text-muted);'>Pilih pertanyaan dari dropdown di atas.</div>";
+            let cont = document.getElementById('pertanyaanContainer');
+            if(cont) cont.innerHTML = "<div style='text-align:center; padding:30px; color:var(--form-text-muted);'>Pilih pertanyaan dari dropdown di atas.</div>";
         }
         
         window.renderJawabanPertanyaan = function(qId) {
             const container = document.getElementById('pertanyaanContainer');
-            if(!qId) { container.innerHTML = ''; return; }
+            if(!qId || !container) { if(container) container.innerHTML = ''; return; }
             
             let html = '';
-            currentResponses.forEach((res, i) => {
+            window.currentResponses.forEach((res, i) => {
                 let answers = res.answers || {}; 
                 let ans = answers[qId];
                 if(ans) {
@@ -701,38 +704,39 @@
         }
 
         window.changeIndiv = function(dir) {
-            currentIndivIndex += dir;
-            if(currentIndivIndex < 0) currentIndivIndex = 0;
-            if(currentIndivIndex >= currentResponses.length) currentIndivIndex = currentResponses.length - 1;
+            window.currentIndivIndex += dir;
+            if(window.currentIndivIndex < 0) window.currentIndivIndex = 0;
+            if(window.currentIndivIndex >= window.currentResponses.length) window.currentIndivIndex = window.currentResponses.length - 1;
             window.renderIndividualResponse();
         }
 
         window.renderIndividualResponse = function() {
             const container = document.getElementById('individualContainer');
             const lbl = document.getElementById('indivLabel');
+            if(!container || !lbl) return;
             
-            if(currentResponses.length === 0) {
+            if(window.currentResponses.length === 0) {
                 lbl.innerText = "0 dari 0";
                 container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted); border:2px dashed var(--form-border); border-radius:12px;'>Belum ada tanggapan.</div>";
                 return;
             }
             
-            lbl.innerText = `${currentIndivIndex + 1} dari ${currentResponses.length}`;
-            document.getElementById('btnIndivPrev').disabled = currentIndivIndex === 0;
-            document.getElementById('btnIndivNext').disabled = currentIndivIndex === currentResponses.length - 1;
+            lbl.innerText = `${window.currentIndivIndex + 1} dari ${window.currentResponses.length}`;
+            let btnP = document.getElementById('btnIndivPrev'); if(btnP) btnP.disabled = window.currentIndivIndex === 0;
+            let btnN = document.getElementById('btnIndivNext'); if(btnN) btnN.disabled = window.currentIndivIndex === window.currentResponses.length - 1;
 
-            let res = currentResponses[currentIndivIndex];
+            let res = window.currentResponses[window.currentIndivIndex];
             if (!res) return; 
             let answers = res.answers || {}; 
             
             let html = `<div style="margin-bottom:20px; text-align:center; padding-bottom:15px; border-bottom:2px dashed var(--form-border);">
-                <h3 style="margin:0 0 10px 0; font-family:var(--form-font-header); font-size:1.8rem; color:var(--form-text);">${currentForm.title}</h3>
+                <h3 style="margin:0 0 10px 0; font-family:var(--form-font-header); font-size:1.8rem; color:var(--form-text);">${window.currentForm.title}</h3>
                 <div style="font-size:1.1rem; color:var(--form-text); font-weight:600;">Waktu: ${new Date(res.timestamp).toLocaleString('id-ID')}</div>
                 <div style="color:var(--form-active-border); font-weight:bold;">Email: ${res.email || 'Tanpa Email'}</div>
                 ${res.score !== null ? `<div style="font-size:1.2rem; font-weight:800; color:#10b981; margin-top:10px;">Skor: ${res.score} / ${res.maxScore}</div>` : ''}
             </div>`;
 
-            currentForm.sections.forEach((sec, sIdx) => {
+            window.currentForm.sections.forEach((sec, sIdx) => {
                 html += `<div style="margin-bottom:30px;">
                             <div class="form-header-card glass-card neumorph-outer" style="border-top:5px solid var(--form-active-border); margin-bottom:20px; padding:20px;">
                                 <h2 style="margin:0; color:var(--form-text);">${sec.title || `Bagian ${sIdx+1}`}</h2>
@@ -773,19 +777,21 @@
                 });
                 html += `</div>`;
             });
-            document.getElementById('individualContainer').innerHTML = html;
+            container.innerHTML = html;
         }
 
         window.printIndividual = function() {
             const container = document.getElementById('j-individual');
-            container.classList.add('print-area');
-            window.print();
-            container.classList.remove('print-area');
+            if(container) {
+                container.classList.add('print-area');
+                window.print();
+                container.classList.remove('print-area');
+            }
         }
 
         window.deleteCurrentIndividual = function() {
-            if(currentResponses.length > 0) {
-                window.deleteResponse(currentResponses[currentIndivIndex].id);
+            if(window.currentResponses.length > 0) {
+                window.deleteResponse(window.currentResponses[window.currentIndivIndex].id);
                 setTimeout(() => window.switchJTab('individual'), 500);
             }
         }
@@ -797,15 +803,13 @@
                 let rect = el.getBoundingClientRect();
                 sub.style.display = 'block';
                 sub.style.top = rect.top + 'px';
-                sub.style.right = (window.innerWidth - rect.left + 5) + 'px'; // Flyout mulus ke arah kiri
                 sub.style.left = 'auto';
+                sub.style.right = (window.innerWidth - rect.left + 5) + 'px'; // Flyout mulus ke arah kiri
             }
         }
         window.hideCFPSubmenu = function(el) {
             let sub = el.querySelector('.cfp-submenu');
-            if(sub) {
-                sub.style.display = 'none';
-            }
+            if(sub) sub.style.display = 'none';
         }
 
         window.toggleFP = function(type, event) {
@@ -821,8 +825,6 @@
             let html = '';
             FONT_OPTIONS.forEach(f => {
                 let isGoogle = f.type === 'google';
-                
-                // JIKA GOOGLE FONT DAN PUNYA BANYAK WEIGHTS, TAMPILKAN PANAH
                 if(isGoogle && f.weights && f.weights.length > 1) {
                     let subItems = f.weights.map(w => `<div class="cfp-subitem" style="font-family:'${f.name}', sans-serif; font-weight:${w};" onclick="window.selectFont('${type}', '${f.name}', ${w}, event)"><span>${WEIGHT_NAMES[w]}</span></div>`).join('');
                     
@@ -842,8 +844,13 @@
         window.selectFont = function(type, fontName, weight, event) {
             event.stopPropagation();
             window.loadDynamicFont(fontName, weight);
-            window.updateTheme(`${type}`, fontName); 
-            window.updateTheme(`${type.replace('Font','')}FontWeight`, weight); 
+            
+            if(window.currentForm && window.currentForm.theme) {
+                window.currentForm.theme[`${type}`] = fontName;
+                window.currentForm.theme[`${type.replace('Font','')}FontWeight`] = weight;
+                try { window.applyThemeToDOM(); } catch(e){}
+                window.saveState();
+            }
             
             let isGoogle = FONT_OPTIONS.find(o => o.name === fontName)?.type === 'google';
             let weightStr = (weight === 400 || !isGoogle) ? '' : ` - ${WEIGHT_NAMES[weight]}`;
@@ -872,17 +879,12 @@
         // ================= SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) LOGICS =================
         window.toggleQMenu = function(event, sIdx, qIdx) {
             event.stopPropagation();
-            const allMenus = document.querySelectorAll('.q-menu-dropdown');
             const targetMenuId = `q-menu-${sIdx}-${qIdx}`;
-            
-            allMenus.forEach(menu => {
+            document.querySelectorAll('.q-menu-dropdown').forEach(menu => {
                 if (menu.id !== targetMenuId) menu.style.display = 'none';
             });
-            
             const menu = document.getElementById(targetMenuId);
-            if (menu) {
-                menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
-            }
+            if (menu) menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
         }
 
         window.closeAllQMenus = function() {
@@ -890,7 +892,8 @@
         }
 
         window.toggleQSetting = function(sIdx, qIdx, settingKey) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             q[settingKey] = !q[settingKey];
             
             if (settingKey === 'showValidation' && q[settingKey]) {
@@ -904,14 +907,16 @@
         }
 
         window.updateQValidation = function(sIdx, qIdx, key, val) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(!q.validation) q.validation = { type: 'Teks', condition: 'Berisi', value: '', errorText: '' };
             q.validation[key] = val;
             window.debouncedSaveState();
         }
         
         window.updateQValidationCheck = function(sIdx, qIdx, condition, val, errText) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(!q.validation) q.validation = { condition: 'Pilih paling sedikit', value: '1', errorText: '' };
             if (condition !== null) q.validation.condition = condition;
             if (val !== null) q.validation.value = val;
@@ -920,7 +925,8 @@
         }
 
         window.updateGoTo = function(sIdx, qIdx, optIndex, optValue, targetSection) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(!q.goToSectionMap) q.goToSectionMap = {};
             q.goToSectionMap[optValue] = targetSection;
             window.debouncedSaveState();
@@ -935,26 +941,29 @@
         }
 
         window.updateCorrectAns = function(sIdx, qIdx, i, val) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(!q.correctAnswers) q.correctAnswers = [];
             q.correctAnswers[i] = val;
             window.debouncedSaveState();
         }
         window.addCorrectAns = function(sIdx, qIdx, val) {
-            if(!val.trim()) return;
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!val.trim() || !window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(!q.correctAnswers) q.correctAnswers = [];
             q.correctAnswers.push(val.trim());
             window.debouncedSaveState(); window.renderBuilder();
         }
         window.removeCorrectAns = function(sIdx, qIdx, i) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(q.correctAnswers) q.correctAnswers.splice(i, 1);
             window.debouncedSaveState(); window.renderBuilder();
         }
 
         window.toggleCorrectAns = function(sIdx, qIdx, opt) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(!q.correctAnswers) q.correctAnswers = [];
             if (q.type === 'pilihan_ganda' || q.type === 'dropdown') {
                 q.correctAnswers = [opt];
@@ -967,7 +976,8 @@
         }
 
         window.toggleGridCorrectAns = function(sIdx, qIdx, rIdx, colVal, type) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(!q.gridCorrectAnswers) q.gridCorrectAnswers = {};
             if(!q.gridCorrectAnswers[rIdx]) q.gridCorrectAnswers[rIdx] = [];
             
@@ -983,46 +993,47 @@
         }
 
         window.updateGridRowPoints = function(sIdx, qIdx, rIdx, val) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
+            if(!window.currentForm) return;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
             if(!q.rowPoints) q.rowPoints = {};
             q.rowPoints[rIdx] = parseInt(val) || 0;
             window.debouncedSaveState();
         }
 
         window.saveState = function() {
-            if(isNavigatingHistory) return;
-            if(historyPointer < historyStack.length - 1) {
-                historyStack = historyStack.slice(0, historyPointer + 1);
+            if(window.isNavigatingHistory) return;
+            if(window.historyPointer < window.historyStack.length - 1) {
+                window.historyStack = window.historyStack.slice(0, window.historyPointer + 1);
             }
-            historyStack.push(JSON.stringify(currentForm));
-            historyPointer++; window.updateUndoRedoUI();
+            window.historyStack.push(JSON.stringify(window.currentForm));
+            window.historyPointer++; window.updateUndoRedoUI();
         }
 
         window.undoState = function() {
-            if(historyPointer > 0) {
-                isNavigatingHistory = true; historyPointer--;
-                currentForm = JSON.parse(historyStack[historyPointer]);
+            if(window.historyPointer > 0) {
+                window.isNavigatingHistory = true; window.historyPointer--;
+                window.currentForm = JSON.parse(window.historyStack[window.historyPointer]);
                 try { window.applyThemeToDOM(); } catch(e){}
                 try { window.renderBuilder(); } catch(e){}
-                isNavigatingHistory = false; window.updateUndoRedoUI();
+                window.isNavigatingHistory = false; window.updateUndoRedoUI();
             }
         }
 
         window.redoState = function() {
-            if(historyPointer < historyStack.length - 1) {
-                isNavigatingHistory = true; historyPointer++;
-                currentForm = JSON.parse(historyStack[historyPointer]);
+            if(window.historyPointer < window.historyStack.length - 1) {
+                window.isNavigatingHistory = true; window.historyPointer++;
+                window.currentForm = JSON.parse(window.historyStack[window.historyPointer]);
                 try { window.applyThemeToDOM(); } catch(e){}
                 try { window.renderBuilder(); } catch(e){}
-                isNavigatingHistory = false; window.updateUndoRedoUI();
+                window.isNavigatingHistory = false; window.updateUndoRedoUI();
             }
         }
 
         window.updateUndoRedoUI = function() {
             const btnU = document.getElementById('btnUndo');
             const btnR = document.getElementById('btnRedo');
-            if(btnU) btnU.disabled = historyPointer <= 0;
-            if(btnR) btnR.disabled = historyPointer >= historyStack.length - 1;
+            if(btnU) btnU.disabled = window.historyPointer <= 0;
+            if(btnR) btnR.disabled = window.historyPointer >= window.historyStack.length - 1;
         }
 
         let debounceTimer;
@@ -1032,7 +1043,7 @@
         }
 
         window.setActive = function(sIdx, qIdx, el) {
-            activeSecIdx = sIdx; activeQIdx = qIdx;
+            window.activeSecIdx = sIdx; window.activeQIdx = qIdx;
             document.querySelectorAll('.form-question-card, .form-header-card').forEach(c => c.classList.remove('active', 'hover-glow'));
             if(el) {
                 el.classList.add('active', 'hover-glow');
@@ -1051,6 +1062,7 @@
         window.initThemeGrids = function() {
             const cGrid = document.getElementById('themeColorGrid');
             const bGrid = document.getElementById('themeBgGrid');
+            if(!cGrid || !bGrid) return;
             
             THEME_COLORS.forEach((c, i) => {
                 cGrid.innerHTML += `<div class="color-circle neumorph-outer" style="background:${c} !important;" onclick="window.updateTheme('color', '${c}'); window.updateTheme('bgColor', '${BG_COLORS[i]}');" id="tc-${c}"></div>`;
@@ -1064,21 +1076,20 @@
         }
 
         window.updateTheme = function(key, value) { 
-            if(currentForm && currentForm.theme) {
-                currentForm.theme[key] = value; 
+            if(window.currentForm && window.currentForm.theme) {
+                window.currentForm.theme[key] = value; 
                 try { window.applyThemeToDOM(); } catch(e){}
                 window.saveState(); 
             }
         }
 
         window.applyThemeToDOM = function() {
-            if(!currentForm || !currentForm.theme) return;
-            const t = currentForm.theme;
+            if(!window.currentForm || !window.currentForm.theme) return;
+            const t = window.currentForm.theme;
             
             document.documentElement.style.setProperty('--form-active-border', t.color || '#8b5cf6');
             document.documentElement.style.setProperty('--form-bg', t.bgColor || '#f5f3ff');
             
-            // FONT BINDING SECARA GLOBAL
             document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont || 'Outfit'}", sans-serif`);
             document.documentElement.style.setProperty('--form-font-header-weight', t.headerFontWeight || '700');
             
@@ -1088,12 +1099,10 @@
             document.documentElement.style.setProperty('--form-font-text', `"${t.textFont || 'Plus Jakarta Sans'}", sans-serif`);
             document.documentElement.style.setProperty('--form-font-text-weight', t.textFontWeight || '400');
             
-            // Load Font Engine
             window.loadDynamicFont(t.headerFont, t.headerFontWeight || 700);
             window.loadDynamicFont(t.questionFont, t.questionFontWeight || 600);
             window.loadDynamicFont(t.textFont, t.textFontWeight || 400);
 
-            // Update UI Dropdown Label Safely
             let dHF = document.getElementById('display-headerFont');
             if(dHF) dHF.innerHTML = `<span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.headerFont || 'Outfit'} - ${WEIGHT_NAMES[t.headerFontWeight||700] || 'Biasa'}</span> <span class="arrow">▼</span>`;
             
@@ -1103,14 +1112,9 @@
             let dTF = document.getElementById('display-textFont');
             if(dTF) dTF.innerHTML = `<span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.textFont || 'Plus Jakarta Sans'} - ${WEIGHT_NAMES[t.textFontWeight||400] || 'Biasa'}</span> <span class="arrow">▼</span>`;
 
-            let sHS = document.getElementById('themeHeaderSize');
-            if(sHS) sHS.value = t.headerFontSize || 28;
-            
-            let sQS = document.getElementById('themeQuestionSize');
-            if(sQS) sQS.value = t.questionFontSize || 14;
-            
-            let sTS = document.getElementById('themeTextSize');
-            if(sTS) sTS.value = t.textFontSize || 12;
+            let sHS = document.getElementById('themeHeaderSize'); if(sHS) sHS.value = t.headerFontSize || 28;
+            let sQS = document.getElementById('themeQuestionSize'); if(sQS) sQS.value = t.questionFontSize || 14;
+            let sTS = document.getElementById('themeTextSize'); if(sTS) sTS.value = t.textFontSize || 12;
 
             document.querySelectorAll('#themeColorGrid .color-circle').forEach(el => el.innerHTML = '');
             const activeColor = document.getElementById(`tc-${t.color}`);
@@ -1141,16 +1145,16 @@
         window.removeHeaderImage = function() { window.updateTheme('headerImage', ''); }
 
         window.previewForm = function() { 
-            if(currentForm && currentForm.slug) window.open(`/form/${currentForm.slug}`, '_blank'); 
+            if(window.currentForm && window.currentForm.slug) window.open(`/form/${window.currentForm.slug}`, '_blank'); 
         }
 
         window.loadAllForms = async function() {
             try {
                 const res = await fetch('/api/forms');
                 const json = await res.json();
-                allForms = json.data || []; 
+                window.allForms = json.data || []; 
                 window.renderFormList();
-            } catch (e) { showToast("Gagal memuat form dari Server Redis."); }
+            } catch (e) { window.showToast("Gagal memuat form dari Server Redis."); }
         }
 
         window.saveFormToDB = async function(isSilent = false) {
@@ -1158,15 +1162,15 @@
                 const btn = document.querySelector('.gf-btn-submit[onclick="window.saveFormToDB()"]');
                 if(!isSilent && btn) { btn.innerText = "⏳ Menyimpan..."; btn.disabled = true; }
 
-                const res = await fetch('/api/forms/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(currentForm) });
+                const res = await fetch('/api/forms/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(window.currentForm) });
                 const json = await res.json();
                 if(json.success) {
-                    if(!isSilent) showToast("✅ Formulir Tersimpan!");
-                    currentForm.id = json.id; window.loadAllForms(); 
+                    if(!isSilent) window.showToast("✅ Formulir Tersimpan!");
+                    window.currentForm.id = json.id; window.loadAllForms(); 
                 }
                 if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
             } catch (e) {
-                if(!isSilent) showToast("⚠️ Gagal menyimpan ke server!");
+                if(!isSilent) window.showToast("⚠️ Gagal menyimpan ke server!");
                 const btn = document.querySelector('.gf-btn-submit[onclick="window.saveFormToDB()"]');
                 if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
             }
@@ -1177,16 +1181,16 @@
                 try {
                     const res = await fetch(`/api/forms/${formId}`, { method: 'DELETE' });
                     const json = await res.json();
-                    if(json.success) { showToast("🗑️ Formulir berhasil dihapus permanen."); window.loadAllForms(); } 
+                    if(json.success) { window.showToast("🗑️ Formulir berhasil dihapus permanen."); window.loadAllForms(); } 
                     else { throw new Error(); }
-                } catch(e) { showToast("⚠️ Gagal menghapus form dari database."); }
+                } catch(e) { window.showToast("⚠️ Gagal menghapus form dari database."); }
             }
         }
 
         window.renderAnswersSummary = function(answers) {
             if (!answers) answers = {}; 
             let html = '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:15px;">';
-            currentForm.sections.forEach(sec => {
+            window.currentForm.sections.forEach(sec => {
                 sec.questions.forEach(q => {
                     if(q.type === 'title_only') return;
                     
@@ -1245,12 +1249,12 @@
             let resContainer = document.getElementById('respList');
             if(resContainer) resContainer.innerHTML = "<div style='text-align:center; padding:30px;'>Memuat tanggapan dari server...</div>";
             try {
-                const res = await fetch(`/api/forms/${currentForm.id}/responses`);
+                const res = await fetch(`/api/forms/${window.currentForm.id}/responses`);
                 const json = await res.json();
-                currentResponses = json.data || [];
+                window.currentResponses = json.data || [];
                 
                 let countEl = document.getElementById('respCount');
-                if(countEl) countEl.innerText = `${currentResponses.length} Tanggapan`;
+                if(countEl) countEl.innerText = `${window.currentResponses.length} Tanggapan`;
                 
                 let activeSubTab = document.querySelector('.j-tab.active');
                 if(activeSubTab) {
@@ -1261,7 +1265,7 @@
                 }
 
                 let html = '';
-                currentResponses.slice().reverse().forEach((r) => { 
+                window.currentResponses.slice().reverse().forEach((r) => { 
                     html += `
                         <div class="glass-card inner-neumorph" style="padding:25px; border-radius:12px; margin-bottom:20px; border-left: 5px solid var(--form-active-border);">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
@@ -1287,20 +1291,19 @@
             }
         }
 
-        // BUKA MODAL EDIT RESPON
         window.editResponse = function(resId) {
-            currentEditingRes = currentResponses.find(r => r.id === resId);
-            if(!currentEditingRes) return;
+            window.currentEditingRes = window.currentResponses.find(r => r.id === resId);
+            if(!window.currentEditingRes) return;
             
             let html = '';
             html += `<div style="margin-bottom:20px; padding:15px; background:var(--form-card-bg); border-radius:12px; box-shadow:var(--inner-neumorph);">
                 <label style="font-size:0.85rem; font-weight:800; color:var(--form-text-muted); text-transform:uppercase; display:block; margin-bottom:8px;">Email Responden</label>
-                <input type="text" id="editResEmail" class="gf-input inner-neumorph" value="${currentEditingRes.email || ''}" style="background:rgba(255,255,255,0.7) !important;">
+                <input type="text" id="editResEmail" class="gf-input inner-neumorph" value="${window.currentEditingRes.email || ''}" style="background:rgba(255,255,255,0.7) !important;">
             </div>`;
             
-            let answers = currentEditingRes.answers || {}; // Pengaman
+            let answers = window.currentEditingRes.answers || {}; 
             
-            currentForm.sections.forEach(sec => {
+            window.currentForm.sections.forEach(sec => {
                 sec.questions.forEach(q => {
                     if(q.type === 'title_only') return;
                     
@@ -1342,12 +1345,11 @@
             document.getElementById('editResModal').style.display = 'flex';
         }
 
-        // SIMPAN EDIT RESPON KE SERVER (REALTIME)
         window.saveEditedResponse = async function() {
-            if(!currentEditingRes) return;
+            if(!window.currentEditingRes) return;
             document.getElementById('btnSaveEditRes').innerText = "⏳ Menyimpan...";
             
-            let updatedAnswers = { ...currentEditingRes.answers };
+            let updatedAnswers = { ...window.currentEditingRes.answers };
             let newEmail = document.getElementById('editResEmail').value;
             
             document.querySelectorAll('.edit-res-input').forEach(inp => {
@@ -1368,14 +1370,14 @@
             });
             
             try {
-                const res = await fetch(`/api/forms/${currentForm.id}/responses/${currentEditingRes.id}`, {
+                const res = await fetch(`/api/forms/${window.currentForm.id}/responses/${window.currentEditingRes.id}`, {
                     method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ email: newEmail, answers: updatedAnswers })
                 });
                 const json = await res.json();
                 if(json.success) {
-                    showToast("✅ Jawaban berhasil diupdate!");
+                    window.showToast("✅ Jawaban berhasil diupdate!");
                     window.closeEditResModal();
                     window.loadResponses();
                 } else {
@@ -1388,14 +1390,13 @@
             }
         }
 
-        // HAPUS RESPON PERMANEN
         window.deleteResponse = async function(resId) {
             if(confirm("PERINGATAN: Yakin ingin menghapus jawaban ini secara PERMANEN dari database?")) {
                 try {
-                    const res = await fetch(`/api/forms/${currentForm.id}/responses/${resId}`, { method: 'DELETE' });
+                    const res = await fetch(`/api/forms/${window.currentForm.id}/responses/${resId}`, { method: 'DELETE' });
                     const json = await res.json();
                     if(json.success) {
-                        showToast("🗑️ Jawaban berhasil dihapus!");
+                        window.showToast("🗑️ Jawaban berhasil dihapus!");
                         window.loadResponses();
                     } else {
                         alert(json.message);
@@ -1410,16 +1411,14 @@
             document.getElementById('editResModal').style.display = 'none';
         }
 
-        // DOWNLOAD EXCEL EXPORT
-        window.downloadExcel = function() { window.open(`/api/forms/${currentForm.id}/export`, '_blank'); }
+        window.downloadExcel = function() { window.open(`/api/forms/${window.currentForm.id}/export`, '_blank'); }
 
-        // ================= RENDERING LIST DASHBOARD =================
         window.renderFormList = function() {
             const cont = document.getElementById('formListContainer');
-            if(allForms.length === 0) { cont.innerHTML = "<div class='glass-card inner-neumorph' style='text-align:center; padding:50px; border-radius:12px;'>Belum ada formulir. Silahkan buat yang baru.</div>"; return; }
+            if(window.allForms.length === 0) { cont.innerHTML = "<div class='glass-card inner-neumorph' style='text-align:center; padding:50px; border-radius:12px;'>Belum ada formulir. Silahkan buat yang baru.</div>"; return; }
             
             let html = '';
-            [...allForms].reverse().forEach(f => {
+            [...window.allForms].reverse().forEach(f => {
                 let deadlineStr = 'Tanpa Batas';
                 if(f.settings && f.settings.deadline) { deadlineStr = new Date(f.settings.deadline).toLocaleString('id-ID', {day:'numeric', month:'short', year:'numeric'}); }
 
@@ -1451,7 +1450,7 @@
         };
 
         window.createNewForm = function() {
-            currentForm = {
+            window.currentForm = {
                 id: '', slug: `form-${Date.now()}`, title: 'Formulir Tanpa Judul', description: '', isActive: true,
                 settings: JSON.parse(JSON.stringify(defaultSettingsJSON)),
                 theme: { 
@@ -1462,19 +1461,19 @@
                 },
                 sections: [ { id: 's1', stepName: 'Tahap 1', title: 'Bagian 1', description: '', questions: [] } ]
             };
-            historyStack = []; historyPointer = -1; window.saveState(); window.openEditorUI();
+            window.historyStack = []; window.historyPointer = -1; window.saveState(); window.openEditorUI();
         }
 
         window.openFormEditor = function(id) {
-            currentForm = JSON.parse(JSON.stringify(allForms.find(f => f.id === id))); 
-            currentForm.settings = { ...defaultSettingsJSON, ...(currentForm.settings || {}) };
-            if(!currentForm.theme) currentForm.theme = { 
+            window.currentForm = JSON.parse(JSON.stringify(window.allForms.find(f => f.id === id))); 
+            window.currentForm.settings = { ...defaultSettingsJSON, ...(window.currentForm.settings || {}) };
+            if(!window.currentForm.theme) window.currentForm.theme = { 
                 headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: 700,
                 questionFont: 'Plus Jakarta Sans', questionFontSize: 14, questionFontWeight: 600,
                 textFont: 'Plus Jakarta Sans', textFontSize: 12, textFontWeight: 400,
                 color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: '' 
             };
-            historyStack = []; historyPointer = -1; window.saveState(); window.openEditorUI();
+            window.historyStack = []; window.historyPointer = -1; window.saveState(); window.openEditorUI();
         }
 
         window.openEditorUI = function() {
@@ -1491,7 +1490,10 @@
             }
         }
 
-        // ================= SUPER BIG UPGRADE: CUSTOM GLASSMORPHISM SELECT (ANTI-HILANG) =================
+        window.genId = function() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+
         window.initCustomSelects = function() {
             document.querySelectorAll('select.q-type-select, select.t-select').forEach(nativeSelect => {
                 if(nativeSelect.nextElementSibling && nativeSelect.nextElementSibling.classList.contains('custom-select-wrapper')) return;
@@ -1598,210 +1600,42 @@
             }
         }
 
-        window.getSafeIndices = function() {
-            let s = activeSecIdx > -1 ? activeSecIdx : 0;
-            if(s >= currentForm.sections.length) s = currentForm.sections.length - 1;
-            let q = activeQIdx > -1 ? activeQIdx : currentForm.sections[s].questions.length - 1;
-            return { s, q };
-        }
-
-        window.defaultQuestion = () => ({
-            id: 'q_' + genId(), type: 'pilihan_ganda', title: 'Pertanyaan', description: '',
-            required: currentForm.settings.defaultRequired || false, options: ['Opsi 1']
-        });
-
-        window.addQuestion = function() {
-            const { s, q } = window.getSafeIndices();
-            const newQ = window.defaultQuestion();
-            currentForm.sections[s].questions.splice(q + 1, 0, newQ);
-            activeQIdx = q + 1; window.debouncedSaveState(); window.renderBuilder();
-        }
-
-        window.duplicateQuestion = function(sIdx, qIdx) {
-            const qToCopy = currentForm.sections[sIdx].questions[qIdx];
-            const newQ = JSON.parse(JSON.stringify(qToCopy));
-            newQ.id = 'q_' + genId(); 
-            currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, newQ);
-            activeQIdx = qIdx + 1; window.debouncedSaveState(); window.renderBuilder();
-        }
-
-        window.deleteQuestion = function(sIdx, qIdx) {
-            currentForm.sections[sIdx].questions.splice(qIdx, 1);
-            if(activeQIdx >= currentForm.sections[sIdx].questions.length) { activeQIdx = currentForm.sections[sIdx].questions.length - 1; }
-            window.debouncedSaveState(); window.renderBuilder();
-        }
-
-        window.addSection = function() {
-            const newSec = {
-                id: 's_' + genId(), stepName: `Tahap ${currentForm.sections.length + 1}`, title: 'Bagian Tanpa Judul', description: '', questions: [window.defaultQuestion()]
-            };
-            currentForm.sections.splice(activeSecIdx + 1, 0, newSec);
-            activeSecIdx++; activeQIdx = 0; window.debouncedSaveState(); window.renderBuilder();
-        }
-
-        window.deleteSection = function(sIdx) {
-            if(currentForm.sections.length <= 1) return showToast("Minimal harus ada 1 bagian (section).");
-            currentForm.sections.splice(sIdx, 1);
-            if(activeSecIdx >= currentForm.sections.length) { activeSecIdx = currentForm.sections.length - 1; }
-            activeQIdx = -1; window.debouncedSaveState(); window.renderBuilder();
-        }
-
-        window.addTitleDesc = function() {
-            const { s, q } = window.getSafeIndices();
-            const newQ = { id: 'q_' + genId(), type: 'title_only', title: 'Judul Teks', image: '' };
-            currentForm.sections[s].questions.splice(q + 1, 0, newQ);
-            activeQIdx = q + 1; window.debouncedSaveState(); window.renderBuilder();
-        }
-
-        window.addOption = function(sIdx, qIdx) {
-            currentForm.sections[sIdx].questions[qIdx].options.push(`Opsi ${currentForm.sections[sIdx].questions[qIdx].options.length + 1}`);
-            window.debouncedSaveState(); window.renderBuilder();
-        }
-
-        window.deleteOption = function(sIdx, qIdx, oIdx) {
-            if(currentForm.sections[sIdx].questions[qIdx].options.length <= 1) return;
-            currentForm.sections[sIdx].questions[qIdx].options.splice(oIdx, 1);
-            window.debouncedSaveState(); window.renderBuilder();
-        }
-
-        window.changeQType = function(sIdx, qIdx, newType) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
-            q.type = newType;
-            
-            if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(newType)) {
-                if(!q.options || q.options.length === 0) q.options = ['Opsi 1'];
-            }
-            if(['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(newType)) {
-                if(!q.rows) q.rows = ['Baris 1']; if(!q.columns) q.columns = ['Kolom 1'];
-            }
-            if(newType === 'upload_file') {
-                if(!q.maxFiles) q.maxFiles = 1; if(!q.maxSize) q.maxSize = '10 MB';
-            }
-            if(newType === 'skala_linier') {
-                if(q.scaleMin === undefined) q.scaleMin = 1; if(!q.scaleMax) q.scaleMax = 5;
-            }
-            if(newType === 'rating') {
-                if(!q.ratingLevels) q.ratingLevels = 5;
-            }
-            window.debouncedSaveState(); window.renderBuilder();
-        }
-        
-        window.addGridRow = function(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].rows.push(`Baris ${currentForm.sections[sIdx].questions[qIdx].rows.length + 1}`); window.debouncedSaveState(); window.renderBuilder(); }
-        window.removeGridRow = function(sIdx, qIdx, rIdx) { if(currentForm.sections[sIdx].questions[qIdx].rows.length <= 1) return; currentForm.sections[sIdx].questions[qIdx].rows.splice(rIdx, 1); window.debouncedSaveState(); window.renderBuilder(); }
-        window.addGridCol = function(sIdx, qIdx) { currentForm.sections[sIdx].questions[qIdx].columns.push(`Kolom ${currentForm.sections[sIdx].questions[qIdx].columns.length + 1}`); window.debouncedSaveState(); window.renderBuilder(); }
-        window.removeGridCol = function(sIdx, qIdx, cIdx) { if(currentForm.sections[sIdx].questions[qIdx].columns.length <= 1) return; currentForm.sections[sIdx].questions[qIdx].columns.splice(cIdx, 1); window.debouncedSaveState(); window.renderBuilder(); }
-
-        window.updateRootSetting = function(key, value) { currentForm[key] = value; window.debouncedSaveState(); }
-        window.updateSetting = function(key, value) { currentForm.settings[key] = value; window.debouncedSaveState(); }
-        window.toggleQuizPanel = function(show) { document.getElementById('quizSubPanel').style.display = show ? 'block' : 'none'; }
-        window.toggleAcc = function(contentId, iconId) {
-            const content = document.getElementById(contentId); const icon = document.getElementById(iconId);
-            if (content.style.display === 'none') { content.style.display = 'block'; icon.style.transform = 'rotate(180deg)'; } 
-            else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; }
-        }
-        
-        window.renderSettings = function() {
-            if(!currentForm) return;
-            const s = currentForm.settings;
-            document.getElementById('setIsQuiz').checked = s.isQuiz;
-            window.toggleQuizPanel(s.isQuiz);
-            
-            if(s.quizRelease) {
-                const el = document.querySelector(`input[name="quizRelease"][value="${s.quizRelease}"]`);
-                if(el) el.checked = true;
-            }
-            document.getElementById('setQuizMissed').checked = s.quizShowMissed;
-            document.getElementById('setQuizCorrect').checked = s.quizShowCorrect;
-            document.getElementById('setQuizPoints').checked = s.quizShowPoints;
-            document.getElementById('setQuizDefPoints').value = s.quizDefaultPoints || 0;
-            
-            document.getElementById('setCollectEmail').value = s.collectEmail || 'none';
-            document.getElementById('setSendCopy').value = s.sendCopy || 'none';
-            document.getElementById('setAllowEdit').checked = s.editResponse;
-            document.getElementById('setLimitOne').checked = s.limitOne;
-            
-            document.getElementById('setShowProgress').checked = s.showProgress;
-            document.getElementById('setShuffle').checked = s.shuffleQuestions;
-            document.getElementById('setConfMsg').value = s.confirmationMessage || '';
-            document.getElementById('setShowSubmitAnother').checked = s.showSubmitAnother;
-            document.getElementById('setShowSummary').checked = s.showSummary;
-            document.getElementById('setDisableAutoSave').checked = s.disableAutoSave;
-            
-            document.getElementById('setActive').checked = currentForm.isActive;
-            document.getElementById('setSlug').value = currentForm.slug || '';
-            if(s.deadline) {
-                const d = new Date(s.deadline);
-                if(!isNaN(d.getTime())) {
-                    const pad = n => n < 10 ? '0'+n : n;
-                    const fmt = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-                    document.getElementById('setDeadline').value = fmt;
-                }
-            } else { document.getElementById('setDeadline').value = ''; }
-            
-            document.getElementById('setDefaultRequired').checked = s.defaultRequired;
-
-            try { window.initCustomSelects(); } catch(e){} 
-        }
-
-        window.toggleAllowedFileType = function(sIdx, qIdx, ftId, isChecked) {
-            let q = currentForm.sections[sIdx].questions[qIdx];
-            if (!q.allowedFileTypes) q.allowedFileTypes = [];
-            if (isChecked) { if (!q.allowedFileTypes.includes(ftId)) q.allowedFileTypes.push(ftId); } 
-            else { q.allowedFileTypes = q.allowedFileTypes.filter(id => id !== ftId); }
-            window.debouncedSaveState();
-        };
-
-        window.openFeedbackModal = function(sIdx, qIdx) {
-            activeFeedbackSIdx = sIdx; activeFeedbackQIdx = qIdx;
-            let q = currentForm.sections[sIdx].questions[qIdx];
-            document.getElementById('feedbackInput').value = q.feedback || '';
-            document.getElementById('feedbackModal').style.display = 'flex';
-        }
-        window.closeFeedbackModal = function() { document.getElementById('feedbackModal').style.display = 'none'; }
-        window.saveFeedback = function() {
-            if (activeFeedbackSIdx > -1 && activeFeedbackQIdx > -1) {
-                let val = document.getElementById('feedbackInput').value;
-                currentForm.sections[activeFeedbackSIdx].questions[activeFeedbackQIdx].feedback = val;
-                window.debouncedSaveState(); window.renderBuilder();
-            }
-            window.closeFeedbackModal();
-        }
-
         window.renderBuilder = function() {
             try {
+                if(!window.currentForm) return;
                 const canvas = document.getElementById('builderCanvas');
                 if(!canvas) return;
-                const theme = currentForm.theme;
+                const theme = window.currentForm.theme;
                 
                 let headerImgHtml = theme.headerImage ? `<img src="${theme.headerImage}" style="width:100%; height:130px; object-fit:cover; border-radius:12px 12px 0 0; display:block;">` : '';
                 
                 let html = `
-                    <div class="form-header-card glass-card neumorph-outer ${(activeSecIdx===-1 && activeQIdx===-1)?'active':''}" style="padding:0; overflow:hidden; border-top: ${theme.headerImage ? 'none' : '10px solid var(--form-active-border)'};" onclick="window.setActive(-1, -1, this)">
+                    <div class="form-header-card glass-card neumorph-outer ${(window.activeSecIdx===-1 && window.activeQIdx===-1)?'active':''}" style="padding:0; overflow:hidden; border-top: ${theme.headerImage ? 'none' : '10px solid var(--form-active-border)'};" onclick="window.setActive(-1, -1, this)">
                         ${headerImgHtml}
                         <div style="padding: 30px;">
-                            <input type="text" class="gf-input form-title inner-neumorph" style="font-size:${theme.headerFontSize}px; margin-bottom:15px;" value="${currentForm.title}" oninput="currentForm.title=this.value; window.debouncedSaveState()" placeholder="Judul Formulir">
-                            <textarea class="gf-input form-desc inner-neumorph" style="font-size:${theme.textFontSize}px;" rows="2" oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'; currentForm.description=this.value; window.debouncedSaveState()" placeholder="Deskripsi (Opsional)">${currentForm.description}</textarea>
+                            <input type="text" class="gf-input form-title inner-neumorph" style="font-size:${theme.headerFontSize}px; margin-bottom:15px;" value="${window.currentForm.title}" oninput="window.currentForm.title=this.value; window.debouncedSaveState()" placeholder="Judul Formulir">
+                            <textarea class="gf-input form-desc inner-neumorph" style="font-size:${theme.textFontSize}px;" rows="2" oninput="this.style.height=''; this.style.height=this.scrollHeight+'px'; window.currentForm.description=this.value; window.debouncedSaveState()" placeholder="Deskripsi (Opsional)">${window.currentForm.description}</textarea>
                         </div>
                     </div>
                 `;
 
-                currentForm.sections.forEach((sec, sIdx) => {
-                    if(currentForm.sections.length > 1) {
+                window.currentForm.sections.forEach((sec, sIdx) => {
+                    if(window.currentForm.sections.length > 1) {
                         html += `
                         <div style="margin-top:40px; position:relative;">
-                            <div class="form-section-header glow-effect">Bagian ${sIdx+1} dari ${currentForm.sections.length}</div>
-                            <div class="form-header-card glass-card neumorph-outer ${(activeSecIdx===sIdx && activeQIdx===-1)?'active':''}" style="border-top: none; border-radius: 0 16px 16px 16px; margin-top:0;" onclick="window.setActive(${sIdx}, -1, this)">
+                            <div class="form-section-header glow-effect">Bagian ${sIdx+1} dari ${window.currentForm.sections.length}</div>
+                            <div class="form-header-card glass-card neumorph-outer ${(window.activeSecIdx===sIdx && window.activeQIdx===-1)?'active':''}" style="border-top: none; border-radius: 0 16px 16px 16px; margin-top:0;" onclick="window.setActive(${sIdx}, -1, this)">
                                 <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:15px; flex-wrap:wrap; gap:15px;">
                                     <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
                                         <div style="display:flex; align-items:center; gap:10px;">
                                             <span style="font-size:0.85rem; font-weight:700; color:var(--form-text-muted); background:var(--form-bg); padding:6px 12px; border-radius:20px;">LABEL TIMELINE</span>
-                                            <input type="text" class="gf-input inner-neumorph" style="font-size:1.05rem; padding:10px 15px; flex:1;" value="${sec.stepName || 'Tahap ' + (sIdx+1)}" oninput="currentForm.sections[${sIdx}].stepName=this.value; window.debouncedSaveState()" placeholder="Contoh: Identitas, Verifikasi, dll">
+                                            <input type="text" class="gf-input inner-neumorph" style="font-size:1.05rem; padding:10px 15px; flex:1;" value="${sec.stepName || 'Tahap ' + (sIdx+1)}" oninput="window.currentForm.sections[${sIdx}].stepName=this.value; window.debouncedSaveState()" placeholder="Contoh: Identitas, Verifikasi, dll">
                                         </div>
-                                        <input type="text" class="gf-input form-title inner-neumorph" style="font-size:1.6rem; border:none; margin:0;" value="${sec.title}" oninput="currentForm.sections[${sIdx}].title=this.value; window.debouncedSaveState()" placeholder="Bagian Tanpa Judul">
+                                        <input type="text" class="gf-input form-title inner-neumorph" style="font-size:1.6rem; border:none; margin:0;" value="${sec.title}" oninput="window.currentForm.sections[${sIdx}].title=this.value; window.debouncedSaveState()" placeholder="Bagian Tanpa Judul">
                                     </div>
                                     <button class="top-icon-btn neumorph-circle text-danger" title="Hapus Bagian Ini" onclick="window.deleteSection(${sIdx})">🗑️</button>
                                 </div>
-                                <input type="text" class="gf-input form-desc inner-neumorph" style="font-size:${theme.textFontSize}px; border:none;" value="${sec.description}" oninput="currentForm.sections[${sIdx}].description=this.value; window.debouncedSaveState()" placeholder="Deskripsi (opsional)">
+                                <input type="text" class="gf-input form-desc inner-neumorph" style="font-size:${theme.textFontSize}px; border:none;" value="${sec.description}" oninput="window.currentForm.sections[${sIdx}].description=this.value; window.debouncedSaveState()" placeholder="Deskripsi (opsional)">
                             </div>
                         </div>`;
                     }
@@ -1809,17 +1643,17 @@
                     html += `<div class="sortable-q-list" id="sort-list-${sIdx}">`;
 
                     sec.questions.forEach((q, qIdx) => {
-                        let isActive = (activeSecIdx === sIdx && activeQIdx === qIdx) ? 'active hover-glow' : '';
+                        let isActive = (window.activeSecIdx === sIdx && window.activeQIdx === qIdx) ? 'active hover-glow' : '';
                         let optionsHtml = '';
                         
-                        let descHtml = q.showDescription ? `<input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-bottom:15px;" value="${q.description || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].description=this.value; window.debouncedSaveState()" placeholder="Deskripsi">` : '';
+                        let descHtml = q.showDescription ? `<input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-bottom:15px;" value="${q.description || ''}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].description=this.value; window.debouncedSaveState()" placeholder="Deskripsi">` : '';
 
                         if(q.type === 'title_only') {
                             html += `
                             <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" onclick="window.setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
                                 <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
-                                <input type="text" class="gf-input question-title inner-neumorph" style="font-size:1.4rem; font-weight:700;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; window.debouncedSaveState()" placeholder="Judul Teks">
-                                <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:10px;" value="${q.image || ''}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value; window.debouncedSaveState()" placeholder="Deskripsi Teks (Opsional)">
+                                <input type="text" class="gf-input question-title inner-neumorph" style="font-size:1.4rem; font-weight:700;" value="${q.title}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; window.debouncedSaveState()" placeholder="Judul Teks">
+                                <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:10px;" value="${q.image || ''}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value; window.debouncedSaveState()" placeholder="Deskripsi Teks (Opsional)">
                                 <div class="builder-card-footer" style="margin-top:15px; justify-content:flex-end;">
                                     <div style="display:flex; align-items:center; gap:12px;">
                                         <button class="top-icon-btn neumorph-circle" onclick="window.duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
@@ -1838,7 +1672,7 @@
                                 akHtml += `<div class="answer-key-header">
                                     <div class="answer-key-title">${q.title || 'Pertanyaan'}</div>
                                     <div style="display:flex; align-items:center; gap:10px;">
-                                        <input type="number" class="gf-input inner-neumorph points-input" value="${q.points || 0}" min="0" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].points=parseInt(this.value); window.debouncedSaveState();"> <span style="font-weight:600;">poin</span>
+                                        <input type="number" class="gf-input inner-neumorph points-input" value="${q.points || 0}" min="0" onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].points=parseInt(this.value); window.debouncedSaveState();"> <span style="font-weight:600;">poin</span>
                                     </div>
                                 </div>`;
                             }
@@ -1854,7 +1688,7 @@
                                 });
                                 akHtml += `<input type="text" class="gf-input inner-neumorph" placeholder="Tambahkan jawaban yang benar..." onchange="window.addCorrectAns(${sIdx}, ${qIdx}, this.value); this.value='';">`;
                                 akHtml += `<label style="display:flex; align-items:center; gap:10px; margin-top:20px; cursor:pointer;">
-                                    <input type="checkbox" class="custom-check" ${q.markOtherIncorrect ? 'checked' : ''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].markOtherIncorrect=this.checked; window.debouncedSaveState();">
+                                    <input type="checkbox" class="custom-check" ${q.markOtherIncorrect ? 'checked' : ''} onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].markOtherIncorrect=this.checked; window.debouncedSaveState();">
                                     <span style="font-size:0.95rem; font-weight:600; color:var(--form-text);">Tandai semua jawaban tidak benar lainnya</span>
                                 </label>`;
                             } 
@@ -1920,12 +1754,13 @@
                                 <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px;" onclick="window.openFeedbackModal(${sIdx}, ${qIdx})">
                                     📋 ${q.feedback ? 'Edit masukan jawaban' : 'Tambahkan masukan jawaban'}
                                 </button>
-                                <button class="gf-btn-submit glow-effect" style="padding:10px 25px; border-radius:30px;" onclick="currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=false; window.renderBuilder();">Selesai</button>
+                                <button class="gf-btn-submit glow-effect" style="padding:10px 25px; border-radius:30px;" onclick="window.currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=false; window.renderBuilder();">Selesai</button>
                             </div>`;
 
                             html += `<div class="form-question-card glass-card neumorph-outer ${isActive} answer-key-mode" style="margin-bottom:30px;" id="q-${sIdx}-${qIdx}">${akHtml}</div>`;
                             return; 
                         }
+
 
                         let menuItems = `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showDescription')"><span style="width:20px;">${q.showDescription ? '✓' : ''}</span> Deskripsi</div>`;
 
@@ -1995,7 +1830,7 @@
                             optionsHtml += `<div class="gf-radio-group" style="margin-top:15px; display:flex; flex-direction:column; gap:16px;">`;
                             
                             let sectionOpts = `<option value="next">Lanjutkan ke bagian berikut</option><option value="submit">Kirim formulir</option>`;
-                            currentForm.sections.forEach((s, idx) => { sectionOpts += `<option value="s${idx}">Buka bagian ${idx+1} (${s.title || 'Tanpa Judul'})</option>`; });
+                            window.currentForm.sections.forEach((s, idx) => { sectionOpts += `<option value="s${idx}">Buka bagian ${idx+1} (${s.title || 'Tanpa Judul'})</option>`; });
 
                             q.options.forEach((opt, oIdx) => {
                                 let icon = q.type === 'kotak_centang' ? '<div class="fake-checkbox"></div>' : (q.type==='dropdown' ? `<span class="fake-num">${oIdx+1}.</span>` : '<div class="fake-radio"></div>');
@@ -2011,7 +1846,7 @@
                                 optionsHtml += `
                                 <div style="display:flex; align-items:center; gap:15px;">
                                     <span style="margin-top:5px; flex-shrink:0;">${icon}</span>
-                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px 15px; font-size:${theme.textFontSize}px; border-radius:8px; flex:1;" value="${opt}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].options[${oIdx}]=this.value; window.debouncedSaveState()" placeholder="Ketik Opsi ${oIdx+1}">
+                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px 15px; font-size:${theme.textFontSize}px; border-radius:8px; flex:1;" value="${opt}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].options[${oIdx}]=this.value; window.debouncedSaveState()" placeholder="Ketik Opsi ${oIdx+1}">
                                     <button class="top-icon-btn neumorph-circle btn-sm" style="width:38px; height:38px; flex-shrink:0;" onclick="window.deleteOption(${sIdx},${qIdx},${oIdx})">✕</button>
                                     ${goToSelect}
                                 </div>`;
@@ -2057,7 +1892,7 @@
                                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                                         <span style="font-weight:600; color:var(--form-text);">Izinkan hanya jenis file tertentu</span>
                                         <div class="toggle-switch neumorph-switch">
-                                            <input type="checkbox" id="restrict-${sIdx}-${qIdx}" class="switch-input" ${q.restrictTypes?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].restrictTypes=this.checked; window.debouncedSaveState(); window.renderBuilder();">
+                                            <input type="checkbox" id="restrict-${sIdx}-${qIdx}" class="switch-input" ${q.restrictTypes?'checked':''} onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].restrictTypes=this.checked; window.debouncedSaveState(); window.renderBuilder();">
                                             <label for="restrict-${sIdx}-${qIdx}" class="switch-label"></label>
                                         </div>
                                     </div>
@@ -2065,11 +1900,11 @@
                                 </div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                                     <span style="font-weight:600; color:var(--form-text);">Jumlah maksimum file</span>
-                                    <select class="t-select inner-neumorph" style="width:100px;" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].maxFiles=parseInt(this.value); window.debouncedSaveState()">${maxFileOpts}</select>
+                                    <select class="t-select inner-neumorph" style="width:100px;" onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].maxFiles=parseInt(this.value); window.debouncedSaveState()">${maxFileOpts}</select>
                                 </div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                                     <span style="font-weight:600; color:var(--form-text);">Ukuran file maksimal</span>
-                                    <select class="t-select inner-neumorph" style="width:120px;" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].maxSize=this.value; window.debouncedSaveState()">${maxSizeOpts}</select>
+                                    <select class="t-select inner-neumorph" style="width:120px;" onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].maxSize=this.value; window.debouncedSaveState()">${maxSizeOpts}</select>
                                 </div>
                             </div>`;
                         }
@@ -2079,18 +1914,18 @@
                             let maxOpts = [2,3,4,5,6,7,8,9,10].map(v => `<option value="${v}" ${q.scaleMax==v?'selected':''}>${v}</option>`).join('');
                             optionsHtml += `
                             <div style="display:flex; gap:15px; align-items:center; margin-top:20px;">
-                                <select class="t-select inner-neumorph" style="width:70px;" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].scaleMin=parseInt(this.value); window.debouncedSaveState()">${minOpts}</select>
+                                <select class="t-select inner-neumorph" style="width:70px;" onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].scaleMin=parseInt(this.value); window.debouncedSaveState()">${minOpts}</select>
                                 <span style="color:var(--form-text-muted); font-weight:600;">sampai</span>
-                                <select class="t-select inner-neumorph" style="width:70px;" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].scaleMax=parseInt(this.value); window.debouncedSaveState()">${maxOpts}</select>
+                                <select class="t-select inner-neumorph" style="width:70px;" onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].scaleMax=parseInt(this.value); window.debouncedSaveState()">${maxOpts}</select>
                             </div>
                             <div style="display:flex; flex-direction:column; gap:15px; margin-top:20px; max-width:400px;">
                                 <div style="display:flex; gap:15px; align-items:center;">
                                     <span style="width:20px; font-weight:600; color:var(--form-text);">${q.scaleMin || 1}</span>
-                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${q.labelMin || ''}" placeholder="Label Kiri (opsional)" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].labelMin=this.value; window.debouncedSaveState()">
+                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${q.labelMin || ''}" placeholder="Label Kiri (opsional)" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].labelMin=this.value; window.debouncedSaveState()">
                                 </div>
                                 <div style="display:flex; gap:15px; align-items:center;">
                                     <span style="width:20px; font-weight:600; color:var(--form-text);">${q.scaleMax || 5}</span>
-                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${q.labelMax || ''}" placeholder="Label Kanan (opsional)" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].labelMax=this.value; window.debouncedSaveState()">
+                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${q.labelMax || ''}" placeholder="Label Kanan (opsional)" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].labelMax=this.value; window.debouncedSaveState()">
                                 </div>
                             </div>`;
                         }
@@ -2099,7 +1934,7 @@
                             let levelOpts = [3,4,5,6,7,8,9,10].map(v => `<option value="${v}" ${q.ratingLevels==v?'selected':''}>${v}</option>`).join('');
                             optionsHtml += `
                             <div style="display:flex; gap:15px; align-items:center; margin-top:20px;">
-                                <select class="t-select inner-neumorph" style="width:80px;" onchange="currentForm.sections[${sIdx}].questions[${qIdx}].ratingLevels=parseInt(this.value); window.debouncedSaveState()">${levelOpts}</select>
+                                <select class="t-select inner-neumorph" style="width:80px;" onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].ratingLevels=parseInt(this.value); window.debouncedSaveState()">${levelOpts}</select>
                                 <div class="inner-neumorph" style="padding:10px 15px; display:flex; align-items:center; gap:8px; color:#f59e0b;"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> Bintang</div>
                             </div>
                             <div style="display:flex; gap:20px; margin-top:25px; flex-wrap:wrap;">
@@ -2117,7 +1952,7 @@
                             (q.rows || ['Baris 1']).forEach((r, rIdx) => {
                                 rowsHtml += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                                     <span style="font-weight:600; color:var(--form-text-muted); width:20px;">${rIdx+1}.</span>
-                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${r}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].rows[${rIdx}]=this.value; window.debouncedSaveState()">
+                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${r}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].rows[${rIdx}]=this.value; window.debouncedSaveState()">
                                     <button class="top-icon-btn neumorph-circle btn-sm" style="width:30px;height:30px;" onclick="window.removeGridRow(${sIdx},${qIdx},${rIdx})">✕</button>
                                 </div>`;
                             });
@@ -2128,7 +1963,7 @@
                             (q.columns || ['Kolom 1']).forEach((c, cIdx) => {
                                 colsHtml += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                                     ${iconType}
-                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${c}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].columns[${cIdx}]=this.value; window.debouncedSaveState()">
+                                    <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${c}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].columns[${cIdx}]=this.value; window.debouncedSaveState()">
                                     <button class="top-icon-btn neumorph-circle btn-sm" style="width:30px;height:30px;" onclick="window.removeGridCol(${sIdx},${qIdx},${cIdx})">✕</button>
                                 </div>`;
                             });
@@ -2146,7 +1981,7 @@
                         <div class="form-question-card glass-card neumorph-outer ${isActive}" style="margin-bottom:30px;" onclick="window.setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
                             <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
                             <div style="display:flex; gap: 15px; align-items:start; flex-wrap:wrap; margin-top:10px; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid rgba(139, 92, 246, 0.2);">
-                                <input type="text" class="gf-input question-title inner-neumorph" style="flex:1; padding:15px; font-size:${theme.questionFontSize}px; margin-bottom:0;" value="${q.title}" oninput="currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; window.debouncedSaveState()" placeholder="Pertanyaan">
+                                <input type="text" class="gf-input question-title inner-neumorph" style="flex:1; padding:15px; font-size:${theme.questionFontSize}px; margin-bottom:0;" value="${q.title}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; window.debouncedSaveState()" placeholder="Pertanyaan">
                                 <select class="q-type-select neumorph-btn" style="background:var(--form-card-bg);" onchange="window.changeQType(${sIdx}, ${qIdx}, this.value)">
                                     <option value="jawaban_singkat" ${q.type==='jawaban_singkat'?'selected':''}>Jawaban singkat</option>
                                     <option value="paragraf" ${q.type==='paragraf'?'selected':''}>Paragraf</option>
@@ -2173,9 +2008,9 @@
                             <div class="builder-card-footer" style="justify-content:space-between;">
                                 
                                 <div style="display:flex; align-items:center;">
-                                    <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px; font-size:0.95rem; display:flex; align-items:center; gap:8px;" onclick="currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=true; window.renderBuilder();">
+                                    <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px; font-size:0.95rem; display:flex; align-items:center; gap:8px;" onclick="window.currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=true; window.renderBuilder();">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                                        Kunci jawaban (${getQuestionPoints(q)} poin)
+                                        Kunci jawaban (${window.getQuestionPoints(q)} poin)
                                     </button>
                                 </div>
 
@@ -2185,7 +2020,7 @@
                                     <div style="width:2px; height:25px; background:var(--form-border); margin:0 10px;"></div>
                                     <div class="toggle-switch neumorph-switch">
                                         <span style="font-weight:600; color:var(--form-text);">Wajib diisi</span>
-                                        <input type="checkbox" id="req-${sIdx}-${qIdx}" class="switch-input" ${q.required?'checked':''} onchange="currentForm.sections[${sIdx}].questions[${qIdx}].required=this.checked; window.saveState()">
+                                        <input type="checkbox" id="req-${sIdx}-${qIdx}" class="switch-input" ${q.required?'checked':''} onchange="window.currentForm.sections[${sIdx}].questions[${qIdx}].required=this.checked; window.saveState()">
                                         <label for="req-${sIdx}-${qIdx}" class="switch-label"></label>
                                     </div>
                                     
@@ -2217,12 +2052,12 @@
                         fallbackClass: 'sortable-drag',
                         onEnd: function(evt) {
                             if (evt.oldIndex !== evt.newIndex) {
-                                let questions = currentForm.sections[sIdx].questions;
+                                let questions = window.currentForm.sections[sIdx].questions;
                                 let movedItem = questions.splice(evt.oldIndex, 1)[0];
                                 questions.splice(evt.newIndex, 0, movedItem);
                                 
-                                activeSecIdx = sIdx;
-                                activeQIdx = evt.newIndex;
+                                window.activeSecIdx = sIdx;
+                                window.activeQIdx = evt.newIndex;
                                 window.saveState();
                                 window.renderBuilder();
                             }
