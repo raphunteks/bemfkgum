@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="/css/mainV2.css">
 
     <style>
-        /* Membersihkan CSS Inline ke mainV2.css */
         /* Custom UI Khusus Halaman Admin Ini */
         .chart-container { background: var(--form-card-bg); border: 1px solid var(--form-border); border-radius: 16px; padding: 20px; box-shadow: var(--inner-neumorph); margin-bottom: 25px; }
         .pagination-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
@@ -30,7 +29,17 @@
         
         /* PENGAMAN KLIK TABS: Mencegah Overlay dari Aurora Background */
         .builder-tabs { position: relative; z-index: 100; }
-        .b-tab { position: relative; z-index: 101; }
+        .b-tab { position: relative; z-index: 101; cursor: pointer; }
+
+        /* FIX CSS SUBMENU FONT FLYOUT (Mengatasi Kliping Sidebar) */
+        .cfp-submenu {
+            position: fixed; /* Escape dari overflow sidebar */
+            background: var(--form-bg); border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid var(--form-border); min-width: 140px;
+            display: none; padding: 5px 0; z-index: 100000;
+        }
+        [data-theme="dark"] .cfp-submenu { box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .cfp-item.has-submenu:hover .cfp-submenu { display: block; animation: popIn 0.2s ease; }
     </style>
 </head>
 <body class="admin-v2-body" onclick="closeAllQMenus()">
@@ -87,7 +96,7 @@
             <div class="font-select-group">
                 <div class="custom-font-picker" id="picker-headerFont">
                     <div class="cfp-display" onclick="toggleFP('headerFont', event)">
-                        <span id="display-headerFont">Outfit</span>
+                        <span id="display-headerFont">Outfit - Biasa</span>
                         <span class="arrow">▼</span>
                     </div>
                     <div class="cfp-dropdown" id="drop-headerFont"></div>
@@ -102,7 +111,7 @@
             <div class="font-select-group">
                 <div class="custom-font-picker" id="picker-questionFont">
                     <div class="cfp-display" onclick="toggleFP('questionFont', event)">
-                        <span id="display-questionFont">Plus Jakarta Sans</span>
+                        <span id="display-questionFont">Plus Jakarta Sans - Biasa</span>
                         <span class="arrow">▼</span>
                     </div>
                     <div class="cfp-dropdown" id="drop-questionFont"></div>
@@ -117,7 +126,7 @@
             <div class="font-select-group">
                 <div class="custom-font-picker" id="picker-textFont">
                     <div class="cfp-display" onclick="toggleFP('textFont', event)">
-                        <span id="display-textFont">Plus Jakarta Sans</span>
+                        <span id="display-textFont">Plus Jakarta Sans - Biasa</span>
                         <span class="arrow">▼</span>
                     </div>
                     <div class="cfp-dropdown" id="drop-textFont"></div>
@@ -870,6 +879,23 @@
 
 
         // ================= FONT ENGINE & CUSTOM FONT PICKER (FLYOUT) =================
+        window.showCFPSubmenu = function(el) {
+            let sub = el.querySelector('.cfp-submenu');
+            if(sub) {
+                let rect = el.getBoundingClientRect();
+                sub.style.display = 'block';
+                sub.style.top = rect.top + 'px';
+                sub.style.right = (window.innerWidth - rect.left) + 'px'; // Flyout mulus ke arah kiri
+                sub.style.left = 'auto';
+            }
+        }
+        window.hideCFPSubmenu = function(el) {
+            let sub = el.querySelector('.cfp-submenu');
+            if(sub) {
+                sub.style.display = 'none';
+            }
+        }
+
         window.toggleFP = function(type, event) {
             event.stopPropagation();
             document.querySelectorAll('.cfp-dropdown').forEach(el => {
@@ -882,11 +908,16 @@
         function renderFontPicker(type) {
             let html = '';
             FONT_OPTIONS.forEach(f => {
-                if(f.type === 'google') {
-                    let subItems = f.weights.map(w => `<div class="cfp-subitem" style="font-family:'${f.name}', sans-serif; font-weight:${w};" onclick="selectFont('${type}', '${f.name}', ${w}, event)">${WEIGHT_NAMES[w]} (${w})</div>`).join('');
-                    html += `<div class="cfp-item" style="font-family:'${f.name}', sans-serif;">${f.name} <span style="font-size:0.6rem; color:var(--form-active-border);">►</span> <div class="cfp-submenu">${subItems}</div></div>`;
+                let isGoogle = f.type === 'google';
+                if(isGoogle && f.weights && f.weights.length > 1) {
+                    let subItems = f.weights.map(w => `<div class="cfp-subitem" style="font-family:'${f.name}', sans-serif; font-weight:${w};" onclick="selectFont('${type}', '${f.name}', ${w}, event)">${WEIGHT_NAMES[w]}</div>`).join('');
+                    html += `<div class="cfp-item has-submenu" style="font-family:'${f.name}', sans-serif;" onmouseenter="showCFPSubmenu(this)" onmouseleave="hideCFPSubmenu(this)">
+                                <span>${f.name}</span> <span style="font-size:0.6rem; color:var(--form-text-muted);">▶</span> 
+                                <div class="cfp-submenu">${subItems}</div>
+                             </div>`;
                 } else {
-                    html += `<div class="cfp-item" style="font-family:'${f.name}', sans-serif;" onclick="selectFont('${type}', '${f.name}', 400, event)">${f.name}</div>`;
+                    let weight = (isGoogle && f.weights) ? f.weights[0] : 400;
+                    html += `<div class="cfp-item" style="font-family:'${f.name}', sans-serif;" onclick="selectFont('${type}', '${f.name}', ${weight}, event)">${f.name}</div>`;
                 }
             });
             let wrap = document.getElementById(`drop-${type}`);
@@ -922,7 +953,7 @@
 
 
         // ================= SUPER UPGRADE: MENU TITIK TIGA (OPTIONS) LOGICS =================
-        function toggleQMenu(event, sIdx, qIdx) {
+        window.toggleQMenu = function(event, sIdx, qIdx) {
             event.stopPropagation();
             const allMenus = document.querySelectorAll('.q-menu-dropdown');
             const targetMenuId = `q-menu-${sIdx}-${qIdx}`;
@@ -941,7 +972,7 @@
             try { document.querySelectorAll('.q-menu-dropdown').forEach(menu => menu.style.display = 'none'); } catch(e){}
         }
 
-        function toggleQSetting(sIdx, qIdx, settingKey) {
+        window.toggleQSetting = function(sIdx, qIdx, settingKey) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             q[settingKey] = !q[settingKey];
             
@@ -955,14 +986,14 @@
             debouncedSaveState(); renderBuilder();
         }
 
-        function updateQValidation(sIdx, qIdx, key, val) {
+        window.updateQValidation = function(sIdx, qIdx, key, val) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.validation) q.validation = { type: 'Teks', condition: 'Berisi', value: '', errorText: '' };
             q.validation[key] = val;
             debouncedSaveState();
         }
         
-        function updateQValidationCheck(sIdx, qIdx, condition, val, errText) {
+        window.updateQValidationCheck = function(sIdx, qIdx, condition, val, errText) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.validation) q.validation = { condition: 'Pilih paling sedikit', value: '1', errorText: '' };
             if (condition !== null) q.validation.condition = condition;
@@ -971,7 +1002,7 @@
             debouncedSaveState();
         }
 
-        function updateGoTo(sIdx, qIdx, optIndex, optValue, targetSection) {
+        window.updateGoTo = function(sIdx, qIdx, optIndex, optValue, targetSection) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.goToSectionMap) q.goToSectionMap = {};
             q.goToSectionMap[optValue] = targetSection;
@@ -986,26 +1017,26 @@
             return q.points || 0;
         }
 
-        function updateCorrectAns(sIdx, qIdx, i, val) {
+        window.updateCorrectAns = function(sIdx, qIdx, i, val) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.correctAnswers) q.correctAnswers = [];
             q.correctAnswers[i] = val;
             debouncedSaveState();
         }
-        function addCorrectAns(sIdx, qIdx, val) {
+        window.addCorrectAns = function(sIdx, qIdx, val) {
             if(!val.trim()) return;
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.correctAnswers) q.correctAnswers = [];
             q.correctAnswers.push(val.trim());
             debouncedSaveState(); renderBuilder();
         }
-        function removeCorrectAns(sIdx, qIdx, i) {
+        window.removeCorrectAns = function(sIdx, qIdx, i) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(q.correctAnswers) q.correctAnswers.splice(i, 1);
             debouncedSaveState(); renderBuilder();
         }
 
-        function toggleCorrectAns(sIdx, qIdx, opt) {
+        window.toggleCorrectAns = function(sIdx, qIdx, opt) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.correctAnswers) q.correctAnswers = [];
             if (q.type === 'pilihan_ganda' || q.type === 'dropdown') {
@@ -1018,7 +1049,7 @@
             debouncedSaveState(); renderBuilder();
         }
 
-        function toggleGridCorrectAns(sIdx, qIdx, rIdx, colVal, type) {
+        window.toggleGridCorrectAns = function(sIdx, qIdx, rIdx, colVal, type) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.gridCorrectAnswers) q.gridCorrectAnswers = {};
             if(!q.gridCorrectAnswers[rIdx]) q.gridCorrectAnswers[rIdx] = [];
@@ -1034,7 +1065,7 @@
             debouncedSaveState(); renderBuilder();
         }
 
-        function updateGridRowPoints(sIdx, qIdx, rIdx, val) {
+        window.updateGridRowPoints = function(sIdx, qIdx, rIdx, val) {
             let q = currentForm.sections[sIdx].questions[qIdx];
             if(!q.rowPoints) q.rowPoints = {};
             q.rowPoints[rIdx] = parseInt(val) || 0;
@@ -1550,6 +1581,7 @@
         function initCustomSelects() {
             document.querySelectorAll('select.q-type-select, select.t-select').forEach(nativeSelect => {
                 if(nativeSelect.nextElementSibling && nativeSelect.nextElementSibling.classList.contains('custom-select-wrapper')) return;
+
                 nativeSelect.style.display = 'none';
                 
                 let wrapper = document.createElement('div');
@@ -1568,7 +1600,7 @@
                 display.style.padding = nativeSelect.classList.contains('q-type-select') ? '15px 20px' : '10px 15px';
                 
                 let optionsList = document.createElement('div');
-                optionsList.className = 'custom-select-options';
+                optionsList.className = 'custom-select-options glass-panel-heavy neumorph-outer';
                 optionsList.style.display = 'none';
                 
                 Array.from(nativeSelect.children).forEach((child) => {
@@ -1604,6 +1636,7 @@
 
                 display.onclick = (e) => {
                     e.stopPropagation();
+                    
                     document.querySelectorAll('.custom-select-options').forEach(el => {
                         if(el !== optionsList) { 
                             el.style.display = 'none'; 
