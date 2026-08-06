@@ -5,7 +5,7 @@ DIKOREKSI: Mengembalikan layout absolut yang hilang, FIX warna
 tema yang transparan, FIX spasi & render Font pada soal/opsi.
 + UPGRADE BARU: Dukungan Penuh Menu Accordion & Sub-Panel (Setelan Form)
 + UPGRADE BARU: Integrasi Sub-Tab Jawaban (Ringkasan, Pertanyaan, Individual)
-+ UPGRADE BARU: Custom Font Picker with Weights & Categories
++ UPGRADE BARU: Custom Font Picker with Weights & Categories (Anti-Clip/Potong)
 =========================================================
 */
 
@@ -172,13 +172,16 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     position: sticky; top: 15px; z-index: 1000;
 }
 
+/* ANTI-CRASH TAB CLICK PENGAMAN */
 .builder-tabs {
     display: flex; justify-content: center; gap: 15px; margin: 0 15px 30px;
     padding: 10px; border-radius: 20px;
+    position: relative; z-index: 100; /* Pengaman Klik Agar Tdk Tertutup Aurora */
 }
 .b-tab {
     padding: 12px 25px; color: var(--form-text-muted); cursor: pointer;
     border-radius: 12px; font-weight: 600; transition: 0.3s; font-size: 0.95rem;
+    position: relative; z-index: 101; /* Pengaman Klik Lapis ke-2 */
 }
 .b-tab:hover { background: rgba(255,255,255,0.4); }
 .b-tab.active {
@@ -222,7 +225,7 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .custom-font-picker { position: relative; width: 100%; }
 .cfp-display { 
     background: var(--form-card-bg); padding: 12px 15px; border-radius: 12px; 
-    border: 1px solid var(--form-border); display: flex; justify-content: space-between; 
+    border: 1px solid var(--form-border); display: flex; justify-content: space-between; align-items: center;
     cursor: pointer; font-size: 0.95rem; font-weight: 600; box-shadow: var(--inner-neumorph); transition: 0.3s;
 }
 .cfp-display:hover { border-color: var(--form-active-border); }
@@ -238,14 +241,39 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     transition: 0.2s; position: relative; font-size: 0.95rem; color: var(--form-text);
 }
 .cfp-item:hover { background: var(--form-focus-glow); color: var(--form-active-border); }
+
+/* ================== SOLUSI KONKRET: FIX CSS FONT FLYOUT MENU ================== */
+/* Hapus hover display block bawaan CSS untuk diserahkan 100% ke Javascript agar koordinat akurat */
+.cfp-item.has-submenu:hover .cfp-submenu { display: none; }
+
 .cfp-submenu {
-    position: absolute; left: 100%; top: 0; background: var(--form-bg); border-radius: 12px;
-    box-shadow: var(--outer-neumorph); border: 1px solid var(--form-border); min-width: 150px;
-    display: none; padding: 5px 0; z-index: 100000; margin-left: 5px;
+    position: fixed !important; /* Wajib Fixed agar tidak terpotong (clipped) oleh sidebar dropdown auto-scroll */
+    background: var(--form-bg) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    border: 1px solid var(--form-border) !important;
+    min-width: 160px !important;
+    display: none; 
+    padding: 8px 0 !important;
+    z-index: 999999 !important; /* Booster Tinggi */
 }
-.cfp-item:hover .cfp-submenu { display: block; animation: popIn 0.2s ease; }
-.cfp-subitem { padding: 10px 15px; cursor: pointer; transition: 0.2s; font-size: 0.85rem; color: var(--form-text); }
-.cfp-subitem:hover { background: var(--form-focus-glow); color: var(--form-active-border); }
+[data-theme="dark"] .cfp-submenu { box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; }
+
+.cfp-subitem {
+    padding: 10px 18px !important;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.9rem !important;
+    color: var(--form-text) !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.cfp-subitem:hover {
+    background: var(--form-focus-glow) !important;
+    color: var(--form-active-border) !important;
+    padding-left: 22px !important; /* Efek Indentasi Estetik */
+}
 
 @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
@@ -257,6 +285,13 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .j-tab.active { color: var(--form-active-border); border-bottom-color: var(--form-active-border); }
 .j-content { display: none; }
 .j-content.active { display: block; animation: fadeInTab 0.4s ease; }
+
+/* Styles untuk Chart & Paginasi (Asli Dari Admin Dashboard UI) */
+.chart-container { background: var(--form-card-bg); border: 1px solid var(--form-border); border-radius: 16px; padding: 20px; box-shadow: var(--inner-neumorph); margin-bottom: 25px; }
+.pagination-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
+.pagination-controls button { padding: 8px 15px; border-radius: 8px; font-weight: bold; background: var(--form-bg); border: 1px solid var(--form-active-border); color: var(--form-active-border); cursor: pointer; transition: 0.2s;}
+.pagination-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+.pagination-controls button:hover:not(:disabled) { background: var(--form-active-border); color: #fff; }
 
 
 /* ================== THEME SIDEBAR ================== */
