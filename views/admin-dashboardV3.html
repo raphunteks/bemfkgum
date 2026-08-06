@@ -145,7 +145,6 @@
                     <input type="color" id="inp-btn-color" oninput="updateState('theme', 'btnColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
                 
-                <!-- Otomatis Muncul via JS jika tipe membutuhkan Border -->
                 <div class="input-group" id="border-color-wrapper" style="display:none;">
                     <label class="input-label">Warna Tombol Border (Khusus Outline/Shadow)</label>
                     <input type="color" id="inp-border-color" oninput="updateState('theme', 'borderColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
@@ -186,6 +185,7 @@
                         <span style="color:var(--text-muted); font-weight:700;">/link/</span>
                         <input type="text" style="border:none; background:transparent; padding:16px 14px; outline:none; font-size:1.05rem; flex:1; font-weight:600; color:var(--text-main);" id="inp-slug" oninput="updateState('slug', null, this.value)" placeholder="nama-kabinet">
                     </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Pastikan slug ini unik. URL Anda akan menjadi: bemkbmfkgumi.com/link/slug-anda</p>
                 </div>
                 
                 <div style="border-top:1px dashed var(--border-color); margin:30px 0;"></div>
@@ -219,7 +219,6 @@
 
     <!-- RIGHT: LIVE PREVIEW PANEL -->
     <div class="preview-panel">
-        <!-- Device Toggle -->
         <div class="device-toggle">
             <button class="device-btn active" id="btn-device-mobile" onclick="toggleDevicePreview('mobile')">📱 Mobile</button>
             <button class="device-btn" id="btn-device-desktop" onclick="toggleDevicePreview('desktop')">💻 Desktop</button>
@@ -238,9 +237,14 @@
     </div>
 </div>
 
+<!-- ================== CUSTOM ALERTS & MODALS (ANTI-CHROME DEFAULT) ================== -->
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="globalToast">Notifikasi</div>
+
 <!-- SUCCESS MODAL (CUSTOM POPUP UNTUK SAVE) -->
-<div id="successModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
-    <div class="glass-card neumorph-outer" style="width:100%; max-width:420px; text-align:center; padding:40px 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+<div id="successModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
+    <div class="glass-card neumorph-outer" style="width:100%; max-width:420px; text-align:center; padding:40px 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin:20px;">
         <div style="font-size:4rem; margin-bottom:15px; animation: bounceIn 1s;">✨</div>
         <h2 style="font-family:'Outfit', sans-serif; color:var(--text-main); margin-top:0; font-size:1.6rem;">Publikasi Berhasil!</h2>
         <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px;">Halaman BEM-Linktree Anda telah tersimpan dan siap dibagikan ke publik.</p>
@@ -253,14 +257,138 @@
             <button class="btn-outline" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="copyModalLink()">📋 Salin Tautan</button>
             <button class="btn-primary" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="openModalLink()">👁️ Buka Halaman</button>
         </div>
-        <button class="btn-danger" style="margin-top:15px; width:100%; background:transparent; color:var(--text-muted); border:1px solid var(--border-color); font-weight:600;" onclick="closeSuccessModal()">Tutup</button>
+        <button class="btn-outline" style="margin-top:15px; width:100%; background:transparent; color:var(--text-muted); border:1px solid var(--border-color); font-weight:600;" onclick="closeSuccessModal()">Tutup Halaman</button>
     </div>
 </div>
 
-<!-- TOAST NOTIFICATION -->
-<div class="toast" id="globalToast">Notifikasi</div>
+<!-- CUSTOM ALERT MODAL -->
+<div id="customAlertModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10002; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
+    <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
+        <div style="font-size:3.5rem; margin-bottom:15px;">⚠️</div>
+        <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Pemberitahuan</h3>
+        <p id="customAlertMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
+        <button class="btn-primary" style="width:100%; font-family:'Plus Jakarta Sans', sans-serif;" onclick="closeCustomAlert()">Mengerti</button>
+    </div>
+</div>
+
+<!-- CUSTOM CONFIRM MODAL -->
+<div id="customConfirmModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10003; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
+    <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
+        <div style="font-size:3.5rem; margin-bottom:15px;">❓</div>
+        <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Konfirmasi Aksi</h3>
+        <p id="customConfirmMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-outline" style="flex:1; font-family:'Plus Jakarta Sans', sans-serif;" onclick="closeCustomConfirm(false)">Batal</button>
+            <button class="btn-danger" style="flex:1; box-shadow:0 0 15px rgba(239,68,68,0.4); font-family:'Plus Jakarta Sans', sans-serif;" onclick="closeCustomConfirm(true)">Yakin & Hapus</button>
+        </div>
+    </div>
+</div>
+
+<!-- CUSTOM PROMPT MODAL (FOR PIN SECURITY) -->
+<div id="customPromptModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10004; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
+    <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
+        <div style="font-size:3.5rem; margin-bottom:15px;">🔒</div>
+        <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Akses Keamanan</h3>
+        <p id="customPromptMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:20px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
+        <input type="password" id="customPromptInput" class="gf-input" style="text-align:center; font-size:1.5rem; letter-spacing:5px; font-weight:bold; margin-bottom:25px; font-family:'Space Mono', monospace;" placeholder="***" maxlength="3">
+        <div style="display:flex; gap:10px;">
+            <button class="btn-outline" style="flex:1; font-family:'Plus Jakarta Sans', sans-serif;" onclick="closeCustomPrompt(false)">Batal</button>
+            <button class="btn-primary" style="flex:1; font-family:'Plus Jakarta Sans', sans-serif;" onclick="closeCustomPrompt(true)">Verifikasi</button>
+        </div>
+    </div>
+</div>
+
 
 <script>
+    // ================= MODAL LOGIC ENGINE =================
+    window.showToast = function(msg) {
+        const t = document.getElementById('globalToast');
+        if(!t) return;
+        t.innerText = msg; t.style.bottom = '30px';
+        setTimeout(() => t.style.bottom = '-100px', 3000);
+    }
+
+    window.copyToClipboard = function(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                window.showToast("✅ Tautan berhasil disalin!");
+            });
+        } else {
+            let textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                window.showToast("✅ Tautan berhasil disalin!");
+            } catch (err) {
+                window.showCustomAlert("Gagal menyalin tautan.");
+            }
+            document.body.removeChild(textArea);
+        }
+    }
+
+    window.showCustomAlert = function(msg) {
+        document.getElementById('customAlertMessage').innerText = msg;
+        document.getElementById('customAlertModal').style.display = 'flex';
+    }
+    window.closeCustomAlert = function() {
+        document.getElementById('customAlertModal').style.display = 'none';
+    }
+
+    let confirmCallback = null;
+    window.showCustomConfirm = function(msg, callback) {
+        document.getElementById('customConfirmMessage').innerText = msg;
+        document.getElementById('customConfirmModal').style.display = 'flex';
+        confirmCallback = callback;
+    }
+    window.closeCustomConfirm = function(isConfirmed) {
+        document.getElementById('customConfirmModal').style.display = 'none';
+        if(isConfirmed && typeof confirmCallback === 'function') {
+            confirmCallback();
+        }
+        confirmCallback = null;
+    }
+
+    let promptCallback = null;
+    window.showCustomPrompt = function(msg, callback) {
+        document.getElementById('customPromptMessage').innerText = msg;
+        const inp = document.getElementById('customPromptInput');
+        inp.value = '';
+        document.getElementById('customPromptModal').style.display = 'flex';
+        inp.focus();
+        promptCallback = callback;
+    }
+    window.closeCustomPrompt = function(isSubmitted) {
+        document.getElementById('customPromptModal').style.display = 'none';
+        if(isSubmitted && typeof promptCallback === 'function') {
+            const val = document.getElementById('customPromptInput').value;
+            promptCallback(val);
+        }
+        promptCallback = null;
+    }
+
+    window.showSuccessModal = function(url) {
+        document.getElementById('modal-link-text').innerText = url;
+        document.getElementById('successModal').style.display = 'flex';
+    }
+    window.closeSuccessModal = function() {
+        document.getElementById('successModal').style.display = 'none';
+        loadAllLinktrees();
+        switchTab('list');
+    }
+    window.openModalLink = function() {
+        if(state.slug) window.open(`${window.location.origin}/link/${state.slug}`, '_blank');
+    }
+    window.copyModalLink = function() {
+        const url = `${window.location.origin}/link/${state.slug}`;
+        window.copyToClipboard(url);
+    }
+
+
     // ================= 50+ AESTHETIC GEN Z FONTS =================
     const fontLibrary = [
         "Inter", "Poppins", "Outfit", "Plus Jakarta Sans", "Space Grotesk", 
@@ -386,21 +514,6 @@
         document.getElementById('grid-types').innerHTML = typesHtml;
     }
 
-    function loadGoogleFont(fontFamilyStr) {
-        if(!fontFamilyStr) return;
-        let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
-        const sysFonts = ['Arial', 'Calibri', 'Comic Sans MS', 'Impact', 'Times New Roman'];
-        if(sysFonts.includes(fontName)) return;
-
-        const linkId = `font-${fontName.replace(/\s+/g, '')}`;
-        if(!document.getElementById(linkId)) {
-            const link = document.createElement('link');
-            link.id = linkId; link.rel = 'stylesheet';
-            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700;800&display=swap`;
-            document.head.appendChild(link);
-        }
-    }
-
     function updateFontPreview() {
         const titleFont = document.getElementById('inp-font-title').value;
         const btnFont = document.getElementById('inp-font-btn').value;
@@ -425,13 +538,14 @@
 
     // ================= PIN LOCK FOOTER URL =================
     function unlockFooterUrl() {
-        let pin = prompt("Keamanan Khusus BEM:\nMasukkan PIN Admin (3 Digit) untuk mengubah Link Default BEM:");
-        if (pin === "999") {
-            document.getElementById('inp-footer-url').removeAttribute('readonly');
-            alert("Akses dibuka. Anda dapat mengedit URL Footer.");
-        } else {
-            alert("PIN Salah! Akses ditolak.");
-        }
+        window.showCustomPrompt("Masukkan PIN Admin (3 Digit) untuk mengubah Link Default BEM:", function(pin) {
+            if (pin === "999") {
+                document.getElementById('inp-footer-url').removeAttribute('readonly');
+                window.showCustomAlert("Akses dibuka. Anda dapat mengedit URL Footer.");
+            } else {
+                window.showCustomAlert("PIN Salah! Akses ditolak.");
+            }
+        });
     }
 
     // ================= TAB CONTROLLER =================
@@ -467,7 +581,7 @@
         }
     }
 
-    // ================= LIST MANAGEMENT & COPY =================
+    // ================= LIST MANAGEMENT =================
     async function loadAllLinktrees() {
         const container = document.getElementById('linktree-list-container');
         container.innerHTML = "<div style='text-align:center; padding:50px; color:var(--text-muted);'>Memuat daftar Linktree dari server...</div>";
@@ -493,7 +607,7 @@
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button class="btn-outline" onclick="openLinktreeEditor('${tree.id}')">✏️ Edit</button>
-                        <button class="btn-outline" onclick="copyToClipboard('${linkUrl}')">📋 Salin</button>
+                        <button class="btn-outline" onclick="window.copyToClipboard('${linkUrl}')">📋 Salin</button>
                         <a href="${linkUrl}" target="_blank" class="btn-outline" style="text-decoration:none;">👁️ Buka</a>
                         <button class="btn-danger" onclick="deleteLinktree('${tree.id}')">🗑️</button>
                     </div>
@@ -524,61 +638,27 @@
         }
     }
 
-    async function deleteLinktree(id) {
-        if(confirm("Apakah Anda yakin ingin menghapus Linktree ini secara permanen?")) {
+    function deleteLinktree(id) {
+        window.showCustomConfirm("Apakah Anda yakin ingin menghapus Linktree ini secara permanen?", async function() {
             try {
                 const res = await fetch(`/api/linktrees/${id}`, { method: 'DELETE' });
                 const json = await res.json();
                 if(json.success) {
-                    showToast("🗑️ Berhasil dihapus!");
+                    window.showToast("🗑️ Berhasil dihapus!");
                     loadAllLinktrees();
                 }
             } catch (e) {
-                alert("Gagal menghapus.");
+                window.showCustomAlert("Gagal menghapus.");
             }
-        }
-    }
-
-    // ================= CLIPBOARD UTILITY =================
-    function showToast(msg) {
-        const t = document.getElementById('globalToast');
-        if(!t) return;
-        t.innerText = msg; t.style.bottom = '30px';
-        setTimeout(() => t.style.bottom = '-100px', 3000);
-    }
-
-    function copyToClipboard(text) {
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast("✅ Tautan berhasil disalin!");
-            });
-        } else {
-            // Fallback for non-https or restricted environments
-            let textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                showToast("✅ Tautan berhasil disalin!");
-            } catch (err) {
-                alert("Gagal menyalin tautan.");
-            }
-            document.body.removeChild(textArea);
-        }
+        });
     }
 
     // ================= STATE UPDATER & BINDING =================
     function populateEditorForm() {
-        // Tab 1
         document.getElementById('edit-profile-img-preview').src = state.profile.image || '/img/bemfkgumi.png';
         document.getElementById('inp-title').value = state.profile.title || '';
         document.getElementById('inp-bio').value = state.profile.bio || '';
 
-        // Tab 2
         document.getElementById('inp-bg-type').value = state.theme.bgType || 'color';
         document.getElementById('inp-bg-color').value = state.theme.bgColor || '#f8fafc';
         document.getElementById('bg-color-picker').style.display = (state.theme.bgType === 'image') ? 'none' : 'block';
@@ -614,13 +694,11 @@
             checkBorderColorVisibility(state.theme.btnType || 'filled');
         }
 
-        // Tab 3
         document.getElementById('inp-slug').value = state.slug || '';
         document.getElementById('inp-seo-title').value = state.settings.seoTitle || '';
         document.getElementById('inp-footer-text').value = state.settings.footerText || defaultState.settings.footerText;
         document.getElementById('inp-footer-url').value = state.settings.footerUrl || defaultState.settings.footerUrl;
         
-        // Pastikan footer selalu terkunci saat di-load
         document.getElementById('inp-footer-url').setAttribute('readonly', true);
 
         renderLinksEditor();
@@ -782,7 +860,7 @@
     async function handleImageUpload(input, type) {
         if(input.files && input.files[0]) {
             const file = input.files[0];
-            if(file.size > 5 * 1024 * 1024) return alert("Maksimal ukuran 5MB");
+            if(file.size > 5 * 1024 * 1024) return window.showCustomAlert("Maksimal ukuran 5MB");
             
             const reader = new FileReader();
             reader.onload = async (e) => {
@@ -836,7 +914,6 @@
         const screen = document.getElementById('live-preview-screen');
         const t = state.theme;
 
-        // Overlay & Background Logic
         if(t.bgType === 'color') {
             screen.style.background = t.bgColor;
             screen.classList.remove('has-bg-image');
@@ -855,15 +932,14 @@
         
         let html = '';
 
-        loadGoogleFont(t.fontTitle);
-        loadGoogleFont(t.fontButton);
+        window.loadDynamicFont(t.fontTitle.split(',')[0].replace(/'/g, "").trim(), 700);
+        window.loadDynamicFont(t.fontButton.split(',')[0].replace(/'/g, "").trim(), 600);
 
         // Profile Section
         html += `<img id="pv-profile-img" src="${state.profile.image || '/img/bemfkgumi.png'}" alt="Profile">`;
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${state.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
-        // Link Buttons Logic (30 TYPES CSS GENERATOR)
         let btnCssObj = `font-family:${t.fontButton}; `;
         let bg = t.btnColor;
         let borderC = t.borderColor || '#0f172a';
@@ -928,7 +1004,7 @@
             html += `</div>`;
         }
         
-        // Footer Watermark Logic (Dinamis dari state)
+        // Footer Watermark Logic
         const fText = state.settings.footerText || defaultState.settings.footerText;
         const fUrl = state.settings.footerUrl || defaultState.settings.footerUrl;
         
@@ -939,29 +1015,7 @@
         screen.innerHTML = html;
     }
 
-    // ================= MODAL & API SAVE LOGIC =================
-    function openModalLink() {
-        if(state.slug) {
-            window.open(`${window.location.origin}/link/${state.slug}`, '_blank');
-        }
-    }
-
-    function copyModalLink() {
-        const url = `${window.location.origin}/link/${state.slug}`;
-        copyToClipboard(url);
-    }
-
-    function showSuccessModal(url) {
-        document.getElementById('modal-link-text').innerText = url;
-        document.getElementById('successModal').style.display = 'flex';
-    }
-
-    function closeSuccessModal() {
-        document.getElementById('successModal').style.display = 'none';
-        loadAllLinktrees(); // Muat ulang list
-        switchTab('list');  // Kembali ke tab list setelah sukses
-    }
-
+    // ================= API SAVE LOGIC =================
     async function saveLinktree() {
         try {
             const btn = document.getElementById('btn-global-action');
@@ -976,15 +1030,14 @@
             const data = await res.json();
             if(data.success) {
                 state = data.data; 
-                // Tampilkan Modal Success Custom bukan bawaan Browser Chrome
-                showSuccessModal(`${window.location.origin}/link/${state.slug}`);
+                window.showSuccessModal(`${window.location.origin}/link/${state.slug}`);
             } else {
-                alert("Gagal: " + data.message);
+                window.showCustomAlert("Gagal: " + data.message);
             }
             btn.innerText = "🚀 Simpan & Publikasi"; btn.disabled = false;
         } catch(e) {
             console.error(e);
-            alert("Terjadi kesalahan jaringan saat menyimpan data.");
+            window.showCustomAlert("Terjadi kesalahan jaringan saat menyimpan data.");
             const btn = document.getElementById('btn-global-action');
             btn.innerText = "🚀 Simpan & Publikasi"; btn.disabled = false;
         }
