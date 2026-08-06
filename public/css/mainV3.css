@@ -1,9 +1,9 @@
 /* FILE: public/css/mainV3.css */
 /* =========================================================
    BEM-LINKTREE BUILDER V3 AESTHETIC (FUTURISTIC GLASSMORPHISM)
-   + 30 BUTTON SHAPES & TYPES
+   + FIX ICON ALIGNMENT & ABSOLUTE CENTERING TEXT
+   + 35 BUTTON SHAPES & TYPES
    + MAC OS DESKTOP PREVIEW TOGGLE
-   + CUSTOM SUCCESS MODAL UI
    ========================================================= */
 
 :root {
@@ -80,7 +80,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .selector-item:hover { transform: scale(1.05); color: var(--primary); }
 .selector-item.active { border-color: var(--primary); background: rgba(139,92,246,0.15); color: var(--primary); box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1); }
 
-/* ================== DYNAMIC BUTTON SHAPES (30 KELAS) ================== */
+/* ================== DYNAMIC BUTTON SHAPES (35 KELAS) ================== */
 .btn-shape-square { border-radius: 0px; }
 .btn-shape-rounded { border-radius: 14px; }
 .btn-shape-pill { border-radius: 50px; }
@@ -102,7 +102,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .btn-shape-hexagon { clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0% 50%); border-radius: 0; }
 .btn-shape-octagon { clip-path: polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%); border-radius:0; }
 .btn-shape-parallelogram { transform: skew(-10deg); }
-.btn-shape-parallelogram > * { transform: skew(10deg); } /* Anti skew font inside */
+.btn-shape-parallelogram > * { transform: skew(10deg); } 
 .btn-shape-cut-tr { border-radius: 10px 30px 10px 10px; }
 .btn-shape-cut-bl { border-radius: 10px 10px 10px 30px; }
 .btn-shape-ticket { clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px); border-radius:0;}
@@ -112,24 +112,6 @@ input:checked + .slider:before { transform: translateX(22px); }
 .btn-shape-bubble-bottom { border-radius: 10px 10px 30px 30px; }
 .btn-shape-diagonal { clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 90%); border-radius:0;}
 .btn-shape-diamond { clip-path: polygon(5% 0, 95% 0, 100% 50%, 95% 100%, 5% 100%, 0 50%); border-radius:0;}
-
-/* ================== TOAST & MODAL NOTIFICATION ================== */
-.toast {
-    position: fixed; bottom: -100px; right: 20px;
-    background: var(--primary); color: #fff; padding: 15px 30px;
-    border-radius: 12px; font-weight: 700; box-shadow: var(--outer-neumorph);
-    transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 99999;
-}
-.modal-link-box {
-    background: rgba(0,0,0,0.05); border: 1px solid var(--border-color);
-    border-radius: 12px; padding: 15px; margin: 20px 0;
-    font-family: 'Space Mono', monospace, sans-serif; font-size: 0.95rem; 
-    color: var(--primary); font-weight:700; word-break: break-all; 
-    box-shadow: var(--inner-neumorph); transition: 0.3s;
-}
-.modal-link-box:hover { background: #fff; border-color: var(--primary); }
-@keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-@keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
 
 /* ================== MOBILE & DESKTOP MOCKUP (LIVE PREVIEW) ================== */
 .device-toggle { display: flex; gap: 10px; background: rgba(255,255,255,0.5); padding: 5px; border-radius: 20px; box-shadow: var(--inner-neumorph); margin-bottom: 20px; z-index: 10;}
@@ -142,14 +124,22 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 
 /* State: Mobile iPhone */
-.mockup-frame.is-mobile { width: 350px; height: 720px; border: 14px solid #0f172a; border-radius: 50px; box-shadow: 0 30px 60px -12px rgba(0,0,0,0.5), inset 0 0 0 2px #334155; }
+.mockup-frame.is-mobile {
+    width: 350px; height: 720px; border: 14px solid #0f172a; border-radius: 50px;
+    box-shadow: 0 30px 60px -12px rgba(0,0,0,0.5), inset 0 0 0 2px #334155;
+}
 .mockup-frame.is-mobile .notch { display: flex; }
 .mockup-frame.is-mobile .macos-bar { display: none; }
 
 /* State: Desktop MacOS */
-.mockup-frame.is-desktop { width: 90%; max-width: 800px; height: 500px; border: 4px solid #334155; border-radius: 12px; box-shadow: 0 40px 80px rgba(0,0,0,0.3); }
+.mockup-frame.is-desktop {
+    width: 90%; max-width: 800px; height: 500px; border: 4px solid #334155; border-radius: 12px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+}
 .mockup-frame.is-desktop .notch { display: none; }
-.mockup-frame.is-desktop .macos-bar { display: flex; height: 30px; background: #1e293b; align-items: center; padding: 0 15px; gap: 8px; border-bottom: 1px solid #0f172a; }
+.mockup-frame.is-desktop .macos-bar {
+    display: flex; height: 30px; background: #1e293b; align-items: center; padding: 0 15px; gap: 8px; border-bottom: 1px solid #0f172a;
+}
 .macos-dot { width: 12px; height: 12px; border-radius: 50%; }
 .dot-red { background: #ef4444; } .dot-yellow { background: #eab308; } .dot-green { background: #10b981; }
 
@@ -170,7 +160,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: -1; pointer-events: none;
 }
 
-/* Dynamic Preview Elements */
+/* ================== DYNAMIC PREVIEW UI & ICONS (FIX) ================== */
 #pv-profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto 20px; display: block; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 2px solid rgba(255,255,255,0.2); transition:0.3s;}
 .mockup-frame.is-desktop #pv-profile-img { width: 120px; height: 120px; }
 
@@ -179,13 +169,40 @@ input:checked + .slider:before { transform: translateX(22px); }
 #pv-links-container { display: flex; flex-direction: column; gap: 16px; align-items:center;}
 .mockup-frame.is-desktop #pv-links-container { flex-direction:row; flex-wrap:wrap; justify-content:center; }
 
+/* PV BUTTON FIX: Posisi icon absolut agar text tetap ditengah sempurna */
 .pv-btn {
-    display: flex; align-items: center; justify-content: center; width: 100%; max-width: 600px;
-    padding: 18px 20px; font-size: 1.05rem; text-align: center; text-decoration: none;
+    display: flex; align-items: center; justify-content: center; 
+    width: 100%; max-width: 600px; min-height: 65px;
+    padding: 18px 60px; /* Jarak padding kiri & kanan dijaga agar teks tak tabrak icon */
+    font-size: 1.05rem; text-align: center; text-decoration: none;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; box-sizing: border-box; font-weight: 700;
 }
 .mockup-frame.is-desktop .pv-btn { width: 45%; }
 .pv-btn:hover { transform: scale(1.03); filter: brightness(1.1); }
+
+/* ICON DI TOMBOL PREVIEW */
+.pv-link-icon {
+    position: absolute;
+    left: 10px; /* Mengunci icon di pinggir kiri */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.05);
+}
+
+.pv-link-icon.svg-icon {
+    border: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 #pv-socials { display: flex; justify-content: center; gap: 18px; margin-top: 35px; flex-wrap: wrap;}
 .pv-social-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-decoration: none;}
