@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 
-// Konfigurasi CORS & Limit Body-Parser (Super Tinggi untuk Base64)
+// Konfigurasi CORS & Limit Body-Parser
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -37,7 +37,7 @@ try {
     console.error("⚠️ Peringatan: Redis gagal inisiasi.", error.message);
 }
 
-// Utility: Safe JSON Parser Anti-Crash
+// Utility: Safe JSON Parser
 const safeParse = (data, fallbackData) => {
     if (!data) return fallbackData;
     try {
@@ -72,6 +72,7 @@ app.get('/link/:slug', async (req, res) => {
             if(tree) {
                 seoData.title = tree.settings?.seoTitle || tree.profile?.title || seoData.title;
                 seoData.desc = tree.profile?.bio || seoData.desc;
+                // Pastikan image URL absolut jika menggunakan path lokal
                 let img = tree.profile?.image || seoData.image;
                 if(img.startsWith('/')) img = `https://bemkbmfkgumi.com${img}`;
                 seoData.image = img;
@@ -81,11 +82,12 @@ app.get('/link/:slug', async (req, res) => {
         console.error("Gagal memuat SSR SEO:", e);
     }
 
+    // Render EJS HTML dan lemparkan variabel seoData ke dalamnya
     res.render('bem-linktree', { slug: slug, seo: seoData });
 });
 
 
-// ================= ENDPOINT API UPLOAD GAMBAR =================
+// ================= ENDPOINT API UPLOAD =================
 app.post('/api/upload', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -101,6 +103,7 @@ app.post('/api/upload', async (req, res) => {
         const fileUrl = `/api/uploads/${uniqueFilename}`;
         res.status(200).json({ success: true, url: fileUrl });
     } catch (e) {
+        console.error(e);
         res.status(500).json({ success: false, message: "Gagal memproses file upload." });
     }
 });
