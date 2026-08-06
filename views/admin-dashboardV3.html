@@ -6,7 +6,7 @@
     <title>BEM-Linktree Builder V3</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- Load Google Fonts -->
+    <!-- Load Google Fonts Awal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -15,6 +15,23 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <link rel="stylesheet" href="/css/mainV3.css">
     
+    <style>
+        /* FIX: Memastikan thumbnail SVG icon dan Gambar bulat presisi di panel Editor Kiri */
+        .link-icon-thumbnail {
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            flex-shrink: 0;
+            margin-right: 15px; 
+        }
+        
+        .link-icon-thumbnail.svg-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body>
 
@@ -60,9 +77,9 @@
                 <div style="display:flex; gap:25px; align-items:center; margin-bottom:25px;">
                     <img id="edit-profile-img-preview" src="/img/bemfkgumi.png" style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid var(--primary); box-shadow:var(--outer-neumorph);">
                     <div style="flex:1;">
-                        <input type="file" id="upload-profile-img" accept="image/*" style="display:none;" onchange="handleImageUpload(this, 'profile')">
+                        <input type="file" id="upload-profile-img" accept="image/*,.heic,.jpeg,.png,.jpg,.webp" style="display:none;" onchange="handleImageUpload(this, 'profile')">
                         <button class="btn-outline" onclick="document.getElementById('upload-profile-img').click()">Ubah Foto Profil</button>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin:8px 0 0;">Format Gambar Bebas (JPG, PNG, dll). Max 5MB.</p>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin:8px 0 0;">Format: JPG, PNG, WEBP, HEIC. Max 5MB.</p>
                     </div>
                 </div>
                 <div class="input-group">
@@ -119,7 +136,7 @@
                             <span style="font-size:1.5rem; opacity:0.5;">🖼️</span>
                         </div>
                         <div style="flex:1;">
-                            <input type="file" id="upload-bg-img" accept="image/*" style="display:none;" onchange="handleImageUpload(this, 'bg')">
+                            <input type="file" id="upload-bg-img" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'bg')">
                             <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper Baru</button>
                             <button class="btn-danger" style="width:100%; padding:10px; background:#ef4444;" onclick="removeBgImage()" title="Hapus Gambar">🗑️ Hapus Gambar</button>
                         </div>
@@ -154,6 +171,7 @@
                     <input type="color" id="inp-btn-color" oninput="updateState('theme', 'btnColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
                 
+                <!-- Otomatis Muncul via JS jika tipe membutuhkan Border -->
                 <div class="input-group" id="border-color-wrapper" style="display:none;">
                     <label class="input-label">Warna Tombol Border (Khusus Outline/Shadow)</label>
                     <input type="color" id="inp-border-color" oninput="updateState('theme', 'borderColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
@@ -256,7 +274,7 @@
         </div>
         
         <div style="margin-bottom:20px;">
-            <input type="file" id="upload-link-icon" accept="image/*" style="display:none;" onchange="handleImageUpload(this, 'link-icon')">
+            <input type="file" id="upload-link-icon" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'link-icon')">
             <button class="btn-primary" style="width:100%;" onclick="document.getElementById('upload-link-icon').click()">🖼️ Upload Gambar Sendiri</button>
             <button class="btn-outline" style="width:100%; margin-top:10px; border-color:#ef4444; color:#ef4444;" onclick="selectIcon('')">🗑️ Hapus Ikon</button>
         </div>
@@ -328,6 +346,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     // ================= MODAL LOGIC ENGINE =================
@@ -417,6 +436,7 @@
         const url = `${window.location.origin}/link/${state.slug}`;
         window.copyToClipboard(url);
     }
+
 
     // ================= 50+ AESTHETIC GEN Z FONTS =================
     const fontLibrary = [
@@ -951,15 +971,15 @@
         state.links.forEach(l => {
             
             // Tampilan Icon/Gambar di dalam Editor
-            let iconPreviewHtml = `<div style="width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; border:1px dashed var(--border-color); margin-right:15px;"><span style="font-size:1.2rem; opacity:0.5;">🖼️</span></div>`;
+            let iconPreviewHtml = `<div style="width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; border:1px dashed var(--border-color);"><span style="font-size:1.2rem; opacity:0.5;">🖼️</span></div>`;
             if(l.icon) {
                 if(l.icon.startsWith('svg:')) {
                     let svgKey = l.icon.split(':')[1];
                     if(svgIconsCollection[svgKey]) {
-                        iconPreviewHtml = `<div class="link-icon-thumbnail svg-icon" style="background:var(--primary); color:#fff;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[svgKey]}</svg></div>`;
+                        iconPreviewHtml = `<div style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[svgKey]}</svg></div>`;
                     }
                 } else {
-                    iconPreviewHtml = `<img src="${l.icon}" class="link-icon-thumbnail">`;
+                    iconPreviewHtml = `<img src="${l.icon}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">`;
                 }
             }
 
@@ -1113,7 +1133,6 @@
     // ================= LIVE PREVIEW RENDERER =================
     function renderLivePreview() {
         const screen = document.getElementById('live-preview-screen');
-        if(!screen) return; // Pengaman crash
         const t = state.theme;
 
         // Overlay & Background Logic
@@ -1153,7 +1172,7 @@
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
         // Link Buttons Logic (30 TYPES CSS GENERATOR)
-        let btnCssObj = `font-family:${t.fontButton}; `;
+        let btnCssObj = `font-family:${t.fontButton}; display:flex; align-items:center; justify-content:center; position:relative; `;
         let bg = t.btnColor;
         let borderC = t.borderColor || '#0f172a';
         let txt = t.textColor;
@@ -1189,11 +1208,6 @@
             case 'candy': btnCssObj += `background:linear-gradient(to right, #fbcfe8, #f9a8d4); color:#be185d; border:none; box-shadow: 0 10px 15px #fbcfe8;`; break;
             case 'midnight': btnCssObj += `background:#020617; color:${bg}; border:1px solid ${borderC}; box-shadow: 0 0 15px ${bg}40;`; break;
             case 'velvet': btnCssObj += `background:${bg}; color:#fff; border:none; opacity:0.9; filter:saturate(1.2);`; break;
-            case 'neobrutalism': btnCssObj += `background:${bg}; color:#000; border:4px solid #000; box-shadow: 8px 8px 0px #000; font-weight:900;`; break;
-            case 'glass-outline': btnCssObj += `background:rgba(255,255,255,0.05); color:${txt}; border:2px solid rgba(255,255,255,0.8); backdrop-filter:blur(15px);`; break;
-            case 'pastel': btnCssObj += `background:linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); color:#000; border:none; box-shadow: 0 5px 15px rgba(0,0,0,0.05);`; break;
-            case 'cyberpunk': btnCssObj += `background:#fef08a; color:#000; border:2px solid #000; border-right:6px solid #ef4444; border-bottom:6px solid #3b82f6;`; break;
-            case 'hologram-dark': btnCssObj += `background:linear-gradient(45deg, #1e1b4b, #312e81, #4c1d95); color:#fff; border:1px solid #6366f1; box-shadow:0 0 20px #4c1d95;`; break;
             default: btnCssObj += `background:${bg}; color:#fff; border:none;`;
         }
 
@@ -1204,11 +1218,9 @@
                 if(l.icon) {
                     if(l.icon.startsWith('svg:')) {
                         let k = l.icon.split(':')[1];
-                        if(svgIconsCollection[k]) {
-                            renderIcon = `<div class="pv-link-icon svg-icon" style="color:inherit;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[k]}</svg></div>`;
-                        }
+                        if(svgIconsCollection[k]) renderIcon = `<div class="link-icon-thumbnail svg-icon" style="color:inherit;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[k]}</svg></div>`;
                     } else {
-                        renderIcon = `<img src="${l.icon}" class="pv-link-icon">`;
+                        renderIcon = `<img src="${l.icon}" class="link-icon-thumbnail">`;
                     }
                 }
 
