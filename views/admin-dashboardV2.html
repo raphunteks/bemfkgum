@@ -24,7 +24,7 @@
         /* Hanya untuk Judul Form & Judul Segmen */
         .form-title, .form-section-header { font-family: var(--form-font-header) !important; font-weight: var(--form-font-header-weight, 700) !important; letter-spacing: -0.5px;}
         
-        /* Hanya untuk Judul Pertanyaan (di dalam Card) */
+        /* Hanya untuk Judul Pertanyaan (di dalam Card / Builder) */
         .question-title { font-family: var(--form-font-question) !important; font-weight: var(--form-font-question-weight, 600) !important; margin-bottom: 20px !important; padding-bottom: 15px; border-bottom: 1px solid rgba(139, 92, 246, 0.2); }
         
         /* Teks Dasar untuk Isi Opsi, Paragraf, Deskripsi, UI Dashboard Umum */
@@ -59,8 +59,8 @@
         }
         .cfp-subitem:hover { background: var(--form-focus-glow) !important; color: var(--form-active-border) !important; padding-left: 22px !important; }
         
-        /* Area aman untuk bridging hover antara menu utama dan submenu flyout */
-        .cfp-item::after { content:''; position:absolute; right:-25px; top:0; height:100%; width:25px; z-index:999; }
+        /* Area aman untuk bridging hover antara menu utama dan submenu flyout (kiri & kanan tercover) */
+        .cfp-item.has-submenu::before { content:''; position:absolute; left:-30px; top:0; height:100%; width:30px; z-index:999; }
     </style>
 </head>
 <body class="admin-v2-body" onclick="window.closeAllQMenus()">
@@ -2274,7 +2274,7 @@
                                 
                                 <div style="display:flex; align-items:center;">
                                     <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px; font-size:0.95rem; display:flex; align-items:center; gap:8px;" onclick="window.currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=true; window.renderBuilder();">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2-2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                                         Kunci jawaban (${window.getQuestionPoints(q)} poin)
                                     </button>
                                 </div>
