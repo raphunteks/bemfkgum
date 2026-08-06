@@ -6,9 +6,6 @@
     <title>Formulir - BEM KBMFKG UMI (Futuristic Edition)</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- SUPER UPGRADE: DYNAMIC FONTS MEMUAT SELURUH FONT DARI ADMIN DASHBOARD -->
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600&family=Oswald:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
     
@@ -23,9 +20,9 @@
         }
         
         /* FORCE FONT RENDERING FIX MENGGUNAKAN VARIABEL CSS */
-        .form-title { font-family: var(--form-font-header) !important; }
-        .question-title { font-family: var(--form-font-question) !important; }
-        .form-desc, .gf-input, .opt-text, .step-name { font-family: var(--form-font-text) !important; }
+        .form-title { font-family: var(--form-font-header) !important; font-weight: var(--form-font-header-weight, 700) !important; }
+        .question-title { font-family: var(--form-font-question) !important; font-weight: var(--form-font-question-weight, 600) !important; }
+        .form-desc, .gf-input, .opt-text, .step-name { font-family: var(--form-font-text) !important; font-weight: var(--form-font-text-weight, 400) !important; }
 
         /* UPGRADE: STYLING DESAIN LIVE COUNTDOWN TIMER */
         .countdown-live-wrapper {
@@ -123,9 +120,7 @@
     <!-- FOOTER STANDAR BEM -->
     <%- include('partials/footer.html') %>
 
-    <!-- GLOBAL EVENT LISTENER UNTUK UI INTERAKTIF (RATING BINTANG & UPLOAD FILE) -->
     <script>
-        // Membantu merender nama file yang telah diunggah / di-drop oleh pengguna pada DOM
         function updateFileName(input) {
             const display = input.parentElement.parentElement.querySelector('.file-list-display');
             if (display) {
@@ -135,7 +130,6 @@
         }
 
         document.addEventListener('change', function(e) {
-            // Logika Rating Bintang Interaktif
             if (e.target && e.target.classList.contains('star-radio')) {
                 const wrapper = e.target.closest('.star-rating-wrapper');
                 const val = parseInt(e.target.value);
@@ -152,15 +146,30 @@
                 });
             }
         });
+
+        // ================= SUPER UPGRADE: DYNAMIC FONTS ENGINE =================
+        function loadDynamicFont(fontName, weight) {
+            if(!fontName) return;
+            const isGoogle = ["Amatic SC", "Caveat", "Comfortaa", "EB Garamond", "Lexend", "Lobster", "Lora", "Merriweather", "Montserrat", "Nunito", "Oswald", "Pacifico", "Playfair Display", "Roboto", "Roboto Mono", "Roboto Serif", "Spectral", "Plus Jakarta Sans", "Outfit"].includes(fontName);
+            if(isGoogle) {
+                const id = `font-${fontName.replace(/\s+/g, '')}-${weight}`;
+                if(!document.getElementById(id)) {
+                    const link = document.createElement('link');
+                    link.id = id; link.rel = 'stylesheet';
+                    link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@${weight}&display=swap`;
+                    document.head.appendChild(link);
+                }
+            }
+        }
     </script>
 
     <script>
         const pathArray = window.location.pathname.split('/');
         const slug = pathArray[pathArray.length - 1];
         let formData = null;
-        let currentStep = 0; // MULTI-STEP WIZARD LOGIC
-        let countdownTimerInterval = null; // UPGRADE: Countdown Interval Reference
-        let manualNextStep = null; // UPGRADE: Variabel untuk Buka Bagian Khusus (GoTo Section)
+        let currentStep = 0; 
+        let countdownTimerInterval = null; 
+        let manualNextStep = null; 
 
         document.addEventListener('DOMContentLoaded', loadPublicForm);
 
@@ -175,17 +184,26 @@
                 
                 formData = json.data;
                 
-                // Memastikan settings terinisialisasi
                 if (!formData.settings) formData.settings = {};
                 
-                // Set Theme Secara Dinamis ke :root CSS
                 if(formData.theme) {
                     const t = formData.theme;
                     document.documentElement.style.setProperty('--form-active-border', t.color);
                     document.documentElement.style.setProperty('--form-bg', t.bgColor);
+                    
                     document.documentElement.style.setProperty('--form-font-header', `"${t.headerFont}", sans-serif`);
+                    document.documentElement.style.setProperty('--form-font-header-weight', t.headerFontWeight || 700);
+                    
                     document.documentElement.style.setProperty('--form-font-question', `"${t.questionFont}", sans-serif`);
+                    document.documentElement.style.setProperty('--form-font-question-weight', t.questionFontWeight || 600);
+                    
                     document.documentElement.style.setProperty('--form-font-text', `"${t.textFont}", sans-serif`);
+                    document.documentElement.style.setProperty('--form-font-text-weight', t.textFontWeight || 400);
+
+                    // Panggil Engine Font Bawaan
+                    loadDynamicFont(t.headerFont, t.headerFontWeight || 700);
+                    loadDynamicFont(t.questionFont, t.questionFontWeight || 600);
+                    loadDynamicFont(t.textFont, t.textFontWeight || 400);
                 }
                 
                 if(formData.isActive === false) { 
@@ -202,8 +220,8 @@
                 }
 
                 renderFormHTML();
-                initAutoSave(); // Init AutoSave LocalStorage
-                initLiveCountdown(); // UPGRADE: Init Live Realtime Countdown
+                initAutoSave(); 
+                initLiveCountdown(); 
             } catch(e) { 
                 renderError("Gangguan Koneksi. Gagal terhubung ke database cloud BEM."); 
             }
@@ -221,7 +239,6 @@
             `;
         }
 
-        // Helper untuk Shuffle Array (Acak Opsi)
         function shuffleArray(array) {
             let currentIndex = array.length,  randomIndex;
             while (currentIndex != 0) {
@@ -232,7 +249,6 @@
             return array;
         }
 
-        // Hitung akumulasi poin untuk soal kisi
         function getQuestionPoints(q) {
             if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
                 if (!q.rowPoints) return 0;
@@ -249,7 +265,6 @@
             let headerImgStyle = theme.headerImage ? `background-image: url('${theme.headerImage}');` : 'background: linear-gradient(135deg, var(--form-active-border), transparent);';
             let headerClass = theme.headerImage ? 'has-image' : 'no-image';
 
-            // UPGRADE: REALTIME LIVE COUNTDOWN & BADGE UI
             let warningHTML = '';
             if(settings.deadline) {
                 const dl = new Date(settings.deadline);
