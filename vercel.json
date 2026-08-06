@@ -4,6 +4,10 @@
     {
       "src": "server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "serverV2.js",
+      "use": "@vercel/node"
     }
   ],
   "headers": [
@@ -87,6 +91,18 @@
     {
       "src": "/favicon.png",
       "dest": "/public/img/bemfkgumi.png"
+    },
+    {
+      "src": "/admin-linktree",
+      "dest": "/serverV2.js"
+    },
+    {
+      "src": "/link/(.*)",
+      "dest": "/serverV2.js"
+    },
+    {
+      "src": "/api/linktrees(.*)",
+      "dest": "/serverV2.js"
     },
     {
       "src": "/(.*)",
