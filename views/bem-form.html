@@ -14,8 +14,6 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/mainV2.css">
     
-    <script src="/js/protect-devtools.js"></script>
-
     <style>
         /* TEMA DINAMIS AKAN MENG-OVERRIDE CLASS INI VIA JAVASCRIPT */
         body.public-form-body { 
@@ -125,7 +123,56 @@
     <!-- FOOTER STANDAR BEM -->
     <%- include('partials/footer.html') %>
 
+    <!-- ================== CUSTOM ALERTS & CONFIRMS MODAL UI (ANTI-CHROME DEFAULT) ================== -->
+    <!-- CUSTOM ALERT MODAL -->
+    <div id="customAlertModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10002; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
+        <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:30px; animation: popIn 0.3s ease;">
+            <div style="font-size:3rem; margin-bottom:15px;">⚠️</div>
+            <h3 class="form-title" style="color:var(--form-text); margin-top:0; margin-bottom:15px;">Pemberitahuan</h3>
+            <p id="customAlertMessage" style="color:var(--form-text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5;"></p>
+            <button class="gf-btn-submit glow-effect" style="width:100%;" onclick="window.closeCustomAlert()">Mengerti</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM MODAL -->
+    <div id="customConfirmModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10003; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
+        <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:30px; animation: popIn 0.3s ease;">
+            <div style="font-size:3rem; margin-bottom:15px;">❓</div>
+            <h3 class="form-title" style="color:var(--form-text); margin-top:0; margin-bottom:15px;">Konfirmasi</h3>
+            <p id="customConfirmMessage" style="color:var(--form-text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5;"></p>
+            <div style="display:flex; gap:10px;">
+                <button class="gf-btn-clear neumorph-btn" style="flex:1;" onclick="window.closeCustomConfirm(false)">Batal</button>
+                <button class="gf-btn-submit glow-effect" style="flex:1; background:#ef4444; box-shadow:0 0 15px rgba(239,68,68,0.4);" onclick="window.closeCustomConfirm(true)">Oke</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Modal UI Engine
+        window.showCustomAlert = function(msg) {
+            document.getElementById('customAlertMessage').innerText = msg;
+            document.getElementById('customAlertModal').style.display = 'flex';
+        }
+
+        window.closeCustomAlert = function() {
+            document.getElementById('customAlertModal').style.display = 'none';
+        }
+
+        let confirmCallback = null;
+        window.showCustomConfirm = function(msg, callback) {
+            document.getElementById('customConfirmMessage').innerText = msg;
+            document.getElementById('customConfirmModal').style.display = 'flex';
+            confirmCallback = callback;
+        }
+
+        window.closeCustomConfirm = function(isConfirmed) {
+            document.getElementById('customConfirmModal').style.display = 'none';
+            if(isConfirmed && typeof confirmCallback === 'function') {
+                confirmCallback();
+            }
+            confirmCallback = null;
+        }
+
         function updateFileName(input) {
             const display = input.parentElement.parentElement.querySelector('.file-list-display');
             if (display) {
@@ -871,10 +918,10 @@
         }
 
         function clearFormDraft() {
-            if(confirm("PERINGATAN: Apakah Anda yakin ingin menghapus semua jawaban dan membersihkan formulir ini?")) {
+            window.showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus semua jawaban dan membersihkan formulir ini?", function() {
                 localStorage.removeItem(`bem_form_draft_${formData.id}`);
                 location.reload();
-            }
+            });
         }
 
         function changeStep(n) {
@@ -986,7 +1033,7 @@
                         if (value.name === '' || value.size === 0) continue; 
                         
                         if (value.size > 5 * 1024 * 1024) {
-                            alert(`Gagal: File "${value.name}" terlalu besar. Maksimal 5MB per file.`);
+                            window.showCustomAlert(`Gagal: File "${value.name}" terlalu besar. Maksimal 5MB per file.`);
                             btn.innerHTML = '🚀 Kirim form'; btn.disabled = false; btn.classList.remove('loading-state');
                             return;
                         }
@@ -1007,7 +1054,7 @@
                             }
                         } catch (errFile) {
                             console.error("Gagal mengunggah file:", errFile);
-                            alert(`Gagal mengunggah file ${value.name}. Periksa koneksi internet Anda.`);
+                            window.showCustomAlert(`Gagal mengunggah file ${value.name}. Periksa koneksi internet Anda.`);
                             btn.innerHTML = '🚀 Kirim form'; btn.disabled = false; btn.classList.remove('loading-state');
                             return; 
                         }
@@ -1062,20 +1109,23 @@
                             
                             <div style="display:flex; justify-content:center; gap:15px; margin-top:30px; flex-wrap:wrap;">
                                 ${showAnother ? `<button onclick="location.reload()" class="gf-btn-clear neumorph-btn" style="font-weight:600; color:var(--form-active-border);">🔄 Submit Respon Baru</button>` : ''}
-                                ${formData.settings.showSummary ? `<button onclick="alert('Fitur Ringkasan dalam Pengembangan')" class="gf-btn-clear neumorph-btn" style="font-weight:600; color:#10b981;">📊 Lihat Ringkasan</button>` : ''}
+                                ${formData.settings.showSummary ? `<button onclick="window.showCustomAlert('Fitur Ringkasan dalam Pengembangan')" class="gf-btn-clear neumorph-btn" style="font-weight:600; color:#10b981;">📊 Lihat Ringkasan</button>` : ''}
                             </div>
                         </div>
                     `;
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else { 
-                    alert(json.message || "Akses Tertolak. Terdapat kesalahan saat memproses formulir di server.");
+                    window.showCustomAlert(json.message || "Akses Tertolak. Terdapat kesalahan saat memproses formulir di server.");
                     btn.innerHTML = '🚀 Kirim form'; btn.disabled = false; btn.classList.remove('loading-state');
                 }
             } catch (err) { 
-                alert("Kesalahan Jaringan: Database cloud BEM tidak merespons atau file yang disertakan terlampau berat sehingga memutus koneksi.");
+                window.showCustomAlert("Kesalahan Jaringan: Database cloud BEM tidak merespons atau file yang disertakan terlampau berat sehingga memutus koneksi.");
                 btn.innerHTML = '🚀 Kirim form'; btn.disabled = false; btn.classList.remove('loading-state');
             }
         }
     </script>
+    
+    <!-- Script Protect DevTools -->
+    <script src="/js/protect-devtools.js"></script>
 </body>
 </html>
