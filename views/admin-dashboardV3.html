@@ -6,7 +6,7 @@
     <title>BEM-Linktree Builder V3</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- Load Google Fonts -->
+    <!-- Load Google Fonts Awal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -14,6 +14,24 @@
     <!-- Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <link rel="stylesheet" href="/css/mainV3.css">
+    
+    <style>
+        /* FIX: Memastikan thumbnail SVG icon dan Gambar bulat presisi di panel Editor Kiri */
+        .link-icon-thumbnail {
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            flex-shrink: 0;
+            margin-right: 15px; 
+        }
+        
+        .link-icon-thumbnail.svg-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body>
 
@@ -288,7 +306,7 @@
             <button class="btn-outline" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="copyModalLink()">📋 Salin Tautan</button>
             <button class="btn-primary" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="openModalLink()">👁️ Buka Halaman</button>
         </div>
-        <button class="btn-danger" style="margin-top:15px; width:100%; background:transparent; color:var(--text-muted); border:1px solid var(--border-color); font-weight:600;" onclick="closeSuccessModal()">Tutup Halaman</button>
+        <button class="btn-outline" style="margin-top:15px; width:100%; background:transparent; color:var(--text-muted); border:1px solid var(--border-color); font-weight:600;" onclick="closeSuccessModal()">Tutup Halaman</button>
     </div>
 </div>
 
@@ -328,6 +346,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     // ================= MODAL LOGIC ENGINE =================
@@ -417,6 +436,7 @@
         const url = `${window.location.origin}/link/${state.slug}`;
         window.copyToClipboard(url);
     }
+
 
     // ================= 50+ AESTHETIC GEN Z FONTS =================
     const fontLibrary = [
@@ -521,6 +541,32 @@
         'linkedin': '<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>',
         'facebook': '<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>'
     };
+
+    function getTemplateCSS(tplName) {
+        switch(tplName) {
+            case 'grid-light': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);`;
+            case 'grid-dark': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);`;
+            case 'polka-light': return `background-image: radial-gradient(rgba(0,0,0,0.1) 2px, transparent 2px); background-size: 20px 20px;`;
+            case 'polka-dark': return `background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px); background-size: 20px 20px;`;
+            case 'diagonal-light': return `background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 10px, transparent 10px, transparent 20px);`;
+            case 'diagonal-dark': return `background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 10px, transparent 10px, transparent 20px);`;
+            case 'checkerboard': return `background-image: linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)); background-size: 20px 20px; background-position: 0 0, 10px 10px;`;
+            case 'zigzag': return `background: linear-gradient(135deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(225deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(315deg, rgba(0,0,0,0.05) 25%, transparent 25%), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%); background-size: 40px 40px;`;
+            case 'wave-light': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px;`;
+            case 'wave-dark': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px;`;
+            case 'topography': return `background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.05) 10px, transparent 11px, transparent 20px);`;
+            case 'memphis': return `background-image: radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%), radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px;`;
+            case 'circuit': return `background-image: radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px;`;
+            case 'starry': return `background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px); background-size: 90px 90px; background-position: 0 0, 45px 45px;`;
+            case 'hexagons': return `background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(rgba(0,0,0,0.05) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, rgba(0,0,0,0.05) 2px, transparent 2px) -1px 0; background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;`;
+            case 'clouds': return `background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 50%); background-size: 100px 100px;`;
+            case 'mesh-1': return `background-image: radial-gradient(at 40% 20%, rgba(255,100,100,0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(100,255,100,0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(100,100,255,0.3) 0px, transparent 50%);`;
+            case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.3) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.3) 0px, transparent 50%);`;
+            case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(0,0,255,0.1)); filter: contrast(1.5);`;
+            case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,0,0.1), rgba(255,0,255,0.1));`;
+            default: return '';
+        }
+    }
 
     // ================= GLOBAL STATE =================
     let allLinktrees = [];
@@ -1084,32 +1130,6 @@
         renderLivePreview();
     }
 
-    function getTemplateCSS(tplName) {
-        switch(tplName) {
-            case 'grid-light': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);`;
-            case 'grid-dark': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);`;
-            case 'polka-light': return `background-image: radial-gradient(rgba(0,0,0,0.1) 2px, transparent 2px); background-size: 20px 20px;`;
-            case 'polka-dark': return `background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px); background-size: 20px 20px;`;
-            case 'diagonal-light': return `background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 10px, transparent 10px, transparent 20px);`;
-            case 'diagonal-dark': return `background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 10px, transparent 10px, transparent 20px);`;
-            case 'checkerboard': return `background-image: linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)); background-size: 20px 20px; background-position: 0 0, 10px 10px;`;
-            case 'zigzag': return `background: linear-gradient(135deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(225deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(315deg, rgba(0,0,0,0.05) 25%, transparent 25%), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%); background-size: 40px 40px;`;
-            case 'wave-light': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px;`;
-            case 'wave-dark': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px;`;
-            case 'topography': return `background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.05) 10px, transparent 11px, transparent 20px);`;
-            case 'memphis': return `background-image: radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%), radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px;`;
-            case 'circuit': return `background-image: radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px;`;
-            case 'starry': return `background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px); background-size: 90px 90px; background-position: 0 0, 45px 45px;`;
-            case 'hexagons': return `background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(rgba(0,0,0,0.05) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, rgba(0,0,0,0.05) 2px, transparent 2px) -1px 0; background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;`;
-            case 'clouds': return `background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 50%); background-size: 100px 100px;`;
-            case 'mesh-1': return `background-image: radial-gradient(at 40% 20%, rgba(255,100,100,0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(100,255,100,0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(100,100,255,0.3) 0px, transparent 50%);`;
-            case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.3) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.3) 0px, transparent 50%);`;
-            case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(0,0,255,0.1)); filter: contrast(1.5);`;
-            case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,0,0.1), rgba(255,0,255,0.1));`;
-            default: return '';
-        }
-    }
-
     // ================= LIVE PREVIEW RENDERER =================
     function renderLivePreview() {
         const screen = document.getElementById('live-preview-screen');
@@ -1130,9 +1150,6 @@
             screen.style.backgroundColor = t.bgColor;
             let cssTpl = getTemplateCSS(t.bgTemplate);
             if(cssTpl) {
-                // Gunakan div overlay khusus di dalam mock-screen jika memungkinkan, 
-                // tapi karena ini preview kita set saja string css-nya
-                // Hack: kita terapkan cssTpl langsung ke style (karena getTemplateCSS mengembalikan string instruksi background)
                 const templateStyleString = `background-color: ${t.bgColor}; ${cssTpl}`;
                 screen.setAttribute('style', templateStyleString);
             }
