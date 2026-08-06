@@ -6,6 +6,7 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 + UPGRADE BARU: Dukungan Penuh Menu Accordion & Sub-Panel (Setelan Form)
 + UPGRADE BARU: Integrasi Sub-Tab Jawaban (Ringkasan, Pertanyaan, Individual)
 + UPGRADE BARU: Custom Font Picker with Weights & Categories (Anti-Clip/Potong)
++ UPGRADE BARU: Custom Success & Alert Modal Notifications UI
 + UPGRADE BARU: Isolasi Rendering Font (Header, Pertanyaan, Teks Dasar)
 + UPGRADE BARU: Jembatan Kursor Hover (Anti-Hilang pada Flyout Menu)
 =========================================================
@@ -130,6 +131,25 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     display: inline-block;
 }
 
+/* ================== TOAST & MODAL NOTIFICATIONS (SUPER UPGRADE) ================== */
+.toast {
+    position: fixed; bottom: -100px; right: 20px;
+    background: var(--form-active-border); color: #fff; padding: 15px 30px;
+    border-radius: 12px; font-weight: 700; box-shadow: var(--outer-neumorph);
+    transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 99999;
+}
+.modal-link-box {
+    background: rgba(0,0,0,0.05); border: 1px solid var(--form-border);
+    border-radius: 12px; padding: 15px; margin: 20px 0;
+    font-family: 'Space Mono', 'Courier New', monospace, sans-serif; font-size: 0.95rem; 
+    color: var(--form-active-border); font-weight:700; word-break: break-all; 
+    box-shadow: var(--inner-neumorph); transition: 0.3s;
+}
+.modal-link-box:hover { background: #fff; border-color: var(--form-active-border); }
+
+@keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+
 /* ================== GLOBAL TYPOGRAPHY BINDING ================== */
 /* FONT HEADER KHUSUS: Hanya judul form, banner selamat datang, judul admin, dll */
 .form-title, .form-section-header, .main-hero-card h1 { 
@@ -145,7 +165,7 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 }
 
 /* FONT TEKS DASAR KHUSUS: Segala teks deskripsi, opsi, select, panel setelan, menu dropdown, chart, dll */
-.form-desc, .gf-input, .opt-text, .step-name, body.admin-v2-body, .custom-select-option, .cfp-text, .setting-title, .setting-desc, .sub-section-title, .chart-container, .duration-container { 
+.form-desc, .gf-input, .opt-text, .step-name, body.admin-v2-body, .custom-select-option, .cfp-text, .setting-title, .setting-desc, .sub-section-title, .chart-container, .duration-container, .q-menu-item, select { 
     font-family: var(--form-font-text) !important; 
     font-weight: var(--form-font-text-weight, 400); 
 }
@@ -267,14 +287,12 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .cfp-item:hover { background: var(--form-focus-glow); color: var(--form-active-border); }
 
 /* ================== SOLUSI KONKRET: FIX CSS FONT FLYOUT MENU ================== */
-/* Hapus hover display block bawaan CSS untuk diserahkan 100% ke Javascript agar koordinat akurat */
 .cfp-item.has-submenu:hover .cfp-submenu { display: none; }
 
 .cfp-submenu {
     position: fixed !important; /* Wajib Fixed agar tidak terpotong (clipped) oleh sidebar dropdown auto-scroll */
     background: var(--form-bg) !important;
     border-radius: 12px !important;
-    /* Disesuaikan untuk menampung flyout yang lebih estetis, shadow diubah agar tidak menutupi container kiri */
     box-shadow: -5px 10px 30px rgba(0,0,0,0.15) !important;
     border: 1px solid var(--form-border) !important;
     min-width: 170px !important;
@@ -306,8 +324,6 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     top: -10px; bottom: -10px; left: -30px; width: 30px;
     z-index: 999;
 }
-
-@keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
 /* ================== NEW: JAWABAN TABS (RINGKASAN, PERTANYAAN, INDIVIDUAL) ================== */
 .j-tabs { display: flex; border-bottom: 2px solid rgba(139, 92, 246, 0.2); margin-bottom: 25px; overflow-x: auto; scrollbar-width: none; }
@@ -387,8 +403,6 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .correct-option-btn.selected { background: rgba(16, 185, 129, 0.1); border-color: #10b981; border-width: 2px; }
 .correct-check { color: #10b981; font-weight: bold; font-size: 1.5rem; display: none; }
 .correct-option-btn.selected .correct-check { display: block; animation: popInCheck 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes popInCheck { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
-
 
 /* ================== INPUTS SKEUOMORPHISM (NEUMORPH + GLASS) ================== */
 .gf-input, .q-type-select {
@@ -466,11 +480,6 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 }
 .custom-select-optgroup:first-child { margin-top: 0; }
 
-@keyframes dropInPremium { 
-    from { opacity: 0; transform: translateY(-20px) scale(0.95); filter: blur(10px); } 
-    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
-}
-
 /* ================== FIX RESPONSIVE TEXT RADIO/CHECKBOX ================== */
 .gf-radio-group, .gf-checkbox-group { display: flex; flex-direction: column; gap: 16px; width: 100%; }
 .gf-option-label { 
@@ -479,7 +488,6 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .gf-option-label:hover { box-shadow: var(--outer-neumorph) !important; background: rgba(255,255,255,0.6) !important; }
 .opt-text { flex: 1; word-break: break-word; line-height: 1.5; margin-top: 2px;} 
 
-/* Hidden Inputs & Custom Styling */
 .custom-radio, .custom-check {
     appearance: none; -webkit-appearance: none; flex-shrink: 0;
     width: 24px; height: 24px; margin: 0; margin-top: 2px; cursor: pointer; background: rgba(255,255,255,0.4);
@@ -504,11 +512,9 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 .custom-check:checked { background: var(--form-active-border) !important; border-color: var(--form-active-border) !important; box-shadow: 0 0 15px var(--form-focus-glow), var(--outer-neumorph); }
 .custom-check:checked::before { transform: rotate(45deg) scale(1); }
 
-/* Fake visually inputs in Builder Admin V2 */
 .fake-radio, .fake-checkbox { flex-shrink: 0; width: 24px; height: 24px; box-shadow: var(--inner-neumorph); border: 1px solid var(--form-border); margin-top: 2px; }
 .fake-radio { border-radius: 50%; } .fake-checkbox { border-radius: 6px; }
 .fake-num { flex-shrink: 0; font-weight: 700; color: var(--form-text-muted); width: 25px; text-align: center; margin-top: 2px; }
-
 
 /* ================== BUTTONS (3D NEUMORPH) ================== */
 .gf-btn-submit {
@@ -533,7 +539,6 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
 }
 .neumorph-circle:hover { color: var(--form-active-border); transform: scale(1.1); }
 .top-icon-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none;}
-
 
 /* ================== SWITCH TOGGLES & ACCORDION ================== */
 .toggle-switch, .neumorph-switch { display: flex; align-items: center; gap: 15px; font-weight: 600; color: var(--form-text);}
@@ -571,7 +576,6 @@ tema yang transparan, FIX spasi & render Font pada soal/opsi.
     display: flex; justify-content: flex-end; align-items: center; gap: 12px;
     border-top: 1px solid var(--form-border); margin-top: 25px; padding-top: 20px;
 }
-@keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ================== PUBLIC FORM EXTRAS ================== */
 .countdown-live-wrapper { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border-radius: 16px; padding: 18px 22px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-shadow: var(--outer-neumorph); }
