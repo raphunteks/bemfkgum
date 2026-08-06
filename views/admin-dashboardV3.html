@@ -9,7 +9,7 @@
     <!-- Load Google Fonts Awal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <!-- Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -145,6 +145,7 @@
                     <input type="color" id="inp-btn-color" oninput="updateState('theme', 'btnColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
                 
+                <!-- Otomatis Muncul via JS jika tipe membutuhkan Border -->
                 <div class="input-group" id="border-color-wrapper" style="display:none;">
                     <label class="input-label">Warna Tombol Border (Khusus Outline/Shadow)</label>
                     <input type="color" id="inp-border-color" oninput="updateState('theme', 'borderColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
@@ -219,6 +220,7 @@
 
     <!-- RIGHT: LIVE PREVIEW PANEL -->
     <div class="preview-panel">
+        <!-- Device Toggle -->
         <div class="device-toggle">
             <button class="device-btn active" id="btn-device-mobile" onclick="toggleDevicePreview('mobile')">📱 Mobile</button>
             <button class="device-btn" id="btn-device-desktop" onclick="toggleDevicePreview('desktop')">💻 Desktop</button>
@@ -244,7 +246,7 @@
 
 <!-- SUCCESS MODAL (CUSTOM POPUP UNTUK SAVE) -->
 <div id="successModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
-    <div class="glass-card neumorph-outer" style="width:100%; max-width:420px; text-align:center; padding:40px 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin:20px;">
+    <div class="glass-card" style="width:100%; max-width:420px; text-align:center; padding:40px 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin:20px;">
         <div style="font-size:4rem; margin-bottom:15px; animation: bounceIn 1s;">✨</div>
         <h2 style="font-family:'Outfit', sans-serif; color:var(--text-main); margin-top:0; font-size:1.6rem;">Publikasi Berhasil!</h2>
         <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px;">Halaman BEM-Linktree Anda telah tersimpan dan siap dibagikan ke publik.</p>
@@ -263,7 +265,7 @@
 
 <!-- CUSTOM ALERT MODAL -->
 <div id="customAlertModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10002; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
-    <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
+    <div class="glass-card" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
         <div style="font-size:3.5rem; margin-bottom:15px;">⚠️</div>
         <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Pemberitahuan</h3>
         <p id="customAlertMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
@@ -273,7 +275,7 @@
 
 <!-- CUSTOM CONFIRM MODAL -->
 <div id="customConfirmModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10003; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
-    <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
+    <div class="glass-card" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
         <div style="font-size:3.5rem; margin-bottom:15px;">❓</div>
         <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Konfirmasi Aksi</h3>
         <p id="customConfirmMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
@@ -286,7 +288,7 @@
 
 <!-- CUSTOM PROMPT MODAL (FOR PIN SECURITY) -->
 <div id="customPromptModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10004; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
-    <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
+    <div class="glass-card" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
         <div style="font-size:3.5rem; margin-bottom:15px;">🔒</div>
         <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Akses Keamanan</h3>
         <p id="customPromptMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:20px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
@@ -297,7 +299,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     // ================= MODAL LOGIC ENGINE =================
@@ -514,6 +515,21 @@
         document.getElementById('grid-types').innerHTML = typesHtml;
     }
 
+    function loadGoogleFont(fontFamilyStr) {
+        if(!fontFamilyStr) return;
+        let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
+        const sysFonts = ['Arial', 'Calibri', 'Comic Sans MS', 'Impact', 'Times New Roman'];
+        if(sysFonts.includes(fontName)) return;
+
+        const linkId = `font-${fontName.replace(/\s+/g, '')}`;
+        if(!document.getElementById(linkId)) {
+            const link = document.createElement('link');
+            link.id = linkId; link.rel = 'stylesheet';
+            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700;800&display=swap`;
+            document.head.appendChild(link);
+        }
+    }
+
     function updateFontPreview() {
         const titleFont = document.getElementById('inp-font-title').value;
         const btnFont = document.getElementById('inp-font-btn').value;
@@ -538,7 +554,7 @@
 
     // ================= PIN LOCK FOOTER URL =================
     function unlockFooterUrl() {
-        window.showCustomPrompt("Masukkan PIN Admin (3 Digit) untuk mengubah Link Default BEM:", function(pin) {
+        window.showCustomPrompt("Keamanan Khusus BEM:\nMasukkan PIN Admin (3 Digit) untuk mengubah Link Default BEM:", function(pin) {
             if (pin === "999") {
                 document.getElementById('inp-footer-url').removeAttribute('readonly');
                 window.showCustomAlert("Akses dibuka. Anda dapat mengedit URL Footer.");
@@ -581,7 +597,7 @@
         }
     }
 
-    // ================= LIST MANAGEMENT =================
+    // ================= LIST MANAGEMENT & COPY =================
     async function loadAllLinktrees() {
         const container = document.getElementById('linktree-list-container');
         container.innerHTML = "<div style='text-align:center; padding:50px; color:var(--text-muted);'>Memuat daftar Linktree dari server...</div>";
@@ -655,10 +671,12 @@
 
     // ================= STATE UPDATER & BINDING =================
     function populateEditorForm() {
+        // Tab 1
         document.getElementById('edit-profile-img-preview').src = state.profile.image || '/img/bemfkgumi.png';
         document.getElementById('inp-title').value = state.profile.title || '';
         document.getElementById('inp-bio').value = state.profile.bio || '';
 
+        // Tab 2
         document.getElementById('inp-bg-type').value = state.theme.bgType || 'color';
         document.getElementById('inp-bg-color').value = state.theme.bgColor || '#f8fafc';
         document.getElementById('bg-color-picker').style.display = (state.theme.bgType === 'image') ? 'none' : 'block';
@@ -694,11 +712,13 @@
             checkBorderColorVisibility(state.theme.btnType || 'filled');
         }
 
+        // Tab 3
         document.getElementById('inp-slug').value = state.slug || '';
         document.getElementById('inp-seo-title').value = state.settings.seoTitle || '';
         document.getElementById('inp-footer-text').value = state.settings.footerText || defaultState.settings.footerText;
         document.getElementById('inp-footer-url').value = state.settings.footerUrl || defaultState.settings.footerUrl;
         
+        // Pastikan footer selalu terkunci saat di-load
         document.getElementById('inp-footer-url').setAttribute('readonly', true);
 
         renderLinksEditor();
@@ -914,6 +934,7 @@
         const screen = document.getElementById('live-preview-screen');
         const t = state.theme;
 
+        // Overlay & Background Logic
         if(t.bgType === 'color') {
             screen.style.background = t.bgColor;
             screen.classList.remove('has-bg-image');
@@ -932,14 +953,15 @@
         
         let html = '';
 
-        window.loadDynamicFont(t.fontTitle.split(',')[0].replace(/'/g, "").trim(), 700);
-        window.loadDynamicFont(t.fontButton.split(',')[0].replace(/'/g, "").trim(), 600);
+        loadGoogleFont(t.fontTitle);
+        loadGoogleFont(t.fontButton);
 
         // Profile Section
         html += `<img id="pv-profile-img" src="${state.profile.image || '/img/bemfkgumi.png'}" alt="Profile">`;
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${state.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
+        // Link Buttons Logic (30 TYPES CSS GENERATOR)
         let btnCssObj = `font-family:${t.fontButton}; `;
         let bg = t.btnColor;
         let borderC = t.borderColor || '#0f172a';
@@ -1004,7 +1026,7 @@
             html += `</div>`;
         }
         
-        // Footer Watermark Logic
+        // Footer Watermark Logic (Dinamis dari state)
         const fText = state.settings.footerText || defaultState.settings.footerText;
         const fUrl = state.settings.footerUrl || defaultState.settings.footerUrl;
         
