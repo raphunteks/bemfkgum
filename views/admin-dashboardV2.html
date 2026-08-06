@@ -273,9 +273,11 @@
 
         <!-- ================= TAB 4: SETELAN ================= -->
         <div id="tab-setelan" class="tab-content">
+            <!-- UI CARD 1 (SETELAN) -->
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding:15px 30px; margin-bottom: 30px;">
                 <h2 class="form-title" style="font-size:1.8rem; margin:15px 0 25px 0; border-bottom:1px solid var(--form-border); padding-bottom:15px;">Setelan</h2>
                 
+                <!-- KUIS -->
                 <div class="setting-group" style="padding-top:10px;">
                     <div class="setting-header">
                         <div style="flex:1;">
@@ -288,6 +290,7 @@
                         </div>
                     </div>
 
+                    <!-- SUB PANEL KUIS -->
                     <div id="quizSubPanel" class="accordion-content" style="display:none; margin-top:20px;">
                         <div class="sub-section-title">Rilis Nilai</div>
                         <div class="gf-radio-group" style="gap:10px; margin-bottom: 25px;">
@@ -303,20 +306,32 @@
 
                         <div class="sub-section-title">Setelan Responden</div>
                         <div class="setting-header" style="margin-bottom:15px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Pertanyaan tak terjawab</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Pertanyaan tak terjawab</div>
+                                <div class="setting-desc">Responden dapat melihat pertanyaan yang tidak dijawab dengan benar</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setQuizMissed" class="switch-input" onchange="window.updateSetting('quizShowMissed', this.checked)"><label for="setQuizMissed" class="switch-label"></label></div>
                         </div>
                         <div class="setting-header" style="margin-bottom:15px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Jawaban yang benar</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Jawaban yang benar</div>
+                                <div class="setting-desc">Responden dapat melihat jawaban yang benar setelah nilai dirilis</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setQuizCorrect" class="switch-input" onchange="window.updateSetting('quizShowCorrect', this.checked)"><label for="setQuizCorrect" class="switch-label"></label></div>
                         </div>
                         <div class="setting-header" style="margin-bottom:25px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Nilai poin</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Nilai poin</div>
+                                <div class="setting-desc">Responden dapat melihat poin total dan poin yang diterima untuk setiap jawaban</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setQuizPoints" class="switch-input" onchange="window.updateSetting('quizShowPoints', this.checked)"><label for="setQuizPoints" class="switch-label"></label></div>
                         </div>
+
                         <div class="sub-section-title">Default Kuis Global</div>
                         <div class="setting-header">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Nilai poin pertanyaan default</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Nilai poin pertanyaan default</div>
+                            </div>
                             <div style="display:flex; align-items:center; gap:10px;">
                                 <input type="number" class="gf-input inner-neumorph" id="setQuizDefPoints" style="width:70px; text-align:center;" min="0" onchange="window.updateSetting('quizDefaultPoints', parseInt(this.value))">
                                 <span style="font-weight:600; color:var(--form-text-muted);">poin</span>
@@ -325,41 +340,68 @@
                     </div>
                 </div>
 
+                <!-- ACCORDION: JAWABAN -->
                 <div class="setting-group accordion-wrapper">
                     <div class="setting-header accordion-header" onclick="window.toggleAcc('accJawaban', 'iconJawaban')">
-                        <div style="flex:1; cursor:pointer;"><div class="setting-title">Jawaban</div></div>
+                        <div style="flex:1; cursor:pointer;">
+                            <div class="setting-title">Jawaban</div>
+                            <div class="setting-desc">Mengelola cara respons dikumpulkan dan dilindungi</div>
+                        </div>
                         <span class="acc-icon" id="iconJawaban">▼</span>
                     </div>
+                    
                     <div class="accordion-content" id="accJawaban" style="display:none; margin-top:20px;">
                         <div class="setting-header" style="margin-bottom:20px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Kumpulkan alamat email</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Kumpulkan alamat email</div>
+                            </div>
                             <select class="q-type-select inner-neumorph" id="setCollectEmail" onchange="window.updateSetting('collectEmail', this.value)">
-                                <option value="none">Jangan kumpulkan</option><option value="verified">Telah Diverifikasi</option><option value="input">Input responden</option>
+                                <option value="none">Jangan kumpulkan</option>
+                                <option value="verified">Telah Diverifikasi</option>
+                                <option value="input">Input responden</option>
                             </select>
                         </div>
+
                         <div class="setting-header" style="margin-bottom:20px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Mengirim salinan jawaban responden</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Mengirim salinan jawaban responden</div>
+                                <div class="setting-desc">Setelan Kumpulkan alamat email wajib diaktifkan</div>
+                            </div>
                             <select class="q-type-select inner-neumorph" id="setSendCopy" onchange="window.updateSetting('sendCopy', this.value)">
-                                <option value="none">Nonaktif</option><option value="requested">Jika diminta</option><option value="always">Selalu</option>
+                                <option value="none">Nonaktif</option>
+                                <option value="requested">Jika diminta</option>
+                                <option value="always">Selalu</option>
                             </select>
                         </div>
+
                         <div class="setting-header" style="margin-bottom:25px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Izinkan pengeditan respons</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Izinkan pengeditan respons</div>
+                                <div class="setting-desc">Respons dapat diubah setelah dikirimkan</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setAllowEdit" class="switch-input" onchange="window.updateSetting('editResponse', this.checked)"><label for="setAllowEdit" class="switch-label"></label></div>
                         </div>
+
                         <div class="sub-section-title">Perlu Login</div>
                         <div class="setting-header">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Batasi ke 1 jawaban</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Batasi ke 1 jawaban</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setLimitOne" class="switch-input" onchange="window.updateSetting('limitOne', this.checked)"><label for="setLimitOne" class="switch-label"></label></div>
                         </div>
                     </div>
                 </div>
 
+                <!-- ACCORDION: PRESENTASI -->
                 <div class="setting-group accordion-wrapper" style="border-bottom:none; padding-bottom:0;">
                     <div class="setting-header accordion-header" onclick="window.toggleAcc('accPresentasi', 'iconPresentasi')">
-                        <div style="flex:1; cursor:pointer;"><div class="setting-title">Presentasi</div></div>
+                        <div style="flex:1; cursor:pointer;">
+                            <div class="setting-title">Presentasi</div>
+                            <div class="setting-desc">Mengelola cara formulir dan respons dipresentasikan.</div>
+                        </div>
                         <span class="acc-icon" id="iconPresentasi">▼</span>
                     </div>
+                    
                     <div class="accordion-content" id="accPresentasi" style="display:none; margin-top:20px;">
                         <div class="sub-section-title">Presentasi Formulir</div>
                         <div class="setting-header" style="margin-bottom:15px;">
@@ -370,19 +412,26 @@
                             <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Acak urutan pertanyaan</div></div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setShuffle" class="switch-input" onchange="window.updateSetting('shuffleQuestions', this.checked)"><label for="setShuffle" class="switch-label"></label></div>
                         </div>
+
                         <div class="sub-section-title">Setelah Pengiriman Formulir</div>
                         <div class="setting-header" style="margin-bottom:15px; flex-direction:column; align-items:flex-start;">
-                            <div style="width:100%;"><div class="setting-title" style="font-size:1rem;">Konfirmasi pesan</div></div>
-                            <input type="text" class="gf-input inner-neumorph" id="setConfMsg" style="margin-top:10px; width:100%;" onchange="window.updateSetting('confirmationMessage', this.value)">
+                            <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                                <div class="setting-title" style="font-size:1rem;">Konfirmasi pesan</div>
+                            </div>
+                            <input type="text" class="gf-input inner-neumorph" id="setConfMsg" style="margin-top:10px; width:100%;" onchange="window.updateSetting('confirmationMessage', this.value)" placeholder="Jawaban Anda telah dicatat">
                         </div>
                         <div class="setting-header" style="margin-bottom:15px;">
                             <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Tampilkan link untuk menyerahkan jawaban lain</div></div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setShowSubmitAnother" class="switch-input" onchange="window.updateSetting('showSubmitAnother', this.checked)"><label for="setShowSubmitAnother" class="switch-label"></label></div>
                         </div>
                         <div class="setting-header" style="margin-bottom:25px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Lihat ringkasan hasil</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Lihat ringkasan hasil</div>
+                                <div class="setting-desc">Bagikan ringkasan hasil kepada responden.</div>
+                            </div>
                             <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setShowSummary" class="switch-input" onchange="window.updateSetting('showSummary', this.checked)"><label for="setShowSummary" class="switch-label"></label></div>
                         </div>
+
                         <div class="sub-section-title">Pembatasan</div>
                         <div class="setting-header">
                             <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Nonaktifkan simpan-otomatis untuk semua responden</div></div>
@@ -392,33 +441,60 @@
                 </div>
             </div>
 
+            <!-- UI CARD 2 (DEFAULT) -->
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding:15px 30px;">
                 <h2 class="form-title" style="font-size:1.8rem; margin:15px 0 25px 0; border-bottom:1px solid var(--form-border); padding-bottom:15px;">Default</h2>
+                
+                <!-- ACCORDION: FORMULIR DEFAULT -->
                 <div class="setting-group accordion-wrapper">
                     <div class="setting-header accordion-header" onclick="window.toggleAcc('accFormDefault', 'iconFormDefault')">
-                        <div style="flex:1; cursor:pointer;"><div class="setting-title">Formulir default</div></div>
+                        <div style="flex:1; cursor:pointer;">
+                            <div class="setting-title">Formulir default</div>
+                            <div class="setting-desc">Setelan diterapkan untuk formulir ini dan formulir baru</div>
+                        </div>
                         <span class="acc-icon" id="iconFormDefault">▼</span>
                     </div>
+                    
                     <div class="accordion-content" id="accFormDefault" style="display:none; margin-top:20px;">
                         <div class="setting-header" style="margin-bottom:20px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Status Formulir Publik</div></div>
-                            <div class="toggle-switch neumorph-switch"><input type="checkbox" id="setActive" class="switch-input" onchange="window.updateRootSetting('isActive', this.checked)"><label for="setActive" class="switch-label"></label></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem;">Status Formulir Publik</div>
+                                <div class="setting-desc">Mengizinkan responden mengisi form ini.</div>
+                            </div>
+                            <div class="toggle-switch neumorph-switch">
+                                <input type="checkbox" id="setActive" class="switch-input" onchange="window.updateRootSetting('isActive', this.checked)">
+                                <label for="setActive" class="switch-label"></label>
+                            </div>
                         </div>
+
                         <div class="setting-header" style="margin-bottom:20px;">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem; color:var(--form-active-border);">Custom Link URL (Slug)</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem; color:var(--form-active-border);">Custom Link URL (Slug)</div>
+                                <div class="setting-desc">Ubah akhiran URL formulir Anda agar lebih rapi.</div>
+                            </div>
                             <input type="text" class="gf-input inner-neumorph" id="setSlug" style="width:250px;" onchange="window.updateRootSetting('slug', this.value)">
                         </div>
+
                         <div class="setting-header">
-                            <div style="flex:1;"><div class="setting-title" style="font-size:1rem; color:#eab308;">Batas Waktu Pengisian (Deadline) 📅</div></div>
+                            <div style="flex:1;">
+                                <div class="setting-title" style="font-size:1rem; color:#eab308;">Batas Waktu Pengisian (Deadline) 📅</div>
+                                <div class="setting-desc">Formulir otomatis tertutup pada waktu yang ditentukan.</div>
+                            </div>
                             <input type="datetime-local" class="gf-input inner-neumorph" id="setDeadline" style="width:250px;" onchange="window.updateSetting('deadline', this.value)">
                         </div>
                     </div>
                 </div>
+
+                <!-- ACCORDION: PERTANYAAN DEFAULT -->
                 <div class="setting-group accordion-wrapper" style="border-bottom:none; padding-bottom:0;">
                     <div class="setting-header accordion-header" onclick="window.toggleAcc('accQuestionDefault', 'iconQuestionDefault')">
-                        <div style="flex:1; cursor:pointer;"><div class="setting-title">Pertanyaan default</div></div>
+                        <div style="flex:1; cursor:pointer;">
+                            <div class="setting-title">Pertanyaan default</div>
+                            <div class="setting-desc">Setelan diterapkan untuk semua pertanyaan</div>
+                        </div>
                         <span class="acc-icon" id="iconQuestionDefault">▼</span>
                     </div>
+                    
                     <div class="accordion-content" id="accQuestionDefault" style="display:none; margin-top:20px;">
                         <div class="setting-header">
                             <div style="flex:1;"><div class="setting-title" style="font-size:1rem;">Buat pertanyaan wajib diisi secara default</div></div>
@@ -426,6 +502,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -1598,6 +1675,175 @@
                 });
                 window.customSelectListenerAttached = true;
             }
+        }
+
+        window.getSafeIndices = function() {
+            let s = window.activeSecIdx > -1 ? window.activeSecIdx : 0;
+            if(s >= window.currentForm.sections.length) s = window.currentForm.sections.length - 1;
+            let q = window.activeQIdx > -1 ? window.activeQIdx : window.currentForm.sections[s].questions.length - 1;
+            return { s, q };
+        }
+
+        window.defaultQuestion = () => ({
+            id: 'q_' + window.genId(), type: 'pilihan_ganda', title: 'Pertanyaan', description: '',
+            required: window.currentForm.settings.defaultRequired || false, options: ['Opsi 1']
+        });
+
+        window.addQuestion = function() {
+            const { s, q } = window.getSafeIndices();
+            const newQ = window.defaultQuestion();
+            window.currentForm.sections[s].questions.splice(q + 1, 0, newQ);
+            window.activeQIdx = q + 1; window.debouncedSaveState(); window.renderBuilder();
+        }
+
+        window.duplicateQuestion = function(sIdx, qIdx) {
+            const qToCopy = window.currentForm.sections[sIdx].questions[qIdx];
+            const newQ = JSON.parse(JSON.stringify(qToCopy));
+            newQ.id = 'q_' + window.genId(); 
+            window.currentForm.sections[sIdx].questions.splice(qIdx + 1, 0, newQ);
+            window.activeQIdx = qIdx + 1; window.debouncedSaveState(); window.renderBuilder();
+        }
+
+        window.deleteQuestion = function(sIdx, qIdx) {
+            window.currentForm.sections[sIdx].questions.splice(qIdx, 1);
+            if(window.activeQIdx >= window.currentForm.sections[sIdx].questions.length) { window.activeQIdx = window.currentForm.sections[sIdx].questions.length - 1; }
+            window.debouncedSaveState(); window.renderBuilder();
+        }
+
+        window.addSection = function() {
+            const newSec = {
+                id: 's_' + window.genId(), stepName: `Tahap ${window.currentForm.sections.length + 1}`, title: 'Bagian Tanpa Judul', description: '', questions: [window.defaultQuestion()]
+            };
+            window.currentForm.sections.splice(window.activeSecIdx + 1, 0, newSec);
+            window.activeSecIdx++; window.activeQIdx = 0; window.debouncedSaveState(); window.renderBuilder();
+        }
+
+        window.deleteSection = function(sIdx) {
+            if(window.currentForm.sections.length <= 1) return window.showToast("Minimal harus ada 1 bagian (section).");
+            window.currentForm.sections.splice(sIdx, 1);
+            if(window.activeSecIdx >= window.currentForm.sections.length) { window.activeSecIdx = window.currentForm.sections.length - 1; }
+            window.activeQIdx = -1; window.debouncedSaveState(); window.renderBuilder();
+        }
+
+        window.addTitleDesc = function() {
+            const { s, q } = window.getSafeIndices();
+            const newQ = { id: 'q_' + window.genId(), type: 'title_only', title: 'Judul Teks', image: '' };
+            window.currentForm.sections[s].questions.splice(q + 1, 0, newQ);
+            window.activeQIdx = q + 1; window.debouncedSaveState(); window.renderBuilder();
+        }
+
+        window.addOption = function(sIdx, qIdx) {
+            window.currentForm.sections[sIdx].questions[qIdx].options.push(`Opsi ${window.currentForm.sections[sIdx].questions[qIdx].options.length + 1}`);
+            window.debouncedSaveState(); window.renderBuilder();
+        }
+
+        window.deleteOption = function(sIdx, qIdx, oIdx) {
+            if(window.currentForm.sections[sIdx].questions[qIdx].options.length <= 1) return;
+            window.currentForm.sections[sIdx].questions[qIdx].options.splice(oIdx, 1);
+            window.debouncedSaveState(); window.renderBuilder();
+        }
+
+        window.changeQType = function(sIdx, qIdx, newType) {
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
+            q.type = newType;
+            
+            if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(newType)) {
+                if(!q.options || q.options.length === 0) q.options = ['Opsi 1'];
+            }
+            if(['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(newType)) {
+                if(!q.rows) q.rows = ['Baris 1']; if(!q.columns) q.columns = ['Kolom 1'];
+            }
+            if(newType === 'upload_file') {
+                if(!q.maxFiles) q.maxFiles = 1; if(!q.maxSize) q.maxSize = '10 MB';
+            }
+            if(newType === 'skala_linier') {
+                if(q.scaleMin === undefined) q.scaleMin = 1; if(!q.scaleMax) q.scaleMax = 5;
+            }
+            if(newType === 'rating') {
+                if(!q.ratingLevels) q.ratingLevels = 5;
+            }
+            window.debouncedSaveState(); window.renderBuilder();
+        }
+        
+        window.addGridRow = function(sIdx, qIdx) { window.currentForm.sections[sIdx].questions[qIdx].rows.push(`Baris ${window.currentForm.sections[sIdx].questions[qIdx].rows.length + 1}`); window.debouncedSaveState(); window.renderBuilder(); }
+        window.removeGridRow = function(sIdx, qIdx, rIdx) { if(window.currentForm.sections[sIdx].questions[qIdx].rows.length <= 1) return; window.currentForm.sections[sIdx].questions[qIdx].rows.splice(rIdx, 1); window.debouncedSaveState(); window.renderBuilder(); }
+        window.addGridCol = function(sIdx, qIdx) { window.currentForm.sections[sIdx].questions[qIdx].columns.push(`Kolom ${window.currentForm.sections[sIdx].questions[qIdx].columns.length + 1}`); window.debouncedSaveState(); window.renderBuilder(); }
+        window.removeGridCol = function(sIdx, qIdx, cIdx) { if(window.currentForm.sections[sIdx].questions[qIdx].columns.length <= 1) return; window.currentForm.sections[sIdx].questions[qIdx].columns.splice(cIdx, 1); window.debouncedSaveState(); window.renderBuilder(); }
+
+        window.updateRootSetting = function(key, value) { window.currentForm[key] = value; window.debouncedSaveState(); }
+        window.updateSetting = function(key, value) { window.currentForm.settings[key] = value; window.debouncedSaveState(); }
+        window.toggleQuizPanel = function(show) { document.getElementById('quizSubPanel').style.display = show ? 'block' : 'none'; }
+        window.toggleAcc = function(contentId, iconId) {
+            const content = document.getElementById(contentId); const icon = document.getElementById(iconId);
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.style.transform = 'rotate(180deg)'; } 
+            else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; }
+        }
+        
+        window.renderSettings = function() {
+            if(!window.currentForm) return;
+            const s = window.currentForm.settings;
+            document.getElementById('setIsQuiz').checked = s.isQuiz;
+            window.toggleQuizPanel(s.isQuiz);
+            
+            if(s.quizRelease) {
+                const el = document.querySelector(`input[name="quizRelease"][value="${s.quizRelease}"]`);
+                if(el) el.checked = true;
+            }
+            document.getElementById('setQuizMissed').checked = s.quizShowMissed;
+            document.getElementById('setQuizCorrect').checked = s.quizShowCorrect;
+            document.getElementById('setQuizPoints').checked = s.quizShowPoints;
+            document.getElementById('setQuizDefPoints').value = s.quizDefaultPoints || 0;
+            
+            document.getElementById('setCollectEmail').value = s.collectEmail || 'none';
+            document.getElementById('setSendCopy').value = s.sendCopy || 'none';
+            document.getElementById('setAllowEdit').checked = s.editResponse;
+            document.getElementById('setLimitOne').checked = s.limitOne;
+            
+            document.getElementById('setShowProgress').checked = s.showProgress;
+            document.getElementById('setShuffle').checked = s.shuffleQuestions;
+            document.getElementById('setConfMsg').value = s.confirmationMessage || '';
+            document.getElementById('setShowSubmitAnother').checked = s.showSubmitAnother;
+            document.getElementById('setShowSummary').checked = s.showSummary;
+            document.getElementById('setDisableAutoSave').checked = s.disableAutoSave;
+            
+            document.getElementById('setActive').checked = window.currentForm.isActive;
+            document.getElementById('setSlug').value = window.currentForm.slug || '';
+            if(s.deadline) {
+                const d = new Date(s.deadline);
+                if(!isNaN(d.getTime())) {
+                    const pad = n => n < 10 ? '0'+n : n;
+                    const fmt = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                    document.getElementById('setDeadline').value = fmt;
+                }
+            } else { document.getElementById('setDeadline').value = ''; }
+            
+            document.getElementById('setDefaultRequired').checked = s.defaultRequired;
+
+            try { window.initCustomSelects(); } catch(e){} 
+        }
+
+        window.toggleAllowedFileType = function(sIdx, qIdx, ftId, isChecked) {
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
+            if (!q.allowedFileTypes) q.allowedFileTypes = [];
+            if (isChecked) { if (!q.allowedFileTypes.includes(ftId)) q.allowedFileTypes.push(ftId); } 
+            else { q.allowedFileTypes = q.allowedFileTypes.filter(id => id !== ftId); }
+            window.debouncedSaveState();
+        };
+
+        window.openFeedbackModal = function(sIdx, qIdx) {
+            window.activeFeedbackSIdx = sIdx; window.activeFeedbackQIdx = qIdx;
+            let q = window.currentForm.sections[sIdx].questions[qIdx];
+            document.getElementById('feedbackInput').value = q.feedback || '';
+            document.getElementById('feedbackModal').style.display = 'flex';
+        }
+        window.closeFeedbackModal = function() { document.getElementById('feedbackModal').style.display = 'none'; }
+        window.saveFeedback = function() {
+            if (window.activeFeedbackSIdx > -1 && window.activeFeedbackQIdx > -1) {
+                let val = document.getElementById('feedbackInput').value;
+                window.currentForm.sections[window.activeFeedbackSIdx].questions[window.activeFeedbackQIdx].feedback = val;
+                window.debouncedSaveState(); window.renderBuilder();
+            }
+            window.closeFeedbackModal();
         }
 
         window.renderBuilder = function() {
