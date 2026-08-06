@@ -36,11 +36,30 @@ body::before {
 
 @keyframes drift { to { transform: translate(10vw, 10vh); } }
 
-/* Split Screen Layout */
+/* CSS UNTUK DAFTAR LINKTREE LIST */
+.list-linktree-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--outer-neumorph);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    transition: 0.3s;
+}
+.list-linktree-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+
+/* Split Screen Layout (List Mode vs Editor Mode) */
 .builder-layout {
     display: flex;
     height: 100vh;
     overflow: hidden;
+    transition: 0.4s ease;
 }
 
 /* Kiri: Editor Panel */
@@ -50,7 +69,12 @@ body::before {
     overflow-y: auto;
     padding: 30px 40px;
     box-sizing: border-box;
+    transition: width 0.4s ease;
 }
+
+/* Jika List Mode Aktif, Kiri 100%, Kanan 0% */
+.builder-layout.list-mode .editor-panel { width: 100%; max-width: 1000px; margin: 0 auto; }
+.builder-layout.list-mode .preview-panel { display: none; }
 
 /* Kanan: Live Preview Panel */
 .preview-panel {
@@ -63,6 +87,7 @@ body::before {
     justify-content: center;
     position: relative;
     backdrop-filter: blur(10px);
+    transition: width 0.4s ease;
 }
 
 /* Glassmorphism Cards */
@@ -77,7 +102,7 @@ body::before {
 }
 
 /* Tabs */
-.tabs-wrapper { display: flex; gap: 15px; margin-bottom: 30px; }
+.tabs-wrapper { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;}
 .tab-btn {
     padding: 12px 25px; font-weight: 700; color: var(--text-muted); cursor: pointer;
     border-radius: 12px; transition: 0.3s;
@@ -106,8 +131,9 @@ body::before {
     box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--primary-glow); }
-.btn-danger { background: #ef4444; color: #fff; border:none; padding: 8px 15px; border-radius: 8px; cursor: pointer;}
-.btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 12px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+.btn-danger { background: #ef4444; color: #fff; border:none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 700;}
+.btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; transition:0.3s;}
+.btn-outline:hover { background: var(--primary); color: white;}
 
 /* Link Item Dragable */
 .link-item {
@@ -170,7 +196,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .pv-btn {
     display: flex; align-items: center; justify-content: center; width: 100%;
     padding: 16px 20px; font-size: 1rem; text-align: center; text-decoration: none;
-    transition: transform 0.2s; position: relative; overflow: hidden;
+    transition: transform 0.2s; position: relative; overflow: hidden; box-sizing: border-box;
 }
 .pv-btn:hover { transform: scale(1.02); }
 
@@ -181,12 +207,36 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Styles will be injected via JS logic into inline style for Fill/Outline/Neumorph */
 
-#pv-socials { display: flex; justify-content: center; gap: 15px; margin-top: 30px; }
+#pv-socials { display: flex; justify-content: center; gap: 15px; margin-top: 30px; flex-wrap: wrap;}
 .pv-social-icon { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.2rem; transition: 0.2s; text-decoration: none;}
 .pv-social-icon:hover { transform: scale(1.1); }
+
+/* ================== PUBLIC LINKTREE STYLES (FULL SCREEN) ================== */
+.public-linktree-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 50px 20px;
+    box-sizing: border-box;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    transition: all 0.4s ease;
+}
+
+.public-container {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    animation: fadeIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
 @media (max-width: 992px) {
     .builder-layout { flex-direction: column; overflow: auto;}
     .editor-panel { width: 100%; min-height: 100vh; }
     .preview-panel { width: 100%; padding: 50px 0; border-top: 2px solid var(--border-color); border-left: none; }
+    
+    /* Ketika list mode mobile, tetap block */
+    .builder-layout.list-mode .preview-panel { display: none; }
 }
