@@ -13,7 +13,9 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-// Routing Static Files
+// Routing Static Files & Favicon
+app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
+app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/img', express.static(path.join(__dirname, 'public/img')));
@@ -45,11 +47,44 @@ const safeParse = (data, fallbackData) => {
     }
 };
 
-// ================= RUTE FRONTEND =================
+// ================= RUTE FRONTEND ADMIN =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
 
-// MENGARAH KE FILE BARU (BEM-LINKTREE.HTML)
-app.get('/link/:slug', (req, res) => res.render('bem-linktree', { slug: req.params.slug }));
+// ================= RUTE FRONTEND PUBLIK DENGAN SSR SEO =================
+app.get('/link/:slug', async (req, res) => {
+    const slug = req.params.slug;
+    
+    // Default SEO Fallback
+    let seoData = {
+        title: 'BEM KBMFKG UMI - Linktree',
+        desc: 'Tautan resmi dan informasi terbaru dari BEM KBMFKG UMI.',
+        image: 'https://bemkbmfkgumi.com/img/bemfkgumi.png',
+        url: `https://bemkbmfkgumi.com/link/${slug}`
+    };
+
+    // Ekstrak Data dari Redis untuk Injeksi Meta Tag (Gold Standard SEO)
+    try {
+        if(redis) {
+            const trees = await redis.hgetall('BEM_Linktrees') || {};
+            const treeArr = Object.values(trees).map(item => safeParse(item, {}));
+            const tree = treeArr.find(t => t.slug === slug);
+            
+            if(tree) {
+                seoData.title = tree.settings?.seoTitle || tree.profile?.title || seoData.title;
+                seoData.desc = tree.profile?.bio || seoData.desc;
+                // Pastikan image URL absolut jika menggunakan path lokal
+                let img = tree.profile?.image || seoData.image;
+                if(img.startsWith('/')) img = `https://bemkbmfkgumi.com${img}`;
+                seoData.image = img;
+            }
+        }
+    } catch(e) {
+        console.error("Gagal memuat SSR SEO:", e);
+    }
+
+    // Render EJS HTML dan lemparkan variabel seoData ke dalamnya
+    res.render('bem-linktree', { slug: slug, seo: seoData });
+});
 
 
 // ================= ENDPOINT API UPLOAD =================
@@ -127,13 +162,12 @@ app.post('/api/linktrees/save', async (req, res) => {
         payload.slug = payload.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/(^-|-$)+/g, '');
         if(!payload.id) payload.id = `LNK-${Date.now()}`;
         
-        // PENGAMANAN: Pastikan slug unik agar tidak tabrakan dengan linktree lain
         const trees = await redis.hgetall('BEM_Linktrees') || {};
         const treeArr = Object.values(trees).map(item => safeParse(item, {}));
         const isSlugTaken = treeArr.some(t => t.slug === payload.slug && t.id !== payload.id);
         
         if(isSlugTaken) {
-            payload.slug = payload.slug + '-' + Math.floor(Math.random() * 1000); // Auto-append angka jika duplikat
+            payload.slug = payload.slug + '-' + Math.floor(Math.random() * 1000); 
         }
         
         await redis.hset('BEM_Linktrees', { [payload.id]: JSON.stringify(payload) });
