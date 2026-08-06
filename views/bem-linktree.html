@@ -4,18 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- GOLD STANDARD SEO (Server-Side Rendered by EJS) -->
+    <!-- GOLD STANDARD SEO (Server-Side Rendered by EJS + Advanced Meta Tags) -->
     <title><%= seo.title %></title>
     <meta name="description" content="<%= seo.desc %>">
-    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="BEM FKG UMI, Linktree BEM UMI, Profil BEM FKG UMI, Tautan Resmi BEM, Organisasi Mahasiswa FKG UMI">
+    <meta name="author" content="BEM KBMFKG UMI">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="<%= seo.url %>">
     
     <!-- Open Graph for Facebook/WhatsApp -->
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
     <meta property="og:title" content="<%= seo.title %>">
     <meta property="og:description" content="<%= seo.desc %>">
     <meta property="og:image" content="<%= seo.image %>">
+    <meta property="og:image:alt" content="Logo / Profil BEM KBMFKG UMI">
     <meta property="og:url" content="<%= seo.url %>">
-    <meta property="og:type" content="website">
     
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
@@ -64,7 +68,6 @@
         'gift': '<polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>',
         'coffee': '<path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line>',
         'mic': '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line>',
-        // More typical UI icons
         'home': '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>',
         'search': '<circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>',
         'settings': '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>',
@@ -153,7 +156,7 @@
                 link.id = linkId; link.rel = 'stylesheet';
                 link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700;800&display=swap`;
                 document.head.appendChild(link);
-            } catch(e){}
+            } catch(e) {}
         }
     }
 
@@ -242,7 +245,6 @@
         if(data.links && Array.isArray(data.links)) {
             data.links.forEach(l => {
                 if(l.active) {
-                    // FIX: Gunakan class pv-link-icon dgn error handler untuk gambar
                     let renderIcon = '';
                     if(l.icon) {
                         if(l.icon.startsWith('svg:')) {
@@ -257,7 +259,7 @@
 
                     html += `<a href="${l.url || '#'}" target="_blank" class="pv-btn btn-shape-${t.btnShape}" style="${btnCssObj}">
                                 ${renderIcon}
-                                <span style="flex:1;">${l.title || 'Untitled Link'}</span>
+                                <span style="flex:1; text-align:center;">${l.title || 'Untitled Link'}</span>
                              </a>`;
                 }
             });
@@ -284,12 +286,92 @@
         // Footer Watermark Logic 
         const fText = data.settings?.footerText || "Powered by BEM KBMFKG UMI (Dept. Infocom)";
         const fUrl = data.settings?.footerUrl || "https://www.bemkbmfkgumi.com/ourteam";
-
+        
         html += `<div style="text-align:center; margin-top:80px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton}; padding-bottom:30px;">
                     <a href="${fUrl}" target="_blank" style="color:${t.textColor}; text-decoration:none;">${fText}</a>
                  </div>`;
 
         screen.innerHTML = html;
+
+        // ================= DYNAMIC SEO JSON-LD INJECTION (GOLD STANDARD GSC) =================
+        const pageUrl = window.location.href;
+        const orgName = "BEM KBMFKG UMI";
+        
+        const existingSchema = document.getElementById('dynamic-schema');
+        if(existingSchema) existingSchema.remove();
+
+        let sitelinks = [];
+        if(data.links && Array.isArray(data.links)) {
+            let pos = 1;
+            data.links.forEach(l => {
+                if(l.active && l.url) {
+                    sitelinks.push({
+                        "@type": "SiteNavigationElement",
+                        "position": pos++,
+                        "name": l.title || "Tautan",
+                        "url": l.url
+                    });
+                }
+            });
+        }
+
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "ProfilePage",
+                    "@id": `${pageUrl}#webpage`,
+                    "url": pageUrl,
+                    "name": data.settings?.seoTitle || data.profile?.title || orgName,
+                    "description": data.profile?.bio || "Tautan resmi BEM KBMFKG UMI",
+                    "inLanguage": "id-ID",
+                    "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
+                },
+                {
+                    "@type": "Organization",
+                    "@id": "https://bemkbmfkgumi.com/#organization",
+                    "name": orgName,
+                    "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+                    "url": "https://bemkbmfkgumi.com/",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Beranda",
+                            "item": "https://bemkbmfkgumi.com/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": data.profile?.title || "Profil Link",
+                            "item": pageUrl
+                        }
+                    ]
+                }
+            ]
+        };
+
+        if(sitelinks.length > 0) {
+            schemaData["@graph"].push({
+                "@type": "ItemList",
+                "@id": `${pageUrl}#sitelinks`,
+                "name": "Tautan Profil",
+                "itemListElement": sitelinks
+            });
+        }
+
+        let scriptSchema = document.createElement('script');
+        scriptSchema.type = "application/ld+json";
+        scriptSchema.id = "dynamic-schema";
+        scriptSchema.text = JSON.stringify(schemaData);
+        document.head.appendChild(scriptSchema);
     }
 </script>
 
