@@ -162,7 +162,7 @@ const defaultFilosofi = {
     logo: [
         { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
         { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." },
-        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan dosis salah ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
+        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan শারীরিক ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
         { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah yang ada." },
         { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." },
         { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." },
@@ -259,7 +259,7 @@ app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
 app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.slug }));
 
 // ============================================================================
-// SUPER BIG UPGRADE: API SYSTEM UPLOAD FILE REALTIME DENGAN SMART NAMING
+// SUPER BIG UPGRADE: API SYSTEM UPLOAD FILE REALTIME (REDIS BACKED)
 // ============================================================================
 
 // POST Endpoint Untuk Upload File dari Form BEM
@@ -276,35 +276,17 @@ app.post('/api/upload', async (req, res) => {
             console.warn(`⚠️ Peringatan Kapasitas: File ${filename} mendekati/melebihi batas Upstash 1MB. (Size: ${sizeInBytes} bytes)`);
         }
 
-        // Membersihkan nama file agar SEO friendly
+        // Membersihkan nama file
         let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
         
-        // UPGRADE: SMART UNIQUE NAMING ALGORITHM
-        // Pisahkan nama dasar dan ekstensinya
-        const extIndex = safeName.lastIndexOf('.');
-        let baseName = safeName;
-        let ext = '';
+        // UPGRADE: Hilangkan "FILE-ID" folder structure, ganti nama filenya agar unique dengan timestamp
+        const uniqueFilename = `${Date.now()}-${safeName}`;
         
-        // Memastikan ekstensi file ditemukan dan bukan file tersembunyi seperti ".env"
-        if (extIndex !== -1 && extIndex !== 0) {
-            baseName = safeName.substring(0, extIndex);
-            ext = safeName.substring(extIndex);
-        }
-
-        let finalFilename = safeName;
-        let counter = 1;
+        // Simpan File ke Redis menggunakan `uniqueFilename` langsung sebagai Key-nya
+        await redis.hset('BEM_Files', { [uniqueFilename]: JSON.stringify({ filename: safeName, data: base64 }) });
         
-        // Logika Pintar: Hanya jika nama file sudah ada di Redis, kita akan beri angka -1, -2, dst
-        while (await redis.hexists('BEM_Files', finalFilename)) {
-            finalFilename = `${baseName}-${counter}${ext}`;
-            counter++;
-        }
-        
-        // Simpan File ke Redis menggunakan nama file final yang cantik dan aman
-        await redis.hset('BEM_Files', { [finalFilename]: JSON.stringify({ filename: finalFilename, data: base64 }) });
-        
-        // URL Sangat Bersih -> /api/uploads/nama-file.jpg
-        const fileUrl = `/api/uploads/${finalFilename}`;
+        // URL Sederhana & Bersih -> /api/uploads/123456789-namafile.jpg
+        const fileUrl = `/api/uploads/${uniqueFilename}`;
         res.status(200).json({ success: true, url: fileUrl });
     } catch (e) {
         console.error(e);
@@ -312,16 +294,17 @@ app.post('/api/upload', async (req, res) => {
     }
 });
 
-// GET Endpoint Untuk Menampilkan/Download File
+// GET Endpoint Untuk Menampilkan/Download File (URL BERSIH 1 TINGKAT)
 app.get('/api/uploads/:filename', async (req, res) => {
     try {
         if(!redis) return res.status(503).send("Server Storage Offline");
         
-        // Mencari file berdasarkan Key filename
+        // Mencari file berdasarkan Key filename yang langsung masuk
         const fileDataStr = await redis.hget('BEM_Files', req.params.filename);
         
         if(!fileDataStr) return res.status(404).send("File tidak ditemukan.");
         
+        // BUG FIX UTAMA: Gunakan safeParse agar tidak crash
         const fileObj = safeParse(fileDataStr, null);
         if(!fileObj || !fileObj.data) return res.status(400).send("Data file korup.");
         
@@ -342,6 +325,7 @@ app.get('/api/uploads/:filename', async (req, res) => {
         
         // Header tambahan untuk download jika bukan gambar
         if(!mimeType.startsWith('image/')) {
+            // Gunakan fileObj.filename (nama asli tanpa timestamp) agar saat diunduh namanya rapi
             res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename}"`);
         }
         res.send(buffer);
