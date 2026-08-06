@@ -30,7 +30,7 @@ const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E
 let redis = null;
 try {
     redis = new Redis({ url: redisUrl, token: redisToken });
-    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi (V2).");
+    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi (V2 - Linktree API).");
 } catch (error) {
     console.error("⚠️ Peringatan: Redis gagal inisiasi.", error.message);
 }
@@ -47,7 +47,10 @@ const safeParse = (data, fallbackData) => {
 
 // ================= RUTE FRONTEND =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
-app.get('/link/:slug', (req, res) => res.render('public-linktree', { slug: req.params.slug }));
+
+// MENGARAH KE FILE BARU (BEM-LINKTREE.HTML)
+app.get('/link/:slug', (req, res) => res.render('bem-linktree', { slug: req.params.slug }));
+
 
 // ================= ENDPOINT API UPLOAD =================
 app.post('/api/upload', async (req, res) => {
@@ -121,11 +124,20 @@ app.post('/api/linktrees/save', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const payload = req.body;
         
-        payload.slug = payload.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        payload.slug = payload.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/(^-|-$)+/g, '');
         if(!payload.id) payload.id = `LNK-${Date.now()}`;
         
+        // PENGAMANAN: Pastikan slug unik agar tidak tabrakan dengan linktree lain
+        const trees = await redis.hgetall('BEM_Linktrees') || {};
+        const treeArr = Object.values(trees).map(item => safeParse(item, {}));
+        const isSlugTaken = treeArr.some(t => t.slug === payload.slug && t.id !== payload.id);
+        
+        if(isSlugTaken) {
+            payload.slug = payload.slug + '-' + Math.floor(Math.random() * 1000); // Auto-append angka jika duplikat
+        }
+        
         await redis.hset('BEM_Linktrees', { [payload.id]: JSON.stringify(payload) });
-        res.status(200).json({ success: true, message: "Linktree disimpan!", id: payload.id });
+        res.status(200).json({ success: true, message: "Linktree disimpan!", data: payload });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
@@ -138,4 +150,4 @@ app.delete('/api/linktrees/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Backend Server V2 (Linktree) berjalan di port ${PORT}`));
+app.listen(PORT, () => console.log(`Backend Server V2 (Linktree API) berjalan di port ${PORT}`));
