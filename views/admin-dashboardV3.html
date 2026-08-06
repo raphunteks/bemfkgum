@@ -6,7 +6,7 @@
     <title>BEM-Linktree Builder V3</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- Load Google Fonts Awal -->
+    <!-- Load Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -15,24 +15,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <link rel="stylesheet" href="/css/mainV3.css">
     
-    <style>
-        /* FIX ICON KIRI PADA PANEL EDITOR */
-        .link-icon-thumbnail {
-            width: 45px !important;
-            height: 45px !important;
-            border-radius: 50% !important;
-            object-fit: cover !important;
-            flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            border: 2px solid rgba(255,255,255,0.4);
-        }
-        .link-icon-thumbnail.svg-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-        }
-    </style>
 </head>
 <body>
 
@@ -78,9 +60,9 @@
                 <div style="display:flex; gap:25px; align-items:center; margin-bottom:25px;">
                     <img id="edit-profile-img-preview" src="/img/bemfkgumi.png" style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid var(--primary); box-shadow:var(--outer-neumorph);">
                     <div style="flex:1;">
-                        <input type="file" id="upload-profile-img" accept="image/*,.heic,.jpeg,.png,.jpg,.webp" style="display:none;" onchange="handleImageUpload(this, 'profile')">
+                        <input type="file" id="upload-profile-img" accept="image/*" style="display:none;" onchange="handleImageUpload(this, 'profile')">
                         <button class="btn-outline" onclick="document.getElementById('upload-profile-img').click()">Ubah Foto Profil</button>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin:8px 0 0;">Format: JPG, PNG, WEBP, HEIC. Max 5MB.</p>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin:8px 0 0;">Format Gambar Bebas (JPG, PNG, dll). Max 5MB.</p>
                     </div>
                 </div>
                 <div class="input-group">
@@ -137,7 +119,7 @@
                             <span style="font-size:1.5rem; opacity:0.5;">🖼️</span>
                         </div>
                         <div style="flex:1;">
-                            <input type="file" id="upload-bg-img" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'bg')">
+                            <input type="file" id="upload-bg-img" accept="image/*" style="display:none;" onchange="handleImageUpload(this, 'bg')">
                             <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper Baru</button>
                             <button class="btn-danger" style="width:100%; padding:10px; background:#ef4444;" onclick="removeBgImage()" title="Hapus Gambar">🗑️ Hapus Gambar</button>
                         </div>
@@ -172,7 +154,6 @@
                     <input type="color" id="inp-btn-color" oninput="updateState('theme', 'btnColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
                 </div>
                 
-                <!-- Otomatis Muncul via JS jika tipe membutuhkan Border -->
                 <div class="input-group" id="border-color-wrapper" style="display:none;">
                     <label class="input-label">Warna Tombol Border (Khusus Outline/Shadow)</label>
                     <input type="color" id="inp-border-color" oninput="updateState('theme', 'borderColor', this.value)" style="width:100%; height:60px; border-radius:16px; cursor:pointer; border:none; padding:0;">
@@ -275,7 +256,7 @@
         </div>
         
         <div style="margin-bottom:20px;">
-            <input type="file" id="upload-link-icon" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'link-icon')">
+            <input type="file" id="upload-link-icon" accept="image/*" style="display:none;" onchange="handleImageUpload(this, 'link-icon')">
             <button class="btn-primary" style="width:100%;" onclick="document.getElementById('upload-link-icon').click()">🖼️ Upload Gambar Sendiri</button>
             <button class="btn-outline" style="width:100%; margin-top:10px; border-color:#ef4444; color:#ef4444;" onclick="selectIcon('')">🗑️ Hapus Ikon</button>
         </div>
@@ -334,14 +315,13 @@
     </div>
 </div>
 
-<!-- CUSTOM PROMPT MODAL (FOR PIN SECURITY - FIX CSS MASKING) -->
+<!-- CUSTOM PROMPT MODAL (FOR PIN SECURITY) -->
 <div id="customPromptModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10004; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
     <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
         <div style="font-size:3.5rem; margin-bottom:15px;">🔒</div>
         <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Akses Keamanan</h3>
         <p id="customPromptMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:20px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
-        <!-- FIX: Menggunakan input tipe text dengan mask CSS (agar Browser Manager Password Chrome tidak muncul) -->
-        <input type="text" id="customPromptInput" class="gf-input pin-input-secure" style="text-align:center; font-size:1.5rem; letter-spacing:5px; font-weight:bold; margin-bottom:25px; font-family:'Space Mono', monospace;" placeholder="***" maxlength="3" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other">
+        <input type="password" id="customPromptInput" class="gf-input" style="text-align:center; font-size:1.5rem; letter-spacing:5px; font-weight:bold; margin-bottom:25px; font-family:'Space Mono', monospace;" placeholder="***" maxlength="3">
         <div style="display:flex; gap:10px;">
             <button class="btn-outline" style="flex:1; font-family:'Plus Jakarta Sans', sans-serif;" onclick="closeCustomPrompt(false)">Batal</button>
             <button class="btn-primary" style="flex:1; font-family:'Plus Jakarta Sans', sans-serif;" onclick="closeCustomPrompt(true)">Verifikasi</button>
@@ -542,6 +522,32 @@
         'facebook': '<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>'
     };
 
+    function getTemplateCSS(tplName) {
+        switch(tplName) {
+            case 'grid-light': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);`;
+            case 'grid-dark': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);`;
+            case 'polka-light': return `background-image: radial-gradient(rgba(0,0,0,0.1) 2px, transparent 2px); background-size: 20px 20px;`;
+            case 'polka-dark': return `background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px); background-size: 20px 20px;`;
+            case 'diagonal-light': return `background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 10px, transparent 10px, transparent 20px);`;
+            case 'diagonal-dark': return `background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 10px, transparent 10px, transparent 20px);`;
+            case 'checkerboard': return `background-image: linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)); background-size: 20px 20px; background-position: 0 0, 10px 10px;`;
+            case 'zigzag': return `background: linear-gradient(135deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(225deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(315deg, rgba(0,0,0,0.05) 25%, transparent 25%), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%); background-size: 40px 40px;`;
+            case 'wave-light': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px;`;
+            case 'wave-dark': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px;`;
+            case 'topography': return `background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.05) 10px, transparent 11px, transparent 20px);`;
+            case 'memphis': return `background-image: radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%), radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px;`;
+            case 'circuit': return `background-image: radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px;`;
+            case 'starry': return `background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px); background-size: 90px 90px; background-position: 0 0, 45px 45px;`;
+            case 'hexagons': return `background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(rgba(0,0,0,0.05) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, rgba(0,0,0,0.05) 2px, transparent 2px) -1px 0; background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;`;
+            case 'clouds': return `background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 50%); background-size: 100px 100px;`;
+            case 'mesh-1': return `background-image: radial-gradient(at 40% 20%, rgba(255,100,100,0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(100,255,100,0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(100,100,255,0.3) 0px, transparent 50%);`;
+            case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.3) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.3) 0px, transparent 50%);`;
+            case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(0,0,255,0.1)); filter: contrast(1.5);`;
+            case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,0,0.1), rgba(255,0,255,0.1));`;
+            default: return '';
+        }
+    }
+
     // ================= GLOBAL STATE =================
     let allLinktrees = [];
     
@@ -578,6 +584,7 @@
     };
 
     let state = JSON.parse(JSON.stringify(defaultState));
+    let activeIconLinkId = null;
 
     // ================= LIFECYCLE =================
     window.onload = () => {
@@ -792,6 +799,7 @@
 
     // ================= STATE UPDATER & BINDING =================
     function populateEditorForm() {
+        // Tab 1
         document.getElementById('edit-profile-img-preview').src = state.profile.image || '/img/bemfkgumi.png';
         document.getElementById('inp-title').value = state.profile.title || '';
         document.getElementById('inp-bio').value = state.profile.bio || '';
@@ -887,22 +895,14 @@
     }
 
     function selectBgTemplate(val) {
-        // FIX: Otomatis ubah dropdown ke tipe Template dan refresh state
-        state.theme.bgType = 'template';
-        document.getElementById('inp-bg-type').value = 'template';
-        document.getElementById('bg-color-picker').style.display = 'block';
-        document.getElementById('bg-image-picker').style.display = 'none';
-        document.getElementById('bg-template-picker').style.display = 'block';
-
         state.theme.bgTemplate = val;
         document.querySelectorAll('.btn-template-sel').forEach(el => el.classList.remove('active'));
         let tplEl = document.querySelector(`.btn-template-sel[data-val="${val}"]`);
         if(tplEl) tplEl.classList.add('active');
-        
         renderLivePreview();
     }
 
-    // ================= MAIN LINKS MANAGEMENT =================
+    // ================= MAIN LINKS MANAGEMENT & ICON PICKER =================
     function genId() { return Math.random().toString(36).substr(2, 9); }
 
     function addLink() {
@@ -950,23 +950,23 @@
         let html = '';
         state.links.forEach(l => {
             
-            // FIX: Menggunakan class link-icon-thumbnail dan fallback image agar presisi 
-            let iconPreviewHtml = `<div class="link-icon-thumbnail" style="background:rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; border:1px dashed var(--border-color); margin-bottom:10px;"><span style="font-size:1.2rem; opacity:0.5;">🖼️</span></div>`;
+            // Tampilan Icon/Gambar di dalam Editor
+            let iconPreviewHtml = `<div style="width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; border:1px dashed var(--border-color); margin-right:15px;"><span style="font-size:1.2rem; opacity:0.5;">🖼️</span></div>`;
             if(l.icon) {
                 if(l.icon.startsWith('svg:')) {
                     let svgKey = l.icon.split(':')[1];
                     if(svgIconsCollection[svgKey]) {
-                        iconPreviewHtml = `<div class="link-icon-thumbnail svg-icon" style="background:var(--primary); color:#fff; margin-bottom:10px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[svgKey]}</svg></div>`;
+                        iconPreviewHtml = `<div class="link-icon-thumbnail svg-icon" style="background:var(--primary); color:#fff;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[svgKey]}</svg></div>`;
                     }
                 } else {
-                    iconPreviewHtml = `<img src="${l.icon}" class="link-icon-thumbnail" style="margin-bottom:10px;" onerror="this.onerror=null;this.src='/img/bemfkgumi.png';">`;
+                    iconPreviewHtml = `<img src="${l.icon}" class="link-icon-thumbnail">`;
                 }
             }
 
             html += `
             <div class="link-item" data-id="${l.id}">
                 <div class="drag-handle">⠿</div>
-                <div style="display:flex; flex-direction:column; align-items:center;">
+                <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
                     ${iconPreviewHtml}
                     <button class="btn-outline" style="padding:5px 8px; font-size:0.75rem;" onclick="openIconPicker('${l.id}')">Ubah Ikon</button>
                 </div>
@@ -1071,16 +1071,15 @@
                     const data = await res.json();
                     
                     if(data.success) {
-                        // MENGGUNAKAN RELATIVE PATH (data.url) agar ANTI-CORS dan Valid di Vercel!
                         if (type === 'profile') {
-                            state.profile.image = data.url;
-                            document.getElementById('edit-profile-img-preview').src = data.url;
+                            state.profile.image = window.location.origin + data.url;
+                            document.getElementById('edit-profile-img-preview').src = state.profile.image;
                         } else if (type === 'bg') {
-                            state.theme.bgImage = data.url;
+                            state.theme.bgImage = window.location.origin + data.url;
                             document.getElementById('bg-filename').innerText = "✅ Background Berhasil Diunggah.";
-                            document.getElementById('bg-preview-box').innerHTML = `<img src="${data.url}" style="width:100%; height:100%; object-fit:cover;">`;
+                            document.getElementById('bg-preview-box').innerHTML = `<img src="${state.theme.bgImage}" style="width:100%; height:100%; object-fit:cover;">`;
                         } else if (type === 'link-icon') {
-                            selectIcon(data.url);
+                            selectIcon(window.location.origin + data.url);
                         }
                         if(type !== 'link-icon') renderLivePreview();
                     }
@@ -1092,7 +1091,7 @@
                     } else if (type === 'bg') {
                         state.theme.bgImage = base64;
                         document.getElementById('bg-filename').innerText = "✅ Background Berhasil Digunakan (Local).";
-                        document.getElementById('bg-preview-box').innerHTML = `<img src="${base64}" style="width:100%; height:100%; object-fit:cover;">`;
+                        document.getElementById('bg-preview-box').innerHTML = `<img src="${state.theme.bgImage}" style="width:100%; height:100%; object-fit:cover;">`;
                     } else if (type === 'link-icon') {
                         selectIcon(base64);
                     }
@@ -1114,49 +1113,47 @@
     // ================= LIVE PREVIEW RENDERER =================
     function renderLivePreview() {
         const screen = document.getElementById('live-preview-screen');
-        if(!screen) return; 
-
+        if(!screen) return; // Pengaman crash
         const t = state.theme;
 
-        // Overlay & Background Logic via cssText agar stabil
+        // Overlay & Background Logic
         screen.classList.remove('has-bg-image');
-        
-        let cssText = `color: ${t.textColor}; `;
+        screen.style.background = ''; // reset
 
         if(t.bgType === 'color') {
-            cssText += `background-color: ${t.bgColor}; `;
+            screen.style.backgroundColor = t.bgColor;
         } else if (t.bgType === 'gradient') {
-            cssText += `background: linear-gradient(135deg, ${t.bgColor}, #ffffff); `;
+            screen.style.background = `linear-gradient(135deg, ${t.bgColor}, #ffffff)`;
         } else if (t.bgType === 'image' && t.bgImage) {
-            cssText += `background: url('${t.bgImage}') no-repeat center center / cover; `;
+            screen.style.background = `url('${t.bgImage}') no-repeat center center / cover`;
             screen.classList.add('has-bg-image');
         } else if (t.bgType === 'template') {
+            screen.style.backgroundColor = t.bgColor;
             let cssTpl = getTemplateCSS(t.bgTemplate);
             if(cssTpl) {
-                cssText += `background-color: ${t.bgColor}; ${cssTpl} `;
-            } else {
-                cssText += `background-color: ${t.bgColor}; `;
+                const templateStyleString = `background-color: ${t.bgColor}; ${cssTpl}`;
+                screen.setAttribute('style', templateStyleString);
             }
         } else {
-            cssText += `background-color: ${t.bgColor}; `;
+            screen.style.backgroundColor = t.bgColor;
         }
-        
-        screen.style.cssText = cssText;
+
+        screen.style.color = t.textColor;
         
         let html = '';
 
         try {
             loadGoogleFont(t.fontTitle);
             loadGoogleFont(t.fontButton);
-        } catch(e) {}
+        } catch(e) { console.log("Gagal memuat font", e); }
 
         // Profile Section
-        html += `<img id="pv-profile-img" src="${state.profile.image || '/img/bemfkgumi.png'}" alt="Profile" onerror="this.onerror=null;this.src='/img/bemfkgumi.png';">`;
+        html += `<img id="pv-profile-img" src="${state.profile.image || '/img/bemfkgumi.png'}" alt="Profile">`;
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${state.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
-        // Link Buttons Logic (35 TYPES CSS GENERATOR)
-        let btnCssObj = `font-family:${t.fontButton}; display:flex; align-items:center; justify-content:center; position:relative; `;
+        // Link Buttons Logic (30 TYPES CSS GENERATOR)
+        let btnCssObj = `font-family:${t.fontButton}; `;
         let bg = t.btnColor;
         let borderC = t.borderColor || '#0f172a';
         let txt = t.textColor;
@@ -1200,10 +1197,9 @@
             default: btnCssObj += `background:${bg}; color:#fff; border:none;`;
         }
 
-        html += `<div id="pv-links-container" style="margin-top:40px;">`;
+        html += `<div id="pv-links-container">`;
         state.links.forEach(l => {
             if(l.active) {
-                // FIX: Gunakan pv-link-icon dengan fail safe dan styling absolut yang ada di mainV3.css
                 let renderIcon = '';
                 if(l.icon) {
                     if(l.icon.startsWith('svg:')) {
@@ -1212,13 +1208,13 @@
                             renderIcon = `<div class="pv-link-icon svg-icon" style="color:inherit;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[k]}</svg></div>`;
                         }
                     } else {
-                        renderIcon = `<img src="${l.icon}" class="pv-link-icon" onerror="this.onerror=null;this.src='/img/bemfkgumi.png';">`;
+                        renderIcon = `<img src="${l.icon}" class="pv-link-icon">`;
                     }
                 }
 
                 html += `<a href="${l.url || '#'}" target="_blank" class="pv-btn btn-shape-${t.btnShape}" style="${btnCssObj}">
                             ${renderIcon}
-                            <span style="flex:1; text-align:center;">${l.title || 'Untitled Link'}</span>
+                            <span style="flex:1;">${l.title || 'Untitled Link'}</span>
                          </a>`;
             }
         });
@@ -1226,7 +1222,7 @@
 
         // Socials Logic
         if(state.socials && state.socials.length > 0) {
-            html += `<div id="pv-socials" style="margin-top:50px;">`;
+            html += `<div id="pv-socials">`;
             state.socials.forEach(s => {
                 if(s.url && socialIconsMap[s.platform]) {
                     let fullUrl = s.url;
@@ -1240,12 +1236,12 @@
             });
             html += `</div>`;
         }
-
+        
         // Footer Watermark Logic (Dinamis dari state)
         const fText = state.settings.footerText || defaultState.settings.footerText;
         const fUrl = state.settings.footerUrl || defaultState.settings.footerUrl;
         
-        html += `<div style="text-align:center; margin-top:80px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton}; padding-bottom:30px;">
+        html += `<div style="text-align:center; margin-top:50px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton};">
                     <a href="${fUrl}" target="_blank" style="color:${t.textColor}; text-decoration:none;">${fText}</a>
                  </div>`;
 
