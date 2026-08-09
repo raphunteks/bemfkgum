@@ -17,11 +17,6 @@
     
     <!-- UPGRADE 2: Pastikan Canonical URL diakhiri dengan slash (/) untuk homepage -->
     <link rel="canonical" href="https://bemkbmfkgumi.com/">
-
-    <!-- =========================================================================
-         SUPER BIG UPGRADE PETA SITUS (Menjawab Isu GSC: "Error pemrosesan sementara")
-         Memberikan panduan eksplisit ke file sitemap.xml langsung dari Beranda
-         ========================================================================= -->
     <link rel="sitemap" type="application/xml" title="Sitemap BEM KBMFKG UMI" href="https://bemkbmfkgumi.com/sitemap.xml">
     
     <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts -->
@@ -36,8 +31,6 @@
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemkbmfkgumi.com/">
-    
-    <!-- UPGRADE 3 (FIXED): OG Site Name dan OG Title disesuaikan untuk Site Name "BEM KBMFKG UMI OFFICIAL" -->
     <meta property="og:site_name" content="BEM KBMFKG UMI OFFICIAL">
     <meta property="og:title" content="BEM KBMFKG UMI OFFICIAL - Beranda">
     <meta property="og:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
@@ -51,37 +44,37 @@
     <meta name="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta name="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
-    <!-- UPGRADE 4 (FIXED): PEMISAHAN SCHEMA KHUSUS "SITE NAME" (Target: BEM KBMFKG UMI OFFICIAL) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "BEM KBMFKG UMI OFFICIAL",
-      "alternateName": [
-        "BEM KBMFKG UMI",
-        "BEM FKG UMI", 
-        "BEM KBMFKG UMI Makassar", 
-        "Badan Eksekutif Mahasiswa FKG UMI"
-      ],
-      "url": "https://bemkbmfkgumi.com/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://bemkbmfkgumi.com/informasi?q={search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-
-    <!-- UPGRADE 5 (FIXED): SUPER SCHEMA UNTUK KNOWLEDGE GRAPH, & SITELINKS (Tanpa Breadcrumb Overkill) -->
+    <!-- =======================================================================================
+         ENTERPRISE SEO SCHEMA: Struktur @graph Tunggal (Mencegah Ambiguitas & Konflik GSC)
+         Tipe Entitas yang Ditemukan: WebSite, Organization, ImageObject, WebPage, BreadcrumbList 
+         ======================================================================================= -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "NGO",
+          "@type": "WebSite",
+          "@id": "https://bemkbmfkgumi.com/#website",
+          "url": "https://bemkbmfkgumi.com/",
+          "name": "BEM KBMFKG UMI OFFICIAL",
+          "alternateName": [
+            "BEM KBMFKG UMI",
+            "BEM FKG UMI", 
+            "BEM KBMFKG UMI Makassar", 
+            "Badan Eksekutif Mahasiswa FKG UMI"
+          ],
+          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://bemkbmfkgumi.com/informasi?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
           "@id": "https://bemkbmfkgumi.com/#organization",
           "name": "BEM KBMFKG UMI OFFICIAL",
           "alternateName": "BEM KBMFKG UMI",
@@ -94,7 +87,7 @@
             "contentUrl": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
             "width": 512,
             "height": 512,
-            "caption": "Logo BEM KBMFKG UMI"
+            "caption": "Logo Resmi BEM KBMFKG UMI"
           },
           "image": { "@id": "https://bemkbmfkgumi.com/#logo" },
           "foundingDate": "2014",
@@ -115,23 +108,31 @@
           }
         },
         {
+          "@type": "ImageObject",
+          "@id": "https://bemkbmfkgumi.com/#primaryimage",
+          "inLanguage": "id-ID",
+          "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+          "contentUrl": "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+          "width": 1200,
+          "height": 630,
+          "caption": "BEM KBMFKG UMI OFFICIAL - Beranda"
+        },
+        {
           "@type": "WebPage",
           "@id": "https://bemkbmfkgumi.com/#webpage",
           "url": "https://bemkbmfkgumi.com/",
           "name": "BEM KBMFKG UMI OFFICIAL - Beranda",
           "isPartOf": { "@id": "https://bemkbmfkgumi.com/#website" },
           "about": { "@id": "https://bemkbmfkgumi.com/#organization" },
-          "primaryImageOfPage": { "@id": "https://bemkbmfkgumi.com/#logo" },
+          "primaryImageOfPage": { "@id": "https://bemkbmfkgumi.com/#primaryimage" },
           "datePublished": "2024-01-01T00:00:00+00:00",
-          "dateModified": "2024-05-01T00:00:00+00:00"
+          "dateModified": "2024-05-01T00:00:00+00:00",
+          "description": "Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.",
+          "breadcrumb": { "@id": "https://bemkbmfkgumi.com/#breadcrumb" }
         },
-        
-        /* ===================================================================================
-           BREADCRUMB LIST HANYA UNTUK BERANDA (Dihapus yang overkill agar bot tidak bingung)
-           =================================================================================== */
         {
           "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/#breadcrumb-home",
+          "@id": "https://bemkbmfkgumi.com/#breadcrumb",
           "name": "Breadcrumb Beranda",
           "itemListElement": [
             {
@@ -142,7 +143,6 @@
             }
           ]
         },
-
         {
           "@type": "ItemList",
           "@id": "https://bemkbmfkgumi.com/#sitelinks-static",
@@ -196,14 +196,12 @@
     <!-- PENGATURAN MANIFEST PWA -->
     <link rel="manifest" href="/manifest.json" />
 </head>
-<body itemscope itemtype="https://schema.org/WebPage">
+
+<!-- PERBAIKAN KRUSIAL: Menghapus atribut itemscope itemtype dari <body> karena memicu peringatan konflik JSON-LD di Google Search Console -->
+<body class="public-form-body">
     <%- include('partials/header.html') %>
 
     <main>
-        <!-- =========================================================================
-             PERBAIKAN: Menghapus Microdata 'itemscope' pada tag HTML agar tidak bentrok 
-             dengan JSON-LD di tag <head>. Ini 100% GSC Valid.
-             ========================================================================= -->
         <section class="hero-section">
             <div class="reveal" style="max-width: 900px; margin: 0 auto;">
                 <div class="clay-badge" style="margin-bottom: 30px; letter-spacing: 2px; font-size: 0.85rem; text-transform: uppercase;">
