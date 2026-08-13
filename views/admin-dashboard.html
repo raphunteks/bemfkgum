@@ -516,7 +516,6 @@
             confirmCallback = null;
         }
 
-
         // ================= STATE & DATA =================
         const FALLBACK_ADMIN_ORG = { 
             visi: "", misi: [], pimpinan: [], departemen: [],
@@ -604,80 +603,77 @@
         }
 
         // =======================================================================================
-        // SUPER UPGRADE: PEMISAHAN LOGIKA FETCH AGAR ANTI SILENT FAILURE
+        // SUPER UPGRADE: ISOLASI ASYNCHRONOUS TRY-CATCH (MENCEGAH BLANK SCREEN PADA PESAN & ASPIRASI)
         // =======================================================================================
         async function loadAllData() {
-            // 1. Ambil Data Konten CMS
-            try {
-                let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemkbmfkgumi.com/api/content'; }
+            
+            // 1. Fetch Data Utama CMS
+            async function fetchCMS() {
+                try {
+                    let apiUrl = '/api/content';
+                    if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemkbmfkgumi.com/api/content'; }
 
-                const req = await fetch(apiUrl);
-                if(req.ok) {
-                    const data = await req.json();
-                    if(data.org) { 
-                        db.org.visi = data.org.visi || ""; 
-                        db.org.misi = data.org.misi || []; 
-                        db.org.pimpinan = data.org.pimpinan || []; 
-                        db.org.departemen = data.org.departemen || []; 
-                        db.org.artiKabinet = data.org.artiKabinet || { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" };
+                    const req = await fetch(apiUrl);
+                    if(req.ok) {
+                        const data = await req.json();
+                        if(data.org) { 
+                            db.org.visi = data.org.visi || ""; 
+                            db.org.misi = data.org.misi || []; 
+                            db.org.pimpinan = data.org.pimpinan || []; 
+                            db.org.departemen = data.org.departemen || []; 
+                            db.org.artiKabinet = data.org.artiKabinet || { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" };
+                        }
+                        if(data.filosofi) { db.filosofi = data.filosofi; }
+                        if(data.settings) db.settings = { ...db.settings, ...data.settings };
+                        if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak };
+                        db.sejarah = data.sejarah || []; 
+                        db.proker = data.proker || []; 
+                        db.kalender = data.kalender || []; 
+                        db.dokumentasi = data.dokumentasi || []; 
+                        db.team = data.team || [];
+                        db.radar = data.radar || []; 
                     }
-                    if(data.filosofi) { db.filosofi = data.filosofi; }
-                    if(data.settings) db.settings = { ...db.settings, ...data.settings };
-                    if(data.kontak) db.kontak = { ...db.kontak, ...data.kontak };
-                    db.sejarah = data.sejarah || []; 
-                    db.proker = data.proker || []; 
-                    db.kalender = data.kalender || []; 
-                    db.dokumentasi = data.dokumentasi || []; 
-                    db.team = data.team || [];
-                    db.radar = data.radar || []; 
+                } catch(err) { 
+                    showToast("⚠️ CMS berjalan di Mode Offline (Preview)."); 
                 }
-            } catch(err) { 
-                showToast("⚠️ CMS berjalan di Mode Offline (Preview)."); 
-                console.warn("CMS Load Error:", err);
+                renderSemuaCMS(); 
             }
 
-            // 2. Ambil Data Interaksi (Aspirasi & Pesan) - Blok Terpisah
-            try {
-                let apiInt = '/api/interactions';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiInt = 'https://bemkbmfkgumi.com/api/interactions'; }
-                const reqInt = await fetch(apiInt); 
-                if(reqInt.ok) { 
-                    const intData = await reqInt.json(); 
-                    if(intData.success) {
-                        aspirasiData = intData.aspirasi || []; 
-                        pesanData = intData.pesan || []; 
+            // 2. Fetch Data Aspirasi & Pesan (TERPISAH MUTLAK)
+            async function fetchInteractions() {
+                try {
+                    let apiInt = '/api/interactions';
+                    if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiInt = 'https://bemkbmfkgumi.com/api/interactions'; }
+                    const reqInt = await fetch(apiInt); 
+                    if(reqInt.ok) { 
+                        const intData = await reqInt.json(); 
+                        if(intData.success) {
+                            aspirasiData = intData.aspirasi || []; 
+                            pesanData = intData.pesan || []; 
+                            renderTabel(); // Render Ulang Tabel Secara Terpisah
+                            updateDashboardStats(aspirasiData.length, pesanData.length);
+                        }
                     }
+                } catch(err) {
+                    console.warn("Interactions Load Error:", err);
+                    renderTabel();
                 }
-            } catch(err) {
-                console.warn("Interactions Load Error:", err);
             }
 
-            // 3. Update Dashboard Stats Explicitly (Sinkronisasi dengan backend)
-            try {
-                let apiStats = '/api/admin/stats';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiStats = 'https://bemkbmfkgumi.com/api/admin/stats'; }
-                const reqStats = await fetch(apiStats);
-                if(reqStats.ok) {
-                    const statData = await reqStats.json();
-                    if(statData.success && statData.data) {
-                        document.getElementById('statAspirasi').innerText = statData.data.totalAspirasi !== undefined ? statData.data.totalAspirasi : aspirasiData.length;
-                        document.getElementById('statPesan').innerText = statData.data.totalPesan !== undefined ? statData.data.totalPesan : pesanData.length;
-                    }
-                }
-            } catch (e) {
-                // Fallback jika API stats gagal
-                document.getElementById('statAspirasi').innerText = aspirasiData.length;
-                document.getElementById('statPesan').innerText = pesanData.length;
-            }
-
-            renderSemuaCMS(); 
+            // Jalankan Keduanya Secara Bersamaan (Parallel) agar tidak saling menunggu/memblokir
+            fetchCMS();
+            fetchInteractions();
             loadArtikelGas(); 
+        }
+
+        function updateDashboardStats(aspirationCount, messageCount) {
+            document.getElementById('statAspirasi').innerText = aspirationCount;
+            document.getElementById('statPesan').innerText = messageCount;
         }
 
         function renderSemuaCMS() { 
             renderOrg(); renderFilosofi(); renderSejarah(); renderProker(); renderKalender(); 
-            renderDokumentasi(); renderTabel(); renderPengaturan(); renderTeam(); renderKontak(); renderRadar();
+            renderDokumentasi(); renderPengaturan(); renderTeam(); renderKontak(); renderRadar();
         }
 
         function renderKontak() {
@@ -1090,14 +1086,8 @@
         }
         function tambahKategoriTeam() { if(!db.team) db.team = []; db.team.push({category: "Kategori Baru", members: []}); renderTeam(); }
 
-        // =======================================================================================
-        // SUPER UPGRADE: FUNGSI TABEL & DELETE INTERAKSI DENGAN CUSTOM CONFIRM MODAL
-        // =======================================================================================
+        // Murni Merender Tabel saja, tidak ikut memfetch
         function renderTabel() {
-            // Update UI Counters safely
-            document.getElementById('statAspirasi').innerText = document.getElementById('statAspirasi').innerText === '0' ? aspirasiData.length : document.getElementById('statAspirasi').innerText; 
-            document.getElementById('statPesan').innerText = document.getElementById('statPesan').innerText === '0' ? pesanData.length : document.getElementById('statPesan').innerText;
-            
             const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
             if (aspirasiData.length === 0) {
                 tbodyA.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color:var(--text-muted);">Tidak ada Aspirasi masuk</td></tr>`;
@@ -1113,8 +1103,9 @@
             }
         }
         
+        // SUPER UPGRADE: Ganti confirm bawaan Chrome dengan Custom Confirm Glassmorphism
         function deleteData(type, id) {
-            showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus data ini secara permanen?", async function() {
+            showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus interaksi ini secara permanen?", async function() {
                 try {
                     let apiUrl = '/api/delete-interaction'; 
                     if(window.location.protocol === 'blob:' || window.location.origin === "null") {
@@ -1382,7 +1373,8 @@
         }
 
         function deleteArtikelGAS(id) {
-            showCustomConfirm("Apakah Anda yakin ingin menghapus Artikel ini?", async function() {
+            // SUPER UPGRADE: Ganti confirm bawaan Chrome untuk artikel
+            showCustomConfirm("Apakah Anda yakin ingin menghapus Artikel ini secara permanen?", async function() {
                 try {
                     const req = await fetch(GAS_ARTIKEL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteArticle', ID_Berita: id }) });
                     if(!req.ok) throw new Error();
