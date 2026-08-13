@@ -860,8 +860,7 @@ app.get('/sitemap.xml', async (req, res) => {
         <loc>${domain}/berita</loc>
         <lastmod>${today}</lastmod>
         <changefreq>daily</changefreq>
-        <priority>0.9</priority>
-    </url>
+        <priority>0.9</url>
     <url>
         <loc>${domain}/ourteam</loc>
         <lastmod>${today}</lastmod>
@@ -1093,12 +1092,12 @@ app.post('/api/content/:type', async (req, res) => {
     }
 });
 
-// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS =================
+// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS (FIXED MGET KEYS) =================
 app.get('/api/admin/stats', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // Perhitungan Menggunakan Keys Lengkap agar Cepat (Realtime Count)
+        // Perhitungan Menggunakan Keys Lengkap agar Cepat & Realtime (Fix Blank Zero Bug)
         const formKeys = await redis.keys('BEM_Forms:*');
         const totalForms = formKeys.length;
         
@@ -1120,27 +1119,32 @@ app.get('/api/admin/stats', async (req, res) => {
     }
 });
 
-// ================= API ENDPOINTS: TRANSAKSIONAL =================
+// ================= API ENDPOINTS: TRANSAKSIONAL (FIXED HGET TO MGET KEYS) =================
 app.get('/api/interactions', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
+        // Ambil Data Aspirasi via Namespace Keys MGET
         const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
         let aspirasi = [];
         if(aspirasiKeys.length > 0) {
             const raw = await redis.mget(...aspirasiKeys);
-            aspirasi = raw.map(i => typeof i === 'string' ? JSON.parse(i) : i);
+            // Robust Parsing: Filter null values & sort by date (Terbaru di atas)
+            aspirasi = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
 
+        // Ambil Data Pesan Narahubung via Namespace Keys MGET
         const messageKeys = await redis.keys('BEM_Messages:*');
         let pesan = [];
         if(messageKeys.length > 0) {
             const raw = await redis.mget(...messageKeys);
-            pesan = raw.map(i => typeof i === 'string' ? JSON.parse(i) : i);
+            // Robust Parsing: Filter null values & sort by date (Terbaru di atas)
+            pesan = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
         
         res.status(200).json({ success: true, aspirasi, pesan });
     } catch (error) {
+        console.error("API Interactions Error:", error);
         res.status(200).json({ success: false, aspirasi: [], pesan: [] });
     }
 });
@@ -1174,6 +1178,7 @@ app.post('/api/message', async (req, res) => {
 app.post('/api/delete-interaction', async (req, res) => {
     try {
         const { type, id } = req.body;
+        // Penyesuaian ke fungsi DEL yang benar untuk Namespace Keys (Pattern)
         if(type === 'aspirasi' && redis) await redis.del(`BEM_Aspirations:${id}`);
         if(type === 'pesan' && redis) await redis.del(`BEM_Messages:${id}`);
         res.status(200).json({ success: true });
