@@ -65,6 +65,10 @@
             object-fit: cover;
             display: none;
         }
+
+        /* CUSTOM MODAL ANIMATIONS */
+        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .neumorph-outer { box-shadow: 6px 6px 15px var(--card-shadow), -6px -6px 15px rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -97,10 +101,7 @@
                 <button onclick="switchSection('kalender', this)" style="color: #10b981;"><span aria-hidden="true">📅</span> Kalender & Detail Proker</button>
                 <button onclick="switchSection('dok', this)"><span aria-hidden="true">📸</span> Galeri Dokumentasi</button>
                 <button onclick="switchSection('artikel', this)" style="color: #00ffaa;"><span aria-hidden="true">📰</span> Manajemen Berita</button>
-                
-                <!-- TAB BARU RADAR BEM -->
                 <button onclick="switchSection('radar', this)" style="color: #ec4899;"><span aria-hidden="true">📡</span> Manajemen Radar BEM</button>
-                
                 <button onclick="switchSection('aspirasi', this)"><span aria-hidden="true">📣</span> Interaksi Masuk</button>
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span aria-hidden="true">🧑‍💻</span> Developer Team</button>
                 <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span aria-hidden="true">📞</span> Manajemen Narahubung</button>
@@ -193,7 +194,7 @@
                 <button class="action-btn view" onclick="tambahSejarah()" style="margin-top: 15px;">+ Tambah Kepengurusan Baru</button>
             </section>
 
-            <!-- 5. PROKER (DEPARTEMEN) - SUPER BIG UPGRADE 10 FIELDS -->
+            <!-- 5. PROKER (DEPARTEMEN) -->
             <section id="sec-proker" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
@@ -229,7 +230,7 @@
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
-            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA (SUPER UPGRADE CRUD) -->
+            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA -->
             <section id="sec-artikel" class="admin-section">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
@@ -376,18 +377,45 @@
         </main>
     </div>
 
-    <!-- Modal View Detail -->
+    <!-- CUSTOM ALERTS & MODALS (Pengganti Alert Chrome Default) -->
+    <!-- Toast Notification -->
+    <div class="toast" id="globalToast">Notifikasi</div>
+
+    <!-- Custom View/Read Modal -->
     <div class="modal-overlay" id="detailModal">
-        <div class="modal-content-box" style="padding: 30px;">
+        <div class="modal-content-box neumorph-outer" style="padding: 30px; background: var(--bg-dark); border: 1px solid var(--border-light);">
             <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">X</button>
             <h2 id="modalTitle" style="margin-bottom: 15px; color: var(--accent-neon);">Detail Data</h2>
             <div id="modalContent" style="color: var(--text-light); line-height: 1.6; font-size: 0.95rem;"></div>
         </div>
     </div>
 
+    <!-- Custom Confirm Modal -->
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-content-box neumorph-outer" style="padding: 35px; background: var(--bg-dark); border: 1px solid var(--border-light); text-align: center; max-width: 400px; animation: popIn 0.3s ease;">
+            <div style="font-size:3.5rem; margin-bottom:15px;">❓</div>
+            <h3 style="color:var(--text-light); margin-top:0; margin-bottom:15px;">Konfirmasi Aksi</h3>
+            <p id="customConfirmMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5;"></p>
+            <div style="display:flex; gap:10px;">
+                <button class="action-btn view" style="flex:1; padding: 12px; border-radius: 12px;" onclick="closeCustomConfirm(false)">Batal</button>
+                <button class="action-btn delete" style="flex:1; padding: 12px; border-radius: 12px; box-shadow: 0 0 15px rgba(239,68,68,0.4);" onclick="closeCustomConfirm(true)">Yakin & Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div class="modal-overlay" id="customAlertModal">
+        <div class="modal-content-box neumorph-outer" style="padding: 35px; background: var(--bg-dark); border: 1px solid var(--border-light); text-align: center; max-width: 400px; animation: popIn 0.3s ease;">
+            <div style="font-size:3.5rem; margin-bottom:15px;">⚠️</div>
+            <h3 style="color:var(--text-light); margin-top:0; margin-bottom:15px;">Pemberitahuan</h3>
+            <p id="customAlertMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5;"></p>
+            <button class="holo-btn" style="width:100%; padding: 12px;" onclick="closeCustomAlert()">Mengerti</button>
+        </div>
+    </div>
+
     <!-- Modal Tambah / Edit Artikel -->
     <div class="modal-overlay" id="artikelModal">
-        <div class="modal-content-box" style="padding: 30px; max-width: 800px;">
+        <div class="modal-content-box neumorph-outer" style="padding: 30px; max-width: 800px; background: var(--bg-dark); border: 1px solid var(--border-light);">
             <button class="modal-close" onclick="closeArtikelModal()">X</button>
             <h2 id="artikelModalTitle" style="margin-bottom: 20px; color: #10b981;">Tambah Artikel Baru</h2>
             
@@ -452,13 +480,44 @@
         </div>
     </div>
 
-    <div class="toast" id="globalToast">Notifikasi</div>
-
     <button class="scroll-to-top" id="scrollToTopBtnAdmin" aria-label="Scroll to top">
         <svg viewBox="0 0 24 24"><path d="M13 5.828V17h-2V5.828L5.636 11.192 4.222 9.778 12 2l7.778 7.778-1.414 1.414L13 5.828zM4 19h16v2H4v-2z"/></svg>
     </button>
 
     <script>
+        // ================= MODAL LOGIC ENGINE =================
+        function showToast(msg) {
+            const t = document.getElementById('globalToast');
+            if(!t) return;
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function showCustomAlert(msg) {
+            document.getElementById('customAlertMessage').innerText = msg;
+            document.getElementById('customAlertModal').classList.add('active');
+        }
+        function closeCustomAlert() {
+            document.getElementById('customAlertModal').classList.remove('active');
+        }
+
+        let confirmCallback = null;
+        function showCustomConfirm(msg, callback) {
+            document.getElementById('customConfirmMessage').innerText = msg;
+            document.getElementById('customConfirmModal').classList.add('active');
+            confirmCallback = callback;
+        }
+        function closeCustomConfirm(isConfirmed) {
+            document.getElementById('customConfirmModal').classList.remove('active');
+            if(isConfirmed && typeof confirmCallback === 'function') {
+                confirmCallback();
+            }
+            confirmCallback = null;
+        }
+
+
+        // ================= STATE & DATA =================
         const FALLBACK_ADMIN_ORG = { 
             visi: "", misi: [], pimpinan: [], departemen: [],
             artiKabinet: { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" }
@@ -471,7 +530,7 @@
             kontak: { alamat: "", email: "", wa: "", waName: "", mapsIframe: "" },
             settings: { headerText: "BEM KBMFKG UMI", footerSlogan: "Kabinet Ananta Anardhaya", footerAlamat: "", logo1: "/img/bemfkgumi.png", logo2: "/img/bemfkgumi.png", logo3: "/img/bemfkgumi.png" }, 
             interaksi: {aspirasi:[], pesan:[]},
-            radar: [] // Tambahan field Radar BEM
+            radar: [] 
         };
         
         let aspirasiData = []; let pesanData = [];
@@ -544,10 +603,14 @@
             }
         }
 
+        // =======================================================================================
+        // SUPER UPGRADE: PEMISAHAN LOGIKA FETCH AGAR ANTI SILENT FAILURE
+        // =======================================================================================
         async function loadAllData() {
+            // 1. Ambil Data Konten CMS
             try {
-                let apiUrl = '/api/content'; let apiInt = '/api/interactions';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemkbmfkgumi.com/api/content'; apiInt = 'https://bemkbmfkgumi.com/api/interactions'; }
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemkbmfkgumi.com/api/content'; }
 
                 const req = await fetch(apiUrl);
                 if(req.ok) {
@@ -569,9 +632,47 @@
                     db.team = data.team || [];
                     db.radar = data.radar || []; 
                 }
-                const reqInt = await fetch(apiInt); if(reqInt.ok) { const intData = await reqInt.json(); aspirasiData = intData.aspirasi || []; pesanData = intData.pesan || []; }
-            } catch(err) { showToast("⚠️ Memuat data Offline (Sesi Preview)."); }
-            renderSemuaCMS(); loadArtikelGas(); 
+            } catch(err) { 
+                showToast("⚠️ CMS berjalan di Mode Offline (Preview)."); 
+                console.warn("CMS Load Error:", err);
+            }
+
+            // 2. Ambil Data Interaksi (Aspirasi & Pesan) - Blok Terpisah
+            try {
+                let apiInt = '/api/interactions';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiInt = 'https://bemkbmfkgumi.com/api/interactions'; }
+                const reqInt = await fetch(apiInt); 
+                if(reqInt.ok) { 
+                    const intData = await reqInt.json(); 
+                    if(intData.success) {
+                        aspirasiData = intData.aspirasi || []; 
+                        pesanData = intData.pesan || []; 
+                    }
+                }
+            } catch(err) {
+                console.warn("Interactions Load Error:", err);
+            }
+
+            // 3. Update Dashboard Stats Explicitly (Sinkronisasi dengan backend)
+            try {
+                let apiStats = '/api/admin/stats';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiStats = 'https://bemkbmfkgumi.com/api/admin/stats'; }
+                const reqStats = await fetch(apiStats);
+                if(reqStats.ok) {
+                    const statData = await reqStats.json();
+                    if(statData.success && statData.data) {
+                        document.getElementById('statAspirasi').innerText = statData.data.totalAspirasi !== undefined ? statData.data.totalAspirasi : aspirasiData.length;
+                        document.getElementById('statPesan').innerText = statData.data.totalPesan !== undefined ? statData.data.totalPesan : pesanData.length;
+                    }
+                }
+            } catch (e) {
+                // Fallback jika API stats gagal
+                document.getElementById('statAspirasi').innerText = aspirasiData.length;
+                document.getElementById('statPesan').innerText = pesanData.length;
+            }
+
+            renderSemuaCMS(); 
+            loadArtikelGas(); 
         }
 
         function renderSemuaCMS() { 
@@ -600,9 +701,6 @@
             }
         }
 
-        // =======================================================================================
-        // SUPER UPGRADE: FUNGSI SAVE DATA TERINTEGRASI SMART FALLBACK (MENCEGAH ERROR UI)
-        // =======================================================================================
         async function saveData(type, btnElement) {
             if(type === 'org') {
                 db.org.visi = document.getElementById('editVisi').value;
@@ -636,11 +734,10 @@
             } catch(e) { 
                 const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
                 if (isPreview) {
-                    // Mencegah munculnya pop-up error merah di Canvas. Data tetap tersimpan di memori lokal.
                     showToast(`✅ Tersimpan di Sesi Preview (Mode Canvas Lokal).`);
                 } else {
                     console.warn("Gagal terhubung ke backend API:", e.message);
-                    showToast("⚠️ Gagal menyimpan ke server. Pastikan koneksi internet stabil."); 
+                    showCustomAlert("Gagal menyimpan ke server. Pastikan koneksi internet stabil."); 
                 }
             } finally {
                 if (btnElement) {
@@ -710,21 +807,18 @@
                         <input type="text" class="neo-input" style="flex:1; font-size:1.2rem; font-weight:bold; color:var(--text-light); border:none; background:var(--bg-dark-overlay); padding:10px; box-shadow:none; text-transform:uppercase;" value="${p.namaProker || ''}" placeholder="NAMA PROKER (CTH: PUBMED)" oninput="db.proker[${i}].namaProker=this.value">
                     </h3>
                     
-                    <!-- SUPER UPGRADE: Double Binding ID dan Slug agar kompatibel mutlak dengan backend GSC URL -->
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
                         <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">ID Slug Proker (URL)</label>
                         <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${p.slug || p.id || ''}" placeholder="contoh: pubmed" oninput="db.proker[${i}].slug=this.value; db.proker[${i}].id=this.value">
                     </div>
 
                     <div class="grid-2" style="align-items:start; margin-bottom:20px;">
-                        <!-- KOTAK 1: FOTO PENGURUS KHUSUS CARD -->
                         <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px solid var(--border-light);">
                             <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold; display:block; margin-bottom:8px;">Foto Pengurus / Cover Card (900x600 px)</label>
                             <img src="${p.fotoPengurus || '/img/bemfkgumi.png'}" style="width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light); background: var(--bg-dark-heavy);" alt="Cover Dept">
                             <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.proker[${i}], 'fotoPengurus', renderProker)">
                         </div>
 
-                        <!-- KOTAK 2: BANNER HEADER KHUSUS DETAIL -->
                         <div style="background: var(--bg-dark-overlay); padding: 15px; border-radius: 15px; border: 1px solid var(--border-light);">
                             <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold; display:block; margin-bottom:8px;">Banner Header (1920x1080 px)</label>
                             <img src="${p.bgImage || '/img/bannerprokerdeskripsi.png'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px; border:1px solid var(--border-light); background: var(--bg-dark-heavy);" alt="Banner Dept">
@@ -748,9 +842,8 @@
                         </div>
                     </div>
 
-                    <!-- KOTAK 3: SEO EVENT SCHEMA DATA -->
                     <div style="margin-bottom:20px; background: rgba(16, 185, 129, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(16, 185, 129, 0.3);">
-                        <h4 style="color:#10b981; font-size:0.9rem; margin-bottom:10px;">SEO Event Data (Wajib Diisi agar Tidak Error di Google)</h4>
+                        <h4 style="color:#10b981; font-size:0.9rem; margin-bottom:10px;">SEO Event Data</h4>
                         <div class="grid-2">
                             <div>
                                 <label style="font-size:0.8rem; color:var(--text-muted);">Tanggal Mulai (Start Date)</label>
@@ -865,7 +958,6 @@
                         </div>
                     </div>
                     
-                    <!-- SUPER UPGRADE: Double Binding ID dan Slug agar kompatibel mutlak dengan backend GSC URL -->
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
                         <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">Custom Link / Slug (Opsional - SEO URL)</label>
                         <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${k.slug || k.id || ''}" placeholder="contoh: umi-amal-senyuman-vol-3" oninput="db.kalender[${i}].slug=this.value; db.kalender[${i}].id=this.value">
@@ -998,27 +1090,60 @@
         }
         function tambahKategoriTeam() { if(!db.team) db.team = []; db.team.push({category: "Kategori Baru", members: []}); renderTeam(); }
 
+        // =======================================================================================
+        // SUPER UPGRADE: FUNGSI TABEL & DELETE INTERAKSI DENGAN CUSTOM CONFIRM MODAL
+        // =======================================================================================
         function renderTabel() {
-            document.getElementById('statAspirasi').innerText = aspirasiData.length; document.getElementById('statPesan').innerText = pesanData.length;
+            // Update UI Counters safely
+            document.getElementById('statAspirasi').innerText = document.getElementById('statAspirasi').innerText === '0' ? aspirasiData.length : document.getElementById('statAspirasi').innerText; 
+            document.getElementById('statPesan').innerText = document.getElementById('statPesan').innerText === '0' ? pesanData.length : document.getElementById('statPesan').innerText;
+            
             const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
-            aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td style="color:var(--text-light);">${item.id}</td><td style="color:var(--text-muted);">${item.kategori}</td><td style="color:var(--text-light);"><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; });
+            if (aspirasiData.length === 0) {
+                tbodyA.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color:var(--text-muted);">Tidak ada Aspirasi masuk</td></tr>`;
+            } else {
+                aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td style="color:var(--text-light);">${item.id}</td><td style="color:var(--text-muted);">${item.kategori}</td><td style="color:var(--text-light);"><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; });
+            }
+
             const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = '';
-            pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td style="color:var(--text-light);"><strong>${item.nama}</strong></td><td style="color:var(--text-muted);">${item.subjek}</td><td style="color:var(--text-muted);">${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; });
+            if (pesanData.length === 0) {
+                tbodyP.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color:var(--text-muted);">Tidak ada Pesan masuk</td></tr>`;
+            } else {
+                pesanData.forEach(item => { tbodyP.innerHTML += `<tr><td style="color:var(--text-light);"><strong>${item.nama}</strong></td><td style="color:var(--text-muted);">${item.subjek}</td><td style="color:var(--text-muted);">${item.timestamp.split('T')[0]}</td><td><button class="action-btn view" onclick="viewPesan('${item.id}')">Baca</button> <button class="action-btn delete" onclick="deleteData('pesan', '${item.id}')">Hapus</button></td></tr>`; });
+            }
         }
         
-        async function deleteData(type, id) {
-            // Confirm di-bypass untuk kompatibilitas Canvas Environment
-            try {
-                let apiUrl = '/api/delete-interaction'; if(window.location.protocol === 'blob:') apiUrl = 'https://bemkbmfkgumi.com/api/delete-interaction';
-                await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) });
-                if(type==='aspirasi') aspirasiData = aspirasiData.filter(x => x.id !== id); else pesanData = pesanData.filter(x => x.id !== id);
-                renderTabel(); showToast('✅ Data dihapus.');
-            } catch(e) { showToast('⚠️ Gagal menghapus.'); }
+        function deleteData(type, id) {
+            showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus data ini secara permanen?", async function() {
+                try {
+                    let apiUrl = '/api/delete-interaction'; 
+                    if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                        apiUrl = 'https://bemkbmfkgumi.com/api/delete-interaction';
+                    }
+                    
+                    const req = await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, id}) });
+                    
+                    if(req.ok) {
+                        if(type === 'aspirasi') {
+                            aspirasiData = aspirasiData.filter(x => x.id !== id);
+                            document.getElementById('statAspirasi').innerText = aspirasiData.length;
+                        } else {
+                            pesanData = pesanData.filter(x => x.id !== id);
+                            document.getElementById('statPesan').innerText = pesanData.length;
+                        }
+                        renderTabel(); 
+                        showToast('✅ Data berhasil dihapus.');
+                    } else {
+                        throw new Error();
+                    }
+                } catch(e) { 
+                    showCustomAlert('⚠️ Gagal menghapus dari server. Pastikan Anda online.'); 
+                }
+            });
         }
         
         function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
         function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><strong>Dari:</strong> ${data.nama} (${data.kontak})</p><p><strong>Subjek:</strong> ${data.subjek}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
-        function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
         // --- RENDER RADAR BEM CMS ---
         function renderRadar() {
@@ -1054,39 +1179,44 @@
         async function loadArtikelGas() {
             try {
                 const req = await fetch(GAS_ARTIKEL_URL + '?action=getArticles&page=1&limit=50');
+                if(!req.ok) throw new Error();
                 const res = await req.json();
                 artikelData = res.data || [];
                 renderArtikelTable();
-            } catch(e) { console.warn("⚠️ Mode offline untuk artikel GAS", e); }
+            } catch(e) { console.warn("⚠️ Gagal meload data artikel GAS", e); }
         }
 
         function renderArtikelTable(dataToRender = artikelData) {
             const tbody = document.getElementById('tableBodyArtikel'); tbody.innerHTML = '';
-            dataToRender.forEach((item, index) => {
-                let catBadge = `<span style="color:#10b981; background:rgba(16, 185, 129, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #10b981;">${item.Kategori || 'Umum'}</span>`;
-                if(item.Kategori === 'Pengumuman') catBadge = '<span style="color:#3b82f6; background:rgba(59, 130, 246, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #3b82f6;">Pengumuman</span>';
+            if (dataToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color:var(--text-muted);">Tidak ada Artikel E-Zine.</td></tr>`;
+            } else {
+                dataToRender.forEach((item, index) => {
+                    let catBadge = `<span style="color:#10b981; background:rgba(16, 185, 129, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #10b981;">${item.Kategori || 'Umum'}</span>`;
+                    if(item.Kategori === 'Pengumuman') catBadge = '<span style="color:#3b82f6; background:rgba(59, 130, 246, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #3b82f6;">Pengumuman</span>';
 
-                tbody.innerHTML += `
-                <tr style="background:var(--card-bg); transition:0.3s;">
-                    <td style="color:var(--text-muted); font-weight:bold;">${index + 1}</td>
-                    <td>
-                        <strong style="color:var(--text-light); font-size:1rem; display:block; margin-bottom:4px;">${item.Judul}</strong>
-                        <span style="color:var(--text-muted); font-size:0.8rem;">✍️ ${item.Penulis || 'Admin'}</span>
-                    </td>
-                    <td>${catBadge}</td>
-                    <td>
-                        <div style="display:flex; flex-direction:column; gap:4px; font-size:0.85rem; font-weight:600;">
-                            <span style="color:#ef4444;">❤️ ${item.Jumlah_Like || 0}</span>
-                            <span style="color:#3b82f6;">👁️ ${item.Jumlah_View || 0}</span>
-                        </div>
-                    </td>
-                    <td style="color:var(--text-muted); font-size:0.85rem;">📅 ${item.Tgl_Rilis ? item.Tgl_Rilis.split('T')[0] : '-'}</td>
-                    <td>
-                        <button class="action-btn view" onclick="openArtikelModal('${item.ID_Berita}')">✏️ Edit</button>
-                        <button class="action-btn delete" onclick="deleteArtikelGAS('${item.ID_Berita}')">🗑️ Hapus</button>
-                    </td>
-                </tr>`;
-            });
+                    tbody.innerHTML += `
+                    <tr style="background:var(--card-bg); transition:0.3s;">
+                        <td style="color:var(--text-muted); font-weight:bold;">${index + 1}</td>
+                        <td>
+                            <strong style="color:var(--text-light); font-size:1rem; display:block; margin-bottom:4px;">${item.Judul}</strong>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">✍️ ${item.Penulis || 'Admin'}</span>
+                        </td>
+                        <td>${catBadge}</td>
+                        <td>
+                            <div style="display:flex; flex-direction:column; gap:4px; font-size:0.85rem; font-weight:600;">
+                                <span style="color:#ef4444;">❤️ ${item.Jumlah_Like || 0}</span>
+                                <span style="color:#3b82f6;">👁️ ${item.Jumlah_View || 0}</span>
+                            </div>
+                        </td>
+                        <td style="color:var(--text-muted); font-size:0.85rem;">📅 ${item.Tgl_Rilis ? item.Tgl_Rilis.split('T')[0] : '-'}</td>
+                        <td>
+                            <button class="action-btn view" onclick="openArtikelModal('${item.ID_Berita}')">✏️ Edit</button>
+                            <button class="action-btn delete" onclick="deleteArtikelGAS('${item.ID_Berita}')">🗑️ Hapus</button>
+                        </td>
+                    </tr>`;
+                });
+            }
         }
 
         function cariArtikel(keyword) {
@@ -1230,14 +1360,16 @@
             };
 
             try {
-                await fetch(GAS_ARTIKEL_URL, {
+                const req = await fetch(GAS_ARTIKEL_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
+                if(!req.ok) throw new Error();
                 showToast('✅ Publikasi Berhasil disimpan di Database!');
                 loadArtikelGas(); 
             } catch(e) {
+                // Fallback UI update only (Local Canvas Mode)
                 if(!isEdit) artikelData.unshift({...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || '/img/bemfkgumi.png'});
                 else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || artikelData[idx].Gambar_URL}; }
                 renderArtikelTable();
@@ -1249,18 +1381,20 @@
             btn.disabled = false;
         }
 
-        async function deleteArtikelGAS(id) {
-            // Confirm di-bypass untuk kompatibilitas Canvas Environment
-            try {
-                await fetch(GAS_ARTIKEL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteArticle', ID_Berita: id }) });
-                artikelData = artikelData.filter(a => a.ID_Berita !== id);
-                renderArtikelTable();
-                showToast('✅ Artikel Dihapus dari Database GAS!');
-            } catch(e) {
-                artikelData = artikelData.filter(a => a.ID_Berita !== id);
-                renderArtikelTable();
-                showToast('✅ Artikel Dihapus (Sesi Simulasi Lokal)');
-            }
+        function deleteArtikelGAS(id) {
+            showCustomConfirm("Apakah Anda yakin ingin menghapus Artikel ini?", async function() {
+                try {
+                    const req = await fetch(GAS_ARTIKEL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteArticle', ID_Berita: id }) });
+                    if(!req.ok) throw new Error();
+                    artikelData = artikelData.filter(a => a.ID_Berita !== id);
+                    renderArtikelTable();
+                    showToast('✅ Artikel Dihapus dari Database GAS!');
+                } catch(e) {
+                    artikelData = artikelData.filter(a => a.ID_Berita !== id);
+                    renderArtikelTable();
+                    showToast('✅ Artikel Dihapus (Sesi Simulasi Lokal)');
+                }
+            });
         }
     </script>
 </body>
