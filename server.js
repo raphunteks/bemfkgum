@@ -1004,7 +1004,7 @@ ${xmlUrls}
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        // Gunakan Prefix BEM_CMS: agar rapi di UI Upstash
+        // PERBAIKAN: Gunakan penamaan Key tanpa Prefix agar sinkron dengan struktur Upstash yang ada di database Anda
         let org = await redis.get('Org_Structure');
         let proker = await redis.get('Proker_Data');
         let kalender = await redis.get('Kalender_Data');
@@ -1067,7 +1067,7 @@ app.post('/api/content/:type', async (req, res) => {
 
         const payload = JSON.stringify(bodyData); 
         
-        // Simpan dalam format Kunci Terstruktur (Folder BEM_CMS)
+        // Simpan dalam format Kunci Terstruktur TANPA Prefix BEM_CMS:
         const dbMapping = {
             'org': 'Org_Structure', 
             'proker': 'Proker_Data', 
@@ -1082,7 +1082,7 @@ app.post('/api/content/:type', async (req, res) => {
         };
         
         if (dbMapping[type]) {
-            const redisKey = dbMapping[type]; // DIBENARKAN: Sesuai struktur Upstash terbaru tanpa prefix BEM_CMS
+            const redisKey = dbMapping[type]; 
             await redis.set(redisKey, payload);
             res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
         } else {
@@ -1093,25 +1093,24 @@ app.post('/api/content/:type', async (req, res) => {
     }
 });
 
-// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS (MENGGUNAKAN KEYS LENGTH) =================
+// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS =================
 app.get('/api/admin/stats', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // Perhitungan Menggunakan Keys Lengkap agar Cepat & Realtime (Fix Blank Zero Bug)
         const formKeys = await redis.keys('BEM_Forms:*');
         const totalForms = formKeys.length;
         
         const responseKeys = await redis.keys('BEM_Responses:*:*');
         const totalResponses = responseKeys.length;
         
-        // PERBAIKAN: Menggunakan .keys('Aspirations:*') untuk menghitung total realtime
-        const aspirasiKeys = await redis.keys('Aspirations:*');
-        const totalAspirasi = aspirasiKeys.length;
+        // MENGGUNAKAN HGETALL karena di Upstash Redis data Aspirations adalah HASH Object
+        const aspirasiData = await redis.hgetall('Aspirations') || {};
+        const totalAspirasi = Object.keys(aspirasiData).length;
         
-        // PERBAIKAN: Menggunakan .keys('Messages:*') untuk menghitung total realtime
-        const messageKeys = await redis.keys('Messages:*');
-        const totalPesan = messageKeys.length;
+        // MENGGUNAKAN HGETALL karena di Upstash Redis data Messages adalah HASH Object
+        const pesanData = await redis.hgetall('Messages') || {};
+        const totalPesan = Object.keys(pesanData).length;
         
         res.status(200).json({ 
             success: true, 
@@ -1122,27 +1121,23 @@ app.get('/api/admin/stats', async (req, res) => {
     }
 });
 
-// ================= API ENDPOINTS: TRANSAKSIONAL (PERBAIKAN MGET) =================
+// ================= API ENDPOINTS: TRANSAKSIONAL =================
 app.get('/api/interactions', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // PERBAIKAN: Gunakan mget dengan keys pattern (Bukan hgetall karena datanya disimpan dengan redis.set bukan hset)
-        const aspirasiKeys = await redis.keys('Aspirations:*');
-        let aspirasi = [];
-        if(aspirasiKeys.length > 0) {
-            const raw = await redis.mget(...aspirasiKeys);
-            // Robust Parsing: Filter null values & sort by date (Terbaru di atas)
-            aspirasi = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-        }
+        // MENGGUNAKAN HGETALL SESUAI STRUKTUR DATABASE ASLI ANDA
+        const rawAspirasi = await redis.hgetall('Aspirations') || {};
+        let aspirasi = Object.values(rawAspirasi)
+            .map(i => typeof i === 'string' ? safeParse(i, null) : i)
+            .filter(i => i !== null)
+            .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        const messageKeys = await redis.keys('Messages:*');
-        let pesan = [];
-        if(messageKeys.length > 0) {
-            const raw = await redis.mget(...messageKeys);
-            // Robust Parsing: Filter null values & sort by date (Terbaru di atas)
-            pesan = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-        }
+        const rawPesan = await redis.hgetall('Messages') || {};
+        let pesan = Object.values(rawPesan)
+            .map(i => typeof i === 'string' ? safeParse(i, null) : i)
+            .filter(i => i !== null)
+            .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
         
         res.status(200).json({ success: true, aspirasi, pesan });
     } catch (error) {
@@ -1157,9 +1152,9 @@ app.post('/api/plasma', async (req, res) => {
     const id = `ASP-${Date.now()}`;
     const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
     
-    // PERBAIKAN: Disimpan dengan .set (string) BUKAN hset
+    // KEMBALIKAN KE HSET SESUAI STRUKTUR DATABASE
     if (redis) {
-        await redis.set(`Aspirations:${id}`, JSON.stringify(payload));
+        await redis.hset('Aspirations', { [id]: JSON.stringify(payload) });
     }
     res.status(200).json({ success: true, message: 'Aspirasi berhasil dikirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -1171,9 +1166,9 @@ app.post('/api/message', async (req, res) => {
     const id = `MSG-${Date.now()}`;
     const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
     
-    // PERBAIKAN: Disimpan dengan .set (string) BUKAN hset
+    // KEMBALIKAN KE HSET SESUAI STRUKTUR DATABASE
     if (redis) {
-        await redis.set(`Messages:${id}`, JSON.stringify(payload));
+        await redis.hset('Messages', { [id]: JSON.stringify(payload) });
     }
     res.status(200).json({ success: true, message: 'Pesan terkirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -1182,9 +1177,9 @@ app.post('/api/message', async (req, res) => {
 app.post('/api/delete-interaction', async (req, res) => {
     try {
         const { type, id } = req.body;
-        // PERBAIKAN: Dihapus dengan .del biasa, sesuai dengan metode penyimpanannya
-        if(type === 'aspirasi' && redis) await redis.del(`Aspirations:${id}`);
-        if(type === 'pesan' && redis) await redis.del(`Messages:${id}`);
+        // KEMBALIKAN KE HDEL SESUAI STRUKTUR DATABASE
+        if(type === 'aspirasi' && redis) await redis.hdel('Aspirations', id);
+        if(type === 'pesan' && redis) await redis.hdel('Messages', id);
         res.status(200).json({ success: true });
     } catch (error) { res.status(500).json({ success: false }); }
 });
