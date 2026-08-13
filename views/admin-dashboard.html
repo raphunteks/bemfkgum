@@ -485,7 +485,7 @@
     </button>
 
     <script>
-        // ================= MODAL LOGIC ENGINE (SUPER UPGRADE) =================
+        // ================= MODAL LOGIC ENGINE =================
         function showToast(msg) {
             const t = document.getElementById('globalToast');
             if(!t) return;
@@ -515,6 +515,7 @@
             }
             confirmCallback = null;
         }
+
 
         // ================= STATE & DATA =================
         const FALLBACK_ADMIN_ORG = { 
@@ -603,10 +604,10 @@
         }
 
         // =======================================================================================
-        // SUPER UPGRADE: ISOLASI TRY-CATCH (MENCEGAH BLANK SCREEN PADA PESAN & ASPIRASI)
+        // SUPER UPGRADE: PEMISAHAN LOGIKA FETCH AGAR ANTI SILENT FAILURE
         // =======================================================================================
         async function loadAllData() {
-            // Blok 1: Tarik Data CMS
+            // 1. Ambil Data Konten CMS
             try {
                 let apiUrl = '/api/content';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemkbmfkgumi.com/api/content'; }
@@ -633,9 +634,10 @@
                 }
             } catch(err) { 
                 showToast("⚠️ CMS berjalan di Mode Offline (Preview)."); 
+                console.warn("CMS Load Error:", err);
             }
 
-            // Blok 2: Tarik Data Interaksi (TERPISAH AGAR ANTI BLANK)
+            // 2. Ambil Data Interaksi (Aspirasi & Pesan) - Blok Terpisah
             try {
                 let apiInt = '/api/interactions';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiInt = 'https://bemkbmfkgumi.com/api/interactions'; }
@@ -651,7 +653,7 @@
                 console.warn("Interactions Load Error:", err);
             }
 
-            // Blok 3: Update Statistik Overview
+            // 3. Update Dashboard Stats Explicitly (Sinkronisasi dengan backend)
             try {
                 let apiStats = '/api/admin/stats';
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiStats = 'https://bemkbmfkgumi.com/api/admin/stats'; }
@@ -664,7 +666,7 @@
                     }
                 }
             } catch (e) {
-                // Fallback stats lokal
+                // Fallback jika API stats gagal
                 document.getElementById('statAspirasi').innerText = aspirasiData.length;
                 document.getElementById('statPesan').innerText = pesanData.length;
             }
@@ -1088,6 +1090,9 @@
         }
         function tambahKategoriTeam() { if(!db.team) db.team = []; db.team.push({category: "Kategori Baru", members: []}); renderTeam(); }
 
+        // =======================================================================================
+        // SUPER UPGRADE: FUNGSI TABEL & DELETE INTERAKSI DENGAN CUSTOM CONFIRM MODAL
+        // =======================================================================================
         function renderTabel() {
             // Update UI Counters safely
             document.getElementById('statAspirasi').innerText = document.getElementById('statAspirasi').innerText === '0' ? aspirasiData.length : document.getElementById('statAspirasi').innerText; 
@@ -1108,9 +1113,8 @@
             }
         }
         
-        // SUPER UPGRADE: Ganti confirm bawaan Chrome dengan Custom Confirm Glassmorphism
         function deleteData(type, id) {
-            showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus interaksi ini secara permanen?", async function() {
+            showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus data ini secara permanen?", async function() {
                 try {
                     let apiUrl = '/api/delete-interaction'; 
                     if(window.location.protocol === 'blob:' || window.location.origin === "null") {
@@ -1378,8 +1382,7 @@
         }
 
         function deleteArtikelGAS(id) {
-            // SUPER UPGRADE: Ganti confirm bawaan Chrome untuk artikel
-            showCustomConfirm("Apakah Anda yakin ingin menghapus Artikel ini secara permanen?", async function() {
+            showCustomConfirm("Apakah Anda yakin ingin menghapus Artikel ini?", async function() {
                 try {
                     const req = await fetch(GAS_ARTIKEL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteArticle', ID_Berita: id }) });
                     if(!req.ok) throw new Error();
