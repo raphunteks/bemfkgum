@@ -1004,17 +1004,23 @@ ${xmlUrls}
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        // PERBAIKAN: Gunakan penamaan Key tanpa Prefix agar sinkron dengan struktur Upstash yang ada di database Anda
-        let org = await redis.get('Org_Structure');
-        let proker = await redis.get('Proker_Data');
-        let kalender = await redis.get('Kalender_Data');
-        let dokumentasi = await redis.get('Dokumentasi_Data');
-        let settings = await redis.get('Settings_Data');
-        let team = await redis.get('Team_Data');
-        let sejarah = await redis.get('Sejarah_Data');
-        let filosofi = await redis.get('Filosofi_Data'); 
-        let kontak = await redis.get('Kontak_Data');
-        let radar = await redis.get('Radar_Data');
+        // PERBAIKAN LOADING LAMBAT: Menggunakan Promise.all untuk fetch paralel secara serentak
+        // Ini memangkas waktu request database dari 10x antrian menjadi 1x request bersamaan
+        const [
+            org, proker, kalender, dokumentasi, settings, 
+            team, sejarah, filosofi, kontak, radar
+        ] = await Promise.all([
+            redis.get('Org_Structure'),
+            redis.get('Proker_Data'),
+            redis.get('Kalender_Data'),
+            redis.get('Dokumentasi_Data'),
+            redis.get('Settings_Data'),
+            redis.get('Team_Data'),
+            redis.get('Sejarah_Data'),
+            redis.get('Filosofi_Data'),
+            redis.get('Kontak_Data'),
+            redis.get('Radar_Data')
+        ]);
 
         let parsedOrg = safeParse(org, defaultOrg);
         
