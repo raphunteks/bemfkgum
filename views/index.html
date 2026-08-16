@@ -192,9 +192,6 @@
 
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
-    
-    <!-- PENGATURAN MANIFEST PWA -->
-    <link rel="manifest" href="/manifest.json" />
 </head>
 
 <!-- PERBAIKAN KRUSIAL: Menghapus atribut itemscope itemtype dari <body> karena memicu peringatan konflik JSON-LD di Google Search Console -->
@@ -659,31 +656,12 @@
                 });
                 
                 setTimeout(() => {
-                    if(document.querySelector('.warna-pill')) {
-                        document.querySelector('.warna-pill').click();
-                    }
-                }, 100);
-            }
-        }
-    </script>
-
-    <!-- ================= PWA SERVICE WORKER REGISTRATION ================= -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-                    navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker berhasil didaftarkan dengan scope:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.error('❌ Service Worker gagal didaftarkan:', error);
-                    });
-                } else {
-                    console.log('ℹ️ Mode Pratinjau Terdeteksi (Protokol: ' + window.location.protocol + '). Pendaftaran Service Worker dilewati sementara untuk mencegah error sandbox.');
+                if(document.querySelector('.warna-pill')) {
+                    document.querySelector('.warna-pill').click();
                 }
-            });
+            }, 100);
         }
-    </script>
+    }
+</script>
 </body>
 </html>
