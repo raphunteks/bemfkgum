@@ -14,7 +14,6 @@
     <!-- SCRIPT PROTECT DEVTOOLS & RIGHT CLICK -->
     <script src="/js/protect-devtools.js"></script>
 
-    <!-- SUPER UPGRADE: Custom File Input Styling for Admin -->
     <style>
         .custom-file-input {
             background: var(--input-bg);
@@ -230,12 +229,12 @@
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
-            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA -->
+            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA (UPGRADED MENGGUNAKAN LOCAL API) -->
             <section id="sec-artikel" class="admin-section">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
                         <h2 style="color: var(--text-light);">Manajemen Artikel & Berita</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Kelola publikasi ke Portal Publik E-Zine BEM</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Kelola publikasi ke Portal Publik E-Zine BEM (Tersimpan Lokal di Upstash Redis)</p>
                     </div>
                     <div style="display:flex; gap:15px; align-items:center;">
                         <input type="text" id="searchArtikel" class="neo-input" placeholder="🔍 Cari artikel..." style="margin-bottom:0; width:250px;" onkeyup="cariArtikel(this.value)">
@@ -421,8 +420,16 @@
             
             <input type="hidden" id="artId">
             
-            <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Judul Kegiatan / Berita</label>
-            <input type="text" id="artJudul" class="neo-input" placeholder="Masukkan judul lengkap...">
+            <div class="grid-2" style="margin-bottom: 0;">
+                <div>
+                    <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Judul Kegiatan / Berita</label>
+                    <input type="text" id="artJudul" class="neo-input" placeholder="Masukkan judul lengkap...">
+                </div>
+                <div>
+                    <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Custom Slug URL (Opsional)</label>
+                    <input type="text" id="artSlug" class="neo-input" placeholder="Cth: berita-hari-ini (Otomatis jika kosong)">
+                </div>
+            </div>
             
             <div class="grid-2" style="margin-bottom: 0;">
                 <div>
@@ -534,7 +541,6 @@
         
         let aspirasiData = []; let pesanData = [];
         let artikelData = []; 
-        const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
 
         const scrollToTopBtnAdmin = document.getElementById("scrollToTopBtnAdmin");
         const adminMainArea = document.querySelector(".admin-main");
@@ -660,10 +666,10 @@
                 }
             }
 
-            // Jalankan Keduanya Secara Bersamaan (Parallel) agar tidak saling menunggu/memblokir
+            // Jalankan Ketiganya Secara Bersamaan (Parallel) agar tidak memblokir
             fetchCMS();
             fetchInteractions();
-            loadArtikelGas(); 
+            loadArtikelLocal(); // SUPER UPGRADE: Panggil lokal API sekarang
         }
 
         function updateDashboardStats(aspirationCount, messageCount) {
@@ -899,7 +905,6 @@
             renderProker(); 
         }
 
-        // --- RENDER KALENDER / AGENDA CMS ---
         function renderKalender() {
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
             (db.kalender || []).forEach((k, i) => { 
@@ -1086,7 +1091,6 @@
         }
         function tambahKategoriTeam() { if(!db.team) db.team = []; db.team.push({category: "Kategori Baru", members: []}); renderTeam(); }
 
-        // Murni Merender Tabel saja, tidak ikut memfetch
         function renderTabel() {
             const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
             if (aspirasiData.length === 0) {
@@ -1103,7 +1107,6 @@
             }
         }
         
-        // SUPER UPGRADE: Ganti confirm bawaan Chrome dengan Custom Confirm Glassmorphism
         function deleteData(type, id) {
             showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus interaksi ini secara permanen?", async function() {
                 try {
@@ -1136,7 +1139,6 @@
         function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
         function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><strong>Dari:</strong> ${data.nama} (${data.kontak})</p><p><strong>Subjek:</strong> ${data.subjek}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
 
-        // --- RENDER RADAR BEM CMS ---
         function renderRadar() {
             const cont = document.getElementById('cmsRadar'); cont.innerHTML = '';
             (db.radar || []).forEach((r, i) => {
@@ -1152,7 +1154,7 @@
                     <input type="text" class="neo-input" value="${r.departemen || ''}" placeholder="Contoh: Dept. of Art and Sport" oninput="db.radar[${i}].departemen=this.value">
                     
                     <label style="font-size:0.8rem; color:var(--text-muted);">Script Embed Code (Elfsight / Widget lainnya)</label>
-                    <textarea class="neo-input" rows="4" placeholder='<script src="..."><\/script>\\n<div class="..."></div>' oninput="db.radar[${i}].embed=this.value">${r.embed || ''}</textarea>
+                    <textarea class="neo-input" rows="4" placeholder='<script src="..."><\/script>\n<div class="..."></div>' oninput="db.radar[${i}].embed=this.value">${r.embed || ''}</textarea>
                     
                     <div style="background: rgba(236, 72, 153, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(236, 72, 153, 0.3); margin-top: 10px;">
                         <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">💡 <strong>Tips:</strong> Paste langsung kode HTML dari Elfsight ke dalam kotak di atas. Sistem akan merender otomatis di halaman radarbem.html</p>
@@ -1167,20 +1169,30 @@
             renderRadar();
         }
 
-        async function loadArtikelGas() {
+        // =========================================================================
+        // UPGRADE SUPER BIG: ARTIKEL CMS MURNI LOKAL (NO MORE GAS URL)
+        // =========================================================================
+        async function loadArtikelLocal() {
             try {
-                const req = await fetch(GAS_ARTIKEL_URL + '?action=getArticles&page=1&limit=50');
+                let apiUrl = '/api/articles?page=1&limit=500';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/articles?page=1&limit=500';
+                }
+                const req = await fetch(apiUrl);
                 if(!req.ok) throw new Error();
                 const res = await req.json();
                 artikelData = res.data || [];
                 renderArtikelTable();
-            } catch(e) { console.warn("⚠️ Gagal meload data artikel GAS", e); }
+            } catch(e) { 
+                console.warn("⚠️ Gagal meload data artikel lokal backend", e); 
+                renderArtikelTable(); 
+            }
         }
 
         function renderArtikelTable(dataToRender = artikelData) {
             const tbody = document.getElementById('tableBodyArtikel'); tbody.innerHTML = '';
             if (dataToRender.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color:var(--text-muted);">Tidak ada Artikel E-Zine.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color:var(--text-muted);">Tidak ada Artikel Publikasi.</td></tr>`;
             } else {
                 dataToRender.forEach((item, index) => {
                     let catBadge = `<span style="color:#10b981; background:rgba(16, 185, 129, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #10b981;">${item.Kategori || 'Umum'}</span>`;
@@ -1203,7 +1215,7 @@
                         <td style="color:var(--text-muted); font-size:0.85rem;">📅 ${item.Tgl_Rilis ? item.Tgl_Rilis.split('T')[0] : '-'}</td>
                         <td>
                             <button class="action-btn view" onclick="openArtikelModal('${item.ID_Berita}')">✏️ Edit</button>
-                            <button class="action-btn delete" onclick="deleteArtikelGAS('${item.ID_Berita}')">🗑️ Hapus</button>
+                            <button class="action-btn delete" onclick="deleteArtikelLocal('${item.ID_Berita}')">🗑️ Hapus</button>
                         </td>
                     </tr>`;
                 });
@@ -1262,6 +1274,7 @@
                 document.getElementById('artikelModalTitle').innerText = "Edit Artikel";
                 document.getElementById('artId').value = art.ID_Berita;
                 document.getElementById('artJudul').value = art.Judul || "";
+                document.getElementById('artSlug').value = art.Slug_URL || "";
                 document.getElementById('artKategori').value = art.Kategori || "Kegiatan";
                 
                 let safeUrl = art.Gambar_URL || "";
@@ -1288,6 +1301,7 @@
                 document.getElementById('artikelModalTitle').innerText = "Tambah Artikel Baru";
                 document.getElementById('artId').value = "";
                 document.getElementById('artJudul').value = "";
+                document.getElementById('artSlug').value = "";
                 document.getElementById('artKategori').value = "Sosial";
                 document.getElementById('artGambar').value = "";
                 document.getElementById('artPenulis').value = "Admin BEM FKG UMI";
@@ -1309,7 +1323,12 @@
             const isEdit = !!document.getElementById('artId').value;
             const id = isEdit ? document.getElementById('artId').value : `ART-${Date.now()}`;
             const judul = document.getElementById('artJudul').value;
-            const slug = judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            
+            // SUPER UPGRADE: Logic Custom Slug Prioritas
+            let manualSlug = document.getElementById('artSlug').value.trim();
+            const slug = manualSlug 
+                ? manualSlug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') 
+                : judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
             
             const rawIsi = document.getElementById('artIsi').value;
             let htmlIsi = rawIsi;
@@ -1331,10 +1350,10 @@
             
             if (fileInput.files.length > 0) {
                 base64Image = await fileToBase64(fileInput.files[0]);
+                finalImageURL = base64Image; // Pakai base64 mutlak jika ada upload
             }
 
             const payload = {
-                action: isEdit ? 'updateArticle' : 'addArticle',
                 ID_Berita: id,
                 Slug_URL: slug,
                 Judul: judul,
@@ -1342,7 +1361,6 @@
                 Kategori: document.getElementById('artKategori').value,
                 Penulis: document.getElementById('artPenulis').value,
                 Gambar_URL: finalImageURL,
-                base64Image: base64Image, 
                 Konten_HTML: htmlIsi,
                 Tgl_Rilis: document.getElementById('artTanggal').value,
                 Waktu_Baca: waktuBaca,
@@ -1351,18 +1369,22 @@
             };
 
             try {
-                const req = await fetch(GAS_ARTIKEL_URL, {
+                let apiUrl = '/api/articles/save';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/articles/save';
+                
+                const req = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                
                 if(!req.ok) throw new Error();
-                showToast('✅ Publikasi Berhasil disimpan di Database!');
-                loadArtikelGas(); 
+                showToast('✅ Publikasi Berhasil disimpan ke Database Lokal!');
+                loadArtikelLocal(); 
             } catch(e) {
                 // Fallback UI update only (Local Canvas Mode)
-                if(!isEdit) artikelData.unshift({...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || '/img/bemfkgumi.png'});
-                else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload, Gambar_URL: base64Image ? `data:image/jpeg;base64,${base64Image}` : finalImageURL || artikelData[idx].Gambar_URL}; }
+                if(!isEdit) artikelData.unshift(payload);
+                else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload}; }
                 renderArtikelTable();
                 showToast('✅ Tersimpan (Sesi Canvas Lokal)');
             }
@@ -1372,15 +1394,19 @@
             btn.disabled = false;
         }
 
-        function deleteArtikelGAS(id) {
-            // SUPER UPGRADE: Ganti confirm bawaan Chrome untuk artikel
+        function deleteArtikelLocal(id) {
+            // SUPER UPGRADE: Hapus langsung via Endpoint Lokal
             showCustomConfirm("Apakah Anda yakin ingin menghapus Artikel ini secara permanen?", async function() {
                 try {
-                    const req = await fetch(GAS_ARTIKEL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteArticle', ID_Berita: id }) });
+                    let apiUrl = `/api/articles/${id}`;
+                    if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com/api/articles/${id}`;
+
+                    const req = await fetch(apiUrl, { method: 'DELETE' });
                     if(!req.ok) throw new Error();
+                    
                     artikelData = artikelData.filter(a => a.ID_Berita !== id);
                     renderArtikelTable();
-                    showToast('✅ Artikel Dihapus dari Database GAS!');
+                    showToast('✅ Artikel Dihapus dari Database Lokal!');
                 } catch(e) {
                     artikelData = artikelData.filter(a => a.ID_Berita !== id);
                     renderArtikelTable();
