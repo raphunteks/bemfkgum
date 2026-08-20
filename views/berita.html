@@ -1,18 +1,31 @@
-<!-- FILE: views/berita.html -->
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0b132b">
     
+    <!-- SUPER UPGRADE FIX: Mencegah Flash of Incorrect Theme (FOIT) dan Sinkronisasi LocalStorage -->
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else if (savedTheme === 'light') {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    
     <!-- PERFORMANCE PRECONNECTS -->
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
 
     <!-- ENTERPRISE SEO DIRECTIVES & CANONICAL -->
-    <title>Portal Berita E-Zine | BEM KBMFKG UMI</title>
+    <title>Portal Berita Pubmed | BEM KBMFKG UMI</title>
     <meta name="description" content="Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.">
-    <meta name="keywords" content="portal berita, ezine, fkg umi, kedokteran gigi, artikel seo, bem fkg umi">
+    <meta name="keywords" content="portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" id="canonicalUrl" href="https://bemkbmfkgumi.com/berita">
@@ -37,8 +50,8 @@
     <script src="/js/protect-devtools.js" defer></script>
 
     <!-- OPEN GRAPH & TWITTER CARDS (DYNAMIC TARGET) -->
-    <meta property="og:site_name" content="Portal Berita E-Zine BEM KBMFKG UMI">
-    <meta property="og:title" id="ogTitle" content="Portal Berita E-Zine | BEM KBMFKG UMI">
+    <meta property="og:site_name" content="Portal Berita Pubmed BEM KBMFKG UMI">
+    <meta property="og:title" id="ogTitle" content="Portal Berita Pubmed | BEM KBMFKG UMI">
     <meta property="og:description" id="ogDesc" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini.">
     <meta property="og:type" id="ogType" content="website">
     <meta property="og:url" id="ogUrl" content="https://bemkbmfkgumi.com/berita">
@@ -66,7 +79,7 @@
           "@type": "CollectionPage",
           "@id": "https://bemkbmfkgumi.com/berita#webpage",
           "url": "https://bemkbmfkgumi.com/berita",
-          "name": "Portal Berita E-Zine | BEM KBMFKG UMI",
+          "name": "Portal Berita Pubmed | BEM KBMFKG UMI",
           "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
           "isPartOf": { 
               "@type": "WebSite",
@@ -78,7 +91,7 @@
         {
           "@type": "BreadcrumbList",
           "@id": "https://bemkbmfkgumi.com/berita#breadcrumb",
-          "name": "Breadcrumb Portal E-Zine",
+          "name": "Breadcrumb Portal Pubmed",
           "itemListElement": [
             {
               "@type": "ListItem",
@@ -89,7 +102,7 @@
             {
               "@type": "ListItem",
               "position": 2,
-              "name": "Portal Publik E-Zine",
+              "name": "Portal Publik Pubmed",
               "item": "https://bemkbmfkgumi.com/berita"
             }
           ]
@@ -147,18 +160,18 @@
          ========================================================================= -->
     <div style="display:none;" itemscope itemtype="https://schema.org/SiteNavigationElement" aria-hidden="true">
         <a itemprop="url" href="https://bemkbmfkgumi.com/" title="Beranda BEM KBMFKG UMI"><span itemprop="name">Beranda (Halaman Perujuk)</span></a>
-        <a itemprop="url" href="https://bemkbmfkgumi.com/berita" title="Portal Berita E-Zine"><span itemprop="name">Portal Berita E-Zine</span></a>
+        <a itemprop="url" href="https://bemkbmfkgumi.com/berita" title="Portal Berita Pubmed"><span itemprop="name">Portal Berita Pubmed</span></a>
     </div>
 
     <!-- ================= BEM STANDAR HEADER ================= -->
     <%- include('partials/header.html') %>
 
-    <!-- SEARCH & HERO E-ZINE -->
+    <!-- SEARCH & HERO PUBMED -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-4">
         <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 mb-8">
             <div>
                 <!-- THEME RESPONSIVE COLOR -->
-                <h1 class="text-4xl md:text-5xl font-black text-[color:var(--text-light)] glow-text tracking-tight mb-2">Portal Publik <span class="text-[color:var(--accent-neon)]">E-Zine</span></h1>
+                <h1 class="text-4xl md:text-5xl font-black text-[color:var(--text-light)] glow-text tracking-tight mb-2">Portal Publik <span class="text-[color:var(--accent-neon)]">Pubmed</span></h1>
                 <p class="text-[color:var(--text-muted)] text-lg">Jelajahi inovasi, berita organisasi, edukasi klinis, dan event terbaru kami.</p>
             </div>
             <div class="relative w-full md:w-80">
@@ -178,7 +191,7 @@
         </nav>
     </section>
 
-    <!-- GRID ARTIKEL E-ZINE (Diubah menjadi struktur Schema ItemList) -->
+    <!-- GRID ARTIKEL PUBMED (Diubah menjadi struktur Schema ItemList) -->
     <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 pb-20 min-h-[50vh]">
         <div class="grid-zine" id="articleGrid" aria-live="polite" itemscope itemtype="https://schema.org/ItemList">
             <meta itemprop="itemListOrder" content="https://schema.org/ItemListOrderDescending" />
@@ -254,9 +267,17 @@
             
             const themeCheckbox = document.getElementById('checkboxTheme');
             if(themeCheckbox) {
+                // Sinkronkan status checkbox dengan DOM yang sudah ditentukan oleh script HEAD
+                themeCheckbox.checked = document.documentElement.hasAttribute('data-theme');
+                
                 themeCheckbox.addEventListener('change', (e) => {
-                    if(e.target.checked) document.documentElement.setAttribute('data-theme', 'dark');
-                    else document.documentElement.removeAttribute('data-theme');
+                    if(e.target.checked) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        document.documentElement.removeAttribute('data-theme');
+                        localStorage.setItem('theme', 'light');
+                    }
                 });
             }
         };
@@ -502,7 +523,7 @@
                         "name": "Breadcrumb Artikel " + article.Judul,
                         "itemListElement": [
                             { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://bemkbmfkgumi.com/" },
-                            { "@type": "ListItem", "position": 2, "name": "Portal E-Zine", "item": "https://bemkbmfkgumi.com/berita" },
+                            { "@type": "ListItem", "position": 2, "name": "Portal Pubmed", "item": "https://bemkbmfkgumi.com/berita" },
                             { "@type": "ListItem", "position": 3, "name": article.Kategori || "Berita", "item": "https://bemkbmfkgumi.com/berita?category=" + encodeURIComponent(article.Kategori) },
                             { "@type": "ListItem", "position": 4, "name": article.Judul, "item": url }
                         ]
@@ -519,12 +540,12 @@
 
         function injectDefaultSEO() {
             // Revert base tags
-            document.title = "Portal Berita E-Zine | BEM KBMFKG UMI";
+            document.title = "Portal Berita Pubmed | BEM KBMFKG UMI";
             document.querySelector('meta[name="description"]')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.");
-            setOrUpdateMeta('name', 'keywords', 'portal berita, ezine, fkg umi, kedokteran gigi, artikel seo, bem fkg umi');
+            setOrUpdateMeta('name', 'keywords', 'portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi');
             document.getElementById('canonicalUrl')?.setAttribute("href", "https://bemkbmfkgumi.com/berita");
             
-            document.getElementById('ogTitle')?.setAttribute("content", "Portal Berita E-Zine | BEM KBMFKG UMI");
+            document.getElementById('ogTitle')?.setAttribute("content", "Portal Berita Pubmed | BEM KBMFKG UMI");
             document.getElementById('ogDesc')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, dan event terkini.");
             document.getElementById('ogUrl')?.setAttribute("content", "https://bemkbmfkgumi.com/berita");
             document.getElementById('ogImage')?.setAttribute("content", "https://bemkbmfkgumi.com/img/bemfkgumi.png");
@@ -587,7 +608,7 @@
                 schema["@graph"].push({
                     "@type": "ItemList",
                     "@id": "https://bemkbmfkgumi.com/berita#itemlist",
-                    "name": "Berita dan Publikasi E-Zine Terbaru",
+                    "name": "Berita dan Publikasi Pubmed Terbaru",
                     "itemListElement": itemListElements
                 });
             }
@@ -698,7 +719,7 @@
             if (navigator.share) {
                 navigator.share({
                     title: article.Judul + ' | BEM KBMFKG UMI',
-                    text: 'Baca artikel menarik ini di Portal Publik E-Zine BEM KBMFKG UMI: ' + article.Judul,
+                    text: 'Baca artikel menarik ini di Portal Publik Pubmed BEM KBMFKG UMI: ' + article.Judul,
                     url: url
                 }).catch(function(error) {
                     console.log('User membatalkan share', error);
@@ -712,23 +733,6 @@
                 document.body.removeChild(dummy);
                 showToastMessage();
             }
-        }
-    </script>
-
-    <!-- PENGATURAN SERVICE WORKER PWA -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-                    navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker E-Zine berhasil didaftarkan:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.error('❌ Service Worker gagal didaftarkan:', error);
-                    });
-                }
-            });
         }
     </script>
 </body>
