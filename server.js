@@ -298,7 +298,6 @@ app.get('/berita/:slug', async (req, res) => {
     }
 });
 
-
 // ============================================================================
 // API SYSTEM UPLOAD FILE (REALTIME & FOLDER STRUCTURE UI)
 // Berdasarkan gambar 6 & 7, kunci tersimpan sebagai String: BEM_Files:1787225019662-sertifikat-bab-i.png
@@ -894,9 +893,10 @@ app.get('/sitemap.xml', async (req, res) => {
                             const img = art.Gambar_URL || `${domain}/img/bemfkgumi.png`;
                             const itemLastMod = formatSitemapDate(art.Tgl_Rilis);
                             if(slug) {
+                                // PERBAIKAN SITEMAP: Menggunakan Clean URL Path /berita/slug
                                 xmlUrls += `
     <url>
-        <loc>${domain}/berita?article=${escapeXml(slug)}</loc>
+        <loc>${domain}/berita/${escapeXml(slug)}</loc>
         <lastmod>${itemLastMod}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.85</priority>
@@ -1026,7 +1026,6 @@ app.delete('/api/articles/:id', async (req, res) => {
          res.status(200).json({ success: true, message: "Artikel dihapus." });
     } catch(e) { res.status(500).json({ success: false }); }
 });
-
 
 // ================= API CMS ENDPOINTS (ZERO-DELAY MGET DENGAN KEYS ASLI) =================
 app.get('/api/content', async (req, res) => {
