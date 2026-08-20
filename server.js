@@ -238,9 +238,6 @@ const defaultKalender = [
     }
 ];
 
-// Google Apps Script API Endpoint untuk Artikel
-const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
-
 // ================= ROUTES FRONTEND UTAMA =================
 app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
@@ -268,7 +265,6 @@ app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.s
 // SUPER BIG UPGRADE: API SYSTEM UPLOAD FILE (REALTIME & FOLDER STRUCTURE UI)
 // Berdasarkan gambar 6 & 7, kunci tersimpan sebagai String: BEM_Files:1787225019662-sertifikat-bab-i.png
 // ============================================================================
-
 app.post('/api/upload', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -338,7 +334,6 @@ app.get('/api/uploads/:filename', async (req, res) => {
 // API ENDPOINTS BEM-FORM (DUAL-ENGINE FETCHING: HASH & STRING)
 // Sesuai Screenshot GBR 4 (BEM_Forms:FRM-...) & GBR 5 (BEM_Forms HASH)
 // ============================================================================
-
 app.get('/api/forms', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -579,7 +574,6 @@ app.post('/api/forms/submit', async (req, res) => {
 // ============================================================================
 // CRUD JAWABAN (EDIT & DELETE SPECIFIC RESPONSE)
 // ============================================================================
-
 app.get('/api/forms/:id/responses', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -706,7 +700,6 @@ app.get('/api/forms/:id/export', async (req, res) => {
 // ============================================================================
 // DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR
 // ============================================================================
-
 app.get('/robots.txt', (req, res) => {
     const domain = "https://bemkbmfkgumi.com";
     res.header('Content-Type', 'text/plain');
@@ -847,19 +840,22 @@ app.get('/sitemap.xml', async (req, res) => {
             });
         }
 
+        // ================= SUPER BIG UPGRADE: DYNAMIC SEO ARTIKEL DARI REDIS LOKAL =================
         try {
-            const gasReq = await fetch(`${GAS_ARTIKEL_URL}?action=getArticles&page=1&limit=100`);
-            if(gasReq.ok) {
-                const gasRes = await gasReq.json();
-                const articles = gasRes.data || [];
-                if (articles.length > 0) {
-                    xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (ARTIKEL/E-ZINE) -->`;
-                    articles.forEach(art => {
-                        const slug = art.Slug_URL || art.ID_Berita;
-                        const img = art.Gambar_URL || `${domain}/img/bemfkgumi.png`;
-                        const itemLastMod = formatSitemapDate(art.Tgl_Rilis);
-                        if(slug) {
-                            xmlUrls += `
+            if (redis) {
+                const articleKeys = await redis.keys('BEM_Articles:*');
+                if (articleKeys.length > 0) {
+                    const rawArticles = await redis.mget(...articleKeys);
+                    const articles = rawArticles.filter(a => a != null).map(a => typeof a === 'string' ? JSON.parse(a) : a);
+                    
+                    if (articles.length > 0) {
+                        xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (ARTIKEL/E-ZINE) -->`;
+                        articles.forEach(art => {
+                            const slug = art.Slug_URL || art.ID_Berita;
+                            const img = art.Gambar_URL || `${domain}/img/bemfkgumi.png`;
+                            const itemLastMod = formatSitemapDate(art.Tgl_Rilis);
+                            if(slug) {
+                                xmlUrls += `
     <url>
         <loc>${domain}/berita?article=${escapeXml(slug)}</loc>
         <lastmod>${itemLastMod}</lastmod>
@@ -871,12 +867,13 @@ app.get('/sitemap.xml', async (req, res) => {
             <image:caption>${escapeXml(art.Kategori || 'Berita')}</image:caption>
         </image:image>
     </url>`;
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
             }
         } catch(e) {
-            console.warn("⚠️ Sitemap: Gagal sinkronisasi artikel", e);
+            console.warn("⚠️ Sitemap: Gagal sinkronisasi artikel lokal", e);
         }
 
         const sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>
@@ -895,6 +892,102 @@ ${xmlUrls}
         res.status(500).send("Internal Server Error generating Sitemap");
     }
 });
+
+// ================= API ENDPOINTS: ARTIKEL (E-ZINE TERINTEGRASI PENUH) =================
+
+// Ambil Seluruh Data Berita (Support Pagination & Filter Kategori)
+app.get('/api/articles', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const category = req.query.category || 'All';
+
+        // 1. Ambil Seluruh Data Berita Dari Namespace `BEM_Articles:*`
+        const keys = await redis.keys('BEM_Articles:*');
+        let articles = [];
+        
+        if(keys.length > 0) {
+            const raw = await redis.mget(...keys);
+            articles = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i);
+        }
+
+        // 2. Sortir Artikel dari Tanggal Terbaru (Descending)
+        articles.sort((a,b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
+
+        // 3. Filter berdasarkan Kategori
+        if (category !== 'All') {
+            articles = articles.filter(a => a.Kategori === category);
+        }
+
+        // 4. Proses Pagination
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const paginatedArticles = articles.slice(startIndex, endIndex);
+
+        res.status(200).json({ success: true, data: paginatedArticles, total: articles.length });
+    } catch (e) { 
+        res.status(500).json({ success: false, data: [] }); 
+    }
+});
+
+// Increment Jumlah View Berita
+app.post('/api/articles/view/:id', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const key = `BEM_Articles:${req.params.id}`;
+        const raw = await redis.get(key);
+        
+        if(raw) {
+            let art = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            art.Jumlah_View = (parseInt(art.Jumlah_View) || 0) + 1;
+            await redis.set(key, JSON.stringify(art));
+        }
+        res.status(200).json({ success: true });
+    } catch(e) { res.status(500).json({ success: false }); }
+});
+
+// Increment Jumlah Like Berita
+app.post('/api/articles/like/:id', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const key = `BEM_Articles:${req.params.id}`;
+        const raw = await redis.get(key);
+        
+        if(raw) {
+            let art = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            art.Jumlah_Like = (parseInt(art.Jumlah_Like) || 0) + 1;
+            await redis.set(key, JSON.stringify(art));
+        }
+        res.status(200).json({ success: true });
+    } catch(e) { res.status(500).json({ success: false }); }
+});
+
+// ADMIN: Simpan atau Edit Berita
+app.post('/api/articles/save', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        let art = req.body;
+        
+        if (!art.ID_Berita) art.ID_Berita = `ART-${Date.now()}`;
+        if (!art.Slug_URL) art.Slug_URL = art.Judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        if (!art.Tgl_Rilis) art.Tgl_Rilis = new Date().toISOString();
+        if (!art.Jumlah_View) art.Jumlah_View = 0;
+        if (!art.Jumlah_Like) art.Jumlah_Like = 0;
+        
+        await redis.set(`BEM_Articles:${art.ID_Berita}`, JSON.stringify(art));
+        res.status(200).json({ success: true, message: "Artikel berhasil disimpan", id: art.ID_Berita });
+    } catch(e) { res.status(500).json({ success: false }); }
+});
+
+// ADMIN: Hapus Berita
+app.delete('/api/articles/:id', async (req, res) => {
+    try {
+         if(redis) await redis.del(`BEM_Articles:${req.params.id}`);
+         res.status(200).json({ success: true, message: "Artikel dihapus." });
+    } catch(e) { res.status(500).json({ success: false }); }
+});
+
 
 // ================= API CMS ENDPOINTS (ZERO-DELAY MGET DENGAN KEYS ASLI) =================
 app.get('/api/content', async (req, res) => {
@@ -1005,13 +1098,18 @@ app.get('/api/admin/stats', async (req, res) => {
         const messageKeys = await redis.keys('BEM_Messages:*'); // GBR 1: BEM_Messages:MSG-...
         const totalPesan = messageKeys.length;
         
+        // Bonus Update: Menghitung total artikel
+        const articleKeys = await redis.keys('BEM_Articles:*');
+        const totalArticles = articleKeys.length;
+        
         res.status(200).json({ 
             success: true, 
             data: { 
                 totalForms, 
                 totalResponses, 
                 totalAspirasi, 
-                totalPesan 
+                totalPesan,
+                totalArticles 
             }
         });
     } catch (e) {
