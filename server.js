@@ -47,7 +47,7 @@ try {
         url: redisUrl, 
         token: redisToken 
     });
-    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi. (REALTIME NAMESPACE MODE)");
+    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi. (REALTIME DUAL-ENGINE MODE)");
 } catch (error) {
     console.error("⚠️ Peringatan: Redis gagal inisiasi. Backend berjalan di Mode Offline.", error.message);
 }
@@ -260,18 +260,15 @@ app.get('/proker-deskripsi/:slug', (req, res) => res.render('proker-deskripsi'))
 app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proker-detail/${req.query.id}`) : res.render('proker-detail'));
 app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
 
-// ============================================================================
-// SUPER BIG UPGRADE BARU: ROUTES BEM-FORM & ADMIN DASHBOARD V2
-// ============================================================================
+// ROUTES BEM-FORM & ADMIN DASHBOARD V2
 app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
 app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.slug }));
 
 // ============================================================================
 // SUPER BIG UPGRADE: API SYSTEM UPLOAD FILE (REALTIME & FOLDER STRUCTURE UI)
-// Berdasarkan gambar 6, kunci tersimpan sebagai String di BEM_Files:178...
+// Berdasarkan gambar 6 & 7, kunci tersimpan sebagai String: BEM_Files:1787225019662-sertifikat-bab-i.png
 // ============================================================================
 
-// POST Endpoint Untuk Upload File dari Form BEM
 app.post('/api/upload', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -288,7 +285,7 @@ app.post('/api/upload', async (req, res) => {
         let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
         const uniqueFilename = `${Date.now()}-${safeName}`;
         
-        // Sesuai Screenshot Upstash (GBR 6): Key berupa String (BEM_Files:1787...)
+        // Simpan sbg STRING murni -> BEM_Files:1234-nama.jpg (Sesuai GBR 6 & 7)
         const redisKey = `BEM_Files:${uniqueFilename}`;
         await redis.set(redisKey, JSON.stringify({ filename: safeName, data: base64 }));
         
@@ -300,11 +297,11 @@ app.post('/api/upload', async (req, res) => {
     }
 });
 
-// GET Endpoint Untuk Menampilkan/Download File (URL BERSIH 1 TINGKAT)
 app.get('/api/uploads/:filename', async (req, res) => {
     try {
         if(!redis) return res.status(503).send("Server Storage Offline");
         
+        // Ambil Data sesuai String Key GBR 6 & 7
         const redisKey = `BEM_Files:${req.params.filename}`;
         const fileDataStr = await redis.get(redisKey);
         
@@ -338,23 +335,41 @@ app.get('/api/uploads/:filename', async (req, res) => {
 });
 
 // ============================================================================
-// API ENDPOINTS BEM-FORM (CRUD & SUBMIT DENGAN BEM_Forms NAMESPACE STRING)
-// Sesuai Screenshot GBR 3 (BEM_Forms:FRM-178...), menggunakan String Pattern
+// API ENDPOINTS BEM-FORM (DUAL-ENGINE FETCHING: HASH & STRING)
+// Sesuai Screenshot GBR 4 (BEM_Forms:FRM-...) & GBR 5 (BEM_Forms HASH)
 // ============================================================================
 
 app.get('/api/forms', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        const keys = await redis.keys('BEM_Forms:*');
-        let parsedForms = [];
-        
-        if(keys.length > 0) {
-            const rawForms = await redis.mget(...keys);
-            parsedForms = rawForms.map(item => typeof item === 'string' ? JSON.parse(item) : item);
+        let allForms = [];
+
+        // ENGINE 1: Ambil data jika tersimpan dalam format HASH `BEM_Forms` (Sesuai GBR 5)
+        const hashForms = await redis.hgetall('BEM_Forms');
+        if (hashForms) {
+            Object.values(hashForms).forEach(formStr => {
+                const parsed = typeof formStr === 'string' ? JSON.parse(formStr) : formStr;
+                allForms.push(parsed);
+            });
+        }
+
+        // ENGINE 2: Ambil data jika tersimpan dalam format STRING pattern `BEM_Forms:*` (Sesuai GBR 4)
+        const stringKeys = await redis.keys('BEM_Forms:*');
+        if (stringKeys.length > 0) {
+            const stringForms = await redis.mget(...stringKeys);
+            stringForms.forEach(formStr => {
+                if (formStr) {
+                    const parsed = typeof formStr === 'string' ? JSON.parse(formStr) : formStr;
+                    allForms.push(parsed);
+                }
+            });
         }
         
-        res.status(200).json({ success: true, data: parsedForms });
+        // Hilangkan Duplikat (Bila tersimpan di kedua tempat dengan ID yang sama)
+        const uniqueForms = Array.from(new Map(allForms.map(item => [item.id, item])).values());
+        
+        res.status(200).json({ success: true, data: uniqueForms });
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
@@ -362,14 +377,28 @@ app.get('/api/forms/:slug', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        const keys = await redis.keys('BEM_Forms:*');
-        let form = null;
-        
-        if(keys.length > 0) {
-            const rawForms = await redis.mget(...keys);
-            const formArr = rawForms.map(item => typeof item === 'string' ? JSON.parse(item) : item);
-            form = formArr.find(f => f.slug === req.params.slug);
+        let allForms = [];
+
+        const hashForms = await redis.hgetall('BEM_Forms');
+        if (hashForms) {
+            Object.values(hashForms).forEach(formStr => {
+                const parsed = typeof formStr === 'string' ? JSON.parse(formStr) : formStr;
+                allForms.push(parsed);
+            });
         }
+
+        const stringKeys = await redis.keys('BEM_Forms:*');
+        if (stringKeys.length > 0) {
+            const stringForms = await redis.mget(...stringKeys);
+            stringForms.forEach(formStr => {
+                if (formStr) {
+                    const parsed = typeof formStr === 'string' ? JSON.parse(formStr) : formStr;
+                    allForms.push(parsed);
+                }
+            });
+        }
+        
+        const form = allForms.find(f => f.slug === req.params.slug);
         
         if(!form) return res.status(404).json({ success: false, message: "Form tidak ditemukan" });
         res.status(200).json({ success: true, data: form });
@@ -410,9 +439,12 @@ app.post('/api/forms/save', async (req, res) => {
         };
         formData.theme = { ...defaultTheme, ...formData.theme };
         
-        // Simpan sebagai STRING Pattern Sesuai Screenshot GBR 3 (BEM_Forms:FRM-...)
+        // Selalu simpan di struktur String yang mutakhir (Sesuai GBR 4)
         const redisKey = `BEM_Forms:${formData.id}`;
         await redis.set(redisKey, JSON.stringify(formData));
+        
+        // Kita juga pastikan menimpa Hash lawas (GBR 5) agar benar-benar tersinkronisasi 100%
+        await redis.hset('BEM_Forms', { [formData.id]: JSON.stringify(formData) });
         
         res.status(200).json({ success: true, message: "Form berhasil disimpan", id: formData.id });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
@@ -423,10 +455,11 @@ app.delete('/api/forms/:id', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
         
-        // Hapus STRING BEM_Forms
+        // Hapus dari Format STRING dan HASH sekalian agar tidak tersisa bangkai data
         await redis.del(`BEM_Forms:${formId}`);
+        await redis.hdel('BEM_Forms', formId);
         
-        // Hapus seluruh respons terkait (Sesuai GBR 2 BEM_Responses:FRM-...)
+        // Hapus seluruh respons terkait (Sesuai GBR 2/3 BEM_Responses:FRM-...)
         const resKeys = await redis.keys(`BEM_Responses:${formId}:*`);
         if(resKeys.length > 0) {
             await redis.del(...resKeys);
@@ -443,7 +476,12 @@ app.post('/api/forms/submit', async (req, res) => {
         const { formId, responses, email } = req.body;
         const resId = `RES-${Date.now()}`;
         
-        const formStr = await redis.get(`BEM_Forms:${formId}`);
+        // Cek STRING Dulu, kalau tidak ada, cek HASH (Dual Engine Validation)
+        let formStr = await redis.get(`BEM_Forms:${formId}`);
+        if(!formStr) {
+            formStr = await redis.hget('BEM_Forms', formId);
+        }
+        
         const formObj = safeParse(formStr, null);
 
         if (!formObj) return res.status(404).json({ success: false, message: "Formulir tidak valid atau telah dihapus." });
@@ -455,7 +493,7 @@ app.post('/api/forms/submit', async (req, res) => {
             }
         }
 
-        // VALIDASI BATASI 1 JAWABAN (Sesuai GBR 2 - BEM_Responses adalah string pattern)
+        // VALIDASI BATASI 1 JAWABAN (Sesuai GBR 2 & 3 - BEM_Responses adalah string pattern)
         if (formObj.settings && formObj.settings.limitOne && email) {
             const keys = await redis.keys(`BEM_Responses:${formId}:*`);
             if(keys.length > 0) {
@@ -527,7 +565,7 @@ app.post('/api/forms/submit', async (req, res) => {
             maxScore: isQuiz ? maxScore : null
         };
         
-        // Simpan langsung ke struktur Kunci string tersendiri (GBR 2 - BEM_Responses:FRM:RES)
+        // Simpan langsung ke struktur Kunci string tersendiri (GBR 2 & GBR 3 - BEM_Responses:FRM:RES)
         const redisKey = `BEM_Responses:${formId}:${resId}`;
         await redis.set(redisKey, JSON.stringify(payload));
         
@@ -547,7 +585,7 @@ app.get('/api/forms/:id/responses', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
         
-        // Sesuai GBR 2, Responses disimpan sebagai string di BEM_Responses:FRM-xxx:*
+        // Sesuai GBR 2 & 3, Responses disimpan sebagai string di BEM_Responses:FRM-xxx:RES-xxx
         const keys = await redis.keys(`BEM_Responses:${formId}:*`);
         let responses = [];
         
@@ -602,7 +640,10 @@ app.get('/api/forms/:id/export', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
         
-        const formStr = await redis.get(`BEM_Forms:${formId}`);
+        let formStr = await redis.get(`BEM_Forms:${formId}`);
+        if(!formStr) {
+            formStr = await redis.hget('BEM_Forms', formId); // Fallback to Hash Engine
+        }
         if(!formStr) return res.status(404).send("Form tidak ditemukan");
         const form = typeof formStr === 'string' ? JSON.parse(formStr) : formStr;
 
@@ -705,7 +746,7 @@ app.get('/sitemap.xml', async (req, res) => {
         let kalenderData = defaultKalender;
 
         if(redis) {
-            // Sesuai Screenshot Upstash: Menggunakan Keys MURNI (Proker_Data & Kalender_Data)
+            // Murni Key Sesuai Upstash: Proker_Data & Kalender_Data (Tanpa Prefix apapun)
             const rawProker = await redis.get('Proker_Data');
             const rawKalender = await redis.get('Kalender_Data');
             prokerData = safeParse(rawProker, defaultProker);
@@ -855,13 +896,13 @@ ${xmlUrls}
     }
 });
 
-// ================= API CMS ENDPOINTS (FIXED KEYS: MURNI STRING SESUAI SCREENSHOT UPSTASH) =================
+// ================= API CMS ENDPOINTS (ZERO-DELAY MGET DENGAN KEYS ASLI) =================
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
         // MGET (MULTI-GET) UNTUK ZERO DELAY
-        // Menggunakan KEY ASLI MURNI sesuai screenshot Upstash (TANPA PREFIX BEM_CMS:)
+        // Menggunakan KEY ASLI MURNI sesuai screenshot struktur utama Anda.
         const keysToFetch = [
             'Org_Structure', 'Proker_Data', 'Kalender_Data', 'Dokumentasi_Data',
             'Settings_Data', 'Team_Data', 'Sejarah_Data', 'Filosofi_Data',
@@ -924,7 +965,7 @@ app.post('/api/content/:type', async (req, res) => {
 
         const payload = JSON.stringify(bodyData); 
         
-        // Pemetaan untuk disimpan kembali ke Redis (Sesuai Kunci STRING Murni di Upstash)
+        // Pemetaan MURNI untuk disimpan kembali ke Redis tanpa Prefix aneh-aneh
         const dbMapping = {
             'org': 'Org_Structure', 'proker': 'Proker_Data', 'kalender': 'Kalender_Data', 
             'dokumentasi': 'Dokumentasi_Data', 'settings': 'Settings_Data', 'team': 'Team_Data', 
@@ -943,26 +984,34 @@ app.post('/api/content/:type', async (req, res) => {
     }
 });
 
-// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS (MGET STRING KEYS) =================
+// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS =================
 app.get('/api/admin/stats', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // Menghitung Jumlah Data Berdasarkan Screenshot Pattern STRING
-        const formKeys = await redis.keys('BEM_Forms:*');
-        const responseKeys = await redis.keys('BEM_Responses:*:*');
+        // Menghitung Forms (Hitung Hash Forms + Hitung String Forms)
+        const hashForms = await redis.hkeys('BEM_Forms');
+        const stringFormKeys = await redis.keys('BEM_Forms:*');
+        const totalForms = (hashForms ? hashForms.length : 0) + stringFormKeys.length;
         
-        // Berdasarkan Screenshot GBR 1 & GBR 8, Pesan disimpan sebagai STRING BEM_Messages:MSG-...
+        // Menghitung Responses
+        const responseKeys = await redis.keys('BEM_Responses:*:*');
+        const totalResponses = responseKeys.length;
+        
+        // Sesuai GBR 1 (Tipe STRING Pattern untuk Message dan Aspirasi)
         const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
-        const messageKeys = await redis.keys('BEM_Messages:*');
+        const totalAspirasi = aspirasiKeys.length;
+        
+        const messageKeys = await redis.keys('BEM_Messages:*'); // GBR 1: BEM_Messages:MSG-...
+        const totalPesan = messageKeys.length;
         
         res.status(200).json({ 
             success: true, 
             data: { 
-                totalForms: formKeys.length, 
-                totalResponses: responseKeys.length, 
-                totalAspirasi: aspirasiKeys.length, 
-                totalPesan: messageKeys.length 
+                totalForms, 
+                totalResponses, 
+                totalAspirasi, 
+                totalPesan 
             }
         });
     } catch (e) {
@@ -970,7 +1019,7 @@ app.get('/api/admin/stats', async (req, res) => {
     }
 });
 
-// ================= API ENDPOINTS: TRANSAKSIONAL (MGET STRING KEYS FIX) =================
+// ================= API ENDPOINTS: TRANSAKSIONAL (MGET STRING KEYS FIX Sesuai GBR 1) =================
 app.get('/api/interactions', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -1008,7 +1057,7 @@ app.post('/api/plasma', async (req, res) => {
     const id = `ASP-${Date.now()}`;
     const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
     
-    // Simpan sebagai STRING Pattern Sesuai Bukti Gambar 1 & 8
+    // Simpan sebagai STRING Sesuai Format Upstash Anda
     if (redis) await redis.set(`BEM_Aspirations:${id}`, JSON.stringify(payload));
     res.status(200).json({ success: true, message: 'Aspirasi berhasil dikirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -1020,7 +1069,7 @@ app.post('/api/message', async (req, res) => {
     const id = `MSG-${Date.now()}`;
     const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
     
-    // Simpan sebagai STRING Pattern Sesuai Bukti Gambar 1 & 8
+    // Simpan sebagai STRING Sesuai Format Upstash Anda (GBR 1)
     if (redis) await redis.set(`BEM_Messages:${id}`, JSON.stringify(payload));
     res.status(200).json({ success: true, message: 'Pesan terkirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -1029,7 +1078,7 @@ app.post('/api/message', async (req, res) => {
 app.post('/api/delete-interaction', async (req, res) => {
     try {
         const { type, id } = req.body;
-        // Hapus Kunci STRING Spesifik Menggunakan DEL
+        // Hapus Kunci STRING Spesifik
         if(type === 'aspirasi' && redis) await redis.del(`BEM_Aspirations:${id}`);
         if(type === 'pesan' && redis) await redis.del(`BEM_Messages:${id}`);
         res.status(200).json({ success: true });
