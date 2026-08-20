@@ -22,13 +22,57 @@
     <!-- PERFORMANCE PRECONNECTS -->
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
 
-    <!-- ENTERPRISE SEO DIRECTIVES & CANONICAL -->
-    <title>Portal Berita Pubmed | BEM KBMFKG UMI</title>
-    <meta name="description" content="Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.">
-    <meta name="keywords" content="portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi">
-    <meta name="author" content="BEM KBMFKG UMI">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" id="canonicalUrl" href="https://bemkbmfkgumi.com/berita">
+    <!-- =========================================================================
+         SUPER BIG UPGRADE: SSR DYNAMIC SEO METADATA & CANONICAL TAGS
+         Di-render langsung dari Server Express.js (EJS) sebelum memuat JS Client!
+         Menyelesaikan isu GSC "Halaman alternatif dengan tag kanonis yang tepat"
+         ========================================================================= -->
+    <% if (typeof articleInfo !== 'undefined' && articleInfo) { %>
+        <!-- SEO SPESIFIK ARTIKEL -->
+        <title><%= articleInfo.Judul %> | BEM KBMFKG UMI</title>
+        <meta name="description" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
+        <meta name="keywords" content="<%= articleInfo.Kategori %>, kedokteran gigi, BEM FKG UMI, portal berita">
+        <meta name="author" content="<%= articleInfo.Penulis || 'Admin BEM FKG UMI' %>">
+        <meta name="robots" content="index, follow, max-image-preview:large">
+        
+        <!-- TAG KANONIS BERSIH (CLEAN URL) -->
+        <link rel="canonical" id="canonicalUrl" href="<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>">
+
+        <!-- OPEN GRAPH & TWITTER CARDS -->
+        <meta property="og:site_name" content="Portal Berita Pubmed BEM KBMFKG UMI">
+        <meta property="og:title" id="ogTitle" content="<%= articleInfo.Judul %> | BEM KBMFKG UMI">
+        <meta property="og:description" id="ogDesc" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
+        <meta property="og:type" id="ogType" content="article">
+        <meta property="og:url" id="ogUrl" content="<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>">
+        <meta property="og:image" id="ogImage" content="<%= articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png' %>">
+        <meta property="article:published_time" content="<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>">
+        <meta property="article:section" content="<%= articleInfo.Kategori || 'Berita' %>">
+        
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" id="twTitle" content="<%= articleInfo.Judul %> | BEM KBMFKG UMI">
+        <meta name="twitter:description" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
+        <meta name="twitter:image" content="<%= articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png' %>">
+        
+    <% } else { %>
+        <!-- SEO DEFAULT INDEKS PORTAL -->
+        <title>Portal Berita Pubmed | BEM KBMFKG UMI</title>
+        <meta name="description" content="Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.">
+        <meta name="keywords" content="portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi">
+        <meta name="author" content="BEM KBMFKG UMI">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        
+        <link rel="canonical" id="canonicalUrl" href="https://bemkbmfkgumi.com/berita">
+
+        <meta property="og:site_name" content="Portal Berita Pubmed BEM KBMFKG UMI">
+        <meta property="og:title" id="ogTitle" content="Portal Berita Pubmed | BEM KBMFKG UMI">
+        <meta property="og:description" id="ogDesc" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini.">
+        <meta property="og:type" id="ogType" content="website">
+        <meta property="og:url" id="ogUrl" content="https://bemkbmfkgumi.com/berita">
+        <meta property="og:image" id="ogImage" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+        
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" id="twTitle" content="Portal Berita BEM KBMFKG UMI">
+    <% } %>
 
     <!-- MOBILE WEB APP & FAVICON OPTIMIZATION -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -49,66 +93,91 @@
     <!-- PROTECT DEVTOOLS -->
     <script src="/js/protect-devtools.js" defer></script>
 
-    <!-- OPEN GRAPH & TWITTER CARDS (DYNAMIC TARGET) -->
-    <meta property="og:site_name" content="Portal Berita Pubmed BEM KBMFKG UMI">
-    <meta property="og:title" id="ogTitle" content="Portal Berita Pubmed | BEM KBMFKG UMI">
-    <meta property="og:description" id="ogDesc" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini.">
-    <meta property="og:type" id="ogType" content="website">
-    <meta property="og:url" id="ogUrl" content="https://bemkbmfkgumi.com/berita">
-    <meta property="og:image" id="ogImage" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
-    
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" id="twTitle" content="Portal Berita BEM KBMFKG UMI">
-
-    <!-- =========================================================================
-         SUPER BIG UPGRADE SEO (PETA SITUS & REFERRER):
-         Menjawab isu GSC "Tidak ada peta situs perujuk yang terdeteksi"
-         ========================================================================= -->
     <link rel="sitemap" type="application/xml" title="Sitemap BEM KBMFKG UMI" href="https://bemkbmfkgumi.com/sitemap.xml">
 
     <!-- =========================================================================
-         SUPER BIG UPGRADE: STATIC INITIAL SCHEMA UNTUK GSC
-         Mencegah GSC mendeteksi "URL tidak memiliki penyempurnaan". 
-         Memberikan landasan skema Breadcrumb yang valid pada pemuatan awal HTML.
+         SUPER BIG UPGRADE: DYNAMIC JSON-LD SCHEMA DARI SERVER (EJS)
+         Google akan langsung membaca Schema NewsArticle tanpa menunggu Javascript
          ========================================================================= -->
     <script type="application/ld+json" id="static-base-schema">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
+    <% if (typeof articleInfo !== 'undefined' && articleInfo) { %>
         {
-          "@type": "CollectionPage",
-          "@id": "https://bemkbmfkgumi.com/berita#webpage",
-          "url": "https://bemkbmfkgumi.com/berita",
-          "name": "Portal Berita Pubmed | BEM KBMFKG UMI",
-          "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
-          "isPartOf": { 
-              "@type": "WebSite",
-              "@id": "https://bemkbmfkgumi.com/#website",
-              "url": "https://bemkbmfkgumi.com/",
-              "name": "BEM KBMFKG UMI"
-          }
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://bemkbmfkgumi.com/berita#breadcrumb",
-          "name": "Breadcrumb Portal Pubmed",
-          "itemListElement": [
+          "@context": "https://schema.org",
+          "@graph": [
             {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Beranda",
-              "item": "https://bemkbmfkgumi.com/"
+              "@type": "NewsArticle",
+              "@id": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>#article",
+              "url": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>",
+              "headline": "<%= articleInfo.Judul %>",
+              "description": "<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...",
+              "image": [ "<%= articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png' %>" ],
+              "datePublished": "<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>",
+              "dateModified": "<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>",
+              "author": { 
+                  "@type": "Person", 
+                  "name": "<%= articleInfo.Penulis || 'Admin BEM FKG UMI' %>",
+                  "url": "<%= siteUrl %>/tentang" 
+              },
+              "publisher": { 
+                  "@type": "Organization", 
+                  "@id": "<%= siteUrl %>/#organization", 
+                  "name": "BEM KBMFKG UMI", 
+                  "logo": { "@type": "ImageObject", "url": "<%= siteUrl %>/img/bemfkgumi.png" } 
+              },
+              "mainEntityOfPage": { "@type": "WebPage", "@id": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>" }
             },
             {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Portal Publik Pubmed",
-              "item": "https://bemkbmfkgumi.com/berita"
+              "@type": "BreadcrumbList",
+              "@id": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>#breadcrumb",
+              "name": "Breadcrumb Artikel",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= siteUrl %>/" },
+                { "@type": "ListItem", "position": 2, "name": "Portal Pubmed", "item": "<%= siteUrl %>/berita" },
+                { "@type": "ListItem", "position": 3, "name": "<%= articleInfo.Kategori || 'Berita' %>", "item": "<%= siteUrl %>/berita?category=<%= encodeURIComponent(articleInfo.Kategori) %>" },
+                { "@type": "ListItem", "position": 4, "name": "<%= articleInfo.Judul %>", "item": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>" }
+              ]
             }
           ]
         }
-      ]
-    }
+    <% } else { %>
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "CollectionPage",
+              "@id": "https://bemkbmfkgumi.com/berita#webpage",
+              "url": "https://bemkbmfkgumi.com/berita",
+              "name": "Portal Berita Pubmed | BEM KBMFKG UMI",
+              "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
+              "isPartOf": { 
+                  "@type": "WebSite",
+                  "@id": "https://bemkbmfkgumi.com/#website",
+                  "url": "https://bemkbmfkgumi.com/",
+                  "name": "BEM KBMFKG UMI"
+              }
+            },
+            {
+              "@type": "BreadcrumbList",
+              "@id": "https://bemkbmfkgumi.com/berita#breadcrumb",
+              "name": "Breadcrumb Portal Pubmed",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Beranda",
+                  "item": "https://bemkbmfkgumi.com/"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Portal Publik Pubmed",
+                  "item": "https://bemkbmfkgumi.com/berita"
+                }
+              ]
+            }
+          ]
+        }
+    <% } %>
     </script>
 
     <style>
@@ -154,10 +223,6 @@
 </head>
 <body class="bg-custom-dark font-sans relative" itemscope itemtype="https://schema.org/WebPage">
 
-    <!-- =========================================================================
-         INJEKSI REFERRER SEMANTIC DOM (Menjawab isu GSC "Halaman perujuk: Tidak ada")
-         Memaksa bot membaca relasi hirarki backlink secara fisik di HTML
-         ========================================================================= -->
     <div style="display:none;" itemscope itemtype="https://schema.org/SiteNavigationElement" aria-hidden="true">
         <a itemprop="url" href="https://bemkbmfkgumi.com/" title="Beranda BEM KBMFKG UMI"><span itemprop="name">Beranda (Halaman Perujuk)</span></a>
         <a itemprop="url" href="https://bemkbmfkgumi.com/berita" title="Portal Berita Pubmed"><span itemprop="name">Portal Berita Pubmed</span></a>
@@ -248,6 +313,9 @@
         // --- UPGRADE: LINK DIREKTORI KE BACKEND NODE.JS UPSTASH (BUKAN LAGI GAS) ---
         const API_URL = "/api/articles";
 
+        // Menerima nilai server-side slug dari EJS untuk initial render routing
+        const serverSlug = "<%= typeof currentSlug !== 'undefined' ? currentSlug : '' %>";
+
         var appState = {
             articles: [], page: 1, limit: 10, category: 'All', 
             hasMore: true, isLoading: false, currentViewId: null,
@@ -267,7 +335,6 @@
             
             const themeCheckbox = document.getElementById('checkboxTheme');
             if(themeCheckbox) {
-                // Sinkronkan status checkbox dengan DOM yang sudah ditentukan oleh script HEAD
                 themeCheckbox.checked = document.documentElement.hasAttribute('data-theme');
                 
                 themeCheckbox.addEventListener('change', (e) => {
@@ -284,9 +351,21 @@
 
         window.addEventListener('popstate', function(event) { checkUrlRouting(true); });
 
+        // SUPER BIG UPGRADE: Mengecek URL menggunakan Clean Pathing API
         function checkUrlRouting(isPopState = false) {
+            // Support backward compatibility (?article=) AND the new Clean URL (/berita/slug)
             const urlParams = new URLSearchParams(window.location.search);
-            const articleIdOrSlug = urlParams.get('article');
+            let articleIdOrSlug = urlParams.get('article');
+            
+            // Prioritaskan SSR Slug dari server atau History State
+            if (!articleIdOrSlug && serverSlug) {
+                articleIdOrSlug = serverSlug;
+            } else if (!articleIdOrSlug && isPopState) {
+                const pathParts = window.location.pathname.split('/');
+                if (pathParts[1] === 'berita' && pathParts[2]) {
+                    articleIdOrSlug = pathParts[2];
+                }
+            }
             
             if (articleIdOrSlug) {
                 var found = appState.articles.find(function(a) { 
@@ -319,7 +398,6 @@
                     var parsedData = typeof res === 'string' ? JSON.parse(res) : res;
                     var articleList = parsedData.data || parsedData || [];
                     
-                    // Simple hasMore logic: if we received exactly 'limit' articles, we assume there might be more.
                     var hasMore = articleList.length === appState.limit; 
                     processNewData(articleList, hasMore); 
                 })
@@ -347,7 +425,8 @@
             document.getElementById('scrollLoader').style.display = 'none';
             renderArticles(cleanedData);
             
-            if (!appState.currentViewId) injectDefaultSEO();
+            // Render SEO dynamically only if we are in normal client navigation (no hard server slug)
+            if (!appState.currentViewId && !serverSlug) injectDefaultSEO();
 
             if (!appState.initialLoadDone) {
                 appState.initialLoadDone = true;
@@ -369,18 +448,19 @@
                 var title = String(item.Judul);
                 var desc = String(item.Meta_Desc || item.Desc || title).replace(/"/g, '&quot;');
                 var dateRaw = String(item.Tgl_Rilis || new Date().toISOString());
-                var seoUrl = "?article=" + slug;
+                
+                // SUPER BIG UPGRADE: CLEAN URL FOR CARD NAVIGATION!
+                var seoUrl = "/berita/" + slug;
                 
                 var isHero = (currentOffset === 0 && i === 0);
                 var loadingAttr = isHero ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"';
                 var globalPosition = currentOffset + i + 1;
                 
-                // SUPER BIG UPGRADE: Injeksi HTML Semantic Microdata persis seperti GSC merekomendasikan
                 html += '<article itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" style="display:contents;">';
                 html +=   '<meta itemprop="position" content="' + globalPosition + '">';
                 
                 html +=   '<a href="' + seoUrl + '" class="zine-card group" onclick="openModal(event, \'' + id + '\')" itemprop="item" itemscope itemtype="https://schema.org/NewsArticle">';
-                html +=     '<meta itemprop="url" content="https://bemkbmfkgumi.com/berita' + seoUrl + '">';
+                html +=     '<meta itemprop="url" content="https://bemkbmfkgumi.com' + seoUrl + '">';
                 html +=     '<meta itemprop="author" content="' + (item.Penulis || 'Admin BEM FKG UMI') + '">';
                 html +=     '<meta itemprop="description" content="' + desc + '">';
                 html +=     '<meta itemprop="datePublished" content="' + dateRaw + '">';
@@ -443,7 +523,7 @@
         }
 
         // =========================================================================
-        // ENTERPRISE JSON-LD SEO GENERATOR (MASTER UPGRADE)
+        // CLIENT-SIDE SEO FALLBACK GENERATOR (DIJALANKAN HANYA JIKA SPA NAVIGASI)
         // =========================================================================
         function setOrUpdateMeta(attrName, attrValue, content) {
             var el = document.querySelector(`meta[${attrName}="${attrValue}"]`);
@@ -458,7 +538,7 @@
         }
 
         function injectEnterpriseSEO(article, url) {
-            // 1. DYNAMIC HTML META TAGS
+            // Karena server telah merender Meta SSR (Clean SEO), kita hanya memperbarui DOM (SPA) untuk User Experience.
             var safeTitle = article.Judul + " | BEM KBMFKG UMI";
             var rawHtml = article.Konten_HTML || "";
             var plainText = rawHtml.replace(/<[^>]*>?/gm, '').substring(0, 155).trim() + "...";
@@ -472,7 +552,6 @@
             setOrUpdateMeta('name', 'keywords', autoKeywords);
             document.getElementById('canonicalUrl')?.setAttribute("href", url);
             
-            // 2. OPEN GRAPH & TWITTER TAGS
             document.getElementById('ogTitle')?.setAttribute("content", safeTitle);
             document.getElementById('ogDesc')?.setAttribute("content", safeDesc);
             document.getElementById('ogUrl')?.setAttribute("content", url);
@@ -487,59 +566,9 @@
             document.getElementById('twTitle')?.setAttribute("content", safeTitle);
             setOrUpdateMeta('name', 'twitter:description', safeDesc);
             setOrUpdateMeta('name', 'twitter:image', safeImg);
-            
-            // 3. JSON-LD ADVANCED SCHEMA FOR INDIVIDUAL ARTICLE
-            var oldSchema = document.getElementById('enterprise-schema');
-            if (oldSchema) oldSchema.remove();
-            
-            var schema = {
-                "@context": "https://schema.org",
-                "@graph": [
-                    {
-                        "@type": "NewsArticle",
-                        "@id": url + "#article",
-                        "url": url,
-                        "headline": article.Judul,
-                        "description": safeDesc,
-                        "image": [ safeImg ],
-                        "datePublished": datePub,
-                        "dateModified": datePub,
-                        "author": { 
-                            "@type": "Person", 
-                            "name": article.Penulis || "Admin BEM FKG UMI",
-                            "url": "https://bemkbmfkgumi.com/tentang" 
-                        },
-                        "publisher": { 
-                            "@type": "Organization", 
-                            "@id": "https://bemkbmfkgumi.com/#organization", 
-                            "name": "BEM KBMFKG UMI", 
-                            "logo": { "@type": "ImageObject", "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png" } 
-                        },
-                        "mainEntityOfPage": { "@type": "WebPage", "@id": url }
-                    },
-                    {
-                        "@type": "BreadcrumbList",
-                        "@id": url + "#breadcrumb",
-                        "name": "Breadcrumb Artikel " + article.Judul,
-                        "itemListElement": [
-                            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://bemkbmfkgumi.com/" },
-                            { "@type": "ListItem", "position": 2, "name": "Portal Pubmed", "item": "https://bemkbmfkgumi.com/berita" },
-                            { "@type": "ListItem", "position": 3, "name": article.Kategori || "Berita", "item": "https://bemkbmfkgumi.com/berita?category=" + encodeURIComponent(article.Kategori) },
-                            { "@type": "ListItem", "position": 4, "name": article.Judul, "item": url }
-                        ]
-                    }
-                ]
-            };
-
-            var script = document.createElement('script');
-            script.type = 'application/ld+json';
-            script.id = 'enterprise-schema';
-            script.text = JSON.stringify(schema);
-            document.head.appendChild(script);
         }
 
         function injectDefaultSEO() {
-            // Revert base tags
             document.title = "Portal Berita Pubmed | BEM KBMFKG UMI";
             document.querySelector('meta[name="description"]')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.");
             setOrUpdateMeta('name', 'keywords', 'portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi');
@@ -554,70 +583,6 @@
             document.getElementById('twTitle')?.setAttribute("content", "Portal Berita BEM KBMFKG UMI");
             setOrUpdateMeta('name', 'twitter:description', "Portal berita kampus, inovasi kedokteran gigi, dan event terkini BEM KBMFKG UMI.");
             setOrUpdateMeta('name', 'twitter:image', "https://bemkbmfkgumi.com/img/bemfkgumi.png");
-
-            var oldSchema = document.getElementById('enterprise-schema');
-            if (oldSchema) oldSchema.remove();
-
-            // SUPER BIG UPGRADE: DYNAMIC ITEMLIST SCHEMA LENGKAP (Gambar, Tanggal, Deskripsi)
-            // Memaksa Google memunculkan Sitelinks NewsArticle yang utuh untuk halaman Base /berita
-            var itemListElements = appState.articles.slice(0, 20).map(function(art, index) {
-                var artUrl = "https://bemkbmfkgumi.com/berita?article=" + (art.Slug_URL || art.ID_Berita);
-                var safeImg = art.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png";
-                var plainText = (art.Konten_HTML || "").replace(/<[^>]*>?/gm, '').substring(0, 155).trim() + "...";
-                var safeDesc = art.Meta_Desc || art.Desc || plainText;
-                var datePub = art.Tgl_Rilis ? new Date(art.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString();
-
-                return {
-                    "@type": "ListItem",
-                    "position": index + 1,
-                    "url": artUrl,
-                    "name": art.Judul,
-                    "item": {
-                        "@type": "NewsArticle",
-                        "headline": art.Judul,
-                        "description": safeDesc,
-                        "image": safeImg,
-                        "datePublished": datePub,
-                        "url": artUrl,
-                        "author": {
-                            "@type": "Organization",
-                            "name": art.Penulis || "Admin BEM FKG UMI"
-                        }
-                    }
-                };
-            });
-
-            var schema = {
-                "@context": "https://schema.org",
-                "@graph": [
-                    {
-                        "@type": "WebSite",
-                        "@id": "https://bemkbmfkgumi.com/#website",
-                        "url": "https://bemkbmfkgumi.com/",
-                        "name": "BEM KBMFKG UMI",
-                        "potentialAction": {
-                            "@type": "SearchAction",
-                            "target": "https://bemkbmfkgumi.com/berita?search={search_term_string}",
-                            "query-input": "required name=search_term_string"
-                        }
-                    }
-                ]
-            };
-
-            if(itemListElements.length > 0) {
-                schema["@graph"].push({
-                    "@type": "ItemList",
-                    "@id": "https://bemkbmfkgumi.com/berita#itemlist",
-                    "name": "Berita dan Publikasi Pubmed Terbaru",
-                    "itemListElement": itemListElements
-                });
-            }
-
-            var script = document.createElement('script');
-            script.type = 'application/ld+json';
-            script.id = 'enterprise-schema';
-            script.text = JSON.stringify(schema);
-            document.head.appendChild(script);
         }
         // =========================================================================
 
@@ -628,7 +593,8 @@
             var article = appState.articles.find(function(a) { return a.ID_Berita === id; });
             if (!article) return;
 
-            var currentFullUrl = window.location.origin + window.location.pathname + '?article=' + (article.Slug_URL || id);
+            // SUPER BIG UPGRADE: Push State langsung ke Directory URL (/berita/slug)
+            var currentFullUrl = window.location.origin + '/berita/' + (article.Slug_URL || id);
 
             if (!skipPushState) {
                 window.history.pushState({ id: id }, article.Judul, currentFullUrl);
@@ -665,7 +631,7 @@
             // Hit Increment View langsung ke Upstash Lokal (Cepat tanpa GAS)
             fetch(API_URL + '/view/' + id, { method: 'POST' }).catch(function(e) {});
 
-            // Inject SEO
+            // Inject SEO SPA State
             injectEnterpriseSEO(article, currentFullUrl);
         }
 
@@ -675,7 +641,8 @@
             document.body.style.overflow = 'auto';
             appState.currentViewId = null;
 
-            if (!skipPushState) window.history.pushState(null, '', window.location.pathname);
+            // SUPER BIG UPGRADE: Saat Modal Ditutup, kembalikan URL ke Induk Direktori (/berita)
+            if (!skipPushState) window.history.pushState(null, '', '/berita');
 
             // Revert SEO to default listing
             injectDefaultSEO();
