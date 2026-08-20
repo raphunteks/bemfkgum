@@ -42,26 +42,27 @@
         let count = 1;
         if(countEl) countEl.innerText = count;
         
-        // Simulasi berjalan realtime perlahan dari 1% ke 99%
+        // Simulasi berjalan realtime perlahan dari 1% ke 85% (Berhenti nunggu database)
         let slowCrawl = setInterval(() => {
-            if(count < 1) { 
+            if(count < 85) { 
                 count += Math.floor(Math.random() * 3) + 1; 
-                if(count > 1 ) count = 99;
+                if(count > 85) count = 85;
                 if(countEl) countEl.innerText = count; 
             }
-        }, 100); 
+        }, 50); 
 
-        // Fungsi Master untuk Mengakhiri Loader (Bisa dipanggil oleh Success atau Failsafe)
+        // Fungsi Master untuk Mengakhiri Loader
         let isFinished = false;
         function finishLoadingProcess() {
             if(isFinished) return;
             isFinished = true;
             clearInterval(slowCrawl); 
             
-            // Lari kencang sisa persennya menuju 100%
+            // Lari kencang sisa persennya menuju 100% setelah Database SIAP
             const finishInterval = setInterval(() => {
                 if(count < 100) {
-                    count++;
+                    count += 3; // Kecepatan ekstra
+                    if(count > 100) count = 100;
                     if(countEl) countEl.innerText = count;
                 } else {
                     clearInterval(finishInterval);
@@ -73,22 +74,33 @@
             }, 10);
         }
 
-        // FAILSAFE 1: TIMER DARURAT MAKSIMAL 4 DETIK (Cegah Stuck 80%)
+        // FAILSAFE 1: TIMER DARURAT MAKSIMAL 10 DETIK (Cegah Stuck jika koneksi lambat)
         const emergencyTimer = setTimeout(() => {
             finishLoadingProcess();
-        }, 4000);
+        }, 10000);
 
         let apiUrl = '/api/content';
         if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
         
-        // FAILSAFE 2: AbortController batas tunggu API 3 detik (Cegah Hanging)
         const fetchController = new AbortController();
-        const fetchTimeout = setTimeout(() => fetchController.abort(), 3000);
+        const fetchTimeout = setTimeout(() => fetchController.abort(), 8000);
 
-        fetch(apiUrl, { signal: fetchController.signal })
+        // ================= SUPER BIG UPGRADE: SYNCHRONIZED LOADING =================
+        // PROMISE 1: Memastikan Aset Visual Halaman (Gambar, CSS) Sudah Siap
+        const domReadyPromise = new Promise(resolve => {
+            if (document.readyState === 'complete') resolve();
+            else window.addEventListener('load', resolve);
+        });
+
+        // PROMISE 2: Memastikan Database dari Backend (Upstash Redis) Selesai Ditarik Mutlak
+        const dbReadyPromise = fetch(apiUrl, { signal: fetchController.signal })
         .then(r => r.json())
         .then(res => {
-            clearTimeout(fetchTimeout); // Hapus timeout API jika sukses
+            clearTimeout(fetchTimeout); 
+            
+            // SIMPAN DATA KE CACHE GLOBAL AGAR HALAMAN LAIN TIDAK PERLU FETCH ULANG
+            window.BEM_DATABASE_CACHE = res;
+            
             if(res.sejarah && res.sejarah.length > 0) {
                 const current = res.sejarah[0]; 
                 if(periodeEl) periodeEl.innerText = "PERIODE " + current.tahun;
@@ -96,20 +108,22 @@
                 
                 const headerKabinet = document.getElementById('header-kabinet-name');
                 if(headerKabinet) headerKabinet.innerText = current.kabinet;
-            } else {
-                throw new Error("No Data");
             }
+            return true; // Beri sinyal database berhasil dimuat
         })
         .catch((err) => {
-            // Fallback Eksekusi Cepat jika API lambat
+            console.warn("⚠️ API Loading Timeout, menggunakan data default lokal.");
             if(periodeEl) periodeEl.innerText = "PERIODE 2025 - 2026";
             if(kabinetEl) kabinetEl.innerText = "KABINET ANANTA ANARDHAYA";
+            return false;
         });
 
-        // Trigger selesainya Loading Screen saat seluruh asset halaman normal selesai di-load
-        window.addEventListener('load', () => {
+        // KUNCI UTAMA: Loader HANYA akan hilang JIKA DAN HANYA JIKA (DOM Ready + Database Ready) Keduanya Selesai!
+        Promise.all([domReadyPromise, dbReadyPromise]).then(() => {
             clearTimeout(emergencyTimer); 
             finishLoadingProcess();
+            // Opsional: Lempar event ke document bahwa DB sudah siap dirender
+            document.dispatchEvent(new Event('BemDatabaseReady'));
         });
     })();
 </script>
