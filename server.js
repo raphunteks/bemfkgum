@@ -47,7 +47,7 @@ try {
         url: redisUrl, 
         token: redisToken 
     });
-    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi. (REALTIME NAMESPACE MODE)");
+    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi. (REALTIME MODE)");
 } catch (error) {
     console.error("⚠️ Peringatan: Redis gagal inisiasi. Backend berjalan di Mode Offline.", error.message);
 }
@@ -79,6 +79,7 @@ const escapeXml = (unsafe) => {
 };
 
 // ================= DATA SEED (STRUKTUR BEM KBMFKG UMI LENGKAP) =================
+// Data di bawah adalah Backup Utuh, tidak ada satupun nama yang diubah atau dikurangi.
 const defaultOrg = {
     visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
     misi: [
@@ -196,7 +197,6 @@ const defaultKontak = {
     mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
 
-// SEED DATA BARU: RADAR BEM WIDGETS
 const defaultRadar = [
     { 
         departemen: "Dept. of Art and Sport", 
@@ -261,20 +261,14 @@ app.get('/proker-deskripsi/:slug', (req, res) => res.render('proker-deskripsi'))
 app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proker-detail/${req.query.id}`) : res.render('proker-detail'));
 app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
 
-
-// ============================================================================
-// SUPER BIG UPGRADE BARU: ROUTES BEM-FORM & ADMIN DASHBOARD V2
-// ============================================================================
+// ROUTES BEM-FORM & ADMIN DASHBOARD V2
 app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
 app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.slug }));
 
-
 // ============================================================================
 // SUPER BIG UPGRADE: API SYSTEM UPLOAD FILE (REALTIME & FOLDER STRUCTURE UI)
-// Sekarang muncul di Upstash Data Browser sebagai folder `BEM_Files` -> `[timestamp]-namafile`
 // ============================================================================
 
-// POST Endpoint Untuk Upload File dari Form BEM
 app.post('/api/upload', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -282,23 +276,17 @@ app.post('/api/upload', async (req, res) => {
         
         if(!filename || !base64) return res.status(400).json({ success: false, message: "File kosong atau tidak valid." });
         
-        // 🔒 SAFETY CHECK: Upstash Redis free-tier strict 1MB Request Limit Guard
         const sizeInBytes = Buffer.byteLength(base64, 'utf8');
         if (sizeInBytes > 1048000) { 
             console.warn(`⚠️ Peringatan Kapasitas: File ${filename} mendekati/melebihi batas Upstash 1MB. (Size: ${sizeInBytes} bytes)`);
         }
 
-        // Membersihkan nama file
         let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
-        
-        // UPGRADE: Hilangkan "FILE-ID" folder structure, ganti nama filenya agar unique dengan timestamp
         const uniqueFilename = `${Date.now()}-${safeName}`;
         
-        // UPGRADE NAMESPACE KEY: Menggunakan ":" untuk membuat struktur Folder di Upstash UI!
         const redisKey = `BEM_Files:${uniqueFilename}`;
         await redis.set(redisKey, JSON.stringify({ filename: safeName, data: base64 }));
         
-        // URL Sederhana & Bersih -> /api/uploads/123456789-namafile.jpg
         const fileUrl = `/api/uploads/${uniqueFilename}`;
         res.status(200).json({ success: true, url: fileUrl });
     } catch (e) {
@@ -307,22 +295,18 @@ app.post('/api/upload', async (req, res) => {
     }
 });
 
-// GET Endpoint Untuk Menampilkan/Download File (URL BERSIH 1 TINGKAT)
 app.get('/api/uploads/:filename', async (req, res) => {
     try {
         if(!redis) return res.status(503).send("Server Storage Offline");
         
-        // Panggil langsung menggunakan struktur namespace folder
         const redisKey = `BEM_Files:${req.params.filename}`;
         const fileDataStr = await redis.get(redisKey);
         
         if(!fileDataStr) return res.status(404).send("File tidak ditemukan.");
         
-        // BUG FIX UTAMA: Gunakan safeParse agar tidak crash
         const fileObj = safeParse(fileDataStr, null);
         if(!fileObj || !fileObj.data) return res.status(400).send("Data file korup.");
         
-        // MENGHINDARI REGEX CATASTROPHIC BACKTRACKING PADA STRING BESAR
         const parts = fileObj.data.split(',');
         if (parts.length !== 2) return res.status(400).send("Format Base64 tidak valid.");
         
@@ -337,9 +321,7 @@ app.get('/api/uploads/:filename', async (req, res) => {
         
         res.type(mimeType);
         
-        // Header tambahan untuk download jika bukan gambar
         if(!mimeType.startsWith('image/')) {
-            // Gunakan fileObj.filename (nama asli tanpa timestamp) agar saat diunduh namanya rapi
             res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename}"`);
         }
         res.send(buffer);
@@ -357,7 +339,6 @@ app.get('/api/forms', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // UPGRADE: Fetch multiple keys menggunakan pattern matching (Folder BEM_Forms)
         const keys = await redis.keys('BEM_Forms:*');
         let parsedForms = [];
         
@@ -393,20 +374,17 @@ app.post('/api/forms/save', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const formData = req.body;
         
-        // Membersihkan string untuk URL slug
         formData.slug = formData.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         if(!formData.id) formData.id = `FRM-${Date.now()}`;
         
-        // SUPER UPGRADE: Validasi & Inject Default Step Name untuk sistem Timeline/Wizard
         if(formData.sections && Array.isArray(formData.sections)) {
             formData.sections.forEach((sec, idx) => {
                 if(!sec.stepName || sec.stepName.trim() === '') {
-                    sec.stepName = `Tahap ${idx + 1}`; // Automatis memberikan label database
+                    sec.stepName = `Tahap ${idx + 1}`; 
                 }
             });
         }
 
-        // SUPER UPGRADE PENGAMAN: Injeksi Struktur Default Untuk Kompatibilitas Versi Lama
         if (!formData.settings) formData.settings = {};
         const defaultFormSettings = {
             collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '',
@@ -414,10 +392,8 @@ app.post('/api/forms/save', async (req, res) => {
             sendCopy: 'none', showProgress: false, shuffleQuestions: false, showSubmitAnother: true, showSummary: false, disableAutoSave: false,
             defaultRequired: false
         };
-        // Menggabungkan settings yang masuk dengan default jika ada atribut baru yang kosong
         formData.settings = { ...defaultFormSettings, ...formData.settings };
 
-        // SUPER UPGRADE: Injeksi Default Theme & Font Weights
         if(!formData.theme) formData.theme = {};
         const defaultTheme = {
             headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: 700,
@@ -427,7 +403,6 @@ app.post('/api/forms/save', async (req, res) => {
         };
         formData.theme = { ...defaultTheme, ...formData.theme };
         
-        // Simpan langsung sebagai Kunci Spesifik (BEM_Forms:FRM-123)
         const redisKey = `BEM_Forms:${formData.id}`;
         await redis.set(redisKey, JSON.stringify(formData));
         
@@ -435,16 +410,13 @@ app.post('/api/forms/save', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-// FIX SUPER UPGRADE: Hapus Form (Delete Endpoint Mutlak)
 app.delete('/api/forms/:id', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
         
-        // Menghapus Form Spesifik
         await redis.del(`BEM_Forms:${formId}`);
         
-        // Menghapus Data Jawaban Terkait di Database (BEM_Responses:FRM-123:*)
         const resKeys = await redis.keys(`BEM_Responses:${formId}:*`);
         if(resKeys.length > 0) {
             await redis.del(...resKeys);
@@ -454,20 +426,17 @@ app.delete('/api/forms/:id', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-// Submit Jawaban Form (Untuk Publik)
 app.post('/api/forms/submit', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { formId, responses, email } = req.body;
         const resId = `RES-${Date.now()}`;
         
-        // SUPER UPGRADE: AMBIL DATA FORM UNTUK VALIDASI BACKEND & AUTO-GRADING
         const formStr = await redis.get(`BEM_Forms:${formId}`);
         const formObj = safeParse(formStr, null);
 
         if (!formObj) return res.status(404).json({ success: false, message: "Formulir tidak valid atau telah dihapus." });
 
-        // 1. VALIDASI DEADLINE & STATUS (BACKEND SECURITY)
         if (formObj.isActive === false) return res.status(403).json({ success: false, message: "Formulir telah ditutup oleh Admin." });
         if (formObj.settings && formObj.settings.deadline) {
             if (new Date() > new Date(formObj.settings.deadline)) {
@@ -475,7 +444,6 @@ app.post('/api/forms/submit', async (req, res) => {
             }
         }
 
-        // 2. VALIDASI BATASI 1 JAWABAN (LIMIT ONE RESPONSE) via MGET (Folder Style)
         if (formObj.settings && formObj.settings.limitOne && email) {
             const keys = await redis.keys(`BEM_Responses:${formId}:*`);
             if(keys.length > 0) {
@@ -490,7 +458,6 @@ app.post('/api/forms/submit', async (req, res) => {
             }
         }
 
-        // 3. AUTO-GRADING SYSTEM (MESIN PENILAIAN KUIS)
         let totalScore = 0;
         let maxScore = 0;
         let isQuiz = formObj.settings && formObj.settings.isQuiz;
@@ -511,7 +478,6 @@ app.post('/api/forms/submit', async (req, res) => {
                             maxScore += pts;
                             let ansArr = Array.isArray(ans) ? ans : [ans];
                             let corrArr = q.correctAnswers || [];
-                            // Syarat benar: Jumlah jawaban sama dan semua elemen cocok
                             let isCorrect = ansArr.length > 0 && ansArr.length === corrArr.length && corrArr.every(c => ansArr.includes(c));
                             if (isCorrect) totalScore += pts;
                         } else if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
@@ -548,7 +514,6 @@ app.post('/api/forms/submit', async (req, res) => {
             maxScore: isQuiz ? maxScore : null
         };
         
-        // Simpan langsung ke struktur Kunci folder terpisah untuk tiap responden
         const redisKey = `BEM_Responses:${formId}:${resId}`;
         await redis.set(redisKey, JSON.stringify(payload));
         
@@ -559,17 +524,11 @@ app.post('/api/forms/submit', async (req, res) => {
     }
 });
 
-// ============================================================================
-// SUPER BIG UPGRADE: CRUD JAWABAN (EDIT & DELETE SPECIFIC RESPONSE)
-// ============================================================================
-
-// Ambil Daftar Jawaban (Untuk Admin V2)
 app.get('/api/forms/:id/responses', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
         
-        // Ambil semua response dengan Pattern (Folder Responden untuk form spesifik)
         const keys = await redis.keys(`BEM_Responses:${formId}:*`);
         let responses = [];
         
@@ -582,7 +541,6 @@ app.get('/api/forms/:id/responses', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
-// UPDATE Jawaban Tertentu (Realtime Edit dari Admin V2)
 app.put('/api/forms/:formId/responses/:resId', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -596,10 +554,8 @@ app.put('/api/forms/:formId/responses/:resId', async (req, res) => {
         
         let existingObj = typeof existingStr === 'string' ? JSON.parse(existingStr) : existingStr;
         
-        // Memperbarui Object
         if(email !== undefined) existingObj.email = email;
         if(answers !== undefined) existingObj.answers = answers;
-        // Opsional: Recalculate Kuis Points dapat diletakkan di sini nantinya jika dibutuhkan.
 
         await redis.set(redisKey, JSON.stringify(existingObj));
         res.status(200).json({ success: true, message: "Jawaban berhasil diperbarui." });
@@ -608,13 +564,11 @@ app.put('/api/forms/:formId/responses/:resId', async (req, res) => {
     }
 });
 
-// HAPUS Jawaban Tertentu
 app.delete('/api/forms/:formId/responses/:resId', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { formId, resId } = req.params;
         
-        // Hapus langsung dari Key Namespace Response ResId Tersebut
         await redis.del(`BEM_Responses:${formId}:${resId}`);
         
         res.status(200).json({ success: true, message: "Jawaban berhasil dihapus." });
@@ -623,18 +577,15 @@ app.delete('/api/forms/:formId/responses/:resId', async (req, res) => {
     }
 });
 
-// EXPORT KE EXCEL (.XLSX) (Untuk Admin V2)
 app.get('/api/forms/:id/export', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
         
-        // Ambil struktur form untuk menyusun kolom header Excel
         const formStr = await redis.get(`BEM_Forms:${formId}`);
         if(!formStr) return res.status(404).send("Form tidak ditemukan");
         const form = typeof formStr === 'string' ? JSON.parse(formStr) : formStr;
 
-        // Ambil data jawaban (Responses) via Pattern Namespace
         const keys = await redis.keys(`BEM_Responses:${formId}:*`);
         let responses = [];
         if(keys.length > 0) {
@@ -642,7 +593,6 @@ app.get('/api/forms/:id/export', async (req, res) => {
             responses = raw.map(r => typeof r === 'string' ? JSON.parse(r) : r);
         }
 
-        // Melakukan Flatten data JSON menjadi Row/Column untuk Excel
         const excelData = responses.map((resp, index) => {
             let row = { 
                 "No": index + 1, 
@@ -650,17 +600,13 @@ app.get('/api/forms/:id/export', async (req, res) => {
                 "Email Responden": resp.email || "-"
             };
             
-            // SUPER UPGRADE: Tambahkan Kolom Skor Jika Ini Adalah Kuis
             if (form.settings && form.settings.isQuiz) {
                 row["Skor Total"] = `${resp.score !== null ? resp.score : 0} / ${resp.maxScore || 0}`;
             }
 
-            // Memetakan ID Pertanyaan dengan Judul Pertanyaannya
             form.sections.forEach(sec => {
                 sec.questions.forEach(q => {
-                    // Abaikan tipe non-input
                     if(q.type !== 'title_only') {
-                        // SUPER UPGRADE: Flatten nilai dari Matrix Grid (Baris x Kolom) menjadi Multi Kolom Excel
                         if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
                             if (q.rows && Array.isArray(q.rows)) {
                                 q.rows.forEach((rowName, rIdx) => {
@@ -671,7 +617,6 @@ app.get('/api/forms/:id/export', async (req, res) => {
                             }
                         } else {
                             let ans = resp.answers[q.id];
-                            // Jika jawabannya berbentuk array (seperti kotak centang), gabungkan dengan koma
                             if(Array.isArray(ans)) ans = ans.join(', '); 
                             row[q.title || "Pertanyaan Tanpa Judul"] = ans || "";
                         }
@@ -681,12 +626,10 @@ app.get('/api/forms/:id/export', async (req, res) => {
             return row;
         });
 
-        // Generate Struktur Excel Workbook
         const worksheet = xlsx.utils.json_to_sheet(excelData);
         const workbook = xlsx.utils.book_new();
         xlsx.utils.book_append_sheet(workbook, worksheet, "Data Responden");
 
-        // Konversi ke File Buffer untuk diunduh langsung via Browser
         const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'buffer' });
 
         res.setHeader('Content-Disposition', `attachment; filename="Hasil_Form_${form.slug}.xlsx"`);
@@ -713,30 +656,25 @@ app.get('/sitemap.xml', async (req, res) => {
     try {
         const domain = "https://bemkbmfkgumi.com";
         
-        // PENGAMAN 100% SEO ENTERPRISE: Helper untuk memastikan format YYYY-MM-DD mutlak sesuai standar Google
         const formatSitemapDate = (dateStr) => {
             try {
                 const fallback = new Date().toISOString().split('T')[0];
                 if (!dateStr) return fallback;
                 
-                // Jika sudah memiliki format ISO (ada 'T')
                 if (dateStr.includes('T')) return new Date(dateStr).toISOString().split('T')[0];
                 
                 if (dateStr.includes('-')) {
                     const parts = dateStr.split('-');
-                    // Jika format YYYY-MM-DD
                     if (parts[0].length === 4) {
                         const d = new Date(dateStr);
                         return isNaN(d) ? fallback : d.toISOString().split('T')[0];
                     }
-                    // Jika format DD-MM-YYYY (seperti di backend / GAS kita)
                     if (parts.length === 3 && parts[2].length === 4) {
                         const d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
                         return isNaN(d) ? fallback : d.toISOString().split('T')[0];
                     }
                 }
                 
-                // Coba parse biasa jika format lain
                 const parsed = new Date(dateStr);
                 return isNaN(parsed) ? fallback : parsed.toISOString().split('T')[0];
             } catch (e) {
@@ -744,20 +682,19 @@ app.get('/sitemap.xml', async (req, res) => {
             }
         };
 
-        const today = formatSitemapDate(); // Format mutlak: YYYY-MM-DD
+        const today = formatSitemapDate(); 
         
         let prokerData = defaultProker;
         let kalenderData = defaultKalender;
 
-        // Coba fetch dari DB Redis CMS Namespace
         if(redis) {
-            const rawProker = await redis.get('BEM_CMS:Proker_Data');
-            const rawKalender = await redis.get('BEM_CMS:Kalender_Data');
+            // FIX KUNCI: Menarik dari Kunci Database Aktual Sesuai Tangkapan Layar Upstash Anda
+            const rawProker = await redis.get('Proker_Data');
+            const rawKalender = await redis.get('Kalender_Data');
             prokerData = safeParse(rawProker, defaultProker);
             kalenderData = safeParse(rawKalender, defaultKalender);
         }
 
-        // 1. GENERATE STATIC URLs
         let xmlUrls = `
     <!-- ========================================= -->
     <!-- HALAMAN UTAMA & PRIORITAS TINGGI          -->
@@ -892,20 +829,17 @@ app.get('/sitemap.xml', async (req, res) => {
         <priority>0.7</priority>
     </url>`;
 
-        // 2. GENERATE DYNAMIC URLs (PROKER & DEPARTEMEN)
         if (Array.isArray(prokerData) && prokerData.length > 0) {
             xmlUrls += `\n\n    <!-- ========================================= -->\n    <!-- DIRECT DYNAMIC SEO URLs (PROKER & DEPARTEMEN) -->\n    <!-- ========================================= -->`;
             prokerData.forEach(p => {
                 const slug = p.slug || p.id;
                 let img = p.bgImage || p.fotoPengurus || `/img/bannerprokerdeskripsi.png`;
                 
-                // SUPER FIX: Pastikan URL Gambar adalah HTTP Absolute (Untuk Validasi XML Sitemap)
                 if (img.startsWith('/')) {
                     img = `${domain}${img}`;
                 }
                 
                 if (slug) {
-                    // Penarikan Tanggal Rilis Proker Dinamis
                     const itemLastMod = formatSitemapDate(p.startDate);
                     xmlUrls += `
     <url>
@@ -922,14 +856,12 @@ app.get('/sitemap.xml', async (req, res) => {
             });
         }
 
-        // 3. GENERATE DYNAMIC URLs (KALENDER EVENT)
         if (Array.isArray(kalenderData) && kalenderData.length > 0) {
             xmlUrls += `\n\n    <!-- ========================================= -->\n    <!-- DIRECT DYNAMIC SEO URLs (EVENT KALENDER) -->\n    <!-- ========================================= -->`;
             kalenderData.forEach(k => {
                 const slug = k.slug || k.id;
                 const img = k.banner || `${domain}/img/bemfkgumi.png`;
                 if (slug) {
-                    // Penarikan Tanggal Mulai Agenda Dinamis
                     const itemLastMod = formatSitemapDate(k.tglMulai);
                     xmlUrls += `
     <url>
@@ -946,7 +878,6 @@ app.get('/sitemap.xml', async (req, res) => {
             });
         }
 
-        // 4. GENERATE DYNAMIC URLs (ARTIKEL BERITA DARI GOOGLE APPS SCRIPT)
         try {
             const gasReq = await fetch(`${GAS_ARTIKEL_URL}?action=getArticles&page=1&limit=100`);
             if(gasReq.ok) {
@@ -959,7 +890,6 @@ app.get('/sitemap.xml', async (req, res) => {
                         const slug = art.Slug_URL || art.ID_Berita;
                         const img = art.Gambar_URL || `${domain}/img/bemfkgumi.png`;
                         
-                        // Handle Date format dengan Helper khusus (Bypass "Tanggal Tidak Valid")
                         const itemLastMod = formatSitemapDate(art.Tgl_Rilis);
 
                         if(slug) {
@@ -983,7 +913,6 @@ app.get('/sitemap.xml', async (req, res) => {
             console.warn("⚠️ Sitemap: Gagal melakukan sinkronisasi artikel dari GAS Backend", e);
         }
 
-        // 5. BUNGKUS DENGAN TAG ROOT SITEMAP SCHEMA GOOGLE
         const sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -1001,35 +930,38 @@ ${xmlUrls}
     }
 });
 
-// ================= API CMS ENDPOINTS (CMS V1 - NAMESPACE FOLDER) =================
-// UPGRADE ZERO DELAY: Menggunakan redis.mget (Memuat seluruh 10 tabel DB sekaligus dalam 1 request)
+// ================= API CMS ENDPOINTS (CMS V1 - NO PREFIX & ZERO DELAY MGET) =================
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // Daftarkan semua Kunci Namespace Database Anda untuk ditarik sekaligus
+        // PENTING: MENGGUNAKAN NAMA KUNCI (KEYS) ASLI SESUAI GAMBAR UPSTASH ANDA
+        // TANPA ADA PREFIX "BEM_CMS:" SEHINGGA BISA DIBACA.
+        // DIGABUNG DENGAN .MGET() AGAR LOADING 10 TABEL DATA INI HANYA 1 DETIK (TIDAK DELAY)
         const keysToFetch = [
-            'BEM_CMS:Org_Structure',
-            'BEM_CMS:Proker_Data',
-            'BEM_CMS:Kalender_Data',
-            'BEM_CMS:Dokumentasi_Data',
-            'BEM_CMS:Settings_Data',
-            'BEM_CMS:Team_Data',
-            'BEM_CMS:Sejarah_Data',
-            'BEM_CMS:Filosofi_Data',
-            'BEM_CMS:Kontak_Data',
-            'BEM_CMS:Radar_Data'
+            'Org_Structure',
+            'Proker_Data',
+            'Kalender_Data',
+            'Dokumentasi_Data',
+            'Settings_Data',
+            'Team_Data',
+            'Sejarah_Data',
+            'Filosofi_Data',
+            'Kontak_Data',
+            'Radar_Data'
         ];
 
-        // 🔥 MAGIC: Menarik semua data di atas dalam 1 kedipan (1x HTTP Request ke Redis)
+        // 1 Kali Request ke Server Database memuat seluruh Kunci.
         const rawData = await redis.mget(...keysToFetch);
 
-        // Dekonstruksi Array Hasil ke Masing-Masing Variabel sesuai urutan keysToFetch
+        // Dekonstruksi Berurutan.
         const [
             org, proker, kalender, dokumentasi, 
             settings, team, sejarah, filosofi, kontak, radar
         ] = rawData;
 
+        // Parsing dan Pengaman. Jika string dari Redis berhasil dibaca maka ini yang akan dirender ke layar,
+        // Jika null (tidak ada di database), dia akan mundur menggunakan (defaultOrg) yang 100% utuh di atas tadi.
         let parsedOrg = safeParse(org, defaultOrg);
         
         if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) {
@@ -1082,7 +1014,7 @@ app.post('/api/content/:type', async (req, res) => {
 
         const payload = JSON.stringify(bodyData); 
         
-        // Simpan dalam format Kunci Terstruktur (Folder BEM_CMS)
+        // Simpan dalam format Kunci Terstruktur TANPA Prefix BEM_CMS: (SESUAI GAMBAR UPSTASH ANDA)
         const dbMapping = {
             'org': 'Org_Structure', 
             'proker': 'Proker_Data', 
@@ -1097,7 +1029,7 @@ app.post('/api/content/:type', async (req, res) => {
         };
         
         if (dbMapping[type]) {
-            const redisKey = `BEM_CMS:${dbMapping[type]}`;
+            const redisKey = dbMapping[type]; 
             await redis.set(redisKey, payload);
             res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
         } else {
@@ -1108,23 +1040,24 @@ app.post('/api/content/:type', async (req, res) => {
     }
 });
 
-// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS (FIXED MGET KEYS) =================
+// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS =================
 app.get('/api/admin/stats', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // Perhitungan Menggunakan Keys Lengkap agar Cepat & Realtime (Fix Blank Zero Bug)
         const formKeys = await redis.keys('BEM_Forms:*');
         const totalForms = formKeys.length;
         
         const responseKeys = await redis.keys('BEM_Responses:*:*');
         const totalResponses = responseKeys.length;
         
-        const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
-        const totalAspirasi = aspirasiKeys.length;
+        // MENGGUNAKAN HGETALL karena di Upstash Redis data Aspirations adalah HASH Object
+        const aspirasiData = await redis.hgetall('Aspirations') || {};
+        const totalAspirasi = Object.keys(aspirasiData).length;
         
-        const messageKeys = await redis.keys('BEM_Messages:*');
-        const totalPesan = messageKeys.length;
+        // MENGGUNAKAN HGETALL karena di Upstash Redis data Messages adalah HASH Object
+        const pesanData = await redis.hgetall('Messages') || {};
+        const totalPesan = Object.keys(pesanData).length;
         
         res.status(200).json({ 
             success: true, 
@@ -1135,30 +1068,23 @@ app.get('/api/admin/stats', async (req, res) => {
     }
 });
 
-// ================= API ENDPOINTS: TRANSAKSIONAL (FIXED HGET TO MGET KEYS) =================
+// ================= API ENDPOINTS: TRANSAKSIONAL =================
 app.get('/api/interactions', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // Ambil Data Aspirasi via Namespace Keys MGET
-        const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
-        let aspirasi = [];
-        if(aspirasiKeys.length > 0) {
-            // 🔥 Penarikan kolektif MGET mempercepat respon Dashboard Admin 10x lipat
-            const raw = await redis.mget(...aspirasiKeys);
-            // Robust Parsing: Filter null values & sort by date (Terbaru di atas)
-            aspirasi = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-        }
+        // MENGGUNAKAN HGETALL SESUAI STRUKTUR DATABASE ASLI ANDA
+        const rawAspirasi = await redis.hgetall('Aspirations') || {};
+        let aspirasi = Object.values(rawAspirasi)
+            .map(i => typeof i === 'string' ? safeParse(i, null) : i)
+            .filter(i => i !== null)
+            .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        // Ambil Data Pesan Narahubung via Namespace Keys MGET
-        const messageKeys = await redis.keys('BEM_Messages:*');
-        let pesan = [];
-        if(messageKeys.length > 0) {
-            // 🔥 Penarikan kolektif MGET
-            const raw = await redis.mget(...messageKeys);
-            // Robust Parsing: Filter null values & sort by date (Terbaru di atas)
-            pesan = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-        }
+        const rawPesan = await redis.hgetall('Messages') || {};
+        let pesan = Object.values(rawPesan)
+            .map(i => typeof i === 'string' ? safeParse(i, null) : i)
+            .filter(i => i !== null)
+            .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
         
         res.status(200).json({ success: true, aspirasi, pesan });
     } catch (error) {
@@ -1173,8 +1099,9 @@ app.post('/api/plasma', async (req, res) => {
     const id = `ASP-${Date.now()}`;
     const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
     
+    // KEMBALIKAN KE HSET SESUAI STRUKTUR DATABASE
     if (redis) {
-        await redis.set(`BEM_Aspirations:${id}`, JSON.stringify(payload));
+        await redis.hset('Aspirations', { [id]: JSON.stringify(payload) });
     }
     res.status(200).json({ success: true, message: 'Aspirasi berhasil dikirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -1186,8 +1113,9 @@ app.post('/api/message', async (req, res) => {
     const id = `MSG-${Date.now()}`;
     const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
     
+    // KEMBALIKAN KE HSET SESUAI STRUKTUR DATABASE
     if (redis) {
-        await redis.set(`BEM_Messages:${id}`, JSON.stringify(payload));
+        await redis.hset('Messages', { [id]: JSON.stringify(payload) });
     }
     res.status(200).json({ success: true, message: 'Pesan terkirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -1196,9 +1124,9 @@ app.post('/api/message', async (req, res) => {
 app.post('/api/delete-interaction', async (req, res) => {
     try {
         const { type, id } = req.body;
-        // Penyesuaian ke fungsi DEL yang benar untuk Namespace Keys (Pattern)
-        if(type === 'aspirasi' && redis) await redis.del(`BEM_Aspirations:${id}`);
-        if(type === 'pesan' && redis) await redis.del(`BEM_Messages:${id}`);
+        // KEMBALIKAN KE HDEL SESUAI STRUKTUR DATABASE
+        if(type === 'aspirasi' && redis) await redis.hdel('Aspirations', id);
+        if(type === 'pesan' && redis) await redis.hdel('Messages', id);
         res.status(200).json({ success: true });
     } catch (error) { res.status(500).json({ success: false }); }
 });
