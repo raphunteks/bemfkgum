@@ -748,10 +748,10 @@ app.get('/sitemap.xml', async (req, res) => {
         let prokerData = defaultProker;
         let kalenderData = defaultKalender;
 
-        // Coba fetch dari DB Redis
+        // Coba fetch dari DB Redis CMS Namespace
         if(redis) {
-            const rawProker = await redis.get('Proker_Data');
-            const rawKalender = await redis.get('Kalender_Data');
+            const rawProker = await redis.get('BEM_CMS:Proker_Data');
+            const rawKalender = await redis.get('BEM_CMS:Kalender_Data');
             prokerData = safeParse(rawProker, defaultProker);
             kalenderData = safeParse(rawKalender, defaultKalender);
         }
@@ -860,8 +860,7 @@ app.get('/sitemap.xml', async (req, res) => {
         <loc>${domain}/berita</loc>
         <lastmod>${today}</lastmod>
         <changefreq>daily</changefreq>
-        <priority>0.9</priority>
-    </url>
+        <priority>0.9</url>
     <url>
         <loc>${domain}/ourteam</loc>
         <lastmod>${today}</lastmod>
@@ -1000,21 +999,21 @@ ${xmlUrls}
     }
 });
 
-// ================= API CMS ENDPOINTS (CMS V1 - UTUH) =================
+// ================= API CMS ENDPOINTS (CMS V1 - NAMESPACE FOLDER) =================
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         // Gunakan Prefix BEM_CMS: agar rapi di UI Upstash
-        let org = await redis.get('Org_Structure');
-        let proker = await redis.get('Proker_Data');
-        let kalender = await redis.get('Kalender_Data');
-        let dokumentasi = await redis.get('Dokumentasi_Data');
-        let settings = await redis.get('Settings_Data');
-        let team = await redis.get('Team_Data');
-        let sejarah = await redis.get('Sejarah_Data');
-        let filosofi = await redis.get('Filosofi_Data'); 
-        let kontak = await redis.get('Kontak_Data');
-        let radar = await redis.get('Radar_Data');
+        let org = await redis.get('BEM_CMS:Org_Structure');
+        let proker = await redis.get('BEM_CMS:Proker_Data');
+        let kalender = await redis.get('BEM_CMS:Kalender_Data');
+        let dokumentasi = await redis.get('BEM_CMS:Dokumentasi_Data');
+        let settings = await redis.get('BEM_CMS:Settings_Data');
+        let team = await redis.get('BEM_CMS:Team_Data');
+        let sejarah = await redis.get('BEM_CMS:Sejarah_Data');
+        let filosofi = await redis.get('BEM_CMS:Filosofi_Data'); 
+        let kontak = await redis.get('BEM_CMS:Kontak_Data');
+        let radar = await redis.get('BEM_CMS:Radar_Data');
 
         let parsedOrg = safeParse(org, defaultOrg);
         
@@ -1082,7 +1081,7 @@ app.post('/api/content/:type', async (req, res) => {
         };
         
         if (dbMapping[type]) {
-            const redisKey = dbMapping[type]; // DIBENARKAN: Sesuai struktur Upstash terbaru tanpa prefix BEM_CMS
+            const redisKey = `BEM_CMS:${dbMapping[type]}`;
             await redis.set(redisKey, payload);
             res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
         } else {
@@ -1093,7 +1092,7 @@ app.post('/api/content/:type', async (req, res) => {
     }
 });
 
-// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS (MENGGUNAKAN KEYS LENGTH) =================
+// ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS (FIXED MGET KEYS) =================
 app.get('/api/admin/stats', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -1105,12 +1104,10 @@ app.get('/api/admin/stats', async (req, res) => {
         const responseKeys = await redis.keys('BEM_Responses:*:*');
         const totalResponses = responseKeys.length;
         
-        // PERBAIKAN: Menggunakan .keys('Aspirations:*') untuk menghitung total realtime
-        const aspirasiKeys = await redis.keys('Aspirations:*');
+        const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
         const totalAspirasi = aspirasiKeys.length;
         
-        // PERBAIKAN: Menggunakan .keys('Messages:*') untuk menghitung total realtime
-        const messageKeys = await redis.keys('Messages:*');
+        const messageKeys = await redis.keys('BEM_Messages:*');
         const totalPesan = messageKeys.length;
         
         res.status(200).json({ 
@@ -1122,13 +1119,13 @@ app.get('/api/admin/stats', async (req, res) => {
     }
 });
 
-// ================= API ENDPOINTS: TRANSAKSIONAL (PERBAIKAN MGET) =================
+// ================= API ENDPOINTS: TRANSAKSIONAL (FIXED HGET TO MGET KEYS) =================
 app.get('/api/interactions', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // PERBAIKAN: Gunakan mget dengan keys pattern (Bukan hgetall karena datanya disimpan dengan redis.set bukan hset)
-        const aspirasiKeys = await redis.keys('Aspirations:*');
+        // Ambil Data Aspirasi via Namespace Keys MGET
+        const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
         let aspirasi = [];
         if(aspirasiKeys.length > 0) {
             const raw = await redis.mget(...aspirasiKeys);
@@ -1136,7 +1133,8 @@ app.get('/api/interactions', async (req, res) => {
             aspirasi = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
 
-        const messageKeys = await redis.keys('Messages:*');
+        // Ambil Data Pesan Narahubung via Namespace Keys MGET
+        const messageKeys = await redis.keys('BEM_Messages:*');
         let pesan = [];
         if(messageKeys.length > 0) {
             const raw = await redis.mget(...messageKeys);
@@ -1157,9 +1155,8 @@ app.post('/api/plasma', async (req, res) => {
     const id = `ASP-${Date.now()}`;
     const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
     
-    // PERBAIKAN: Disimpan dengan .set (string) BUKAN hset
     if (redis) {
-        await redis.set(`Aspirations:${id}`, JSON.stringify(payload));
+        await redis.set(`BEM_Aspirations:${id}`, JSON.stringify(payload));
     }
     res.status(200).json({ success: true, message: 'Aspirasi berhasil dikirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -1171,9 +1168,8 @@ app.post('/api/message', async (req, res) => {
     const id = `MSG-${Date.now()}`;
     const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
     
-    // PERBAIKAN: Disimpan dengan .set (string) BUKAN hset
     if (redis) {
-        await redis.set(`Messages:${id}`, JSON.stringify(payload));
+        await redis.set(`BEM_Messages:${id}`, JSON.stringify(payload));
     }
     res.status(200).json({ success: true, message: 'Pesan terkirim!' });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -1182,9 +1178,9 @@ app.post('/api/message', async (req, res) => {
 app.post('/api/delete-interaction', async (req, res) => {
     try {
         const { type, id } = req.body;
-        // PERBAIKAN: Dihapus dengan .del biasa, sesuai dengan metode penyimpanannya
-        if(type === 'aspirasi' && redis) await redis.del(`Aspirations:${id}`);
-        if(type === 'pesan' && redis) await redis.del(`Messages:${id}`);
+        // Penyesuaian ke fungsi DEL yang benar untuk Namespace Keys (Pattern)
+        if(type === 'aspirasi' && redis) await redis.del(`BEM_Aspirations:${id}`);
+        if(type === 'pesan' && redis) await redis.del(`BEM_Messages:${id}`);
         res.status(200).json({ success: true });
     } catch (error) { res.status(500).json({ success: false }); }
 });
