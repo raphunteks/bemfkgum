@@ -1,3 +1,4 @@
+<!-- FILE: views/berita.html -->
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
 <head>
@@ -6,9 +7,7 @@
     <meta name="theme-color" content="#0b132b">
     
     <!-- PERFORMANCE PRECONNECTS -->
-    <link rel="preconnect" href="https://script.google.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-    <link rel="dns-prefetch" href="https://script.google.com">
 
     <!-- ENTERPRISE SEO DIRECTIVES & CANONICAL -->
     <title>Portal Berita E-Zine | BEM KBMFKG UMI</title>
@@ -233,8 +232,8 @@
     </button>
 
     <script>
-        // --- LINK GOOGLE APPS SCRIPT API BACKEND ---
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
+        // --- UPGRADE: LINK DIREKTORI KE BACKEND NODE.JS UPSTASH (BUKAN LAGI GAS) ---
+        const API_URL = "/api/articles";
 
         var appState = {
             articles: [], page: 1, limit: 10, category: 'All', 
@@ -288,20 +287,23 @@
                 document.getElementById('articleGrid').innerHTML = '';
             }
 
-            var fetchUrl = GAS_URL + "?action=getArticles&page=" + appState.page + "&limit=" + appState.limit + "&category=" + encodeURIComponent(appState.category);
+            var fetchUrl = API_URL + "?page=" + appState.page + "&limit=" + appState.limit + "&category=" + encodeURIComponent(appState.category);
 
             fetch(fetchUrl)
                 .then(function(response) {
-                    if (!response.ok) throw new Error("Gagal menyambung ke GAS API.");
+                    if (!response.ok) throw new Error("Gagal menyambung ke API Lokal.");
                     return response.json();
                 })
                 .then(function(res) {
                     var parsedData = typeof res === 'string' ? JSON.parse(res) : res;
                     var articleList = parsedData.data || parsedData || [];
-                    processNewData(articleList, false); 
+                    
+                    // Simple hasMore logic: if we received exactly 'limit' articles, we assume there might be more.
+                    var hasMore = articleList.length === appState.limit; 
+                    processNewData(articleList, hasMore); 
                 })
                 .catch(function(err) {
-                    console.warn("GAS API Error.", err);
+                    console.warn("API Error.", err);
                     appState.isLoading = false;
                     document.getElementById('scrollLoader').style.display = 'none';
                 });
@@ -639,7 +641,8 @@
             var gridBadge = document.getElementById('viewCount-' + id);
             if (gridBadge) gridBadge.innerText = article.Jumlah_View;
             
-            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementView', ID_Berita: id}) }).catch(function(e) {});
+            // Hit Increment View langsung ke Upstash Lokal (Cepat tanpa GAS)
+            fetch(API_URL + '/view/' + id, { method: 'POST' }).catch(function(e) {});
 
             // Inject SEO
             injectEnterpriseSEO(article, currentFullUrl);
@@ -674,7 +677,8 @@
             article.Jumlah_Like = (parseInt(article.Jumlah_Like) || 0) + 1;
             document.getElementById('txtLikeCount').innerText = article.Jumlah_Like;
 
-            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'incrementLike', ID_Berita: id}) }).catch(function(e){});
+            // Hit Increment Like langsung ke Upstash Lokal (Cepat tanpa GAS)
+            fetch(API_URL + '/like/' + id, { method: 'POST' }).catch(function(e){});
         }
 
         function showToastMessage() {
