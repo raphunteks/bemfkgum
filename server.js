@@ -156,17 +156,35 @@ const defaultTeam = [
 const defaultSejarah = [
     { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
     { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" },
-    { tahun: "2023-2024", kabinet: "Kabinet Satya Bimantara", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" }
+    { tahun: "2023-2024", kabinet: "Kabinet Satya Bimantara", logo: "/img/bemfkgumi.png", ketua: "Andi Fajrin Perdana Sam, S.KG", wakil: "Ibnu Rusyd, S.KG" },
+    { tahun: "2023", kabinet: "Kabinet Aswara Karya", logo: "/img/bemfkgumi.png", ketua: "Aditya Dwianugrah Wiratman, S.KG", wakil: "Nur. Muhammad Syafaat, S.KG" },
+    { tahun: "2022", kabinet: "Kabinet Dedikasi Karsa", logo: "/img/bemfkgumi.png", ketua: "drg. Amdhan Syarief", wakil: "Marwati Sumardi, S.KG" },
+    { tahun: "2021", kabinet: "Kabinet Aksi Adhikari", logo: "/img/bemfkgumi.png", ketua: "drg. Fahri Muhammad", wakil: "drg. Ayu Lestari" },
+    { tahun: "2020", kabinet: "Kabinet Progresif", logo: "/img/bemfkgumi.png", ketua: "drg. Muhammad Ajis", wakil: "drg. Andriani T" },
+    { tahun: "2018-2019", kabinet: "Kabinet Bersatu", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Sulaihi Ramadhan", wakil: "drg. Sri Devi" },
+    { tahun: "2017-2018", kabinet: "Kabinet Sinergis", logo: "/img/bemfkgumi.png", ketua: "drg. Faisal Ramadhan", wakil: "drg, Satria Nur Fathanah" },
+    { tahun: "2016-2017", kabinet: "Kabinet Harmoni", logo: "/img/bemfkgumi.png", ketua: "drg. Zulfahmi Duwila", wakil: "drg. Abd. Rahman Abdal Basri Makassau" },
+    { tahun: "2015-2016", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Muh. Rizky Adipratama Yusuf", wakil: "drg. Muhammad Hidayatullah" },
+    { tahun: "2014-2015", kabinet: "Kabinet X", logo: "/img/bemfkgumi.png", ketua: "drg. Dian Rickyrianto Azis", wakil: "drg. Bima Anugrah" }
 ];
 
 const defaultFilosofi = {
     logo: [
         { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
-        { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." }
+        { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang. Ketika seseorang sedang menderita suatu penyakit." },
+        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Sebagai calon dokter gigi kita memiliki sifat-sifat seperti ular yaitu, Ular berganti kulit, maksudnya dengan berganti kulit bagaikan orang dulunya sakit dan melalui pertolongan dokter, orang tersebut dapat sembuh dari penyakitnya. 1) Ular dapat bersifat beracun dan bersifat mengobati, hal ini dihubungkan obat-obatan yang digunakan saat ini. Selain memiliki efek menyembuhkan, lambang ular juga bersifat racun apabila penggunaan dosis salah ataupun berlebihan. 2) Ular memiliki taring yang mencerminkan kekuatan dan jati diri mahasiswa." },
+        { elemen: "Molar", arti: "Gigi yang paling sering digunakan dan paling kuat.", makna: "Sebagai mahasiswa FKG UMI, diharapkan sering bermanfaat di lingkungan masyarakat dan kuat menghadapi masalah-masalah yang ada." },
+        { elemen: "Perahu Phinisi", arti: "Merupakan lambang khas asli Sulawesi Selatan.", makna: "Diharapkan seluruh Mahasiswa/I dan Lulusan FKG UMI nantinya bisa menghadapi tantangan, rintangan, serta mampu bersaing dimanapun kita berada." },
+        { elemen: "Segitiga", arti: "Segitiga sama kaki terbalik berwarna ungu.", makna: "Diharapkan dari Mahasiswa dan Lulusan FKG UMI dapat mewujudkan visi Persatuan Dokter Gigi Indonesia." },
+        { elemen: "Angka 2014", arti: "Tahun Berdirinya Organisasi.", makna: "KBMFKG-UMI didirikan pada tahun 2014." }
     ],
     warna: [
         { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
-        { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." }
+        { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
+        { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian." },
+        { warna: "Kuning", hex: "#f59e0b", makna: "Melambangkan kedewasaan, kemuliaan, dan kelestarian." },
+        { warna: "Merah", hex: "#ef4444", makna: "Melambangkan keadilan, keberanian, dan tanggung responsabilidad." },
+        { warna: "Hitam", hex: "#111827", makna: "Melambangkan kejujuran dan keilmuan." }
     ]
 };
 
@@ -178,6 +196,7 @@ const defaultKontak = {
     mapsIframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2034501.8037647426!2d117.10876464843753!3d-5.162069646776987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbf1d606370a527%3A0xdb175c222d9d580b!2sUniversitas%20Muslim%20Indonesia%2C%20Fakultas%20Kedokteran%20Gigi!5e0!3m2!1sid!2sid!4v1783856471813!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy referrerpolicy="strict-origin-when-cross-origin"></iframe>'
 };
 
+// SEED DATA BARU: RADAR BEM WIDGETS
 const defaultRadar = [
     { 
         departemen: "Dept. of Art and Sport", 
@@ -194,7 +213,7 @@ const defaultKalender = [
         tglMulai: "2026-07-24",
         tglSelesai: "2026-07-26",
         banner: "/img/bemfkgumi.png",
-        deskripsi: "WELCOME TO UAS VOL. IV\n\nSaatnya membawa nama himpunan menuju arena pengabdian terbesar di FKG UMI!",
+        deskripsi: "WELCOME TO UAS VOL. IV\n\nSaatnya membawa nama himpunan menuju arena pengabdian terbesar di FKG UMI! Kegiatan ini merupakan wujud nyata Tridharma Perguruan Tinggi yang menjunjung tinggi nilai kemanusiaan dan kepedulian sosial.",
         lokasi: "Desa Binaan FKG UMI",
         targetPeserta: "Seluruh Mahasiswa FKG UMI",
         statusDaftar: "Buka",
@@ -204,7 +223,16 @@ const defaultKalender = [
                 namaDivisi: "Inti Kegiatan",
                 anggota: [
                     { nama: "Fajri", jabatan: "Steering Committee" },
-                    { nama: "Rizky", jabatan: "Ketua Panitia" }
+                    { nama: "Rizky", jabatan: "Ketua Panitia" },
+                    { nama: "Dian", jabatan: "Sekretaris" },
+                    { nama: "Amelia", jabatan: "Bendahara" }
+                ]
+            },
+            {
+                namaDivisi: "Divisi Acara",
+                anggota: [
+                    { nama: "Syauqi", jabatan: "Koordinator" },
+                    { nama: "Ananda", jabatan: "Anggota" }
                 ]
             }
         ]
@@ -320,7 +348,6 @@ app.get('/api/uploads/:filename', async (req, res) => {
         res.status(500).send("Gagal memuat file.");
     }
 });
-
 
 // ============================================================================
 // API ENDPOINTS BEM-FORM (CRUD & SUBMIT DENGAN UPSTASH FOLDER STRUCTURE)
@@ -532,7 +559,6 @@ app.post('/api/forms/submit', async (req, res) => {
     }
 });
 
-
 // ============================================================================
 // SUPER BIG UPGRADE: CRUD JAWABAN (EDIT & DELETE SPECIFIC RESPONSE)
 // ============================================================================
@@ -573,6 +599,7 @@ app.put('/api/forms/:formId/responses/:resId', async (req, res) => {
         // Memperbarui Object
         if(email !== undefined) existingObj.email = email;
         if(answers !== undefined) existingObj.answers = answers;
+        // Opsional: Recalculate Kuis Points dapat diletakkan di sini nantinya jika dibutuhkan.
 
         await redis.set(redisKey, JSON.stringify(existingObj));
         res.status(200).json({ success: true, message: "Jawaban berhasil diperbarui." });
@@ -672,7 +699,6 @@ app.get('/api/forms/:id/export', async (req, res) => {
     }
 });
 
-
 // ============================================================================
 // DYNAMIC SEO SITEMAP & ROBOTS.TXT GENERATOR (CMS V1 - UTUH)
 // ============================================================================
@@ -723,11 +749,12 @@ app.get('/sitemap.xml', async (req, res) => {
         let prokerData = defaultProker;
         let kalenderData = defaultKalender;
 
-        // Coba fetch dari DB Redis CMS Namespace (MGET Fast Load optimization applied here too)
+        // Coba fetch dari DB Redis CMS Namespace
         if(redis) {
-            const rawData = await redis.mget('BEM_CMS:Proker_Data', 'BEM_CMS:Kalender_Data');
-            prokerData = safeParse(rawData[0], defaultProker);
-            kalenderData = safeParse(rawData[1], defaultKalender);
+            const rawProker = await redis.get('BEM_CMS:Proker_Data');
+            const rawKalender = await redis.get('BEM_CMS:Kalender_Data');
+            prokerData = safeParse(rawProker, defaultProker);
+            kalenderData = safeParse(rawKalender, defaultKalender);
         }
 
         // 1. GENERATE STATIC URLs
@@ -974,9 +1001,8 @@ ${xmlUrls}
     }
 });
 
-
 // ================= API CMS ENDPOINTS (CMS V1 - NAMESPACE FOLDER) =================
-// UPGRADE ZERO DELAY: Menggunakan redis.mget (Memuat seluruh 10 tabel DB sekaligus dalam 1 request kecepatan kilat)
+// UPGRADE ZERO DELAY: Menggunakan redis.mget (Memuat seluruh 10 tabel DB sekaligus dalam 1 request)
 app.get('/api/content', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -1081,7 +1107,6 @@ app.post('/api/content/:type', async (req, res) => {
         res.status(500).json({ success: false, message: 'Gagal menyimpan data ke Redis.' });
     }
 });
-
 
 // ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS (FIXED MGET KEYS) =================
 app.get('/api/admin/stats', async (req, res) => {
