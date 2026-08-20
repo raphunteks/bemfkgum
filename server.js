@@ -261,48 +261,87 @@ app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
 app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.slug }));
 
 // ============================================================================
-// SUPER BIG UPGRADE: SSR ROUTING UNTUK BERITA (SEO ENTERPRISE)
-// Mencegah "Halaman alternatif" GSC dengan mengirim Meta Tag yang tepat langsung dari Server!
+// SUPER BIG UPGRADE: SSR ROUTING UNTUK BERITA & KATEGORI DINAMIS (SEO ENTERPRISE)
 // ============================================================================
 
-// 1. Route untuk Indeks Berita Biasa (Grid Artikel)
-app.get('/berita', (req, res) => {
-    res.render('berita', { articleInfo: null, siteUrl: 'https://bemkbmfkgumi.com' });
-});
-
-// 2. Route untuk CLEAN URL Dinamis Artikel Spesifik (Suntikan SEO)
-app.get('/berita/:slug', async (req, res) => {
+// Fungsi Helper untuk menarik semua artikel dan mengekstrak kategori unik
+async function getArticlesAndCategories() {
+    if (!redis) return { articles: [], categories: [] };
     try {
-        let articleInfo = null;
-        if (redis) {
-            // Ambil semua artikel untuk mencari slug yang cocok
-            const keys = await redis.keys('BEM_Articles:*');
-            if (keys.length > 0) {
-                const raw = await redis.mget(...keys);
-                const articles = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i);
-                
-                // Cari artikel dengan Slug atau ID_Berita yang cocok dengan route
-                articleInfo = articles.find(a => (a.Slug_URL || a.ID_Berita) === req.params.slug);
-            }
-        }
+        const keys = await redis.keys('BEM_Articles:*');
+        if (keys.length === 0) return { articles: [], categories: [] };
+        const raw = await redis.mget(...keys);
+        const articles = raw.filter(a => a != null).map(a => typeof a === 'string' ? JSON.parse(a) : a);
         
-        // Render berita.html dan masukkan Data Artikel ke EJS Engine!
-        res.render('berita', { 
-            articleInfo: articleInfo, 
-            siteUrl: 'https://bemkbmfkgumi.com', 
-            currentSlug: req.params.slug 
-        });
-    } catch(e) {
-        console.error("Gagal melakukan SSR Artikel", e);
-        res.render('berita', { articleInfo: null, siteUrl: 'https://bemkbmfkgumi.com' });
+        // Ekstrak nama kategori yang unik
+        const categories = [...new Set(articles.map(a => a.Kategori).filter(Boolean))];
+        return { articles, categories };
+    } catch (e) {
+        return { articles: [], categories: [] };
     }
+}
+
+// 1. Route Indeks Berita Default (/berita)
+app.get('/berita', async (req, res) => {
+    const { categories } = await getArticlesAndCategories();
+    res.render('berita', { 
+        articleInfo: null, 
+        siteUrl: 'https://bemkbmfkgumi.com',
+        currentCategory: 'All',
+        categorySlug: null,
+        categories: categories 
+    });
+});
+
+// 2. Route Dinamis Kategori Berita (/berita/kategori/:kategori_slug)
+app.get('/berita/kategori/:kategori_slug', async (req, res) => {
+    const { articles, categories } = await getArticlesAndCategories();
+    const catSlugReq = req.params.kategori_slug;
+    
+    // Konversi slug kembali menjadi nama Kategori asli dengan mencari di dalam array artikel
+    let actualCategoryName = 'All';
+    const sampleArticle = articles.find(a => {
+        if (!a.Kategori) return false;
+        const catSlug = a.Kategori.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        return catSlug === catSlugReq;
+    });
+
+    if (sampleArticle) {
+        actualCategoryName = sampleArticle.Kategori;
+    }
+
+    res.render('berita', { 
+        articleInfo: null, 
+        siteUrl: 'https://bemkbmfkgumi.com',
+        currentCategory: actualCategoryName,
+        categorySlug: catSlugReq,
+        categories: categories 
+    });
+});
+
+// 3. Route Dinamis Detail Artikel (/berita/:slug)
+app.get('/berita/:slug', async (req, res) => {
+    const { articles, categories } = await getArticlesAndCategories();
+    let articleInfo = null;
+
+    if (articles.length > 0) {
+        articleInfo = articles.find(a => (a.Slug_URL || a.ID_Berita) === req.params.slug);
+    }
+    
+    res.render('berita', { 
+        articleInfo: articleInfo, 
+        siteUrl: 'https://bemkbmfkgumi.com', 
+        currentSlug: req.params.slug,
+        currentCategory: articleInfo ? articleInfo.Kategori : 'All',
+        categorySlug: null,
+        categories: categories
+    });
 });
 
 // ============================================================================
-// API SYSTEM UPLOAD FILE (REALTIME & FOLDER STRUCTURE UI)
+// SUPER BIG UPGRADE: API SYSTEM UPLOAD FILE (REALTIME & FOLDER STRUCTURE UI)
 // Berdasarkan gambar 6 & 7, kunci tersimpan sebagai String: BEM_Files:1787225019662-sertifikat-bab-i.png
 // ============================================================================
-
 app.post('/api/upload', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
