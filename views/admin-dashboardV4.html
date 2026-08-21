@@ -151,14 +151,12 @@
             <div class="neo-card">
                 <h3 style="margin-bottom: 15px;">Bentuk Titik (Dots Pattern)</h3>
                 <div class="grid-options" id="grid-dots-type">
-                    <!-- Standard -->
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'square', this)">Square</button>
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'dots', this)">Dots</button>
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'rounded', this)">Rounded</button>
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'extra-rounded', this)">Extra Round</button>
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'classy', this)">Classy</button>
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'classy-rounded', this)">Classy Round</button>
-                    <!-- Tambahan 9 Variasi Premium/Playful -->
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'star', this)">Star</button>
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'diamond', this)">Diamond</button>
                     <button class="opt-btn" onclick="selectStyle('dotsType', 'hexagon', this)">Hexagon</button>
@@ -175,13 +173,11 @@
             <div class="neo-card">
                 <h3 style="margin-bottom: 15px;">Bentuk Frame Mata (Corner Squares)</h3>
                 <div class="grid-options" id="grid-corner-square-type">
-                    <!-- Standard -->
                     <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'square', this)">Square</button>
                     <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'dot', this)">Dot / Bulat</button>
                     <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'extra-rounded', this)">Extra Round</button>
-                    <!-- Tambahan 12 Variasi Premium/Playful -->
                     <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'leaf', this)">Leaf (Daun)</button>
-                    <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'shield', this)">Shield (Perisai)</button>
+                    <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'shield', this)">Shield</button>
                     <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'hexagon', this)">Hexagon</button>
                     <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'octagon', this)">Octagon</button>
                     <button class="opt-btn" onclick="selectStyle('cornerSquareType', 'diamond', this)">Diamond</button>
@@ -319,17 +315,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('axa_admin_token');
         if (token) {
-            // Unlocks dashboard if token exists
             document.getElementById('loginGate').style.display = 'none';
             document.getElementById('main-layout').style.display = 'flex';
-            // Slight delay for smooth transition
             setTimeout(() => { document.getElementById('main-layout').style.opacity = '1'; }, 50);
             
-            // Proceed to load data & initialize builder
             loadAllQRCodes();
             qrCodeInstance = new QRCodeStyling(getQROptions(state));
         } else {
-            // Blocks the dashboard if no token
             document.getElementById('loginGate').style.display = 'flex';
         }
     });
@@ -361,7 +353,6 @@
                 throw new Error();
             }
         } catch(e) {
-            // Fallback for Local Canvas Simulation
             if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
                 localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); 
                 showToast("✅ Simulasi Canvas Aktif."); 
@@ -380,7 +371,6 @@
             document.getElementById('loginGate').style.display = 'none'; 
             const layout = document.getElementById('main-layout');
             layout.style.display = 'flex'; 
-            // Trigger reflow
             layout.offsetHeight;
             layout.style.opacity = '1'; 
             
@@ -397,68 +387,54 @@
     // ================= STATE MANAGEMENT =================
     let allQRCodes = [];
     
-    // Default Configuration for qr-code-styling
     const defaultState = {
         id: '',
         projectName: 'QR Code Baru',
-        dataType: 'url', // url, text, email, phone
+        dataType: 'url',
         data: 'https://bemkbmfkgumi.com',
-        
-        // Colors
         dotsColor: '#0f172a',
         cornerColor: '#facc15',
         bgColor: '#ffffff',
         bgTransparent: false,
-        
-        // Shapes
-        dotsType: 'square', // square, dots, rounded, extra-rounded, classy, classy-rounded, star, etc
-        cornerSquareType: 'square', // square, dot, extra-rounded, leaf, shield, etc
-        cornerDotType: 'square', // square, dot, star, heart, diamond
-        
-        // Center Settings (Logo or Text)
-        centerMode: 'none', // none, image, text
-        image: '', // URL of logo
+        dotsType: 'square',
+        cornerSquareType: 'square',
+        cornerDotType: 'square',
+        centerMode: 'none',
+        image: '',
         centerText: 'BEM',
         centerTextColor: '#ffffff',
         centerTextBgColor: '#0f172a',
         centerTextRounded: true,
         imageSize: 0.3,
-        hideBgDots: true // margin around logo/text
+        hideBgDots: true
     };
 
     let state = JSON.parse(JSON.stringify(defaultState));
     let qrCodeInstance = null;
 
     function toggleMobileMenu() {
-        const nav = document.getElementById('sidebarNav');
-        nav.classList.toggle('show');
+        document.getElementById('sidebarNav').classList.toggle('show');
     }
 
     // ================= UI & TAB CONTROLLER =================
     function switchTab(tabId) {
-        // Toggle Sidebar Links
         document.querySelectorAll('.sidebar-link').forEach(btn => btn.classList.remove('active'));
         let targetBtn = document.querySelector(`.sidebar-link[onclick="switchTab('${tabId}')"]`);
         if(targetBtn) targetBtn.classList.add('active');
         
-        // Toggle Contents
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
 
-        // Toggle UI Modes (List vs Editor)
         const editorElements = document.querySelectorAll('.editor-only');
         if (tabId === 'list') {
             editorElements.forEach(el => el.style.display = 'none');
             loadAllQRCodes();
         } else {
             editorElements.forEach(el => el.style.display = 'flex');
-            // specifically for header to remain flex row
             document.querySelector('.editor-header').style.display = window.innerWidth > 768 ? 'flex' : 'column';
             populateEditorForm();
             renderLivePreview();
         }
-        
-        // Hide mobile menu after click
         document.getElementById('sidebarNav').classList.remove('show');
     }
 
@@ -480,11 +456,16 @@
 
             let html = '';
             [...allQRCodes].forEach(qr => {
+                // SANGAT PENTING: Mencegah Crash akibat Struktur Lama di Database (Gambar 1)
+                let typeStr = (qr.dataType || (qr.data && qr.data.startsWith('http') ? 'url' : 'text')).toUpperCase();
+                let nameStr = qr.projectName || qr.name || 'Tanpa Judul';
+                let dataStr = qr.data || '';
+                
                 html += `
                 <div class="list-item-card">
                     <div class="list-item-info">
-                        <h4>${qr.projectName || 'Tanpa Judul'}</h4>
-                        <p>${qr.dataType.toUpperCase()}: ${qr.data.substring(0, 30)}${qr.data.length > 30 ? '...' : ''}</p>
+                        <h4>${nameStr}</h4>
+                        <p>${typeStr}: ${dataStr.substring(0, 30)}${dataStr.length > 30 ? '...' : ''}</p>
                     </div>
                     <div class="list-item-actions">
                         <button class="neo-btn secondary" style="padding: 8px 12px; font-size: 0.8rem;" onclick="openEditor('${qr.id}')">✏️ Edit</button>
@@ -494,6 +475,7 @@
             });
             container.innerHTML = html;
         } catch (e) {
+            console.error(e);
             container.innerHTML = "<div class='empty-state' style='color:var(--danger);'>Gagal terhubung ke server. (Mode Lokal Canvas aktif)</div>";
         }
     }
@@ -506,11 +488,42 @@
     function openEditor(id) {
         const found = allQRCodes.find(q => q.id === id);
         if(found) {
-            state = JSON.parse(JSON.stringify(found));
-            // Failsafe keys
-            if(state.bgTransparent === undefined) state.bgTransparent = false;
-            if(!state.centerMode) {
+            // ADAPTER: Menyinkronkan Database Lama (design: {...}) ke format Flat State UI Baru
+            state.id = found.id;
+            state.projectName = found.projectName || found.name || 'QR Code Baru';
+            state.dataType = found.dataType || (found.data && found.data.startsWith('http') ? 'url' : 'text');
+            state.data = found.data || '';
+            
+            if (found.design) {
+                // Mapping DB Lama
+                state.dotsColor = found.design.dotsColor || '#0f172a';
+                state.cornerColor = found.design.eyesColor || '#facc15';
+                state.bgColor = found.design.bgColor || '#ffffff';
+                state.bgTransparent = false;
+                state.dotsType = found.design.dotsShape || 'square';
+                state.cornerSquareType = found.design.eyesShape || 'square';
+                state.cornerDotType = 'square';
+                state.image = found.design.logoUrl || '';
+                state.imageSize = parseFloat(found.design.logoScale) || 0.3;
+                state.hideBgDots = found.design.logoBg !== undefined ? found.design.logoBg : true;
                 state.centerMode = state.image ? 'image' : 'none';
+            } else {
+                // Mapping DB Baru (Flat)
+                state.dotsColor = found.dotsColor || '#0f172a';
+                state.cornerColor = found.cornerColor || '#facc15';
+                state.bgColor = found.bgColor || '#ffffff';
+                state.bgTransparent = found.bgTransparent || false;
+                state.dotsType = found.dotsType || 'square';
+                state.cornerSquareType = found.cornerSquareType || 'square';
+                state.cornerDotType = found.cornerDotType || 'square';
+                state.centerMode = found.centerMode || 'none';
+                state.image = found.image || '';
+                state.centerText = found.centerText || '';
+                state.centerTextColor = found.centerTextColor || '#ffffff';
+                state.centerTextBgColor = found.centerTextBgColor || '#0f172a';
+                state.centerTextRounded = found.centerTextRounded !== undefined ? found.centerTextRounded : true;
+                state.imageSize = parseFloat(found.imageSize) || 0.3;
+                state.hideBgDots = found.hideBgDots !== undefined ? found.hideBgDots : true;
             }
             switchTab('data');
         }
@@ -535,7 +548,6 @@
                 showCustomAlert("Gagal: " + data.message);
             }
         } catch(e) {
-            // Local fallback
             if(!state.id) state.id = `QR-${Date.now()}`;
             const idx = allQRCodes.findIndex(q => q.id === state.id);
             if(idx > -1) allQRCodes[idx] = JSON.parse(JSON.stringify(state));
@@ -564,7 +576,6 @@
 
     // ================= EDITOR BINDING & UPDATER =================
     function populateEditorForm() {
-        // Tab Data
         document.getElementById('inp-project-name').value = state.projectName;
         document.getElementById('inp-data-type').value = state.dataType;
         toggleDataInput(state.dataType);
@@ -574,18 +585,15 @@
         if(state.dataType === 'email') document.getElementById('inp-data-email').value = state.data.replace('mailto:','');
         if(state.dataType === 'phone') document.getElementById('inp-data-phone').value = state.data.replace('tel:','');
 
-        // Tab Design (Colors)
         document.getElementById('inp-color-dots').value = state.dotsColor;
         document.getElementById('inp-color-corner').value = state.cornerColor;
         document.getElementById('inp-color-bg').value = state.bgColor;
         document.getElementById('inp-transparent-bg').checked = state.bgTransparent;
 
-        // Tab Design (Shapes Active States)
         setActiveGridButton('grid-dots-type', state.dotsType);
         setActiveGridButton('grid-corner-square-type', state.cornerSquareType);
         setActiveGridButton('grid-corner-dot-type', state.cornerDotType);
 
-        // Tab Logo/Text
         document.getElementById('inp-center-mode').value = state.centerMode;
         toggleCenterMode(state.centerMode);
         
@@ -610,11 +618,7 @@
         document.getElementById('wrap-center-image').style.display = mode === 'image' ? 'block' : 'none';
         document.getElementById('wrap-center-text').style.display = mode === 'text' ? 'block' : 'none';
         document.getElementById('wrap-center-settings').style.display = mode !== 'none' ? 'block' : 'none';
-        
-        if (mode === 'none') {
-            state.image = '';
-            // Don't reset centerText completely so it's remembered, just clear image URL in QR Option
-        }
+        if (mode === 'none') state.image = '';
         renderLivePreview();
     }
 
@@ -623,7 +627,6 @@
         if(!container) return;
         container.querySelectorAll('.opt-btn').forEach(btn => {
             btn.classList.remove('active');
-            // Hacky way to match the onclick parameter value
             if(btn.getAttribute('onclick').includes(`'${activeVal}'`)) {
                 btn.classList.add('active');
             }
@@ -676,11 +679,8 @@
                 state.image = window.location.origin + data.url;
                 showToast("✅ Logo berhasil diunggah!");
                 renderLivePreview();
-            } else {
-                throw new Error();
-            }
+            } else { throw new Error(); }
         } catch(e) {
-            // Local fallback (Base64)
             const b64 = await fileToBase64(file);
             state.image = b64;
             showToast("✅ Logo diterapkan (Sesi Lokal).");
@@ -694,34 +694,25 @@
         renderLivePreview();
     }
 
-    // ================= TEXT-TO-IMAGE CONVERTER (For Center Text) =================
-    // Because qr-code-styling library expects an Image URL for the center,
-    // we create a dynamic Canvas, draw the text + bg, and convert it to a Data URL (base64 image)
+    // ================= TEXT-TO-IMAGE CONVERTER =================
     function createCenterTextImage() {
         if(!state.centerText) return '';
-        
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const size = 150; // High res base size
-        canvas.width = size;
-        canvas.height = size;
+        const size = 150; 
+        canvas.width = size; canvas.height = size;
         
-        // Draw BG
         ctx.fillStyle = state.centerTextBgColor || '#000';
         if (state.centerTextRounded) {
             ctx.beginPath();
             ctx.roundRect(0, 0, size, size, 30);
             ctx.fill();
-        } else {
-            ctx.fillRect(0, 0, size, size);
-        }
+        } else { ctx.fillRect(0, 0, size, size); }
 
-        // Draw Text
         ctx.fillStyle = state.centerTextColor || '#fff';
         ctx.font = `bold ${size * 0.4}px 'Plus Jakarta Sans', sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(state.centerText, size/2, size/2 + (size*0.05)); // slight vertical adjustment
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(state.centerText, size/2, size/2 + (size*0.05));
         
         return canvas.toDataURL('image/png');
     }
@@ -729,53 +720,33 @@
     // ================= LIVE PREVIEW QR GENERATOR =================
     function getQROptions(s) {
         let centerImageUri = '';
-        if (s.centerMode === 'image' && s.image) {
-            centerImageUri = s.image;
-        } else if (s.centerMode === 'text' && s.centerText) {
-            centerImageUri = createCenterTextImage();
-        }
+        if (s.centerMode === 'image' && s.image) centerImageUri = s.image;
+        else if (s.centerMode === 'text' && s.centerText) centerImageUri = createCenterTextImage();
 
         return {
             width: 350,
             height: 350,
             data: s.data || "https://bemkbmfkgumi.com",
             margin: 0,
-            qrOptions: {
-                typeNumber: 0,
-                mode: "Byte",
-                errorCorrectionLevel: "H" // High correction required for center image
-            },
+            qrOptions: { typeNumber: 0, mode: "Byte", errorCorrectionLevel: "H" },
             imageOptions: {
                 hideBackgroundDots: s.hideBgDots,
                 imageSize: parseFloat(s.imageSize) || 0.4,
                 margin: 5,
                 crossOrigin: "anonymous"
             },
-            dotsOptions: {
-                color: s.dotsColor,
-                // Maps extended options to base options or uses the direct extended name if library supports it
-                type: s.dotsType 
-            },
-            backgroundOptions: {
-                color: s.bgTransparent ? "transparent" : s.bgColor,
-            },
+            dotsOptions: { color: s.dotsColor, type: s.dotsType },
+            backgroundOptions: { color: s.bgTransparent ? "transparent" : s.bgColor },
             image: centerImageUri,
-            cornersSquareOptions: {
-                color: s.cornerColor,
-                type: s.cornerSquareType
-            },
-            cornersDotOptions: {
-                color: s.cornerColor,
-                type: s.cornerDotType
-            }
+            cornersSquareOptions: { color: s.cornerColor, type: s.cornerSquareType },
+            cornersDotOptions: { color: s.cornerColor, type: s.cornerDotType }
         };
     }
 
     function renderLivePreview() {
         const container = document.getElementById("qr-canvas-container");
         if (!container || !qrCodeInstance) return;
-        
-        container.innerHTML = ""; // Clear existing
+        container.innerHTML = ""; 
         qrCodeInstance.update(getQROptions(state));
         qrCodeInstance.append(container);
     }
@@ -792,8 +763,7 @@
     function showToast(msg) {
         const t = document.getElementById('globalToast');
         if(!t) return;
-        t.innerText = msg;
-        t.classList.add('show');
+        t.innerText = msg; t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
@@ -814,7 +784,6 @@
         if(isConfirmed && confirmCallback) confirmCallback();
         confirmCallback = null;
     }
-
 </script>
 
 </body>
