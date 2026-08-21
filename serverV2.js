@@ -32,7 +32,7 @@ const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E
 let redis = null;
 try {
     redis = new Redis({ url: redisUrl, token: redisToken });
-    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi (V2 - Linktree API).");
+    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi (V2 - Linktree & QR Code API).");
 } catch (error) {
     console.error("⚠️ Peringatan: Redis gagal inisiasi.", error.message);
 }
@@ -49,6 +49,8 @@ const safeParse = (data, fallbackData) => {
 
 // ================= RUTE FRONTEND ADMIN =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
+// RUTE BARU: QR Code Builder V4 (Neubrutalism)
+app.get('/admin-qrcode', (req, res) => res.render('admin-dashboardV4'));
 
 // ================= RUTE FRONTEND PUBLIK DENGAN SSR SEO =================
 app.get('/link/:slug', async (req, res) => {
@@ -94,7 +96,7 @@ app.post('/api/upload', async (req, res) => {
         if(!filename || !base64) return res.status(400).json({ success: false, message: "File kosong." });
         
         let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
-        const uniqueFilename = `linktree-${Date.now()}-${safeName}`;
+        const uniqueFilename = `file-${Date.now()}-${safeName}`;
         
         await redis.hset('BEM_Files', { [uniqueFilename]: JSON.stringify({ filename: safeName, data: base64 }) });
         
@@ -123,6 +125,12 @@ app.get('/api/uploads/:filename', async (req, res) => {
 
         const buffer = Buffer.from(parts[1], 'base64');
         res.type(mimeType);
+        
+        // Caching Khusus Gambar (SEO Image Optimization)
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        res.setHeader('Pragma', 'cache');
+        res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
+        
         res.send(buffer);
     } catch(e) {
         res.status(500).send("Gagal memuat file.");
@@ -180,5 +188,46 @@ app.delete('/api/linktrees/:id', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
+
+// ================= ENDPOINT API QR CODES (NEW UPGRADE) =================
+// Arsitektur Penyimpanan Database: BEM_QRCodes (String Pattern) untuk SEO Standardisasi
+app.get('/api/qrcodes', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const keys = await redis.keys('BEM_QRCodes:*');
+        let parsedQRs = [];
+        
+        if(keys.length > 0) {
+            const raw = await redis.mget(...keys);
+            parsedQRs = raw.filter(i => i != null).map(item => safeParse(item, {}));
+        }
+        res.status(200).json({ success: true, data: parsedQRs });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+app.post('/api/qrcodes/save', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const payload = req.body;
+        
+        if(!payload.id) payload.id = `QR-${Date.now()}`;
+        payload.updatedAt = new Date().toISOString();
+        
+        const redisKey = `BEM_QRCodes:${payload.id}`;
+        await redis.set(redisKey, JSON.stringify(payload));
+        
+        res.status(200).json({ success: true, message: "Desain QR Code disimpan ke Cloud!", data: payload });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+app.delete('/api/qrcodes/:id', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.del(`BEM_QRCodes:${req.params.id}`);
+        res.status(200).json({ success: true, message: "QR Code Permanen Dihapus" });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Backend Server V2 (Linktree API) berjalan di port ${PORT}`));
+app.listen(PORT, () => console.log(`Backend Server V2 (Linktree + QR Builder API) berjalan di port ${PORT}`));
