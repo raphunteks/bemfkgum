@@ -48,7 +48,6 @@ const safeParse = (data, fallbackData) => {
 };
 
 // ================= ENDPOINT AUTENTIKASI ADMIN (SECURITY) =================
-// Disesuaikan agar sama seperti server utama (server.js) untuk otentikasi UI Dashboard
 app.post('/api/admin/auth', (req, res) => {
     const { username, password } = req.body;
     
@@ -65,15 +64,12 @@ app.post('/api/admin/auth', (req, res) => {
 
 // ================= RUTE FRONTEND ADMIN =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
-
-// 🔥 RUTE BARU: Menghubungkan URL /admin-qrcode ke file admin-dashboardV4.html
 app.get('/admin-qrcode', (req, res) => res.render('admin-dashboardV4'));
 
 // ================= RUTE FRONTEND PUBLIK DENGAN SSR SEO =================
 app.get('/link/:slug', async (req, res) => {
     const slug = req.params.slug;
     
-    // Default SEO Fallback
     let seoData = {
         title: 'BEM KBMFKG UMI - Linktree',
         desc: 'Tautan resmi dan informasi terbaru dari BEM KBMFKG UMI.',
@@ -81,7 +77,6 @@ app.get('/link/:slug', async (req, res) => {
         url: `https://bemkbmfkgumi.com/link/${slug}`
     };
 
-    // Ekstrak Data dari Redis untuk Injeksi Meta Tag (Gold Standard SEO)
     try {
         if(redis) {
             const trees = await redis.hgetall('BEM_Linktrees') || {};
@@ -96,9 +91,7 @@ app.get('/link/:slug', async (req, res) => {
                 seoData.image = img;
             }
         }
-    } catch(e) {
-        console.error("Gagal memuat SSR SEO:", e);
-    }
+    } catch(e) { console.error("Gagal memuat SSR SEO:", e); }
 
     res.render('bem-linktree', { slug: slug, seo: seoData });
 });
@@ -143,7 +136,6 @@ app.get('/api/uploads/:filename', async (req, res) => {
         const buffer = Buffer.from(parts[1], 'base64');
         res.type(mimeType);
         
-        // Caching Khusus Gambar (SEO Image Optimization)
         res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         res.setHeader('Pragma', 'cache');
         res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
@@ -205,24 +197,18 @@ app.delete('/api/linktrees/:id', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-// ================= ENDPOINT API QR CODES (NEW UPGRADE) =================
-// Arsitektur Penyimpanan Database: BEM_QRCodes (String Pattern) untuk SEO Standardisasi
-// SUPER FIX: Menggunakan Array Multiple Route (Dengan/Tanpa Slash) untuk Cegah 404 Vercel
+// ================= ENDPOINT API QR CODES =================
 app.get(['/api/qrcodes', '/api/qrcodes/'], async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         
-        // 1. Dapatkan semua Keys dengan Namespace BEM_QRCodes
         const keys = await redis.keys('BEM_QRCodes:*');
         let parsedQRs = [];
         
-        // 2. Aman dari Crash jika Database Kosong
         if(keys && keys.length > 0) {
             const raw = await redis.mget(...keys);
-            
             parsedQRs = raw.filter(i => i != null).map(item => safeParse(item, {}));
             
-            // 3. Urutkan berdasarkan waktu terakhir diubah (Terbaru di atas)
             parsedQRs.sort((a, b) => {
                 const dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0);
                 const dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
@@ -243,8 +229,6 @@ app.post('/api/qrcodes/save', async (req, res) => {
         const payload = req.body;
         
         if(!payload.id) payload.id = `QR-${Date.now()}`;
-        
-        // Bubuhkan Timestamp untuk Sorting saat diload
         payload.updatedAt = new Date().toISOString();
         
         const redisKey = `BEM_QRCodes:${payload.id}`;
@@ -252,7 +236,6 @@ app.post('/api/qrcodes/save', async (req, res) => {
         
         res.status(200).json({ success: true, message: "Desain QR Code disimpan ke Cloud!", data: payload });
     } catch (e) { 
-        console.error("Gagal menyimpan QR Codes:", e.message);
         res.status(500).json({ success: false, message: e.message }); 
     }
 });
@@ -268,4 +251,4 @@ app.delete('/api/qrcodes/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Backend Server V2 (Linktree + QR Builder API) berjalan di port ${PORT}`));
+app.listen(PORT, () => console.log(`Backend Server V2 berjalan di port ${PORT}`));
