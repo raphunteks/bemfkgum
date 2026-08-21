@@ -385,7 +385,416 @@
 
         let scriptSchema = document.createElement('script');
         scriptSchema.type = "application/ld+json";
+        scriptSchema.id = "dynamic-schema";<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- ================= GOLD STANDARD SEO (Server-Side Rendered by EJS) ================= -->
+    <title><%= seo.title %></title>
+    <meta name="description" content="<%= seo.desc %>">
+    <meta name="keywords" content="BEM FKG UMI, Linktree BEM UMI, Profil BEM FKG UMI, Tautan Resmi BEM, Organisasi Mahasiswa FKG UMI, Kabinet BEM">
+    <meta name="author" content="BEM KBMFKG UMI">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="<%= seo.url %>">
+
+    <!-- Open Graph for Facebook/WhatsApp/LinkedIn -->
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
+    <meta property="og:title" content="<%= seo.title %>">
+    <meta property="og:description" content="<%= seo.desc %>">
+    <meta property="og:image" content="<%= seo.image %>">
+    <meta property="og:image:alt" content="Logo / Profil BEM KBMFKG UMI">
+    <meta property="og:url" content="<%= seo.url %>">
+
+    <!-- Twitter Cards for X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="<%= seo.url %>">
+    <meta name="twitter:title" content="<%= seo.title %>">
+    <meta name="twitter:description" content="<%= seo.desc %>">
+    <meta name="twitter:image" content="<%= seo.image %>">
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+
+    <!-- CSS Master (Glassmorphism & New Types Integration) -->
+    <link rel="stylesheet" href="/css/mainV3.css">
+
+    <!-- Preconnect Fonts untuk performa Loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+<!-- Layout Container Utama -->
+<div class="public-linktree-wrapper" id="page-wrapper">
+    <div class="public-container" id="public-screen">
+
+        <!-- Loading Screen Super Clean -->
+        <div class="glass-card" style="text-align:center; padding: 60px 20px; border:none; box-shadow:none; background:transparent; backdrop-filter:none;">
+            <div class="loader-ring glow-effect" style="border-color:var(--primary); border-top-color:transparent; margin:0 auto; width:50px; height:50px; border-width:4px;"></div>
+            <p style="font-weight:700; opacity:0.7; font-family:'Plus Jakarta Sans', sans-serif; margin-top:25px;">Memuat Sistem BEM KBMFKG UMI...</p>
+            <noscript>
+                <div class="glass-panel" style="background:#fee2e2; border-color:#fca5a5; margin-top:20px;">
+                    <p style="color:#ef4444; margin:0; font-weight:700;">⚠️ JavaScript harus diaktifkan untuk melihat halaman ini.</p>
+                </div>
+            </noscript>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Menangkap ID (Slug) dari EJS Backend (serverV2.js)
+    const slug = "<%= slug %>";
+
+    const svgIconsCollection = {
+        'camera': '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle>',
+        'cart': '<circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>',
+        'music': '<path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle>',
+        'video': '<polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>',
+        'star': '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
+        'heart': '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>',
+        'mail': '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>',
+        'phone': '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>',
+        'map-pin': '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>',
+        'bell': '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>',
+        'globe': '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>',
+        'user': '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>',
+        'link': '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>',
+        'shopping-bag': '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>',
+        'calendar': '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>',
+        'book': '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>',
+        'award': '<circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>',
+        'gift': '<polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>',
+        'coffee': '<path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line>',
+        'mic': '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line>',
+        'home': '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>',
+        'search': '<circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>',
+        'settings': '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>',
+        'smile': '<circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line>',
+        'sun': '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>',
+        'moon': '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+    };
+
+    const socialIconsMap = {
+        'instagram': '<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>',
+        'tiktok': '<path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.37-3.46-5.7-.02-1.43.3-2.84 1-4.04 1.25-2.08 3.59-3.4 6-3.45.02 1.37-.01 2.74.02 4.11-1.19-.07-2.39.31-3.25 1.16-.76.71-1.17 1.77-1.1 2.84.05 1.05.59 2.05 1.43 2.65 1.01.76 2.45.89 3.63.38.86-.36 1.47-1.14 1.63-2.05.08-.5.06-1.02.06-1.52.01-5.78-.02-11.56.02-17.34z"/>',
+        'whatsapp': '<path d="M11.968 0C5.358 0 .002 5.36.002 11.97c0 2.12.553 4.195 1.606 6.012L.031 24l6.155-1.616c1.768.966 3.75 1.476 5.782 1.476 6.61 0 11.97-5.36 11.97-11.972C23.938 5.36 18.578 0 11.968 0zm6.544 17.202c-.273.766-1.583 1.472-2.193 1.545-.584.071-1.355.205-4.238-.99-3.486-1.442-5.76-5.02-5.934-5.253-.173-.233-1.417-1.883-1.417-3.59 0-1.707.886-2.545 1.202-2.881.316-.336.69-.42 .919-.42.23 0 .459.001.661.011.216.01.503-.083.786.596.287.69.977 2.38.977 2.38s.114.282-.03.563c-.143.282-.258.468-.517.766-.258.298-.535.632-.764.887-.245.27-.506.56-.226 1.05.281.49 1.246 2.068 2.668 3.484 1.838 1.829 3.393 2.4 3.882 2.632.489.232.775.186 1.063-.14.288-.326 1.233-1.442 1.564-1.936.33-.493.66-.412 1.106-.238.446.175 2.814 1.328 3.288 1.563.475.235.792.35.907.545.115.195.115 1.13-.158 1.896z"/>',
+        'email': '<path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/>',
+        'x': '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>',
+        'youtube': '<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>',
+        'threads': '<path d="M14.61 21.05c-1.39.9-3.23 1.34-5.32 1.34-3.14 0-5.71-1-7.46-2.9C.1 17.61-.31 15.02-.31 11.97c0-2.92.51-5.38 1.53-7.37 1.05-2.04 2.65-3.32 4.79-3.32 1.83 0 3.3.84 4.41 2.54 1.13 1.73 1.69 4.18 1.69 7.31v1.65H5.8c.03 2.15.57 3.82 1.63 5 1.07 1.2 2.5 1.8 4.29 1.8 1.19 0 2.22-.26 3.08-.77a6.97 6.97 0 0 0 2.2-2.03l1.83 1.28c-.85 1.3-2.26 2.3-4.22 3zm-2.45-12.72c0-2.07-.37-3.6-1.12-4.57-.75-.98-1.75-1.48-2.99-1.48-1.22 0-2.22.51-3 1.52-.77 1.03-1.18 2.56-1.24 4.58h8.35v-.05zm9.14 5.95v-9h-2.31v9.06c0 1.28-.27 2.21-.81 2.78-.54.58-1.34.86-2.41.86-1.11 0-1.92-.29-2.44-.86-.51-.57-.77-1.5-.77-2.79v-9.05H10.1v9c0 2.05.58 3.59 1.73 4.62 1.15 1.04 2.8 1.56 4.96 1.56 2.11 0 3.73-.5 4.88-1.5 1.15-1 1.72-2.51 1.72-4.52z"/>',
+        'spotify': '<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.394-.682.525-1.08.275-2.97-1.815-6.705-2.22-11.115-1.215-.465.105-.915-.18-1.02-.645-.105-.465.18-.915.645-1.02 4.83-1.11 8.97-.645 12.285 1.38.39.24.525.675.285 1.225zm1.44-3.24c-.3.495-.915.645-1.41.345-3.39-2.085-8.625-2.655-12.435-1.455-.555.18-1.155-.135-1.335-.69-.18-.555.135-1.155.69-1.335 4.38-1.38 10.23-.735 14.16 1.665.495.3.645.915.33 1.47zm.135-3.405c-4.065-2.415-10.785-2.64-14.67-1.455-.675.21-1.395-.165-1.605-.84-.21-.675.165-1.395.84-1.605 4.53-1.38 11.955-1.11 16.68 1.695.6.36.81 1.14.45 1.74-.36.6-1.14.81-1.695.465z"/>',
+        'linkedin': '<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>',
+        'facebook': '<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>'
+    };
+
+    function getTemplateCSS(tplName) {
+        switch(tplName) {
+            case 'grid-light': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.15) 1px, transparent 1px);`;
+            case 'grid-dark': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.15) 1px, transparent 1px);`;
+            case 'polka-light': return `background-image: radial-gradient(rgba(0,0,0,0.15) 2px, transparent 2px); background-size: 20px 20px;`;
+            case 'polka-dark': return `background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px); background-size: 20px 20px;`;
+            case 'diagonal-light': return `background: repeating-linear-gradient(45deg, rgba(0,0,0,0.06), rgba(0,0,0,0.06) 10px, transparent 10px, transparent 20px);`;
+            case 'diagonal-dark': return `background: repeating-linear-gradient(45deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 10px, transparent 10px, transparent 20px);`;
+            case 'checkerboard': return `background-image: linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.1)), linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.1)); background-size: 20px 20px; background-position: 0 0, 10px 10px;`;
+            case 'zigzag': return `background: linear-gradient(135deg, rgba(0,0,0,0.08) 25%, transparent 25%) -20px 0, linear-gradient(225deg, rgba(0,0,0,0.08) 25%, transparent 25%) -20px 0, linear-gradient(315deg, rgba(0,0,0,0.08) 25%, transparent 25%), linear-gradient(45deg, rgba(0,0,0,0.08) 25%, transparent 25%); background-size: 40px 40px;`;
+            case 'wave-light': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(0,0,0,0.08) 21%, rgba(0,0,0,0.08) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(0,0,0,0.08) 21%, rgba(0,0,0,0.08) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px;`;
+            case 'wave-dark': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.08) 21%, rgba(255,255,255,0.08) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.08) 21%, rgba(255,255,255,0.08) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px;`;
+            case 'topography': return `background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.1) 10px, transparent 11px, transparent 20px);`;
+            case 'memphis': return `background-image: radial-gradient(circle, rgba(0,0,0,0.15) 10%, transparent 10%), radial-gradient(circle, rgba(0,0,0,0.15) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px;`;
+            case 'circuit': return `background-image: radial-gradient(rgba(0,0,0,0.15) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.15) 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px;`;
+            case 'starry': return `background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px); background-size: 90px 90px; background-position: 0 0, 45px 45px;`;
+            case 'hexagons': return `background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.1) 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.1) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px) -1px 0; background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;`;
+            case 'clouds': return `background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 50%); background-size: 100px 100px;`;
+            case 'mesh-1': return `background-image: radial-gradient(at 40% 20%, rgba(255,100,100,0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(100,255,100,0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(100,100,255,0.3) 0px, transparent 50%);`;
+            case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.3) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.3) 0px, transparent 50%);`;
+            case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(0,0,255,0.1)); filter: contrast(1.5);`;
+            case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,0,0.1), rgba(255,0,255,0.1));`;
+            
+            /* 10 NEW TEMPLATES CSS */
+            case 'neobrutalism': return `background-image: radial-gradient(#000 2px, transparent 2px); background-size: 20px 20px; background-position: 0 0;`;
+            case 'y2k-grid': return `background-image: linear-gradient(transparent 95%, rgba(0,255,255,0.5) 100%), linear-gradient(90deg, transparent 95%, rgba(255,0,255,0.5) 100%); background-size: 30px 30px;`;
+            case 'holographic': return `background: linear-gradient(135deg, rgba(255,204,255,0.5), rgba(204,255,255,0.5), rgba(204,204,255,0.5), rgba(255,255,204,0.5)); background-size: 200% 200%;`;
+            case 'retro-sunset': return `background: linear-gradient(to bottom, #2b0b3f 0%, #d8305c 50%, #ff703f 100%);`;
+            case 'noise': return `background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");`;
+            case 'pastel-gradient': return `background: linear-gradient(120deg, rgba(253,241,244,0.9) 0%, rgba(228,239,251,0.9) 100%);`;
+            case 'cyber-matrix': return `background-image: linear-gradient(rgba(0,255,0,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,0,0.15) 1px, transparent 1px); background-size: 20px 20px; background-color: #0d1117;`;
+            case 'abstract-blobs': return `background-image: radial-gradient(circle at 15% 50%, rgba(139,92,246,0.15) 0%, transparent 50%), radial-gradient(circle at 85% 30%, rgba(16,185,129,0.15) 0%, transparent 50%);`;
+            case 'glass-morph': return `background-image: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%); backdrop-filter: blur(10px);`;
+            case 'dark-matter': return `background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #000000 100%);`;
+            default: return '';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadLinktreeData);
+
+    async function loadLinktreeData() {
+        try {
+            const res = await fetch(`/api/linktrees/${slug}`);
+            const json = await res.json();
+
+            if(!json.success || !json.data) {
+                renderError();
+                return;
+            }
+
+            renderPublicLinktree(json.data);
+        } catch (error) {
+            renderError();
+        }
+    }
+
+    function renderError() {
+        document.getElementById('public-screen').innerHTML = `
+            <div class="glass-card" style="text-align:center; padding:50px;">
+                <h2 style="color:#ef4444; font-family:'Outfit', sans-serif;">Halaman Tidak Ditemukan</h2>
+                <p style="color:var(--text-main); font-weight:600;">Linktree yang Anda cari tidak ada atau belum dipublikasikan.</p>
+                <a href="/" class="btn-primary" style="display:inline-block; margin-top:20px; text-decoration:none;">Kembali ke Portal BEM</a>
+            </div>
+        `;
+    }
+
+    function loadGoogleFont(fontFamilyStr) {
+        if(!fontFamilyStr) return;
+        let fontName = fontFamilyStr.split(',')[0].replace(/'/g, "").trim();
+        const sysFonts = ['Arial', 'Calibri', 'Comic Sans MS', 'Impact', 'Times New Roman'];
+        if(sysFonts.includes(fontName)) return;
+
+        const linkId = `font-${fontName.replace(/\s+/g, '')}`;
+        if(!document.getElementById(linkId)) {
+            try {
+                const link = document.createElement('link');
+                link.id = linkId;
+                link.rel = 'stylesheet';
+                link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;600;700;800&display=swap`;
+                document.head.appendChild(link);
+            } catch(e) {}
+        }
+    }
+
+    function renderPublicLinktree(data) {
+        const wrapper = document.getElementById('page-wrapper');
+        const screen = document.getElementById('public-screen');
+        const t = data.theme;
+
+        // Background Rendering
+        wrapper.classList.remove('has-bg-image');
+        wrapper.style.background = ''; // reset
+        wrapper.style.backgroundColor = t.bgColor; // default fallback
+
+        if (t.bgType === 'gradient') {
+            wrapper.style.background = `linear-gradient(135deg, ${t.bgColor}, #ffffff)`;
+        } else if (t.bgType === 'image' && t.bgImage) {
+            wrapper.style.background = `url('${t.bgImage}') no-repeat center center / cover`;
+            wrapper.classList.add('has-bg-image');
+        } else if (t.bgType === 'template') {
+            let cssTpl = getTemplateCSS(t.bgTemplate);
+            if(cssTpl) {
+                wrapper.setAttribute('style', `background-color: ${t.bgColor}; ${cssTpl} color: ${t.textColor};`);
+            }
+        }
+
+        try {
+            loadGoogleFont(t.fontTitle);
+            loadGoogleFont(t.fontButton);
+        } catch(e) {}
+
+        wrapper.style.color = t.textColor;
+
+        let html = '';
+
+        // Profile Section
+        html += `<img id="pv-profile-img" src="${data.profile.image || '/img/bemfkgumi.png'}" alt="Profile" onerror="this.onerror=null;this.src='/img/bemfkgumi.png';">`;
+        html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${data.profile.title || '@namaprofil'}</h2>`;
+        html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${data.profile.bio || ''}</p>`;
+
+        // Link Buttons Logic (UPGRADED CSS GENERATOR w/ drop-shadow)
+        let btnCssObj = `font-family:${t.fontButton}; display:flex; align-items:center; justify-content:center; position:relative; `;
+        let bg = t.btnColor;
+        let borderC = t.borderColor || '#0f172a';
+        let txt = t.textColor;
+
+        switch(t.btnType) {
+            case 'filled': btnCssObj += `background:${bg}; color:#fff; border:none;`; break;
+            case 'outline': btnCssObj += `background:transparent; color:${txt}; border:2px solid ${borderC};`; break;
+            case 'neumorph': btnCssObj += `background:rgba(255,255,255,0.4); color:${txt}; border:1px solid rgba(255,255,255,0.6); box-shadow: 4px 4px 10px rgba(0,0,0,0.05), inset 1px 1px 1px rgba(255,255,255,0.5); backdrop-filter:blur(10px);`; break;
+            case 'soft': btnCssObj += `background:${bg}33; color:${bg}; border:none;`; break;
+            case 'ghost': btnCssObj += `background:transparent; color:${txt}; border:none; text-decoration:underline;`; break;
+            case 'gradient-x': btnCssObj += `background:linear-gradient(90deg, ${bg}, #ffffff); color:#000; border:none;`; break;
+            case 'gradient-y': btnCssObj += `background:linear-gradient(180deg, ${bg}, #000000); color:#fff; border:none;`; break;
+            case '3d': btnCssObj += `background:${bg}; color:#fff; border:none; border-bottom:4px solid ${borderC}; transform:translateY(-2px); filter: drop-shadow(0 4px 0 ${borderC});`; break;
+            case 'shadow-hard': btnCssObj += `background:${bg}; color:#fff; border:2px solid ${borderC}; filter: drop-shadow(6px 6px 0px ${borderC});`; break;
+            case 'shadow-soft': btnCssObj += `background:${bg}; color:#fff; border:none; filter: drop-shadow(0 10px 15px ${bg}80);`; break;
+            case 'neon': btnCssObj += `background:transparent; color:${bg}; border:2px solid ${borderC}; box-shadow: 0 0 10px ${borderC}, inset 0 0 10px ${borderC}; text-shadow: 0 0 5px ${bg};`; break;
+            case 'retro': btnCssObj += `background:${bg}; color:#000; border:3px solid ${borderC}; filter: drop-shadow(4px 4px 0px ${borderC});`; break;
+            case 'glass': btnCssObj += `background:rgba(255,255,255,0.1); color:${txt}; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(20px);`; break;
+            case 'wireframe': btnCssObj += `background:transparent; color:${txt}; border:2px dashed ${borderC};`; break;
+            case 'brutalism': btnCssObj += `background:${bg}; color:#000; border:3px solid ${borderC}; filter: drop-shadow(6px 6px 0px ${borderC}); border-radius:0 !important;`; break;
+            case 'glow': btnCssObj += `background:${bg}; color:#fff; border:none; filter: drop-shadow(0 0 15px ${bg});`; break;
+            case 'elegant': btnCssObj += `background:#0f172a; color:${bg}; border:1px solid ${borderC};`; break;
+            case 'metallic': btnCssObj += `background:linear-gradient(135deg, #e2e8f0, #94a3b8); color:#0f172a; border:1px solid ${borderC}; box-shadow:inset 2px 2px 5px #fff;`; break;
+            case 'mesh': btnCssObj += `background:radial-gradient(circle at top left, ${bg}, transparent), radial-gradient(circle at bottom right, #fff, transparent); background-color:#e2e8f0; color:#000; border:none;`; break;
+            case 'duotone': btnCssObj += `background:linear-gradient(45deg, ${bg}, #fcd34d); color:#fff; border:none;`; break;
+            case 'holographic': btnCssObj += `background:linear-gradient(135deg, #fbcfe8, #c4b5fd, #86efac); color:#0f172a; border:none; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));`; break;
+            case 'dark-neu': btnCssObj += `background:#1e293b; color:${bg}; border:1px solid #334155; box-shadow: 5px 5px 10px #0f172a, -5px -5px 10px #334155;`; break;
+            case 'frosted': btnCssObj += `background:rgba(255,255,255,0.2); color:${txt}; border:1px solid rgba(255,255,255,0.6); border-top:1px solid #fff; border-left:1px solid #fff; backdrop-filter:blur(15px); filter: drop-shadow(0 8px 15px rgba(0,0,0,0.1));`; break;
+            case 'minimal': btnCssObj += `background:transparent; color:${txt}; border-bottom:2px solid ${borderC}; border-radius:0 !important; padding-left:0; padding-right:0;`; break;
+            case 'thick-border': btnCssObj += `background:transparent; color:${txt}; border:4px solid ${borderC}; font-weight:900;`; break;
+            case 'shadow-pop': btnCssObj += `background:${bg}; color:#fff; border:2px solid ${borderC}; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.1));`; break;
+            case 'inner-glow': btnCssObj += `background:${bg}; color:#fff; border:none; box-shadow: inset 0 0 15px rgba(255,255,255,0.8);`; break;
+            case 'candy': btnCssObj += `background:linear-gradient(to right, #fbcfe8, #f9a8d4); color:#be185d; border:none; filter: drop-shadow(0 10px 15px #fbcfe8);`; break;
+            case 'midnight': btnCssObj += `background:#020617; color:${bg}; border:1px solid ${borderC}; filter: drop-shadow(0 0 15px ${bg}40);`; break;
+            case 'velvet': btnCssObj += `background:${bg}; color:#fff; border:none; opacity:0.9; filter:saturate(1.2);`; break;
+            case 'neobrutalism': btnCssObj += `background:${bg}; color:#000; border:4px solid #000; filter: drop-shadow(8px 8px 0px #000); font-weight:900;`; break;
+            case 'glass-outline': btnCssObj += `background:rgba(255,255,255,0.05); color:${txt}; border:2px solid rgba(255,255,255,0.8); backdrop-filter:blur(15px);`; break;
+            case 'pastel': btnCssObj += `background:linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); color:#000; border:none; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.05));`; break;
+            case 'cyberpunk': btnCssObj += `background:#fef08a; color:#000; border:2px solid #000; border-right:6px solid #ef4444; border-bottom:6px solid #3b82f6;`; break;
+            case 'hologram-dark': btnCssObj += `background:linear-gradient(45deg, #1e1b4b, #312e81, #4c1d95); color:#fff; border:1px solid #6366f1; filter: drop-shadow(0 0 15px #4c1d95);`; break;
+            default: btnCssObj += `background:${bg}; color:#fff; border:none;`;
+        }
+
+        html += `<div id="pv-links-container" style="margin-top:40px;">`;
+        if(data.links && Array.isArray(data.links)) {
+            data.links.forEach(l => {
+                if(l.active) {
+                    let renderIcon = '';
+                    if(l.icon) {
+                        if(l.icon.startsWith('svg:')) {
+                            let k = l.icon.split(':')[1];
+                            if(svgIconsCollection[k]) {
+                                renderIcon = `<div class="pv-link-icon svg-icon" style="color:inherit;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[k]}</svg></div>`;
+                            }
+                        } else {
+                            renderIcon = `<img src="${l.icon}" class="pv-link-icon" onerror="this.onerror=null;this.src='/img/bemfkgumi.png';">`;
+                        }
+                    }
+
+                    html += `<a href="${l.url || '#'}" target="_blank" class="pv-btn btn-shape-${t.btnShape}" style="${btnCssObj}">
+                                ${renderIcon}
+                                <span style="flex:1; text-align:center;">${l.title || 'Untitled Link'}</span>
+                             </a>`;
+                }
+            });
+        }
+        html += `</div>`;
+
+        // Socials Logic
+        if(data.socials && data.socials.length > 0) {
+            html += `<div id="pv-socials" style="margin-top:50px;">`;
+            data.socials.forEach(s => {
+                if(s.url && socialIconsMap[s.platform]) {
+                    let fullUrl = s.url;
+                    if(s.platform === 'whatsapp' && !s.url.includes('wa.me')) fullUrl = `https://wa.me/${s.url}`;
+                    if(s.platform === 'email' && !s.url.includes('mailto:')) fullUrl = `mailto:${s.url}`;
+
+                    html += `<a href="${fullUrl}" target="_blank" class="pv-social-icon" style="color:${t.textColor}">
+                                <svg viewBox="0 0 24 24">${socialIconsMap[s.platform]}</svg>
+                             </a>`;
+                }
+            });
+            html += `</div>`;
+        }
+
+        // Footer Watermark Logic 
+        const fText = data.settings?.footerText || "Powered by BEM KBMFKG UMI (Dept. Infocom)";
+        const fUrl = data.settings?.footerUrl || "https://www.bemkbmfkgumi.com/ourteam";
+
+        html += `<div style="text-align:center; margin-top:80px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton}; padding-bottom:30px;">
+                    <a href="${fUrl}" target="_blank" style="color:${t.textColor}; text-decoration:none;">${fText}</a>
+                 </div>`;
+
+        screen.innerHTML = html;
+
+        // ================= DYNAMIC SEO JSON-LD INJECTION (GOLD STANDARD GSC) =================
+        const pageUrl = window.location.href;
+        const orgName = "BEM KBMFKG UMI";
+
+        const existingSchema = document.getElementById('dynamic-schema');
+        if(existingSchema) existingSchema.remove();
+
+        let sitelinks = [];
+        if(data.links && Array.isArray(data.links)) {
+            let pos = 1;
+            data.links.forEach(l => {
+                if(l.active && l.url) {
+                    sitelinks.push({
+                        "@type": "SiteNavigationElement",
+                        "position": pos++,
+                        "name": l.title || "Tautan",
+                        "url": l.url
+                    });
+                }
+            });
+        }
+
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "ProfilePage",
+                    "@id": `${pageUrl}#webpage`,
+                    "url": pageUrl,
+                    "name": data.settings?.seoTitle || data.profile?.title || orgName,
+                    "description": data.profile?.bio || "Tautan resmi BEM KBMFKG UMI",
+                    "inLanguage": "id-ID",
+                    "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
+                },
+                {
+                    "@type": "Organization",
+                    "@id": "https://bemkbmfkgumi.com/#organization",
+                    "name": orgName,
+                    "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+                    "url": "https://bemkbmfkgumi.com/",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Beranda",
+                            "item": "https://bemkbmfkgumi.com/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": data.profile?.title || "Profil Link",
+                            "item": pageUrl
+                        }
+                    ]
+                }
+            ]
+        };
+
+        if(sitelinks.length > 0) {
+            schemaData["@graph"].push({
+                "@type": "ItemList",
+                "@id": `${pageUrl}#sitelinks`,
+                "name": "Tautan Profil",
+                "itemListElement": sitelinks
+            });
+        }
+
+        let scriptSchema = document.createElement('script');
+        scriptSchema.type = "application/ld+json";
         scriptSchema.id = "dynamic-schema";
+        scriptSchema.text = JSON.stringify(schemaData);
+        document.head.appendChild(scriptSchema);
+    }
+</script>
+
+<!-- Script Protect DevTools -->
+<script src="/js/protect-devtools.js"></script>
+
+</body>
+</html>
         scriptSchema.text = JSON.stringify(schemaData);
         document.head.appendChild(scriptSchema);
     }
