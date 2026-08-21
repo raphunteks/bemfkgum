@@ -436,12 +436,7 @@
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Kategori</label>
                     <input list="listKategori" id="artKategori" class="neo-input" placeholder="Ketik atau pilih kategori...">
                     <datalist id="listKategori">
-                        <option value="Sosial"></option>
-                        <option value="Edukasi"></option>
-                        <option value="Olahraga"></option>
-                        <option value="Event"></option>
-                        <option value="Pengumuman"></option>
-                        <option value="Prestasi"></option>
+                        <!-- Opsi akan di-render dinamis dari JavaScript berdasarkan Database -->
                     </datalist>
 
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Penulis / Publisher</label>
@@ -593,17 +588,36 @@
 
         function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
         
+        // SUPER BIG UPGRADE: Fungsi Upload ke Server Lokal untuk mendapatkan Clean Image URL (SEO Standard)
+        async function uploadImageToServer(file) {
+            const base64 = await fileToBase64(file);
+            let apiUrl = '/api/upload';
+            if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                apiUrl = 'https://bemkbmfkgumi.com/api/upload';
+            }
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, base64: base64 })
+            });
+            if(!res.ok) throw new Error('Upload failed');
+            const data = await res.json();
+            return data.url; // Akan mengembalikan /api/uploads/xxx-nama.jpg
+        }
+
         async function handleImageUpload(inputElem, objToUpdate, keyName, renderFn) {
             const file = inputElem.files[0];
             if(file) { 
-                showToast("⏳ Memproses gambar...");
+                showToast("⏳ Mengunggah gambar ke server...");
                 try {
-                    const base64 = await fileToBase64(file); 
-                    objToUpdate[keyName] = base64; 
-                    showToast("✅ Gambar dimuat! Ingat klik Simpan."); 
+                    // Murni menyimpan Clean URL, bukan lagi Base64 raksasa!
+                    const cleanUrl = await uploadImageToServer(file);
+                    objToUpdate[keyName] = cleanUrl; 
+                    showToast("✅ Gambar berhasil diunggah! Ingat klik Simpan."); 
                     renderFn(); 
                 } catch(e) {
-                    showToast("⚠️ Gagal memproses gambar.");
+                    showToast("⚠️ Gagal mengunggah gambar.");
+                    console.error(e);
                 }
             }
         }
@@ -1175,6 +1189,7 @@
 
         // =========================================================================
         // UPGRADE SUPER BIG: ARTIKEL CMS MURNI LOKAL (NO MORE GAS URL)
+        // DENGAN INTEGRASI UPLOAD GAMBAR API LOKAL & DYNAMIC CATEGORIES
         // =========================================================================
         async function loadArtikelLocal() {
             try {
@@ -1260,11 +1275,20 @@
             updateArtPreviewUI(safeUrl);
         }
 
+        // SUPER UPGRADE: Preview sekalian Upload agar tidak ada Base64 nyasar di Database!
         async function previewArtImage(input) {
             if (input.files && input.files[0]) {
-                const base64 = await fileToBase64(input.files[0]);
-                updateArtPreviewUI(base64);
-                document.getElementById('artGambar').value = '';
+                showToast("⏳ Mengunggah gambar artikel ke server...");
+                try {
+                    // Upload ke server dan dapatkan URL yang ramah Google Images
+                    const cleanUrl = await uploadImageToServer(input.files[0]);
+                    updateArtPreviewUI(cleanUrl);
+                    // Langsung set input Gambar ke Clean URL
+                    document.getElementById('artGambar').value = cleanUrl;
+                    showToast("✅ Gambar artikel siap! Lanjutkan.");
+                } catch(e) {
+                    showToast("⚠️ Gagal mengunggah gambar artikel.");
+                }
             }
         }
 
@@ -1273,13 +1297,29 @@
             document.getElementById('artFileImage').value = ''; 
             updateArtPreviewUI(''); 
             
+            // Populasi Datalist Kategori secara dinamis
+            const uniqueCats = [...new Set(artikelData.map(a => a.Kategori).filter(Boolean))];
+            const dataList = document.getElementById('listKategori');
+            dataList.innerHTML = '';
+            uniqueCats.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                dataList.appendChild(opt);
+            });
+            // Pastikan kategori default tetap ada jika kosong
+            if(uniqueCats.length === 0) {
+                ['Kegiatan Sosial', 'Edukasi', 'Olahraga', 'Event', 'Pengumuman', 'Prestasi'].forEach(cat => {
+                    const opt = document.createElement('option'); opt.value = cat; dataList.appendChild(opt);
+                });
+            }
+
             if(id) {
                 const art = artikelData.find(a => a.ID_Berita === id);
                 document.getElementById('artikelModalTitle').innerText = "Edit Artikel";
                 document.getElementById('artId').value = art.ID_Berita;
                 document.getElementById('artJudul').value = art.Judul || "";
                 document.getElementById('artSlug').value = art.Slug_URL || "";
-                document.getElementById('artKategori').value = art.Kategori || "Kegiatan";
+                document.getElementById('artKategori').value = art.Kategori || "Kegiatan Sosial";
                 
                 let safeUrl = art.Gambar_URL || "";
                 if(safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
@@ -1306,7 +1346,7 @@
                 document.getElementById('artId').value = "";
                 document.getElementById('artJudul').value = "";
                 document.getElementById('artSlug').value = "";
-                document.getElementById('artKategori').value = "Sosial";
+                document.getElementById('artKategori').value = "Kegiatan Sosial";
                 document.getElementById('artGambar').value = "";
                 document.getElementById('artPenulis').value = "Admin BEM FKG UMI";
                 document.getElementById('artDesc').value = "";
@@ -1322,7 +1362,7 @@
 
         async function saveArtikel() {
             const btn = document.getElementById('btnSaveArtikel');
-            btn.innerText = "⏳ Memproses Upload..."; btn.disabled = true;
+            btn.innerText = "⏳ Memproses..."; btn.disabled = true;
 
             const isEdit = !!document.getElementById('artId').value;
             const id = isEdit ? document.getElementById('artId').value : `ART-${Date.now()}`;
@@ -1343,18 +1383,20 @@
             const wordCount = htmlIsi.split(' ').length;
             const waktuBaca = Math.ceil(wordCount / 200) + " min read";
 
-            const fileInput = document.getElementById('artFileImage');
-            let base64Image = null;
-            
             let finalImageURL = document.getElementById('artGambar').value; 
             if (finalImageURL && (finalImageURL.indexOf('drive.google.com') !== -1 || finalImageURL.indexOf('drive.usercontent.com') !== -1)) {
                 let match = finalImageURL.match(/[-\w]{25,33}/);
                 if (match && match[0]) finalImageURL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
             }
             
-            if (fileInput.files.length > 0) {
-                base64Image = await fileToBase64(fileInput.files[0]);
-                finalImageURL = base64Image; // Pakai base64 mutlak jika ada upload
+            // Failsafe: Jika user langsung klik simpan tanpa menunggu preview upload selesai
+            const fileInput = document.getElementById('artFileImage');
+            if (fileInput.files.length > 0 && !finalImageURL.startsWith('/api/uploads/')) {
+                try {
+                    finalImageURL = await uploadImageToServer(fileInput.files[0]);
+                } catch(e) {
+                    console.error("Failsafe upload error", e);
+                }
             }
 
             const payload = {
