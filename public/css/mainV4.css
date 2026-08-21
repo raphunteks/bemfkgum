@@ -1,0 +1,388 @@
+/* =========================================================
+   mainV4.css
+   Style: Neubrutalism (Playful, Colorful, Bold)
+   Author: Master Enterprise Chief SEO & Architect
+   ========================================================= */
+
+:root {
+    /* Base Colors */
+    --bg-main: #f4f0eb; /* Warm off-white */
+    --border-color: #0f172a; /* Slate 900 - Almost Black */
+    
+    /* Neubrutalism Shadows & Borders */
+    --border-width: 3px;
+    --shadow-color: #0f172a;
+    --shadow-offset: 6px;
+    
+    /* Playful & Vibrant Palette */
+    --primary: #facc15; /* Bright Yellow */
+    --secondary: #38bdf8; /* Sky Blue */
+    --accent: #f472b6; /* Hot Pink */
+    --success: #4ade80; /* Mint Green */
+    --danger: #fb7185; /* Coral Red */
+    --purple: #a78bfa; /* Soft Purple */
+    
+    /* Enterprise Fonts */
+    --font-main: 'Plus Jakarta Sans', sans-serif;
+    --font-title: 'Outfit', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+}
+
+/* ================= RESET & BASE ================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-main);
+    color: var(--border-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* TYPOGRAPHY */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-title);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    color: var(--border-color);
+}
+
+/* ================= NEOBRUTALISM BUTTONS ================= */
+.neo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--border-color);
+    background-color: #fff;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--shadow-color);
+    transition: all 0.15s ease-in-out;
+    text-decoration: none;
+}
+
+.neo-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0px var(--shadow-color);
+}
+
+.neo-btn:active {
+    transform: translate(var(--shadow-offset), var(--shadow-offset));
+    box-shadow: 0px 0px 0px var(--shadow-color);
+}
+
+/* Button Color Variants */
+.neo-btn.primary { background-color: var(--primary); }
+.neo-btn.secondary { background-color: var(--secondary); }
+.neo-btn.accent { background-color: var(--accent); }
+.neo-btn.success { background-color: var(--success); }
+.neo-btn.danger { background-color: var(--danger); }
+.neo-btn.purple { background-color: var(--purple); }
+
+/* ================= NEOBRUTALISM CARDS ================= */
+.neo-card {
+    background-color: #fff;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--shadow-color);
+    margin-bottom: 24px;
+}
+
+/* ================= FORM ELEMENTS ================= */
+.neo-label {
+    display: block;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.neo-input, .neo-select, .neo-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--border-color);
+    background-color: #fff;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0px var(--shadow-color);
+    transition: all 0.2s;
+    margin-bottom: 20px;
+    outline: none;
+}
+
+.neo-input:focus, .neo-select:focus, .neo-textarea:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--primary);
+}
+
+/* Color Picker Brutalism Fix */
+.neo-input[type="color"] {
+    padding: 0;
+    height: 55px;
+    cursor: pointer;
+}
+.neo-input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.neo-input[type="color"]::-webkit-color-swatch { 
+    border: none; 
+    border-radius: 4px; 
+    border-right: var(--border-width) solid var(--border-color); 
+}
+
+/* ================= LAYOUT BUILDER ================= */
+.builder-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* LEFT PANEL: EDITOR */
+.editor-panel {
+    flex: 1;
+    width: 45%;
+    max-width: 650px;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 30px;
+    background-color: var(--bg-main);
+    border-right: var(--border-width) solid var(--border-color);
+    z-index: 10;
+}
+
+/* RIGHT PANEL: PREVIEW */
+.preview-panel {
+    flex: 1;
+    width: 55%;
+    height: 100vh;
+    /* Aesthetic grid background */
+    background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.1) 2px, transparent 2px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.1) 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-color: var(--purple);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    position: relative;
+    overflow-y: auto;
+}
+
+/* ================= QR PREVIEW WRAPPER ================= */
+.qr-preview-wrapper {
+    background: #fff;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 16px 16px 0px var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+#qr-canvas-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1/1;
+    background: transparent;
+}
+
+/* ================= TABS NAVIGATION ================= */
+.neo-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.neo-tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 12px 10px;
+    background: #fff;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 8px;
+    font-weight: 800;
+    font-family: var(--font-title);
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--shadow-color);
+    transition: 0.2s;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.neo-tab-btn.active {
+    background: var(--primary);
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px var(--shadow-color);
+}
+
+/* Tab Contents */
+.tab-content { display: none; animation: popIn 0.3s ease; }
+.tab-content.active { display: block; }
+
+@keyframes popIn {
+    0% { transform: translateY(10px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* ================= GRID SELECTORS (SHAPES & DOTS) ================= */
+.grid-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+    margin-bottom: 24px;
+}
+
+.opt-box {
+    aspect-ratio: 1;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--shadow-color);
+    transition: 0.2s;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 10px;
+}
+
+.opt-box svg {
+    margin-bottom: 8px;
+    width: 30px;
+    height: 30px;
+}
+
+.opt-box:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--shadow-color);
+}
+
+.opt-box.active {
+    background: var(--primary);
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px var(--shadow-color);
+}
+
+/* ================= TOAST NOTIFICATION ================= */
+.neo-toast {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--success);
+    color: var(--border-color);
+    font-family: var(--font-mono);
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 16px 30px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 8px 8px 0px var(--border-color);
+    z-index: 10000;
+    transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.neo-toast.show { bottom: 40px; }
+.neo-toast.error { background: var(--danger); }
+
+/* ================= TABLE DESIGN ================= */
+.neo-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: #fff;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 6px 6px 0px var(--border-color);
+    margin-top: 20px;
+}
+
+.neo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-main);
+}
+
+.neo-table th, .neo-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.neo-table th {
+    background-color: var(--secondary);
+    font-family: var(--font-title);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.neo-table tr:last-child td { border-bottom: none; }
+.neo-table tbody tr:hover { background-color: var(--bg-main); }
+
+/* ================= RESPONSIVE (MOBILE & TABLET) ================= */
+@media (max-width: 1024px) {
+    .editor-panel { width: 50%; }
+    .preview-panel { width: 50%; }
+    .qr-preview-wrapper { padding: 25px; box-shadow: 8px 8px 0px var(--border-color); }
+}
+
+@media (max-width: 768px) {
+    .builder-layout {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+    
+    .editor-panel {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: var(--border-width) solid var(--border-color);
+        padding: 20px;
+    }
+
+    .preview-panel {
+        width: 100%;
+        height: auto;
+        min-height: 500px;
+        padding: 20px;
+    }
+
+    .neo-btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    h1 { font-size: 1.8rem; }
+}
