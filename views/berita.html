@@ -142,7 +142,8 @@
               "itemListElement": [
                 { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= siteUrl %>/" },
                 { "@type": "ListItem", "position": 2, "name": "Portal Pubmed", "item": "<%= siteUrl %>/berita" },
-                { "@type": "ListItem", "position": 3, "name": "<%= articleInfo.Kategori || 'Berita' %>", "item": "<%= siteUrl %>/berita?category=<%= encodeURIComponent(articleInfo.Kategori) %>" },
+                <% let schemaCatSlug = (articleInfo.Kategori || 'Berita').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''); %>
+                { "@type": "ListItem", "position": 3, "name": "<%= articleInfo.Kategori || 'Berita' %>", "item": "<%= siteUrl %>/berita/kategori/<%= schemaCatSlug %>" },
                 { "@type": "ListItem", "position": 4, "name": "<%= articleInfo.Judul %>", "item": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>" }
               ]
             }
