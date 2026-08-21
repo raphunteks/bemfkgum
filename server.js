@@ -1253,7 +1253,6 @@ app.get('/api/interactions', async (req, res) => {
     }
 });
 
-// ================= SUPER UPGRADE FIX: API PENERIMA TRANSAKSIONAL (MENANGKAP FILE) =================
 app.post('/api/plasma', async (req, res) => {
   try {
     const { judul, kategori, jenis, isi, bukti } = req.body;
@@ -1268,12 +1267,9 @@ app.post('/api/plasma', async (req, res) => {
 
 app.post('/api/message', async (req, res) => {
   try {
-    // MENANGKAP VARIABEL dokumen DARI REQ.BODY
-    const { nama, kontak, subjek, pesan, dokumen } = req.body;
+    const { nama, kontak, subjek, pesan } = req.body;
     const id = `MSG-${Date.now()}`;
-    
-    // MEMASUKKAN dokumen KE DALAM PAYLOAD JSON
-    const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), dokumen: dokumen || null, timestamp: new Date().toISOString() };
+    const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
     
     // Simpan sebagai STRING Sesuai Format Upstash Anda (GBR 1)
     if (redis) await redis.set(`BEM_Messages:${id}`, JSON.stringify(payload));
