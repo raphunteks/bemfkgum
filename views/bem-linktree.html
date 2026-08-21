@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- ================= GOLD STANDARD SEO (Server-Side Rendered by EJS) ================= -->
     <title><%= seo.title %></title>
@@ -33,22 +33,33 @@
 
     <!-- CSS Master (Glassmorphism & New Types Integration) -->
     <link rel="stylesheet" href="/css/mainV3.css">
+    
+    <!-- Preconnect Fonts untuk performa Loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
 
+<!-- Layout Container Utama -->
 <div class="public-linktree-wrapper" id="page-wrapper">
     <div class="public-container" id="public-screen">
-        <div style="text-align:center; padding: 150px 20px;">
-            <div class="loader-ring glow-effect" style="border-color:var(--primary); border-top-color:transparent; margin:0 auto;"></div>
-            <p style="font-weight:700; opacity:0.7; font-family:'Plus Jakarta Sans', sans-serif; margin-top:20px;">Memuat Sistem BEM KBMFKG UMI...</p>
+        
+        <!-- Loading Screen Super Clean -->
+        <div class="glass-card" style="text-align:center; padding: 60px 20px; border:none; box-shadow:none; background:transparent; backdrop-filter:none;">
+            <div class="loader-ring glow-effect" style="border-color:var(--primary); border-top-color:transparent; margin:0 auto; width:50px; height:50px; border-width:4px;"></div>
+            <p style="font-weight:700; opacity:0.7; font-family:'Plus Jakarta Sans', sans-serif; margin-top:25px;">Memuat Sistem BEM KBMFKG UMI...</p>
             <noscript>
-                <p style="color:#ef4444; margin-top:10px;">JavaScript harus diaktifkan untuk melihat halaman ini dengan sempurna.</p>
+                <div class="glass-panel" style="background:#fee2e2; border-color:#fca5a5; margin-top:20px;">
+                    <p style="color:#ef4444; margin:0; font-weight:700;">⚠️ JavaScript harus diaktifkan untuk melihat halaman ini.</p>
+                </div>
             </noscript>
         </div>
+        
     </div>
 </div>
 
 <script>
+    // Menangkap ID (Slug) dari EJS Backend (serverV2.js)
     const slug = "<%= slug %>";
 
     const svgIconsCollection = {
@@ -287,7 +298,7 @@
             });
             html += `</div>`;
         }
-
+        
         // Footer Watermark Logic 
         const fText = data.settings?.footerText || "Powered by BEM KBMFKG UMI (Dept. Infocom)";
         const fUrl = data.settings?.footerUrl || "https://www.bemkbmfkgumi.com/ourteam";
