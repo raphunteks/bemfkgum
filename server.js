@@ -12,9 +12,13 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// ================= SUPER BIG UPGRADE: ANTI-CACHE UNTUK REALTIME LIVE UPDATE =================
-// Memastikan semua request API tidak di-cache oleh browser sehingga data selalu REALTIME dari Redis
+// ================= SUPER BIG UPGRADE: ANTI-CACHE & IMAGE CACHE BYPASS =================
+// Memastikan request API realtime tidak di-cache, KECUALI untuk aset gambar uploads
 app.use('/api', (req, res, next) => {
+    // SEO UPGRADE: Bypass Anti-Cache untuk Gambar agar bisa diindeks Google Images
+    if (req.path.startsWith('/uploads/')) {
+        return next(); 
+    }
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
@@ -76,6 +80,14 @@ const escapeXml = (unsafe) => {
             default: return c;
         }
     });
+};
+
+// SEO UPGRADE: Filter Base64 agar tidak masuk ke Sitemap dan membuat GSC Error
+const sanitizeImageUrl = (imgStr, domain) => {
+    if (!imgStr) return `${domain}/img/bemfkgumi.png`;
+    if (imgStr.startsWith('data:image/')) return `${domain}/img/bemfkgumi.png`; // Cegah Base64 merusak XML
+    if (imgStr.startsWith('/')) return `${domain}${imgStr}`;
+    return imgStr;
 };
 
 // ================= DATA SEED (STRUKTUR BEM KBMFKG UMI LENGKAP 100% UTUH) =================
@@ -406,6 +418,12 @@ app.get('/api/uploads/:filename', async (req, res) => {
         const buffer = Buffer.from(base64Data, 'base64');
         
         res.type(mimeType);
+        
+        // SEO SUPER UPGRADE: Pastikan Googlebot Image dapat meng-cache dan merayapi ini
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        res.setHeader('Pragma', 'cache');
+        res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
+        res.removeHeader('Surrogate-Control');
         
         if(!mimeType.startsWith('image/')) {
             res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename}"`);
@@ -790,7 +808,7 @@ app.get('/api/forms/:id/export', async (req, res) => {
 app.get('/robots.txt', (req, res) => {
     const domain = "https://bemkbmfkgumi.com";
     res.header('Content-Type', 'text/plain');
-    res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: ${domain}/sitemap.xml\n`);
+    res.send(`User-agent: *\nAllow: /\nAllow: /api/uploads/\nDisallow: /admin\nDisallow: /api/\n\nSitemap: ${domain}/sitemap.xml\n`);
 });
 
 app.get('/sitemap.xml', async (req, res) => {
@@ -886,8 +904,7 @@ app.get('/sitemap.xml', async (req, res) => {
             xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (PROKER & DEPARTEMEN) -->`;
             prokerData.forEach(p => {
                 const slug = p.slug || p.id;
-                let img = p.bgImage || p.fotoPengurus || `/img/bannerprokerdeskripsi.png`;
-                if (img.startsWith('/')) img = `${domain}${img}`;
+                let img = sanitizeImageUrl(p.bgImage || p.fotoPengurus, domain);
                 if (slug) {
                     const itemLastMod = formatSitemapDate(p.startDate);
                     xmlUrls += `
@@ -909,7 +926,7 @@ app.get('/sitemap.xml', async (req, res) => {
             xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (EVENT KALENDER) -->`;
             kalenderData.forEach(k => {
                 const slug = k.slug || k.id;
-                const img = k.banner || `${domain}/img/bemfkgumi.png`;
+                const img = sanitizeImageUrl(k.banner, domain);
                 if (slug) {
                     const itemLastMod = formatSitemapDate(k.tglMulai);
                     xmlUrls += `
@@ -937,10 +954,10 @@ app.get('/sitemap.xml', async (req, res) => {
                     const articles = rawArticles.filter(a => a != null).map(a => typeof a === 'string' ? JSON.parse(a) : a);
                     
                     if (articles.length > 0) {
-                        xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (ARTIKEL/E-ZINE) -->`;
+                        xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (ARTIKEL/PUBMED) -->`;
                         articles.forEach(art => {
                             const slug = art.Slug_URL || art.ID_Berita;
-                            const img = art.Gambar_URL || `${domain}/img/bemfkgumi.png`;
+                            const img = sanitizeImageUrl(art.Gambar_URL, domain);
                             const itemLastMod = formatSitemapDate(art.Tgl_Rilis);
                             if(slug) {
                                 xmlUrls += `
@@ -981,7 +998,7 @@ ${xmlUrls}
     }
 });
 
-// ================= API ENDPOINTS: ARTIKEL (E-ZINE TERINTEGRASI PENUH LOKAL REDIS) =================
+// ================= API ENDPOINTS: ARTIKEL (PUBMED TERINTEGRASI PENUH LOKAL REDIS) =================
 
 // Ambil Seluruh Data Berita (Support Pagination & Filter Kategori)
 app.get('/api/articles', async (req, res) => {
