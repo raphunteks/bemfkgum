@@ -54,24 +54,33 @@
         <meta name="twitter:image" content="<%= articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png' %>">
         
     <% } else { %>
-        <!-- SEO DEFAULT INDEKS PORTAL -->
-        <title>Portal Berita Pubmed | BEM KBMFKG UMI</title>
+        <!-- SEO DEFAULT INDEKS PORTAL & DYNAMIC KATEGORI -->
+        <% 
+            let pageTitle = "Portal Berita Pubmed | BEM KBMFKG UMI";
+            let pageUrl = "https://bemkbmfkgumi.com/berita";
+            if (typeof currentCategory !== 'undefined' && currentCategory && currentCategory !== 'All') {
+                pageTitle = "Kategori: " + currentCategory + " | Portal Berita Pubmed";
+                let catSlug = currentCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                pageUrl = "https://bemkbmfkgumi.com/berita/kategori/" + catSlug;
+            }
+        %>
+        <title><%= pageTitle %></title>
         <meta name="description" content="Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.">
         <meta name="keywords" content="portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi">
         <meta name="author" content="BEM KBMFKG UMI">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
         
-        <link rel="canonical" id="canonicalUrl" href="https://bemkbmfkgumi.com/berita">
+        <link rel="canonical" id="canonicalUrl" href="<%= pageUrl %>">
 
         <meta property="og:site_name" content="Portal Berita Pubmed BEM KBMFKG UMI">
-        <meta property="og:title" id="ogTitle" content="Portal Berita Pubmed | BEM KBMFKG UMI">
+        <meta property="og:title" id="ogTitle" content="<%= pageTitle %>">
         <meta property="og:description" id="ogDesc" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini.">
         <meta property="og:type" id="ogType" content="website">
-        <meta property="og:url" id="ogUrl" content="https://bemkbmfkgumi.com/berita">
+        <meta property="og:url" id="ogUrl" content="<%= pageUrl %>">
         <meta property="og:image" id="ogImage" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
         
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" id="twTitle" content="Portal Berita BEM KBMFKG UMI">
+        <meta name="twitter:title" id="twTitle" content="<%= pageTitle %>">
     <% } %>
 
     <!-- MOBILE WEB APP & FAVICON OPTIMIZATION -->
@@ -245,14 +254,27 @@
             </div>
         </div>
 
-        <!-- FILTER KATEGORI -->
+        <!-- =================================================================================
+             SUPER BIG UPGRADE: DINAMIS FILTER KATEGORI BERDASARKAN DATABASE (EJS RENDER)
+             Ditarik langsung dari Backend Server. Jika ada kategori baru, otomatis muncul.
+             ================================================================================= -->
         <nav aria-label="Filter Kategori" class="flex flex-wrap gap-3 mb-10 border-b border-[color:var(--border-light)] pb-6" id="categoryContainer">
-            <button class="badge-category active" onclick="filterCategory('All', this)">Semua</button>
-            <button class="badge-category" onclick="filterCategory('Pengumuman', this)">Pengumuman</button>
-            <button class="badge-category" onclick="filterCategory('Edukasi', this)">Edukasi</button>
-            <button class="badge-category" onclick="filterCategory('Sosial', this)">Kegiatan Sosial</button>
-            <button class="badge-category" onclick="filterCategory('Olahraga', this)">Olahraga</button>
-            <button class="badge-category" onclick="filterCategory('Prestasi', this)">Prestasi</button>
+            <% let activeCat = (typeof currentCategory !== 'undefined' && currentCategory) ? currentCategory : 'All'; %>
+            <button class="badge-category <%= activeCat === 'All' ? 'active' : '' %>" onclick="filterCategory('All', this, '')">Semua</button>
+            
+            <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                <% categories.forEach(function(cat) { %>
+                    <% let catSlug = cat.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''); %>
+                    <button class="badge-category <%= activeCat === cat ? 'active' : '' %>" onclick="filterCategory('<%= cat %>', this, '<%= catSlug %>')"><%= cat %></button>
+                <% }); %>
+            <% } else { %>
+                <!-- Fallback Aman -->
+                <button class="badge-category <%= activeCat === 'Pengumuman' ? 'active' : '' %>" onclick="filterCategory('Pengumuman', this, 'pengumuman')">Pengumuman</button>
+                <button class="badge-category <%= activeCat === 'Edukasi' ? 'active' : '' %>" onclick="filterCategory('Edukasi', this, 'edukasi')">Edukasi</button>
+                <button class="badge-category <%= activeCat === 'Kegiatan Sosial' ? 'active' : '' %>" onclick="filterCategory('Kegiatan Sosial', this, 'kegiatan-sosial')">Kegiatan Sosial</button>
+                <button class="badge-category <%= activeCat === 'Olahraga' ? 'active' : '' %>" onclick="filterCategory('Olahraga', this, 'olahraga')">Olahraga</button>
+                <button class="badge-category <%= activeCat === 'Prestasi' ? 'active' : '' %>" onclick="filterCategory('Prestasi', this, 'prestasi')">Prestasi</button>
+            <% } %>
         </nav>
     </section>
 
@@ -310,14 +332,14 @@
     </button>
 
     <script>
-        // --- UPGRADE: LINK DIREKTORI KE BACKEND NODE.JS UPSTASH (BUKAN LAGI GAS) ---
         const API_URL = "/api/articles";
 
         // Menerima nilai server-side slug dari EJS untuk initial render routing
         const serverSlug = "<%= typeof currentSlug !== 'undefined' ? currentSlug : '' %>";
+        const serverCategory = "<%= typeof currentCategory !== 'undefined' ? currentCategory : 'All' %>";
 
         var appState = {
-            articles: [], page: 1, limit: 10, category: 'All', 
+            articles: [], page: 1, limit: 10, category: serverCategory, 
             hasMore: true, isLoading: false, currentViewId: null,
             initialLoadDone: false 
         };
@@ -349,11 +371,30 @@
             }
         };
 
-        window.addEventListener('popstate', function(event) { checkUrlRouting(true); });
+        window.addEventListener('popstate', function(event) { 
+            if(event.state && event.state.category) {
+                // SPA Filter Logic untuk History Back (Tanpa Reload Halaman Penuh)
+                const btns = document.querySelectorAll('.badge-category');
+                let found = false;
+                btns.forEach(b => {
+                    if(b.innerText === event.state.category || (event.state.category === 'All' && b.innerText.toLowerCase() === 'semua')) {
+                        // Bypass pushState dalam filterCategory saat di-trigger dari history pop
+                        document.querySelectorAll('.badge-category').forEach(btn => btn.classList.remove('active'));
+                        b.classList.add('active');
+                        appState.category = event.state.category;
+                        injectDefaultSEO(appState.category);
+                        loadArticles(true);
+                        found = true;
+                    }
+                });
+                if(!found) window.location.reload();
+            } else {
+                checkUrlRouting(true); 
+            }
+        });
 
-        // SUPER BIG UPGRADE: Mengecek URL menggunakan Clean Pathing API
+        // Mengecek URL menggunakan Clean Pathing API
         function checkUrlRouting(isPopState = false) {
-            // Support backward compatibility (?article=) AND the new Clean URL (/berita/slug)
             const urlParams = new URLSearchParams(window.location.search);
             let articleIdOrSlug = urlParams.get('article');
             
@@ -362,7 +403,7 @@
                 articleIdOrSlug = serverSlug;
             } else if (!articleIdOrSlug && isPopState) {
                 const pathParts = window.location.pathname.split('/');
-                if (pathParts[1] === 'berita' && pathParts[2]) {
+                if (pathParts[1] === 'berita' && pathParts[2] !== 'kategori' && pathParts[2]) {
                     articleIdOrSlug = pathParts[2];
                 }
             }
@@ -426,7 +467,7 @@
             renderArticles(cleanedData);
             
             // Render SEO dynamically only if we are in normal client navigation (no hard server slug)
-            if (!appState.currentViewId && !serverSlug) injectDefaultSEO();
+            if (!appState.currentViewId && !serverSlug) injectDefaultSEO(appState.category);
 
             if (!appState.initialLoadDone) {
                 appState.initialLoadDone = true;
@@ -514,12 +555,22 @@
             });
         }
 
-        function filterCategory(cat, btnElement) {
+        // =========================================================================
+        // FILTER & DYNAMIC CATEGORY ROUTING (SPA)
+        // =========================================================================
+        function filterCategory(cat, btnElement, slug = '') {
             document.querySelectorAll('.badge-category').forEach(function(b) { 
                 b.classList.remove('active'); 
             });
             btnElement.classList.add('active');
-            appState.category = cat; loadArticles(true);
+            appState.category = cat; 
+            
+            // UPDATE REALTIME URL ROUTING
+            var newUrl = cat === 'All' ? '/berita' : '/berita/kategori/' + slug;
+            window.history.pushState({ category: cat }, 'Kategori: ' + cat, newUrl);
+            
+            injectDefaultSEO(cat);
+            loadArticles(true);
         }
 
         // =========================================================================
@@ -568,19 +619,23 @@
             setOrUpdateMeta('name', 'twitter:image', safeImg);
         }
 
-        function injectDefaultSEO() {
-            document.title = "Portal Berita Pubmed | BEM KBMFKG UMI";
+        function injectDefaultSEO(cat = 'All') {
+            var isCategory = cat && cat !== 'All';
+            var titleStr = isCategory ? "Kategori: " + cat + " | Portal Berita Pubmed" : "Portal Berita Pubmed | BEM KBMFKG UMI";
+            var catUrl = isCategory ? "https://bemkbmfkgumi.com/berita/kategori/" + cat.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : "https://bemkbmfkgumi.com/berita";
+
+            document.title = titleStr;
             document.querySelector('meta[name="description"]')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.");
             setOrUpdateMeta('name', 'keywords', 'portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi');
-            document.getElementById('canonicalUrl')?.setAttribute("href", "https://bemkbmfkgumi.com/berita");
+            document.getElementById('canonicalUrl')?.setAttribute("href", catUrl);
             
-            document.getElementById('ogTitle')?.setAttribute("content", "Portal Berita Pubmed | BEM KBMFKG UMI");
+            document.getElementById('ogTitle')?.setAttribute("content", titleStr);
             document.getElementById('ogDesc')?.setAttribute("content", "Portal berita kampus, inovasi kedokteran gigi, dan event terkini.");
-            document.getElementById('ogUrl')?.setAttribute("content", "https://bemkbmfkgumi.com/berita");
+            document.getElementById('ogUrl')?.setAttribute("content", catUrl);
             document.getElementById('ogImage')?.setAttribute("content", "https://bemkbmfkgumi.com/img/bemfkgumi.png");
             document.getElementById('ogType')?.setAttribute("content", "website");
             
-            document.getElementById('twTitle')?.setAttribute("content", "Portal Berita BEM KBMFKG UMI");
+            document.getElementById('twTitle')?.setAttribute("content", titleStr);
             setOrUpdateMeta('name', 'twitter:description', "Portal berita kampus, inovasi kedokteran gigi, dan event terkini BEM KBMFKG UMI.");
             setOrUpdateMeta('name', 'twitter:image', "https://bemkbmfkgumi.com/img/bemfkgumi.png");
         }
@@ -601,7 +656,8 @@
             }
 
             var breadcrumbHtml = '<a href="/" onclick="closeModalAndGoHome(event)">Beranda Publik</a> <span class="separator">/</span> ';
-            breadcrumbHtml += '<span class="text-[color:var(--text-muted)]">' + article.Kategori + '</span> <span class="separator">/</span> ';
+            let slugCat = article.Kategori.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            breadcrumbHtml += `<a href="/berita/kategori/${slugCat}" class="text-[color:var(--text-muted)] hover:text-[color:var(--accent-neon)] transition" onclick="closeModalAndGoHome(event, '${article.Kategori}', '${slugCat}')">${article.Kategori}</a> <span class="separator">/</span> `;
             breadcrumbHtml += '<span class="text-[color:var(--text-light)] truncate block sm:inline max-w-[200px] sm:max-w-xs align-bottom">' + article.Judul + '</span>';
             document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
@@ -635,22 +691,42 @@
             injectEnterpriseSEO(article, currentFullUrl);
         }
 
-        function closeModal(skipPushState = false) {
+        function closeModal(skipPushState = false, targetCat = null, targetSlug = null) {
             var modal = document.getElementById('articleModal');
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
             appState.currentViewId = null;
 
-            // SUPER BIG UPGRADE: Saat Modal Ditutup, kembalikan URL ke Induk Direktori (/berita)
-            if (!skipPushState) window.history.pushState(null, '', '/berita');
-
-            // Revert SEO to default listing
-            injectDefaultSEO();
+            // SUPER BIG UPGRADE: Saat Modal Ditutup, kembalikan URL ke Induk Direktori (/berita) ATAU filter spesifik kategori
+            if (!skipPushState) {
+                if (targetCat && targetCat !== 'All') {
+                    window.history.pushState({ category: targetCat }, 'Kategori: ' + targetCat, '/berita/kategori/' + targetSlug);
+                    appState.category = targetCat;
+                    loadArticles(true); // Memuat ulang list kategori terkait
+                    injectDefaultSEO(targetCat);
+                } else {
+                    var backUrl = appState.category !== 'All' 
+                        ? '/berita/kategori/' + appState.category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+                        : '/berita';
+                    window.history.pushState({ category: appState.category }, '', backUrl);
+                    injectDefaultSEO(appState.category);
+                }
+            }
         }
 
-        function closeModalAndGoHome(event) {
+        function closeModalAndGoHome(event, targetCat = null, targetSlug = null) {
             if (event) event.preventDefault();
-            closeModal();
+            if (targetCat) {
+                // Cari tombol dan paksa UI berganti untuk keselarasan active state
+                const btns = document.querySelectorAll('.badge-category');
+                btns.forEach(b => {
+                    if (b.innerText === targetCat) {
+                        document.querySelectorAll('.badge-category').forEach(btn => btn.classList.remove('active'));
+                        b.classList.add('active');
+                    }
+                });
+            }
+            closeModal(false, targetCat, targetSlug);
         }
 
         function likeArticle() {
