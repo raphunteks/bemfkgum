@@ -236,7 +236,7 @@
                 <button class="action-btn view" onclick="tambahDokumentasi()" style="margin-top: 10px;">+ Upload Dokumentasi Baru</button>
             </section>
 
-            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA (UPGRADED MENGGUNAKAN LOCAL API) -->
+            <!-- 7.5 MANAJEMEN ARTIKEL / BERITA -->
             <section id="sec-artikel" class="admin-section">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
@@ -383,20 +383,18 @@
         </main>
     </div>
 
-    <!-- CUSTOM ALERTS & MODALS (Pengganti Alert Chrome Default) -->
-    <!-- Toast Notification -->
+    <!-- CUSTOM ALERTS & MODALS -->
     <div class="toast" id="globalToast">Notifikasi</div>
 
-    <!-- Custom View/Read Modal -->
-    <div class="modal-overlay" id="detailModal">
-        <div class="modal-content-box neumorph-outer" style="padding: 30px; background: var(--bg-dark); border: 1px solid var(--border-light);">
+    <!-- SUPER UPGRADE: Custom View/Read Modal (Fix Overflow & Display Bukti/Dokumen) -->
+    <div class="modal-overlay" id="detailModal" style="z-index: 100000;">
+        <div class="modal-content-box neumorph-outer" style="padding: 30px; background: var(--bg-dark); border: 1px solid var(--border-light); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
             <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">X</button>
             <h2 id="modalTitle" style="margin-bottom: 15px; color: var(--accent-neon);">Detail Data</h2>
             <div id="modalContent" style="color: var(--text-light); line-height: 1.6; font-size: 0.95rem;"></div>
         </div>
     </div>
 
-    <!-- Custom Confirm Modal -->
     <div class="modal-overlay" id="customConfirmModal">
         <div class="modal-content-box neumorph-outer" style="padding: 35px; background: var(--bg-dark); border: 1px solid var(--border-light); text-align: center; max-width: 400px; animation: popIn 0.3s ease;">
             <div style="font-size:3.5rem; margin-bottom:15px;">❓</div>
@@ -409,7 +407,6 @@
         </div>
     </div>
 
-    <!-- Custom Alert Modal -->
     <div class="modal-overlay" id="customAlertModal">
         <div class="modal-content-box neumorph-outer" style="padding: 35px; background: var(--bg-dark); border: 1px solid var(--border-light); text-align: center; max-width: 400px; animation: popIn 0.3s ease;">
             <div style="font-size:3.5rem; margin-bottom:15px;">⚠️</div>
@@ -419,7 +416,6 @@
         </div>
     </div>
 
-    <!-- Modal Tambah / Edit Artikel -->
     <div class="modal-overlay" id="artikelModal">
         <div class="modal-content-box neumorph-outer" style="padding: 30px; max-width: 800px; background: var(--bg-dark); border: 1px solid var(--border-light);">
             <button class="modal-close" onclick="closeArtikelModal()">X</button>
@@ -442,9 +438,7 @@
                 <div>
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Kategori</label>
                     <input list="listKategori" id="artKategori" class="neo-input" placeholder="Ketik atau pilih kategori...">
-                    <datalist id="listKategori">
-                        <!-- Opsi akan di-render dinamis dari JavaScript berdasarkan Database -->
-                    </datalist>
+                    <datalist id="listKategori"></datalist>
 
                     <label style="color:var(--text-muted); font-size: 0.85rem; font-weight:bold;">Penulis / Publisher</label>
                     <input type="text" id="artPenulis" class="neo-input" placeholder="Admin BEM FKG UMI">
@@ -595,7 +589,6 @@
 
         function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
         
-        // SUPER BIG UPGRADE: Fungsi Upload ke Server Lokal untuk mendapatkan Clean Image URL (SEO Standard)
         async function uploadImageToServer(file) {
             const base64 = await fileToBase64(file);
             let apiUrl = '/api/upload';
@@ -609,7 +602,7 @@
             });
             if(!res.ok) throw new Error('Upload failed');
             const data = await res.json();
-            return data.url; // Akan mengembalikan /api/uploads/xxx-nama.jpg
+            return data.url; 
         }
 
         async function handleImageUpload(inputElem, objToUpdate, keyName, renderFn) {
@@ -617,7 +610,6 @@
             if(file) { 
                 showToast("⏳ Mengunggah gambar ke server...");
                 try {
-                    // Murni menyimpan Clean URL, bukan lagi Base64 raksasa!
                     const cleanUrl = await uploadImageToServer(file);
                     objToUpdate[keyName] = cleanUrl; 
                     showToast("✅ Gambar berhasil diunggah! Ingat klik Simpan."); 
@@ -629,12 +621,7 @@
             }
         }
 
-        // =======================================================================================
-        // SUPER UPGRADE: ISOLASI ASYNCHRONOUS TRY-CATCH (MENCEGAH BLANK SCREEN PADA PESAN & ASPIRASI)
-        // =======================================================================================
         async function loadAllData() {
-            
-            // 1. Fetch Data Utama CMS
             async function fetchCMS() {
                 try {
                     let apiUrl = '/api/content';
@@ -666,7 +653,6 @@
                 renderSemuaCMS(); 
             }
 
-            // 2. Fetch Data Aspirasi & Pesan (TERPISAH MUTLAK)
             async function fetchInteractions() {
                 try {
                     let apiInt = '/api/interactions';
@@ -677,7 +663,7 @@
                         if(intData.success) {
                             aspirasiData = intData.aspirasi || []; 
                             pesanData = intData.pesan || []; 
-                            renderTabel(); // Render Ulang Tabel Secara Terpisah
+                            renderTabel();
                             updateDashboardStats(aspirasiData.length, pesanData.length);
                         }
                     }
@@ -687,10 +673,9 @@
                 }
             }
 
-            // Jalankan Ketiganya Secara Bersamaan (Parallel) agar tidak memblokir
             fetchCMS();
             fetchInteractions();
-            loadArtikelLocal(); // SUPER UPGRADE: Panggil lokal API sekarang
+            loadArtikelLocal(); 
         }
 
         function updateDashboardStats(aspirationCount, messageCount) {
@@ -926,7 +911,6 @@
             renderProker(); 
         }
 
-        // --- RENDER KALENDER / AGENDA CMS ---
         function renderKalender() {
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
             (db.kalender || []).forEach((k, i) => { 
@@ -1113,13 +1097,13 @@
         }
         function tambahKategoriTeam() { if(!db.team) db.team = []; db.team.push({category: "Kategori Baru", members: []}); renderTeam(); }
 
-        // Murni Merender Tabel saja, tidak ikut memfetch
+        // ================= UPGRADED: RENDERING TABEL ASPIRASI & PESAN =================
         function renderTabel() {
             const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
             if (aspirasiData.length === 0) {
                 tbodyA.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color:var(--text-muted);">Tidak ada Aspirasi masuk</td></tr>`;
             } else {
-                aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td style="color:var(--text-light);">${item.id}</td><td style="color:var(--text-muted);">${item.kategori}</td><td style="color:var(--text-light);"><strong>${item.judul}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; });
+                aspirasiData.forEach(item => { tbodyA.innerHTML += `<tr><td style="color:var(--text-light);">${item.id}</td><td style="color:var(--text-muted);">${item.kategori}</td><td style="color:var(--text-light);"><strong>${item.judul || 'Tanpa Judul'}</strong></td><td><button class="action-btn view" onclick="viewAspirasi('${item.id}')">Lihat</button> <button class="action-btn delete" onclick="deleteData('aspirasi', '${item.id}')">Hapus</button></td></tr>`; });
             }
 
             const tbodyP = document.getElementById('tableBodyPesan'); tbodyP.innerHTML = '';
@@ -1130,7 +1114,6 @@
             }
         }
         
-        // SUPER UPGRADE: Ganti confirm bawaan Chrome dengan Custom Confirm Glassmorphism
         function deleteData(type, id) {
             showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus interaksi ini secara permanen?", async function() {
                 try {
@@ -1160,8 +1143,68 @@
             });
         }
         
-        function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
-        function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><strong>Dari:</strong> ${data.nama} (${data.kontak})</p><p><strong>Subjek:</strong> ${data.subjek}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
+        // ================= SUPER UPGRADE: RENDERING MODAL DETAIL INTERAKSI (SUPPORT FILE & JUDUL) =================
+        function viewAspirasi(id) { 
+            const data = aspirasiData.find(x => x.id === id); 
+            if(!data) return; 
+            
+            let attachmentHtml = '';
+            if(data.bukti) {
+                if(data.bukti.startsWith('data:application/pdf')) {
+                    attachmentHtml = `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-light);">
+                        <p style="margin-bottom: 10px; color: var(--text-muted);"><strong>Lampiran Dokumen:</strong></p>
+                        <a href="${data.bukti}" download="Bukti_Aspirasi_${data.id}.pdf" class="holo-btn" style="padding: 8px 15px; font-size: 0.85rem; display: inline-block; text-decoration: none; color: white;">📄 Download PDF Lampiran</a>
+                    </div>`;
+                } else if(data.bukti.startsWith('data:image/') || data.bukti.startsWith('http')) {
+                    attachmentHtml = `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-light);">
+                        <p style="margin-bottom: 10px; color: var(--text-muted);"><strong>Lampiran Gambar:</strong></p>
+                        <img src="${data.bukti}" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid var(--border-light); display: block;" alt="Bukti Aspirasi">
+                        <a href="${data.bukti}" download="Bukti_Gambar_${data.id}.png" class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem; display: inline-block; text-decoration: none; color: white; margin-top: 10px;">⬇️ Unduh Gambar</a>
+                    </div>`;
+                }
+            }
+
+            document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; 
+            document.getElementById('modalContent').innerHTML = `
+                <p style="margin-bottom: 10px;"><strong>Judul:</strong> <span style="color:var(--accent-neon);">${data.judul || 'Tanpa Judul'}</span></p>
+                <p style="margin-bottom: 10px;"><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p>
+                <p style="margin-bottom: 5px;"><strong>Isi Aspirasi:</strong></p>
+                <div style="background:var(--bg-dark-overlay); padding:15px; border-radius:5px; border:1px solid var(--border-light); white-space: pre-wrap;">${data.isi}</div>
+                ${attachmentHtml}
+            `; 
+            document.getElementById('detailModal').classList.add('active'); 
+        }
+
+        function viewPesan(id) { 
+            const data = pesanData.find(x => x.id === id); 
+            if(!data) return; 
+            
+            let attachmentHtml = '';
+            if(data.dokumen) {
+                if(data.dokumen.startsWith('data:application/pdf')) {
+                    attachmentHtml = `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-light);">
+                        <p style="margin-bottom: 10px; color: var(--text-muted);"><strong>Lampiran Dokumen:</strong></p>
+                        <a href="${data.dokumen}" download="Dokumen_Pesan_${data.id}.pdf" class="holo-btn" style="padding: 8px 15px; font-size: 0.85rem; display: inline-block; text-decoration: none; color: white;">📄 Download PDF Lampiran</a>
+                    </div>`;
+                } else if(data.dokumen.startsWith('data:image/') || data.dokumen.startsWith('http')) {
+                    attachmentHtml = `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-light);">
+                        <p style="margin-bottom: 10px; color: var(--text-muted);"><strong>Lampiran Gambar:</strong></p>
+                        <img src="${data.dokumen}" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid var(--border-light); display: block;" alt="Dokumen Pesan">
+                        <a href="${data.dokumen}" download="Gambar_Pesan_${data.id}.png" class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem; display: inline-block; text-decoration: none; color: white; margin-top: 10px;">⬇️ Unduh Gambar</a>
+                    </div>`;
+                }
+            }
+
+            document.getElementById('modalTitle').innerText = "Pesan Masuk " + data.id; 
+            document.getElementById('modalContent').innerHTML = `
+                <p style="margin-bottom: 10px;"><strong>Dari:</strong> ${data.nama} (${data.kontak})</p>
+                <p style="margin-bottom: 10px;"><strong>Subjek:</strong> <span style="color:var(--accent-neon);">${data.subjek}</span></p>
+                <p style="margin-bottom: 5px;"><strong>Isi Pesan:</strong></p>
+                <div style="background:var(--bg-dark-overlay); padding:15px; border-radius:5px; border:1px solid var(--border-light); white-space: pre-wrap;">${data.pesan}</div>
+                ${attachmentHtml}
+            `; 
+            document.getElementById('detailModal').classList.add('active'); 
+        }
 
         // --- RENDER RADAR BEM CMS ---
         function renderRadar() {
@@ -1282,15 +1325,12 @@
             updateArtPreviewUI(safeUrl);
         }
 
-        // SUPER UPGRADE: Preview sekalian Upload agar tidak ada Base64 nyasar di Database!
         async function previewArtImage(input) {
             if (input.files && input.files[0]) {
                 showToast("⏳ Mengunggah gambar artikel ke server...");
                 try {
-                    // Upload ke server dan dapatkan URL yang ramah Google Images
                     const cleanUrl = await uploadImageToServer(input.files[0]);
                     updateArtPreviewUI(cleanUrl);
-                    // Langsung set input Gambar ke Clean URL
                     document.getElementById('artGambar').value = cleanUrl;
                     showToast("✅ Gambar artikel siap! Lanjutkan.");
                 } catch(e) {
@@ -1304,7 +1344,6 @@
             document.getElementById('artFileImage').value = ''; 
             updateArtPreviewUI(''); 
             
-            // Populasi Datalist Kategori secara dinamis
             const uniqueCats = [...new Set(artikelData.map(a => a.Kategori).filter(Boolean))];
             const dataList = document.getElementById('listKategori');
             dataList.innerHTML = '';
@@ -1313,7 +1352,6 @@
                 opt.value = cat;
                 dataList.appendChild(opt);
             });
-            // Pastikan kategori default tetap ada jika kosong
             if(uniqueCats.length === 0) {
                 ['Kegiatan Sosial', 'Edukasi', 'Olahraga', 'Event', 'Pengumuman', 'Prestasi'].forEach(cat => {
                     const opt = document.createElement('option'); opt.value = cat; dataList.appendChild(opt);
@@ -1375,7 +1413,6 @@
             const id = isEdit ? document.getElementById('artId').value : `ART-${Date.now()}`;
             const judul = document.getElementById('artJudul').value;
             
-            // SUPER UPGRADE: Logic Custom Slug Prioritas
             let manualSlug = document.getElementById('artSlug').value.trim();
             const slug = manualSlug 
                 ? manualSlug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') 
@@ -1396,7 +1433,6 @@
                 if (match && match[0]) finalImageURL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
             }
             
-            // Failsafe: Jika user langsung klik simpan tanpa menunggu preview upload selesai
             const fileInput = document.getElementById('artFileImage');
             if (fileInput.files.length > 0 && !finalImageURL.startsWith('/api/uploads/')) {
                 try {
@@ -1435,7 +1471,6 @@
                 showToast('✅ Publikasi Berhasil disimpan ke Database Lokal!');
                 loadArtikelLocal(); 
             } catch(e) {
-                // Fallback UI update only (Local Canvas Mode)
                 if(!isEdit) artikelData.unshift(payload);
                 else { const idx = artikelData.findIndex(a => a.ID_Berita === id); if(idx > -1) artikelData[idx] = {...artikelData[idx], ...payload}; }
                 renderArtikelTable();
@@ -1448,7 +1483,6 @@
         }
 
         function deleteArtikelLocal(id) {
-            // SUPER UPGRADE: Hapus langsung via Endpoint Lokal
             showCustomConfirm("Apakah Anda yakin ingin menghapus Artikel ini secara permanen?", async function() {
                 try {
                     let apiUrl = `/api/articles/${id}`;
