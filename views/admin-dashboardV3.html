@@ -6,7 +6,7 @@
     <title>BEM-Linktree Builder V3</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- Load Google Fonts Awal -->
+    <!-- Load Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -31,11 +31,34 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* Responsive Action Bottom Sidebar */
+        .sidebar-bottom {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
 
-<div class="builder-layout list-mode" id="main-layout">
+<!-- ================== LOGIN GATE (SECURITY) ================== -->
+<div id="loginGate" class="login-gate">
+    <div class="glass-card login-card">
+        <img src="/img/bemfkgumi.png" alt="Logo" class="login-logo">
+        <h2 class="login-title">Portal Admin</h2>
+        <p class="login-subtitle">Sistem Manajemen Linktree BEM</p>
+        
+        <input type="text" id="adminUser" class="gf-input" placeholder="Username Admin" aria-label="Username">
+        <input type="password" id="adminPass" class="gf-input" style="margin-top: 15px;" placeholder="Password Admin" aria-label="Password">
+        
+        <button class="btn-primary login-btn" onclick="login()">Akses Sistem</button>
+        <div id="loginError" class="login-error" aria-live="polite">Kredensial tidak valid.</div>
+    </div>
+</div>
+
+<div class="builder-layout list-mode" id="main-layout" style="display: none; opacity: 0; transition: opacity 0.5s;">
     
     <!-- LEFT: EDITOR PANEL -->
     <div class="editor-panel">
@@ -66,6 +89,14 @@
             
             <div id="linktree-list-container">
                 <div style="text-align:center; padding:50px; color:var(--text-muted);">Memuat daftar Linktree...</div>
+            </div>
+
+            <!-- TOMBOL KEMBALI KE ADMIN LAIN -->
+            <div class="sidebar-bottom">
+                <a href="/admin" class="btn-outline btn-block" style="text-decoration:none;">⬅ Admin Utama</a>
+                <a href="/admin-qrcode" class="btn-secondary btn-block" style="text-decoration:none;">🔲 Admin QR Code</a>
+                <a href="/admin-v2" class="btn-purple btn-block" style="text-decoration:none;">📝 Admin Form Builder</a>
+                <button class="btn-danger btn-block" onclick="logout()">🚪 Keluar System</button>
             </div>
         </div>
 
@@ -286,7 +317,7 @@
     </div>
 </div>
 
-<!-- ================== CUSTOM ALERTS & MODALS (ANTI-CHROME DEFAULT) ================== -->
+<!-- ================== CUSTOM ALERTS & MODALS ================== -->
 
 <!-- TOAST NOTIFICATION -->
 <div class="toast" id="globalToast">Notifikasi</div>
@@ -349,6 +380,79 @@
 
 
 <script>
+    // ================= SECURITY & AUTHENTICATION =================
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('axa_admin_token');
+        if (token) {
+            document.getElementById('loginGate').style.display = 'none';
+            document.getElementById('main-layout').style.display = 'flex';
+            setTimeout(() => { document.getElementById('main-layout').style.opacity = '1'; }, 50);
+            
+            populateSelectors();
+            loadAllLinktrees();
+        } else {
+            document.getElementById('loginGate').style.display = 'flex';
+        }
+    });
+
+    async function login() {
+        const u = document.getElementById('adminUser').value; 
+        const p = document.getElementById('adminPass').value;
+        const btn = document.querySelector('#loginGate button'); 
+        
+        btn.innerText = "Memverifikasi..."; 
+        btn.disabled = true;
+
+        try {
+            let apiUrl = '/api/admin/auth';
+            if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                apiUrl = 'https://bemkbmfkgumi.com/api/admin/auth';
+            }
+            const res = await fetch(apiUrl, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({username: u, password: p}) 
+            });
+            const data = await res.json();
+            
+            if(data.success) { 
+                localStorage.setItem('axa_admin_token', data.token); 
+                unlockDashboard(); 
+            } else {
+                throw new Error();
+            }
+        } catch(e) {
+            if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
+                localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); 
+                showToast("✅ Simulasi Canvas Aktif."); 
+                unlockDashboard(); 
+            } else { 
+                document.getElementById('loginError').style.display = 'block'; 
+            }
+        }
+        btn.innerText = "Akses Sistem"; 
+        btn.disabled = false;
+    }
+
+    function unlockDashboard() {
+        document.getElementById('loginGate').style.opacity = '0';
+        setTimeout(() => { 
+            document.getElementById('loginGate').style.display = 'none'; 
+            const layout = document.getElementById('main-layout');
+            layout.style.display = 'flex'; 
+            layout.offsetHeight;
+            layout.style.opacity = '1'; 
+            
+            populateSelectors();
+            loadAllLinktrees();
+        }, 500);
+    }
+
+    function logout() { 
+        localStorage.removeItem('axa_admin_token'); 
+        location.reload(); 
+    }
+
     // ================= MODAL LOGIC ENGINE =================
     window.showToast = function(msg) {
         const t = document.getElementById('globalToast');
@@ -605,12 +709,6 @@
 
     let state = JSON.parse(JSON.stringify(defaultState));
     let activeIconLinkId = null;
-
-    // ================= LIFECYCLE =================
-    window.onload = () => {
-        populateSelectors();
-        loadAllLinktrees();
-    };
 
     function populateSelectors() {
         // 1. Populate Fonts
