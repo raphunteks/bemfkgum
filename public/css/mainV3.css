@@ -2,8 +2,9 @@
 /* =========================================================
    BEM-LINKTREE BUILDER V3 AESTHETIC (FUTURISTIC GLASSMORPHISM)
    + FIX ICON ALIGNMENT & ABSOLUTE CENTERING TEXT
-   + 35 BUTTON SHAPES & TYPES (FIXED & COMPLETED)
+   + 35 BUTTON SHAPES & TYPES (FIXED OVERRIDE CONFLICTS)
    + MAC OS DESKTOP PREVIEW TOGGLE
+   + 30 TEMPLATES ANIMATION SUPPORT
    ========================================================= */
 
 :root {
@@ -73,6 +74,13 @@ body::before { content: ''; position: fixed; top: -20%; left: -10%; width: 60vw;
 body::after { content: ''; position: fixed; bottom: -20%; right: -10%; width: 50vw; height: 50vw; border-radius: 50%; background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 60%); filter: blur(80px); z-index: -1; animation: drift2 15s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
 @keyframes drift { to { transform: translate(10vw, 10vh) scale(1.1); } }
 @keyframes drift2 { to { transform: translate(-10vw, -5vh) scale(1.2); } }
+
+/* Animasi untuk Template Background Baru (Y2K Holo dll) */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
 /* Cards & Layout */
 .list-linktree-card { background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-color); box-shadow: var(--outer-neumorph); border-radius: 20px; padding: 25px 30px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; transition: all 0.4s ease; }
@@ -174,44 +182,43 @@ input:checked + .slider:before { transform: translateX(22px); }
 .selector-item:hover { transform: scale(1.05); color: var(--primary); }
 .selector-item.active { border-color: var(--primary); background: rgba(139,92,246,0.15); color: var(--primary); box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1); }
 
-/* ================== DYNAMIC BUTTON SHAPES (35 KELAS) ================== */
-.btn-shape-square { border-radius: 0px; }
-.btn-shape-rounded { border-radius: 14px; }
-.btn-shape-pill { border-radius: 50px; }
-.btn-shape-leaf-right { border-radius: 24px 0 24px 0; }
-.btn-shape-leaf-left { border-radius: 0 24px 0 24px; }
-.btn-shape-arch-up { border-radius: 30px 30px 6px 6px; }
-.btn-shape-arch-down { border-radius: 6px 6px 30px 30px; }
-.btn-shape-arch-left { border-radius: 30px 6px 6px 30px; }
-.btn-shape-arch-right { border-radius: 6px 30px 30px 6px; }
-.btn-shape-sharp-mix { border-radius: 20px 5px 20px 5px; }
-.btn-shape-sharp-mix-alt { border-radius: 5px 20px 5px 20px; }
-.btn-shape-barrel { border-radius: 15px 50px 15px 50px; }
-.btn-shape-barrel-alt { border-radius: 50px 15px 50px 15px; }
-.btn-shape-blob1 { border-radius: 40% 60% 60% 40% / 40% 50% 50% 60%; }
-.btn-shape-blob2 { border-radius: 50% 50% 40% 60% / 60% 40% 50% 50%; }
-.btn-shape-slant { border-radius: 10px 30px; }
-.btn-shape-slant-alt { border-radius: 30px 10px; }
-.btn-shape-oval { border-radius: 50% / 100%; }
-.btn-shape-hexagon { clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0% 50%); border-radius: 0; }
-.btn-shape-octagon { clip-path: polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%); border-radius: 0; }
-.btn-shape-parallelogram { transform: skew(-10deg); }
-.btn-shape-parallelogram > * { transform: skew(10deg); } 
-.btn-shape-cut-tr { border-radius: 10px 30px 10px 10px; }
-.btn-shape-cut-bl { border-radius: 10px 10px 10px 30px; }
-.btn-shape-ticket { clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px); border-radius: 0; }
-.btn-shape-folded { border-radius: 15px; border-top-right-radius: 0; position: relative; }
-.btn-shape-shield { border-radius: 10px 10px 30px 30px; }
-.btn-shape-bubble-top { border-radius: 30px 30px 10px 10px; }
-.btn-shape-bubble-bottom { border-radius: 10px 10px 30px 30px; }
-.btn-shape-diagonal { clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 90%); border-radius: 0; }
-.btn-shape-diamond { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); border-radius: 0; }
-/* 5 Additional Shapes to Complete 35 */
-.btn-shape-wave { border-radius: 15px 40px 15px 40px / 40px 15px 40px 15px; }
-.btn-shape-ripped { clip-path: polygon(2% 0, 98% 2%, 100% 98%, 0 100%); border-radius: 0; }
-.btn-shape-zigzag { clip-path: polygon(0 0, 5% 10px, 10% 0, 15% 10px, 20% 0, 25% 10px, 30% 0, 35% 10px, 40% 0, 45% 10px, 50% 0, 55% 10px, 60% 0, 65% 10px, 70% 0, 75% 10px, 80% 0, 85% 10px, 90% 0, 95% 10px, 100% 0, 100% 100%, 95% calc(100% - 10px), 90% 100%, 85% calc(100% - 10px), 80% 100%, 75% calc(100% - 10px), 70% 100%, 65% calc(100% - 10px), 60% 100%, 55% calc(100% - 10px), 50% 100%, 45% calc(100% - 10px), 40% 100%, 35% calc(100% - 10px), 30% 100%, 25% calc(100% - 10px), 20% 100%, 15% calc(100% - 10px), 10% 100%, 5% calc(100% - 10px), 0 100%); border-radius: 0; }
-.btn-shape-chevron { clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 50%, 100% 100%, 15px 100%, 0% 50%); border-radius: 0; }
-.btn-shape-banner { clip-path: polygon(0% 0%, 100% 0%, calc(100% - 15px) 50%, 100% 100%, 0% 100%, 15px 50%); border-radius: 0; }
+/* ================== DYNAMIC BUTTON SHAPES (35 KELAS - WITH !IMPORTANT TO PREVENT OVERRIDES) ================== */
+.btn-shape-square { border-radius: 0px !important; clip-path: none !important; }
+.btn-shape-rounded { border-radius: 14px !important; clip-path: none !important; }
+.btn-shape-pill { border-radius: 50px !important; clip-path: none !important; }
+.btn-shape-leaf-right { border-radius: 24px 0 24px 0 !important; clip-path: none !important; }
+.btn-shape-leaf-left { border-radius: 0 24px 0 24px !important; clip-path: none !important; }
+.btn-shape-arch-up { border-radius: 30px 30px 6px 6px !important; clip-path: none !important; }
+.btn-shape-arch-down { border-radius: 6px 6px 30px 30px !important; clip-path: none !important; }
+.btn-shape-arch-left { border-radius: 30px 6px 6px 30px !important; clip-path: none !important; }
+.btn-shape-arch-right { border-radius: 6px 30px 30px 6px !important; clip-path: none !important; }
+.btn-shape-sharp-mix { border-radius: 20px 5px 20px 5px !important; clip-path: none !important; }
+.btn-shape-sharp-mix-alt { border-radius: 5px 20px 5px 20px !important; clip-path: none !important; }
+.btn-shape-barrel { border-radius: 15px 50px 15px 50px !important; clip-path: none !important; }
+.btn-shape-barrel-alt { border-radius: 50px 15px 50px 15px !important; clip-path: none !important; }
+.btn-shape-blob1 { border-radius: 40% 60% 60% 40% / 40% 50% 50% 60% !important; clip-path: none !important; }
+.btn-shape-blob2 { border-radius: 50% 50% 40% 60% / 60% 40% 50% 50% !important; clip-path: none !important; }
+.btn-shape-slant { border-radius: 10px 30px !important; clip-path: none !important; }
+.btn-shape-slant-alt { border-radius: 30px 10px !important; clip-path: none !important; }
+.btn-shape-oval { border-radius: 50% / 100% !important; clip-path: none !important; }
+.btn-shape-hexagon { clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0% 50%) !important; border-radius: 0 !important; }
+.btn-shape-octagon { clip-path: polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%) !important; border-radius: 0 !important; }
+.btn-shape-parallelogram { transform: skew(-10deg) !important; border-radius: 0 !important; }
+.btn-shape-parallelogram > * { transform: skew(10deg) !important; } 
+.btn-shape-cut-tr { border-radius: 10px 30px 10px 10px !important; clip-path: none !important; }
+.btn-shape-cut-bl { border-radius: 10px 10px 10px 30px !important; clip-path: none !important; }
+.btn-shape-ticket { clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px) !important; border-radius: 0 !important; }
+.btn-shape-folded { border-radius: 15px !important; border-top-right-radius: 0 !important; clip-path: none !important; position:relative; }
+.btn-shape-shield { border-radius: 10px 10px 30px 30px !important; clip-path: none !important; }
+.btn-shape-bubble-top { border-radius: 30px 30px 10px 10px !important; clip-path: none !important; }
+.btn-shape-bubble-bottom { border-radius: 10px 10px 30px 30px !important; clip-path: none !important; }
+.btn-shape-diagonal { clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 90%) !important; border-radius: 0 !important; }
+.btn-shape-diamond { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%) !important; border-radius: 0 !important; }
+.btn-shape-wave { border-radius: 20px !important; clip-path: polygon(0 0, 100% 0, 100% 85%, 75% 100%, 50% 85%, 25% 100%, 0 85%) !important; }
+.btn-shape-ripped { border-radius: 0 !important; clip-path: polygon(0 0, 100% 0, 100% 100%, 95% 90%, 90% 100%, 85% 90%, 80% 100%, 75% 90%, 70% 100%, 65% 90%, 60% 100%, 55% 90%, 50% 100%, 45% 90%, 40% 100%, 35% 90%, 30% 100%, 25% 90%, 20% 100%, 15% 90%, 10% 100%, 5% 90%, 0 100%) !important; }
+.btn-shape-zigzag { border-radius: 0 !important; clip-path: polygon(0 10px, 10px 0, 20px 10px, 30px 0, 40px 10px, 50px 0, 60px 10px, 70px 0, 80px 10px, 90px 0, 100px 10px, 110px 0, 120px 10px, 130px 0, 140px 10px, 150px 0, 160px 10px, 170px 0, 180px 10px, 190px 0, 200px 10px, 210px 0, 220px 10px, 230px 0, 240px 10px, 250px 0, 260px 10px, 270px 0, 280px 10px, 290px 0, 300px 10px, 310px 0, 320px 10px, 330px 0, 340px 10px, 350px 0, 360px 10px, 370px 0, 380px 10px, 390px 0, 400px 10px, 410px 0, 420px 10px, 430px 0, 440px 10px, 450px 0, 460px 10px, 470px 0, 480px 10px, 490px 0, 500px 10px, 100% 0, 100% 100%, 0 100%) !important; }
+.btn-shape-chevron { border-radius: 0 !important; clip-path: polygon(0% 0%, 90% 0, 100% 50%, 90% 100%, 0% 100%, 10% 50%) !important; }
+.btn-shape-banner { border-radius: 0 !important; clip-path: polygon(100% 0, 100% 50%, 100% 100%, 0% 100%, 5% 50%, 0% 0%) !important; }
 
 /* ================== TOAST & MODAL NOTIFICATION ================== */
 .toast {
@@ -338,7 +345,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     align-items: center;
     justify-content: center;
 }
-
 
 #pv-socials { display: flex; justify-content: center; gap: 18px; margin-top: 35px; flex-wrap: wrap;}
 .pv-social-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-decoration: none;}
