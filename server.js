@@ -264,7 +264,7 @@ app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.s
 // SUPER BIG UPGRADE: SSR ROUTING UNTUK BERITA & KATEGORI DINAMIS (SEO ENTERPRISE)
 // ============================================================================
 
-// Fungsi Helper untuk menarik semua artikel dan mengekstrak kategori unik
+// Fungsi Helper untuk menarik semua artikel dari Redis (Menjadi fondasi SSR)
 async function getArticlesAndCategories() {
     if (!redis) return { articles: [], categories: [] };
     try {
@@ -283,13 +283,17 @@ async function getArticlesAndCategories() {
 
 // 1. Route Indeks Berita Default (/berita)
 app.get('/berita', async (req, res) => {
-    const { categories } = await getArticlesAndCategories();
+    // SUPER UPGRADE SEO FIX (Halaman Perujuk GSC): Lempar artikel terbaru ke SSR HTML agar Googlebot melihat tautan fisik
+    const { articles, categories } = await getArticlesAndCategories();
+    const sortedArticles = articles.sort((a,b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
+    
     res.render('berita', { 
         articleInfo: null, 
         siteUrl: 'https://bemkbmfkgumi.com',
         currentCategory: 'All',
         categorySlug: null,
-        categories: categories 
+        categories: categories,
+        latestArticles: sortedArticles.slice(0, 20) // SSR Fix
     });
 });
 
@@ -298,7 +302,7 @@ app.get('/berita/kategori/:kategori_slug', async (req, res) => {
     const { articles, categories } = await getArticlesAndCategories();
     const catSlugReq = req.params.kategori_slug;
     
-    // Konversi slug kembali menjadi nama Kategori asli dengan mencari di dalam array artikel
+    // Konversi slug kembali menjadi nama Kategori asli
     let actualCategoryName = 'All';
     const sampleArticle = articles.find(a => {
         if (!a.Kategori) return false;
@@ -309,17 +313,21 @@ app.get('/berita/kategori/:kategori_slug', async (req, res) => {
     if (sampleArticle) {
         actualCategoryName = sampleArticle.Kategori;
     }
+    
+    const sortedArticles = articles.sort((a,b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
 
     res.render('berita', { 
         articleInfo: null, 
         siteUrl: 'https://bemkbmfkgumi.com',
         currentCategory: actualCategoryName,
         categorySlug: catSlugReq,
-        categories: categories 
+        categories: categories,
+        latestArticles: sortedArticles.slice(0, 20) // SSR Fix
     });
 });
 
 // 3. Route Dinamis Detail Artikel (/berita/:slug)
+// SUPER UPGRADE: Mencegat request Googlebot ke URL spesifik artikel (SSR)
 app.get('/berita/:slug', async (req, res) => {
     const { articles, categories } = await getArticlesAndCategories();
     let articleInfo = null;
@@ -328,13 +336,15 @@ app.get('/berita/:slug', async (req, res) => {
         articleInfo = articles.find(a => (a.Slug_URL || a.ID_Berita) === req.params.slug);
     }
     
+    // Mengirim Data Artikel (Metadata) ke dalam File HTML EJS
     res.render('berita', { 
         articleInfo: articleInfo, 
         siteUrl: 'https://bemkbmfkgumi.com', 
         currentSlug: req.params.slug,
         currentCategory: articleInfo ? articleInfo.Kategori : 'All',
         categorySlug: null,
-        categories: categories
+        categories: categories,
+        latestArticles: []
     });
 });
 
@@ -918,6 +928,7 @@ app.get('/sitemap.xml', async (req, res) => {
         }
 
         // ================= SUPER BIG UPGRADE: DYNAMIC SEO ARTIKEL DARI REDIS LOKAL =================
+        // FIX SITEMAP KANONIS: Format URL diubah menjadi Clean URL Path (/berita/slug)
         try {
             if (redis) {
                 const articleKeys = await redis.keys('BEM_Articles:*');
@@ -932,7 +943,6 @@ app.get('/sitemap.xml', async (req, res) => {
                             const img = art.Gambar_URL || `${domain}/img/bemfkgumi.png`;
                             const itemLastMod = formatSitemapDate(art.Tgl_Rilis);
                             if(slug) {
-                                // PERBAIKAN SITEMAP: Menggunakan Clean URL Path /berita/slug
                                 xmlUrls += `
     <url>
         <loc>${domain}/berita/${escapeXml(slug)}</loc>
