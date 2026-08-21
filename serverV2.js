@@ -49,7 +49,8 @@ const safeParse = (data, fallbackData) => {
 
 // ================= RUTE FRONTEND ADMIN =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
-// RUTE BARU: QR Code Builder V4 (Neubrutalism)
+
+// 🔥 RUTE BARU: Menghubungkan URL /admin-qrcode ke file admin-dashboardV4.html
 app.get('/admin-qrcode', (req, res) => res.render('admin-dashboardV4'));
 
 // ================= RUTE FRONTEND PUBLIK DENGAN SSR SEO =================
@@ -188,7 +189,6 @@ app.delete('/api/linktrees/:id', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-
 // ================= ENDPOINT API QR CODES (NEW UPGRADE) =================
 // Arsitektur Penyimpanan Database: BEM_QRCodes (String Pattern) untuk SEO Standardisasi
 app.get('/api/qrcodes', async (req, res) => {
@@ -227,7 +227,6 @@ app.delete('/api/qrcodes/:id', async (req, res) => {
         res.status(200).json({ success: true, message: "QR Code Permanen Dihapus" });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
-
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend Server V2 (Linktree + QR Builder API) berjalan di port ${PORT}`));
