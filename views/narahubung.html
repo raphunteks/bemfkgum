@@ -317,69 +317,46 @@
             }
         }
 
-        // SUPER UPGRADE: Tangani Submit Form dengan membaca Dokumen Base64 (Gambar/PDF)
+        // Tangani Submit Form dengan aman
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const resultBox = document.getElementById('formResult');
             
             btn.disabled = true; 
-            btn.innerText = "Membaca Dokumen & Mengirim Pesan...";
+            btn.innerText = "Mengirim Pesan...";
             resultBox.style.display = 'none';
 
-            // Ekstrak Form Helper Function
-            const processSubmit = async (dokumenData) => {
-                const payload = {
-                    nama: document.getElementById('nama').value,
-                    kontak: `${contactType}: ${document.getElementById('kontak').value}`,
-                    subjek: document.getElementById('subjekSelect').value === 'Lainnya' ? document.getElementById('subjekManual').value : document.getElementById('subjekSelect').value,
-                    pesan: document.getElementById('pesan').value,
-                    dokumen: dokumenData // <--- Mengirim Base64 Dokumen ke Server
-                };
-
-                try {
-                    let apiUrl = '/api/message';
-                    if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                        apiUrl = 'https://bemkbmfkgumi.com/api/message';
-                    }
-
-                    const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-                    if(res.ok) {
-                        resultBox.innerHTML = '✅ Pesan dan Lampiran berhasil dikirim ke sistem BEM FKG UMI!';
-                        resultBox.className = 'success-box';
-                        e.target.reset();
-                        toggleManualSubject();
-                    } else throw new Error();
-                } catch (error) {
-                    // Fallback jika API Offline
-                    console.warn("API Offline / Redis Down. Simulasi Form Berjalan.");
-                    resultBox.innerHTML = '⚠️ <strong>Mode Offline Aktif</strong><br>Koneksi server gagal, namun pesan Anda tetap tercatat dalam cache.';
-                    resultBox.className = 'error-box';
-                }
-                
-                resultBox.style.display = 'block';
-                btn.disabled = false; 
-                btn.innerText = "Kirim Pesan Sekarang";
+            const payload = {
+                nama: document.getElementById('nama').value,
+                kontak: `${contactType}: ${document.getElementById('kontak').value}`,
+                subjek: document.getElementById('subjekSelect').value === 'Lainnya' ? document.getElementById('subjekManual').value : document.getElementById('subjekSelect').value,
+                pesan: document.getElementById('pesan').value
             };
 
-            // Baca File Jika Ada Menggunakan FileReader
-            const fileInput = document.getElementById('dokumen');
-            if(fileInput.files.length > 0) {
-                const reader = new FileReader();
-                reader.readAsDataURL(fileInput.files[0]);
-                reader.onload = async () => {
-                    await processSubmit(reader.result); // Mengirim base64 string
-                };
-                reader.onerror = () => {
-                    resultBox.innerHTML = '⚠️ Gagal membaca file yang dilampirkan.';
-                    resultBox.className = 'error-box';
-                    resultBox.style.display = 'block';
-                    btn.disabled = false; 
-                    btn.innerText = "Kirim Pesan Sekarang";
-                };
-            } else {
-                await processSubmit(null); // Mengirim pesan tanpa lampiran file
+            try {
+                let apiUrl = '/api/message';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/message';
+                }
+
+                const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                if(res.ok) {
+                    resultBox.innerHTML = '✅ Pesan berhasil dikirim ke sistem BEM FKG UMI!';
+                    resultBox.className = 'success-box';
+                    e.target.reset();
+                    toggleManualSubject();
+                } else throw new Error();
+            } catch (error) {
+                // Fallback jika API Offline
+                console.warn("API Offline / Redis Down. Simulasi Form Berjalan.");
+                resultBox.innerHTML = '⚠️ <strong>Mode Offline Aktif</strong><br>Koneksi server gagal, namun pesan Anda tetap tercatat dalam cache.';
+                resultBox.className = 'error-box';
             }
+            
+            resultBox.style.display = 'block';
+            btn.disabled = false; 
+            btn.innerText = "Kirim Pesan Sekarang";
         });
 
         // Initialize Observer & Data Fetching dari Database
