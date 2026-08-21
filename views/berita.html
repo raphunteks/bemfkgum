@@ -185,6 +185,22 @@
                 }
               ]
             }
+            <% if (typeof latestArticles !== 'undefined' && latestArticles.length > 0) { %>
+            ,{
+              "@type": "ItemList",
+              "@id": "https://bemkbmfkgumi.com/berita#itemlist",
+              "name": "Daftar Publikasi Pubmed BEM KBMFKG UMI",
+              "itemListElement": [
+                <% latestArticles.forEach(function(art, index) { %>
+                {
+                  "@type": "ListItem",
+                  "position": <%= index + 1 %>,
+                  "url": "https://bemkbmfkgumi.com/berita/<%= art.Slug_URL || art.ID_Berita %>"
+                }<%= index < latestArticles.length - 1 ? ',' : '' %>
+                <% }); %>
+              ]
+            }
+            <% } %>
           ]
         }
     <% } %>
@@ -236,6 +252,13 @@
     <div style="display:none;" itemscope itemtype="https://schema.org/SiteNavigationElement" aria-hidden="true">
         <a itemprop="url" href="https://bemkbmfkgumi.com/" title="Beranda BEM KBMFKG UMI"><span itemprop="name">Beranda (Halaman Perujuk)</span></a>
         <a itemprop="url" href="https://bemkbmfkgumi.com/berita" title="Portal Berita Pubmed"><span itemprop="name">Portal Berita Pubmed</span></a>
+        
+        <!-- SEO INTERNAL LINKS FOR GOOGLEBOT (REFERRER FIX) -->
+        <% if (typeof latestArticles !== 'undefined' && latestArticles.length > 0 && !articleInfo) { %>
+            <% latestArticles.forEach(function(art) { %>
+                <a itemprop="url" href="<%= siteUrl %>/berita/<%= art.Slug_URL || art.ID_Berita %>"><span itemprop="name"><%= art.Judul %></span></a>
+            <% }); %>
+        <% } %>
     </div>
 
     <!-- ================= BEM STANDAR HEADER ================= -->
