@@ -20,17 +20,17 @@
 <body>
 
 <!-- ================== LOGIN GATE (SECURITY) ================== -->
-<div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-main); z-index:99999; display:flex; justify-content:center; align-items:center; transition: opacity 0.5s;">
-    <div class="neo-card" style="width: 100%; max-width: 420px; text-align:center; padding: 40px 30px; margin: 20px;">
-        <img src="/img/bemfkgumi.png" alt="Logo" style="height: 70px; margin-bottom: 20px;">
-        <h2 style="margin-bottom: 10px; font-size: 1.8rem;">Portal Admin</h2>
-        <p style="color: #475569; font-size: 0.95rem; margin-bottom: 30px; font-weight: 700;">Sistem Manajemen QR Code Organisasi</p>
+<div id="loginGate" class="login-gate">
+    <div class="neo-card login-card">
+        <img src="/img/bemfkgumi.png" alt="Logo" class="login-logo">
+        <h2 class="login-title">Portal Admin</h2>
+        <p class="login-subtitle">Sistem Manajemen QR Code Organisasi</p>
         
         <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin" aria-label="Username">
         <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin" aria-label="Password">
         
-        <button class="neo-btn primary block" onclick="login()" style="margin-top: 10px;">Akses Sistem</button>
-        <div id="loginError" style="color: var(--danger); margin-top: 15px; font-size: 0.95rem; display: none; font-weight: 800;" aria-live="polite">Kredensial tidak valid.</div>
+        <button class="neo-btn primary block login-btn" onclick="login()">Akses Sistem</button>
+        <div id="loginError" class="login-error" aria-live="polite">Kredensial tidak valid.</div>
     </div>
 </div>
 
@@ -53,9 +53,12 @@
             <button class="sidebar-link editor-only" onclick="switchTab('logo')" style="display:none;">🖼️ Sisip Logo/Teks</button>
         </nav>
         
+        <!-- BUTTON NAVIGASI ADMIN ENTERPRISE -->
         <div class="sidebar-bottom">
-            <a href="/admin" class="neo-btn accent block">⬅ Kembali ke Admin</a>
-            <button class="neo-btn danger block" style="margin-top: 12px;" onclick="logout()">🚪 Keluar System</button>
+            <a href="/admin" class="neo-btn accent block">⬅ Admin Utama</a>
+            <a href="/admin-linktree" class="neo-btn secondary block">🌳 Admin Linktree</a>
+            <a href="/admin-v2" class="neo-btn purple block">📝 Admin Form</a>
+            <button class="neo-btn danger block" onclick="logout()">🚪 Keluar System</button>
         </div>
     </aside>
 
@@ -315,13 +318,17 @@
     document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('axa_admin_token');
         if (token) {
+            // Unlocks dashboard if token exists
             document.getElementById('loginGate').style.display = 'none';
             document.getElementById('main-layout').style.display = 'flex';
+            // Slight delay for smooth transition
             setTimeout(() => { document.getElementById('main-layout').style.opacity = '1'; }, 50);
             
+            // Proceed to load data & initialize builder
             loadAllQRCodes();
             qrCodeInstance = new QRCodeStyling(getQROptions(state));
         } else {
+            // Blocks the dashboard if no token
             document.getElementById('loginGate').style.display = 'flex';
         }
     });
@@ -353,6 +360,7 @@
                 throw new Error();
             }
         } catch(e) {
+            // Fallback for Local Canvas Simulation
             if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
                 localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); 
                 showToast("✅ Simulasi Canvas Aktif."); 
@@ -371,6 +379,7 @@
             document.getElementById('loginGate').style.display = 'none'; 
             const layout = document.getElementById('main-layout');
             layout.style.display = 'flex'; 
+            // Trigger reflow
             layout.offsetHeight;
             layout.style.opacity = '1'; 
             
@@ -387,18 +396,25 @@
     // ================= STATE MANAGEMENT =================
     let allQRCodes = [];
     
+    // Default Configuration for qr-code-styling
     const defaultState = {
         id: '',
         projectName: 'QR Code Baru',
         dataType: 'url',
         data: 'https://bemkbmfkgumi.com',
+        
+        // Colors
         dotsColor: '#0f172a',
         cornerColor: '#facc15',
         bgColor: '#ffffff',
         bgTransparent: false,
+        
+        // Shapes
         dotsType: 'square',
         cornerSquareType: 'square',
         cornerDotType: 'square',
+        
+        // Center Settings (Logo or Text)
         centerMode: 'none',
         image: '',
         centerText: 'BEM',
@@ -413,7 +429,8 @@
     let qrCodeInstance = null;
 
     function toggleMobileMenu() {
-        document.getElementById('sidebarNav').classList.toggle('show');
+        const nav = document.getElementById('sidebarNav');
+        nav.classList.toggle('show');
     }
 
     // ================= UI & TAB CONTROLLER =================
