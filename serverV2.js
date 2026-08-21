@@ -47,6 +47,22 @@ const safeParse = (data, fallbackData) => {
     }
 };
 
+// ================= ENDPOINT AUTENTIKASI ADMIN (SECURITY) =================
+// Disesuaikan agar sama seperti server utama (server.js)
+app.post('/api/admin/auth', (req, res) => {
+    const { username, password } = req.body;
+    
+    // Fallback kredensial persis seperti server utama Anda
+    const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
+    const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
+
+    if (username === validUser && password === validPass) {
+        res.status(200).json({ success: true, token: 'AXA-XYZ-SECURE-TOKEN' });
+    } else {
+        res.status(401).json({ success: false, message: 'Kredensial salah!' });
+    }
+});
+
 // ================= RUTE FRONTEND ADMIN =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
 
