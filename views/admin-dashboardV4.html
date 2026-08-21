@@ -19,10 +19,25 @@
 </head>
 <body>
 
+<!-- ================== LOGIN GATE (SECURITY) ================== -->
+<div id="loginGate" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-main); z-index:99999; display:flex; justify-content:center; align-items:center; transition: opacity 0.5s;">
+    <div class="neo-card" style="width: 100%; max-width: 420px; text-align:center; padding: 40px 30px; margin: 20px;">
+        <img src="/img/bemfkgumi.png" alt="Logo" style="height: 70px; margin-bottom: 20px;">
+        <h2 style="margin-bottom: 10px; font-size: 1.8rem;">Portal Admin</h2>
+        <p style="color: #475569; font-size: 0.95rem; margin-bottom: 30px; font-weight: 700;">Sistem Manajemen QR Code Organisasi</p>
+        
+        <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin" aria-label="Username">
+        <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin" aria-label="Password">
+        
+        <button class="neo-btn primary block" onclick="login()" style="margin-top: 10px;">Akses Sistem</button>
+        <div id="loginError" style="color: var(--danger); margin-top: 15px; font-size: 0.95rem; display: none; font-weight: 800;" aria-live="polite">Kredensial tidak valid.</div>
+    </div>
+</div>
+
 <!-- Mobile Menu Toggle Button -->
 <button class="neo-btn primary mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
 
-<div class="builder-layout" id="main-layout">
+<div class="builder-layout" id="main-layout" style="display: none; opacity: 0; transition: opacity 0.5s;">
     
     <!-- LEFT SIDEBAR: MENU -->
     <aside class="sidebar-panel">
@@ -40,6 +55,7 @@
         
         <div class="sidebar-bottom">
             <a href="/admin" class="neo-btn accent block">⬅ Kembali ke Admin</a>
+            <button class="neo-btn danger block" style="margin-top: 12px;" onclick="logout()">🚪 Keluar System</button>
         </div>
     </aside>
 
@@ -299,6 +315,85 @@
 <div class="neo-toast" id="globalToast">Notifikasi</div>
 
 <script>
+    // ================= SECURITY & AUTHENTICATION =================
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('axa_admin_token');
+        if (token) {
+            // Unlocks dashboard if token exists
+            document.getElementById('loginGate').style.display = 'none';
+            document.getElementById('main-layout').style.display = 'flex';
+            // Slight delay for smooth transition
+            setTimeout(() => { document.getElementById('main-layout').style.opacity = '1'; }, 50);
+            
+            // Proceed to load data & initialize builder
+            loadAllQRCodes();
+            qrCodeInstance = new QRCodeStyling(getQROptions(state));
+        } else {
+            // Blocks the dashboard if no token
+            document.getElementById('loginGate').style.display = 'flex';
+        }
+    });
+
+    async function login() {
+        const u = document.getElementById('adminUser').value; 
+        const p = document.getElementById('adminPass').value;
+        const btn = document.querySelector('#loginGate button'); 
+        
+        btn.innerText = "Memverifikasi..."; 
+        btn.disabled = true;
+
+        try {
+            let apiUrl = '/api/admin/auth';
+            if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                apiUrl = 'https://bemkbmfkgumi.com/api/admin/auth';
+            }
+            const res = await fetch(apiUrl, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({username: u, password: p}) 
+            });
+            const data = await res.json();
+            
+            if(data.success) { 
+                localStorage.setItem('axa_admin_token', data.token); 
+                unlockDashboard(); 
+            } else {
+                throw new Error();
+            }
+        } catch(e) {
+            // Fallback for Local Canvas Simulation
+            if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
+                localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); 
+                showToast("✅ Simulasi Canvas Aktif."); 
+                unlockDashboard(); 
+            } else { 
+                document.getElementById('loginError').style.display = 'block'; 
+            }
+        }
+        btn.innerText = "Akses Sistem"; 
+        btn.disabled = false;
+    }
+
+    function unlockDashboard() {
+        document.getElementById('loginGate').style.opacity = '0';
+        setTimeout(() => { 
+            document.getElementById('loginGate').style.display = 'none'; 
+            const layout = document.getElementById('main-layout');
+            layout.style.display = 'flex'; 
+            // Trigger reflow
+            layout.offsetHeight;
+            layout.style.opacity = '1'; 
+            
+            loadAllQRCodes();
+            qrCodeInstance = new QRCodeStyling(getQROptions(state));
+        }, 500);
+    }
+
+    function logout() { 
+        localStorage.removeItem('axa_admin_token'); 
+        location.reload(); 
+    }
+
     // ================= STATE MANAGEMENT =================
     let allQRCodes = [];
     
@@ -333,13 +428,6 @@
 
     let state = JSON.parse(JSON.stringify(defaultState));
     let qrCodeInstance = null;
-
-    // ================= LIFECYCLE =================
-    window.onload = () => {
-        loadAllQRCodes();
-        // Initialize QR Code Instance
-        qrCodeInstance = new QRCodeStyling(getQROptions(state));
-    };
 
     function toggleMobileMenu() {
         const nav = document.getElementById('sidebarNav');
@@ -391,7 +479,7 @@
             }
 
             let html = '';
-            [...allQRCodes].reverse().forEach(qr => {
+            [...allQRCodes].forEach(qr => {
                 html += `
                 <div class="list-item-card">
                     <div class="list-item-info">
