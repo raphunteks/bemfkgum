@@ -284,7 +284,7 @@
         </div>
 
         <div class="preview-actions editor-only" style="display:none;">
-            <button class="neo-btn block" style="background:#fff;" onclick="downloadQR('png')">📥 Download PNG Super-HD (WA Ready)</button>
+            <button class="neo-btn block" style="background:#fff;" onclick="downloadQR('png')">📥 Download PNG Super-HD 2K (WA Ready)</button>
             <button class="neo-btn block" style="background:#fff;" onclick="downloadQR('svg')">📥 Download Format SVG</button>
         </div>
     </section>
@@ -318,17 +318,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('axa_admin_token');
         if (token) {
-            // Unlocks dashboard if token exists
             document.getElementById('loginGate').style.display = 'none';
             document.getElementById('main-layout').style.display = 'flex';
-            // Slight delay for smooth transition
             setTimeout(() => { document.getElementById('main-layout').style.opacity = '1'; }, 50);
             
-            // Proceed to load data & initialize builder
             loadAllQRCodes();
             qrCodeInstance = new QRCodeStyling(getQROptions(state));
         } else {
-            // Blocks the dashboard if no token
             document.getElementById('loginGate').style.display = 'flex';
         }
     });
@@ -360,7 +356,6 @@
                 throw new Error();
             }
         } catch(e) {
-            // Fallback for Local Canvas Simulation
             if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
                 localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); 
                 showToast("✅ Simulasi Canvas Aktif."); 
@@ -379,7 +374,6 @@
             document.getElementById('loginGate').style.display = 'none'; 
             const layout = document.getElementById('main-layout');
             layout.style.display = 'flex'; 
-            // Trigger reflow
             layout.offsetHeight;
             layout.style.opacity = '1'; 
             
@@ -396,25 +390,21 @@
     // ================= STATE MANAGEMENT =================
     let allQRCodes = [];
     
-    // Default Configuration for qr-code-styling
     const defaultState = {
         id: '',
         projectName: 'QR Code Baru',
         dataType: 'url',
         data: 'https://bemkbmfkgumi.com',
         
-        // Colors
         dotsColor: '#0f172a',
         cornerColor: '#facc15',
         bgColor: '#ffffff',
         bgTransparent: false,
         
-        // Shapes
         dotsType: 'square',
         cornerSquareType: 'square',
         cornerDotType: 'square',
         
-        // Center Settings (Logo or Text)
         centerMode: 'none',
         image: '',
         centerText: 'BEM',
@@ -707,20 +697,20 @@
         renderLivePreview();
     }
 
-    // ================= SUPER BIG UPGRADE: ULTRA-HD TEXT CONVERTER (1024px) =================
+    // ================= SUPER BIG UPGRADE: ULTRA-HD TEXT CONVERTER (2048px) =================
     function createCenterTextImage() {
         if(!state.centerText) return '';
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
-        // UPGRADE RESOLUSI CANVAS KE 1024PX AGAR SANGAT TAJAM DAN STANDAR SOSMED
-        const size = 1024; 
+        // UPGRADE RESOLUSI CANVAS TEKS KE 2048PX AGAR SEJAJAR DENGAN BASE 2K
+        const size = 2048; 
         canvas.width = size; canvas.height = size;
         
         ctx.fillStyle = state.centerTextBgColor || '#000';
         if (state.centerTextRounded) {
             ctx.beginPath();
-            ctx.roundRect(0, 0, size, size, 200); // Radius round adjusted for 1024px scale
+            ctx.roundRect(0, 0, size, size, 400); // Radius bundar di-scale up
             ctx.fill();
         } else { ctx.fillRect(0, 0, size, size); }
 
@@ -732,23 +722,24 @@
         return canvas.toDataURL('image/png');
     }
 
-    // ================= SUPER BIG UPGRADE: 1024x1024 SUPER HD QR GENERATOR =================
+    // ================= SUPER BIG UPGRADE: 2048x2048 2K HD QR GENERATOR =================
     function getQROptions(s) {
         let centerImageUri = '';
         if (s.centerMode === 'image' && s.image) centerImageUri = s.image;
         else if (s.centerMode === 'text' && s.centerText) centerImageUri = createCenterTextImage();
 
         return {
-            // UPGRADE RESOLUSI KE 1024x1024PX (SWEET SPOT ANTI BLUR WHATSAPP & SOSMED)
-            width: 1024,
-            height: 1024,
+            // UPGRADE RESOLUSI KE 2048x2048PX (2K UHD)
+            // Ini akan meretas filter WA agar menampilkan opsi HD!
+            width: 2048,
+            height: 2048,
             data: s.data || "https://bemkbmfkgumi.com",
             margin: 0,
             qrOptions: { typeNumber: 0, mode: "Byte", errorCorrectionLevel: "H" },
             imageOptions: {
                 hideBackgroundDots: s.hideBgDots,
                 imageSize: parseFloat(s.imageSize) || 0.4,
-                margin: 20, 
+                margin: 40, // Margin disesuaikan agar proporsional di kanvas 2048px
                 crossOrigin: "anonymous"
             },
             dotsOptions: { color: s.dotsColor, type: s.dotsType },
@@ -772,9 +763,9 @@
         if(!qrCodeInstance) return;
         let filename = state.projectName ? state.projectName.replace(/\s+/g, '_') : 'BEM_QRCode_HD';
         
-        // Download now will generate a crisp 1024x1024px image due to base settings
+        // Memicu download dengan resolusi yang kini sangat besar (2K)
         qrCodeInstance.download({ name: filename, extension: extension });
-        showToast(`📥 Mengunduh Format ${extension.toUpperCase()} Super-HD (1024x1024)...`);
+        showToast(`📥 Mengunduh Format ${extension.toUpperCase()} Super-HD 2K (2048x2048)...`);
     }
 
     // ================= CUSTOM ALERTS =================
