@@ -105,7 +105,14 @@
                 <button onclick="switchSection('team', this)" style="color: #3b82f6;"><span aria-hidden="true">🧑‍💻</span> Developer Team</button>
                 <button onclick="switchSection('kontak', this)" style="color: #10b981;"><span aria-hidden="true">📞</span> Manajemen Narahubung</button>
                 <button onclick="switchSection('pengaturan', this)" style="color: var(--accent-neon);"><span aria-hidden="true">⚙️</span> Header & Footer</button>
-                <button onclick="logout()" style="margin-top: 30px; color: #ef4444;"><span aria-hidden="true">🚪</span> Logout</button>
+                
+                <!-- Navigasi ke Modul Eksternal Admin -->
+                <div style="width: 100%; height: 1px; background: var(--border-light); margin: 25px 0 10px 0;"></div>
+                <button onclick="window.location.href='/admin-v2'" style="color: #a78bfa;"><span aria-hidden="true">📝</span> Admin Form</button>
+                <button onclick="window.location.href='/admin-linktree'" style="color: #38bdf8;"><span aria-hidden="true">🌳</span> Admin Linktree</button>
+                <button onclick="window.location.href='/admin-qrcode'" style="color: #facc15;"><span aria-hidden="true">🔳</span> Admin QR Code</button>
+
+                <button onclick="logout()" style="margin-top: 20px; color: #ef4444;"><span aria-hidden="true">🚪</span> Logout</button>
             </nav>
         </aside>
 
