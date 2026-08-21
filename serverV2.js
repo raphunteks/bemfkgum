@@ -48,7 +48,7 @@ const safeParse = (data, fallbackData) => {
 };
 
 // ================= ENDPOINT AUTENTIKASI ADMIN (SECURITY) =================
-// Disesuaikan agar sama seperti server utama (server.js)
+// Disesuaikan agar sama seperti server utama (server.js) untuk otentikasi UI Dashboard
 app.post('/api/admin/auth', (req, res) => {
     const { username, password } = req.body;
     
@@ -207,18 +207,34 @@ app.delete('/api/linktrees/:id', async (req, res) => {
 
 // ================= ENDPOINT API QR CODES (NEW UPGRADE) =================
 // Arsitektur Penyimpanan Database: BEM_QRCodes (String Pattern) untuk SEO Standardisasi
-app.get('/api/qrcodes', async (req, res) => {
+// SUPER FIX: Menggunakan Array Multiple Route (Dengan/Tanpa Slash) untuk Cegah 404 Vercel
+app.get(['/api/qrcodes', '/api/qrcodes/'], async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
+        
+        // 1. Dapatkan semua Keys dengan Namespace BEM_QRCodes
         const keys = await redis.keys('BEM_QRCodes:*');
         let parsedQRs = [];
         
-        if(keys.length > 0) {
+        // 2. Aman dari Crash jika Database Kosong
+        if(keys && keys.length > 0) {
             const raw = await redis.mget(...keys);
+            
             parsedQRs = raw.filter(i => i != null).map(item => safeParse(item, {}));
+            
+            // 3. Urutkan berdasarkan waktu terakhir diubah (Terbaru di atas)
+            parsedQRs.sort((a, b) => {
+                const dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0);
+                const dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
+                return dateB - dateA;
+            });
         }
+        
         res.status(200).json({ success: true, data: parsedQRs });
-    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+    } catch (e) { 
+        console.error("Gagal load QR Codes:", e.message);
+        res.status(500).json({ success: false, message: e.message }); 
+    }
 });
 
 app.post('/api/qrcodes/save', async (req, res) => {
@@ -227,13 +243,18 @@ app.post('/api/qrcodes/save', async (req, res) => {
         const payload = req.body;
         
         if(!payload.id) payload.id = `QR-${Date.now()}`;
+        
+        // Bubuhkan Timestamp untuk Sorting saat diload
         payload.updatedAt = new Date().toISOString();
         
         const redisKey = `BEM_QRCodes:${payload.id}`;
         await redis.set(redisKey, JSON.stringify(payload));
         
         res.status(200).json({ success: true, message: "Desain QR Code disimpan ke Cloud!", data: payload });
-    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+    } catch (e) { 
+        console.error("Gagal menyimpan QR Codes:", e.message);
+        res.status(500).json({ success: false, message: e.message }); 
+    }
 });
 
 app.delete('/api/qrcodes/:id', async (req, res) => {
@@ -241,7 +262,9 @@ app.delete('/api/qrcodes/:id', async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         await redis.del(`BEM_QRCodes:${req.params.id}`);
         res.status(200).json({ success: true, message: "QR Code Permanen Dihapus" });
-    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+    } catch (e) { 
+        res.status(500).json({ success: false, message: e.message }); 
+    }
 });
 
 const PORT = process.env.PORT || 3001;
