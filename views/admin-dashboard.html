@@ -905,6 +905,7 @@
             renderProker(); 
         }
 
+        // --- RENDER KALENDER / AGENDA CMS ---
         function renderKalender() {
             const cont = document.getElementById('cmsKalender'); cont.innerHTML = '';
             (db.kalender || []).forEach((k, i) => { 
@@ -1091,6 +1092,7 @@
         }
         function tambahKategoriTeam() { if(!db.team) db.team = []; db.team.push({category: "Kategori Baru", members: []}); renderTeam(); }
 
+        // Murni Merender Tabel saja, tidak ikut memfetch
         function renderTabel() {
             const tbodyA = document.getElementById('tableBodyAspirasi'); tbodyA.innerHTML = '';
             if (aspirasiData.length === 0) {
@@ -1107,6 +1109,7 @@
             }
         }
         
+        // SUPER UPGRADE: Ganti confirm bawaan Chrome dengan Custom Confirm Glassmorphism
         function deleteData(type, id) {
             showCustomConfirm("PERINGATAN: Apakah Anda yakin ingin menghapus interaksi ini secara permanen?", async function() {
                 try {
@@ -1139,6 +1142,7 @@
         function viewAspirasi(id) { const data = aspirasiData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Detail Aspirasi " + data.id; document.getElementById('modalContent').innerHTML = `<p><strong>Kategori:</strong> ${data.kategori} | <strong>Jenis:</strong> ${data.jenis}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.isi}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
         function viewPesan(id) { const data = pesanData.find(x => x.id === id); if(!data) return; document.getElementById('modalTitle').innerText = "Pesan Masuk"; document.getElementById('modalContent').innerHTML = `<p><strong>Dari:</strong> ${data.nama} (${data.kontak})</p><p><strong>Subjek:</strong> ${data.subjek}</p><p><strong>Isi:</strong><br><div style="background:var(--bg-dark-overlay); padding:15px; margin-top:5px; border-radius:5px; border:1px solid var(--border-light);">${data.pesan}</div></p>`; document.getElementById('detailModal').classList.add('active'); }
 
+        // --- RENDER RADAR BEM CMS ---
         function renderRadar() {
             const cont = document.getElementById('cmsRadar'); cont.innerHTML = '';
             (db.radar || []).forEach((r, i) => {
@@ -1259,7 +1263,7 @@
         async function previewArtImage(input) {
             if (input.files && input.files[0]) {
                 const base64 = await fileToBase64(input.files[0]);
-                updateArtPreviewUI(`data:${input.files[0].type};base64,${base64}`);
+                updateArtPreviewUI(base64);
                 document.getElementById('artGambar').value = '';
             }
         }
