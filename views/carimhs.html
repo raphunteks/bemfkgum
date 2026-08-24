@@ -52,7 +52,6 @@
         const btnMhs = document.getElementById('btn-mode-mhs');
         const btnCiv = document.getElementById('btn-mode-civ');
         const input = document.getElementById('search-input');
-        const helperText = document.getElementById('default-helper-text');
 
         // Reset Hasil Pencarian jika ganti mode
         document.getElementById('result-container').innerHTML = `<div class="neo-card neo-bg-white text-center" style="padding: 40px;" id="default-helper-text"></div>`;
@@ -106,14 +105,12 @@
                 let html = '';
                 json.data.forEach(item => {
                     
-                    // ===============================================================
-                    // SMART EXTRACTION: Mendeteksi isi data walau ID Form-nya dinamis
-                    // ===============================================================
                     let d_id = '-';
                     let d_nama = '-';
                     let d_desc = '-'; 
                     let d_status = 'Aktif';
                     let d_tipe = ''; // Khusus Civitas
+                    let d_tipe_url = searchMode; // Parameter URL spesifik untuk tombol Detail
 
                     if (searchMode === 'mhs') {
                         d_id = item.nim || item.NIM || '-';
@@ -125,7 +122,10 @@
                         }
                     } else {
                         d_id = item.nip || item.NIP || item.nidn || item.NIDN || '-';
-                        d_tipe = (item.tipe_pegawai || 'Civitas').toUpperCase();
+                        d_tipe = (item.tipe_pegawai || 'civitas');
+                        d_tipe_url = d_tipe.toLowerCase(); // Penting: mengirim 'dosen' atau 'civitas'
+                        d_tipe = d_tipe.toUpperCase();
+
                         for(let key in item) {
                             let k = key.toLowerCase();
                             if(k.includes('nama')) d_nama = item[key];
@@ -142,7 +142,6 @@
                     else if (st_lower.includes('cuti') || st_lower.includes('belajar') || st_lower.includes('tb')) statusColor = 'neo-bg-yellow';
                     else if (st_lower.includes('do') || st_lower.includes('keluar')) statusColor = 'neo-bg-pink';
                     
-                    // Elemen khusus untuk membedakan tampilan hasil pencarian
                     let descBadge = searchMode === 'mhs' 
                         ? `<span class="neo-badge neo-bg-yellow" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_desc}</span>`
                         : `<span class="neo-badge neo-bg-white" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_desc}</span>`;
@@ -161,11 +160,10 @@
                             <div>
                                 ${typeBadgeHtml}
                                 ${descBadge}
-                                <span class="neo-badge ${statusColor}" style="font-size: 0.95rem; padding: 6px 14px;">${d_status}</span>
+                                <span class="neo-badge ${statusColor}" style="font-size: 0.95rem; padding: 6px 14px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${d_status}</span>
                             </div>
                         </div>
-                        <!-- Parameter type dikirim ke halaman detail untuk logic API -->
-                        <a href="/carimhs/detail?nim=${encodeURIComponent(d_id)}&type=${searchMode}" class="neo-btn neo-bg-blue" style="text-decoration:none; padding:15px 35px; font-size: 1.1rem;">Lihat Detail 👁️</a>
+                        <a href="/carimhs/detail?nim=${encodeURIComponent(d_id)}&type=${d_tipe_url}" class="neo-btn neo-bg-blue" style="text-decoration:none; padding:15px 35px; font-size: 1.1rem;">Lihat Detail 👁️</a>
                     </div>`;
                 });
                 
