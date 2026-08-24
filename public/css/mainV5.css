@@ -1,7 +1,7 @@
 /* FILE: public/css/mainV5.css */
 /* =========================================================
    BEM PDDIKTI UI - NEUBRUTALISM AESTHETIC V5
-   COLORFUL, PLAYFUL, BOLD & RESPONSIVE
+   COLORFUL, PLAYFUL, BOLD & SUPER RESPONSIVE
    ========================================================= */
 
 :root {
@@ -25,7 +25,10 @@
     --neo-shadow-active: 0px 0px 0px transparent;
 }
 
-* { box-sizing: border-box; }
+* { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent;
+}
 
 body { 
     background: var(--bg-main); 
@@ -57,14 +60,22 @@ body {
     box-shadow: 8px 8px 0px var(--line-color);
     transition: transform 0.2s, box-shadow 0.2s;
     color: var(--text-main);
+    background: var(--bg-white);
 }
 
 /* Component: Buttons */
 .neo-btn {
-    display: inline-block; border: 3px solid var(--line-color); border-radius: 8px;
-    padding: 12px 24px; font-family: 'Space Mono', monospace; font-weight: 700;
-    color: var(--text-main); box-shadow: 4px 4px 0px var(--line-color);
-    cursor: pointer; transition: all 0.15s ease-out; text-align: center;
+    display: inline-block; 
+    border: 3px solid var(--line-color); 
+    border-radius: 8px;
+    padding: 12px 24px; 
+    font-family: 'Space Mono', monospace; 
+    font-weight: 700;
+    color: var(--text-main); 
+    box-shadow: 4px 4px 0px var(--line-color);
+    cursor: pointer; 
+    transition: all 0.15s ease-out; 
+    text-align: center;
 }
 .neo-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--line-color); }
 .neo-btn:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0px transparent; }
@@ -74,38 +85,64 @@ body {
 /* Component: Inputs */
 .neo-label { display: block; font-family: 'Space Mono', monospace; font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; }
 .neo-input {
-    width: 100%; padding: 16px 20px; border: 4px solid var(--line-color); border-radius: 8px;
-    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700;
-    color: var(--text-main); background: #fff; box-shadow: 4px 4px 0px rgba(0,0,0,0.1) inset;
-    transition: 0.2s; outline: none;
+    width: 100%; 
+    padding: 16px 20px; 
+    border: 4px solid var(--line-color); 
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    font-size: 1rem; 
+    font-weight: 700;
+    color: var(--text-main); 
+    background: #fff; 
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.1) inset;
+    transition: 0.2s; 
+    outline: none;
+    -webkit-appearance: none;
 }
 .neo-input:focus { background: var(--bg-yellow); box-shadow: none; }
 
 /* Component: Badges */
 .neo-badge {
-    border: 3px solid var(--line-color); padding: 5px 12px; border-radius: 20px;
-    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem;
-    box-shadow: 3px 3px 0px var(--line-color); display: inline-block;
+    border: 3px solid var(--line-color); 
+    padding: 5px 12px; 
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace; 
+    font-weight: 700; 
+    font-size: 0.85rem;
+    box-shadow: 3px 3px 0px var(--line-color); 
+    display: inline-block;
+    white-space: nowrap;
 }
 
 /* Component: Table */
-.neo-table { width: 100%; border-collapse: collapse; border: 4px solid var(--line-color); background: #fff; }
+.neo-table { width: 100%; border-collapse: collapse; border: 4px solid var(--line-color); background: #fff; min-width: 600px; }
 .neo-table th, .neo-table td { border: 3px solid var(--line-color); padding: 15px; text-align: left; }
 .neo-table th { font-family: 'Outfit', sans-serif; font-weight: 900; text-transform: uppercase; }
 .neo-table tr:hover { background-color: rgba(0,0,0,0.02); }
 
 /* Layout: Dashboard Structure */
 .builder-layout { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR DESKTOP */
 .sidebar-panel {
-    width: 280px; height: 100%; border-right: 4px solid var(--line-color);
-    display: flex; flex-direction: column; padding: 30px 25px; box-shadow: 5px 0px 0px rgba(0,0,0,0.05); z-index: 10;
+    width: 280px; 
+    height: 100%; 
+    border-right: 4px solid var(--line-color);
+    display: flex; 
+    flex-direction: column; 
+    padding: 30px 25px; 
+    box-shadow: 5px 0px 0px rgba(0,0,0,0.05); 
+    z-index: 10;
+    background: var(--bg-white);
 }
+
 .editor-panel { flex: 1; height: 100%; overflow-y: auto; padding: 40px 50px; }
+
 .brand-box {
     border: 4px solid var(--line-color); border-radius: 12px; padding: 15px; text-align: center;
-    box-shadow: 4px 4px 0px var(--line-color); margin-bottom: 40px;
+    box-shadow: 4px 4px 0px var(--line-color); margin-bottom: 30px;
 }
-.brand-box img { width: 60px; height: 60px; margin-bottom: 10px; border-radius: 50%; border:3px solid #000; background:#fff;}
+.brand-box img { width: 60px; height: 60px; margin-bottom: 10px; border-radius: 50%; border:3px solid #000; background:#fff; object-fit: cover;}
 
 .sidebar-nav { display: flex; flex-direction: column; gap: 15px; flex: 1; }
 .sidebar-link {
@@ -128,35 +165,133 @@ body {
 /* Tab System */
 .tab-content { display: none; animation: slideIn 0.3s ease; }
 .tab-content.active { display: block; }
-@keyframes slideIn { from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+@keyframes slideIn { from{ opacity:0; transform:translateY(15px); } to{ opacity:1; transform:translateY(0); } }
 
 /* Modals */
 .neo-modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none;
     align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(5px);
 }
-.neo-modal-overlay.active { display: flex; }
+.neo-modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
 .neo-modal-content {
-    width: 90%; border: 4px solid var(--line-color); border-radius: 16px; padding: 35px; box-shadow: 8px 8px 0px var(--line-color);
+    width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+    border: 4px solid var(--line-color); border-radius: 16px; padding: 35px; 
+    box-shadow: 8px 8px 0px var(--line-color); background: var(--bg-white);
 }
+@keyframes fadeIn { from{ opacity:0; transform:scale(0.95); } to{ opacity:1; transform:scale(1); } }
 
 .neo-toast {
     position: fixed; bottom: -100px; right: 20px; border: 3px solid var(--line-color);
     background: var(--bg-blue); color: #fff; padding: 15px 30px; border-radius: 8px; font-weight: 800; font-family:'Space Mono', monospace;
-    box-shadow: 5px 5px 0px var(--line-color); transition: 0.4s; z-index: 99999;
+    box-shadow: 5px 5px 0px var(--line-color); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 99999;
 }
 .neo-toast.show { bottom: 30px; }
 
 /* Login Gate */
-.login-gate { display: flex; flex-direction: column; }
-.login-logo { width: 90px; height: 90px; border-radius: 50%; border: 4px solid #000; box-shadow: 4px 4px 0px #000; margin-bottom: 20px;}
+.login-gate { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.login-card { width: 100%; max-width: 400px; text-align: center; }
+.login-logo { width: 90px; height: 90px; border-radius: 50%; border: 4px solid #000; box-shadow: 4px 4px 0px #000; margin-bottom: 20px; object-fit: cover;}
+.login-error { color: #ef4444; font-weight: 800; margin-top: 15px; display: none; }
 
-.mobile-menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 999; }
+/* Mobile Menu Toggle Button */
+.mobile-menu-toggle { 
+    display: none; 
+    position: fixed; 
+    top: 20px; 
+    left: 20px; 
+    z-index: 1001; /* Harus lebih tinggi dari sidebar */
+    padding: 10px 15px;
+    font-size: 1.5rem;
+    box-shadow: 4px 4px 0px var(--line-color);
+}
 
+
+/* =========================================================
+   RESPONSIVE LAYOUT ENGINE
+   ========================================================= */
+
+/* TABLET & MOBILE LANDSCAPE */
 @media (max-width: 992px) {
-    .builder-layout { flex-direction: column; overflow: auto; }
-    .sidebar-panel { position: fixed; top: 0; left: -100%; width: 300px; transition: 0.3s; z-index: 998; background:var(--bg-white);}
-    .sidebar-panel.show { left: 0; }
-    .editor-panel { padding: 80px 20px 40px; }
+    .builder-layout { flex-direction: column; overflow: auto; height: auto; display: block; }
+    
+    /* FIX LOGIKA MOBILE: Mendorong Sidebar Utuh (Anti-Crash JS Lama) */
+    .sidebar-panel { 
+        position: fixed; 
+        top: 0; 
+        left: -120%; /* Tersembunyi di luar layar */
+        width: 320px; 
+        max-width: 85vw;
+        height: 100vh; 
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        z-index: 1000; 
+        background: var(--bg-white);
+        box-shadow: 20px 0px 0px rgba(0,0,0,0.5); /* Shadow brutalist saat sidebar muncul */
+    }
+    
+    /* Auto-trigger: Jika JS lama men-toggle .show di sidebarNav, panel induk akan ditarik keluar */
+    .sidebar-panel.show,
+    .sidebar-panel:has(.show),
+    .sidebar-panel:has(#sidebarNav.show) { 
+        left: 0; 
+    }
+
+    /* Pastikan link navigasi selalu terlihat jika sidebar ditarik keluar */
+    .sidebar-nav { display: flex !important; }
+
+    /* Mencegah Konten Utama Tertutup Tombol Garis Tiga */
+    .editor-panel { padding: 90px 25px 40px 25px; width: 100%; }
+    
     .mobile-menu-toggle { display: block; }
+    
+    .grid-stats { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+}
+
+/* MOBILE PORTRAIT (SMARTPHONE) */
+@media (max-width: 768px) {
+    .grid-stats { grid-template-columns: 1fr; }
+    
+    .editor-header { 
+        flex-direction: column; 
+        text-align: center; 
+        gap: 20px;
+        padding: 30px 20px;
+    }
+    
+    .editor-header .neo-btn { width: 100%; }
+    
+    .neo-card { padding: 20px; }
+    
+    /* Optimasi Table Overflow di Layar Sempit */
+    .neo-table th, .neo-table td { padding: 12px; font-size: 0.9rem; }
+    
+    /* Tombol Aksi di Modal & Form Tumpuk ke bawah */
+    form div[style*="display: flex; gap: 10px; margin-top: 30px;"] {
+        flex-direction: column;
+    }
+    form div[style*="display: flex; gap: 10px; margin-top: 30px;"] button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    /* Button Filter Search Responsif */
+    div[style*="display: flex; gap: 15px; flex-wrap: wrap;"] {
+        flex-direction: column;
+    }
+    div[style*="display: flex; gap: 15px; flex-wrap: wrap;"] button,
+    div[style*="display: flex; gap: 15px; flex-wrap: wrap;"] input {
+        width: 100%;
+    }
+}
+
+/* ULTRA SMALL MOBILE */
+@media (max-width: 480px) {
+    .neo-heading { font-size: 1.8rem !important; }
+    .neo-heading-sm { font-size: 1.2rem; }
+    
+    .sidebar-panel { width: 85vw; padding: 20px 15px; }
+    .editor-panel { padding: 80px 15px 30px 15px; }
+    
+    .login-card { padding: 30px 20px; }
+    .neo-modal-content { padding: 25px 15px; border-width: 3px; box-shadow: 5px 5px 0px var(--line-color);}
 }
