@@ -52,6 +52,10 @@
         <nav class="sidebar-nav" id="sidebarNav">
             <button class="sidebar-link active" onclick="switchTab('dashboard')">📊 Dashboard</button>
             <button class="sidebar-link" onclick="switchTab('list')">🗂️ Data Mahasiswa</button>
+            
+            <!-- TAB BARU: MANAJEMEN FORM -->
+            <button class="sidebar-link" onclick="openFormTab()">📝 Manajemen Form (+ Mhs Baru)</button>
+            
             <button class="sidebar-link" onclick="switchTab('import')">📥 Import Excel (XLSX)</button>
         </nav>
         
@@ -111,12 +115,12 @@
             </div>
         </div>
 
-        <!-- TAB 1: DATA MAHASISWA (CRUD & SEARCHING) -->
+        <!-- TAB 1: DATA MAHASISWA (TABLE & SEARCHING) -->
         <div id="tab-list" class="tab-content">
             <div class="neo-card neo-bg-white" style="margin-bottom: 20px;">
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <input type="text" class="neo-input" id="search-mhs" placeholder="Cari NIM, Nama, atau Tahun Angkatan (Cth: 2020)..." onkeyup="filterTable()" style="flex:1;">
-                    <button class="neo-btn neo-bg-blue" onclick="openFormModal()">+ Tambah Mhs Baru</button>
+                    <button class="neo-btn neo-bg-blue" onclick="openFormTab()">+ Tambah Mhs Baru</button>
                     <button class="neo-btn neo-bg-yellow" onclick="loadAllMhs()">🔄 Refresh</button>
                 </div>
             </div>
@@ -141,7 +145,78 @@
             </div>
         </div>
 
-        <!-- TAB 2: IMPORT EXCEL (BULK) -->
+        <!-- TAB BARU: MANAJEMEN FORM (+ MHS BARU) -->
+        <div id="tab-form" class="tab-content">
+            <div class="neo-card neo-bg-white" style="max-width: 650px; margin: 0 auto;">
+                <h2 class="neo-heading-sm" id="form-title" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Manajemen Form (+ Mhs Baru)</h2>
+                
+                <form id="mhs-form" onsubmit="saveSingleMhs(event)">
+                    
+                    <!-- =========================================================================
+                         BAGIAN UPLOAD FOTO (BEBAS DIUBAH POSISINYA)
+                         ========================================================================= -->
+                    <div style="text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed #000; border-radius: 12px; background: #f8fafc;">
+                        <img id="preview-foto" src="/img/bemprofilmhs.png" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; object-fit: cover; margin-bottom: 15px; box-shadow: 4px 4px 0px #000;">
+                        <input type="file" id="inp-foto-file" accept="image/*" style="display: none;" onchange="uploadFotoMhs(this)">
+                        <input type="hidden" id="inp-foto-url" value="/img/bemprofilmhs.png">
+                        <br>
+                        <button type="button" class="neo-btn neo-bg-yellow" onclick="document.getElementById('inp-foto-file').click()">📸 Pilih Foto Profil (.jpg/.png)</button>
+                    </div>
+
+                    <!-- =========================================================================
+                         STRUKTUR INPUT FORM (BEBAS DIUBAH URUTANNYA, DIHAPUS, ATAU DIGANTI JENISNYA)
+                         Jika Ingin Mengubah Dropdown jadi Text Biasa, cukup ganti <select> jadi <input type="text">
+                         Pastikan ID ("inp-nim", "inp-nama", "inp-angkatan", "inp-prodi", "inp-status") tetap sama.
+                         ========================================================================= -->
+
+                    <!-- 1. INPUT NIM -->
+                    <div style="margin-bottom: 15px;">
+                        <label class="neo-label">Nomor Induk Mahasiswa (NIM)</label>
+                        <input type="text" class="neo-input" id="inp-nim" required placeholder="Cth: 16120200021">
+                    </div>
+                    
+                    <!-- 2. INPUT NAMA -->
+                    <div style="margin-bottom: 15px;">
+                        <label class="neo-label">Nama Lengkap</label>
+                        <input type="text" class="neo-input" id="inp-nama" required placeholder="Cth: DRG. M. AKSA ARSYAD, S.KG">
+                    </div>
+                    
+                    <!-- 3. INPUT ANGKATAN -->
+                    <div style="margin-bottom: 15px;">
+                        <label class="neo-label">Tahun Angkatan</label>
+                        <input type="number" class="neo-input" id="inp-angkatan" required placeholder="Cth: 2020">
+                    </div>
+                    
+                    <!-- 4. INPUT PRODI (BISA DIGANTI TEXT BIASA) -->
+                    <div style="margin-bottom: 15px;">
+                        <label class="neo-label">Program Studi</label>
+                        <select class="neo-input" id="inp-prodi" required>
+                            <option value="Kedokteran Gigi">Kedokteran Gigi</option>
+                            <option value="Profesi Dokter Gigi">Profesi Dokter Gigi</option>
+                        </select>
+                    </div>
+
+                    <!-- 5. INPUT STATUS (BISA DIGANTI TEXT BIASA) -->
+                    <div style="margin-bottom: 25px;">
+                        <label class="neo-label">Status Akademik</label>
+                        <select class="neo-input" id="inp-status" required>
+                            <option value="Aktif">Aktif</option>
+                            <option value="Cuti">Cuti</option>
+                            <option value="Lulus">Lulus</option>
+                            <option value="DO/Keluar">DO/Keluar</option>
+                        </select>
+                    </div>
+                    
+                    <!-- TOMBOL AKSI FORM -->
+                    <div style="display: flex; gap: 10px; margin-top: 30px;">
+                        <button type="button" class="neo-btn neo-bg-pink" style="flex:1;" onclick="cancelForm()">Batal</button>
+                        <button type="submit" class="neo-btn neo-bg-blue" style="flex:2;" id="btn-save-single">💾 Simpan Data MHS</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 3: IMPORT EXCEL (BULK) -->
         <div id="tab-import" class="tab-content">
             <div class="neo-card neo-bg-yellow">
                 <h2 class="neo-heading-sm" style="margin-bottom: 10px;">Bulk Upload Database (XLSX)</h2>
@@ -181,56 +256,9 @@
     </section>
 </div>
 
-<!-- ================== MODAL FORM MHS BARU / EDIT ================== -->
-<div class="neo-modal-overlay" id="formModal">
-    <div class="neo-modal-content neo-bg-white" style="max-width: 550px; max-height: 90vh; overflow-y:auto;">
-        <h2 class="neo-heading-sm" id="modal-title" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Manajemen Form MHS Baru</h2>
-        
-        <form id="mhs-form" onsubmit="saveSingleMhs(event)">
-            
-            <!-- UPLOAD FOTO PROFIL SECTION -->
-            <div style="text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed #000; border-radius: 12px; background: #f8fafc;">
-                <img id="preview-foto" src="/img/bemprofilmhs.png" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; object-fit: cover; margin-bottom: 15px; box-shadow: 4px 4px 0px #000;">
-                <input type="file" id="inp-foto-file" accept="image/*" style="display: none;" onchange="uploadFotoMhs(this)">
-                <input type="hidden" id="inp-foto-url" value="/img/bemprofilmhs.png">
-                <br>
-                <button type="button" class="neo-btn neo-bg-yellow" onclick="document.getElementById('inp-foto-file').click()">📸 Pilih Foto Profil (.jpg/.png)</button>
-            </div>
-
-            <label class="neo-label">Nomor Induk Mahasiswa (NIM)</label>
-            <input type="text" class="neo-input" id="inp-nim" required placeholder="Cth: 16120200021">
-            
-            <label class="neo-label" style="margin-top: 15px;">Nama Lengkap</label>
-            <input type="text" class="neo-input" id="inp-nama" required placeholder="Cth: DRG. M. AKSA ARSYAD, S.KG">
-            
-            <label class="neo-label" style="margin-top: 15px;">Tahun Angkatan</label>
-            <input type="number" class="neo-input" id="inp-angkatan" required placeholder="Cth: 2020">
-            
-            <label class="neo-label" style="margin-top: 15px;">Program Studi</label>
-            <select class="neo-input" id="inp-prodi" required>
-                <option value="Kedokteran Gigi">Kedokteran Gigi</option>
-                <option value="Profesi Dokter Gigi">Profesi Dokter Gigi</option>
-            </select>
-
-            <label class="neo-label" style="margin-top: 15px;">Status Akademik</label>
-            <select class="neo-input" id="inp-status" required>
-                <option value="Aktif">Aktif</option>
-                <option value="Cuti">Cuti</option>
-                <option value="Lulus">Lulus</option>
-                <option value="DO/Keluar">DO/Keluar</option>
-            </select>
-            
-            <div style="display: flex; gap: 10px; margin-top: 30px;">
-                <button type="button" class="neo-btn neo-bg-pink" style="flex:1;" onclick="closeFormModal()">Batal</button>
-                <button type="submit" class="neo-btn neo-bg-blue" style="flex:2;" id="btn-save-single">💾 Simpan Data MHS</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <!-- ================== CUSTOM ALERTS ================== -->
 <div class="neo-modal-overlay" id="customAlertModal">
-    <div class="neo-modal-content neo-bg-yellow" style="text-align: center;">
+    <div class="neo-modal-content neo-bg-yellow" style="text-align: center; max-width: 400px;">
         <h3 class="neo-heading-sm">⚠️ Pemberitahuan</h3>
         <p id="customAlertMessage" style="font-weight: 700; font-size: 1.1rem; margin: 20px 0;"></p>
         <button class="neo-btn neo-bg-white block" onclick="closeCustomAlert()">Mengerti</button>
@@ -322,7 +350,7 @@
             
             if(res.ok) {
                 const data = await res.json();
-                document.getElementById('inp-foto-url').value = data.url; // URL /api/uploads/xxx.jpg
+                document.getElementById('inp-foto-url').value = data.url; 
                 document.getElementById('preview-foto').src = data.url;
                 showToast("✅ Foto berhasil diunggah!");
             } else { throw new Error(); }
@@ -342,7 +370,12 @@
     function switchTab(tabId) {
         document.querySelectorAll('.sidebar-link').forEach(btn => btn.classList.remove('active'));
         let targetBtn = document.querySelector(`.sidebar-link[onclick="switchTab('${tabId}')"]`);
-        if(targetBtn) targetBtn.classList.add('active');
+        // Khusus tombol form (karena memanggil openFormTab), jika tidak ada cari berdasar nama
+        if(targetBtn) {
+            targetBtn.classList.add('active');
+        } else if(tabId === 'form') {
+            document.querySelector(`.sidebar-link[onclick="openFormTab()"]`).classList.add('active');
+        }
         
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
@@ -428,12 +461,12 @@
         document.getElementById('stat-date').innerText = timeStr;
     }
 
-    // ================= CRUD LOGIC (SINGLE) =================
+    // ================= CRUD LOGIC (TAB FORM) =================
     let isEditMode = false;
 
-    function openFormModal() {
+    function openFormTab() {
         isEditMode = false;
-        document.getElementById('modal-title').innerText = "Manajemen Form MHS Baru";
+        document.getElementById('form-title').innerText = "Manajemen Form (+ Mhs Baru)";
         document.getElementById('mhs-form').reset();
         document.getElementById('inp-nim').readOnly = false;
         
@@ -441,14 +474,16 @@
         document.getElementById('inp-foto-url').value = '/img/bemprofilmhs.png';
         document.getElementById('preview-foto').src = '/img/bemprofilmhs.png';
 
-        document.getElementById('formModal').classList.add('active');
+        switchTab('form');
     }
 
-    function closeFormModal() { document.getElementById('formModal').classList.remove('active'); }
+    function cancelForm() {
+        switchTab('list');
+    }
 
     function editMhs(mhs) {
         isEditMode = true;
-        document.getElementById('modal-title').innerText = "Edit Data Mahasiswa";
+        document.getElementById('form-title').innerText = "Edit Data Mahasiswa";
         document.getElementById('inp-nim').value = mhs.nim;
         document.getElementById('inp-nim').readOnly = true; 
         document.getElementById('inp-nama').value = mhs.nama;
@@ -460,7 +495,7 @@
         document.getElementById('inp-foto-url').value = fotoSrc;
         document.getElementById('preview-foto').src = fotoSrc;
 
-        document.getElementById('formModal').classList.add('active');
+        switchTab('form');
     }
 
     async function saveSingleMhs(e) {
@@ -494,14 +529,14 @@
             
             if(data.success) {
                 showToast("✅ Berhasil disimpan secara Realtime!");
-                closeFormModal();
+                switchTab('list');
                 loadAllMhs(); // Trigger Realtime Table Update
             } else {
                 showCustomAlert("Gagal menyimpan: " + data.message);
             }
         } catch (error) {
             showToast("✅ Simulasi: Data tersimpan lokal.");
-            closeFormModal();
+            switchTab('list');
         }
         btn.innerText = "💾 Simpan Data MHS"; btn.disabled = false;
     }
@@ -543,7 +578,7 @@
                 
                 excelDataPayload = rawJson.map(row => {
                     return {
-                        foto: '/img/bemprofilmhs.png', // Default Bulk
+                        foto: '/img/bemprofilmhs.png', 
                         nim: (row['NIM'] || row['nim'] || row['Nim'] || '').toString().trim(),
                         nama: (row['NAMA'] || row['Nama'] || row['nama lengkap'] || '').toString().trim(),
                         angkatan: (row['ANGKATAN'] || row['Angkatan'] || row['Tahun'] || '').toString().trim(),
