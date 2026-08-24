@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Mahasiswa | PDDIKTI BEM</title>
+    <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/mainV5.css">
+</head>
+<body class="neo-bg-bg" style="display: flex; justify-content: center; padding: 50px 20px;">
+
+    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 600px; width: 100%; position: relative;">
+        <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -20px; left: -20px; text-decoration:none; padding: 10px 20px; font-size: 0.9rem;">⬅ KEMBALI</a>
+        
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+            <div style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; box-shadow: 4px 4px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:4rem;">🎓</div>
+            <h1 class="neo-heading" id="d-nama">Memuat...</h1>
+            <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace;">-</h2>
+        </div>
+
+        <table class="neo-table" style="width: 100%; border: none;">
+            <tbody>
+                <tr>
+                    <td class="neo-bg-yellow" style="width: 40%; font-weight: 800;">Angkatan</td>
+                    <td id="d-angkatan" style="font-weight: 700;">-</td>
+                </tr>
+                <tr>
+                    <td class="neo-bg-yellow" style="font-weight: 800;">Program Studi</td>
+                    <td id="d-prodi" style="font-weight: 700;">-</td>
+                </tr>
+                <tr>
+                    <td class="neo-bg-yellow" style="font-weight: 800;">Status Terkini</td>
+                    <td id="d-status" style="font-weight: 700;">-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="text-align: center; margin-top: 30px; border-top: 3px dashed #000; padding-top: 20px;">
+            <p style="font-weight: 700; font-size: 0.9rem;">Sumber Data: Database Resmi BEM KBMFKG UMI</p>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const nim = urlParams.get('nim');
+
+        if(!nim) {
+            document.getElementById('d-nama').innerText = "Data Tidak Valid";
+            return;
+        }
+
+        try {
+            let apiUrl = `/api/mhs/${nim}`;
+            if(window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com${apiUrl}`;
+
+            const res = await fetch(apiUrl);
+            const json = await res.json();
+
+            if(json.success) {
+                const d = json.data;
+                document.getElementById('d-nama').innerText = d.nama;
+                document.getElementById('d-nim').innerText = d.nim;
+                document.getElementById('d-angkatan').innerText = d.angkatan;
+                document.getElementById('d-prodi').innerText = d.prodi;
+                
+                let statusColor = d.status.toLowerCase() === 'aktif' ? 'neo-bg-green' : (d.status.toLowerCase() === 'lulus' ? 'neo-bg-blue' : 'neo-bg-pink');
+                document.getElementById('d-status').innerHTML = `<span class="neo-badge ${statusColor}">${d.status}</span>`;
+            } else {
+                document.getElementById('d-nama').innerText = "Mahasiswa Tidak Ditemukan";
+            }
+        } catch(e) {
+            document.getElementById('d-nama').innerText = "Gangguan Server";
+        }
+    });
+</script>
+<!-- Script Protect DevTools -->
+<script src="/js/protect-devtools.js"></script>
+</body>
+</html>
