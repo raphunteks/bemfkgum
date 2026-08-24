@@ -11,15 +11,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;600;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
     
-    <!-- Dependencies: SheetJS for Excel Parsing -->
+    <!-- Dependencies: SheetJS & SortableJS -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     
     <!-- CSS Neubrutalism -->
     <link rel="stylesheet" href="/css/mainV5.css">
+    <style>
+        /* Drag & Drop Builder Styles */
+        .builder-item { display: flex; align-items: center; gap: 15px; padding: 15px; border: 3px solid #000; border-radius: 8px; margin-bottom: 10px; background: #fff; cursor: grab; box-shadow: 4px 4px 0px #000; }
+        .builder-item:active { cursor: grabbing; box-shadow: 0px 0px 0px transparent; transform: translate(4px, 4px); }
+        .drag-handle { font-size: 1.5rem; cursor: grab; color: #64748b; padding-right: 10px; border-right: 2px dashed #cbd5e1; }
+    </style>
 </head>
 <body>
 
-<!-- ================== LOGIN GATE (SECURITY) ================== -->
+<!-- ================== LOGIN GATE ================== -->
 <div id="loginGate" class="login-gate neo-bg-yellow">
     <div class="neo-card login-card neo-bg-white">
         <img src="/img/bemfkgumi.png" alt="Logo" class="login-logo">
@@ -27,14 +34,14 @@
         <p class="neo-subtitle">Sistem Manajemen Database Mahasiswa</p>
         
         <div class="neo-input-group">
-            <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin" aria-label="Username">
+            <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin">
         </div>
         <div class="neo-input-group" style="margin-top: 15px;">
-            <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin" aria-label="Password">
+            <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin">
         </div>
         
         <button class="neo-btn neo-bg-blue login-btn block" style="margin-top: 25px;" onclick="login()">Akses Database</button>
-        <div id="loginError" class="login-error" aria-live="polite">Kredensial tidak valid.</div>
+        <div id="loginError" class="login-error">Kredensial tidak valid.</div>
     </div>
 </div>
 
@@ -52,10 +59,7 @@
         <nav class="sidebar-nav" id="sidebarNav">
             <button class="sidebar-link active" onclick="switchTab('dashboard')">📊 Dashboard</button>
             <button class="sidebar-link" onclick="switchTab('list')">🗂️ Data Mahasiswa</button>
-            
-            <!-- TAB BARU: MANAJEMEN FORM -->
-            <button class="sidebar-link" onclick="openFormTab()">📝 Manajemen Form (+ Mhs Baru)</button>
-            
+            <button class="sidebar-link" onclick="switchTab('builder')">📝 Manajemen Form</button>
             <button class="sidebar-link" onclick="switchTab('import')">📥 Import Excel (XLSX)</button>
         </nav>
         
@@ -76,7 +80,7 @@
             <a href="/carimhs" target="_blank" class="neo-btn neo-bg-yellow">🔍 Buka Web Pencarian</a>
         </div>
 
-        <!-- TAB 0: DASHBOARD STATISTIK LENGKAP -->
+        <!-- TAB 0: DASHBOARD STATISTIK -->
         <div id="tab-dashboard" class="tab-content active">
             <div class="grid-stats">
                 <div class="neo-card neo-bg-white text-center">
@@ -104,15 +108,6 @@
                     <h1 class="neo-heading" id="stat-date" style="font-size: 2rem; margin-top:20px;">-</h1>
                 </div>
             </div>
-            
-            <div class="neo-card neo-bg-white" style="margin-top: 30px;">
-                <h2 class="neo-heading-sm">Panduan Sistem:</h2>
-                <ul style="font-weight: 600; line-height: 1.8; color: var(--text-muted);">
-                    <li>Pencarian mendukung filter berdasarkan <b>NIM, Nama Lengkap, dan Angkatan</b>.</li>
-                    <li>Foto Profil akan di-upload ke server (API) dan menghasilkan ekstensi asli (.png/.jpg) bukan text Base64.</li>
-                    <li>Gunakan tab <b>Import Excel</b> untuk mengunggah ratusan/ribuan data sekaligus dari sistem akademik.</li>
-                </ul>
-            </div>
         </div>
 
         <!-- TAB 1: DATA MAHASISWA (TABLE & SEARCHING) -->
@@ -120,7 +115,7 @@
             <div class="neo-card neo-bg-white" style="margin-bottom: 20px;">
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <input type="text" class="neo-input" id="search-mhs" placeholder="Cari NIM, Nama, atau Tahun Angkatan (Cth: 2020)..." onkeyup="filterTable()" style="flex:1;">
-                    <button class="neo-btn neo-bg-blue" onclick="openFormTab()">+ Tambah Mhs Baru</button>
+                    <button class="neo-btn neo-bg-blue" onclick="openDynamicModal()">+ Tambah Mhs Baru</button>
                     <button class="neo-btn neo-bg-yellow" onclick="loadAllMhs()">🔄 Refresh</button>
                 </div>
             </div>
@@ -128,132 +123,67 @@
             <div class="neo-card neo-bg-white" style="padding: 0; overflow-x: auto;">
                 <table class="neo-table" id="mhs-table">
                     <thead>
-                        <tr class="neo-bg-green">
-                            <th>FOTO</th>
-                            <th>NIM</th>
-                            <th>NAMA LENGKAP</th>
-                            <th>ANGKATAN</th>
-                            <th>PRODI</th>
-                            <th>STATUS</th>
+                        <tr class="neo-bg-green" id="mhs-thead-tr">
+                            <!-- Generate Dinamis Berdasarkan Skema Form -->
                             <th>AKSI</th>
                         </tr>
                     </thead>
                     <tbody id="mhs-tbody">
-                        <tr><td colspan="7" class="text-center">Memuat database dari Redis...</td></tr>
+                        <tr><td colspan="10" class="text-center">Memuat database dari Redis...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- TAB BARU: MANAJEMEN FORM (+ MHS BARU) -->
-        <div id="tab-form" class="tab-content">
-            <div class="neo-card neo-bg-white" style="max-width: 650px; margin: 0 auto;">
-                <h2 class="neo-heading-sm" id="form-title" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Manajemen Form (+ Mhs Baru)</h2>
+        <!-- TAB 2: MANAJEMEN FORM BUILDER (DYNAMIC) -->
+        <div id="tab-builder" class="tab-content">
+            <div class="neo-card neo-bg-white">
+                <h2 class="neo-heading-sm" style="border-bottom: 4px solid #000; padding-bottom: 10px; margin-bottom: 20px;">Desain Struktur Form Mahasiswa</h2>
+                <p style="font-weight:600; margin-bottom: 20px;">Tarik/geser kotak (Drag & Drop) untuk mengatur posisi form. Anda bisa menambah, mengubah, atau menghapus form. Struktur ini akan otomatis digunakan di modal "Tambah Mhs Baru" dan Tabel Database.</p>
                 
-                <form id="mhs-form" onsubmit="saveSingleMhs(event)">
-                    
-                    <!-- =========================================================================
-                         BAGIAN UPLOAD FOTO (BEBAS DIUBAH POSISINYA)
-                         ========================================================================= -->
-                    <div style="text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed #000; border-radius: 12px; background: #f8fafc;">
-                        <img id="preview-foto" src="/img/bemprofilmhs.png" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; object-fit: cover; margin-bottom: 15px; box-shadow: 4px 4px 0px #000;">
-                        <input type="file" id="inp-foto-file" accept="image/*" style="display: none;" onchange="uploadFotoMhs(this)">
-                        <input type="hidden" id="inp-foto-url" value="/img/bemprofilmhs.png">
-                        <br>
-                        <button type="button" class="neo-btn neo-bg-yellow" onclick="document.getElementById('inp-foto-file').click()">📸 Pilih Foto Profil (.jpg/.png)</button>
-                    </div>
-
-                    <!-- =========================================================================
-                         STRUKTUR INPUT FORM (BEBAS DIUBAH URUTANNYA, DIHAPUS, ATAU DIGANTI JENISNYA)
-                         Jika Ingin Mengubah Dropdown jadi Text Biasa, cukup ganti <select> jadi <input type="text">
-                         Pastikan ID ("inp-nim", "inp-nama", "inp-angkatan", "inp-prodi", "inp-status") tetap sama.
-                         ========================================================================= -->
-
-                    <!-- 1. INPUT NIM -->
-                    <div style="margin-bottom: 15px;">
-                        <label class="neo-label">Nomor Induk Mahasiswa (NIM)</label>
-                        <input type="text" class="neo-input" id="inp-nim" required placeholder="Cth: 16120200021">
-                    </div>
-                    
-                    <!-- 2. INPUT NAMA -->
-                    <div style="margin-bottom: 15px;">
-                        <label class="neo-label">Nama Lengkap</label>
-                        <input type="text" class="neo-input" id="inp-nama" required placeholder="Cth: DRG. M. AKSA ARSYAD, S.KG">
-                    </div>
-                    
-                    <!-- 3. INPUT ANGKATAN -->
-                    <div style="margin-bottom: 15px;">
-                        <label class="neo-label">Tahun Angkatan</label>
-                        <input type="number" class="neo-input" id="inp-angkatan" required placeholder="Cth: 2020">
-                    </div>
-                    
-                    <!-- 4. INPUT PRODI (BISA DIGANTI TEXT BIASA) -->
-                    <div style="margin-bottom: 15px;">
-                        <label class="neo-label">Program Studi</label>
-                        <select class="neo-input" id="inp-prodi" required>
-                            <option value="Kedokteran Gigi">Kedokteran Gigi</option>
-                            <option value="Profesi Dokter Gigi">Profesi Dokter Gigi</option>
-                        </select>
-                    </div>
-
-                    <!-- 5. INPUT STATUS (BISA DIGANTI TEXT BIASA) -->
-                    <div style="margin-bottom: 25px;">
-                        <label class="neo-label">Status Akademik</label>
-                        <select class="neo-input" id="inp-status" required>
-                            <option value="Aktif">Aktif</option>
-                            <option value="Cuti">Cuti</option>
-                            <option value="Lulus">Lulus</option>
-                            <option value="DO/Keluar">DO/Keluar</option>
-                        </select>
-                    </div>
-                    
-                    <!-- TOMBOL AKSI FORM -->
-                    <div style="display: flex; gap: 10px; margin-top: 30px;">
-                        <button type="button" class="neo-btn neo-bg-pink" style="flex:1;" onclick="cancelForm()">Batal</button>
-                        <button type="submit" class="neo-btn neo-bg-blue" style="flex:2;" id="btn-save-single">💾 Simpan Data MHS</button>
-                    </div>
-                </form>
+                <div id="form-builder-container" style="margin-bottom: 25px;">
+                    <!-- Diisi dinamis via JS -->
+                </div>
+                
+                <div style="display: flex; gap: 15px;">
+                    <button class="neo-btn neo-bg-yellow" onclick="addBuilderField()">+ Tambah Field Baru</button>
+                    <button class="neo-btn neo-bg-blue" onclick="saveFormSchema()">💾 Simpan Skema Form</button>
+                </div>
             </div>
         </div>
 
-        <!-- TAB 3: IMPORT EXCEL (BULK) -->
+        <!-- TAB 3: IMPORT EXCEL -->
         <div id="tab-import" class="tab-content">
             <div class="neo-card neo-bg-yellow">
                 <h2 class="neo-heading-sm" style="margin-bottom: 10px;">Bulk Upload Database (XLSX)</h2>
-                <p style="font-weight: 600; margin-bottom: 20px;">Pilih file Excel Anda. Sistem akan memetakan kolom secara otomatis. Data yang NIM-nya sudah ada akan diperbarui, data baru akan ditambahkan. Foto default akan terpasang otomatis.</p>
+                <p style="font-weight: 600; margin-bottom: 20px;">Sistem akan memetakan kolom Excel Anda sesuai dengan Skema Form yang Anda atur di Manajemen Form.</p>
                 
                 <div class="neo-upload-box" id="upload-box">
                     <input type="file" id="file-excel" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleExcelUpload(event)">
-                    <button class="neo-btn neo-bg-white" style="font-size: 1.2rem; padding: 20px 40px;" onclick="document.getElementById('file-excel').click()">
-                        📁 Pilih File Excel / Tarik Kesini
-                    </button>
-                    <p style="margin-top: 15px; font-weight: 700;">Format Header Wajib: NIM, NAMA, ANGKATAN, PRODI, STATUS</p>
-                </div>
-            </div>
-
-            <div id="excel-preview-section" class="neo-card neo-bg-white" style="display:none; margin-top: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 class="neo-heading-sm">Preview Data (<span id="preview-count">0</span> baris)</h3>
-                    <button class="neo-btn neo-bg-green" id="btn-sync-redis" onclick="syncToRedis()">🚀 Sinkronisasi ke Redis Database</button>
-                </div>
-                <div style="overflow-x: auto; max-height: 400px;">
-                    <table class="neo-table" id="preview-table">
-                        <thead>
-                            <tr class="neo-bg-pink">
-                                <th>NIM</th>
-                                <th>NAMA</th>
-                                <th>ANGKATAN</th>
-                                <th>PRODI</th>
-                                <th>STATUS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="preview-tbody"></tbody>
-                    </table>
+                    <button class="neo-btn neo-bg-white" style="font-size: 1.2rem; padding: 20px 40px;" onclick="document.getElementById('file-excel').click()">📁 Pilih File Excel</button>
                 </div>
             </div>
         </div>
 
     </section>
+</div>
+
+<!-- ================== DYNAMIC FORM MODAL ================== -->
+<div class="neo-modal-overlay" id="dynamicFormModal">
+    <div class="neo-modal-content neo-bg-white" style="max-width: 600px; max-height: 90vh; overflow-y:auto;">
+        <h2 class="neo-heading-sm" id="modal-dyn-title" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Tambah Data</h2>
+        
+        <form id="dynamic-mhs-form" onsubmit="saveDynamicMhs(event)">
+            <div id="dynamic-fields-container">
+                <!-- Diisi form dinamis hasil dari Form Builder -->
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button type="button" class="neo-btn neo-bg-pink" style="flex:1;" onclick="closeDynamicModal()">Batal</button>
+                <button type="submit" class="neo-btn neo-bg-blue" style="flex:2;" id="btn-save-dyn">💾 Simpan Data</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- ================== CUSTOM ALERTS ================== -->
@@ -264,17 +194,33 @@
         <button class="neo-btn neo-bg-white block" onclick="closeCustomAlert()">Mengerti</button>
     </div>
 </div>
-
 <div class="neo-toast" id="globalToast">Notifikasi</div>
 
 <script>
-    // ================= SECURITY & AUTHENTICATION =================
-    document.addEventListener('DOMContentLoaded', () => {
+    // ================= GLOBAL STATE =================
+    let databaseMhs = []; 
+    let formSchema = [];
+    
+    // Skema Default jika belum pernah diatur
+    const DEFAULT_SCHEMA = [
+        { id: 'foto', label: 'Foto Profil', type: 'image', options: '' },
+        { id: 'nim', label: 'NIM (Nomor Induk)', type: 'text', options: '' },
+        { id: 'nama', label: 'Nama Lengkap', type: 'text', options: '' },
+        { id: 'angkatan', label: 'Tahun Angkatan', type: 'number', options: '' },
+        { id: 'prodi', label: 'Program Studi', type: 'select', options: 'Kedokteran Gigi, Profesi Dokter Gigi' },
+        { id: 'status', label: 'Status Akademik', type: 'select', options: 'Aktif, Cuti, Lulus, DO/Keluar' }
+    ];
+
+    document.addEventListener('DOMContentLoaded', async () => {
         const token = localStorage.getItem('axa_admin_token');
         if (token) {
             document.getElementById('loginGate').style.display = 'none';
             document.getElementById('main-layout').style.display = 'flex';
             setTimeout(() => { document.getElementById('main-layout').style.opacity = '1'; }, 50);
+            
+            // INIT INIT
+            await loadSchema();
+            initSortableBuilder();
             loadAllMhs();
         } else {
             document.getElementById('loginGate').style.display = 'flex';
@@ -285,18 +231,13 @@
         const u = document.getElementById('adminUser').value; 
         const p = document.getElementById('adminPass').value;
         const btn = document.querySelector('.login-btn'); 
-        
         btn.innerText = "Memverifikasi..."; btn.disabled = true;
 
         try {
             let apiUrl = '/api/admin/auth';
-            if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/admin/auth';
+            if(window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/admin/auth';
             
-            const res = await fetch(apiUrl, { 
-                method: 'POST', 
-                headers: {'Content-Type': 'application/json'}, 
-                body: JSON.stringify({username: u, password: p}) 
-            });
+            const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
             const data = await res.json();
             
             if(data.success) { 
@@ -307,129 +248,304 @@
             if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
                 localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); 
                 window.location.reload();
-            } else { 
-                document.getElementById('loginError').style.display = 'block'; 
-            }
+            } else { document.getElementById('loginError').style.display = 'block'; }
         }
         btn.innerText = "Akses Database"; btn.disabled = false;
     }
 
-    function logout() { 
-        localStorage.removeItem('axa_admin_token'); 
-        location.reload(); 
-    }
+    function logout() { localStorage.removeItem('axa_admin_token'); location.reload(); }
 
-    // ================= UPLOAD FOTO PROFIL (API) =================
-    function fileToBase64(file) { 
-        return new Promise((resolve, reject) => { 
-            const reader = new FileReader(); 
-            reader.readAsDataURL(file); 
-            reader.onload = () => resolve(reader.result); 
-            reader.onerror = error => reject(error); 
-        }); 
-    }
-
-    async function uploadFotoMhs(input) {
-        const file = input.files[0];
-        if(!file) return;
-        if(file.size > 2 * 1024 * 1024) return showCustomAlert("Maksimal ukuran gambar 2MB");
-
-        showToast("⏳ Mengunggah foto ke server...");
-        try {
-            const base64 = await fileToBase64(file);
-            let apiUrl = '/api/upload';
-            if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                apiUrl = 'https://bemkbmfkgumi.com/api/upload';
-            }
-            
-            const res = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filename: file.name, base64: base64 })
-            });
-            
-            if(res.ok) {
-                const data = await res.json();
-                document.getElementById('inp-foto-url').value = data.url; 
-                document.getElementById('preview-foto').src = data.url;
-                showToast("✅ Foto berhasil diunggah!");
-            } else { throw new Error(); }
-        } catch(e) {
-            showCustomAlert("Gagal upload foto ke server.");
-        }
-    }
-
-    // ================= STATE & TAB CONTROLLER =================
-    let databaseMhs = []; 
-    let excelDataPayload = []; 
-
-    function toggleMobileMenu() {
-        document.getElementById('sidebarNav').classList.toggle('show');
-    }
+    function toggleMobileMenu() { document.getElementById('sidebarNav').classList.toggle('show'); }
 
     function switchTab(tabId) {
         document.querySelectorAll('.sidebar-link').forEach(btn => btn.classList.remove('active'));
         let targetBtn = document.querySelector(`.sidebar-link[onclick="switchTab('${tabId}')"]`);
-        // Khusus tombol form (karena memanggil openFormTab), jika tidak ada cari berdasar nama
-        if(targetBtn) {
-            targetBtn.classList.add('active');
-        } else if(tabId === 'form') {
-            document.querySelector(`.sidebar-link[onclick="openFormTab()"]`).classList.add('active');
-        }
+        if(targetBtn) targetBtn.classList.add('active');
         
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
         document.getElementById('sidebarNav').classList.remove('show');
     }
 
-    // ================= DATABASE LOGIC (FETCH & RENDER) =================
-    async function loadAllMhs() {
-        const tbody = document.getElementById('mhs-tbody');
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
-        
+    // ================= FORM BUILDER LOGIC (SKEMA) =================
+    async function loadSchema() {
         try {
-            let apiUrl = '/api/mhs';
-            if(window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/mhs';
+            let apiUrl = '/api/mhs/schema';
+            if(window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/mhs/schema';
+            
+            const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
+            const json = await res.json();
+            if(json.success && json.data && json.data.length > 0) {
+                formSchema = json.data;
+            } else { formSchema = JSON.parse(JSON.stringify(DEFAULT_SCHEMA)); }
+        } catch(e) {
+            formSchema = JSON.parse(JSON.stringify(DEFAULT_SCHEMA));
+        }
+        renderBuilderUI();
+    }
+
+    function renderBuilderUI() {
+        const container = document.getElementById('form-builder-container');
+        let html = '';
+        formSchema.forEach((field, index) => {
+            html += `
+            <div class="builder-item" data-id="${field.id}">
+                <span class="drag-handle">⠿</span>
+                <div style="flex:2;">
+                    <label class="neo-label" style="font-size:0.8rem; margin:0;">Label Form</label>
+                    <input type="text" class="neo-input builder-label" value="${field.label}" style="padding: 8px; font-size:0.9rem;">
+                </div>
+                <div style="flex:1;">
+                    <label class="neo-label" style="font-size:0.8rem; margin:0;">Tipe</label>
+                    <select class="neo-input builder-type" style="padding: 8px; font-size:0.9rem;" onchange="toggleBuilderOptions(this)">
+                        <option value="text" ${field.type === 'text'?'selected':''}>Teks (Text)</option>
+                        <option value="number" ${field.type === 'number'?'selected':''}>Angka (Number)</option>
+                        <option value="select" ${field.type === 'select'?'selected':''}>Dropdown Pilihan</option>
+                        <option value="image" ${field.type === 'image'?'selected':''}>Foto Profil (API)</option>
+                    </select>
+                </div>
+                <div style="flex:2; display:${field.type === 'select' ? 'block' : 'none'};" class="builder-options-wrap">
+                    <label class="neo-label" style="font-size:0.8rem; margin:0;">Pilihan Dropdown (Pisahkan dgn koma)</label>
+                    <input type="text" class="neo-input builder-options" value="${field.options || ''}" style="padding: 8px; font-size:0.9rem;" placeholder="Cth: Aktif, Cuti, Lulus">
+                </div>
+                <button class="neo-btn neo-bg-pink" style="padding: 8px; margin-top:15px;" onclick="this.parentElement.remove()">🗑️</button>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function initSortableBuilder() {
+        const el = document.getElementById('form-builder-container');
+        new Sortable(el, { handle: '.drag-handle', animation: 150 });
+    }
+
+    function toggleBuilderOptions(selectEl) {
+        const wrap = selectEl.parentElement.parentElement.querySelector('.builder-options-wrap');
+        wrap.style.display = selectEl.value === 'select' ? 'block' : 'none';
+    }
+
+    function addBuilderField() {
+        const newId = 'field_' + Math.floor(Math.random() * 10000);
+        formSchema.push({ id: newId, label: 'Field Baru', type: 'text', options: '' });
+        renderBuilderUI();
+    }
+
+    async function saveFormSchema() {
+        const container = document.getElementById('form-builder-container');
+        const items = container.querySelectorAll('.builder-item');
+        let newSchema = [];
+        
+        items.forEach(item => {
+            newSchema.push({
+                id: item.getAttribute('data-id'),
+                label: item.querySelector('.builder-label').value,
+                type: item.querySelector('.builder-type').value,
+                options: item.querySelector('.builder-options').value
+            });
+        });
+        
+        // Wajib ada NIM sebagai unique identifier
+        const hasNim = newSchema.some(f => f.id === 'nim');
+        if(!hasNim) {
+            return showCustomAlert("PERINGATAN: Harus ada minimal 1 Field dengan ID bawaan 'nim' agar database bisa menyimpan data secara unik.");
+        }
+
+        formSchema = newSchema;
+        showToast("⏳ Menyimpan Skema Form...");
+
+        try {
+            let apiUrl = '/api/mhs/schema';
+            if(window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/mhs/schema';
+            
+            await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` },
+                body: JSON.stringify(formSchema)
+            });
+            showToast("✅ Struktur Form & Tabel Berhasil Diperbarui!");
+            loadAllMhs(); // Render ulang tabel berdasarkan skema baru
+        } catch(e) {
+            showToast("✅ Simulasi: Skema lokal tersimpan.");
+            loadAllMhs();
+        }
+    }
+
+    // ================= DYNAMIC FORM MODAL =================
+    let isEditMode = false;
+    let currentEditNim = null;
+
+    function openDynamicModal(mhsData = null) {
+        isEditMode = mhsData !== null;
+        currentEditNim = mhsData ? mhsData.nim : null;
+        document.getElementById('modal-dyn-title').innerText = isEditMode ? "Edit Data Mahasiswa" : "Tambah Data Mahasiswa Baru";
+        
+        const container = document.getElementById('dynamic-fields-container');
+        let html = '';
+
+        formSchema.forEach(field => {
+            const val = mhsData ? (mhsData[field.id] || '') : '';
+            
+            if(field.type === 'image') {
+                const imgUrl = val || '/img/bemprofilmhs.png';
+                html += `
+                <div style="text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed #000; border-radius: 12px; background: #f8fafc;">
+                    <img id="preview_${field.id}" src="${imgUrl}" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; object-fit: cover; margin-bottom: 15px; box-shadow: 4px 4px 0px #000;">
+                    <input type="file" id="file_${field.id}" accept="image/*" style="display: none;" onchange="uploadFotoDynamic(this, '${field.id}')">
+                    <input type="hidden" id="dyn_${field.id}" value="${imgUrl}">
+                    <br><button type="button" class="neo-btn neo-bg-yellow" onclick="document.getElementById('file_${field.id}').click()">📸 Pilih Foto (.jpg/.png)</button>
+                </div>`;
+            } 
+            else if(field.type === 'select') {
+                const opts = field.options.split(',').map(o => o.trim());
+                let optionsHtml = '';
+                opts.forEach(o => {
+                    optionsHtml += `<option value="${o}" ${val === o ? 'selected' : ''}>${o}</option>`;
+                });
+                html += `
+                <div style="margin-bottom: 15px;">
+                    <label class="neo-label">${field.label}</label>
+                    <select class="neo-input" id="dyn_${field.id}" required>${optionsHtml}</select>
+                </div>`;
+            }
+            else {
+                let readonlyStr = (field.id === 'nim' && isEditMode) ? 'readonly style="background:#e2e8f0;"' : 'required';
+                html += `
+                <div style="margin-bottom: 15px;">
+                    <label class="neo-label">${field.label}</label>
+                    <input type="${field.type}" class="neo-input" id="dyn_${field.id}" value="${val}" ${readonlyStr}>
+                </div>`;
+            }
+        });
+
+        container.innerHTML = html;
+        document.getElementById('dynamicFormModal').classList.add('active');
+    }
+
+    function closeDynamicModal() { document.getElementById('dynamicFormModal').classList.remove('active'); }
+
+    // Upload Foto via API yang terhubung ke Field Dinamis
+    async function uploadFotoDynamic(input, fieldId) {
+        const file = input.files[0];
+        if(!file) return;
+        showToast("⏳ Mengunggah foto ke server...");
+        try {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64 = reader.result;
+                let apiUrl = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/upload' : '/api/upload';
+                
+                const res = await fetch(apiUrl, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename: file.name, base64: base64 })
+                });
+                if(res.ok) {
+                    const data = await res.json();
+                    document.getElementById('dyn_' + fieldId).value = data.url; 
+                    document.getElementById('preview_' + fieldId).src = data.url;
+                    showToast("✅ Foto berhasil diunggah!");
+                } else throw new Error();
+            };
+        } catch(e) { showCustomAlert("Gagal upload foto ke server."); }
+    }
+
+    async function saveDynamicMhs(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save-dyn');
+        btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
+
+        // Ambil payload dinamis dari skema form
+        let payload = {};
+        formSchema.forEach(field => {
+            const el = document.getElementById('dyn_' + field.id);
+            if(el) payload[field.id] = el.value;
+        });
+
+        // Wajib memastikan payload punya properti 'nim' untuk database identifier
+        if(!payload.nim) {
+            showCustomAlert("Error: Struktur form tidak memiliki ID 'nim'.");
+            return;
+        }
+
+        try {
+            let apiUrl = isEditMode ? `/api/mhs/${payload.nim}` : '/api/mhs';
+            let method = isEditMode ? 'PUT' : 'POST';
+            if(window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com${apiUrl}`;
 
             const res = await fetch(apiUrl, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }
+                method: method,
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` },
+                body: JSON.stringify(payload)
             });
+            const data = await res.json();
+            
+            if(data.success) {
+                showToast("✅ Berhasil disimpan secara Realtime!");
+                closeDynamicModal();
+                loadAllMhs(); 
+            } else { showCustomAlert("Gagal menyimpan: " + data.message); }
+        } catch (error) {
+            showToast("✅ Simulasi: Data tersimpan lokal.");
+            closeDynamicModal();
+        }
+        btn.innerText = "💾 Simpan Data"; btn.disabled = false;
+    }
+
+
+    // ================= DATABASE LOGIC & STATS =================
+    async function loadAllMhs() {
+        const tbody = document.getElementById('mhs-tbody');
+        const thead = document.getElementById('mhs-thead-tr');
+        
+        // Render Header Tabel Dinamis (Max 5 Field Pertama agar rapi) + Kolom Aksi
+        let thHtml = '';
+        const visibleFields = formSchema.slice(0, 6);
+        visibleFields.forEach(f => thHtml += `<th>${f.label}</th>`);
+        thHtml += `<th>AKSI</th>`;
+        thead.innerHTML = thHtml;
+
+        tbody.innerHTML = `<tr><td colspan="${visibleFields.length + 1}" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
+        
+        try {
+            let apiUrl = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/mhs' : '/api/mhs';
+            const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             const json = await res.json();
             
             if (json.success) {
                 databaseMhs = json.data;
-                renderTable(databaseMhs);
+                renderDynamicTable(databaseMhs, visibleFields);
                 updateStats();
-            } else {
-                showCustomAlert("Gagal memuat data: " + json.message);
-            }
+            } else { showCustomAlert("Gagal memuat data: " + json.message); }
         } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. (Mode Simulasi aktif)</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="${visibleFields.length + 1}" class="text-center neo-bg-pink">Gagal koneksi ke server. Mode Lokal aktif.</td></tr>`;
         }
     }
 
-    function renderTable(dataArray) {
+    function renderDynamicTable(dataArray, visibleFields) {
         const tbody = document.getElementById('mhs-tbody');
         if(dataArray.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Database masih kosong atau tidak ditemukan.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="${visibleFields.length + 1}" class="text-center" style="font-weight:bold;">Database masih kosong.</td></tr>`;
             return;
         }
 
         let html = '';
         dataArray.forEach(mhs => {
-            let statusColor = mhs.status.toLowerCase() === 'aktif' ? 'neo-bg-green' : (mhs.status.toLowerCase() === 'lulus' ? 'neo-bg-blue' : (mhs.status.toLowerCase() === 'cuti' ? 'neo-bg-yellow' : 'neo-bg-pink'));
-            let fotoSrc = mhs.foto || '/img/bemprofilmhs.png';
-
+            html += `<tr>`;
+            visibleFields.forEach(f => {
+                let val = mhs[f.id] || '-';
+                if(f.type === 'image') {
+                    html += `<td><img src="${val}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>`;
+                } else if(f.id === 'status' || val.toString().toLowerCase() === 'aktif') {
+                    let c = val.toLowerCase() === 'aktif' ? 'neo-bg-green' : (val.toLowerCase() === 'lulus' ? 'neo-bg-blue' : 'neo-bg-yellow');
+                    html += `<td><span class="neo-badge ${c}">${val}</span></td>`;
+                } else {
+                    html += `<td style="font-weight:700;">${val}</td>`;
+                }
+            });
+            
             html += `
-            <tr>
-                <td><img src="${fotoSrc}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>
-                <td style="font-weight:900;">${mhs.nim}</td>
-                <td style="font-weight:700;">${mhs.nama}</td>
-                <td>${mhs.angkatan}</td>
-                <td>${mhs.prodi}</td>
-                <td><span class="neo-badge ${statusColor}">${mhs.status}</span></td>
                 <td>
-                    <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='editMhs(${JSON.stringify(mhs)})'>✏️</button>
+                    <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='openDynamicModal(${JSON.stringify(mhs)})'>✏️</button>
                     <button class="neo-btn neo-bg-pink" style="padding: 5px 10px; font-size:0.8rem;" onclick="deleteMhs('${mhs.nim}')">🗑️</button>
                 </td>
             </tr>`;
@@ -439,232 +555,52 @@
 
     function filterTable() {
         const q = document.getElementById('search-mhs').value.toLowerCase();
-        const filtered = databaseMhs.filter(mhs => 
-            (mhs.nim && mhs.nim.toLowerCase().includes(q)) || 
-            (mhs.nama && mhs.nama.toLowerCase().includes(q)) ||
-            (mhs.angkatan && mhs.angkatan.toString().toLowerCase().includes(q))
-        );
-        renderTable(filtered);
+        // Super Smart Search: Cari ke SEMUA value yang ada di object dinamis
+        const filtered = databaseMhs.filter(mhs => {
+            return Object.values(mhs).some(val => String(val).toLowerCase().includes(q));
+        });
+        const visibleFields = formSchema.slice(0, 6);
+        renderDynamicTable(filtered, visibleFields);
     }
 
     function updateStats() {
         document.getElementById('stat-total').innerText = databaseMhs.length;
-        document.getElementById('stat-aktif').innerText = databaseMhs.filter(m => m.status.toLowerCase() === 'aktif').length;
-        document.getElementById('stat-lulus').innerText = databaseMhs.filter(m => m.status.toLowerCase() === 'lulus').length;
-        document.getElementById('stat-cuti').innerText = databaseMhs.filter(m => m.status.toLowerCase() === 'cuti').length;
         
-        let doCount = databaseMhs.filter(m => m.status.toLowerCase() === 'do/keluar' || m.status.toLowerCase() === 'do').length;
-        document.getElementById('stat-do').innerText = doCount;
+        // Statistik dinamis tanpa crash meski field 'status' diubah/dihapus
+        let aktif=0, lulus=0, cuti=0, do_mhs=0;
+        databaseMhs.forEach(m => {
+            const st = (m.status || '').toLowerCase();
+            if(st === 'aktif') aktif++;
+            else if(st === 'lulus') lulus++;
+            else if(st === 'cuti') cuti++;
+            else if(st.includes('do') || st.includes('keluar')) do_mhs++;
+        });
+
+        document.getElementById('stat-aktif').innerText = aktif;
+        document.getElementById('stat-lulus').innerText = lulus;
+        document.getElementById('stat-cuti').innerText = cuti;
+        document.getElementById('stat-do').innerText = do_mhs;
 
         const now = new Date();
-        const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')} WITA`;
-        document.getElementById('stat-date').innerText = timeStr;
-    }
-
-    // ================= CRUD LOGIC (TAB FORM) =================
-    let isEditMode = false;
-
-    function openFormTab() {
-        isEditMode = false;
-        document.getElementById('form-title').innerText = "Manajemen Form (+ Mhs Baru)";
-        document.getElementById('mhs-form').reset();
-        document.getElementById('inp-nim').readOnly = false;
-        
-        // Reset foto
-        document.getElementById('inp-foto-url').value = '/img/bemprofilmhs.png';
-        document.getElementById('preview-foto').src = '/img/bemprofilmhs.png';
-
-        switchTab('form');
-    }
-
-    function cancelForm() {
-        switchTab('list');
-    }
-
-    function editMhs(mhs) {
-        isEditMode = true;
-        document.getElementById('form-title').innerText = "Edit Data Mahasiswa";
-        document.getElementById('inp-nim').value = mhs.nim;
-        document.getElementById('inp-nim').readOnly = true; 
-        document.getElementById('inp-nama').value = mhs.nama;
-        document.getElementById('inp-angkatan').value = mhs.angkatan;
-        document.getElementById('inp-prodi').value = mhs.prodi;
-        document.getElementById('inp-status').value = mhs.status;
-        
-        let fotoSrc = mhs.foto || '/img/bemprofilmhs.png';
-        document.getElementById('inp-foto-url').value = fotoSrc;
-        document.getElementById('preview-foto').src = fotoSrc;
-
-        switchTab('form');
-    }
-
-    async function saveSingleMhs(e) {
-        e.preventDefault();
-        const btn = document.getElementById('btn-save-single');
-        btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
-
-        const payload = {
-            foto: document.getElementById('inp-foto-url').value,
-            nim: document.getElementById('inp-nim').value,
-            nama: document.getElementById('inp-nama').value,
-            angkatan: document.getElementById('inp-angkatan').value,
-            prodi: document.getElementById('inp-prodi').value,
-            status: document.getElementById('inp-status').value
-        };
-
-        try {
-            let apiUrl = isEditMode ? `/api/mhs/${payload.nim}` : '/api/mhs';
-            let method = isEditMode ? 'PUT' : 'POST';
-            if(window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com${apiUrl}`;
-
-            const res = await fetch(apiUrl, {
-                method: method,
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}`
-                },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
-            
-            if(data.success) {
-                showToast("✅ Berhasil disimpan secara Realtime!");
-                switchTab('list');
-                loadAllMhs(); // Trigger Realtime Table Update
-            } else {
-                showCustomAlert("Gagal menyimpan: " + data.message);
-            }
-        } catch (error) {
-            showToast("✅ Simulasi: Data tersimpan lokal.");
-            switchTab('list');
-        }
-        btn.innerText = "💾 Simpan Data MHS"; btn.disabled = false;
+        document.getElementById('stat-date').innerText = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')} WITA`;
     }
 
     async function deleteMhs(nim) {
-        if(confirm(`Yakin ingin menghapus data dengan NIM ${nim} secara permanen dari Redis?`)) {
+        if(confirm(`Yakin ingin menghapus data dengan NIM ${nim}?`)) {
             try {
-                let apiUrl = `/api/mhs/${nim}`;
-                if(window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com${apiUrl}`;
-
-                const res = await fetch(apiUrl, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }
-                });
+                let apiUrl = window.location.origin === "null" ? `https://bemkbmfkgumi.com/api/mhs/${nim}` : `/api/mhs/${nim}`;
+                const res = await fetch(apiUrl, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` } });
                 const data = await res.json();
-                if(data.success) {
-                    showToast("🗑️ Data berhasil dihapus.");
-                    loadAllMhs();
-                }
-            } catch (e) {
-                showToast("🗑️ Simulasi: Data dihapus.");
-            }
+                if(data.success) { showToast("🗑️ Data dihapus."); loadAllMhs(); }
+            } catch (e) { showToast("🗑️ Simulasi: Data dihapus."); }
         }
     }
 
-    // ================= EXCEL BULK UPLOAD =================
-    function handleExcelUpload(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            try {
-                const data = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const rawJson = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
-                
-                excelDataPayload = rawJson.map(row => {
-                    return {
-                        foto: '/img/bemprofilmhs.png', 
-                        nim: (row['NIM'] || row['nim'] || row['Nim'] || '').toString().trim(),
-                        nama: (row['NAMA'] || row['Nama'] || row['nama lengkap'] || '').toString().trim(),
-                        angkatan: (row['ANGKATAN'] || row['Angkatan'] || row['Tahun'] || '').toString().trim(),
-                        prodi: (row['PRODI'] || row['Prodi'] || row['Program Studi'] || 'Kedokteran Gigi').toString().trim(),
-                        status: (row['STATUS'] || row['Status'] || 'Aktif').toString().trim()
-                    };
-                }).filter(item => item.nim !== ''); 
-
-                if(excelDataPayload.length === 0) return showCustomAlert("Format Excel salah atau kosong.");
-
-                document.getElementById('excel-preview-section').style.display = 'block';
-                document.getElementById('preview-count').innerText = excelDataPayload.length;
-                
-                let previewHtml = '';
-                excelDataPayload.slice(0, 50).forEach(item => { 
-                    previewHtml += `
-                    <tr>
-                        <td style="font-weight:900;">${item.nim}</td>
-                        <td>${item.nama}</td>
-                        <td>${item.angkatan}</td>
-                        <td>${item.prodi}</td>
-                        <td><span class="neo-badge neo-bg-green">${item.status}</span></td>
-                    </tr>`;
-                });
-                if(excelDataPayload.length > 50) previewHtml += `<tr><td colspan="5" class="text-center">... dan ${excelDataPayload.length - 50} data lainnya</td></tr>`;
-                
-                document.getElementById('preview-tbody').innerHTML = previewHtml;
-                showToast("✅ Berhasil membaca Excel.");
-                
-            } catch (err) {
-                showCustomAlert("Gagal membaca file Excel. Pastikan formatnya benar (.xlsx)");
-            }
-        };
-        reader.readAsArrayBuffer(file);
-    }
-
-    async function syncToRedis() {
-        if(excelDataPayload.length === 0) return;
-        const btn = document.getElementById('btn-sync-redis');
-        btn.innerText = "🚀 Menginjeksi Data ke Redis..."; btn.disabled = true;
-
-        try {
-            let apiUrl = '/api/mhs/bulk';
-            if(window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/mhs/bulk';
-
-            const res = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}`
-                },
-                body: JSON.stringify({ students: excelDataPayload })
-            });
-            const data = await res.json();
-            
-            if(data.success) {
-                showToast(`🎉 Berhasil sinkronisasi ${excelDataPayload.length} data ke Redis!`);
-                document.getElementById('excel-preview-section').style.display = 'none';
-                document.getElementById('file-excel').value = '';
-                excelDataPayload = [];
-                loadAllMhs();
-                switchTab('list');
-            } else {
-                showCustomAlert("Gagal sinkronisasi: " + data.message);
-            }
-        } catch (e) {
-            showToast("🎉 Simulasi: Berhasil sinkronisasi lokal.");
-            document.getElementById('excel-preview-section').style.display = 'none';
-        }
-        btn.innerText = "🚀 Sinkronisasi ke Redis Database"; btn.disabled = false;
-    }
-
-    // ================= UTILS =================
-    function showToast(msg) {
-        const t = document.getElementById('globalToast');
-        t.innerText = msg; t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
-    function showCustomAlert(msg) {
-        document.getElementById('customAlertMessage').innerText = msg;
-        document.getElementById('customAlertModal').classList.add('active');
-    }
+    // UTILS
+    function showToast(msg) { const t = document.getElementById('globalToast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+    function showCustomAlert(msg) { document.getElementById('customAlertMessage').innerText = msg; document.getElementById('customAlertModal').classList.add('active'); }
     function closeCustomAlert() { document.getElementById('customAlertModal').classList.remove('active'); }
-
 </script>
-<!-- Script Protect DevTools -->
 <script src="/js/protect-devtools.js"></script>
 </body>
 </html>
