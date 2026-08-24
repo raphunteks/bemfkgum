@@ -3,6 +3,7 @@ const express = require('express');
 const { Redis } = require('@upstash/redis');
 const cors = require('cors');
 const path = require('path');
+const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const app = express();
@@ -166,10 +167,32 @@ app.get('/api/uploads/:filename', async (req, res) => {
     }
 });
 
-// ================= ENDPOINT API PDDIKTI MHS (DATABASE MAHASISWA) =================
+// ================= ENDPOINT API PDDIKTI MHS (DATABASE & DYNAMIC SCHEMA) =================
 const MHS_HASH_KEY = 'BEM_MHS_DB';
+const MHS_SCHEMA_KEY = 'BEM_MHS_FORM_SCHEMA'; // Key baru untuk Dynamic Form Builder
 
-// 1. GET ALL MHS (Read All / Search / Public)
+// 0. GET & POST SCHEMA BUILDER
+app.get('/api/mhs/schema', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const schema = await redis.get(MHS_SCHEMA_KEY);
+        res.json({ success: true, data: safeParse(schema, []) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal mengambil skema' });
+    }
+});
+
+app.post('/api/mhs/schema', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.set(MHS_SCHEMA_KEY, JSON.stringify(req.body));
+        res.json({ success: true, message: 'Skema Berhasil Disimpan' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal menyimpan skema' });
+    }
+});
+
+// 1. GET ALL MHS (Read All / Smart Search / Public)
 app.get('/api/mhs', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -182,12 +205,11 @@ app.get('/api/mhs', async (req, res) => {
             }
         }
         
-        // Fitur Filter Search dari URL (?q=nama/nim) dioptimasi dengan String()
+        // Smart Search Terintegrasi: Cek ke SEMUA property objek (Mendukung filter Angkatan, NIM, Nama, dll)
         if (req.query.q) {
             const q = req.query.q.toLowerCase();
             resultArray = resultArray.filter(m => 
-                (m.nim && String(m.nim).toLowerCase().includes(q)) || 
-                (m.nama && String(m.nama).toLowerCase().includes(q))
+                Object.values(m).some(val => String(val).toLowerCase().includes(q))
             );
         }
 
@@ -243,7 +265,7 @@ app.post('/api/mhs', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const std = req.body;
-        if (!std.nim || !std.nama) return res.status(400).json({ success: false, message: 'NIM dan Nama Wajib Diisi' });
+        if (!std.nim) return res.status(400).json({ success: false, message: 'NIM Wajib Diisi' });
 
         await redis.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
