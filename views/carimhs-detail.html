@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Mahasiswa | PDDIKTI BEM</title>
+    <title>Detail Data | PDDIKTI BEM</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,11 +17,12 @@
     <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 650px; width: 100%; position: relative; padding: 50px;">
         <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -20px; left: 20px; text-decoration:none; padding: 12px 25px; font-size: 1rem;">⬅ KEMBALI</a>
         
-        <!-- HEADER PROFIL (FOTO, NAMA, NIM) -->
+        <!-- HEADER PROFIL (FOTO, NAMA, ID) -->
         <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
             <img id="d-foto" src="/img/bemprofilmhs.png" style="width: 140px; height: 140px; border-radius: 50%; border: 5px solid #000; box-shadow: 5px 5px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:block; object-fit: cover;">
             <h1 class="neo-heading" id="d-nama" style="font-size: 2.2rem; line-height:1.2;">Memuat...</h1>
             <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 1.5rem; margin-top:10px;">-</h2>
+            <div id="d-badge-tipe" style="margin-top: 15px; display: none;"></div>
         </div>
 
         <!-- TABEL BIODATA DINAMIS -->
@@ -32,87 +33,146 @@
         </table>
 
         <div style="text-align: center; margin-top: 40px; border-top: 4px dashed #000; padding-top: 20px;">
-            <p style="font-weight: 800; font-size: 1rem; color: #1e1e1e;">Sumber Data: Database Resmi BEM KBMFKG UMI</p>
+            <p style="font-weight: 800; font-size: 1rem; color: #1e1e1e;">Sumber Data: Database Resmi Institusi KBMFKG UMI</p>
         </div>
     </div>
 
 <script>
+    // Skema Default Fallback
+    const DEFAULT_SCHEMA_MHS = [
+        { id: 'foto', label: 'Foto Profil', type: 'image' },
+        { id: 'nim', label: 'NIM (Nomor Induk)', type: 'text' },
+        { id: 'nama', label: 'Nama Lengkap', type: 'text' },
+        { id: 'angkatan', label: 'Tahun Angkatan', type: 'number' },
+        { id: 'prodi', label: 'Program Studi', type: 'select' },
+        { id: 'status', label: 'Status Akademik', type: 'select' }
+    ];
+
+    const DEFAULT_SCHEMA_DOSEN = [
+        { id: 'foto', label: 'Foto Profil', type: 'image' },
+        { id: 'nip', label: 'NIDN / NIP', type: 'text' },
+        { id: 'nama', label: 'Nama Lengkap', type: 'text' },
+        { id: 'jk', label: 'Jenis Kelamin', type: 'select' },
+        { id: 'prodi', label: 'Program Studi', type: 'text' },
+        { id: 'jabatan', label: 'Jabatan Fungsional', type: 'text' },
+        { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'text' },
+        { id: 'pendidikan', label: 'Pendidikan Terakhir', type: 'select' },
+        { id: 'pt', label: 'Perguruan Tinggi', type: 'text' },
+        { id: 'gelar', label: 'Gelar Akademik', type: 'text' },
+        { id: 'tahun_lulus', label: 'Tahun', type: 'number' },
+        { id: 'jenjang', label: 'Jenjang', type: 'text' },
+        { id: 'status', label: 'Status Dosen', type: 'select' }
+    ];
+
+    const DEFAULT_SCHEMA_CIVITAS = [
+        { id: 'foto', label: 'Foto Profil', type: 'image' },
+        { id: 'nip', label: 'NIP', type: 'text' },
+        { id: 'nama', label: 'Nama Lengkap', type: 'text' },
+        { id: 'jk', label: 'Jenis Kelamin', type: 'select' },
+        { id: 'prodi', label: 'Program Studi / Unit Kerja', type: 'text' },
+        { id: 'jabatan', label: 'Jabatan Fungsional', type: 'text' },
+        { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'text' },
+        { id: 'pendidikan', label: 'Pendidikan Terakhir', type: 'select' },
+        { id: 'gelar', label: 'Gelar Akademik', type: 'text' },
+        { id: 'tahun_lulus', label: 'Tahun', type: 'number' },
+        { id: 'status', label: 'Status Civitas', type: 'select' }
+    ];
+
     document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const nimParam = urlParams.get('nim');
+        const idParam = urlParams.get('nim'); // Parameter ID (NIM/NIP) dikirim dari carimhs.html
+        const typeParam = urlParams.get('type') || 'mhs'; // Menentukan API mana yang dipanggil
 
-        if(!nimParam) {
+        if(!idParam) {
             document.getElementById('d-nama').innerText = "Data Tidak Valid";
+            document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Parameter URL tidak lengkap.</td></tr>`;
             return;
         }
 
         try {
-            let schemaUrl = `/api/mhs/schema`;
-            let dataUrl = `/api/mhs/${nimParam}`;
-            
-            if(window.location.origin === "null") {
-                schemaUrl = `https://bemkbmfkgumi.com${schemaUrl}`;
-                dataUrl = `https://bemkbmfkgumi.com${dataUrl}`;
-            }
+            // 1. Fetch Data Utama Terlebih Dahulu
+            let dataUrl = typeParam === 'mhs' ? `/api/mhs/${idParam}` : `/api/civitas/${idParam}`;
+            if(window.location.origin === "null") dataUrl = `https://bemkbmfkgumi.com${dataUrl}`;
 
-            // Fetch Skema Form & Data Mahasiswa secara paralel
-            const [resSchema, resData] = await Promise.all([
-                fetch(schemaUrl),
-                fetch(dataUrl)
-            ]);
-
-            const jsonSchema = await resSchema.json();
+            const resData = await fetch(dataUrl);
             const jsonData = await resData.json();
 
-            if(jsonData.success) {
+            if(jsonData.success && jsonData.data) {
                 const d = jsonData.data;
                 
-                // Fallback schema jika belum disetting di admin
-                const schema = (jsonSchema.success && jsonSchema.data && jsonSchema.data.length > 0) ? jsonSchema.data : [
-                    { id: 'foto', label: 'Foto Profil', type: 'image' },
-                    { id: 'nim', label: 'NIM (Nomor Induk)', type: 'text' },
-                    { id: 'nama', label: 'Nama Lengkap', type: 'text' },
-                    { id: 'angkatan', label: 'Tahun Angkatan', type: 'number' },
-                    { id: 'prodi', label: 'Program Studi', type: 'select' },
-                    { id: 'status', label: 'Status Akademik', type: 'select' }
-                ];
+                // 2. Tentukan Skema Berdasarkan Tipe Pegawai (Bila bukan mahasiswa)
+                let schemaUrl = '';
+                let defaultSchema = DEFAULT_SCHEMA_MHS;
+                
+                if (typeParam === 'mhs') {
+                    schemaUrl = `/api/mhs/schema`;
+                } else {
+                    let tp = d.tipe_pegawai || 'civitas'; // fallback
+                    schemaUrl = `/api/civitas/schema/${tp}`;
+                    defaultSchema = tp === 'dosen' ? DEFAULT_SCHEMA_DOSEN : DEFAULT_SCHEMA_CIVITAS;
+                    
+                    // Menampilkan Badge Ekstra untuk membedakan Dosen/Civitas di Profil
+                    const badgeEl = document.getElementById('d-badge-tipe');
+                    badgeEl.style.display = 'block';
+                    badgeEl.innerHTML = tp === 'dosen' 
+                        ? `<span class="neo-badge neo-bg-blue" style="font-size:1rem;">Dosen Pengajar</span>`
+                        : `<span class="neo-badge neo-bg-yellow" style="font-size:1rem;">Staf Civitas</span>`;
+                }
 
+                if(window.location.origin === "null") schemaUrl = `https://bemkbmfkgumi.com${schemaUrl}`;
+                
+                // 3. Fetch Skema dari Database
+                let schema = null;
+                try {
+                    const resSchema = await fetch(schemaUrl);
+                    const jsonSchema = await resSchema.json();
+                    if(jsonSchema.success && jsonSchema.data && jsonSchema.data.length > 0) {
+                        schema = jsonSchema.data;
+                    }
+                } catch(err) {
+                    console.log("Menggunakan skema default fallback.");
+                }
+
+                // Gunakan skema database, jika kosong gunakan default
+                schema = schema || defaultSchema;
+
+                // 4. Render Data ke HTML
                 let fotoUrl = '/img/bemprofilmhs.png';
                 let namaVal = '-';
-                let nimVal = nimParam;
+                let identitasVal = idParam;
                 let tableHtml = '';
 
-                // Memetakan data berdasarkan skema secara dinamis
                 schema.forEach(field => {
                     let val = d[field.id] || '-';
                     let fId = field.id.toLowerCase();
                     let fLabel = field.label.toLowerCase();
 
-                    // Pengecualian: Foto, Nama, dan NIM dipisah untuk ditaruh di Header Atas
+                    // Pengecualian: Foto, Nama, dan Identifier (NIM/NIP) ditaruh di Header
                     if (field.type === 'image') {
                         if(val !== '-') fotoUrl = val;
-                        return; // Skip agar tidak masuk tabel
+                        return; // Skip dari tabel
                     }
                     if (fId.includes('nama') || fLabel.includes('nama')) {
                         if(val !== '-') namaVal = val;
-                        return; // Skip agar tidak masuk tabel
+                        return; // Skip dari tabel
                     }
-                    if (fId === 'nim' || fLabel.includes('nim')) {
-                        if(val !== '-') nimVal = val;
-                        return; // Skip agar tidak masuk tabel
+                    if (fId === 'nim' || fId === 'nip' || fId === 'nidn' || fLabel.includes('nim') || fLabel.includes('nip') || fLabel.includes('nidn')) {
+                        if(val !== '-') identitasVal = val;
+                        return; // Skip dari tabel
                     }
 
-                    // Merender field sisanya ke dalam tabel
                     let displayVal = val;
                     
-                    // Deteksi khusus jika field adalah "Status" agar dibuatkan Badge Warna
+                    // Pewarnaan khusus kolom Status
                     if (fId.includes('status') || fLabel.includes('status')) {
                         let statusColor = 'neo-bg-green';
-                        if (val.toLowerCase().includes('lulus')) statusColor = 'neo-bg-blue';
-                        else if (val.toLowerCase().includes('cuti')) statusColor = 'neo-bg-yellow';
-                        else if (val.toLowerCase().includes('do') || val.toLowerCase().includes('keluar')) statusColor = 'neo-bg-pink';
+                        let st_lower = val.toLowerCase();
+                        if (st_lower.includes('lulus')) statusColor = 'neo-bg-blue';
+                        else if (st_lower.includes('pensiun')) statusColor = 'neo-bg-purple';
+                        else if (st_lower.includes('cuti') || st_lower.includes('belajar') || st_lower.includes('tb')) statusColor = 'neo-bg-yellow';
+                        else if (st_lower.includes('do') || st_lower.includes('keluar')) statusColor = 'neo-bg-pink';
                         
-                        displayVal = `<span class="neo-badge ${statusColor}" style="font-size:1rem; padding: 6px 15px;">${val}</span>`;
+                        displayVal = `<span class="neo-badge ${statusColor}" style="font-size:1rem; padding: 6px 15px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${val}</span>`;
                     }
 
                     tableHtml += `
@@ -125,16 +185,16 @@
                 // Suntik ke DOM
                 document.getElementById('d-foto').src = fotoUrl;
                 document.getElementById('d-nama').innerText = namaVal;
-                document.getElementById('d-nim').innerText = nimVal;
+                document.getElementById('d-nim').innerText = identitasVal;
                 document.getElementById('dynamic-tbody').innerHTML = tableHtml;
 
             } else {
-                document.getElementById('d-nama').innerText = "Mahasiswa Tidak Ditemukan";
-                document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Data tidak ada di database.</td></tr>`;
+                document.getElementById('d-nama').innerText = "Data Tidak Ditemukan";
+                document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Data tidak ada di dalam database.</td></tr>`;
             }
         } catch(e) {
             document.getElementById('d-nama').innerText = "Gangguan Server";
-            document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Gagal menghubungi database.</td></tr>`;
+            document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Gagal menghubungi server database.</td></tr>`;
         }
     });
 </script>
