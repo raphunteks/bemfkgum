@@ -6,43 +6,35 @@
     <title>BEM Database Terpadu | Admin V5</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
-    <!-- Load Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;600;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
     
-    <!-- Dependencies: SheetJS, SortableJS, ChartJS -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- CSS Neubrutalism Full Responsive -->
     <link rel="stylesheet" href="/css/mainV5.css">
 </head>
 <body>
 
-<!-- ================== LOGIN GATE ================== -->
+<!-- LOGIN GATE -->
 <div id="loginGate" class="login-gate neo-bg-yellow">
-    <div class="neo-card login-card neo-bg-white">
+    <div class="neo-card login-card neo-bg-white" style="max-width: 400px; padding:40px;">
         <img src="/img/bemfkgumi.png" alt="Logo" class="login-logo">
         <h2 class="neo-heading">Portal Data BEM</h2>
-        <p class="neo-subtitle">Sistem Manajemen Database Institusi</p>
+        <p class="neo-subtitle" style="font-weight:700; margin-bottom:25px;">Sistem Manajemen Institusi</p>
         
-        <div class="neo-input-group mt-3">
-            <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin">
-        </div>
-        <div class="neo-input-group mt-3">
-            <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin">
-        </div>
+        <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin" style="margin-bottom:15px;">
+        <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin">
         
-        <button class="neo-btn neo-bg-blue login-btn block mt-4" onclick="login()">Akses Database</button>
+        <button class="neo-btn neo-bg-blue login-btn block" style="margin-top: 25px;" onclick="login()">Akses Database</button>
         <div id="loginError" class="login-error">Kredensial tidak valid.</div>
     </div>
 </div>
 
-<button class="neo-btn neo-bg-pink mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
+<button class="neo-btn neo-bg-pink mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
 
-<!-- Hilangkan style inline agar CSS responsif bekerja penuh -->
 <div class="builder-layout neo-bg-bg" id="main-layout" style="display: none;">
     
     <!-- LEFT SIDEBAR -->
@@ -52,35 +44,35 @@
             <h2 class="neo-heading-sm">DB BEM V5</h2>
         </div>
         
-        <nav class="sidebar-nav" id="sidebarNav">
+        <nav class="sidebar-nav">
             <p class="sidebar-category">MAHASISWA</p>
             <button class="sidebar-link active" onclick="switchTab('dashboard-mhs')">📊 Dashboard MHS</button>
             <button class="sidebar-link" onclick="switchTab('list-mhs')">🗂️ Data MHS</button>
             <button class="sidebar-link" onclick="switchTab('builder-mhs')">📝 Manajemen Form MHS</button>
             <button class="sidebar-link" onclick="switchTab('import-mhs')">📥 Import Excel MHS</button>
 
-            <p class="sidebar-category mt-3">DOSEN & CIVITAS</p>
+            <p class="sidebar-category" style="margin-top:20px;">DOSEN & CIVITAS</p>
             <button class="sidebar-link" onclick="switchTab('dashboard-civitas')">📈 Dashboard Civitas</button>
             <button class="sidebar-link" onclick="switchTab('list-civitas')">👨‍🏫 Data Civitas</button>
             <button class="sidebar-link" onclick="switchTab('builder-civitas')">📋 Form Civitas</button>
             <button class="sidebar-link" onclick="switchTab('import-civitas')">📥 Import Civitas</button>
         </nav>
         
-        <div class="sidebar-bottom mt-5">
-            <a href="/admin" class="neo-btn neo-bg-yellow block text-center" style="text-decoration:none;">⬅ Admin Utama</a>
-            <button class="neo-btn neo-bg-pink block mt-2" onclick="logout()">🚪 Keluar Sistem</button>
+        <div style="margin-top: 40px;">
+            <a href="/admin" class="neo-btn neo-bg-yellow block text-center" style="text-decoration:none; margin-bottom:10px;">⬅ Admin Utama</a>
+            <button class="neo-btn neo-bg-pink block" onclick="logout()">🚪 Keluar Sistem</button>
         </div>
     </aside>
 
-    <!-- MID PANEL -->
+    <!-- MID PANEL (SCROLLABLE AREA) -->
     <section class="editor-panel">
         
-        <div class="editor-header neo-card neo-bg-purple mb-5 flex-between">
-            <div class="editor-title-group">
-                <h1 class="neo-heading text-white m-0" id="main-panel-title">DATABASE INSTITUSI</h1>
-                <p class="header-subtitle text-white mt-1 fw-600">Pusat Pengelolaan Data Terpadu BEM (Realtime Redis)</p>
+        <div class="editor-header neo-card neo-bg-purple flex-between" style="color:#fff;">
+            <div>
+                <h1 class="neo-heading m-0">DATABASE INSTITUSI</h1>
+                <p style="margin-top:5px; font-weight:600;">Pusat Pengelolaan Data Terpadu BEM</p>
             </div>
-            <a href="/carimhs" target="_blank" class="neo-btn neo-bg-yellow">🔍 Web Pencarian Terpadu</a>
+            <a href="/carimhs" target="_blank" class="neo-btn neo-bg-yellow">🔍 Web Pencarian MHS</a>
         </div>
 
         <!-- =========================================================================
@@ -89,84 +81,45 @@
 
         <!-- TAB 0: DASHBOARD MHS -->
         <div id="tab-dashboard-mhs" class="tab-content active">
-            <h2 class="neo-heading-sm section-title">Statistik Mahasiswa</h2>
+            <h2 class="neo-heading-sm" style="margin-bottom:20px; border-bottom:3px solid #000; padding-bottom:10px;">Statistik Mahasiswa</h2>
             <div class="grid-stats">
-                <div class="neo-card neo-bg-white text-center">
-                    <h3 class="neo-heading-sm">Total Mahasiswa</h3>
-                    <h1 class="neo-heading font-lg mt-2" id="stat-total-mhs">0</h1>
-                </div>
-                <div class="neo-card neo-bg-green text-center">
-                    <h3 class="neo-heading-sm">Status Aktif</h3>
-                    <h1 class="neo-heading font-lg mt-2" id="stat-aktif-mhs">0</h1>
-                </div>
-                <div class="neo-card neo-bg-blue text-center">
-                    <h3 class="neo-heading-sm">Lulus</h3>
-                    <h1 class="neo-heading font-lg mt-2" id="stat-lulus-mhs">0</h1>
-                </div>
-                <div class="neo-card neo-bg-yellow text-center">
-                    <h3 class="neo-heading-sm">Cuti</h3>
-                    <h1 class="neo-heading font-lg mt-2" id="stat-cuti-mhs">0</h1>
-                </div>
-                <div class="neo-card neo-bg-pink text-center">
-                    <h3 class="neo-heading-sm">DO / Keluar</h3>
-                    <h1 class="neo-heading font-lg mt-2" id="stat-do-mhs">0</h1>
-                </div>
-                <div class="neo-card neo-bg-purple text-center text-white">
-                    <h3 class="neo-heading-sm">Update Terakhir</h3>
-                    <h1 class="neo-heading font-md mt-4" id="stat-date-mhs">-</h1>
-                </div>
+                <div class="neo-card text-center"><h3 class="neo-heading-sm">Total Mahasiswa</h3><h1 class="neo-heading" id="stat-total-mhs" style="font-size:2.5rem; margin-top:10px;">0</h1></div>
+                <div class="neo-card neo-bg-green text-center"><h3 class="neo-heading-sm">Status Aktif</h3><h1 class="neo-heading" id="stat-aktif-mhs" style="font-size:2.5rem; margin-top:10px;">0</h1></div>
+                <div class="neo-card neo-bg-blue text-center"><h3 class="neo-heading-sm">Lulus</h3><h1 class="neo-heading" id="stat-lulus-mhs" style="font-size:2.5rem; margin-top:10px;">0</h1></div>
+                <div class="neo-card neo-bg-yellow text-center"><h3 class="neo-heading-sm">Cuti</h3><h1 class="neo-heading" id="stat-cuti-mhs" style="font-size:2.5rem; margin-top:10px;">0</h1></div>
+                <div class="neo-card neo-bg-pink text-center"><h3 class="neo-heading-sm">DO/Keluar</h3><h1 class="neo-heading" id="stat-do-mhs" style="font-size:2.5rem; margin-top:10px;">0</h1></div>
+                <div class="neo-card neo-bg-purple text-center" style="color:#fff;"><h3 class="neo-heading-sm">Update Terakhir</h3><h1 class="neo-heading" id="stat-date-mhs" style="font-size:1.5rem; margin-top:20px;">-</h1></div>
             </div>
 
             <div class="charts-grid">
-                <div class="neo-card neo-bg-white">
-                    <h3 class="neo-heading-sm text-center mb-4">Sebaran Status Akademik</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="chart-status-mhs"></canvas>
-                    </div>
-                </div>
-                <div class="neo-card neo-bg-white">
-                    <h3 class="neo-heading-sm text-center mb-4">Sebaran Tahun Angkatan</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="chart-angkatan-mhs"></canvas>
-                    </div>
-                </div>
+                <div class="neo-card"><h3 class="neo-heading-sm text-center" style="margin-bottom:20px;">Status Akademik</h3><div class="chart-wrapper"><canvas id="chart-status-mhs"></canvas></div></div>
+                <div class="neo-card"><h3 class="neo-heading-sm text-center" style="margin-bottom:20px;">Tahun Angkatan</h3><div class="chart-wrapper"><canvas id="chart-angkatan-mhs"></canvas></div></div>
             </div>
         </div>
 
         <!-- TAB 1: DATA MAHASISWA -->
         <div id="tab-list-mhs" class="tab-content">
-            <h2 class="neo-heading-sm mb-4">Tabel Data Mahasiswa</h2>
-            <div class="neo-card neo-bg-white mb-4">
-                <div class="flex-actions">
-                    <input type="text" class="neo-input flex-1" id="search-mhs" placeholder="Cari NIM, Nama, atau Tahun Angkatan (Cth: 2020)..." onkeyup="filterTableMhs()">
-                    <button class="neo-btn neo-bg-blue" onclick="openDynamicModalMhs()">+ Tambah Mhs Baru</button>
-                    <button class="neo-btn neo-bg-yellow" onclick="loadAllMhs()">🔄 Refresh</button>
-                </div>
+            <h2 class="neo-heading-sm" style="margin-bottom:20px;">Tabel Data Mahasiswa</h2>
+            <div class="neo-card flex-actions">
+                <input type="text" class="neo-input" id="search-mhs" placeholder="Cari NIM, Nama, atau Tahun..." onkeyup="filterTableMhs()" style="flex:1;">
+                <button class="neo-btn neo-bg-blue" onclick="openDynamicModalMhs()">+ Tambah Mhs Baru</button>
+                <button class="neo-btn neo-bg-yellow" onclick="loadAllMhs()">🔄 Refresh</button>
             </div>
-
-            <div class="neo-card neo-bg-white table-container">
+            <div class="neo-card" style="padding:0; overflow-x:auto;">
                 <table class="neo-table" id="mhs-table">
-                    <thead>
-                        <tr class="neo-bg-green" id="mhs-thead-tr">
-                            <th>AKSI</th>
-                        </tr>
-                    </thead>
-                    <tbody id="mhs-tbody">
-                        <tr><td colspan="10" class="text-center">Memuat database dari Redis...</td></tr>
-                    </tbody>
+                    <thead><tr class="neo-bg-green" id="mhs-thead-tr"><th>AKSI</th></tr></thead>
+                    <tbody id="mhs-tbody"><tr><td colspan="10" class="text-center">Memuat dari Redis...</td></tr></tbody>
                 </table>
             </div>
         </div>
 
         <!-- TAB 2: BUILDER MHS -->
         <div id="tab-builder-mhs" class="tab-content">
-            <div class="neo-card neo-bg-white">
-                <h2 class="neo-heading-sm section-title">Desain Form Mahasiswa</h2>
-                <p class="fw-600 mb-4">Atur struktur kolom form untuk Mahasiswa. Wajib memiliki field dengan label "NIM".</p>
-                
-                <div id="form-builder-mhs" class="mb-4"></div>
-                
-                <div class="flex-actions">
+            <div class="neo-card">
+                <h2 class="neo-heading-sm" style="border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px;">Desain Form Mahasiswa</h2>
+                <p style="font-weight:600; margin-bottom: 25px;">Geser kotak untuk mengatur posisi. Wajib memiliki label "NIM".</p>
+                <div id="form-builder-mhs"></div>
+                <div class="flex-actions" style="margin-top:20px;">
                     <button class="neo-btn neo-bg-yellow" onclick="addBuilderField('mhs')">+ Tambah Field</button>
                     <button class="neo-btn neo-bg-blue" onclick="saveSchema('mhs')">💾 Simpan Skema MHS</button>
                 </div>
@@ -176,22 +129,21 @@
         <!-- TAB 3: IMPORT MHS -->
         <div id="tab-import-mhs" class="tab-content">
             <div class="neo-card neo-bg-yellow">
-                <h2 class="neo-heading-sm mb-2">Bulk Upload Mahasiswa (XLSX)</h2>
-                <div class="neo-card neo-bg-white hint-box">
-                    <p id="excel-hint-mhs" class="hint-text"></p>
+                <h2 class="neo-heading-sm" style="margin-bottom: 15px;">Bulk Upload Mahasiswa (XLSX)</h2>
+                <div class="neo-card" style="padding:15px; margin-bottom:20px;">
+                    <p id="excel-hint-mhs" style="margin:0; font-family:'Space Mono', monospace; font-weight:bold;"></p>
                 </div>
-                <div class="neo-upload-box">
+                <div class="neo-upload-box" onclick="document.getElementById('file-excel-mhs').click()">
                     <input type="file" id="file-excel-mhs" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleExcelUpload(event, 'mhs')">
-                    <button class="neo-btn neo-bg-white upload-btn-large" onclick="document.getElementById('file-excel-mhs').click()">📁 Upload Excel MHS</button>
+                    <p style="font-weight:800; font-size:1.2rem; margin:0;">📁 Klik di sini untuk Upload Excel MHS</p>
                 </div>
             </div>
-
-            <div id="preview-section-mhs" class="neo-card neo-bg-white preview-section">
-                <div class="preview-header">
-                    <h3 class="neo-heading-sm m-0">Preview Data MHS (<span id="preview-count-mhs">0</span> baris)</h3>
-                    <button class="neo-btn neo-bg-green" id="btn-sync-mhs" onclick="syncToRedis('mhs')">🚀 Sinkronisasi Server MHS</button>
+            <div id="preview-section-mhs" class="neo-card" style="display:none; margin-top: 25px;">
+                <div class="flex-between" style="margin-bottom:20px;">
+                    <h3 class="neo-heading-sm">Preview Data (<span id="preview-count-mhs">0</span>)</h3>
+                    <button class="neo-btn neo-bg-green" id="btn-sync-mhs" onclick="syncToRedis('mhs')">🚀 Sinkronisasi Server</button>
                 </div>
-                <div class="table-wrapper">
+                <div style="overflow-x:auto; max-height:400px;">
                     <table class="neo-table">
                         <thead id="preview-thead-mhs"></thead>
                         <tbody id="preview-tbody-mhs"></tbody>
@@ -206,72 +158,41 @@
 
         <!-- TAB 0: DASHBOARD CIVITAS -->
         <div id="tab-dashboard-civitas" class="tab-content">
-            <h2 class="neo-heading-sm section-title">Statistik Dosen & Civitas</h2>
+            <h2 class="neo-heading-sm" style="margin-bottom: 20px; border-bottom: 3px solid #000; padding-bottom: 10px;">Statistik Dosen & Civitas</h2>
             <div class="grid-stats">
-                <div class="neo-card neo-bg-white text-center">
-                    <h3 class="neo-heading-sm">Total Civitas</h3>
-                    <h1 class="neo-heading font-lg mt-2" id="stat-total-civitas">0</h1>
-                </div>
-                <div class="neo-card neo-bg-green text-center">
-                    <h3 class="neo-heading-sm">Dosen Aktif</h3>
-                    <h1 class="neo-heading font-lg mt-2" id="stat-aktif-civitas">0</h1>
-                </div>
-                <div class="neo-card neo-bg-blue text-center">
-                    <h3 class="neo-heading-sm">Tugas Belajar</h3>
-                    <h1 class="neo-heading font-lg mt-2" id="stat-tugas-civitas">0</h1>
-                </div>
+                <div class="neo-card text-center"><h3 class="neo-heading-sm">Total Civitas</h3><h1 class="neo-heading font-lg mt-2" id="stat-total-civitas">0</h1></div>
+                <div class="neo-card neo-bg-green text-center"><h3 class="neo-heading-sm">Dosen Aktif</h3><h1 class="neo-heading font-lg mt-2" id="stat-aktif-civitas">0</h1></div>
+                <div class="neo-card neo-bg-blue text-center"><h3 class="neo-heading-sm">Tugas Belajar</h3><h1 class="neo-heading font-lg mt-2" id="stat-tugas-civitas">0</h1></div>
             </div>
-
             <div class="charts-grid">
-                <div class="neo-card neo-bg-white">
-                    <h3 class="neo-heading-sm text-center mb-4">Jabatan Fungsional</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="chart-jabatan-civitas"></canvas>
-                    </div>
-                </div>
-                <div class="neo-card neo-bg-white">
-                    <h3 class="neo-heading-sm text-center mb-4">Jenjang Pendidikan</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="chart-pendidikan-civitas"></canvas>
-                    </div>
-                </div>
+                <div class="neo-card"><h3 class="neo-heading-sm text-center mb-4">Jabatan Fungsional</h3><div class="chart-wrapper"><canvas id="chart-jabatan-civitas"></canvas></div></div>
+                <div class="neo-card"><h3 class="neo-heading-sm text-center mb-4">Jenjang Pendidikan</h3><div class="chart-wrapper"><canvas id="chart-pendidikan-civitas"></canvas></div></div>
             </div>
         </div>
 
         <!-- TAB 1: DATA CIVITAS -->
         <div id="tab-list-civitas" class="tab-content">
             <h2 class="neo-heading-sm mb-4">Tabel Data Dosen & Civitas</h2>
-            <div class="neo-card neo-bg-white mb-4">
-                <div class="flex-actions">
-                    <input type="text" class="neo-input flex-1" id="search-civitas" placeholder="Cari NIDN, Nama, atau Jabatan..." onkeyup="filterTableCivitas()">
-                    <button class="neo-btn neo-bg-blue" onclick="openDynamicModalCivitas()">+ Tambah Civitas Baru</button>
-                    <button class="neo-btn neo-bg-yellow" onclick="loadAllCivitas()">🔄 Refresh</button>
-                </div>
+            <div class="neo-card flex-actions mb-4">
+                <input type="text" class="neo-input flex-1" id="search-civitas" placeholder="Cari NIDN, Nama, Jabatan..." onkeyup="filterTableCivitas()">
+                <button class="neo-btn neo-bg-blue" onclick="openDynamicModalCivitas()">+ Tambah Baru</button>
+                <button class="neo-btn neo-bg-yellow" onclick="loadAllCivitas()">🔄 Refresh</button>
             </div>
-
-            <div class="neo-card neo-bg-white table-container">
+            <div class="neo-card" style="padding: 0; overflow-x: auto;">
                 <table class="neo-table">
-                    <thead>
-                        <tr class="neo-bg-purple text-white" id="civitas-thead-tr">
-                            <th>AKSI</th>
-                        </tr>
-                    </thead>
-                    <tbody id="civitas-tbody">
-                        <tr><td colspan="10" class="text-center">Memuat database dari Redis...</td></tr>
-                    </tbody>
+                    <thead><tr class="neo-bg-purple text-white" id="civitas-thead-tr"><th>AKSI</th></tr></thead>
+                    <tbody id="civitas-tbody"><tr><td colspan="10" class="text-center">Memuat dari Redis...</td></tr></tbody>
                 </table>
             </div>
         </div>
 
         <!-- TAB 2: BUILDER CIVITAS -->
         <div id="tab-builder-civitas" class="tab-content">
-            <div class="neo-card neo-bg-white">
+            <div class="neo-card">
                 <h2 class="neo-heading-sm section-title">Desain Form Dosen & Civitas</h2>
-                <p class="fw-600 mb-4">Atur struktur kolom form untuk Civitas. Wajib memiliki field dengan label "NIDN".</p>
-                
-                <div id="form-builder-civitas" class="mb-4"></div>
-                
-                <div class="flex-actions">
+                <p class="fw-600 mb-4">Atur kolom untuk Civitas. Wajib memiliki field label "NIDN".</p>
+                <div id="form-builder-civitas"></div>
+                <div class="flex-actions mt-4">
                     <button class="neo-btn neo-bg-yellow" onclick="addBuilderField('civitas')">+ Tambah Field</button>
                     <button class="neo-btn neo-bg-blue" onclick="saveSchema('civitas')">💾 Simpan Skema Civitas</button>
                 </div>
@@ -282,19 +203,18 @@
         <div id="tab-import-civitas" class="tab-content">
             <div class="neo-card neo-bg-yellow">
                 <h2 class="neo-heading-sm mb-2">Bulk Upload Civitas (XLSX)</h2>
-                <div class="neo-card neo-bg-white hint-box">
+                <div class="neo-card hint-box">
                     <p id="excel-hint-civitas" class="hint-text"></p>
                 </div>
-                <div class="neo-upload-box">
+                <div class="neo-upload-box" onclick="document.getElementById('file-excel-civitas').click()">
                     <input type="file" id="file-excel-civitas" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleExcelUpload(event, 'civitas')">
-                    <button class="neo-btn neo-bg-white upload-btn-large" onclick="document.getElementById('file-excel-civitas').click()">📁 Upload Excel Civitas</button>
+                    <p style="font-weight:800; font-size:1.2rem; margin:0;">📁 Klik di sini untuk Upload Excel Civitas</p>
                 </div>
             </div>
-
-            <div id="preview-section-civitas" class="neo-card neo-bg-white preview-section">
+            <div id="preview-section-civitas" class="neo-card preview-section">
                 <div class="preview-header">
-                    <h3 class="neo-heading-sm m-0">Preview Data Civitas (<span id="preview-count-civitas">0</span> baris)</h3>
-                    <button class="neo-btn neo-bg-green" id="btn-sync-civitas" onclick="syncToRedis('civitas')">🚀 Sinkronisasi Server Civitas</button>
+                    <h3 class="neo-heading-sm">Preview Data (<span id="preview-count-civitas">0</span>)</h3>
+                    <button class="neo-btn neo-bg-green" id="btn-sync-civitas" onclick="syncToRedis('civitas')">🚀 Sinkronisasi Server</button>
                 </div>
                 <div class="table-wrapper">
                     <table class="neo-table">
@@ -308,37 +228,37 @@
     </section>
 </div>
 
-<!-- ================== MODALS ================== -->
+<!-- ================== MODALS (Form Input) ================== -->
 <div class="neo-modal-overlay" id="modal-mhs">
-    <div class="neo-modal-content neo-bg-white modal-form-content">
+    <div class="neo-modal-content">
         <h2 class="neo-heading-sm section-title" id="title-mhs">Form Mahasiswa</h2>
         <form onsubmit="saveDynamicData(event, 'mhs')">
             <div id="fields-mhs"></div>
-            <div class="flex-modal-actions">
+            <div class="flex-actions" style="margin-top:30px;">
                 <button type="button" class="neo-btn neo-bg-pink flex-1" onclick="closeModal('modal-mhs')">Batal</button>
-                <button type="submit" class="neo-btn neo-bg-blue flex-2" id="btn-save-mhs">💾 Simpan MHS</button>
+                <button type="submit" class="neo-btn neo-bg-blue flex-2" id="btn-save-mhs">💾 Simpan ke Server</button>
             </div>
         </form>
     </div>
 </div>
 
 <div class="neo-modal-overlay" id="modal-civitas">
-    <div class="neo-modal-content neo-bg-white modal-form-content">
+    <div class="neo-modal-content">
         <h2 class="neo-heading-sm section-title" id="title-civitas">Form Civitas/Dosen</h2>
         <form onsubmit="saveDynamicData(event, 'civitas')">
             <div id="fields-civitas"></div>
-            <div class="flex-modal-actions">
+            <div class="flex-actions" style="margin-top:30px;">
                 <button type="button" class="neo-btn neo-bg-pink flex-1" onclick="closeModal('modal-civitas')">Batal</button>
-                <button type="submit" class="neo-btn neo-bg-purple text-white flex-2" id="btn-save-civitas">💾 Simpan Civitas</button>
+                <button type="submit" class="neo-btn neo-bg-purple text-white flex-2" id="btn-save-civitas">💾 Simpan ke Server</button>
             </div>
         </form>
     </div>
 </div>
 
 <div class="neo-modal-overlay" id="customAlertModal">
-    <div class="neo-modal-content neo-bg-yellow modal-alert-content">
+    <div class="neo-modal-content neo-bg-yellow" style="text-align: center; max-width: 400px;">
         <h3 class="neo-heading-sm">⚠️ Pemberitahuan</h3>
-        <p id="customAlertMessage" class="alert-msg"></p>
+        <p id="customAlertMessage" style="font-weight: 700; font-size: 1.1rem; margin: 20px 0;"></p>
         <button class="neo-btn neo-bg-white block" onclick="closeCustomAlert()">Mengerti</button>
     </div>
 </div>
@@ -368,8 +288,8 @@
         { id: 'prodi', label: 'Program Studi Unit Kerja', type: 'select', options: 'Kedokteran Gigi, Profesi Dokter Gigi' },
         { id: 'jabatan', label: 'Jabatan Fungsional', type: 'select', options: 'Asisten Ahli, Lektor, Lektor Kepala, Guru Besar, Tenaga Pengajar' },
         { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'select', options: 'Dosen Tetap, Dosen LB, PNS, Non-PNS' },
-        { id: 'jenjang', label: 'Pendidikan (Jenjang Terakhir)', type: 'select', options: 'S1, S2, S3, Sp-1, Sp-2' },
-        { id: 'gelar', label: 'Gelar Akademik Terakhir', type: 'text', options: '' },
+        { id: 'jenjang', label: 'Pendidikan Terakhir', type: 'select', options: 'S1, S2, S3, Sp-1, Sp-2' },
+        { id: 'gelar', label: 'Gelar Akademik', type: 'text', options: '' },
         { id: 'pt', label: 'Perguruan Tinggi Lulusan', type: 'text', options: '' },
         { id: 'tahun_lulus', label: 'Tahun Lulus', type: 'number', options: '' },
         { id: 'status', label: 'Status Aktif', type: 'select', options: 'Aktif, Tugas Belajar, Cuti, Pensiun, Keluar' }
@@ -382,7 +302,7 @@
         const token = localStorage.getItem('axa_admin_token');
         if (token) {
             document.getElementById('loginGate').style.display = 'none';
-            document.getElementById('main-layout').style.display = ''; // Hilangkan block inline JS lama!
+            document.getElementById('main-layout').style.display = 'flex';
             
             await loadSchema('mhs');
             await loadSchema('civitas');
@@ -413,8 +333,8 @@
             } else { throw new Error(); }
         } catch(e) {
             document.getElementById('loginError').style.display = 'block'; 
+            btn.innerText = "Akses Database"; btn.disabled = false;
         }
-        btn.innerText = "Akses Database"; btn.disabled = false;
     }
 
     function logout() { localStorage.removeItem('axa_admin_token'); location.reload(); }
@@ -463,24 +383,24 @@
             html += `
             <div class="builder-item" data-id="${field.id}">
                 <span class="drag-handle">⠿</span>
-                <div class="builder-field-wrap">
-                    <label class="builder-label-sm">Label Form</label>
-                    <input type="text" class="neo-input builder-label builder-input-sm" value="${field.label}">
+                <div class="b-wrap-lg">
+                    <label class="neo-label" style="font-size:0.8rem; margin:0 0 5px;">Label Form</label>
+                    <input type="text" class="neo-input builder-label" value="${field.label}" style="padding: 10px; font-size:0.9rem;">
                 </div>
-                <div class="builder-type-wrap">
-                    <label class="builder-label-sm">Tipe</label>
-                    <select class="neo-input builder-type builder-input-sm" onchange="toggleBuilderOptions(this)">
+                <div class="b-wrap">
+                    <label class="neo-label" style="font-size:0.8rem; margin:0 0 5px;">Tipe</label>
+                    <select class="neo-input builder-type" style="padding: 10px; font-size:0.9rem;" onchange="toggleBuilderOptions(this)">
                         <option value="text" ${field.type === 'text'?'selected':''}>Teks (Text)</option>
                         <option value="number" ${field.type === 'number'?'selected':''}>Angka (Number)</option>
                         <option value="select" ${field.type === 'select'?'selected':''}>Dropdown</option>
                         <option value="image" ${field.type === 'image'?'selected':''}>Foto Profil</option>
                     </select>
                 </div>
-                <div class="builder-field-wrap builder-options-wrap" style="display:${field.type === 'select' ? 'block' : 'none'};">
-                    <label class="builder-label-sm">Pilihan Dropdown (Koma)</label>
-                    <input type="text" class="neo-input builder-options builder-input-sm" value="${field.options || ''}">
+                <div class="b-wrap-lg builder-options-wrap" style="display:${field.type === 'select' ? 'block' : 'none'};">
+                    <label class="neo-label" style="font-size:0.8rem; margin:0 0 5px;">Pilihan Dropdown (Koma)</label>
+                    <input type="text" class="neo-input builder-options" value="${field.options || ''}" style="padding: 10px; font-size:0.9rem;">
                 </div>
-                <button class="neo-btn neo-bg-pink builder-btn-del" onclick="this.parentElement.remove()">🗑️</button>
+                <button class="neo-btn neo-bg-pink" style="padding: 10px 15px; margin-top:20px;" onclick="this.parentElement.remove()">🗑️</button>
             </div>`;
         });
         container.innerHTML = html;
@@ -535,7 +455,7 @@
             const json = await res.json();
             
             if(json.success) {
-                showToast("✅ Struktur Form & Tabel Diperbarui di Server!");
+                showToast("✅ Skema Form & Tabel Diperbarui di Server!");
                 if(type==='mhs') loadAllMhs(); else loadAllCivitas();
             } else {
                 showCustomAlert("Gagal menyimpan skema: " + json.message);
@@ -566,8 +486,8 @@
             if(field.type === 'image') {
                 const imgUrl = val !== '-' && val !== '' ? val : '/img/bemprofilmhs.png';
                 html += `
-                <div class="photo-upload-container">
-                    <img id="preview_${type}_${field.id}" src="${imgUrl}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" class="photo-preview-large">
+                <div style="text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed #000; border-radius: 12px; background: #f8fafc;">
+                    <img id="preview_${type}_${field.id}" src="${imgUrl}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; object-fit: cover; margin-bottom: 15px;">
                     <input type="file" id="file_${type}_${field.id}" accept="image/*" style="display: none;" onchange="uploadFotoDynamic(this, '${type}', '${field.id}')">
                     <input type="hidden" id="dyn_${type}_${field.id}" value="${imgUrl}">
                     <br><button type="button" class="neo-btn neo-bg-yellow" onclick="document.getElementById('file_${type}_${field.id}').click()">📸 Pilih Foto</button>
@@ -577,17 +497,17 @@
                 let optionsHtml = '';
                 opts.forEach(o => { optionsHtml += `<option value="${o}" ${val === o ? 'selected' : ''}>${o}</option>`; });
                 html += `
-                <div class="form-group">
+                <div style="margin-bottom: 15px;">
                     <label class="neo-label">${field.label}</label>
                     <select class="neo-input" id="dyn_${type}_${field.id}" required>${optionsHtml}</select>
                 </div>`;
             } else {
                 let stepStr = field.type === 'number' ? 'step="any"' : '';
-                let readonlyStr = (field.id.toLowerCase() === primaryKey && state[type].isEdit) ? 'readonly class="neo-input readonly-input"' : 'class="neo-input" required';
+                let readonlyStr = (field.id.toLowerCase() === primaryKey && state[type].isEdit) ? 'readonly style="background:#e2e8f0;"' : 'required';
                 html += `
-                <div class="form-group">
+                <div style="margin-bottom: 15px;">
                     <label class="neo-label">${field.label}</label>
-                    <input type="${field.type}" id="dyn_${type}_${field.id}" value="${val}" ${readonlyStr} ${stepStr}>
+                    <input type="${field.type}" class="neo-input" id="dyn_${type}_${field.id}" value="${val}" ${readonlyStr} ${stepStr}>
                 </div>`;
             }
         });
@@ -732,8 +652,8 @@
                     previewHtml += `<tr>`;
                     visFields.forEach(f => {
                         let val = item[f.id] || '-';
-                        if(f.type === 'image') previewHtml += `<td><img src="${val}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" class="photo-preview-small border-black"></td>`;
-                        else previewHtml += `<td class="td-bold">${val}</td>`;
+                        if(f.type === 'image') previewHtml += `<td><img src="${val}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width:40px; height:40px; border-radius:50%; object-fit:cover;"></td>`;
+                        else previewHtml += `<td style="font-weight:700;">${val}</td>`;
                     });
                     previewHtml += `</tr>`;
                 });
@@ -783,7 +703,9 @@
                 renderDynamicTable('mhs');
                 updateStatsMhs();
             } else { throw new Error(); }
-        } catch (e) { document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; }
+        } catch (e) { 
+            document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink" style="font-weight:700;">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; 
+        }
     }
 
     function updateStatsMhs() {
@@ -852,7 +774,9 @@
                 renderDynamicTable('civitas');
                 updateStatsCivitas();
             } else { throw new Error(); }
-        } catch (e) { document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; }
+        } catch (e) { 
+            document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink" style="font-weight:700;">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; 
+        }
     }
 
     function updateStatsCivitas() {
@@ -935,20 +859,20 @@
                 let val = row[f.id] || '-';
                 if(f.type === 'image') {
                     let imgSrc = val !== '-' && val !== '' ? val : '/img/bemprofilmhs.png';
-                    html += `<td><img src="${imgSrc}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" class="photo-preview-small border-black"></td>`;
+                    html += `<td><img src="${imgSrc}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>`;
                 } else if(f.id.toLowerCase().includes('status') || val.toString().toLowerCase() === 'aktif') {
                     let c = val.toLowerCase().includes('aktif') ? 'neo-bg-green' : (val.toLowerCase().includes('lulus') ? 'neo-bg-blue' : 'neo-bg-yellow');
                     html += `<td><span class="neo-badge ${c}">${val}</span></td>`;
                 } else {
-                    html += `<td class="td-bold">${val}</td>`;
+                    html += `<td style="font-weight:700;">${val}</td>`;
                 }
             });
             
             let rowId = row[primaryKey] || row[primaryKey.toUpperCase()];
             html += `
                 <td>
-                    <button class="neo-btn neo-bg-yellow btn-action-sm" onclick='openDynamicModal("${type}", ${JSON.stringify(row).replace(/'/g, "&#39;")})'>✏️</button>
-                    <button class="neo-btn neo-bg-pink btn-action-sm" onclick="deleteData('${rowId}', '${type}')">🗑️</button>
+                    <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='openDynamicModal("${type}", ${JSON.stringify(row).replace(/'/g, "&#39;")})'>✏️</button>
+                    <button class="neo-btn neo-bg-pink" style="padding: 5px 10px; font-size:0.8rem;" onclick="deleteData('${rowId}', '${type}')">🗑️</button>
                 </td>
             </tr>`;
         });
