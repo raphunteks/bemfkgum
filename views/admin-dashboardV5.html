@@ -953,9 +953,10 @@
         const tbody = document.getElementById('pegawai-tbody');
         const thead = document.getElementById('pegawai-thead-tr');
         
-        let thHtml = `<th>TIPE</th><th>NIP / NIDN</th><th>NAMA LENGKAP</th><th>PRODI / UNIT</th><th>STATUS</th><th>AKSI</th>`;
+        // Memperbarui header agar ada slot untuk FOTO (7 Kolom)
+        let thHtml = `<th>FOTO</th><th>TIPE</th><th>NIP / NIDN</th><th>NAMA LENGKAP</th><th>PRODI / UNIT</th><th>STATUS</th><th>AKSI</th>`;
         thead.innerHTML = thHtml;
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
         
         try {
             let apiUrl = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/civitas' : '/api/civitas';
@@ -968,7 +969,7 @@
                 updateStatsPegawai();
             } else { showCustomAlert("Gagal memuat data pegawai: " + json.message); }
         } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center neo-bg-pink">Gagal koneksi ke server. Mode Lokal aktif.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center neo-bg-pink">Gagal koneksi ke server. Mode Lokal aktif.</td></tr>`;
             // Fallback for simulation rendering
             renderDynamicTablePegawai(databasePegawai);
             updateStatsPegawai();
@@ -978,7 +979,7 @@
     function renderDynamicTablePegawai(dataArray) {
         const tbody = document.getElementById('pegawai-tbody');
         if(dataArray.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="font-weight:bold;">Database Pegawai Kosong.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Database Pegawai Kosong.</td></tr>`;
             return;
         }
 
@@ -990,8 +991,13 @@
             let status = (p.status || p.Status || 'Aktif').toLowerCase();
             let cStatus = status.includes('aktif') ? 'neo-bg-green' : (status.includes('pensiun') ? 'neo-bg-purple' : (status.includes('keluar') ? 'neo-bg-pink' : 'neo-bg-white'));
             
+            // Logika FOTO: Mencari properti foto pada objek pegawai, fallback ke default jika kosong
+            let fotoVal = p.foto || p.Foto || '';
+            let imgSrc = fotoVal !== '-' && fotoVal !== '' ? fotoVal : '/img/bemprofilmhs.png';
+            
             html += `
             <tr>
+                <td><img src="${imgSrc}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>
                 <td>${typeBadge}</td>
                 <td style="font-family:'Space Mono', monospace; font-weight:700;">${p.nip || p.NIP || '-'}</td>
                 <td style="font-weight:700; font-size:1.1rem;">${p.nama || p.Nama || p['Nama Lengkap'] || '-'}</td>
