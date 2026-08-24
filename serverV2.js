@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 
-// Konfigurasi CORS & Limit Body-Parser (Super Tinggi untuk Base64)
+// Konfigurasi CORS & Limit Body-Parser (Super Tinggi untuk Base64 & Bulk Excel)
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -32,7 +32,7 @@ const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E
 let redis = null;
 try {
     redis = new Redis({ url: redisUrl, token: redisToken });
-    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi (V2 - Linktree & QR Code API).");
+    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi (V2 - Linktree, QR Code & MHS Database API).");
 } catch (error) {
     console.error("⚠️ Peringatan: Redis gagal inisiasi.", error.message);
 }
@@ -44,6 +44,23 @@ const safeParse = (data, fallbackData) => {
         return typeof data === 'string' ? JSON.parse(data) : data;
     } catch (error) {
         return fallbackData;
+    }
+};
+
+// ================= MIDDLEWARE AUTHENTICATION =================
+const verifyToken = (req, res, next) => {
+    const bearerHeader = req.headers['authorization'];
+    if (typeof bearerHeader !== 'undefined') {
+        const bearer = bearerHeader.split(' ');
+        const bearerToken = bearer[1];
+        // Validasi token yang di-generate dari endpoint login
+        if (bearerToken === 'AXA-XYZ-SECURE-TOKEN') { 
+            next(); 
+        } else {
+            res.status(403).json({ success: false, message: 'Token Invalid atau Kedaluwarsa' });
+        }
+    } else {
+        res.status(403).json({ success: false, message: 'Akses Ditolak: Token Tidak Ditemukan' });
     }
 };
 
@@ -62,9 +79,12 @@ app.post('/api/admin/auth', (req, res) => {
     }
 });
 
-// ================= RUTE FRONTEND ADMIN =================
+// ================= RUTE FRONTEND ADMIN & PDDIKTI =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
 app.get('/admin-qrcode', (req, res) => res.render('admin-dashboardV4'));
+app.get('/admin-mhs', (req, res) => res.render('admin-dashboardV5')); // DB Mahasiswa Admin
+app.get('/carimhs', (req, res) => res.render('carimhs')); // Web Pencarian Mahasiswa Publik
+app.get('/carimhs/detail', (req, res) => res.render('carimhs-detail')); // Detail Mahasiswa Publik
 
 // ================= RUTE FRONTEND PUBLIK DENGAN SSR SEO =================
 app.get('/link/:slug', async (req, res) => {
@@ -146,6 +166,123 @@ app.get('/api/uploads/:filename', async (req, res) => {
     }
 });
 
+// ================= ENDPOINT API PDDIKTI MHS (DATABASE MAHASISWA) =================
+const MHS_HASH_KEY = 'BEM_MHS_DB';
+
+// 1. GET ALL MHS (Read All / Search / Public)
+app.get('/api/mhs', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const allData = await redis.hgetall(MHS_HASH_KEY);
+        
+        let resultArray = [];
+        if (allData) {
+            for (const [nim, dataStr] of Object.entries(allData)) {
+                resultArray.push(safeParse(dataStr, {}));
+            }
+        }
+        
+        // Fitur Filter Search dari URL (?q=nama/nim)
+        if (req.query.q) {
+            const q = req.query.q.toLowerCase();
+            resultArray = resultArray.filter(m => 
+                (m.nim && m.nim.toLowerCase().includes(q)) || 
+                (m.nama && m.nama.toLowerCase().includes(q))
+            );
+        }
+
+        res.json({ success: true, data: resultArray });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal mengambil database' });
+    }
+});
+
+// 2. GET SINGLE MHS DETAIL (Public)
+app.get('/api/mhs/:nim', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { nim } = req.params;
+        const dataStr = await redis.hget(MHS_HASH_KEY, nim);
+        
+        if (!dataStr) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
+        
+        res.json({ success: true, data: safeParse(dataStr, {}) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal mengambil data' });
+    }
+});
+
+// 3. POST BULK UPLOAD (EXCEL DATA TO REDIS PIPELINE) - PROTECTED
+app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { students } = req.body;
+        if (!students || !Array.isArray(students)) {
+            return res.status(400).json({ success: false, message: 'Format data tidak valid' });
+        }
+
+        // Menggunakan Redis Pipeline dari Upstash untuk efisiensi ratusan baris data
+        const p = redis.pipeline();
+        
+        students.forEach(std => {
+            if (std.nim && std.nama) {
+                p.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
+            }
+        });
+        
+        await p.exec();
+
+        res.json({ success: true, message: `Berhasil sinkronisasi ${students.length} mahasiswa` });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database' });
+    }
+});
+
+// 4. POST SINGLE MHS (CREATE) - PROTECTED
+app.post('/api/mhs', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const std = req.body;
+        if (!std.nim || !std.nama) return res.status(400).json({ success: false, message: 'NIM dan Nama Wajib Diisi' });
+
+        await redis.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
+        res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal menyimpan data' });
+    }
+});
+
+// 5. PUT SINGLE MHS (UPDATE) - PROTECTED
+app.put('/api/mhs/:nim', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { nim } = req.params;
+        const std = req.body;
+        
+        const exists = await redis.hexists(MHS_HASH_KEY, nim);
+        if (!exists) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
+
+        std.nim = nim; // Pastikan parameter path tidak dikelabuhi payload body
+        
+        await redis.hset(MHS_HASH_KEY, { [nim]: JSON.stringify(std) });
+        res.json({ success: true, message: 'Data Mahasiswa Berhasil Diperbarui' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal memperbarui data' });
+    }
+});
+
+// 6. DELETE SINGLE MHS - PROTECTED
+app.delete('/api/mhs/:nim', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { nim } = req.params;
+        await redis.hdel(MHS_HASH_KEY, nim);
+        res.json({ success: true, message: 'Data Mahasiswa Terhapus' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Gagal menghapus data' });
+    }
+});
+
 // ================= ENDPOINT API LINKTREE =================
 app.get('/api/linktrees', async (req, res) => {
     try {
@@ -168,7 +305,7 @@ app.get('/api/linktrees/:slug', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-app.post('/api/linktrees/save', async (req, res) => {
+app.post('/api/linktrees/save', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const payload = req.body;
@@ -189,7 +326,7 @@ app.post('/api/linktrees/save', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-app.delete('/api/linktrees/:id', async (req, res) => {
+app.delete('/api/linktrees/:id', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         await redis.hdel('BEM_Linktrees', req.params.id);
@@ -223,7 +360,7 @@ app.get(['/api/qrcodes', '/api/qrcodes/'], async (req, res) => {
     }
 });
 
-app.post('/api/qrcodes/save', async (req, res) => {
+app.post('/api/qrcodes/save', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const payload = req.body;
@@ -240,7 +377,7 @@ app.post('/api/qrcodes/save', async (req, res) => {
     }
 });
 
-app.delete('/api/qrcodes/:id', async (req, res) => {
+app.delete('/api/qrcodes/:id', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         await redis.del(`BEM_QRCodes:${req.params.id}`);
