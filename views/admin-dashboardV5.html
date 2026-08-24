@@ -38,12 +38,11 @@
     </div>
 </div>
 
-<!-- Mobile Menu Toggle Button -->
 <button class="neo-btn neo-bg-pink mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
 
 <div class="builder-layout neo-bg-bg" id="main-layout" style="display: none; opacity: 0; transition: opacity 0.5s;">
     
-    <!-- LEFT SIDEBAR: MENU -->
+    <!-- LEFT SIDEBAR -->
     <aside class="sidebar-panel neo-bg-white">
         <div class="brand-box neo-bg-green">
             <img src="/img/bemfkgumi.png" alt="BEM Logo">
@@ -62,11 +61,10 @@
         </div>
     </aside>
 
-    <!-- MID PANEL: EDITOR -->
+    <!-- MID PANEL -->
     <section class="editor-panel">
         
-        <!-- HEADER EDITOR -->
-        <div class="editor-header neo-card neo-bg-purple" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="editor-header neo-card neo-bg-purple" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap:wrap; gap:15px;">
             <div class="editor-title-group">
                 <h1 class="neo-heading" style="color: #fff; margin-bottom:0;">DATABASE MAHASISWA</h1>
                 <p style="color: #fff; margin-top:5px; font-weight:600;">Pusat Pengelolaan Data Induk BEM (Realtime Redis)</p>
@@ -74,39 +72,50 @@
             <a href="/carimhs" target="_blank" class="neo-btn neo-bg-yellow">🔍 Buka Web Pencarian</a>
         </div>
 
-        <!-- TAB 0: DASHBOARD -->
+        <!-- TAB 0: DASHBOARD STATISTIK LENGKAP -->
         <div id="tab-dashboard" class="tab-content active">
             <div class="grid-stats">
-                <div class="neo-card neo-bg-blue">
+                <div class="neo-card neo-bg-white text-center">
                     <h3 class="neo-heading-sm">Total Mahasiswa</h3>
-                    <h1 class="neo-heading" id="stat-total" style="font-size: 3rem;">0</h1>
+                    <h1 class="neo-heading" id="stat-total" style="font-size: 3rem; margin-top:10px;">0</h1>
                 </div>
-                <div class="neo-card neo-bg-pink">
+                <div class="neo-card neo-bg-green text-center">
                     <h3 class="neo-heading-sm">Status Aktif</h3>
-                    <h1 class="neo-heading" id="stat-aktif" style="font-size: 3rem;">0</h1>
+                    <h1 class="neo-heading" id="stat-aktif" style="font-size: 3rem; margin-top:10px;">0</h1>
                 </div>
-                <div class="neo-card neo-bg-green">
+                <div class="neo-card neo-bg-blue text-center">
+                    <h3 class="neo-heading-sm">Lulus</h3>
+                    <h1 class="neo-heading" id="stat-lulus" style="font-size: 3rem; margin-top:10px;">0</h1>
+                </div>
+                <div class="neo-card neo-bg-yellow text-center">
+                    <h3 class="neo-heading-sm">Cuti</h3>
+                    <h1 class="neo-heading" id="stat-cuti" style="font-size: 3rem; margin-top:10px;">0</h1>
+                </div>
+                <div class="neo-card neo-bg-pink text-center">
+                    <h3 class="neo-heading-sm">DO / Keluar</h3>
+                    <h1 class="neo-heading" id="stat-do" style="font-size: 3rem; margin-top:10px;">0</h1>
+                </div>
+                <div class="neo-card neo-bg-purple text-center" style="color:#fff;">
                     <h3 class="neo-heading-sm">Update Terakhir</h3>
-                    <h1 class="neo-heading-sm" id="stat-date" style="margin-top: 15px;">Hari ini</h1>
+                    <h1 class="neo-heading" id="stat-date" style="font-size: 2rem; margin-top:20px;">-</h1>
                 </div>
             </div>
             
             <div class="neo-card neo-bg-white" style="margin-top: 30px;">
                 <h2 class="neo-heading-sm">Panduan Sistem:</h2>
                 <ul style="font-weight: 600; line-height: 1.8; color: var(--text-muted);">
-                    <li>Gunakan tab <b>Data Mahasiswa</b> untuk mengedit, menambah, atau menghapus data secara satuan (CRUD manual).</li>
+                    <li>Pencarian mendukung filter berdasarkan <b>NIM, Nama Lengkap, dan Angkatan</b>.</li>
+                    <li>Foto Profil akan di-upload ke server (API) dan menghasilkan ekstensi asli (.png/.jpg) bukan text Base64.</li>
                     <li>Gunakan tab <b>Import Excel</b> untuk mengunggah ratusan/ribuan data sekaligus dari sistem akademik.</li>
-                    <li>Sistem ini terhubung langsung dengan backend <b>Upstash Redis</b> secara Real-Time.</li>
-                    <li>Format Excel (.xlsx) yang didukung harus memiliki kolom: <b>NIM, NAMA, ANGKATAN, PRODI, STATUS</b>.</li>
                 </ul>
             </div>
         </div>
 
-        <!-- TAB 1: DATA MAHASISWA (CRUD) -->
+        <!-- TAB 1: DATA MAHASISWA (CRUD & SEARCHING) -->
         <div id="tab-list" class="tab-content">
             <div class="neo-card neo-bg-white" style="margin-bottom: 20px;">
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <input type="text" class="neo-input" id="search-mhs" placeholder="Cari NIM atau Nama..." onkeyup="filterTable()" style="flex:1;">
+                    <input type="text" class="neo-input" id="search-mhs" placeholder="Cari NIM, Nama, atau Tahun Angkatan (Cth: 2020)..." onkeyup="filterTable()" style="flex:1;">
                     <button class="neo-btn neo-bg-blue" onclick="openFormModal()">+ Tambah Mhs Baru</button>
                     <button class="neo-btn neo-bg-yellow" onclick="loadAllMhs()">🔄 Refresh</button>
                 </div>
@@ -116,6 +125,7 @@
                 <table class="neo-table" id="mhs-table">
                     <thead>
                         <tr class="neo-bg-green">
+                            <th>FOTO</th>
                             <th>NIM</th>
                             <th>NAMA LENGKAP</th>
                             <th>ANGKATAN</th>
@@ -125,7 +135,7 @@
                         </tr>
                     </thead>
                     <tbody id="mhs-tbody">
-                        <tr><td colspan="6" class="text-center">Memuat database dari Redis...</td></tr>
+                        <tr><td colspan="7" class="text-center">Memuat database dari Redis...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -135,7 +145,7 @@
         <div id="tab-import" class="tab-content">
             <div class="neo-card neo-bg-yellow">
                 <h2 class="neo-heading-sm" style="margin-bottom: 10px;">Bulk Upload Database (XLSX)</h2>
-                <p style="font-weight: 600; margin-bottom: 20px;">Pilih file Excel Anda. Sistem akan memetakan kolom secara otomatis. Data yang NIM-nya sudah ada akan diperbarui (Update), data baru akan ditambahkan (Insert).</p>
+                <p style="font-weight: 600; margin-bottom: 20px;">Pilih file Excel Anda. Sistem akan memetakan kolom secara otomatis. Data yang NIM-nya sudah ada akan diperbarui, data baru akan ditambahkan. Foto default akan terpasang otomatis.</p>
                 
                 <div class="neo-upload-box" id="upload-box">
                     <input type="file" id="file-excel" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleExcelUpload(event)">
@@ -146,7 +156,6 @@
                 </div>
             </div>
 
-            <!-- Preview Excel Data -->
             <div id="excel-preview-section" class="neo-card neo-bg-white" style="display:none; margin-top: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 class="neo-heading-sm">Preview Data (<span id="preview-count">0</span> baris)</h3>
@@ -172,20 +181,30 @@
     </section>
 </div>
 
-<!-- ================== MODAL FORM (CRUD) ================== -->
+<!-- ================== MODAL FORM MHS BARU / EDIT ================== -->
 <div class="neo-modal-overlay" id="formModal">
-    <div class="neo-modal-content neo-bg-white" style="max-width: 500px;">
-        <h2 class="neo-heading-sm" id="modal-title" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Tambah Mahasiswa</h2>
+    <div class="neo-modal-content neo-bg-white" style="max-width: 550px; max-height: 90vh; overflow-y:auto;">
+        <h2 class="neo-heading-sm" id="modal-title" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Manajemen Form MHS Baru</h2>
         
         <form id="mhs-form" onsubmit="saveSingleMhs(event)">
+            
+            <!-- UPLOAD FOTO PROFIL SECTION -->
+            <div style="text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed #000; border-radius: 12px; background: #f8fafc;">
+                <img id="preview-foto" src="/img/bemprofilmhs.png" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; object-fit: cover; margin-bottom: 15px; box-shadow: 4px 4px 0px #000;">
+                <input type="file" id="inp-foto-file" accept="image/*" style="display: none;" onchange="uploadFotoMhs(this)">
+                <input type="hidden" id="inp-foto-url" value="/img/bemprofilmhs.png">
+                <br>
+                <button type="button" class="neo-btn neo-bg-yellow" onclick="document.getElementById('inp-foto-file').click()">📸 Pilih Foto Profil (.jpg/.png)</button>
+            </div>
+
             <label class="neo-label">Nomor Induk Mahasiswa (NIM)</label>
-            <input type="text" class="neo-input" id="inp-nim" required placeholder="Cth: 1622026001">
+            <input type="text" class="neo-input" id="inp-nim" required placeholder="Cth: 16120200021">
             
             <label class="neo-label" style="margin-top: 15px;">Nama Lengkap</label>
-            <input type="text" class="neo-input" id="inp-nama" required placeholder="Cth: Muhammad Alif">
+            <input type="text" class="neo-input" id="inp-nama" required placeholder="Cth: DRG. M. AKSA ARSYAD, S.KG">
             
             <label class="neo-label" style="margin-top: 15px;">Tahun Angkatan</label>
-            <input type="number" class="neo-input" id="inp-angkatan" required placeholder="Cth: 2026">
+            <input type="number" class="neo-input" id="inp-angkatan" required placeholder="Cth: 2020">
             
             <label class="neo-label" style="margin-top: 15px;">Program Studi</label>
             <select class="neo-input" id="inp-prodi" required>
@@ -201,9 +220,9 @@
                 <option value="DO/Keluar">DO/Keluar</option>
             </select>
             
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
                 <button type="button" class="neo-btn neo-bg-pink" style="flex:1;" onclick="closeFormModal()">Batal</button>
-                <button type="submit" class="neo-btn neo-bg-blue" style="flex:1;" id="btn-save-single">💾 Simpan Data</button>
+                <button type="submit" class="neo-btn neo-bg-blue" style="flex:2;" id="btn-save-single">💾 Simpan Data MHS</button>
             </div>
         </form>
     </div>
@@ -272,9 +291,49 @@
         location.reload(); 
     }
 
+    // ================= UPLOAD FOTO PROFIL (API) =================
+    function fileToBase64(file) { 
+        return new Promise((resolve, reject) => { 
+            const reader = new FileReader(); 
+            reader.readAsDataURL(file); 
+            reader.onload = () => resolve(reader.result); 
+            reader.onerror = error => reject(error); 
+        }); 
+    }
+
+    async function uploadFotoMhs(input) {
+        const file = input.files[0];
+        if(!file) return;
+        if(file.size > 2 * 1024 * 1024) return showCustomAlert("Maksimal ukuran gambar 2MB");
+
+        showToast("⏳ Mengunggah foto ke server...");
+        try {
+            const base64 = await fileToBase64(file);
+            let apiUrl = '/api/upload';
+            if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                apiUrl = 'https://bemkbmfkgumi.com/api/upload';
+            }
+            
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, base64: base64 })
+            });
+            
+            if(res.ok) {
+                const data = await res.json();
+                document.getElementById('inp-foto-url').value = data.url; // URL /api/uploads/xxx.jpg
+                document.getElementById('preview-foto').src = data.url;
+                showToast("✅ Foto berhasil diunggah!");
+            } else { throw new Error(); }
+        } catch(e) {
+            showCustomAlert("Gagal upload foto ke server.");
+        }
+    }
+
     // ================= STATE & TAB CONTROLLER =================
-    let databaseMhs = []; // Cache lokal
-    let excelDataPayload = []; // Penampung data dari excel
+    let databaseMhs = []; 
+    let excelDataPayload = []; 
 
     function toggleMobileMenu() {
         document.getElementById('sidebarNav').classList.toggle('show');
@@ -293,7 +352,7 @@
     // ================= DATABASE LOGIC (FETCH & RENDER) =================
     async function loadAllMhs() {
         const tbody = document.getElementById('mhs-tbody');
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
         
         try {
             let apiUrl = '/api/mhs';
@@ -312,23 +371,25 @@
                 showCustomAlert("Gagal memuat data: " + json.message);
             }
         } catch (e) {
-            console.error(e);
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. (Mode Simulasi aktif)</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. (Mode Simulasi aktif)</td></tr>`;
         }
     }
 
     function renderTable(dataArray) {
         const tbody = document.getElementById('mhs-tbody');
         if(dataArray.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="font-weight:bold;">Database masih kosong.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Database masih kosong atau tidak ditemukan.</td></tr>`;
             return;
         }
 
         let html = '';
         dataArray.forEach(mhs => {
-            let statusColor = mhs.status.toLowerCase() === 'aktif' ? 'neo-bg-green' : (mhs.status.toLowerCase() === 'lulus' ? 'neo-bg-blue' : 'neo-bg-pink');
+            let statusColor = mhs.status.toLowerCase() === 'aktif' ? 'neo-bg-green' : (mhs.status.toLowerCase() === 'lulus' ? 'neo-bg-blue' : (mhs.status.toLowerCase() === 'cuti' ? 'neo-bg-yellow' : 'neo-bg-pink'));
+            let fotoSrc = mhs.foto || '/img/bemprofilmhs.png';
+
             html += `
             <tr>
+                <td><img src="${fotoSrc}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>
                 <td style="font-weight:900;">${mhs.nim}</td>
                 <td style="font-weight:700;">${mhs.nama}</td>
                 <td>${mhs.angkatan}</td>
@@ -346,15 +407,25 @@
     function filterTable() {
         const q = document.getElementById('search-mhs').value.toLowerCase();
         const filtered = databaseMhs.filter(mhs => 
-            mhs.nim.toLowerCase().includes(q) || mhs.nama.toLowerCase().includes(q)
+            (mhs.nim && mhs.nim.toLowerCase().includes(q)) || 
+            (mhs.nama && mhs.nama.toLowerCase().includes(q)) ||
+            (mhs.angkatan && mhs.angkatan.toString().toLowerCase().includes(q))
         );
         renderTable(filtered);
     }
 
     function updateStats() {
         document.getElementById('stat-total').innerText = databaseMhs.length;
-        const aktif = databaseMhs.filter(m => m.status.toLowerCase() === 'aktif').length;
-        document.getElementById('stat-aktif').innerText = aktif;
+        document.getElementById('stat-aktif').innerText = databaseMhs.filter(m => m.status.toLowerCase() === 'aktif').length;
+        document.getElementById('stat-lulus').innerText = databaseMhs.filter(m => m.status.toLowerCase() === 'lulus').length;
+        document.getElementById('stat-cuti').innerText = databaseMhs.filter(m => m.status.toLowerCase() === 'cuti').length;
+        
+        let doCount = databaseMhs.filter(m => m.status.toLowerCase() === 'do/keluar' || m.status.toLowerCase() === 'do').length;
+        document.getElementById('stat-do').innerText = doCount;
+
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')} WITA`;
+        document.getElementById('stat-date').innerText = timeStr;
     }
 
     // ================= CRUD LOGIC (SINGLE) =================
@@ -362,26 +433,33 @@
 
     function openFormModal() {
         isEditMode = false;
-        document.getElementById('modal-title').innerText = "Tambah Mahasiswa Baru";
+        document.getElementById('modal-title').innerText = "Manajemen Form MHS Baru";
         document.getElementById('mhs-form').reset();
         document.getElementById('inp-nim').readOnly = false;
+        
+        // Reset foto
+        document.getElementById('inp-foto-url').value = '/img/bemprofilmhs.png';
+        document.getElementById('preview-foto').src = '/img/bemprofilmhs.png';
+
         document.getElementById('formModal').classList.add('active');
     }
 
-    function closeFormModal() {
-        document.getElementById('formModal').classList.remove('active');
-    }
+    function closeFormModal() { document.getElementById('formModal').classList.remove('active'); }
 
     function editMhs(mhs) {
         isEditMode = true;
         document.getElementById('modal-title').innerText = "Edit Data Mahasiswa";
         document.getElementById('inp-nim').value = mhs.nim;
-        document.getElementById('inp-nim').readOnly = true; // NIM tidak boleh diubah
+        document.getElementById('inp-nim').readOnly = true; 
         document.getElementById('inp-nama').value = mhs.nama;
         document.getElementById('inp-angkatan').value = mhs.angkatan;
         document.getElementById('inp-prodi').value = mhs.prodi;
         document.getElementById('inp-status').value = mhs.status;
         
+        let fotoSrc = mhs.foto || '/img/bemprofilmhs.png';
+        document.getElementById('inp-foto-url').value = fotoSrc;
+        document.getElementById('preview-foto').src = fotoSrc;
+
         document.getElementById('formModal').classList.add('active');
     }
 
@@ -391,6 +469,7 @@
         btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
 
         const payload = {
+            foto: document.getElementById('inp-foto-url').value,
             nim: document.getElementById('inp-nim').value,
             nama: document.getElementById('inp-nama').value,
             angkatan: document.getElementById('inp-angkatan').value,
@@ -414,9 +493,9 @@
             const data = await res.json();
             
             if(data.success) {
-                showToast("✅ Berhasil disimpan ke Redis!");
+                showToast("✅ Berhasil disimpan secara Realtime!");
                 closeFormModal();
-                loadAllMhs();
+                loadAllMhs(); // Trigger Realtime Table Update
             } else {
                 showCustomAlert("Gagal menyimpan: " + data.message);
             }
@@ -424,7 +503,7 @@
             showToast("✅ Simulasi: Data tersimpan lokal.");
             closeFormModal();
         }
-        btn.innerText = "💾 Simpan Data"; btn.disabled = false;
+        btn.innerText = "💾 Simpan Data MHS"; btn.disabled = false;
     }
 
     async function deleteMhs(nim) {
@@ -439,7 +518,7 @@
                 });
                 const data = await res.json();
                 if(data.success) {
-                    showToast("🗑️ Data dihapus.");
+                    showToast("🗑️ Data berhasil dihapus.");
                     loadAllMhs();
                 }
             } catch (e) {
@@ -448,7 +527,7 @@
         }
     }
 
-    // ================= EXCEL BULK UPLOAD LOGIC (SHEETJS) =================
+    // ================= EXCEL BULK UPLOAD =================
     function handleExcelUpload(e) {
         const file = e.target.files[0];
         if(!file) return;
@@ -460,31 +539,26 @@
                 const workbook = XLSX.read(data, {type: 'array'});
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-                
-                // Konversi sheet ke JSON array
                 const rawJson = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
                 
-                // Pemetaan kolom secara cerdas (case-insensitive)
                 excelDataPayload = rawJson.map(row => {
                     return {
+                        foto: '/img/bemprofilmhs.png', // Default Bulk
                         nim: (row['NIM'] || row['nim'] || row['Nim'] || '').toString().trim(),
                         nama: (row['NAMA'] || row['Nama'] || row['nama lengkap'] || '').toString().trim(),
                         angkatan: (row['ANGKATAN'] || row['Angkatan'] || row['Tahun'] || '').toString().trim(),
                         prodi: (row['PRODI'] || row['Prodi'] || row['Program Studi'] || 'Kedokteran Gigi').toString().trim(),
                         status: (row['STATUS'] || row['Status'] || 'Aktif').toString().trim()
                     };
-                }).filter(item => item.nim !== ''); // Buang baris kosong tanpa NIM
+                }).filter(item => item.nim !== ''); 
 
-                if(excelDataPayload.length === 0) {
-                    return showCustomAlert("Format Excel salah atau kosong. Pastikan ada kolom NIM dan NAMA.");
-                }
+                if(excelDataPayload.length === 0) return showCustomAlert("Format Excel salah atau kosong.");
 
-                // Render Preview Table
                 document.getElementById('excel-preview-section').style.display = 'block';
                 document.getElementById('preview-count').innerText = excelDataPayload.length;
                 
                 let previewHtml = '';
-                excelDataPayload.slice(0, 50).forEach(item => { // limit preview 50 baris
+                excelDataPayload.slice(0, 50).forEach(item => { 
                     previewHtml += `
                     <tr>
                         <td style="font-weight:900;">${item.nim}</td>
@@ -497,7 +571,7 @@
                 if(excelDataPayload.length > 50) previewHtml += `<tr><td colspan="5" class="text-center">... dan ${excelDataPayload.length - 50} data lainnya</td></tr>`;
                 
                 document.getElementById('preview-tbody').innerHTML = previewHtml;
-                showToast("✅ Berhasil membaca Excel. Silakan Cek Preview.");
+                showToast("✅ Berhasil membaca Excel.");
                 
             } catch (err) {
                 showCustomAlert("Gagal membaca file Excel. Pastikan formatnya benar (.xlsx)");
@@ -508,7 +582,6 @@
 
     async function syncToRedis() {
         if(excelDataPayload.length === 0) return;
-        
         const btn = document.getElementById('btn-sync-redis');
         btn.innerText = "🚀 Menginjeksi Data ke Redis..."; btn.disabled = true;
 
@@ -539,7 +612,6 @@
         } catch (e) {
             showToast("🎉 Simulasi: Berhasil sinkronisasi lokal.");
             document.getElementById('excel-preview-section').style.display = 'none';
-            btn.innerText = "🚀 Sinkronisasi ke Redis Database"; btn.disabled = false;
         }
         btn.innerText = "🚀 Sinkronisasi ke Redis Database"; btn.disabled = false;
     }
