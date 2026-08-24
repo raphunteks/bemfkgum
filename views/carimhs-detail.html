@@ -14,34 +14,34 @@
 </head>
 <body class="neo-bg-bg" style="display: flex; justify-content: center; padding: 50px 20px;">
 
-    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 600px; width: 100%; position: relative;">
-        <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -20px; left: -20px; text-decoration:none; padding: 10px 20px; font-size: 0.9rem;">⬅ KEMBALI</a>
+    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 650px; width: 100%; position: relative; padding: 50px;">
+        <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -20px; left: 20px; text-decoration:none; padding: 12px 25px; font-size: 1rem;">⬅ KEMBALI</a>
         
-        <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
-            <div style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; box-shadow: 4px 4px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:4rem;">🎓</div>
-            <h1 class="neo-heading" id="d-nama">Memuat...</h1>
-            <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace;">-</h2>
+        <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
+            <img id="d-foto" src="/img/bemprofilmhs.png" style="width: 140px; height: 140px; border-radius: 50%; border: 5px solid #000; box-shadow: 5px 5px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:block; object-fit: cover;">
+            <h1 class="neo-heading" id="d-nama" style="font-size: 2.2rem; line-height:1.2;">Memuat...</h1>
+            <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 1.5rem; margin-top:10px;">-</h2>
         </div>
 
-        <table class="neo-table" style="width: 100%; border: none;">
+        <table class="neo-table" style="width: 100%; border: 4px solid #000;">
             <tbody>
                 <tr>
-                    <td class="neo-bg-yellow" style="width: 40%; font-weight: 800;">Angkatan</td>
-                    <td id="d-angkatan" style="font-weight: 700;">-</td>
+                    <td class="neo-bg-yellow" style="width: 35%; font-weight: 900; font-size:1.1rem; border-right: 4px solid #000; border-bottom: 4px solid #000;">Angkatan</td>
+                    <td id="d-angkatan" style="font-weight: 800; font-size:1.1rem; border-bottom: 4px solid #000;">-</td>
                 </tr>
                 <tr>
-                    <td class="neo-bg-yellow" style="font-weight: 800;">Program Studi</td>
-                    <td id="d-prodi" style="font-weight: 700;">-</td>
+                    <td class="neo-bg-yellow" style="font-weight: 900; font-size:1.1rem; border-right: 4px solid #000; border-bottom: 4px solid #000;">Program Studi</td>
+                    <td id="d-prodi" style="font-weight: 800; font-size:1.1rem; border-bottom: 4px solid #000;">-</td>
                 </tr>
                 <tr>
-                    <td class="neo-bg-yellow" style="font-weight: 800;">Status Terkini</td>
-                    <td id="d-status" style="font-weight: 700;">-</td>
+                    <td class="neo-bg-yellow" style="font-weight: 900; font-size:1.1rem; border-right: 4px solid #000;">Status Terkini</td>
+                    <td id="d-status" style="font-weight: 800; font-size:1.1rem;">-</td>
                 </tr>
             </tbody>
         </table>
 
-        <div style="text-align: center; margin-top: 30px; border-top: 3px dashed #000; padding-top: 20px;">
-            <p style="font-weight: 700; font-size: 0.9rem;">Sumber Data: Database Resmi BEM KBMFKG UMI</p>
+        <div style="text-align: center; margin-top: 40px; border-top: 4px dashed #000; padding-top: 20px;">
+            <p style="font-weight: 800; font-size: 1rem; color: #1e1e1e;">Sumber Data: Database Resmi BEM KBMFKG UMI</p>
         </div>
     </div>
 
@@ -64,13 +64,14 @@
 
             if(json.success) {
                 const d = json.data;
+                document.getElementById('d-foto').src = d.foto || '/img/bemprofilmhs.png';
                 document.getElementById('d-nama').innerText = d.nama;
                 document.getElementById('d-nim').innerText = d.nim;
                 document.getElementById('d-angkatan').innerText = d.angkatan;
                 document.getElementById('d-prodi').innerText = d.prodi;
                 
-                let statusColor = d.status.toLowerCase() === 'aktif' ? 'neo-bg-green' : (d.status.toLowerCase() === 'lulus' ? 'neo-bg-blue' : 'neo-bg-pink');
-                document.getElementById('d-status').innerHTML = `<span class="neo-badge ${statusColor}">${d.status}</span>`;
+                let statusColor = d.status.toLowerCase() === 'aktif' ? 'neo-bg-green' : (d.status.toLowerCase() === 'lulus' ? 'neo-bg-blue' : (d.status.toLowerCase() === 'cuti' ? 'neo-bg-yellow' : 'neo-bg-pink'));
+                document.getElementById('d-status').innerHTML = `<span class="neo-badge ${statusColor}" style="font-size:1rem; padding: 6px 15px;">${d.status}</span>`;
             } else {
                 document.getElementById('d-nama').innerText = "Mahasiswa Tidak Ditemukan";
             }
