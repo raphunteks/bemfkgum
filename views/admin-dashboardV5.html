@@ -20,48 +20,16 @@
     <link rel="stylesheet" href="/css/mainV5.css">
     <style>
         /* Drag & Drop Builder Styles */
-        .builder-item { display: flex; align-items: center; gap: 15px; padding: 15px; border: 3px solid #000; border-radius: 8px; margin-bottom: 10px; background: #fff; cursor: grab; box-shadow: 4px 4px 0px #000; flex-wrap: wrap;}
+        .builder-item { display: flex; align-items: center; gap: 15px; padding: 15px; border: 3px solid #000; border-radius: 8px; margin-bottom: 10px; background: #fff; cursor: grab; box-shadow: 4px 4px 0px #000; }
         .builder-item:active { cursor: grabbing; box-shadow: 0px 0px 0px transparent; transform: translate(4px, 4px); }
         .drag-handle { font-size: 1.5rem; cursor: grab; color: #64748b; padding-right: 10px; border-right: 2px dashed #cbd5e1; }
         
         /* Sidebar Kategori */
         .sidebar-category { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 0.85rem; color: var(--text-muted); margin: 25px 0 5px 15px; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* ========================================================
-           FIX: ANTI-OFFSIDE CHART (RESPONSIVE MOBILE, TABLET, PC)
-           ======================================================== */
-        .charts-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1.5fr; 
-            gap: 20px; 
-            margin-top: 30px; 
-            width: 100%; 
-        }
-        
-        /* KUNCI ANTI-OFFSIDE: Paksa box agar tidak lebih lebar dari layar HP */
-        .charts-grid .neo-card {
-            min-width: 0; 
-            max-width: 100%;
-            overflow: hidden;
-            padding: 20px;
-        }
-
-        /* Container absolut wajib untuk Chart.js agar bisa merespons otomatis */
-        .chart-wrapper {
-            position: relative;
-            height: 280px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 992px) { 
-            .charts-grid { grid-template-columns: 1fr; } 
-            .chart-wrapper { height: 260px; }
-        }
-
-        @media (max-width: 768px) {
-            .chart-wrapper { height: 220px; }
-        }
+        /* Grid Charts */
+        .charts-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-top: 30px; }
+        @media (max-width: 992px) { .charts-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -89,8 +57,8 @@
 
 <div class="builder-layout neo-bg-bg" id="main-layout" style="display: none; opacity: 0; transition: opacity 0.5s;">
     
-    <!-- LEFT SIDEBAR DENGAN ID mainSidebar UNTUK TARGET MOBILE -->
-    <aside class="sidebar-panel neo-bg-white" id="mainSidebar" style="overflow-y:auto; padding-bottom: 50px;">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar-panel neo-bg-white" style="overflow-y:auto; padding-bottom: 50px;">
         <div class="brand-box neo-bg-green">
             <img src="/img/bemfkgumi.png" alt="BEM Logo">
             <h2 class="neo-heading-sm">DB BEM V5</h2>
@@ -167,13 +135,13 @@
             <div class="charts-grid">
                 <div class="neo-card neo-bg-white">
                     <h3 class="neo-heading-sm text-center" style="margin-bottom: 20px;">Sebaran Status Akademik</h3>
-                    <div class="chart-wrapper">
+                    <div style="position: relative; height: 250px; width: 100%;">
                         <canvas id="chart-status-mhs"></canvas>
                     </div>
                 </div>
                 <div class="neo-card neo-bg-white">
                     <h3 class="neo-heading-sm text-center" style="margin-bottom: 20px;">Sebaran Tahun Angkatan</h3>
-                    <div class="chart-wrapper">
+                    <div style="position: relative; height: 250px; width: 100%;">
                         <canvas id="chart-angkatan-mhs"></canvas>
                     </div>
                 </div>
@@ -213,7 +181,7 @@
                 
                 <div id="form-builder-mhs" style="margin-bottom: 25px;"></div>
                 
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 15px;">
                     <button class="neo-btn neo-bg-yellow" onclick="addBuilderField('mhs')">+ Tambah Field</button>
                     <button class="neo-btn neo-bg-blue" onclick="saveSchema('mhs')">💾 Simpan Skema MHS</button>
                 </div>
@@ -234,7 +202,7 @@
             </div>
 
             <div id="preview-section-mhs" class="neo-card neo-bg-white" style="display:none; margin-top: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 class="neo-heading-sm">Preview Data MHS (<span id="preview-count-mhs">0</span> baris)</h3>
                     <button class="neo-btn neo-bg-green" id="btn-sync-mhs" onclick="syncToRedis('mhs')">🚀 Sinkronisasi Server MHS</button>
                 </div>
@@ -272,13 +240,13 @@
             <div class="charts-grid">
                 <div class="neo-card neo-bg-white">
                     <h3 class="neo-heading-sm text-center" style="margin-bottom: 20px;">Jabatan Fungsional</h3>
-                    <div class="chart-wrapper">
+                    <div style="position: relative; height: 250px; width: 100%;">
                         <canvas id="chart-jabatan-civitas"></canvas>
                     </div>
                 </div>
                 <div class="neo-card neo-bg-white">
                     <h3 class="neo-heading-sm text-center" style="margin-bottom: 20px;">Jenjang Pendidikan</h3>
-                    <div class="chart-wrapper">
+                    <div style="position: relative; height: 250px; width: 100%;">
                         <canvas id="chart-pendidikan-civitas"></canvas>
                     </div>
                 </div>
@@ -318,7 +286,7 @@
                 
                 <div id="form-builder-civitas" style="margin-bottom: 25px;"></div>
                 
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 15px;">
                     <button class="neo-btn neo-bg-yellow" onclick="addBuilderField('civitas')">+ Tambah Field</button>
                     <button class="neo-btn neo-bg-blue" onclick="saveSchema('civitas')">💾 Simpan Skema Civitas</button>
                 </div>
@@ -339,7 +307,7 @@
             </div>
 
             <div id="preview-section-civitas" class="neo-card neo-bg-white" style="display:none; margin-top: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 class="neo-heading-sm">Preview Data Civitas (<span id="preview-count-civitas">0</span> baris)</h3>
                     <button class="neo-btn neo-bg-green" id="btn-sync-civitas" onclick="syncToRedis('civitas')">🚀 Sinkronisasi Server Civitas</button>
                 </div>
@@ -358,11 +326,11 @@
 <!-- ================== MODALS ================== -->
 <!-- Modal Form MHS -->
 <div class="neo-modal-overlay" id="modal-mhs">
-    <div class="neo-modal-content neo-bg-white">
+    <div class="neo-modal-content neo-bg-white" style="max-width: 600px; max-height: 90vh; overflow-y:auto;">
         <h2 class="neo-heading-sm" id="title-mhs" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Form Mahasiswa</h2>
         <form onsubmit="saveDynamicData(event, 'mhs')">
             <div id="fields-mhs"></div>
-            <div style="display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
                 <button type="button" class="neo-btn neo-bg-pink" style="flex:1;" onclick="closeModal('modal-mhs')">Batal</button>
                 <button type="submit" class="neo-btn neo-bg-blue" style="flex:2;" id="btn-save-mhs">💾 Simpan MHS</button>
             </div>
@@ -372,11 +340,11 @@
 
 <!-- Modal Form CIVITAS -->
 <div class="neo-modal-overlay" id="modal-civitas">
-    <div class="neo-modal-content neo-bg-white">
+    <div class="neo-modal-content neo-bg-white" style="max-width: 600px; max-height: 90vh; overflow-y:auto;">
         <h2 class="neo-heading-sm" id="title-civitas" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Form Civitas/Dosen</h2>
         <form onsubmit="saveDynamicData(event, 'civitas')">
             <div id="fields-civitas"></div>
-            <div style="display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
                 <button type="button" class="neo-btn neo-bg-pink" style="flex:1;" onclick="closeModal('modal-civitas')">Batal</button>
                 <button type="submit" class="neo-btn neo-bg-purple" style="color:#fff; flex:2;" id="btn-save-civitas">💾 Simpan Civitas</button>
             </div>
@@ -468,11 +436,7 @@
     }
 
     function logout() { localStorage.removeItem('axa_admin_token'); location.reload(); }
-
-    function toggleMobileMenu() { 
-        const sidebar = document.getElementById('mainSidebar');
-        if(sidebar) sidebar.classList.toggle('show'); 
-    }
+    function toggleMobileMenu() { document.getElementById('sidebarNav').classList.toggle('show'); }
 
     function switchTab(tabId) {
         document.querySelectorAll('.sidebar-link').forEach(btn => btn.classList.remove('active'));
@@ -481,9 +445,7 @@
         
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
-        
-        const sidebar = document.getElementById('mainSidebar');
-        if(sidebar) sidebar.classList.remove('show');
+        document.getElementById('sidebarNav').classList.remove('show');
     }
 
     function getApiUrl(endpoint) {
@@ -497,7 +459,7 @@
             const json = await res.json();
             if(json.success && json.data && json.data.length > 0) {
                 state[type].schema = json.data;
-            } else { throw new Error(); }
+            } else { state[type].schema = JSON.parse(JSON.stringify(type==='mhs'?DEFAULT_SCHEMA_MHS:DEFAULT_SCHEMA_CIVITAS)); }
         } catch(e) {
             state[type].schema = JSON.parse(JSON.stringify(type==='mhs'?DEFAULT_SCHEMA_MHS:DEFAULT_SCHEMA_CIVITAS));
             showCustomAlert(`Peringatan: Gagal memuat skema ${type.toUpperCase()} dari server jaringan. Menggunakan skema default.`);
@@ -514,11 +476,11 @@
             html += `
             <div class="builder-item" data-id="${field.id}">
                 <span class="drag-handle">⠿</span>
-                <div style="flex:2; min-width:150px;">
+                <div style="flex:2;">
                     <label class="neo-label" style="font-size:0.8rem; margin:0;">Label Form</label>
                     <input type="text" class="neo-input builder-label" value="${field.label}" style="padding: 8px; font-size:0.9rem;">
                 </div>
-                <div style="flex:1; min-width:150px;">
+                <div style="flex:1;">
                     <label class="neo-label" style="font-size:0.8rem; margin:0;">Tipe</label>
                     <select class="neo-input builder-type" style="padding: 8px; font-size:0.9rem;" onchange="toggleBuilderOptions(this)">
                         <option value="text" ${field.type === 'text'?'selected':''}>Teks (Text)</option>
@@ -527,7 +489,7 @@
                         <option value="image" ${field.type === 'image'?'selected':''}>Foto Profil</option>
                     </select>
                 </div>
-                <div style="flex:2; min-width:150px; display:${field.type === 'select' ? 'block' : 'none'};" class="builder-options-wrap">
+                <div style="flex:2; display:${field.type === 'select' ? 'block' : 'none'};" class="builder-options-wrap">
                     <label class="neo-label" style="font-size:0.8rem; margin:0;">Pilihan Dropdown (Koma)</label>
                     <input type="text" class="neo-input builder-options" value="${field.options || ''}" style="padding: 8px; font-size:0.9rem;">
                 </div>
@@ -592,7 +554,7 @@
                 showCustomAlert("Gagal menyimpan skema: " + json.message);
             }
         } catch(e) {
-            showCustomAlert("Gagal terhubung ke jaringan Server Backend untuk simpan skema.");
+            showCustomAlert("Gagal menyimpan skema ke jaringan Server Backend.");
         }
     }
 
@@ -834,9 +796,7 @@
                 renderDynamicTable('mhs');
                 updateStatsMhs();
             } else { throw new Error(); }
-        } catch (e) { 
-            document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; 
-        }
+        } catch (e) { document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend.</td></tr>`; }
     }
 
     function updateStatsMhs() {
@@ -905,9 +865,7 @@
                 renderDynamicTable('civitas');
                 updateStatsCivitas();
             } else { throw new Error(); }
-        } catch (e) { 
-            document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; 
-        }
+        } catch (e) { document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend.</td></tr>`; }
     }
 
     function updateStatsCivitas() {
@@ -1002,7 +960,7 @@
             let rowId = row[primaryKey] || row[primaryKey.toUpperCase()];
             html += `
                 <td>
-                    <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='openDynamicModal("${type}", ${JSON.stringify(row).replace(/'/g, "&#39;")})'>✏️</button>
+                    <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='openDynamicModal("${type}", ${JSON.stringify(row)})'>✏️</button>
                     <button class="neo-btn neo-bg-pink" style="padding: 5px 10px; font-size:0.8rem;" onclick="deleteData('${rowId}', '${type}')">🗑️</button>
                 </td>
             </tr>`;
