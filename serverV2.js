@@ -8,7 +8,6 @@ require('dotenv').config();
 const app = express();
 
 // Konfigurasi CORS & Limit Request (Super Tinggi untuk Base64 & Bulk Excel)
-// Menggunakan express.json bawaan sebagai best-practice modern menggantikan body-parser eksternal
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -53,7 +52,6 @@ const verifyToken = (req, res, next) => {
     if (typeof bearerHeader !== 'undefined') {
         const bearer = bearerHeader.split(' ');
         const bearerToken = bearer[1];
-        // Validasi token yang di-generate dari endpoint login
         if (bearerToken === 'AXA-XYZ-SECURE-TOKEN') { 
             next(); 
         } else {
@@ -165,19 +163,16 @@ app.get('/api/uploads/:filename', async (req, res) => {
     }
 });
 
-// ================= ENDPOINT API EKOSISTEM MAHASISWA =================
+// ================= ENDPOINT API EKOSISTEM MAHASISWA (MHS) =================
 const MHS_HASH_KEY = 'BEM_MHS_DB';
 const MHS_SCHEMA_KEY = 'BEM_MHS_FORM_SCHEMA';
 
-// 0. GET & POST SCHEMA BUILDER MHS
 app.get('/api/mhs/schema', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const schema = await redis.get(MHS_SCHEMA_KEY);
         res.json({ success: true, data: safeParse(schema, []) });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal mengambil skema' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema' }); }
 });
 
 app.post('/api/mhs/schema', verifyToken, async (req, res) => {
@@ -185,134 +180,96 @@ app.post('/api/mhs/schema', verifyToken, async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         await redis.set(MHS_SCHEMA_KEY, JSON.stringify(req.body));
         res.json({ success: true, message: 'Skema Berhasil Disimpan' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal menyimpan skema' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema' }); }
 });
 
-// 1. GET ALL MHS (Read All / Smart Search / Public)
 app.get('/api/mhs', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const allData = await redis.hgetall(MHS_HASH_KEY);
-        
         let resultArray = [];
         if (allData) {
             for (const [nim, dataStr] of Object.entries(allData)) {
                 resultArray.push(safeParse(dataStr, {}));
             }
         }
-        
-        // Smart Search Terintegrasi: Cek ke SEMUA property objek (Mendukung filter Angkatan, NIM, Nama, dll)
         if (req.query.q) {
             const q = req.query.q.toLowerCase();
             resultArray = resultArray.filter(m => 
                 Object.values(m).some(val => String(val).toLowerCase().includes(q))
             );
         }
-
         res.json({ success: true, data: resultArray });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal mengambil database' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database' }); }
 });
 
-// 2. GET SINGLE MHS DETAIL (Public)
 app.get('/api/mhs/:nim', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { nim } = req.params;
         const dataStr = await redis.hget(MHS_HASH_KEY, nim);
-        
         if (!dataStr) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
-        
         res.json({ success: true, data: safeParse(dataStr, {}) });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal mengambil data' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil data' }); }
 });
 
-// 3. POST BULK UPLOAD MHS (EXCEL DATA TO REDIS PIPELINE) - PROTECTED
 app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { students } = req.body;
-        if (!students || !Array.isArray(students)) {
-            return res.status(400).json({ success: false, message: 'Format data tidak valid' });
-        }
+        if (!students || !Array.isArray(students)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
 
         const p = redis.pipeline();
         students.forEach(std => {
-            // Identifier MHS -> std.nim
-            if (std.nim) {
-                p.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
-            }
+            if (std.nim) p.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
         });
         await p.exec();
-
         res.json({ success: true, message: `Berhasil sinkronisasi ${students.length} mahasiswa` });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal sinkronisasi database' }); }
 });
 
-// 4. POST SINGLE MHS (CREATE) - PROTECTED
 app.post('/api/mhs', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const std = req.body;
         if (!std.nim) return res.status(400).json({ success: false, message: 'NIM Wajib Diisi (Identifier Database)' });
-
         await redis.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal menyimpan data' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data' }); }
 });
 
-// 5. PUT SINGLE MHS (UPDATE) - PROTECTED
 app.put('/api/mhs/:nim', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { nim } = req.params;
         const std = req.body;
-        
         const exists = await redis.hexists(MHS_HASH_KEY, nim);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
-
         std.nim = nim; 
         await redis.hset(MHS_HASH_KEY, { [nim]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Diperbarui' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal memperbarui data' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data' }); }
 });
 
-// 6. DELETE SINGLE MHS - PROTECTED
 app.delete('/api/mhs/:nim', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { nim } = req.params;
         await redis.hdel(MHS_HASH_KEY, nim);
         res.json({ success: true, message: 'Data Mahasiswa Terhapus' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal menghapus data' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data' }); }
 });
 
-// ================= ENDPOINT API EKOSISTEM CIVITAS/DOSEN =================
+// ================= ENDPOINT API EKOSISTEM DOSEN & CIVITAS =================
 const CIVITAS_HASH_KEY = 'BEM_CIVITAS_DB';
 const CIVITAS_SCHEMA_KEY = 'BEM_CIVITAS_FORM_SCHEMA';
 
-// 0. GET & POST SCHEMA BUILDER CIVITAS
 app.get('/api/civitas/schema', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const schema = await redis.get(CIVITAS_SCHEMA_KEY);
         res.json({ success: true, data: safeParse(schema, []) });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal mengambil skema civitas' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema civitas' }); }
 });
 
 app.post('/api/civitas/schema', verifyToken, async (req, res) => {
@@ -320,122 +277,85 @@ app.post('/api/civitas/schema', verifyToken, async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         await redis.set(CIVITAS_SCHEMA_KEY, JSON.stringify(req.body));
         res.json({ success: true, message: 'Skema Civitas Berhasil Disimpan' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal menyimpan skema civitas' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema civitas' }); }
 });
 
-// 1. GET ALL CIVITAS (Read All / Smart Search / Public)
 app.get('/api/civitas', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const allData = await redis.hgetall(CIVITAS_HASH_KEY);
-        
         let resultArray = [];
         if (allData) {
             for (const [nidn, dataStr] of Object.entries(allData)) {
                 resultArray.push(safeParse(dataStr, {}));
             }
         }
-        
-        // Smart Search: Check all values for civitas
         if (req.query.q) {
             const q = req.query.q.toLowerCase();
             resultArray = resultArray.filter(c => 
                 Object.values(c).some(val => String(val).toLowerCase().includes(q))
             );
         }
-
         res.json({ success: true, data: resultArray });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal mengambil database civitas' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database civitas' }); }
 });
 
-// 2. GET SINGLE CIVITAS DETAIL (Public)
 app.get('/api/civitas/:nidn', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { nidn } = req.params;
         const dataStr = await redis.hget(CIVITAS_HASH_KEY, nidn);
-        
         if (!dataStr) return res.status(404).json({ success: false, message: 'Data Civitas tidak ditemukan' });
-        
         res.json({ success: true, data: safeParse(dataStr, {}) });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal mengambil data civitas' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil data civitas' }); }
 });
 
-// 3. POST BULK UPLOAD CIVITAS (EXCEL DATA TO REDIS PIPELINE) - PROTECTED
 app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { civitas } = req.body;
-        if (!civitas || !Array.isArray(civitas)) {
-            return res.status(400).json({ success: false, message: 'Format data tidak valid' });
-        }
+        if (!civitas || !Array.isArray(civitas)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
 
         const p = redis.pipeline();
         civitas.forEach(std => {
-            // Identifier Civitas -> std.nidn
-            if (std.nidn) {
-                p.hset(CIVITAS_HASH_KEY, { [std.nidn]: JSON.stringify(std) });
-            }
+            if (std.nidn) p.hset(CIVITAS_HASH_KEY, { [std.nidn]: JSON.stringify(std) });
         });
         await p.exec();
-
         res.json({ success: true, message: `Berhasil sinkronisasi ${civitas.length} civitas` });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal sinkronisasi database civitas' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal sinkronisasi database civitas' }); }
 });
 
-// 4. POST SINGLE CIVITAS (CREATE) - PROTECTED
 app.post('/api/civitas', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const std = req.body;
         if (!std.nidn) return res.status(400).json({ success: false, message: 'NIDN Wajib Diisi (Identifier Database Civitas)' });
-
         await redis.hset(CIVITAS_HASH_KEY, { [std.nidn]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Civitas Berhasil Dibuat' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal menyimpan data civitas' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data civitas' }); }
 });
 
-// 5. PUT SINGLE CIVITAS (UPDATE) - PROTECTED
 app.put('/api/civitas/:nidn', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { nidn } = req.params;
         const std = req.body;
-        
         const exists = await redis.hexists(CIVITAS_HASH_KEY, nidn);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Civitas tidak ditemukan' });
-
         std.nidn = nidn; 
-        
         await redis.hset(CIVITAS_HASH_KEY, { [nidn]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Civitas Berhasil Diperbarui' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal memperbarui data civitas' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data civitas' }); }
 });
 
-// 6. DELETE SINGLE CIVITAS - PROTECTED
 app.delete('/api/civitas/:nidn', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const { nidn } = req.params;
         await redis.hdel(CIVITAS_HASH_KEY, nidn);
         res.json({ success: true, message: 'Data Civitas Terhapus' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal menghapus data civitas' });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data civitas' }); }
 });
-
 
 // ================= ENDPOINT API LINKTREE =================
 app.get('/api/linktrees', async (req, res) => {
@@ -509,7 +429,6 @@ app.get(['/api/qrcodes', '/api/qrcodes/'], async (req, res) => {
         
         res.status(200).json({ success: true, data: parsedQRs });
     } catch (e) { 
-        console.error("Gagal load QR Codes:", e.message);
         res.status(500).json({ success: false, message: e.message }); 
     }
 });
