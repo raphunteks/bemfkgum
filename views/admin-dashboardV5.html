@@ -302,7 +302,7 @@
             formSchema = JSON.parse(JSON.stringify(DEFAULT_SCHEMA));
         }
         renderBuilderUI();
-        updateExcelHeaderHint(); // Mengubah tampilan hint kolom Excel
+        updateExcelHeaderHint(); 
     }
 
     function renderBuilderUI() {
@@ -346,7 +346,6 @@
     }
 
     function addBuilderField() {
-        // Buat field baru dengan ID acak tanpa spasi/karakter aneh
         const newId = 'field_' + Math.floor(Math.random() * 10000);
         formSchema.push({ id: newId, label: 'Field Baru', type: 'text', options: '' });
         renderBuilderUI();
@@ -366,7 +365,6 @@
             });
         });
         
-        // Wajib ada NIM sebagai unique identifier
         const hasNim = newSchema.some(f => f.id.toLowerCase() === 'nim' || f.label.toLowerCase().includes('nim'));
         if(!hasNim) {
             return showCustomAlert("PERINGATAN: Harus ada minimal 1 Field dengan Label 'NIM' agar database bisa menyimpan data secara unik tiap mahasiswa.");
@@ -386,14 +384,14 @@
                 body: JSON.stringify(formSchema)
             });
             showToast("✅ Struktur Form, Excel Mapping, & Tabel Berhasil Diperbarui!");
-            loadAllMhs(); // Render ulang tabel berdasarkan skema baru
+            loadAllMhs(); 
         } catch(e) {
             showToast("✅ Simulasi: Skema lokal tersimpan.");
             loadAllMhs();
         }
     }
 
-    // ================= DYNAMIC FORM MODAL (FIXED NUMBER DECIMALS) =================
+    // ================= DYNAMIC FORM MODAL =================
     let isEditMode = false;
     let currentEditNim = null;
 
@@ -409,10 +407,10 @@
             const val = mhsData ? (mhsData[field.id] || '') : '';
             
             if(field.type === 'image') {
-                const imgUrl = val || '/img/bemprofilmhs.png';
+                const imgUrl = val !== '-' && val !== '' ? val : '/img/bemprofilmhs.png';
                 html += `
                 <div style="text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed #000; border-radius: 12px; background: #f8fafc;">
-                    <img id="preview_${field.id}" src="${imgUrl}" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; object-fit: cover; margin-bottom: 15px; box-shadow: 4px 4px 0px #000;">
+                    <img id="preview_${field.id}" src="${imgUrl}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #000; object-fit: cover; margin-bottom: 15px; box-shadow: 4px 4px 0px #000;">
                     <input type="file" id="file_${field.id}" accept="image/*" style="display: none;" onchange="uploadFotoDynamic(this, '${field.id}')">
                     <input type="hidden" id="dyn_${field.id}" value="${imgUrl}">
                     <br><button type="button" class="neo-btn neo-bg-yellow" onclick="document.getElementById('file_${field.id}').click()">📸 Pilih Foto (.jpg/.png)</button>
@@ -431,7 +429,6 @@
                 </div>`;
             }
             else {
-                // FIX: Menambahkan step="any" jika tipe data form adalah number, sehingga mengizinkan IPK desimal (3.76, 4.00, dll)
                 let stepStr = field.type === 'number' ? 'step="any"' : '';
                 let readonlyStr = (field.id.toLowerCase() === 'nim' && isEditMode) ? 'readonly style="background:#e2e8f0;"' : 'required';
                 
@@ -449,7 +446,6 @@
 
     function closeDynamicModal() { document.getElementById('dynamicFormModal').classList.remove('active'); }
 
-    // Upload Foto via API yang terhubung ke Field Dinamis
     async function uploadFotoDynamic(input, fieldId) {
         const file = input.files[0];
         if(!file) return;
@@ -480,14 +476,12 @@
         const btn = document.getElementById('btn-save-dyn');
         btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
 
-        // Ambil payload dinamis dari skema form
         let payload = {};
         formSchema.forEach(field => {
             const el = document.getElementById('dyn_' + field.id);
             if(el) payload[field.id] = el.value;
         });
 
-        // Paksa untuk mengenali field NIM meski ID aslinya berupa random hash hasil builder
         let nimField = formSchema.find(f => f.id.toLowerCase() === 'nim' || f.label.toLowerCase().includes('nim'));
         if(!nimField || !payload[nimField.id]) {
             showCustomAlert("Error: Sistem tidak menemukan field yang ditandai sebagai 'NIM'. Silakan atur di Manajemen Form.");
@@ -495,7 +489,7 @@
             return;
         }
 
-        payload.nim = payload[nimField.id]; // Standardisasi agar API backend (serverV2) mudah mengenali path NIM
+        payload.nim = payload[nimField.id]; 
 
         try {
             let apiUrl = isEditMode ? `/api/mhs/${payload.nim}` : '/api/mhs';
@@ -522,13 +516,12 @@
     }
 
 
-    // ================= DYNAMIC EXCEL BULK UPLOAD (MANAJEMEN XLSX) =================
+    // ================= DYNAMIC EXCEL BULK UPLOAD =================
     
     function updateExcelHeaderHint() {
         const hintEl = document.getElementById('excel-header-hint');
         if(!hintEl) return;
         
-        // Ciptakan nama header berdasarkan label yang dibuat admin di Form Builder
         const headersArr = formSchema.filter(f => f.type !== 'image').map(f => f.label.toUpperCase());
         const headersTxt = headersArr.join(' | ');
         
@@ -548,17 +541,15 @@
                 const worksheet = workbook.Sheets[firstSheetName];
                 const rawJson = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
                 
-                // SMART MAPPING BERDASARKAN DYNAMIC SCHEMA
                 excelDataPayload = rawJson.map(row => {
                     let mappedObj = {};
                     
                     formSchema.forEach(f => {
                         if (f.type === 'image') {
-                            mappedObj[f.id] = '/img/bemprofilmhs.png'; // Default foto
+                            mappedObj[f.id] = '/img/bemprofilmhs.png'; 
                             return;
                         }
 
-                        // Cari key di Excel (row) yang paling mendekati f.id atau f.label (Menggunakan Regex Case Insensitive)
                         const searchRegex = new RegExp(f.label.replace(/[^a-zA-Z0-9]/g, ''), 'i');
                         const idRegex = new RegExp(f.id.replace(/[^a-zA-Z0-9]/g, ''), 'i');
                         
@@ -570,11 +561,10 @@
                         if (matchedKey) {
                             mappedObj[f.id] = row[matchedKey].toString().trim();
                         } else {
-                            mappedObj[f.id] = ''; // Jika di excel benar-benar tidak ada
+                            mappedObj[f.id] = ''; 
                         }
                     });
 
-                    // Pastikan selalu ada NIM cadangan yang diset agar API tidak reject
                     let nimField = formSchema.find(f => f.id.toLowerCase() === 'nim' || f.label.toLowerCase().includes('nim'));
                     if (nimField && mappedObj[nimField.id]) {
                         mappedObj.nim = mappedObj[nimField.id]; 
@@ -588,7 +578,6 @@
                 document.getElementById('excel-preview-section').style.display = 'block';
                 document.getElementById('preview-count').innerText = excelDataPayload.length;
                 
-                // Render Header Dinamis untuk Tabel Preview Import Excel
                 const visFields = formSchema.slice(0, 6);
                 let theadHtml = '<tr class="neo-bg-pink">';
                 visFields.forEach(f => {
@@ -597,14 +586,18 @@
                 theadHtml += '</tr>';
                 document.getElementById('preview-thead').innerHTML = theadHtml;
 
-                // Render Baris Data
                 let previewHtml = '';
                 excelDataPayload.slice(0, 50).forEach(item => { 
                     previewHtml += `<tr>`;
                     visFields.forEach(f => {
                         let val = item[f.id] || '-';
-                        if(f.type === 'image') previewHtml += `<td><img src="${val}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;"></td>`;
-                        else previewHtml += `<td style="font-weight:700;">${val}</td>`;
+                        if(f.type === 'image') {
+                            let imgSrc = val !== '-' && val !== '' ? val : '/img/bemprofilmhs.png';
+                            previewHtml += `<td><img src="${imgSrc}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width:40px; height:40px; border-radius:50%; object-fit:cover;"></td>`;
+                        }
+                        else {
+                            previewHtml += `<td style="font-weight:700;">${val}</td>`;
+                        }
                     });
                     previewHtml += `</tr>`;
                 });
@@ -659,7 +652,6 @@
         const tbody = document.getElementById('mhs-tbody');
         const thead = document.getElementById('mhs-thead-tr');
         
-        // Render Header Tabel Dinamis (Max 5 Field Pertama agar rapi) + Kolom Aksi
         let thHtml = '';
         const visibleFields = formSchema.slice(0, 6);
         visibleFields.forEach(f => thHtml += `<th>${f.label.toUpperCase()}</th>`);
@@ -696,7 +688,9 @@
             visibleFields.forEach(f => {
                 let val = mhs[f.id] || '-';
                 if(f.type === 'image') {
-                    html += `<td><img src="${val}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>`;
+                    // FIX: Penambahan fungsi Error Fallback pada gambar profil di dalam tabel agar tidak rusak
+                    let imgSrc = val !== '-' && val !== '' ? val : '/img/bemprofilmhs.png';
+                    html += `<td><img src="${imgSrc}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>`;
                 } else if(f.id.toLowerCase() === 'status' || val.toString().toLowerCase() === 'aktif') {
                     let c = val.toLowerCase() === 'aktif' ? 'neo-bg-green' : (val.toLowerCase() === 'lulus' ? 'neo-bg-blue' : 'neo-bg-yellow');
                     html += `<td><span class="neo-badge ${c}">${val}</span></td>`;
@@ -717,7 +711,6 @@
 
     function filterTable() {
         const q = document.getElementById('search-mhs').value.toLowerCase();
-        // Super Smart Search: Cari ke SEMUA value yang ada di object dinamis (Mendukung cari Angkatan)
         const filtered = databaseMhs.filter(mhs => {
             return Object.values(mhs).some(val => String(val).toLowerCase().includes(q));
         });
@@ -730,7 +723,6 @@
         
         let aktif=0, lulus=0, cuti=0, do_mhs=0;
         databaseMhs.forEach(m => {
-            // Mencari value yang mendefinisikan status pada setiap MHS
             const st = (m.status || m.Status || Object.values(m).find(v => typeof v === 'string' && ['aktif','lulus','cuti','do','keluar'].some(s => v.toLowerCase().includes(s))) || '').toLowerCase();
             
             if(st.includes('aktif')) aktif++;
