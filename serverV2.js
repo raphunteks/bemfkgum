@@ -32,7 +32,7 @@ const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E
 let redis = null;
 try {
     redis = new Redis({ url: redisUrl, token: redisToken });
-    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi (V2 - Linktree, QR Code & MHS Database API).");
+    console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi (V2 - Ekosistem BEM Lengkap).");
 } catch (error) {
     console.error("⚠️ Peringatan: Redis gagal inisiasi.", error.message);
 }
@@ -53,7 +53,6 @@ const verifyToken = (req, res, next) => {
     if (typeof bearerHeader !== 'undefined') {
         const bearer = bearerHeader.split(' ');
         const bearerToken = bearer[1];
-        // Validasi token yang di-generate dari endpoint login
         if (bearerToken === 'AXA-XYZ-SECURE-TOKEN') { 
             next(); 
         } else {
@@ -64,11 +63,9 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-// ================= ENDPOINT AUTENTIKASI ADMIN (SECURITY) =================
+// ================= ENDPOINT AUTENTIKASI ADMIN =================
 app.post('/api/admin/auth', (req, res) => {
     const { username, password } = req.body;
-    
-    // Fallback kredensial persis seperti server utama Anda
     const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
     const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
 
@@ -82,14 +79,13 @@ app.post('/api/admin/auth', (req, res) => {
 // ================= RUTE FRONTEND ADMIN & PDDIKTI =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
 app.get('/admin-qrcode', (req, res) => res.render('admin-dashboardV4'));
-app.get('/admin-mhs', (req, res) => res.render('admin-dashboardV5')); // DB Mahasiswa Admin
-app.get('/carimhs', (req, res) => res.render('carimhs')); // Web Pencarian Mahasiswa Publik
-app.get('/carimhs/detail', (req, res) => res.render('carimhs-detail')); // Detail Mahasiswa Publik
+app.get('/admin-mhs', (req, res) => res.render('admin-dashboardV5'));
+app.get('/carimhs', (req, res) => res.render('carimhs'));
+app.get('/carimhs/detail', (req, res) => res.render('carimhs-detail'));
 
 // ================= RUTE FRONTEND PUBLIK DENGAN SSR SEO =================
 app.get('/link/:slug', async (req, res) => {
     const slug = req.params.slug;
-    
     let seoData = {
         title: 'BEM KBMFKG UMI - Linktree',
         desc: 'Tautan resmi dan informasi terbaru dari BEM KBMFKG UMI.',
@@ -117,7 +113,7 @@ app.get('/link/:slug', async (req, res) => {
 });
 
 
-// ================= ENDPOINT API UPLOAD GAMBAR =================
+// ================= ENDPOINT API UPLOAD GAMBAR (FOTO MHS/LOGO) =================
 app.post('/api/upload', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -125,6 +121,7 @@ app.post('/api/upload', async (req, res) => {
         
         if(!filename || !base64) return res.status(400).json({ success: false, message: "File kosong." });
         
+        // Mempertahankan ekstensi file asli (.jpg/.png/.jpeg)
         let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
         const uniqueFilename = `file-${Date.now()}-${safeName}`;
         
@@ -169,7 +166,7 @@ app.get('/api/uploads/:filename', async (req, res) => {
 // ================= ENDPOINT API PDDIKTI MHS (DATABASE MAHASISWA) =================
 const MHS_HASH_KEY = 'BEM_MHS_DB';
 
-// 1. GET ALL MHS (Read All / Search / Public)
+// GET ALL MHS & SEARCH (SUPPORT ANGKATAN, NIM, NAMA)
 app.get('/api/mhs', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -182,12 +179,13 @@ app.get('/api/mhs', async (req, res) => {
             }
         }
         
-        // Fitur Filter Search dari URL (?q=nama/nim)
+        // Fitur Filter Search
         if (req.query.q) {
             const q = req.query.q.toLowerCase();
             resultArray = resultArray.filter(m => 
                 (m.nim && m.nim.toLowerCase().includes(q)) || 
-                (m.nama && m.nama.toLowerCase().includes(q))
+                (m.nama && m.nama.toLowerCase().includes(q)) ||
+                (m.angkatan && m.angkatan.toString().toLowerCase().includes(q))
             );
         }
 
@@ -197,7 +195,7 @@ app.get('/api/mhs', async (req, res) => {
     }
 });
 
-// 2. GET SINGLE MHS DETAIL (Public)
+// GET SINGLE MHS DETAIL
 app.get('/api/mhs/:nim', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -212,7 +210,7 @@ app.get('/api/mhs/:nim', async (req, res) => {
     }
 });
 
-// 3. POST BULK UPLOAD (EXCEL DATA TO REDIS PIPELINE) - PROTECTED
+// POST BULK UPLOAD (EXCEL DATA TO REDIS PIPELINE)
 app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -221,15 +219,13 @@ app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
             return res.status(400).json({ success: false, message: 'Format data tidak valid' });
         }
 
-        // Menggunakan Redis Pipeline dari Upstash untuk efisiensi ratusan baris data
         const p = redis.pipeline();
-        
         students.forEach(std => {
             if (std.nim && std.nama) {
+                if(!std.foto) std.foto = '/img/bemprofilmhs.png';
                 p.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
             }
         });
-        
         await p.exec();
 
         res.json({ success: true, message: `Berhasil sinkronisasi ${students.length} mahasiswa` });
@@ -238,12 +234,14 @@ app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
     }
 });
 
-// 4. POST SINGLE MHS (CREATE) - PROTECTED
+// POST SINGLE MHS (CREATE)
 app.post('/api/mhs', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const std = req.body;
         if (!std.nim || !std.nama) return res.status(400).json({ success: false, message: 'NIM dan Nama Wajib Diisi' });
+        
+        if(!std.foto) std.foto = '/img/bemprofilmhs.png';
 
         await redis.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
@@ -252,7 +250,7 @@ app.post('/api/mhs', verifyToken, async (req, res) => {
     }
 });
 
-// 5. PUT SINGLE MHS (UPDATE) - PROTECTED
+// PUT SINGLE MHS (UPDATE)
 app.put('/api/mhs/:nim', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -262,7 +260,8 @@ app.put('/api/mhs/:nim', verifyToken, async (req, res) => {
         const exists = await redis.hexists(MHS_HASH_KEY, nim);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
 
-        std.nim = nim; // Pastikan parameter path tidak dikelabuhi payload body
+        std.nim = nim; 
+        if(!std.foto) std.foto = '/img/bemprofilmhs.png';
         
         await redis.hset(MHS_HASH_KEY, { [nim]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Diperbarui' });
@@ -271,7 +270,7 @@ app.put('/api/mhs/:nim', verifyToken, async (req, res) => {
     }
 });
 
-// 6. DELETE SINGLE MHS - PROTECTED
+// DELETE SINGLE MHS
 app.delete('/api/mhs/:nim', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -283,7 +282,7 @@ app.delete('/api/mhs/:nim', verifyToken, async (req, res) => {
     }
 });
 
-// ================= ENDPOINT API LINKTREE =================
+// ================= ENDPOINT API LINKTREE & QR CODES (EXISTING) =================
 app.get('/api/linktrees', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -334,28 +333,22 @@ app.delete('/api/linktrees/:id', verifyToken, async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-// ================= ENDPOINT API QR CODES =================
 app.get(['/api/qrcodes', '/api/qrcodes/'], async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        
         const keys = await redis.keys('BEM_QRCodes:*');
         let parsedQRs = [];
-        
         if(keys && keys.length > 0) {
             const raw = await redis.mget(...keys);
             parsedQRs = raw.filter(i => i != null).map(item => safeParse(item, {}));
-            
             parsedQRs.sort((a, b) => {
                 const dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0);
                 const dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
                 return dateB - dateA;
             });
         }
-        
         res.status(200).json({ success: true, data: parsedQRs });
     } catch (e) { 
-        console.error("Gagal load QR Codes:", e.message);
         res.status(500).json({ success: false, message: e.message }); 
     }
 });
@@ -364,17 +357,12 @@ app.post('/api/qrcodes/save', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const payload = req.body;
-        
         if(!payload.id) payload.id = `QR-${Date.now()}`;
         payload.updatedAt = new Date().toISOString();
-        
         const redisKey = `BEM_QRCodes:${payload.id}`;
         await redis.set(redisKey, JSON.stringify(payload));
-        
         res.status(200).json({ success: true, message: "Desain QR Code disimpan ke Cloud!", data: payload });
-    } catch (e) { 
-        res.status(500).json({ success: false, message: e.message }); 
-    }
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
 app.delete('/api/qrcodes/:id', verifyToken, async (req, res) => {
@@ -382,9 +370,7 @@ app.delete('/api/qrcodes/:id', verifyToken, async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         await redis.del(`BEM_QRCodes:${req.params.id}`);
         res.status(200).json({ success: true, message: "QR Code Permanen Dihapus" });
-    } catch (e) { 
-        res.status(500).json({ success: false, message: e.message }); 
-    }
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
 const PORT = process.env.PORT || 3001;
