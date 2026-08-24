@@ -171,7 +171,7 @@ const CIVITAS_HASH_KEY = 'BEM_CIVITAS_DB'; // Database gabungan Dosen & Civitas
 const DOSEN_SCHEMA_KEY = 'BEM_DOSEN_FORM_SCHEMA';
 const CIVITAS_SCHEMA_KEY = 'BEM_CIVITAS_FORM_SCHEMA';
 
-// ================= ENDPOINT API MAHASISWA (DATABASE & DYNAMIC SCHEMA) =================
+// ================= ENDPOINT API MAHASISWA =================
 app.get('/api/mhs/schema', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -258,7 +258,6 @@ app.delete('/api/mhs/:nim', verifyToken, async (req, res) => {
 
 // ================= ENDPOINT API PEGAWAI (DOSEN & CIVITAS) =================
 
-// Endpoint Schema Dosen
 app.get('/api/civitas/schema/dosen', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -275,7 +274,6 @@ app.post('/api/civitas/schema/dosen', verifyToken, async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema Dosen' }); }
 });
 
-// Endpoint Schema Civitas
 app.get('/api/civitas/schema/civitas', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -292,19 +290,17 @@ app.post('/api/civitas/schema/civitas', verifyToken, async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema Civitas' }); }
 });
 
-// Endpoint Database Pegawai (Dosen & Civitas Gabungan)
+// Get All Pegawai
 app.get('/api/civitas', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const allData = await redis.hgetall(CIVITAS_HASH_KEY);
         let resultArray = [];
-        
         if (allData) {
             for (const [nip, dataStr] of Object.entries(allData)) {
                 resultArray.push(safeParse(dataStr, {}));
             }
         }
-        
         if (req.query.q) {
             const q = req.query.q.toLowerCase();
             resultArray = resultArray.filter(p => Object.values(p).some(val => String(val).toLowerCase().includes(q)));
@@ -313,7 +309,16 @@ app.get('/api/civitas', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database pegawai' }); }
 });
 
-// Bulk Upload Pegawai
+// GET SINGLE PEGAWAI (ENDPOINT YANG SEBELUMNYA HILANG - PENYEBAB GANGGUAN SERVER)
+app.get('/api/civitas/:nip', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const dataStr = await redis.hget(CIVITAS_HASH_KEY, req.params.nip);
+        if (!dataStr) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
+        res.json({ success: true, data: safeParse(dataStr, {}) });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil data pegawai' }); }
+});
+
 app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -329,7 +334,6 @@ app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database pegawai' }); }
 });
 
-// Create Single Pegawai
 app.post('/api/civitas', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -341,7 +345,6 @@ app.post('/api/civitas', verifyToken, async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data pegawai' }); }
 });
 
-// Update Single Pegawai
 app.put('/api/civitas/:nip', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -355,7 +358,6 @@ app.put('/api/civitas/:nip', verifyToken, async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data pegawai' }); }
 });
 
-// Delete Single Pegawai
 app.delete('/api/civitas/:nip', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
