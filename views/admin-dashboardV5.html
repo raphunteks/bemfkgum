@@ -42,29 +42,28 @@
 
 <button class="neo-btn neo-bg-pink mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
 
-<div class="builder-layout neo-bg-bg" id="main-layout">
+<!-- Hilangkan style inline agar CSS responsif bekerja penuh -->
+<div class="builder-layout neo-bg-bg" id="main-layout" style="display: none;">
     
     <!-- LEFT SIDEBAR -->
-    <aside class="sidebar-panel neo-bg-white scrollable-sidebar" id="mainSidebar">
+    <aside class="sidebar-panel neo-bg-white" id="mainSidebar">
         <div class="brand-box neo-bg-green">
             <img src="/img/bemfkgumi.png" alt="BEM Logo">
             <h2 class="neo-heading-sm">DB BEM V5</h2>
         </div>
         
         <nav class="sidebar-nav" id="sidebarNav">
-            <!-- MHS SECTION -->
             <p class="sidebar-category">MAHASISWA</p>
             <button class="sidebar-link active" onclick="switchTab('dashboard-mhs')">📊 Dashboard MHS</button>
             <button class="sidebar-link" onclick="switchTab('list-mhs')">🗂️ Data MHS</button>
             <button class="sidebar-link" onclick="switchTab('builder-mhs')">📝 Manajemen Form MHS</button>
             <button class="sidebar-link" onclick="switchTab('import-mhs')">📥 Import Excel MHS</button>
 
-            <!-- CIVITAS SECTION -->
-            <p class="sidebar-category">DOSEN & CIVITAS</p>
+            <p class="sidebar-category mt-3">DOSEN & CIVITAS</p>
             <button class="sidebar-link" onclick="switchTab('dashboard-civitas')">📈 Dashboard Civitas</button>
             <button class="sidebar-link" onclick="switchTab('list-civitas')">👨‍🏫 Data Civitas</button>
-            <button class="sidebar-link" onclick="switchTab('builder-civitas')">📋 Manajemen Form Civitas</button>
-            <button class="sidebar-link" onclick="switchTab('import-civitas')">📥 Import Excel Civitas</button>
+            <button class="sidebar-link" onclick="switchTab('builder-civitas')">📋 Form Civitas</button>
+            <button class="sidebar-link" onclick="switchTab('import-civitas')">📥 Import Civitas</button>
         </nav>
         
         <div class="sidebar-bottom mt-5">
@@ -81,14 +80,14 @@
                 <h1 class="neo-heading text-white m-0" id="main-panel-title">DATABASE INSTITUSI</h1>
                 <p class="header-subtitle text-white mt-1 fw-600">Pusat Pengelolaan Data Terpadu BEM (Realtime Redis)</p>
             </div>
-            <a href="/carimhs" target="_blank" class="neo-btn neo-bg-yellow">🔍 Web Pencarian MHS</a>
+            <a href="/carimhs" target="_blank" class="neo-btn neo-bg-yellow">🔍 Web Pencarian Terpadu</a>
         </div>
 
         <!-- =========================================================================
-             BAGIAN 1: EKOSISTEM MAHASISWA
+             EKOSISTEM MAHASISWA
              ========================================================================= -->
 
-        <!-- TAB 0: DASHBOARD MHS (DENGAN CHARTS) -->
+        <!-- TAB 0: DASHBOARD MHS -->
         <div id="tab-dashboard-mhs" class="tab-content active">
             <h2 class="neo-heading-sm section-title">Statistik Mahasiswa</h2>
             <div class="grid-stats">
@@ -118,7 +117,6 @@
                 </div>
             </div>
 
-            <!-- CHARTS SECTION MHS -->
             <div class="charts-grid">
                 <div class="neo-card neo-bg-white">
                     <h3 class="neo-heading-sm text-center mb-4">Sebaran Status Akademik</h3>
@@ -190,7 +188,7 @@
 
             <div id="preview-section-mhs" class="neo-card neo-bg-white preview-section">
                 <div class="preview-header">
-                    <h3 class="neo-heading-sm">Preview Data MHS (<span id="preview-count-mhs">0</span> baris)</h3>
+                    <h3 class="neo-heading-sm m-0">Preview Data MHS (<span id="preview-count-mhs">0</span> baris)</h3>
                     <button class="neo-btn neo-bg-green" id="btn-sync-mhs" onclick="syncToRedis('mhs')">🚀 Sinkronisasi Server MHS</button>
                 </div>
                 <div class="table-wrapper">
@@ -203,7 +201,7 @@
         </div>
 
         <!-- =========================================================================
-             BAGIAN 2: EKOSISTEM CIVITAS / DOSEN
+             EKOSISTEM CIVITAS / DOSEN
              ========================================================================= -->
 
         <!-- TAB 0: DASHBOARD CIVITAS -->
@@ -295,7 +293,7 @@
 
             <div id="preview-section-civitas" class="neo-card neo-bg-white preview-section">
                 <div class="preview-header">
-                    <h3 class="neo-heading-sm">Preview Data Civitas (<span id="preview-count-civitas">0</span> baris)</h3>
+                    <h3 class="neo-heading-sm m-0">Preview Data Civitas (<span id="preview-count-civitas">0</span> baris)</h3>
                     <button class="neo-btn neo-bg-green" id="btn-sync-civitas" onclick="syncToRedis('civitas')">🚀 Sinkronisasi Server Civitas</button>
                 </div>
                 <div class="table-wrapper">
@@ -311,7 +309,6 @@
 </div>
 
 <!-- ================== MODALS ================== -->
-<!-- Modal Form MHS -->
 <div class="neo-modal-overlay" id="modal-mhs">
     <div class="neo-modal-content neo-bg-white modal-form-content">
         <h2 class="neo-heading-sm section-title" id="title-mhs">Form Mahasiswa</h2>
@@ -325,7 +322,6 @@
     </div>
 </div>
 
-<!-- Modal Form CIVITAS -->
 <div class="neo-modal-overlay" id="modal-civitas">
     <div class="neo-modal-content neo-bg-white modal-form-content">
         <h2 class="neo-heading-sm section-title" id="title-civitas">Form Civitas/Dosen</h2>
@@ -340,7 +336,7 @@
 </div>
 
 <div class="neo-modal-overlay" id="customAlertModal">
-    <div class="neo-modal-content neo-bg-yellow text-center modal-alert-content">
+    <div class="neo-modal-content neo-bg-yellow modal-alert-content">
         <h3 class="neo-heading-sm">⚠️ Pemberitahuan</h3>
         <p id="customAlertMessage" class="alert-msg"></p>
         <button class="neo-btn neo-bg-white block" onclick="closeCustomAlert()">Mengerti</button>
@@ -386,7 +382,7 @@
         const token = localStorage.getItem('axa_admin_token');
         if (token) {
             document.getElementById('loginGate').style.display = 'none';
-            document.getElementById('main-layout').classList.add('active-layout'); // Ganti sistem Flex JS lama
+            document.getElementById('main-layout').style.display = ''; // Hilangkan block inline JS lama!
             
             await loadSchema('mhs');
             await loadSchema('civitas');
@@ -451,7 +447,7 @@
             const json = await res.json();
             if(json.success && json.data && json.data.length > 0) {
                 state[type].schema = json.data;
-            } else { throw new Error(); }
+            } else { state[type].schema = JSON.parse(JSON.stringify(type==='mhs'?DEFAULT_SCHEMA_MHS:DEFAULT_SCHEMA_CIVITAS)); }
         } catch(e) {
             state[type].schema = JSON.parse(JSON.stringify(type==='mhs'?DEFAULT_SCHEMA_MHS:DEFAULT_SCHEMA_CIVITAS));
         }
@@ -787,9 +783,7 @@
                 renderDynamicTable('mhs');
                 updateStatsMhs();
             } else { throw new Error(); }
-        } catch (e) { 
-            document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; 
-        }
+        } catch (e) { document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; }
     }
 
     function updateStatsMhs() {
@@ -858,9 +852,7 @@
                 renderDynamicTable('civitas');
                 updateStatsCivitas();
             } else { throw new Error(); }
-        } catch (e) { 
-            document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; 
-        }
+        } catch (e) { document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; }
     }
 
     function updateStatsCivitas() {
