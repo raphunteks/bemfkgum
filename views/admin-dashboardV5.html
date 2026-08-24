@@ -346,7 +346,7 @@
             <div id="fields-civitas"></div>
             <div style="display: flex; gap: 10px; margin-top: 30px;">
                 <button type="button" class="neo-btn neo-bg-pink" style="flex:1;" onclick="closeModal('modal-civitas')">Batal</button>
-                <button type="submit" class="neo-btn neo-bg-purple" style="flex:2;" style="color:#fff;" id="btn-save-civitas">💾 Simpan Civitas</button>
+                <button type="submit" class="neo-btn neo-bg-purple" style="color:#fff; flex:2;" id="btn-save-civitas">💾 Simpan Civitas</button>
             </div>
         </form>
     </div>
@@ -430,10 +430,7 @@
                 window.location.reload();
             } else { throw new Error(); }
         } catch(e) {
-            if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
-                localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); 
-                window.location.reload();
-            } else { document.getElementById('loginError').style.display = 'block'; }
+            document.getElementById('loginError').style.display = 'block'; 
         }
         btn.innerText = "Akses Database"; btn.disabled = false;
     }
@@ -456,7 +453,7 @@
     }
 
     // ================= SCHEMA BUILDER LOGIC =================
-    async function loadSchema(type) { // type: 'mhs' or 'civitas'
+    async function loadSchema(type) { 
         try {
             const res = await fetch(getApiUrl(`/api/${type}/schema`), { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             const json = await res.json();
@@ -550,8 +547,7 @@
             showToast("✅ Struktur Form & Tabel Diperbarui!");
             if(type==='mhs') loadAllMhs(); else loadAllCivitas();
         } catch(e) {
-            showToast("✅ Simulasi: Skema lokal tersimpan.");
-            if(type==='mhs') loadAllMhs(); else loadAllCivitas();
+            showCustomAlert("Gagal menyimpan skema ke server: " + e.message);
         }
     }
 
@@ -626,7 +622,7 @@
                     showToast("✅ Foto diunggah!");
                 } else throw new Error();
             };
-        } catch(e) { showCustomAlert("Gagal upload foto."); }
+        } catch(e) { showCustomAlert("Gagal upload foto ke server."); }
     }
 
     async function saveDynamicData(e, type) {
@@ -663,24 +659,24 @@
             const data = await res.json();
             
             if(data.success) {
-                showToast("✅ Berhasil disimpan!");
+                showToast("✅ Berhasil disimpan ke server!");
                 closeModal(`modal-${type}`);
                 if(type === 'mhs') loadAllMhs(); else loadAllCivitas();
             } else { showCustomAlert("Gagal menyimpan: " + data.message); }
         } catch (error) {
-            showToast("✅ Simulasi: Data tersimpan lokal.");
-            closeModal(`modal-${type}`);
+            showCustomAlert("Gagal menyimpan data ke server jaringan.");
         }
         btn.innerText = "💾 Simpan"; btn.disabled = false;
     }
 
     async function deleteData(id, type) {
-        if(confirm(`Yakin ingin menghapus data dengan ID/NIM/NIDN ${id}?`)) {
+        if(confirm(`Yakin ingin menghapus data dengan ID/NIM/NIDN ${id} dari Server Permanen?`)) {
             try {
                 const res = await fetch(getApiUrl(`/api/${type}/${id}`), { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` } });
                 const data = await res.json();
                 if(data.success) { showToast("🗑️ Data dihapus."); if(type==='mhs') loadAllMhs(); else loadAllCivitas(); }
-            } catch (e) { showToast("🗑️ Simulasi dihapus."); }
+                else { showCustomAlert("Gagal menghapus data."); }
+            } catch (e) { showCustomAlert("Gagal menghapus data dari server."); }
         }
     }
     
@@ -765,7 +761,7 @@
             const data = await res.json();
             
             if(data.success) {
-                showToast(`🎉 Sinkronisasi ${state[type].excelPayload.length} data sukses!`);
+                showToast(`🎉 Sinkronisasi ${state[type].excelPayload.length} data sukses ke server!`);
                 document.getElementById(`preview-section-${type}`).style.display = 'none';
                 document.getElementById(`file-excel-${type}`).value = '';
                 state[type].excelPayload = [];
@@ -773,8 +769,7 @@
                 switchTab(`list-${type}`);
             } else { showCustomAlert("Gagal: " + data.message); }
         } catch (e) {
-            showToast("🎉 Simulasi: Sinkronisasi lokal sukses.");
-            document.getElementById(`preview-section-${type}`).style.display = 'none';
+            showCustomAlert("Gagal sinkronisasi jaringan server.");
         }
         btn.innerText = "🚀 Sinkronisasi"; btn.disabled = false;
     }
@@ -789,8 +784,8 @@
                 state.mhs.data = json.data;
                 renderDynamicTable('mhs');
                 updateStatsMhs();
-            }
-        } catch (e) { document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Mode Simulasi</td></tr>`; }
+            } else { throw new Error(); }
+        } catch (e) { document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend.</td></tr>`; }
     }
 
     function updateStatsMhs() {
@@ -806,7 +801,6 @@
             else if(st.includes('cuti')) statusCounts.Cuti++;
             else if(st.includes('do') || st.includes('keluar')) statusCounts.DO++;
 
-            // Cari kolom yg mewakili angkatan
             let angkField = state.mhs.schema.find(f => f.label.toLowerCase().includes('angkatan') || f.id.toLowerCase().includes('angkat'));
             let angk = angkField && m[angkField.id] ? m[angkField.id] : 'Lainnya';
             angkatanCounts[angk] = (angkatanCounts[angk] || 0) + 1;
@@ -820,7 +814,6 @@
         const now = new Date();
         document.getElementById('stat-date-mhs').innerText = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')} WITA`;
 
-        // Render MHS Charts
         const ctxStatus = document.getElementById('chart-status-mhs').getContext('2d');
         if(chartStatusMhs) chartStatusMhs.destroy();
         chartStatusMhs = new Chart(ctxStatus, {
@@ -860,8 +853,8 @@
                 state.civitas.data = json.data;
                 renderDynamicTable('civitas');
                 updateStatsCivitas();
-            }
-        } catch (e) { document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Mode Simulasi</td></tr>`; }
+            } else { throw new Error(); }
+        } catch (e) { document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend.</td></tr>`; }
     }
 
     function updateStatsCivitas() {
@@ -888,7 +881,6 @@
         document.getElementById('stat-aktif-civitas').innerText = aktif;
         document.getElementById('stat-tugas-civitas').innerText = tugas;
 
-        // Render CIVITAS Charts
         const ctxJabatan = document.getElementById('chart-jabatan-civitas').getContext('2d');
         if(chartJabatanCivitas) chartJabatanCivitas.destroy();
         chartJabatanCivitas = new Chart(ctxJabatan, {
@@ -921,7 +913,7 @@
     // ================= TABLE RENDER ENGINE (GLOBAL) =================
     function renderTableHeaders(type) {
         let thHtml = '';
-        const visibleFields = state[type].schema.slice(0, 6); // Max 6 columns
+        const visibleFields = state[type].schema.slice(0, 6); 
         visibleFields.forEach(f => thHtml += `<th>${f.label.toUpperCase()}</th>`);
         thHtml += `<th>AKSI</th>`;
         document.getElementById(`${type}-thead-tr`).innerHTML = thHtml;
