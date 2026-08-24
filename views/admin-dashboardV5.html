@@ -204,7 +204,7 @@
             <div id="preview-section-mhs" class="neo-card neo-bg-white" style="display:none; margin-top: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 class="neo-heading-sm">Preview Data MHS (<span id="preview-count-mhs">0</span> baris)</h3>
-                    <button class="neo-btn neo-bg-green" id="btn-sync-mhs" onclick="syncToRedis('mhs')">🚀 Sinkronisasi MHS</button>
+                    <button class="neo-btn neo-bg-green" id="btn-sync-mhs" onclick="syncToRedis('mhs')">🚀 Sinkronisasi Server MHS</button>
                 </div>
                 <div style="overflow-x: auto; max-height: 400px;">
                     <table class="neo-table">
@@ -309,7 +309,7 @@
             <div id="preview-section-civitas" class="neo-card neo-bg-white" style="display:none; margin-top: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 class="neo-heading-sm">Preview Data Civitas (<span id="preview-count-civitas">0</span> baris)</h3>
-                    <button class="neo-btn neo-bg-green" id="btn-sync-civitas" onclick="syncToRedis('civitas')">🚀 Sinkronisasi Civitas</button>
+                    <button class="neo-btn neo-bg-green" id="btn-sync-civitas" onclick="syncToRedis('civitas')">🚀 Sinkronisasi Server Civitas</button>
                 </div>
                 <div style="overflow-x: auto; max-height: 400px;">
                     <table class="neo-table">
@@ -462,6 +462,7 @@
             } else { state[type].schema = JSON.parse(JSON.stringify(type==='mhs'?DEFAULT_SCHEMA_MHS:DEFAULT_SCHEMA_CIVITAS)); }
         } catch(e) {
             state[type].schema = JSON.parse(JSON.stringify(type==='mhs'?DEFAULT_SCHEMA_MHS:DEFAULT_SCHEMA_CIVITAS));
+            showCustomAlert(`Peringatan: Gagal memuat skema ${type.toUpperCase()} dari server jaringan. Menggunakan skema default.`);
         }
         renderBuilderUI(type);
         updateExcelHeaderHint(type);
@@ -536,22 +537,28 @@
 
         state[type].schema = newSchema;
         updateExcelHeaderHint(type);
-        showToast("⏳ Menyimpan Skema...");
+        showToast("⏳ Menyimpan Skema ke Server...");
 
         try {
-            await fetch(getApiUrl(`/api/${type}/schema`), {
+            const res = await fetch(getApiUrl(`/api/${type}/schema`), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` },
                 body: JSON.stringify(newSchema)
             });
-            showToast("✅ Struktur Form & Tabel Diperbarui!");
-            if(type==='mhs') loadAllMhs(); else loadAllCivitas();
+            const json = await res.json();
+            
+            if(json.success) {
+                showToast("✅ Struktur Form & Tabel Diperbarui di Server!");
+                if(type==='mhs') loadAllMhs(); else loadAllCivitas();
+            } else {
+                showCustomAlert("Gagal menyimpan skema: " + json.message);
+            }
         } catch(e) {
-            showCustomAlert("Gagal menyimpan skema ke server: " + e.message);
+            showCustomAlert("Gagal menyimpan skema ke jaringan Server Backend.");
         }
     }
 
-    // ================= DYNAMIC MODALS =================
+    // ================= DYNAMIC MODALS (CRUD) =================
     function openDynamicModalMhs(data = null) { openDynamicModal('mhs', data); }
     function openDynamicModalCivitas(data = null) { openDynamicModal('civitas', data); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -659,12 +666,12 @@
             const data = await res.json();
             
             if(data.success) {
-                showToast("✅ Berhasil disimpan ke server!");
+                showToast("✅ Berhasil disimpan ke Server!");
                 closeModal(`modal-${type}`);
                 if(type === 'mhs') loadAllMhs(); else loadAllCivitas();
-            } else { showCustomAlert("Gagal menyimpan: " + data.message); }
+            } else { showCustomAlert("Gagal menyimpan ke server: " + data.message); }
         } catch (error) {
-            showCustomAlert("Gagal menyimpan data ke server jaringan.");
+            showCustomAlert("Gagal terhubung ke jaringan Server Database.");
         }
         btn.innerText = "💾 Simpan"; btn.disabled = false;
     }
@@ -674,18 +681,22 @@
             try {
                 const res = await fetch(getApiUrl(`/api/${type}/${id}`), { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` } });
                 const data = await res.json();
-                if(data.success) { showToast("🗑️ Data dihapus."); if(type==='mhs') loadAllMhs(); else loadAllCivitas(); }
-                else { showCustomAlert("Gagal menghapus data."); }
-            } catch (e) { showCustomAlert("Gagal menghapus data dari server."); }
+                if(data.success) { 
+                    showToast("🗑️ Data dihapus dari server."); 
+                    if(type==='mhs') loadAllMhs(); else loadAllCivitas(); 
+                } else {
+                    showCustomAlert("Gagal menghapus data: " + data.message);
+                }
+            } catch (e) { showCustomAlert("Gagal terhubung ke jaringan Server untuk menghapus data."); }
         }
     }
     
-    // ================= EXCEL BULK =================
+    // ================= EXCEL BULK UPLOAD =================
     function updateExcelHeaderHint(type) {
         const hintEl = document.getElementById(`excel-hint-${type}`);
         if(!hintEl) return;
         const headersArr = state[type].schema.filter(f => f.type !== 'image').map(f => f.label.toUpperCase());
-        hintEl.innerHTML = `<strong>Format Header:</strong><br> ${headersArr.join(' | ')}`;
+        hintEl.innerHTML = `<strong>Format Header Wajib:</strong><br> ${headersArr.join(' | ')}`;
     }
 
     function handleExcelUpload(e, type) {
@@ -761,17 +772,17 @@
             const data = await res.json();
             
             if(data.success) {
-                showToast(`🎉 Sinkronisasi ${state[type].excelPayload.length} data sukses ke server!`);
+                showToast(`🎉 Sinkronisasi ${state[type].excelPayload.length} data sukses ke Server!`);
                 document.getElementById(`preview-section-${type}`).style.display = 'none';
                 document.getElementById(`file-excel-${type}`).value = '';
                 state[type].excelPayload = [];
                 if(type==='mhs') loadAllMhs(); else loadAllCivitas();
                 switchTab(`list-${type}`);
-            } else { showCustomAlert("Gagal: " + data.message); }
+            } else { showCustomAlert("Gagal injeksi ke server: " + data.message); }
         } catch (e) {
-            showCustomAlert("Gagal sinkronisasi jaringan server.");
+            showCustomAlert("Gagal terhubung ke jaringan Server Backend untuk Sinkronisasi.");
         }
-        btn.innerText = "🚀 Sinkronisasi"; btn.disabled = false;
+        btn.innerText = "🚀 Sinkronisasi Server"; btn.disabled = false;
     }
 
     // ================= MHS: LOAD, RENDER & CHARTS =================
