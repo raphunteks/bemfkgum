@@ -16,7 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- CSS Neubrutalism (Super Responsive) -->
+    <!-- CSS Neubrutalism Full Responsive -->
     <link rel="stylesheet" href="/css/mainV5.css">
 </head>
 <body>
@@ -28,7 +28,7 @@
         <h2 class="neo-heading">Portal Data BEM</h2>
         <p class="neo-subtitle">Sistem Manajemen Database Institusi</p>
         
-        <div class="neo-input-group">
+        <div class="neo-input-group mt-3">
             <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin">
         </div>
         <div class="neo-input-group mt-3">
@@ -42,7 +42,7 @@
 
 <button class="neo-btn neo-bg-pink mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
 
-<div class="builder-layout neo-bg-bg" id="main-layout" style="display: none; opacity: 0; transition: opacity 0.5s;">
+<div class="builder-layout neo-bg-bg" id="main-layout">
     
     <!-- LEFT SIDEBAR -->
     <aside class="sidebar-panel neo-bg-white scrollable-sidebar" id="mainSidebar">
@@ -386,8 +386,7 @@
         const token = localStorage.getItem('axa_admin_token');
         if (token) {
             document.getElementById('loginGate').style.display = 'none';
-            document.getElementById('main-layout').style.display = 'flex';
-            setTimeout(() => { document.getElementById('main-layout').style.opacity = '1'; }, 50);
+            document.getElementById('main-layout').classList.add('active-layout'); // Ganti sistem Flex JS lama
             
             await loadSchema('mhs');
             await loadSchema('civitas');
@@ -452,7 +451,7 @@
             const json = await res.json();
             if(json.success && json.data && json.data.length > 0) {
                 state[type].schema = json.data;
-            } else { state[type].schema = JSON.parse(JSON.stringify(type==='mhs'?DEFAULT_SCHEMA_MHS:DEFAULT_SCHEMA_CIVITAS)); }
+            } else { throw new Error(); }
         } catch(e) {
             state[type].schema = JSON.parse(JSON.stringify(type==='mhs'?DEFAULT_SCHEMA_MHS:DEFAULT_SCHEMA_CIVITAS));
         }
@@ -469,11 +468,11 @@
             <div class="builder-item" data-id="${field.id}">
                 <span class="drag-handle">⠿</span>
                 <div class="builder-field-wrap">
-                    <label class="neo-label builder-label-sm">Label Form</label>
+                    <label class="builder-label-sm">Label Form</label>
                     <input type="text" class="neo-input builder-label builder-input-sm" value="${field.label}">
                 </div>
                 <div class="builder-type-wrap">
-                    <label class="neo-label builder-label-sm">Tipe</label>
+                    <label class="builder-label-sm">Tipe</label>
                     <select class="neo-input builder-type builder-input-sm" onchange="toggleBuilderOptions(this)">
                         <option value="text" ${field.type === 'text'?'selected':''}>Teks (Text)</option>
                         <option value="number" ${field.type === 'number'?'selected':''}>Angka (Number)</option>
@@ -482,7 +481,7 @@
                     </select>
                 </div>
                 <div class="builder-field-wrap builder-options-wrap" style="display:${field.type === 'select' ? 'block' : 'none'};">
-                    <label class="neo-label builder-label-sm">Pilihan Dropdown (Koma)</label>
+                    <label class="builder-label-sm">Pilihan Dropdown (Koma)</label>
                     <input type="text" class="neo-input builder-options builder-input-sm" value="${field.options || ''}">
                 </div>
                 <button class="neo-btn neo-bg-pink builder-btn-del" onclick="this.parentElement.remove()">🗑️</button>
@@ -546,7 +545,7 @@
                 showCustomAlert("Gagal menyimpan skema: " + json.message);
             }
         } catch(e) {
-            showCustomAlert("Gagal menyimpan skema ke jaringan Server Backend.");
+            showCustomAlert("Gagal terhubung ke jaringan Server Backend untuk simpan skema.");
         }
     }
 
@@ -788,7 +787,9 @@
                 renderDynamicTable('mhs');
                 updateStatsMhs();
             } else { throw new Error(); }
-        } catch (e) { document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend.</td></tr>`; }
+        } catch (e) { 
+            document.getElementById('mhs-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; 
+        }
     }
 
     function updateStatsMhs() {
@@ -857,7 +858,9 @@
                 renderDynamicTable('civitas');
                 updateStatsCivitas();
             } else { throw new Error(); }
-        } catch (e) { document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend.</td></tr>`; }
+        } catch (e) { 
+            document.getElementById('civitas-tbody').innerHTML = `<tr><td colspan="10" class="text-center neo-bg-pink">Gagal koneksi ke server Backend. Cek koneksi Anda.</td></tr>`; 
+        }
     }
 
     function updateStatsCivitas() {
@@ -952,7 +955,7 @@
             let rowId = row[primaryKey] || row[primaryKey.toUpperCase()];
             html += `
                 <td>
-                    <button class="neo-btn neo-bg-yellow btn-action-sm" onclick='openDynamicModal("${type}", ${JSON.stringify(row)})'>✏️</button>
+                    <button class="neo-btn neo-bg-yellow btn-action-sm" onclick='openDynamicModal("${type}", ${JSON.stringify(row).replace(/'/g, "&#39;")})'>✏️</button>
                     <button class="neo-btn neo-bg-pink btn-action-sm" onclick="deleteData('${rowId}', '${type}')">🗑️</button>
                 </td>
             </tr>`;
