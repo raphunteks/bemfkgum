@@ -80,8 +80,8 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const idParam = urlParams.get('nim'); // Parameter ID (NIM/NIP) dikirim dari carimhs.html
-        const typeParam = urlParams.get('type') || 'mhs'; // Menentukan API mana yang dipanggil
+        const idParam = urlParams.get('nim'); 
+        const typeParam = urlParams.get('type') || 'mhs'; 
 
         if(!idParam) {
             document.getElementById('d-nama').innerText = "Data Tidak Valid";
@@ -90,8 +90,14 @@
         }
 
         try {
-            // 1. Fetch Data Utama Terlebih Dahulu
-            let dataUrl = typeParam === 'mhs' ? `/api/mhs/${idParam}` : `/api/civitas/${idParam}`;
+            // 1. Fetch Data Utama Terlebih Dahulu (Dosen & Civitas ditarik dari endpoint /api/civitas/:nip)
+            let dataUrl = '';
+            if (typeParam === 'mhs') {
+                dataUrl = `/api/mhs/${idParam}`;
+            } else {
+                dataUrl = `/api/civitas/${idParam}`;
+            }
+            
             if(window.location.origin === "null") dataUrl = `https://bemkbmfkgumi.com${dataUrl}`;
 
             const resData = await fetch(dataUrl);
@@ -100,18 +106,17 @@
             if(jsonData.success && jsonData.data) {
                 const d = jsonData.data;
                 
-                // 2. Tentukan Skema Berdasarkan Tipe Pegawai (Bila bukan mahasiswa)
+                // 2. Tentukan Skema Berdasarkan Tipe Pegawai 
                 let schemaUrl = '';
                 let defaultSchema = DEFAULT_SCHEMA_MHS;
                 
                 if (typeParam === 'mhs') {
                     schemaUrl = `/api/mhs/schema`;
                 } else {
-                    let tp = d.tipe_pegawai || 'civitas'; // fallback
+                    let tp = d.tipe_pegawai || typeParam; // Fallback mendeteksi tipe yang sesungguhnya (dosen/civitas)
                     schemaUrl = `/api/civitas/schema/${tp}`;
                     defaultSchema = tp === 'dosen' ? DEFAULT_SCHEMA_DOSEN : DEFAULT_SCHEMA_CIVITAS;
                     
-                    // Menampilkan Badge Ekstra untuk membedakan Dosen/Civitas di Profil
                     const badgeEl = document.getElementById('d-badge-tipe');
                     badgeEl.style.display = 'block';
                     badgeEl.innerHTML = tp === 'dosen' 
@@ -133,7 +138,6 @@
                     console.log("Menggunakan skema default fallback.");
                 }
 
-                // Gunakan skema database, jika kosong gunakan default
                 schema = schema || defaultSchema;
 
                 // 4. Render Data ke HTML
@@ -147,23 +151,22 @@
                     let fId = field.id.toLowerCase();
                     let fLabel = field.label.toLowerCase();
 
-                    // Pengecualian: Foto, Nama, dan Identifier (NIM/NIP) ditaruh di Header
+                    // Pengecualian elemen header profil
                     if (field.type === 'image') {
                         if(val !== '-') fotoUrl = val;
-                        return; // Skip dari tabel
+                        return; 
                     }
                     if (fId.includes('nama') || fLabel.includes('nama')) {
                         if(val !== '-') namaVal = val;
-                        return; // Skip dari tabel
+                        return; 
                     }
                     if (fId === 'nim' || fId === 'nip' || fId === 'nidn' || fLabel.includes('nim') || fLabel.includes('nip') || fLabel.includes('nidn')) {
                         if(val !== '-') identitasVal = val;
-                        return; // Skip dari tabel
+                        return; 
                     }
 
                     let displayVal = val;
                     
-                    // Pewarnaan khusus kolom Status
                     if (fId.includes('status') || fLabel.includes('status')) {
                         let statusColor = 'neo-bg-green';
                         let st_lower = val.toLowerCase();
@@ -182,7 +185,6 @@
                     </tr>`;
                 });
 
-                // Suntik ke DOM
                 document.getElementById('d-foto').src = fotoUrl;
                 document.getElementById('d-nama').innerText = namaVal;
                 document.getElementById('d-nim').innerText = identitasVal;
