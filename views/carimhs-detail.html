@@ -17,26 +17,17 @@
     <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 650px; width: 100%; position: relative; padding: 50px;">
         <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -20px; left: 20px; text-decoration:none; padding: 12px 25px; font-size: 1rem;">⬅ KEMBALI</a>
         
+        <!-- HEADER PROFIL (FOTO, NAMA, NIM) -->
         <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
             <img id="d-foto" src="/img/bemprofilmhs.png" style="width: 140px; height: 140px; border-radius: 50%; border: 5px solid #000; box-shadow: 5px 5px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:block; object-fit: cover;">
             <h1 class="neo-heading" id="d-nama" style="font-size: 2.2rem; line-height:1.2;">Memuat...</h1>
             <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 1.5rem; margin-top:10px;">-</h2>
         </div>
 
+        <!-- TABEL BIODATA DINAMIS -->
         <table class="neo-table" style="width: 100%; border: 4px solid #000;">
-            <tbody>
-                <tr>
-                    <td class="neo-bg-yellow" style="width: 35%; font-weight: 900; font-size:1.1rem; border-right: 4px solid #000; border-bottom: 4px solid #000;">Angkatan</td>
-                    <td id="d-angkatan" style="font-weight: 800; font-size:1.1rem; border-bottom: 4px solid #000;">-</td>
-                </tr>
-                <tr>
-                    <td class="neo-bg-yellow" style="font-weight: 900; font-size:1.1rem; border-right: 4px solid #000; border-bottom: 4px solid #000;">Program Studi</td>
-                    <td id="d-prodi" style="font-weight: 800; font-size:1.1rem; border-bottom: 4px solid #000;">-</td>
-                </tr>
-                <tr>
-                    <td class="neo-bg-yellow" style="font-weight: 900; font-size:1.1rem; border-right: 4px solid #000;">Status Terkini</td>
-                    <td id="d-status" style="font-weight: 800; font-size:1.1rem;">-</td>
-                </tr>
+            <tbody id="dynamic-tbody">
+                <tr><td class="text-center" style="font-weight: 700;">Menarik data dari database...</td></tr>
             </tbody>
         </table>
 
@@ -48,35 +39,102 @@
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const nim = urlParams.get('nim');
+        const nimParam = urlParams.get('nim');
 
-        if(!nim) {
+        if(!nimParam) {
             document.getElementById('d-nama').innerText = "Data Tidak Valid";
             return;
         }
 
         try {
-            let apiUrl = `/api/mhs/${nim}`;
-            if(window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com${apiUrl}`;
+            let schemaUrl = `/api/mhs/schema`;
+            let dataUrl = `/api/mhs/${nimParam}`;
+            
+            if(window.location.origin === "null") {
+                schemaUrl = `https://bemkbmfkgumi.com${schemaUrl}`;
+                dataUrl = `https://bemkbmfkgumi.com${dataUrl}`;
+            }
 
-            const res = await fetch(apiUrl);
-            const json = await res.json();
+            // Fetch Skema Form & Data Mahasiswa secara paralel
+            const [resSchema, resData] = await Promise.all([
+                fetch(schemaUrl),
+                fetch(dataUrl)
+            ]);
 
-            if(json.success) {
-                const d = json.data;
-                document.getElementById('d-foto').src = d.foto || '/img/bemprofilmhs.png';
-                document.getElementById('d-nama').innerText = d.nama;
-                document.getElementById('d-nim').innerText = d.nim;
-                document.getElementById('d-angkatan').innerText = d.angkatan;
-                document.getElementById('d-prodi').innerText = d.prodi;
+            const jsonSchema = await resSchema.json();
+            const jsonData = await resData.json();
+
+            if(jsonData.success) {
+                const d = jsonData.data;
                 
-                let statusColor = d.status.toLowerCase() === 'aktif' ? 'neo-bg-green' : (d.status.toLowerCase() === 'lulus' ? 'neo-bg-blue' : (d.status.toLowerCase() === 'cuti' ? 'neo-bg-yellow' : 'neo-bg-pink'));
-                document.getElementById('d-status').innerHTML = `<span class="neo-badge ${statusColor}" style="font-size:1rem; padding: 6px 15px;">${d.status}</span>`;
+                // Fallback schema jika belum disetting di admin
+                const schema = (jsonSchema.success && jsonSchema.data && jsonSchema.data.length > 0) ? jsonSchema.data : [
+                    { id: 'foto', label: 'Foto Profil', type: 'image' },
+                    { id: 'nim', label: 'NIM (Nomor Induk)', type: 'text' },
+                    { id: 'nama', label: 'Nama Lengkap', type: 'text' },
+                    { id: 'angkatan', label: 'Tahun Angkatan', type: 'number' },
+                    { id: 'prodi', label: 'Program Studi', type: 'select' },
+                    { id: 'status', label: 'Status Akademik', type: 'select' }
+                ];
+
+                let fotoUrl = '/img/bemprofilmhs.png';
+                let namaVal = '-';
+                let nimVal = nimParam;
+                let tableHtml = '';
+
+                // Memetakan data berdasarkan skema secara dinamis
+                schema.forEach(field => {
+                    let val = d[field.id] || '-';
+                    let fId = field.id.toLowerCase();
+                    let fLabel = field.label.toLowerCase();
+
+                    // Pengecualian: Foto, Nama, dan NIM dipisah untuk ditaruh di Header Atas
+                    if (field.type === 'image') {
+                        if(val !== '-') fotoUrl = val;
+                        return; // Skip agar tidak masuk tabel
+                    }
+                    if (fId.includes('nama') || fLabel.includes('nama')) {
+                        if(val !== '-') namaVal = val;
+                        return; // Skip agar tidak masuk tabel
+                    }
+                    if (fId === 'nim' || fLabel.includes('nim')) {
+                        if(val !== '-') nimVal = val;
+                        return; // Skip agar tidak masuk tabel
+                    }
+
+                    // Merender field sisanya ke dalam tabel
+                    let displayVal = val;
+                    
+                    // Deteksi khusus jika field adalah "Status" agar dibuatkan Badge Warna
+                    if (fId.includes('status') || fLabel.includes('status')) {
+                        let statusColor = 'neo-bg-green';
+                        if (val.toLowerCase().includes('lulus')) statusColor = 'neo-bg-blue';
+                        else if (val.toLowerCase().includes('cuti')) statusColor = 'neo-bg-yellow';
+                        else if (val.toLowerCase().includes('do') || val.toLowerCase().includes('keluar')) statusColor = 'neo-bg-pink';
+                        
+                        displayVal = `<span class="neo-badge ${statusColor}" style="font-size:1rem; padding: 6px 15px;">${val}</span>`;
+                    }
+
+                    tableHtml += `
+                    <tr>
+                        <td class="neo-bg-yellow" style="width: 35%; font-weight: 900; font-size:1.1rem; border-right: 4px solid #000; border-bottom: 4px solid #000;">${field.label}</td>
+                        <td style="font-weight: 800; font-size:1.1rem; border-bottom: 4px solid #000;">${displayVal}</td>
+                    </tr>`;
+                });
+
+                // Suntik ke DOM
+                document.getElementById('d-foto').src = fotoUrl;
+                document.getElementById('d-nama').innerText = namaVal;
+                document.getElementById('d-nim').innerText = nimVal;
+                document.getElementById('dynamic-tbody').innerHTML = tableHtml;
+
             } else {
                 document.getElementById('d-nama').innerText = "Mahasiswa Tidak Ditemukan";
+                document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Data tidak ada di database.</td></tr>`;
             }
         } catch(e) {
             document.getElementById('d-nama').innerText = "Gangguan Server";
+            document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Gagal menghubungi database.</td></tr>`;
         }
     });
 </script>
