@@ -25,14 +25,16 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* FIX NATIVE SCROLL: Menghilangkan pembatas overflow pada body */
 body { 
     background: var(--bg-main); 
     font-family: 'Plus Jakarta Sans', sans-serif; 
     color: var(--text-main); 
     margin: 0; 
     padding: 0;
-    /* PENTING: Jangan gunakan overflow-y:hidden disini agar Native Scroll bekerja */
     overflow-x: hidden; 
+    overflow-y: auto; 
+    min-height: 100vh;
 }
 
 /* Background Color Helpers */
@@ -119,36 +121,31 @@ body {
 /* Layout: Dashboard Structure (NATIVE SCROLL FIX) */
 .builder-layout { 
     display: flex; 
-    min-height: 100vh; /* Bukan height statis */
-    align-items: flex-start;
+    min-height: 100vh; /* Tidak dibatasi tinggi */
+    align-items: stretch;
+    width: 100%;
 }
 
-/* SIDEBAR DESKTOP */
+/* SIDEBAR DESKTOP (STICKY) */
 .sidebar-panel {
     width: 280px; 
     height: 100vh; 
-    position: sticky; /* Tetap menempel saat scroll */
+    position: sticky; /* Menempel saat di-scroll */
     top: 0;
     border-right: 4px solid var(--line-color);
     display: flex; 
     flex-direction: column; 
     padding: 30px 25px; 
     box-shadow: 5px 0px 0px rgba(0,0,0,0.05); 
-    z-index: 10;
+    z-index: 100;
     background: var(--bg-white);
     flex-shrink: 0;
-}
-
-.editor-panel { 
-    flex-grow: 1; 
-    min-height: 100vh;
-    padding: 40px 50px; 
-    /* Hilangkan overflow: auto disini agar page yang nge-scroll */
+    overflow-y: auto; /* Bisa scroll internal jika menu panjang */
 }
 
 .brand-box {
     border: 4px solid var(--line-color); border-radius: 12px; padding: 15px; text-align: center;
-    box-shadow: 4px 4px 0px var(--line-color); margin-bottom: 30px;
+    box-shadow: 4px 4px 0px var(--line-color); margin-bottom: 30px; flex-shrink: 0;
 }
 .brand-box img { width: 60px; height: 60px; margin-bottom: 10px; border-radius: 50%; border:3px solid #000; background:#fff; object-fit: cover;}
 
@@ -161,53 +158,13 @@ body {
 .sidebar-link:hover { border-color: var(--line-color); background: rgba(0,0,0,0.05); }
 .sidebar-link.active { border-color: var(--line-color); background: var(--bg-yellow); box-shadow: 3px 3px 0px var(--line-color); }
 
-.grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
-
-/* Upload Box Custom */
-.neo-upload-box {
-    border: 4px dashed var(--line-color); border-radius: 16px; padding: 50px; text-align: center;
-    background: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s;
+/* EDITOR PANEL */
+.editor-panel { 
+    flex-grow: 1; 
+    min-height: 100vh;
+    padding: 40px 50px; 
+    min-width: 0; /* Anti pecah untuk tabel flex */
 }
-.neo-upload-box:hover { background: rgba(255,255,255,0.9); transform: scale(1.02); }
-
-/* Tab System */
-.tab-content { display: none; animation: slideIn 0.3s ease; }
-.tab-content.active { display: block; }
-@keyframes slideIn { from{ opacity:0; transform:translateY(15px); } to{ opacity:1; transform:translateY(0); } }
-
-/* Modals */
-.neo-modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none;
-    align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(5px);
-}
-.neo-modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
-@keyframes fadeIn { from{ opacity:0; transform:scale(0.95); } to{ opacity:1; transform:scale(1); } }
-
-.neo-toast {
-    position: fixed; bottom: -100px; right: 20px; border: 3px solid var(--line-color);
-    background: var(--bg-blue); color: #fff; padding: 15px 30px; border-radius: 8px; font-weight: 800; font-family:'Space Mono', monospace;
-    box-shadow: 5px 5px 0px var(--line-color); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 99999;
-}
-.neo-toast.show { bottom: 30px; }
-
-/* Login Gate */
-.login-gate { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-.login-card { width: 100%; max-width: 400px; text-align: center; }
-.login-logo { width: 90px; height: 90px; border-radius: 50%; border: 4px solid #000; box-shadow: 4px 4px 0px #000; margin-bottom: 20px; object-fit: cover;}
-.login-error { color: #ef4444; font-weight: 800; margin-top: 15px; display: none; }
-
-/* Mobile Menu Toggle Button */
-.mobile-menu-toggle { 
-    display: none; 
-    position: fixed; 
-    top: 20px; 
-    left: 20px; 
-    z-index: 1001;
-    padding: 10px 15px;
-    font-size: 1.5rem;
-    box-shadow: 4px 4px 0px var(--line-color);
-}
-
 
 /* =========================================================
    REFACTORED INLINE CSS CLASSES
@@ -238,30 +195,20 @@ body {
 .flex-2 { flex: 2; }
 
 /* Element specific */
-.scrollable-sidebar { overflow-y: auto; padding-bottom: 50px; }
 .section-title { margin-bottom: 20px; border-bottom: 3px solid var(--line-color); padding-bottom: 10px; }
-.table-container { padding: 0; overflow-x: auto; }
-.table-wrapper { overflow-x: auto; max-height: 400px; }
+.table-container { padding: 0; overflow-x: auto; width: 100%; border-radius: 12px; }
+.table-wrapper { overflow-x: auto; max-height: 500px; width: 100%; }
 .hint-box { margin-bottom: 25px; border-width: 3px; padding: 15px; }
 .hint-text { margin: 0; font-family: 'Space Mono', monospace; font-weight: bold; }
 .upload-btn-large { font-size: 1.2rem; padding: 20px 40px; }
 .preview-section { display: none; margin-top: 25px; }
 .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
 
-/* Modals */
-.modal-form-content { width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-.modal-alert-content { max-width: 400px; text-align: center; }
-.alert-msg { font-weight: 700; font-size: 1.1rem; margin: 20px 0; }
-.readonly-input { background: #e2e8f0; }
-.form-group { margin-bottom: 15px; }
-
-/* Photos */
-.photo-upload-container { text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed var(--line-color); border-radius: 12px; background: #f8fafc; }
-.photo-preview-large { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--line-color); object-fit: cover; margin-bottom: 15px; }
-.photo-preview-small { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-.border-black { border: 2px solid var(--line-color); }
-.td-bold { font-weight: 700; }
-.btn-action-sm { padding: 5px 10px; font-size: 0.8rem; }
+/* Dashboard Grids & Charts */
+.grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+.charts-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-top: 30px; }
+.chart-wrapper { position: relative; height: 300px; width: 100%; }
+.sidebar-category { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 0.85rem; color: var(--text-muted); margin: 25px 0 5px 15px; text-transform: uppercase; letter-spacing: 1px; }
 
 /* Drag & Drop Builder - Fully Responsive */
 .builder-item { 
@@ -285,12 +232,69 @@ body {
 .builder-input-sm { padding: 10px 12px; font-size: 0.95rem; }
 .builder-btn-del { padding: 8px 12px; margin-top: 25px; align-self: flex-start; }
 
-/* Sidebar Category */
-.sidebar-category { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 0.85rem; color: var(--text-muted); margin: 25px 0 5px 15px; text-transform: uppercase; letter-spacing: 1px; }
+/* Upload Box Custom */
+.neo-upload-box {
+    border: 4px dashed var(--line-color); border-radius: 16px; padding: 50px; text-align: center;
+    background: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s;
+}
+.neo-upload-box:hover { background: rgba(255,255,255,0.9); transform: scale(1.02); }
 
-/* Charts */
-.charts-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-top: 30px; }
-.chart-wrapper { position: relative; height: 280px; width: 100%; }
+/* Tab System */
+.tab-content { display: none; animation: slideIn 0.3s ease; }
+.tab-content.active { display: block; }
+@keyframes slideIn { from{ opacity:0; transform:translateY(15px); } to{ opacity:1; transform:translateY(0); } }
+
+/* Modals */
+.neo-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none;
+    align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(5px);
+}
+.neo-modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+.neo-modal-content {
+    width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+    border: 4px solid var(--line-color); border-radius: 16px; padding: 35px; 
+    box-shadow: 8px 8px 0px var(--line-color); background: var(--bg-white);
+}
+.modal-alert-content { max-width: 400px; text-align: center; }
+.alert-msg { font-weight: 700; font-size: 1.1rem; margin: 20px 0; }
+.readonly-input { background: #e2e8f0; }
+.form-group { margin-bottom: 15px; }
+
+@keyframes fadeIn { from{ opacity:0; transform:scale(0.95); } to{ opacity:1; transform:scale(1); } }
+
+/* Photos */
+.photo-upload-container { text-align: center; margin-bottom: 25px; padding: 20px; border: 3px dashed var(--line-color); border-radius: 12px; background: #f8fafc; }
+.photo-preview-large { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--line-color); object-fit: cover; margin-bottom: 15px; }
+.photo-preview-small { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+.border-black { border: 2px solid var(--line-color); }
+.td-bold { font-weight: 700; }
+.btn-action-sm { padding: 5px 10px; font-size: 0.8rem; }
+
+/* Toasts */
+.neo-toast {
+    position: fixed; bottom: -100px; right: 20px; border: 3px solid var(--line-color);
+    background: var(--bg-blue); color: #fff; padding: 15px 30px; border-radius: 8px; font-weight: 800; font-family:'Space Mono', monospace;
+    box-shadow: 5px 5px 0px var(--line-color); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 99999;
+}
+.neo-toast.show { bottom: 30px; }
+
+/* Login Gate */
+.login-gate { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.login-card { width: 100%; max-width: 400px; text-align: center; }
+.login-logo { width: 90px; height: 90px; border-radius: 50%; border: 4px solid #000; box-shadow: 4px 4px 0px #000; margin-bottom: 20px; object-fit: cover;}
+.login-error { color: #ef4444; font-weight: 800; margin-top: 15px; display: none; }
+
+/* Mobile Menu Toggle Button */
+.mobile-menu-toggle { 
+    display: none; 
+    position: fixed; 
+    top: 20px; 
+    left: 20px; 
+    z-index: 1001;
+    padding: 10px 15px;
+    font-size: 1.5rem;
+    box-shadow: 4px 4px 0px var(--line-color);
+}
 
 
 /* =========================================================
@@ -299,10 +303,10 @@ body {
 
 /* TABLET & MOBILE LANDSCAPE */
 @media (max-width: 992px) {
-    /* Mencegah JS lama menimpa display flex menjadi inline, kita paksa menjadi block */
-    .builder-layout { display: block !important; }
+    /* Pembatalan display flex agar mengikuti urutan blok */
+    .builder-layout { display: block; }
     
-    /* Mendorong Sidebar Utuh dari Kiri */
+    /* Sidebar masuk mode Off-Canvas */
     .sidebar-panel { 
         position: fixed; 
         top: 0; 
@@ -316,26 +320,23 @@ body {
         box-shadow: 20px 0px 0px rgba(0,0,0,0.5); 
     }
     
-    /* Sidebar Trigger System */
-    .sidebar-panel.show,
-    .sidebar-panel:has(.show),
-    .sidebar-panel:has(#sidebarNav.show) { 
-        left: 0; 
-    }
-
+    .sidebar-panel.show { left: 0; }
     .sidebar-nav { display: flex !important; }
+    
     .editor-panel { padding: 90px 25px 40px 25px; width: 100%; }
     .mobile-menu-toggle { display: block; }
     
     .grid-stats { grid-template-columns: repeat(2, 1fr); }
     .charts-grid { grid-template-columns: 1fr; }
-    .chart-wrapper { height: 250px; }
+    .chart-wrapper { height: 280px; }
 }
 
 /* MOBILE PORTRAIT (SMARTPHONE) */
 @media (max-width: 768px) {
     .grid-stats { grid-template-columns: 1fr; }
-    
+    .charts-grid { grid-template-columns: 1fr; }
+    .chart-wrapper { height: 250px; }
+
     .editor-header { 
         flex-direction: column; 
         text-align: center; 
@@ -344,14 +345,10 @@ body {
     }
     .editor-header .neo-btn { width: 100%; }
     .neo-card { padding: 20px; }
-    
     .neo-table th, .neo-table td { padding: 12px; font-size: 0.9rem; }
     
-    .flex-modal-actions { flex-direction: column; margin-top: 20px; }
-    .flex-modal-actions button { width: 100%; margin-bottom: 10px; }
-    
-    .flex-actions { flex-direction: column; }
-    .flex-actions button, .flex-actions input { width: 100%; }
+    .flex-modal-actions, .flex-actions { flex-direction: column; }
+    .flex-modal-actions button, .flex-actions button, .flex-actions input { width: 100%; margin-bottom: 10px; }
 }
 
 /* ULTRA SMALL MOBILE */
@@ -363,5 +360,5 @@ body {
     .editor-panel { padding: 80px 15px 30px 15px; }
     
     .login-card { padding: 30px 20px; }
-    .modal-form-content { padding: 25px 15px; border-width: 3px; box-shadow: 5px 5px 0px var(--line-color);}
+    .neo-modal-content { padding: 25px 15px; border-width: 3px; box-shadow: 5px 5px 0px var(--line-color);}
 }
