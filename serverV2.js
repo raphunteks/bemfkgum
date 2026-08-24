@@ -3,7 +3,6 @@ const express = require('express');
 const { Redis } = require('@upstash/redis');
 const cors = require('cors');
 const path = require('path');
-const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const app = express();
@@ -247,7 +246,8 @@ app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
         const p = redis.pipeline();
         
         students.forEach(std => {
-            if (std.nim && std.nama) {
+            // Evaluasi ultra-dinamis: Pastikan setidaknya 'nim' tersedia
+            if (std.nim) {
                 p.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
             }
         });
@@ -265,7 +265,8 @@ app.post('/api/mhs', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const std = req.body;
-        if (!std.nim) return res.status(400).json({ success: false, message: 'NIM Wajib Diisi' });
+        // Hanya wajibkan 'nim' karena skema form admin sekarang sepenuhnya dinamis
+        if (!std.nim) return res.status(400).json({ success: false, message: 'NIM Wajib Diisi (Identifier Database)' });
 
         await redis.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
