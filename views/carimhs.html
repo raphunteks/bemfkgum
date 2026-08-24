@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pencarian Data Terpadu | PDDIKTI BEM</title>
+    <title>Pencarian Data BEM | PDDIKTI BEM</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <!-- Load Google Fonts -->
@@ -22,58 +22,61 @@
         <h1 class="neo-heading" style="font-size: 2.8rem; margin-bottom: 10px;">PORTAL DATA BEM</h1>
         <p class="neo-subtitle" style="font-weight: 800; color: #1e1e1e; font-size: 1.1rem;">Pencarian Terpusat Database Institusi KBMFKG UMI.</p>
         
-        <!-- ================= PILIHAN TAB ENTITAS ================= -->
-        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 35px; flex-wrap: wrap;">
-            <button id="tab-mhs" class="neo-btn neo-bg-blue" onclick="setSearchType('mhs')" style="font-size: 1.1rem; padding: 15px 30px;">🎓 Cari Mahasiswa</button>
-            <button id="tab-civitas" class="neo-btn neo-bg-white" onclick="setSearchType('civitas')" style="font-size: 1.1rem; padding: 15px 30px;">👨‍🏫 Cari Dosen/Civitas</button>
-        </div>
-        
-        <!-- FORM PENCARIAN -->
-        <div style="display: flex; gap: 10px; margin-top: 25px; flex-wrap: wrap; justify-content: center;">
-            <input type="text" id="search-input" class="neo-input" placeholder="Masukkan NIM, Nama, atau Angkatan (Cth: 2020)..." style="max-width: 500px; font-size: 1.2rem; padding: 20px; border-radius: 12px; border-width: 4px;" onkeypress="handleEnter(event)">
-            <button class="neo-btn neo-bg-green" style="font-size: 1.2rem; padding: 20px 40px;" onclick="searchData()">CARI DATA 🔍</button>
+        <div style="margin-top: 35px;">
+            <!-- Toggle Mode Pencarian -->
+            <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap;">
+                <button id="btn-mode-mhs" class="neo-btn neo-bg-blue" style="flex:1; max-width: 250px; font-size:1.1rem; padding: 15px;" onclick="setMode('mhs')">🎓 Cari Mahasiswa</button>
+                <button id="btn-mode-civ" class="neo-btn neo-bg-white" style="flex:1; max-width: 250px; font-size:1.1rem; padding: 15px;" onclick="setMode('civitas')">👨‍🏫 Cari Dosen/Civitas</button>
+            </div>
+
+            <!-- Form Pencarian Dinamis -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                <input type="text" id="search-input" class="neo-input" placeholder="Masukkan NIM, Nama, atau Angkatan (Cth: 2020)..." style="width: 100%; max-width: 600px; font-size: 1.2rem; padding: 20px; border-radius: 12px; border-width: 4px; text-align: center;" onkeypress="handleEnter(event)">
+                <button class="neo-btn neo-bg-green" style="font-size: 1.2rem; padding: 18px 50px;" onclick="searchData()">CARI DATA 🔍</button>
+            </div>
         </div>
     </div>
 
     <!-- RESULT CONTAINER -->
     <div id="result-container" style="max-width: 800px; width: 100%; display: grid; gap: 20px;">
-        <div class="neo-card neo-bg-white text-center" id="default-hint" style="padding: 40px;">
+        <div class="neo-card neo-bg-white text-center" style="padding: 40px;" id="default-helper-text">
             <h3 class="neo-heading-sm" style="color: var(--text-muted);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>
         </div>
     </div>
 
 <script>
-    let currentSearchType = 'mhs'; // Default type
+    let searchMode = 'mhs'; // Default State
 
-    // ================= FUNGSI GANTI TAB PENCARIAN =================
-    function setSearchType(type) {
-        currentSearchType = type;
-        const btnMhs = document.getElementById('tab-mhs');
-        const btnCivitas = document.getElementById('tab-civitas');
-        const searchInput = document.getElementById('search-input');
-        const hintBox = document.getElementById('result-container');
+    function setMode(mode) {
+        searchMode = mode;
+        const btnMhs = document.getElementById('btn-mode-mhs');
+        const btnCiv = document.getElementById('btn-mode-civ');
+        const input = document.getElementById('search-input');
+        const helperText = document.getElementById('default-helper-text');
 
-        if (type === 'mhs') {
+        // Reset Hasil Pencarian jika ganti mode
+        document.getElementById('result-container').innerHTML = `<div class="neo-card neo-bg-white text-center" style="padding: 40px;" id="default-helper-text"></div>`;
+
+        if (mode === 'mhs') {
             btnMhs.className = 'neo-btn neo-bg-blue';
-            btnCivitas.className = 'neo-btn neo-bg-white';
-            searchInput.placeholder = 'Masukkan NIM, Nama, atau Angkatan (Cth: 2020)...';
-            hintBox.innerHTML = `<div class="neo-card neo-bg-white text-center" id="default-hint" style="padding: 40px;"><h3 class="neo-heading-sm" style="color: var(--text-muted);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3></div>`;
+            btnCiv.className = 'neo-btn neo-bg-white';
+            input.placeholder = 'Masukkan NIM, Nama, atau Angkatan (Cth: 2020)...';
+            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>`;
         } else {
+            btnCiv.className = 'neo-btn neo-bg-blue';
             btnMhs.className = 'neo-btn neo-bg-white';
-            btnCivitas.className = 'neo-btn neo-bg-purple'; // Warna identitas Civitas
-            searchInput.placeholder = 'Masukkan NIDN, Nama, Jenjang, atau Jabatan...';
-            hintBox.innerHTML = `<div class="neo-card neo-bg-white text-center" id="default-hint" style="padding: 40px;"><h3 class="neo-heading-sm" style="color: var(--text-muted);">Silakan ketikkan NIDN, Nama, atau Jabatan untuk memulai pencarian Civitas/Dosen.</h3></div>`;
+            input.placeholder = 'Masukkan NIP/NIDN, Nama, atau Unit Kerja...';
+            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted);">Silakan ketikkan NIP, NIDN, Nama, atau Unit Kerja untuk memulai pencarian.</h3>`;
         }
         
-        searchInput.value = '';
-        searchInput.focus();
+        input.value = '';
+        input.focus();
     }
 
     function handleEnter(e) {
         if(e.key === 'Enter') searchData();
     }
 
-    // ================= FUNGSI PENCARIAN CERDAS (API) =================
     async function searchData() {
         const query = document.getElementById('search-input').value.trim();
         const container = document.getElementById('result-container');
@@ -86,17 +89,17 @@
         container.innerHTML = `<div class="neo-card neo-bg-white text-center"><h3 class="neo-heading-sm">Mencari data di server... ⏳</h3></div>`;
 
         try {
-            // URL dinamis menyesuaikan tab yang sedang aktif (/api/mhs atau /api/civitas)
-            let apiUrl = `/api/${currentSearchType}?q=${encodeURIComponent(query)}`;
-            if(window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com${apiUrl}`;
+            // Memanggil API Backend V2 berdasarkan Mode (Mhs / Civitas)
+            let endpoint = searchMode === 'mhs' ? `/api/mhs?q=${encodeURIComponent(query)}` : `/api/civitas?q=${encodeURIComponent(query)}`;
+            let apiUrl = window.location.origin === "null" ? `https://bemkbmfkgumi.com${endpoint}` : endpoint;
 
             const res = await fetch(apiUrl);
             const json = await res.json();
 
             if(json.success) {
                 if(json.data.length === 0) {
-                    const labelEntitas = currentSearchType === 'mhs' ? 'Mahasiswa' : 'Civitas/Dosen';
-                    container.innerHTML = `<div class="neo-card neo-bg-pink text-center"><h3 class="neo-heading-sm">Hasil Tidak Ditemukan.</h3><p style="font-weight:700;">Tidak ada data ${labelEntitas} yang cocok dengan kata kunci "${query}"</p></div>`;
+                    let tipeTeks = searchMode === 'mhs' ? 'mahasiswa' : 'dosen/civitas';
+                    container.innerHTML = `<div class="neo-card neo-bg-pink text-center"><h3 class="neo-heading-sm">Hasil Tidak Ditemukan.</h3><p style="font-weight:700;">Tidak ada data ${tipeTeks} yang cocok dengan kata kunci "${query}"</p></div>`;
                     return;
                 }
 
@@ -104,68 +107,70 @@
                 json.data.forEach(item => {
                     
                     // ===============================================================
-                    // SMART EXTRACTION: Pengekstrak Data Anti-Crash (MHS & CIVITAS)
+                    // SMART EXTRACTION: Mendeteksi isi data walau ID Form-nya dinamis
                     // ===============================================================
                     let d_id = '-';
                     let d_nama = '-';
-                    let d_sub1 = '-';
-                    let d_sub2 = '';
+                    let d_desc = '-'; 
                     let d_status = 'Aktif';
-                    let d_foto = '/img/bemprofilmhs.png';
+                    let d_tipe = ''; // Khusus Civitas
 
-                    for(let key in item) {
-                        let k = key.toLowerCase();
-                        if(k.includes('nama')) d_nama = item[key];
-                        if(k.includes('status')) d_status = item[key];
-                        if(k === 'foto' || k === 'image') d_foto = item[key] !== '-' && item[key] !== '' ? item[key] : d_foto;
-                        
-                        // Ekstraksi khusus jika mode Mahasiswa
-                        if(currentSearchType === 'mhs') {
-                            if(k === 'nim' || k.includes('nim')) d_id = item[key];
-                            if(k.includes('angkat') || k.includes('tahun')) d_sub1 = 'Angkatan ' + item[key];
-                            if(k.includes('prodi') || k.includes('program')) d_sub2 = item[key];
-                        } 
-                        // Ekstraksi khusus jika mode Civitas/Dosen
-                        else {
-                            if(k === 'nidn' || k === 'nip' || k.includes('nidn')) d_id = item[key];
-                            if(k.includes('jenjang') || k.includes('pendidikan')) d_sub1 = item[key];
-                            if(k.includes('jabatan')) d_sub2 = item[key];
+                    if (searchMode === 'mhs') {
+                        d_id = item.nim || item.NIM || '-';
+                        for(let key in item) {
+                            let k = key.toLowerCase();
+                            if(k.includes('nama')) d_nama = item[key];
+                            if(k.includes('angkat') || k.includes('tahun')) d_desc = `Angkatan ${item[key]}`;
+                            if(k.includes('status')) d_status = item[key];
+                        }
+                    } else {
+                        d_id = item.nip || item.NIP || item.nidn || item.NIDN || '-';
+                        d_tipe = (item.tipe_pegawai || 'Civitas').toUpperCase();
+                        for(let key in item) {
+                            let k = key.toLowerCase();
+                            if(k.includes('nama')) d_nama = item[key];
+                            if(k.includes('prodi') || k.includes('unit')) d_desc = item[key];
+                            if(k.includes('status')) d_status = item[key];
                         }
                     }
 
                     // Logika Pewarnaan Badge Status
-                    let statusColor = 'neo-bg-green'; // Default Aktif
-                    if (d_status.toLowerCase().includes('lulus') || d_status.toLowerCase().includes('tugas')) statusColor = 'neo-bg-blue';
-                    else if (d_status.toLowerCase().includes('cuti')) statusColor = 'neo-bg-yellow';
-                    else if (d_status.toLowerCase().includes('do') || d_status.toLowerCase().includes('keluar') || d_status.toLowerCase().includes('pensiun')) statusColor = 'neo-bg-pink';
+                    let statusColor = 'neo-bg-green'; 
+                    let st_lower = d_status.toLowerCase();
+                    if (st_lower.includes('lulus')) statusColor = 'neo-bg-blue';
+                    else if (st_lower.includes('pensiun')) statusColor = 'neo-bg-purple';
+                    else if (st_lower.includes('cuti') || st_lower.includes('belajar') || st_lower.includes('tb')) statusColor = 'neo-bg-yellow';
+                    else if (st_lower.includes('do') || st_lower.includes('keluar')) statusColor = 'neo-bg-pink';
                     
-                    // Parameter URL untuk diarahkan ke halaman detail
-                    let linkParam = currentSearchType === 'mhs' ? `nim=${d_id}` : `nidn=${d_id}`;
-
+                    // Elemen khusus untuk membedakan tampilan hasil pencarian
+                    let descBadge = searchMode === 'mhs' 
+                        ? `<span class="neo-badge neo-bg-yellow" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_desc}</span>`
+                        : `<span class="neo-badge neo-bg-white" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_desc}</span>`;
+                        
+                    let typeBadgeHtml = searchMode === 'civitas' 
+                        ? `<span class="neo-badge neo-bg-blue" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_tipe}</span>` 
+                        : '';
+                    
                     html += `
                     <div class="neo-card neo-bg-white" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; padding: 25px 30px;">
-                        
-                        <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
-                            <img src="${d_foto}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #000; object-fit: cover; box-shadow: 3px 3px 0px #000; background: #fff;">
+                        <div>
+                            <h2 class="neo-heading-sm" style="margin-bottom: 5px; font-size:1.6rem; color: #000;">${d_nama}</h2>
+                            <p style="font-weight:900; font-family:'Space Mono', monospace; font-size:1.1rem; color: var(--text-muted); margin:0 0 15px 0;">${d_id}</p>
+                            
+                            <!-- BADGES INFO -->
                             <div>
-                                <h2 class="neo-heading-sm" style="margin-bottom: 5px; font-size:1.6rem; color: #000;">${d_nama}</h2>
-                                <p style="font-weight:900; font-family:'Space Mono', monospace; font-size:1.1rem; color: var(--text-muted); margin:0 0 10px 0;">${d_id}</p>
-                                
-                                <div>
-                                    <span class="neo-badge neo-bg-yellow" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_sub1}</span>
-                                    ${d_sub2 && d_sub2 !== '-' ? `<span class="neo-badge neo-bg-white" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_sub2}</span>` : ''}
-                                    <span class="neo-badge ${statusColor}" style="font-size: 0.95rem; padding: 6px 14px;">${d_status}</span>
-                                </div>
+                                ${typeBadgeHtml}
+                                ${descBadge}
+                                <span class="neo-badge ${statusColor}" style="font-size: 0.95rem; padding: 6px 14px;">${d_status}</span>
                             </div>
                         </div>
-
-                        <a href="/carimhs/detail?${linkParam}&type=${currentSearchType}" class="neo-btn neo-bg-blue" style="text-decoration:none; padding:15px 35px; font-size: 1.1rem;">Lihat Detail 👁️</a>
+                        <!-- Parameter type dikirim ke halaman detail untuk logic API -->
+                        <a href="/carimhs/detail?nim=${encodeURIComponent(d_id)}&type=${searchMode}" class="neo-btn neo-bg-blue" style="text-decoration:none; padding:15px 35px; font-size: 1.1rem;">Lihat Detail 👁️</a>
                     </div>`;
                 });
                 
-                // Menambahkan informasi jumlah temuan data
-                const typeText = currentSearchType === 'mhs' ? 'Mahasiswa' : 'Civitas/Dosen';
-                const resultHeader = `<div style="text-align:left; font-weight:800; font-size:1.1rem; color:var(--text-main); margin-bottom:-5px; padding-left:10px;">Menemukan ${json.data.length} Data ${typeText}</div>`;
+                let tipeTeks = searchMode === 'mhs' ? 'Mahasiswa' : 'Pegawai';
+                const resultHeader = `<div style="text-align:left; font-weight:800; font-size:1.1rem; color:var(--text-main); margin-bottom:-5px; padding-left:10px;">Menemukan ${json.data.length} Data ${tipeTeks}</div>`;
                 
                 container.innerHTML = resultHeader + html;
             } else { throw new Error(); }
