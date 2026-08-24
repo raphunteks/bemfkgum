@@ -171,6 +171,8 @@ app.get('/api/mhs/schema', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const schema = await redis.get(MHS_SCHEMA_KEY);
+        // FIX: Agar jika null (skema kosong) dari server tidak memicu error di frontend
+        if(!schema) return res.json({ success: true, data: [] });
         res.json({ success: true, data: safeParse(schema, []) });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema' }); }
 });
@@ -268,6 +270,8 @@ app.get('/api/civitas/schema', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const schema = await redis.get(CIVITAS_SCHEMA_KEY);
+        // FIX: Agar jika null (skema kosong) dari server tidak memicu error di frontend
+        if(!schema) return res.json({ success: true, data: [] });
         res.json({ success: true, data: safeParse(schema, []) });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema civitas' }); }
 });
