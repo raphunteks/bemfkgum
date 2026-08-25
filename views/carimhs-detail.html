@@ -11,32 +11,47 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="/css/mainV5.css">
+    <style>
+        /* Mobile Specific Adjustments */
+        @media (max-width: 600px) {
+            .table-mobile-responsive th, .table-mobile-responsive td {
+                padding: 10px !important;
+                font-size: 0.95rem !important;
+            }
+            .riwayat-card-header {
+                font-size: 1.3rem !important;
+                padding: 12px !important;
+            }
+        }
+    </style>
 </head>
-<body class="neo-bg-bg" style="display: flex; justify-content: center; padding: 50px 20px;">
+<body class="neo-bg-bg" style="display: flex; justify-content: center; padding: clamp(20px, 5vw, 50px) 20px;">
 
-    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 750px; width: 100%; position: relative; padding: 50px;">
-        <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -20px; left: 20px; text-decoration:none; padding: 12px 25px; font-size: 1rem;">⬅ KEMBALI</a>
+    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 650px; width: 100%; position: relative; padding: clamp(30px, 5vw, 50px);">
+        <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -15px; left: 15px; text-decoration:none; padding: 10px 20px; font-size: 0.9rem;">⬅ KEMBALI</a>
         
         <!-- HEADER PROFIL (FOTO, NAMA, ID) -->
-        <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
-            <img id="d-foto" src="/img/bemprofilmhs.png" style="width: 140px; height: 140px; border-radius: 50%; border: 5px solid #000; box-shadow: 5px 5px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:block; object-fit: cover;">
-            <h1 class="neo-heading" id="d-nama" style="font-size: 2.2rem; line-height:1.2;">Memuat...</h1>
-            <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 1.5rem; margin-top:10px;">-</h2>
+        <div style="text-align: center; margin-top: 25px; margin-bottom: clamp(25px, 5vw, 40px);">
+            <img id="d-foto" src="/img/bemprofilmhs.png" style="width: clamp(100px, 20vw, 140px); height: clamp(100px, 20vw, 140px); border-radius: 50%; border: clamp(3px, 1vw, 5px) solid #000; box-shadow: 4px 4px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:block; object-fit: cover;">
+            <h1 class="neo-heading" id="d-nama" style="font-size: clamp(1.6rem, 5vw, 2.2rem); line-height:1.2; margin-bottom: 5px;">Memuat...</h1>
+            <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: clamp(1.1rem, 4vw, 1.5rem); margin-top:5px;">-</h2>
             <div id="d-badge-tipe" style="margin-top: 15px; display: none;"></div>
         </div>
 
         <!-- TABEL BIODATA UTAMA -->
-        <table class="neo-table" style="width: 100%; border: 4px solid #000;">
-            <tbody id="dynamic-tbody">
-                <tr><td class="text-center" style="font-weight: 700;">Menarik data dari database...</td></tr>
-            </tbody>
-        </table>
+        <div style="overflow-x: auto; border: 4px solid #000; border-radius: 8px;">
+            <table class="neo-table table-mobile-responsive" style="width: 100%; border: none; margin: 0;">
+                <tbody id="dynamic-tbody">
+                    <tr><td class="text-center" style="font-weight: 700;">Menarik data dari database...</td></tr>
+                </tbody>
+            </table>
+        </div>
         
         <!-- KONTOTAINER KHUSUS RIWAYAT DOSEN -->
         <div id="riwayat-container"></div>
 
         <div style="text-align: center; margin-top: 40px; border-top: 4px dashed #000; padding-top: 20px;">
-            <p style="font-weight: 800; font-size: 1rem; color: #1e1e1e;">Sumber Data: Database Resmi Institusi KBMFKG UMI</p>
+            <p style="font-weight: 800; font-size: 0.95rem; color: #1e1e1e;">Sumber Data: Database Resmi Institusi KBMFKG UMI</p>
         </div>
     </div>
 
@@ -75,7 +90,7 @@
         { id: 'pendidikan', label: 'Pendidikan Terakhir', type: 'select' },
         { id: 'gelar', label: 'Gelar Akademik', type: 'text' },
         { id: 'tahun_lulus', label: 'Tahun', type: 'number' },
-        { id: 'status', label: 'Status', type: 'select' }
+        { id: 'status', label: 'Status Civitas', type: 'select' }
     ];
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -91,7 +106,7 @@
         }
 
         try {
-            // 1. Fetch Data Utama Terlebih Dahulu 
+            // 1. Fetch Data Utama Terlebih Dahulu
             let dataUrl = '';
             if (typeParam === 'mhs') {
                 dataUrl = `/api/mhs/${idParam}`;
@@ -121,8 +136,8 @@
                     const badgeEl = document.getElementById('d-badge-tipe');
                     badgeEl.style.display = 'block';
                     badgeEl.innerHTML = tp === 'dosen' 
-                        ? `<span class="neo-badge neo-bg-blue" style="font-size:1rem;">Dosen Pengajar</span>`
-                        : `<span class="neo-badge neo-bg-yellow" style="font-size:1rem;">Staf Civitas</span>`;
+                        ? `<span class="neo-badge neo-bg-blue" style="font-size: clamp(0.85rem, 3vw, 1rem); padding: 8px 18px;">Dosen Pengajar</span>`
+                        : `<span class="neo-badge neo-bg-yellow" style="font-size: clamp(0.85rem, 3vw, 1rem); padding: 8px 18px;">Staf Civitas</span>`;
                 }
 
                 if(window.location.origin === "null") schemaUrl = `https://bemkbmfkgumi.com${schemaUrl}`;
@@ -177,32 +192,31 @@
                             rwData.forEach(rw => {
                                 rows += `
                                 <tr>
-                                    <td style="padding:15px; border-bottom:2px solid #cbd5e1; font-weight:600;">${rw.pt || '-'}</td>
-                                    <td style="padding:15px; border-bottom:2px solid #cbd5e1; font-weight:600;">${rw.gelar_akademik || '-'}</td>
-                                    <td style="padding:15px; border-bottom:2px solid #cbd5e1; font-weight:600;">${rw.tahun || '-'}</td>
-                                    <td style="padding:15px; border-bottom:2px solid #cbd5e1; font-weight:600;">${rw.jenjang || '-'}</td>
+                                    <td style="padding: clamp(10px, 3vw, 15px); border-bottom:2px solid #cbd5e1; font-weight:600; font-size: clamp(0.9rem, 3vw, 1rem);">${rw.pt || '-'}</td>
+                                    <td style="padding: clamp(10px, 3vw, 15px); border-bottom:2px solid #cbd5e1; font-weight:600; font-size: clamp(0.9rem, 3vw, 1rem);">${rw.gelar_akademik || '-'}</td>
+                                    <td style="padding: clamp(10px, 3vw, 15px); border-bottom:2px solid #cbd5e1; font-weight:600; font-size: clamp(0.9rem, 3vw, 1rem);">${rw.tahun || '-'}</td>
+                                    <td style="padding: clamp(10px, 3vw, 15px); border-bottom:2px solid #cbd5e1; font-weight:600; font-size: clamp(0.9rem, 3vw, 1rem);">${rw.jenjang || '-'}</td>
                                 </tr>`;
                             });
 
                             riwayatHtml += `
                             <div style="margin-top: 40px;">
-                                <div style="background: linear-gradient(90deg, #d946ef, #8b5cf6); color: white; padding: 18px; text-align: center; border-radius: 12px; margin-bottom: 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000;">
-                                    <h2 style="margin:0; font-family:'Outfit', sans-serif; font-size:1.6rem; letter-spacing:1px;">Riwayat Dosen</h2>
+                                <div class="riwayat-card-header" style="background: linear-gradient(90deg, #d946ef, #8b5cf6); color: white; padding: 18px; text-align: center; border-radius: 12px; margin-bottom: 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000;">
+                                    <h2 style="margin:0; font-family:'Outfit', sans-serif; font-size: clamp(1.4rem, 4vw, 1.6rem); letter-spacing:1px;">Riwayat Dosen</h2>
                                 </div>
                                 
-                                <div style="display:flex; justify-content:center; gap:10px; margin-bottom: 15px;">
-                                    <div style="background: linear-gradient(90deg, #f472b6, #c084fc); color: white; padding: 10px 30px; border-radius: 8px; font-weight: bold; border: 2px solid #000;">Riwayat Pendidikan</div>
-                                    <div style="background: #f1f5f9; color: #94a3b8; padding: 10px 30px; border-radius: 8px; font-weight: bold; border: 2px solid #cbd5e1;">Riwayat Mengajar</div>
+                                <div style="display:flex; justify-content:center; margin-bottom: 15px;">
+                                    <div style="background: linear-gradient(90deg, #f472b6, #c084fc); color: white; padding: 12px 30px; border-radius: 8px; font-weight: bold; border: 2px solid #000; font-size: clamp(0.9rem, 3vw, 1.1rem); width: 100%; text-align: center;">Riwayat Pendidikan</div>
                                 </div>
 
                                 <div style="overflow-x: auto; border: 4px solid #000; border-radius: 8px; box-shadow: 5px 5px 0px #000;">
-                                    <table style="width: 100%; border-collapse: collapse; background: #fff;">
+                                    <table style="width: 100%; border-collapse: collapse; background: #fff; min-width: 500px;">
                                         <thead>
                                             <tr style="background: #e9d5ff;">
-                                                <th style="padding: 15px; text-align: left; font-weight: 800; border-bottom: 4px solid #000;">Perguruan Tinggi</th>
-                                                <th style="padding: 15px; text-align: left; font-weight: 800; border-bottom: 4px solid #000;">Gelar Akademik</th>
-                                                <th style="padding: 15px; text-align: left; font-weight: 800; border-bottom: 4px solid #000;">Tahun</th>
-                                                <th style="padding: 15px; text-align: left; font-weight: 800; border-bottom: 4px solid #000;">Jenjang</th>
+                                                <th style="padding: clamp(10px, 3vw, 15px); text-align: left; font-weight: 800; border-bottom: 4px solid #000; font-size: clamp(0.9rem, 3vw, 1rem);">Perguruan Tinggi</th>
+                                                <th style="padding: clamp(10px, 3vw, 15px); text-align: left; font-weight: 800; border-bottom: 4px solid #000; font-size: clamp(0.9rem, 3vw, 1rem);">Gelar Akademik</th>
+                                                <th style="padding: clamp(10px, 3vw, 15px); text-align: left; font-weight: 800; border-bottom: 4px solid #000; font-size: clamp(0.9rem, 3vw, 1rem);">Tahun</th>
+                                                <th style="padding: clamp(10px, 3vw, 15px); text-align: left; font-weight: 800; border-bottom: 4px solid #000; font-size: clamp(0.9rem, 3vw, 1rem);">Jenjang</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -225,13 +239,13 @@
                         else if (st_lower.includes('cuti') || st_lower.includes('belajar') || st_lower.includes('tb') || st_lower.includes('tetap')) statusColor = 'neo-bg-pink'; // Khusus Tetap
                         else if (st_lower.includes('do') || st_lower.includes('keluar')) statusColor = 'neo-bg-pink';
                         
-                        displayVal = `<span class="neo-badge ${statusColor}" style="font-size:1rem; padding: 6px 15px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${val}</span>`;
+                        displayVal = `<span class="neo-badge ${statusColor}" style="font-size: clamp(0.85rem, 3vw, 1rem); padding: 6px 15px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${val}</span>`;
                     }
 
                     tableHtml += `
                     <tr>
-                        <td class="neo-bg-yellow" style="width: 35%; font-weight: 900; font-size:1.1rem; border-right: 4px solid #000; border-bottom: 4px solid #000;">${field.label}</td>
-                        <td style="font-weight: 800; font-size:1.1rem; border-bottom: 4px solid #000;">${displayVal}</td>
+                        <td class="neo-bg-yellow" style="width: 40%; font-weight: 900; font-size: clamp(0.95rem, 3vw, 1.1rem); border-right: 3px solid #000; border-bottom: 3px solid #000;">${field.label}</td>
+                        <td style="font-weight: 800; font-size: clamp(0.95rem, 3vw, 1.1rem); border-bottom: 3px solid #000;">${displayVal}</td>
                     </tr>`;
                 });
 
