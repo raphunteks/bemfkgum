@@ -475,13 +475,7 @@
 
         function processNewData(newData, hasMore) {
             var cleanedData = newData.map(function(item) {
-                var url = item.Gambar_URL || '';
-                if (url.indexOf('drive.google.com') !== -1 || url.indexOf('drive.usercontent.com') !== -1) {
-                    var match = url.match(/[-\w]{25,33}/); 
-                    if (match && match[0]) {
-                        item.Gambar_URL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
-                    }
-                }
+                // Skrip Google Drive telah dihapus. Menggunakan path /api/uploads/ murni.
                 return item;
             });
 
