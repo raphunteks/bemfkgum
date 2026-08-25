@@ -79,7 +79,7 @@ app.post('/api/admin/auth', (req, res) => {
 // ================= RUTE FRONTEND ADMIN & PDDIKTI =================
 app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
 app.get('/admin-qrcode', (req, res) => res.render('admin-dashboardV4'));
-app.get('/admin-mhs', (req, res) => res.render('admin-dashboardV5')); // DB Terpadu Mhs & Pegawai
+app.get('/admin-mhs', (req, res) => res.render('admin-dashboardV5')); 
 app.get('/carimhs', (req, res) => res.render('carimhs')); 
 app.get('/carimhs/detail', (req, res) => res.render('carimhs-detail')); 
 
@@ -167,7 +167,7 @@ app.get('/api/uploads/:filename', async (req, res) => {
 const MHS_HASH_KEY = 'BEM_MHS_DB';
 const MHS_SCHEMA_KEY = 'BEM_MHS_FORM_SCHEMA'; 
 
-const CIVITAS_HASH_KEY = 'BEM_CIVITAS_DB'; // Database gabungan Dosen & Civitas
+const CIVITAS_HASH_KEY = 'BEM_CIVITAS_DB'; 
 const DOSEN_SCHEMA_KEY = 'BEM_DOSEN_FORM_SCHEMA';
 const CIVITAS_SCHEMA_KEY = 'BEM_CIVITAS_FORM_SCHEMA';
 
@@ -297,7 +297,7 @@ app.get('/api/civitas', async (req, res) => {
         const allData = await redis.hgetall(CIVITAS_HASH_KEY);
         let resultArray = [];
         if (allData) {
-            for (const [nip, dataStr] of Object.entries(allData)) {
+            for (const [id, dataStr] of Object.entries(allData)) {
                 resultArray.push(safeParse(dataStr, {}));
             }
         }
@@ -309,11 +309,11 @@ app.get('/api/civitas', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database pegawai' }); }
 });
 
-// GET SINGLE PEGAWAI (ENDPOINT YANG SEBELUMNYA HILANG - PENYEBAB GANGGUAN SERVER)
-app.get('/api/civitas/:nip', async (req, res) => {
+// GET SINGLE PEGAWAI (MENDUKUNG PARAMETER DINAMIS :id UNTUK NIDN/NIP)
+app.get('/api/civitas/:id', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        const dataStr = await redis.hget(CIVITAS_HASH_KEY, req.params.nip);
+        const dataStr = await redis.hget(CIVITAS_HASH_KEY, req.params.id);
         if (!dataStr) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
         res.json({ success: true, data: safeParse(dataStr, {}) });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil data pegawai' }); }
@@ -327,7 +327,8 @@ app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
         
         const p = redis.pipeline();
         pegawai.forEach(peg => {
-            if (peg.nip) p.hset(CIVITAS_HASH_KEY, { [peg.nip]: JSON.stringify(peg) });
+            const pegId = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
+            if (pegId) p.hset(CIVITAS_HASH_KEY, { [pegId]: JSON.stringify(peg) });
         });
         await p.exec();
         res.json({ success: true, message: `Berhasil sinkronisasi ${pegawai.length} pegawai` });
@@ -338,30 +339,30 @@ app.post('/api/civitas', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const peg = req.body;
-        if (!peg.nip) return res.status(400).json({ success: false, message: 'NIP / NIDN Wajib Diisi (Identifier Database)' });
+        const idPegawai = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
+        if (!idPegawai) return res.status(400).json({ success: false, message: 'NIP / NIDN Wajib Diisi (Identifier Database)' });
 
-        await redis.hset(CIVITAS_HASH_KEY, { [peg.nip]: JSON.stringify(peg) });
+        await redis.hset(CIVITAS_HASH_KEY, { [idPegawai]: JSON.stringify(peg) });
         res.json({ success: true, message: 'Data Pegawai Berhasil Dibuat' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data pegawai' }); }
 });
 
-app.put('/api/civitas/:nip', verifyToken, async (req, res) => {
+app.put('/api/civitas/:id', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        const { nip } = req.params;
-        const exists = await redis.hexists(CIVITAS_HASH_KEY, nip);
+        const { id } = req.params;
+        const exists = await redis.hexists(CIVITAS_HASH_KEY, id);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
 
-        req.body.nip = nip; 
-        await redis.hset(CIVITAS_HASH_KEY, { [nip]: JSON.stringify(req.body) });
+        await redis.hset(CIVITAS_HASH_KEY, { [id]: JSON.stringify(req.body) });
         res.json({ success: true, message: 'Data Pegawai Berhasil Diperbarui' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data pegawai' }); }
 });
 
-app.delete('/api/civitas/:nip', verifyToken, async (req, res) => {
+app.delete('/api/civitas/:id', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        await redis.hdel(CIVITAS_HASH_KEY, req.params.nip);
+        await redis.hdel(CIVITAS_HASH_KEY, req.params.id);
         res.json({ success: true, message: 'Data Pegawai Terhapus' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data pegawai' }); }
 });
