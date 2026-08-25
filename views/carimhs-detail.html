@@ -14,7 +14,7 @@
 </head>
 <body class="neo-bg-bg" style="display: flex; justify-content: center; padding: 50px 20px;">
 
-    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 650px; width: 100%; position: relative; padding: 50px;">
+    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 750px; width: 100%; position: relative; padding: 50px;">
         <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -20px; left: 20px; text-decoration:none; padding: 12px 25px; font-size: 1rem;">⬅ KEMBALI</a>
         
         <!-- HEADER PROFIL (FOTO, NAMA, ID) -->
@@ -25,12 +25,15 @@
             <div id="d-badge-tipe" style="margin-top: 15px; display: none;"></div>
         </div>
 
-        <!-- TABEL BIODATA DINAMIS -->
+        <!-- TABEL BIODATA UTAMA -->
         <table class="neo-table" style="width: 100%; border: 4px solid #000;">
             <tbody id="dynamic-tbody">
                 <tr><td class="text-center" style="font-weight: 700;">Menarik data dari database...</td></tr>
             </tbody>
         </table>
+        
+        <!-- KONTOTAINER KHUSUS RIWAYAT DOSEN -->
+        <div id="riwayat-container"></div>
 
         <div style="text-align: center; margin-top: 40px; border-top: 4px dashed #000; padding-top: 20px;">
             <p style="font-weight: 800; font-size: 1rem; color: #1e1e1e;">Sumber Data: Database Resmi Institusi KBMFKG UMI</p>
@@ -52,16 +55,13 @@
         { id: 'foto', label: 'Foto Profil', type: 'image' },
         { id: 'nip', label: 'NIDN / NIP', type: 'text' },
         { id: 'nama', label: 'Nama Lengkap', type: 'text' },
-        { id: 'jk', label: 'Jenis Kelamin', type: 'select' },
-        { id: 'prodi', label: 'Program Studi', type: 'text' },
-        { id: 'jabatan', label: 'Jabatan Fungsional', type: 'text' },
-        { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'text' },
-        { id: 'pendidikan', label: 'Pendidikan Terakhir', type: 'select' },
-        { id: 'pt', label: 'Perguruan Tinggi', type: 'text' },
-        { id: 'gelar', label: 'Gelar Akademik', type: 'text' },
-        { id: 'tahun_lulus', label: 'Tahun', type: 'number' },
-        { id: 'jenjang', label: 'Jenjang', type: 'text' },
-        { id: 'status', label: 'Status Dosen', type: 'select' }
+        { id: 'gelar', label: 'Gelar', type: 'text' },
+        { id: 'prodi', label: 'Program Studi / Unit Kerja', type: 'select' },
+        { id: 'jabatan', label: 'Jabatan Fungsional', type: 'select' },
+        { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'select' },
+        { id: 'pendidikan', label: 'Pendidikan (Jenjang Terakhir)', type: 'select' },
+        { id: 'riwayat_pendidikan', label: 'Riwayat Pendidikan', type: 'riwayat' },
+        { id: 'status', label: 'Status Aktif', type: 'select' }
     ];
 
     const DEFAULT_SCHEMA_CIVITAS = [
@@ -75,22 +75,23 @@
         { id: 'pendidikan', label: 'Pendidikan Terakhir', type: 'select' },
         { id: 'gelar', label: 'Gelar Akademik', type: 'text' },
         { id: 'tahun_lulus', label: 'Tahun', type: 'number' },
-        { id: 'status', label: 'Status Civitas', type: 'select' }
+        { id: 'status', label: 'Status', type: 'select' }
     ];
 
     document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const idParam = urlParams.get('nim'); 
+        // Bisa menangkap nim, nidn, ataupun nip
+        const idParam = urlParams.get('nim') || urlParams.get('nidn') || urlParams.get('nip'); 
         const typeParam = urlParams.get('type') || 'mhs'; 
 
         if(!idParam) {
             document.getElementById('d-nama').innerText = "Data Tidak Valid";
-            document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Parameter URL tidak lengkap.</td></tr>`;
+            document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Parameter URL ID (NIM/NIP/NIDN) tidak ditemukan.</td></tr>`;
             return;
         }
 
         try {
-            // 1. Fetch Data Utama Terlebih Dahulu (Dosen & Civitas ditarik dari endpoint /api/civitas/:nip)
+            // 1. Fetch Data Utama Terlebih Dahulu 
             let dataUrl = '';
             if (typeParam === 'mhs') {
                 dataUrl = `/api/mhs/${idParam}`;
@@ -106,14 +107,14 @@
             if(jsonData.success && jsonData.data) {
                 const d = jsonData.data;
                 
-                // 2. Tentukan Skema Berdasarkan Tipe Pegawai 
+                // 2. Tentukan Skema Berdasarkan Tipe
                 let schemaUrl = '';
                 let defaultSchema = DEFAULT_SCHEMA_MHS;
                 
                 if (typeParam === 'mhs') {
                     schemaUrl = `/api/mhs/schema`;
                 } else {
-                    let tp = d.tipe_pegawai || typeParam; // Fallback mendeteksi tipe yang sesungguhnya (dosen/civitas)
+                    let tp = d.tipe_pegawai || typeParam; 
                     schemaUrl = `/api/civitas/schema/${tp}`;
                     defaultSchema = tp === 'dosen' ? DEFAULT_SCHEMA_DOSEN : DEFAULT_SCHEMA_CIVITAS;
                     
@@ -126,7 +127,7 @@
 
                 if(window.location.origin === "null") schemaUrl = `https://bemkbmfkgumi.com${schemaUrl}`;
                 
-                // 3. Fetch Skema dari Database
+                // 3. Fetch Skema 
                 let schema = null;
                 try {
                     const resSchema = await fetch(schemaUrl);
@@ -140,18 +141,19 @@
 
                 schema = schema || defaultSchema;
 
-                // 4. Render Data ke HTML
+                // 4. Render Data
                 let fotoUrl = '/img/bemprofilmhs.png';
                 let namaVal = '-';
                 let identitasVal = idParam;
                 let tableHtml = '';
+                let riwayatHtml = '';
 
                 schema.forEach(field => {
                     let val = d[field.id] || '-';
                     let fId = field.id.toLowerCase();
                     let fLabel = field.label.toLowerCase();
 
-                    // Pengecualian elemen header profil
+                    // SKIP: Foto, Nama, NIP/NIDN/NIM
                     if (field.type === 'image') {
                         if(val !== '-') fotoUrl = val;
                         return; 
@@ -165,14 +167,62 @@
                         return; 
                     }
 
+                    // KHUSUS RENDER SUB-FORM RIWAYAT (TABEL TERPISAH)
+                    if (field.type === 'riwayat') {
+                        let rwData = [];
+                        try { rwData = JSON.parse(val); } catch(e) {}
+                        
+                        if(rwData && rwData.length > 0) {
+                            let rows = '';
+                            rwData.forEach(rw => {
+                                rows += `
+                                <tr>
+                                    <td style="padding:15px; border-bottom:2px solid #cbd5e1; font-weight:600;">${rw.pt || '-'}</td>
+                                    <td style="padding:15px; border-bottom:2px solid #cbd5e1; font-weight:600;">${rw.gelar_akademik || '-'}</td>
+                                    <td style="padding:15px; border-bottom:2px solid #cbd5e1; font-weight:600;">${rw.tahun || '-'}</td>
+                                    <td style="padding:15px; border-bottom:2px solid #cbd5e1; font-weight:600;">${rw.jenjang || '-'}</td>
+                                </tr>`;
+                            });
+
+                            riwayatHtml += `
+                            <div style="margin-top: 40px;">
+                                <div style="background: linear-gradient(90deg, #d946ef, #8b5cf6); color: white; padding: 18px; text-align: center; border-radius: 12px; margin-bottom: 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000;">
+                                    <h2 style="margin:0; font-family:'Outfit', sans-serif; font-size:1.6rem; letter-spacing:1px;">Riwayat Dosen</h2>
+                                </div>
+                                
+                                <div style="display:flex; justify-content:center; gap:10px; margin-bottom: 15px;">
+                                    <div style="background: linear-gradient(90deg, #f472b6, #c084fc); color: white; padding: 10px 30px; border-radius: 8px; font-weight: bold; border: 2px solid #000;">Riwayat Pendidikan</div>
+                                    <div style="background: #f1f5f9; color: #94a3b8; padding: 10px 30px; border-radius: 8px; font-weight: bold; border: 2px solid #cbd5e1;">Riwayat Mengajar</div>
+                                </div>
+
+                                <div style="overflow-x: auto; border: 4px solid #000; border-radius: 8px; box-shadow: 5px 5px 0px #000;">
+                                    <table style="width: 100%; border-collapse: collapse; background: #fff;">
+                                        <thead>
+                                            <tr style="background: #e9d5ff;">
+                                                <th style="padding: 15px; text-align: left; font-weight: 800; border-bottom: 4px solid #000;">Perguruan Tinggi</th>
+                                                <th style="padding: 15px; text-align: left; font-weight: 800; border-bottom: 4px solid #000;">Gelar Akademik</th>
+                                                <th style="padding: 15px; text-align: left; font-weight: 800; border-bottom: 4px solid #000;">Tahun</th>
+                                                <th style="padding: 15px; text-align: left; font-weight: 800; border-bottom: 4px solid #000;">Jenjang</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${rows}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>`;
+                        }
+                        return; // Jangan dimasukkan ke dalam tabel biodata utama
+                    }
+
+                    // RENDER BARIS TABEL BIODATA UTAMA
                     let displayVal = val;
-                    
                     if (fId.includes('status') || fLabel.includes('status')) {
                         let statusColor = 'neo-bg-green';
                         let st_lower = val.toLowerCase();
                         if (st_lower.includes('lulus')) statusColor = 'neo-bg-blue';
                         else if (st_lower.includes('pensiun')) statusColor = 'neo-bg-purple';
-                        else if (st_lower.includes('cuti') || st_lower.includes('belajar') || st_lower.includes('tb')) statusColor = 'neo-bg-yellow';
+                        else if (st_lower.includes('cuti') || st_lower.includes('belajar') || st_lower.includes('tb') || st_lower.includes('tetap')) statusColor = 'neo-bg-pink'; // Khusus Tetap
                         else if (st_lower.includes('do') || st_lower.includes('keluar')) statusColor = 'neo-bg-pink';
                         
                         displayVal = `<span class="neo-badge ${statusColor}" style="font-size:1rem; padding: 6px 15px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${val}</span>`;
@@ -189,6 +239,7 @@
                 document.getElementById('d-nama').innerText = namaVal;
                 document.getElementById('d-nim').innerText = identitasVal;
                 document.getElementById('dynamic-tbody').innerHTML = tableHtml;
+                document.getElementById('riwayat-container').innerHTML = riwayatHtml;
 
             } else {
                 document.getElementById('d-nama').innerText = "Data Tidak Ditemukan";
