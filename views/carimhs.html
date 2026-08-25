@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pencarian Data BEM | PDDIKTI BEM</title>
+    <title>Pencarian Database | BEM KBMFKG UMI</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <!-- Load Google Fonts -->
@@ -13,34 +13,51 @@
     
     <!-- CSS Neubrutalism -->
     <link rel="stylesheet" href="/css/mainV5.css">
+    <style>
+        /* Extra Tweaks for Global Mobile View */
+        .result-card-inner {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            padding: clamp(20px, 4vw, 25px) clamp(15px, 4vw, 30px);
+        }
+        .result-info { flex: 1 1 250px; }
+        .result-btn { flex: 1 1 150px; max-width: 250px; text-align: center; }
+        
+        @media (max-width: 500px) {
+            .result-btn { max-width: 100%; width: 100%; }
+        }
+    </style>
 </head>
-<body class="neo-bg-bg" style="display: flex; flex-direction: column; align-items: center; padding: 40px 20px;">
+<body class="neo-bg-bg" style="display: flex; flex-direction: column; align-items: center; padding: clamp(20px, 5vw, 40px) 20px;">
 
     <!-- HEADER / HERO -->
-    <div class="neo-card neo-bg-yellow text-center" style="max-width: 800px; width: 100%; margin-bottom: 40px; padding: 50px 30px;">
-        <img src="/img/bemfkgumi.png" alt="Logo" style="width: 100px; height: 100px; border: 4px solid #000; border-radius: 50%; box-shadow: 4px 4px 0px #000; background: #fff; object-fit: cover; margin-bottom: 20px;">
-        <h1 class="neo-heading" style="font-size: 2.8rem; margin-bottom: 10px;">PORTAL DATA BEM</h1>
-        <p class="neo-subtitle" style="font-weight: 800; color: #1e1e1e; font-size: 1.1rem;">Pencarian Terpusat Database Institusi KBMFKG UMI.</p>
+    <div class="neo-card neo-bg-yellow text-center" style="max-width: 700px; width: 100%; margin-bottom: 40px; padding: clamp(30px, 6vw, 50px) clamp(15px, 5vw, 30px);">
+        <img src="/img/bemfkgumi.png" alt="Logo" style="width: clamp(70px, 15vw, 90px); height: clamp(70px, 15vw, 90px); border: 4px solid #000; border-radius: 50%; box-shadow: 4px 4px 0px #000; background: #fff; object-fit: cover; margin-bottom: 15px;">
+        <h1 class="neo-heading" style="font-size: clamp(2rem, 6vw, 2.8rem); margin-bottom: 10px;">PORTAL DATA BEM</h1>
+        <p class="neo-subtitle" style="font-weight: 800; color: #1e1e1e; font-size: clamp(0.95rem, 3vw, 1.1rem);">Pencarian Terpusat Database Institusi KBMFKG UMI.</p>
         
         <div style="margin-top: 35px;">
             <!-- Toggle Mode Pencarian -->
             <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap;">
-                <button id="btn-mode-mhs" class="neo-btn neo-bg-blue" style="flex:1; max-width: 250px; font-size:1.1rem; padding: 15px;" onclick="setMode('mhs')">🎓 Cari Mahasiswa</button>
-                <button id="btn-mode-civ" class="neo-btn neo-bg-white" style="flex:1; max-width: 250px; font-size:1.1rem; padding: 15px;" onclick="setMode('civitas')">👨‍🏫 Cari Dosen/Civitas</button>
+                <button id="btn-mode-mhs" class="neo-btn neo-bg-blue" style="flex: 1 1 200px; font-size: clamp(0.9rem, 3vw, 1.1rem); padding: 15px;" onclick="setMode('mhs')">🎓 Cari Mahasiswa</button>
+                <button id="btn-mode-civ" class="neo-btn neo-bg-white" style="flex: 1 1 200px; font-size: clamp(0.9rem, 3vw, 1.1rem); padding: 15px;" onclick="setMode('civitas')">👨‍🏫 Cari Dosen/Civitas</button>
             </div>
 
             <!-- Form Pencarian Dinamis -->
             <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-                <input type="text" id="search-input" class="neo-input" placeholder="Masukkan NIM, Nama, atau Angkatan (Cth: 2020)..." style="width: 100%; max-width: 600px; font-size: 1.2rem; padding: 20px; border-radius: 12px; border-width: 4px; text-align: center;" onkeypress="handleEnter(event)">
-                <button class="neo-btn neo-bg-green" style="font-size: 1.2rem; padding: 18px 50px;" onclick="searchData()">CARI DATA 🔍</button>
+                <input type="text" id="search-input" class="neo-input" placeholder="Masukkan NIM, Nama, atau Angkatan (Cth: 2020)..." style="width: 100%; max-width: 550px; font-size: clamp(1rem, 4vw, 1.2rem); padding: 18px; border-radius: 12px; border-width: 4px; text-align: center;" onkeypress="handleEnter(event)">
+                <button class="neo-btn neo-bg-green" style="font-size: clamp(1rem, 4vw, 1.2rem); padding: 15px 50px; width: 100%; max-width: 300px;" onclick="searchData()">CARI DATA 🔍</button>
             </div>
         </div>
     </div>
 
     <!-- RESULT CONTAINER -->
-    <div id="result-container" style="max-width: 800px; width: 100%; display: grid; gap: 20px;">
+    <div id="result-container" style="max-width: 700px; width: 100%; display: grid; gap: 20px;">
         <div class="neo-card neo-bg-white text-center" style="padding: 40px;" id="default-helper-text">
-            <h3 class="neo-heading-sm" style="color: var(--text-muted);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>
+            <h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>
         </div>
     </div>
 
@@ -60,12 +77,12 @@
             btnMhs.className = 'neo-btn neo-bg-blue';
             btnCiv.className = 'neo-btn neo-bg-white';
             input.placeholder = 'Masukkan NIM, Nama, atau Angkatan (Cth: 2020)...';
-            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>`;
+            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>`;
         } else {
             btnCiv.className = 'neo-btn neo-bg-blue';
             btnMhs.className = 'neo-btn neo-bg-white';
             input.placeholder = 'Masukkan NIP/NIDN, Nama, atau Unit Kerja...';
-            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted);">Silakan ketikkan NIP, NIDN, Nama, atau Unit Kerja untuk memulai pencarian.</h3>`;
+            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIP, NIDN, Nama, atau Unit Kerja untuk memulai pencarian.</h3>`;
         }
         
         input.value = '';
@@ -150,11 +167,11 @@
                     else if (st_lower.includes('do') || st_lower.includes('keluar')) statusColor = 'neo-bg-pink';
                     
                     let descBadge = searchMode === 'mhs' 
-                        ? `<span class="neo-badge neo-bg-yellow" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_desc}</span>`
-                        : `<span class="neo-badge neo-bg-white" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_desc}</span>`;
+                        ? `<span class="neo-badge neo-bg-yellow" style="margin-right: 8px; margin-bottom: 8px; font-size: 0.9rem; padding: 6px 14px;">${d_desc}</span>`
+                        : `<span class="neo-badge neo-bg-white" style="margin-right: 8px; margin-bottom: 8px; font-size: 0.9rem; padding: 6px 14px;">${d_desc}</span>`;
                         
                     let typeBadgeHtml = searchMode === 'civitas' 
-                        ? `<span class="neo-badge neo-bg-blue" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_tipe}</span>` 
+                        ? `<span class="neo-badge neo-bg-blue" style="margin-right: 8px; margin-bottom: 8px; font-size: 0.9rem; padding: 6px 14px;">${d_tipe}</span>` 
                         : '';
                     
                     // Membuat nama parameter URL Dinamis (nim / nidn / nip)
@@ -164,19 +181,19 @@
                     }
 
                     html += `
-                    <div class="neo-card neo-bg-white" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; padding: 25px 30px;">
-                        <div>
-                            <h2 class="neo-heading-sm" style="margin-bottom: 5px; font-size:1.6rem; color: #000;">${d_nama}</h2>
-                            <p style="font-weight:900; font-family:'Space Mono', monospace; font-size:1.1rem; color: var(--text-muted); margin:0 0 15px 0;">${d_id}</p>
+                    <div class="neo-card neo-bg-white result-card-inner">
+                        <div class="result-info">
+                            <h2 class="neo-heading-sm" style="margin-bottom: 5px; font-size:clamp(1.3rem, 4vw, 1.6rem); color: #000;">${d_nama}</h2>
+                            <p style="font-weight:900; font-family:'Space Mono', monospace; font-size:clamp(1rem, 3vw, 1.1rem); color: var(--text-muted); margin:0 0 15px 0;">${d_id}</p>
                             
                             <!-- BADGES INFO -->
-                            <div>
+                            <div style="display:flex; flex-wrap:wrap;">
                                 ${typeBadgeHtml}
                                 ${descBadge}
-                                <span class="neo-badge ${statusColor}" style="font-size: 0.95rem; padding: 6px 14px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${d_status}</span>
+                                <span class="neo-badge ${statusColor}" style="margin-bottom: 8px; font-size: 0.9rem; padding: 6px 14px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${d_status}</span>
                             </div>
                         </div>
-                        <a href="/carimhs/detail?${urlParamName}=${encodeURIComponent(d_id)}&type=${d_tipe_url}" class="neo-btn neo-bg-blue" style="text-decoration:none; padding:15px 35px; font-size: 1.1rem;">Lihat Detail 👁️</a>
+                        <a href="/carimhs/detail?${urlParamName}=${encodeURIComponent(d_id)}&type=${d_tipe_url}" class="neo-btn neo-bg-blue result-btn" style="text-decoration:none; padding:12px 25px; font-size: 1rem;">Lihat Detail 👁️</a>
                     </div>`;
                 });
                 
