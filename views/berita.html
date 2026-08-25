@@ -28,6 +28,13 @@
          Menyelesaikan isu GSC "Halaman alternatif dengan tag kanonis yang tepat"
          ========================================================================= -->
     <% if (typeof articleInfo !== 'undefined' && articleInfo) { %>
+        <!-- FIX: Konversi URL Relatif menjadi Absolut untuk SEO Open Graph -->
+        <% 
+            let ogImgUrl = articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png';
+            if (ogImgUrl.startsWith('/')) {
+                ogImgUrl = siteUrl + ogImgUrl;
+            }
+        %>
         <!-- SEO SPESIFIK ARTIKEL -->
         <title><%= articleInfo.Judul %> | BEM KBMFKG UMI</title>
         <meta name="description" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
@@ -44,14 +51,14 @@
         <meta property="og:description" id="ogDesc" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
         <meta property="og:type" id="ogType" content="article">
         <meta property="og:url" id="ogUrl" content="<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>">
-        <meta property="og:image" id="ogImage" content="<%= articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png' %>">
+        <meta property="og:image" id="ogImage" content="<%= ogImgUrl %>">
         <meta property="article:published_time" content="<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>">
         <meta property="article:section" content="<%= articleInfo.Kategori || 'Berita' %>">
         
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" id="twTitle" content="<%= articleInfo.Judul %> | BEM KBMFKG UMI">
         <meta name="twitter:description" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
-        <meta name="twitter:image" content="<%= articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png' %>">
+        <meta name="twitter:image" content="<%= ogImgUrl %>">
         
     <% } else { %>
         <!-- SEO DEFAULT INDEKS PORTAL & DYNAMIC KATEGORI -->
@@ -110,6 +117,12 @@
          ========================================================================= -->
     <script type="application/ld+json" id="static-base-schema">
     <% if (typeof articleInfo !== 'undefined' && articleInfo) { %>
+        <% 
+            let schemaImgUrl = articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png';
+            if (schemaImgUrl.startsWith('/')) {
+                schemaImgUrl = siteUrl + schemaImgUrl;
+            }
+        %>
         {
           "@context": "https://schema.org",
           "@graph": [
@@ -119,7 +132,7 @@
               "url": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>",
               "headline": "<%= articleInfo.Judul %>",
               "description": "<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...",
-              "image": [ "<%= articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png' %>" ],
+              "image": [ "<%= schemaImgUrl %>" ],
               "datePublished": "<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>",
               "dateModified": "<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>",
               "author": { 
@@ -322,7 +335,7 @@
             </button>
             
             <figure id="modalImgWrapper" class="w-full h-64 md:h-[450px] bg-[color:var(--bg-dark-heavy)] relative m-0 rounded-t-3xl overflow-hidden">
-                <!-- Gambar Injeksi dengan Referrer-Policy No-Referrer. -->
+                <!-- Gambar Injeksi dengan Fallback OnError -->
             </figure>
 
             <div class="px-6 md:px-12 mt-8">
@@ -475,7 +488,9 @@
 
         function processNewData(newData, hasMore) {
             var cleanedData = newData.map(function(item) {
-                // Skrip Google Drive telah dihapus. Menggunakan path /api/uploads/ murni.
+                if(item.Gambar_URL) {
+                    item.Gambar_URL = item.Gambar_URL.trim();
+                }
                 return item;
             });
 
@@ -502,7 +517,7 @@
                 var item = data[i];
                 var id = String(item.ID_Berita);
                 var slug = String(item.Slug_URL || id);
-                var img = String(item.Gambar_URL || 'https://bemkbmfkgumi.com/img/bemfkgumi.png');
+                var img = String(item.Gambar_URL || '/img/bemfkgumi.png');
                 var cat = String(item.Kategori);
                 var title = String(item.Judul);
                 var desc = String(item.Meta_Desc || item.Desc || title).replace(/"/g, '&quot;');
@@ -526,7 +541,8 @@
                 
                 html +=     '<div class="zine-img-wrapper">';
                 if (img) {
-                    html +=       '<img itemprop="image" src="' + img + '" ' + loadingAttr + ' referrerpolicy="no-referrer" class="card-img" alt="' + title + '">';
+                    // FIX MURNI: referrerpolicy dihapus + menambahkan fallback onerror agar icon broken image tidak muncul
+                    html +=       '<img itemprop="image" src="' + img + '" ' + loadingAttr + ' class="card-img" alt="' + title + '" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';">';
                 } else {
                     html +=       '<div class="card-img" style="display:flex; align-items:center; justify-content:center;"><i class="ph ph-image text-4xl text-[color:var(--text-muted)]"></i></div>';
                 }
@@ -612,7 +628,12 @@
             var rawHtml = article.Konten_HTML || "";
             var plainText = rawHtml.replace(/<[^>]*>?/gm, '').substring(0, 155).trim() + "...";
             var safeDesc = article.Meta_Desc || article.Desc || plainText;
+            
+            // FIX OG IMAGE SPA: Pastikan Absolute URL
             var safeImg = article.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png";
+            if (safeImg.startsWith('/')) {
+                safeImg = "https://bemkbmfkgumi.com" + safeImg;
+            }
             
             document.title = safeTitle;
             document.querySelector('meta[name="description"]')?.setAttribute("content", safeDesc);
@@ -680,7 +701,8 @@
             document.getElementById('modalBreadcrumb').innerHTML = breadcrumbHtml;
 
             if (article.Gambar_URL) {
-                document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" referrerpolicy="no-referrer" class="w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
+                // FIX: Menghapus referrerpolicy dan menambahkan onerror fallback
+                document.getElementById('modalImgWrapper').innerHTML = '<img src="' + article.Gambar_URL + '" alt="' + article.Judul + '" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=\'/img/bemfkgumi.png\';"><div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
             } else {
                 document.getElementById('modalImgWrapper').innerHTML = '<div class="absolute inset-0 bg-gradient-to-t from-[color:var(--bg-dark)] via-transparent to-transparent"></div>';
             }
