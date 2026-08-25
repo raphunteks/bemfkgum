@@ -48,7 +48,7 @@
 
             <!-- Form Pencarian Dinamis -->
             <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-                <input type="text" id="search-input" class="neo-input" placeholder="Masukkan NIM, Nama, atau Angkatan (Cth: 2020)..." style="width: 100%; max-width: 550px; font-size: clamp(1rem, 4vw, 1.2rem); padding: 18px; border-radius: 12px; border-width: 4px; text-align: center;" onkeypress="handleEnter(event)">
+                <input type="text" id="search-input" class="neo-input" placeholder="Masukkan NIM, Nama / Angkatan (Cth: 2020)" style="width: 100%; max-width: 550px; font-size: clamp(1rem, 4vw, 1.2rem); padding: 18px; border-radius: 12px; border-width: 4px; text-align: center;" onkeypress="handleEnter(event)">
                 <button class="neo-btn neo-bg-green" style="font-size: clamp(1rem, 4vw, 1.2rem); padding: 15px 50px; width: 100%; max-width: 300px;" onclick="searchData()">CARI DATA 🔍</button>
             </div>
         </div>
@@ -76,13 +76,13 @@
         if (mode === 'mhs') {
             btnMhs.className = 'neo-btn neo-bg-blue';
             btnCiv.className = 'neo-btn neo-bg-white';
-            input.placeholder = 'Masukkan NIM, Nama, atau Angkatan (Cth: 2020)...';
+            input.placeholder = 'Masukkan NIM, Nama, atau Angkatan (Cth: 2020)';
             document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>`;
         } else {
             btnCiv.className = 'neo-btn neo-bg-blue';
             btnMhs.className = 'neo-btn neo-bg-white';
-            input.placeholder = 'Masukkan NIP/NIDN, Nama, atau Unit Kerja...';
-            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIP, NIDN, Nama, atau Unit Kerja untuk memulai pencarian.</h3>`;
+            input.placeholder = 'Masukkan NIP/NIDN, Nama, atau Ikatan Kerja (Cth: Dosen tetap)';
+            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIP, NIDN, Nama, atau Ikatan Kerja untuk memulai pencarian.</h3>`;
         }
         
         input.value = '';
