@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEM MHS Database | Admin V5</title>
+    <title>BEM Database | Admin V5</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <!-- Load Google Fonts -->
@@ -25,6 +25,9 @@
         .drag-handle { font-size: 1.5rem; cursor: grab; color: #64748b; padding-right: 10px; border-right: 2px dashed #cbd5e1; }
         
         .sidebar-section-title { color: #64748b; font-size: 0.8rem; font-weight: 800; margin: 15px 0 5px 5px; font-family: 'Space Mono', monospace; text-transform: uppercase; }
+        
+        /* Riwayat Subform */
+        .riwayat-row input { font-size: 0.85rem; padding: 10px !important; }
     </style>
 </head>
 <body>
@@ -298,7 +301,7 @@
 
 <!-- ================== DYNAMIC FORM MODAL ================== -->
 <div class="neo-modal-overlay" id="dynamicFormModal">
-    <div class="neo-modal-content neo-bg-white" style="max-width: 650px; max-height: 90vh; overflow-y:auto;">
+    <div class="neo-modal-content neo-bg-white" style="max-width: 750px; max-height: 90vh; overflow-y:auto;">
         <h2 class="neo-heading-sm" id="modal-dyn-title" style="margin-bottom: 20px; border-bottom: 4px solid #000; padding-bottom: 10px;">Tambah Data</h2>
         
         <form id="dynamic-form-core" onsubmit="saveDynamicData(event)">
@@ -342,7 +345,7 @@
     let pegawaiChart = null; // Chart.js instance
     let currentEditId = null; // State utk mencatat ID sebelum di-edit agar bisa CRUD ID
     
-    // Skema Default yang Diupgrade
+    // Skema Default
     const DEFAULT_SCHEMA_MHS = [
         { id: 'foto', label: 'Foto Profil', type: 'image', options: '' },
         { id: 'nim', label: 'NIM (Nomor Induk)', type: 'text', options: '' },
@@ -357,15 +360,11 @@
         { id: 'nip', label: 'NIDN / NIP', type: 'text', options: '' },
         { id: 'nama', label: 'Nama Lengkap', type: 'text', options: '' },
         { id: 'gelar', label: 'Gelar', type: 'text', options: '' },
-        { id: 'jk', label: 'Jenis Kelamin', type: 'select', options: 'Laki-Laki, Perempuan' },
         { id: 'prodi', label: 'Program Studi / Unit Kerja', type: 'select', options: 'Kedokteran Gigi, Profesi Dokter Gigi' },
         { id: 'jabatan', label: 'Jabatan Fungsional', type: 'select', options: 'Asisten Ahli, Lektor, Lektor Kepala, Guru Besar, Tenaga Pengajar' },
         { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'select', options: 'Dosen Tetap, Dosen Kontrak, Dosen Tidak Tetap, PNS, Non-PNS' },
         { id: 'pendidikan', label: 'Pendidikan (Jenjang Terakhir)', type: 'select', options: 'S1, S2, S3, Sp-1, Sp-2' },
-        { id: 'pt', label: 'Riwayat Pendidikan: Perguruan Tinggi', type: 'text', options: '' },
-        { id: 'gelar_lulusan', label: 'Riwayat Pendidikan: Gelar Akademik', type: 'text', options: '' },
-        { id: 'tahun_lulus', label: 'Riwayat Pendidikan: Tahun', type: 'number', options: '' },
-        { id: 'jenjang', label: 'Riwayat Pendidikan: Jenjang', type: 'text', options: '' },
+        { id: 'riwayat_pendidikan', label: 'Riwayat Pendidikan', type: 'riwayat', options: '' },
         { id: 'status', label: 'Status Aktif', type: 'select', options: 'Aktif, Tugas Belajar, Cuti, Pensiun, Keluar' }
     ];
 
@@ -374,7 +373,7 @@
         { id: 'nip', label: 'NIP', type: 'text', options: '' },
         { id: 'nama', label: 'Nama Lengkap', type: 'text', options: '' },
         { id: 'jk', label: 'Jenis Kelamin', type: 'select', options: 'Laki-Laki, Perempuan' },
-        { id: 'prodi', label: 'Program Studi', type: 'text', options: '' },
+        { id: 'prodi', label: 'Program Studi / Unit Kerja', type: 'text', options: '' },
         { id: 'jabatan', label: 'Jabatan Fungsional', type: 'text', options: '' },
         { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'text', options: '' },
         { id: 'pendidikan', label: 'Pendidikan Terakhir', type: 'select', options: 'SMA/SMK, D3, D4, S1, S2, S3' },
@@ -442,19 +441,16 @@
     // ================= SCHEMAS & BUILDER LOGIC =================
     async function loadAllSchemas() {
         try {
-            // Load MHS Schema
             let urlMhs = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/mhs/schema' : '/api/mhs/schema';
             let res = await fetch(urlMhs, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             let json = await res.json();
             schemas.mhs = (json.success && json.data.length > 0) ? json.data : JSON.parse(JSON.stringify(DEFAULT_SCHEMA_MHS));
             
-            // Load Dosen Schema
             let urlDosen = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/civitas/schema/dosen' : '/api/civitas/schema/dosen';
             let resDosen = await fetch(urlDosen, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             let jsonDosen = await resDosen.json();
             schemas.dosen = (jsonDosen.success && jsonDosen.data.length > 0) ? jsonDosen.data : JSON.parse(JSON.stringify(DEFAULT_SCHEMA_DOSEN));
 
-            // Load Civitas Schema
             let urlCiv = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/civitas/schema/civitas' : '/api/civitas/schema/civitas';
             let resCiv = await fetch(urlCiv, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             let jsonCiv = await resCiv.json();
@@ -494,6 +490,7 @@
                         <option value="number" ${field.type === 'number'?'selected':''}>Angka (Number)</option>
                         <option value="select" ${field.type === 'select'?'selected':''}>Dropdown Pilihan</option>
                         <option value="image" ${field.type === 'image'?'selected':''}>Foto Profil (API)</option>
+                        <option value="riwayat" ${field.type === 'riwayat'?'selected':''}>Riwayat (Sub-Form Multi Data)</option>
                     </select>
                 </div>
                 <div style="flex:2; display:${field.type === 'select' ? 'block' : 'none'};" class="builder-options-wrap">
@@ -571,6 +568,43 @@
     // ================= DYNAMIC FORM MODAL (MHS & PEGAWAI) =================
     let isEditMode = false;
     
+    function generateRiwayatRowHTML(fieldId, pt='', gelar='', tahun='', jenjang='') {
+        const rowId = 'rw_' + Math.floor(Math.random() * 1000000);
+        // Proteksi karakter tanda kutip yang dapat merusak HTML structure
+        const safePt = pt ? pt.toString().replace(/"/g, '&quot;') : '';
+        const safeGelar = gelar ? gelar.toString().replace(/"/g, '&quot;') : '';
+        const safeTahun = tahun ? tahun.toString().replace(/"/g, '&quot;') : '';
+        const safeJenjang = jenjang ? jenjang.toString().replace(/"/g, '&quot;') : '';
+
+        return `
+        <div id="${rowId}" class="riwayat-row" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; background:#fff; padding:10px; border:2px dashed #cbd5e1; border-radius:6px;">
+            <input type="text" class="neo-input rw-pt" placeholder="Perguruan Tinggi" value="${safePt}" style="flex:2; min-width: 150px; padding:10px;" required>
+            <input type="text" class="neo-input rw-gelar" placeholder="Gelar Akademik" value="${safeGelar}" style="flex:1.5; min-width: 120px; padding:10px;" required>
+            <input type="number" class="neo-input rw-tahun" placeholder="Tahun" value="${safeTahun}" style="flex:1; min-width: 90px; padding:10px;" required>
+            <input type="text" class="neo-input rw-jenjang" placeholder="Jenjang (S1/S2..)" value="${safeJenjang}" style="flex:1; min-width: 100px; padding:10px;" required>
+            <button type="button" class="neo-btn neo-bg-pink" style="padding:10px;" onclick="document.getElementById('${rowId}').remove();">🗑️</button>
+        </div>`;
+    }
+
+    window.addRiwayatRow = function(fieldId) {
+        document.getElementById(`riwayat_container_${fieldId}`).insertAdjacentHTML('beforeend', generateRiwayatRowHTML(fieldId));
+    };
+
+    function updateRiwayatData(fieldId) {
+        const container = document.getElementById(`riwayat_container_${fieldId}`);
+        const rows = container.querySelectorAll('.riwayat-row');
+        let arr = [];
+        rows.forEach(row => {
+            arr.push({
+                pt: row.querySelector('.rw-pt').value,
+                gelar_akademik: row.querySelector('.rw-gelar').value,
+                tahun: row.querySelector('.rw-tahun').value,
+                jenjang: row.querySelector('.rw-jenjang').value
+            });
+        });
+        document.getElementById(`dyn_${fieldId}`).value = JSON.stringify(arr);
+    }
+
     function openDynamicModal(tipe, data = null) {
         isEditMode = data !== null;
         document.getElementById('modal-active-type').value = tipe;
@@ -583,7 +617,7 @@
         let html = '';
         let activeSchema = schemas[tipe];
 
-        // Menyimpan current ID agar kalau diedit, API tahu mana yang dihapus dan diganti
+        // Menyimpan ID lama untuk mekanisme Perubahan (Update) NIDN/NIP/NIM
         let idField = activeSchema.find(f => f.id.toLowerCase() === 'nim' || f.id.toLowerCase() === 'nip' || f.label.toLowerCase().includes('nim') || f.label.toLowerCase().includes('nip') || f.label.toLowerCase().includes('nidn'));
         if(isEditMode && idField) {
             currentEditId = data[idField.id];
@@ -615,6 +649,37 @@
                     <label class="neo-label">${field.label}</label>
                     <select class="neo-input" id="dyn_${field.id}" required>${optionsHtml}</select>
                 </div>`;
+            }
+            else if (field.type === 'riwayat') {
+                // LOGIC MULTI-ROW PENDIDIKAN DOSEN
+                let riwayatArr = [];
+                if (val && val !== '-') {
+                    try { riwayatArr = typeof val === 'string' ? JSON.parse(val) : val; } 
+                    catch(e) { riwayatArr = []; }
+                }
+                
+                let rwHtml = `
+                <div style="margin-bottom: 20px; border: 3px solid #000; border-radius: 8px; padding: 15px; background: #f8fafc;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+                        <label class="neo-label" style="margin:0; font-size:1rem;">${field.label}</label>
+                        <button type="button" class="neo-btn neo-bg-green" style="padding: 8px 15px; font-size:0.85rem;" onclick="addRiwayatRow('${field.id}')">➕ Tambah Baris</button>
+                    </div>
+                    <div id="riwayat_container_${field.id}" style="display:flex; flex-direction:column; gap:10px;">
+                `;
+                
+                if (riwayatArr.length === 0) {
+                    rwHtml += generateRiwayatRowHTML(field.id);
+                } else {
+                    riwayatArr.forEach(rw => {
+                        rwHtml += generateRiwayatRowHTML(field.id, rw.pt, rw.gelar_akademik, rw.tahun, rw.jenjang);
+                    });
+                }
+                
+                rwHtml += `
+                    </div>
+                    <input type="hidden" id="dyn_${field.id}" value='${typeof val === 'string' && val !== '-' ? val : JSON.stringify(riwayatArr)}'>
+                </div>`;
+                html += rwHtml;
             }
             else {
                 let stepStr = field.type === 'number' ? 'step="any"' : '';
@@ -670,10 +735,15 @@
 
         let payload = {};
         activeSchema.forEach(field => {
+            if (field.type === 'riwayat') {
+                // Sinkronkan HTML Subform Array ke dalam string JSON Input Hidden sebelum menyimpan payload
+                updateRiwayatData(field.id);
+            }
             const el = document.getElementById('dyn_' + field.id);
             if(el) payload[field.id] = el.value;
         });
 
+        // Inject tipe_pegawai automatically for DB differentiation
         if(tipe !== 'mhs') payload.tipe_pegawai = tipe; 
 
         let idField = activeSchema.find(f => f.id.toLowerCase() === 'nim' || f.id.toLowerCase() === 'nip' || f.label.toLowerCase().includes('nim') || f.label.toLowerCase().includes('nip') || f.label.toLowerCase().includes('nidn'));
@@ -725,11 +795,18 @@
         } catch (error) {
             showToast("✅ Simulasi: Data tersimpan lokal.");
             closeDynamicModal();
+            // Local fallback logic
             if(tipe === 'mhs') {
-                if(!isEditMode) databaseMhs.push(payload);
+                if(isEditMode && currentEditId !== uniqueId) {
+                    databaseMhs = databaseMhs.filter(m => (m.nim || m.NIM) !== currentEditId);
+                }
+                if(!isEditMode || currentEditId !== uniqueId) databaseMhs.push(payload);
                 loadAllMhs();
             } else {
-                if(!isEditMode) databasePegawai.push(payload);
+                if(isEditMode && currentEditId !== uniqueId) {
+                    databasePegawai = databasePegawai.filter(p => (p.nip || p.NIP || p.nidn || p.NIDN) !== currentEditId);
+                }
+                if(!isEditMode || currentEditId !== uniqueId) databasePegawai.push(payload);
                 loadAllPegawai();
             }
         }
@@ -749,7 +826,7 @@
         const headersArr = currentSchema.filter(f => f.type !== 'image').map(f => f.label.toUpperCase());
         const headersTxt = headersArr.join(' | ');
         
-        hintEl.innerHTML = `<strong>Format Header Wajib saat ini untuk data <span style="color:var(--bg-blue);">${activeType.toUpperCase()}</span>:</strong><br><br> ${headersTxt}<br><br><span style="font-size:0.85rem; color:var(--text-muted); font-weight:normal;">*Sistem pintar (Smart-Mapping) otomatis mendeteksi nama kolom Excel yang mirip dengan Label Skema Anda di atas. Terdapat toleransi huruf besar/kecil.</span>`;
+        hintEl.innerHTML = `<strong>Format Header Wajib saat ini untuk data <span style="color:var(--bg-blue);">${activeType.toUpperCase()}</span>:</strong><br><br> ${headersTxt}<br><br><span style="font-size:0.85rem; color:var(--text-muted); font-weight:normal;">*Sistem pintar (Smart-Mapping) otomatis mendeteksi nama kolom Excel yang mirip dengan Label Skema Anda di atas. Terdapat toleransi huruf besar/kecil. Untuk sub-form riwayat gunakan format string JSON.</span>`;
     }
 
     function handleExcelUpload(e) {
