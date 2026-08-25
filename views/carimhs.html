@@ -109,8 +109,8 @@
                     let d_nama = '-';
                     let d_desc = '-'; 
                     let d_status = 'Aktif';
-                    let d_tipe = ''; // Khusus Civitas
-                    let d_tipe_url = searchMode; // Parameter URL spesifik untuk tombol Detail
+                    let d_tipe = ''; // Khusus Pegawai
+                    let d_tipe_url = searchMode; // Parameter URL spesifik (mhs / dosen / civitas)
 
                     if (searchMode === 'mhs') {
                         d_id = item.nim || item.NIM || '-';
@@ -121,9 +121,16 @@
                             if(k.includes('status')) d_status = item[key];
                         }
                     } else {
-                        d_id = item.nip || item.NIP || item.nidn || item.NIDN || '-';
+                        // Prioritas Pencarian ID Pegawai
                         d_tipe = (item.tipe_pegawai || 'civitas');
-                        d_tipe_url = d_tipe.toLowerCase(); // Penting: mengirim 'dosen' atau 'civitas'
+                        d_tipe_url = d_tipe.toLowerCase();
+                        
+                        if (d_tipe_url === 'dosen') {
+                            d_id = item.nidn || item.NIDN || item.nip || item.NIP || '-';
+                        } else {
+                            d_id = item.nip || item.NIP || item.nidn || item.NIDN || '-';
+                        }
+                        
                         d_tipe = d_tipe.toUpperCase();
 
                         for(let key in item) {
@@ -150,6 +157,12 @@
                         ? `<span class="neo-badge neo-bg-blue" style="margin-right: 8px; font-size: 0.95rem; padding: 6px 14px;">${d_tipe}</span>` 
                         : '';
                     
+                    // Membuat nama parameter URL Dinamis (nim / nidn / nip)
+                    let urlParamName = 'nim';
+                    if (searchMode !== 'mhs') {
+                        urlParamName = d_tipe_url === 'dosen' ? 'nidn' : 'nip';
+                    }
+
                     html += `
                     <div class="neo-card neo-bg-white" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; padding: 25px 30px;">
                         <div>
@@ -163,7 +176,7 @@
                                 <span class="neo-badge ${statusColor}" style="font-size: 0.95rem; padding: 6px 14px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${d_status}</span>
                             </div>
                         </div>
-                        <a href="/carimhs/detail?nim=${encodeURIComponent(d_id)}&type=${d_tipe_url}" class="neo-btn neo-bg-blue" style="text-decoration:none; padding:15px 35px; font-size: 1.1rem;">Lihat Detail 👁️</a>
+                        <a href="/carimhs/detail?${urlParamName}=${encodeURIComponent(d_id)}&type=${d_tipe_url}" class="neo-btn neo-bg-blue" style="text-decoration:none; padding:15px 35px; font-size: 1.1rem;">Lihat Detail 👁️</a>
                     </div>`;
                 });
                 
