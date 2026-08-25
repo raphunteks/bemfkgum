@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEM Database | Admin V5</title>
+    <title>BEM MHS Database | Admin V5</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <!-- Load Google Fonts -->
@@ -340,8 +340,9 @@
     let activeBuilderType = 'mhs'; // State utk Tab Builder
     let excelDataPayload = [];
     let pegawaiChart = null; // Chart.js instance
+    let currentEditId = null; // State utk mencatat ID sebelum di-edit agar bisa CRUD ID
     
-    // Skema Default
+    // Skema Default yang Diupgrade
     const DEFAULT_SCHEMA_MHS = [
         { id: 'foto', label: 'Foto Profil', type: 'image', options: '' },
         { id: 'nim', label: 'NIM (Nomor Induk)', type: 'text', options: '' },
@@ -355,16 +356,17 @@
         { id: 'foto', label: 'Foto Profil', type: 'image', options: '' },
         { id: 'nip', label: 'NIDN / NIP', type: 'text', options: '' },
         { id: 'nama', label: 'Nama Lengkap', type: 'text', options: '' },
+        { id: 'gelar', label: 'Gelar', type: 'text', options: '' },
         { id: 'jk', label: 'Jenis Kelamin', type: 'select', options: 'Laki-Laki, Perempuan' },
-        { id: 'prodi', label: 'Program Studi', type: 'text', options: '' },
-        { id: 'jabatan', label: 'Jabatan Fungsional', type: 'text', options: '' },
-        { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'text', options: '' },
-        { id: 'pendidikan', label: 'Pendidikan Terakhir', type: 'select', options: 'S1, S2, S3, Sp-1, Sp-2' },
-        { id: 'pt', label: 'Perguruan Tinggi', type: 'text', options: '' },
-        { id: 'gelar', label: 'Gelar Akademik', type: 'text', options: '' },
-        { id: 'tahun_lulus', label: 'Tahun', type: 'number', options: '' },
-        { id: 'jenjang', label: 'Jenjang', type: 'text', options: '' },
-        { id: 'status', label: 'Status Dosen', type: 'select', options: 'Aktif, Tugas Belajar, Cuti, Pensiun, Keluar' }
+        { id: 'prodi', label: 'Program Studi / Unit Kerja', type: 'select', options: 'Kedokteran Gigi, Profesi Dokter Gigi' },
+        { id: 'jabatan', label: 'Jabatan Fungsional', type: 'select', options: 'Asisten Ahli, Lektor, Lektor Kepala, Guru Besar, Tenaga Pengajar' },
+        { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'select', options: 'Dosen Tetap, Dosen Kontrak, Dosen Tidak Tetap, PNS, Non-PNS' },
+        { id: 'pendidikan', label: 'Pendidikan (Jenjang Terakhir)', type: 'select', options: 'S1, S2, S3, Sp-1, Sp-2' },
+        { id: 'pt', label: 'Riwayat Pendidikan: Perguruan Tinggi', type: 'text', options: '' },
+        { id: 'gelar_lulusan', label: 'Riwayat Pendidikan: Gelar Akademik', type: 'text', options: '' },
+        { id: 'tahun_lulus', label: 'Riwayat Pendidikan: Tahun', type: 'number', options: '' },
+        { id: 'jenjang', label: 'Riwayat Pendidikan: Jenjang', type: 'text', options: '' },
+        { id: 'status', label: 'Status Aktif', type: 'select', options: 'Aktif, Tugas Belajar, Cuti, Pensiun, Keluar' }
     ];
 
     const DEFAULT_SCHEMA_CIVITAS = [
@@ -372,13 +374,13 @@
         { id: 'nip', label: 'NIP', type: 'text', options: '' },
         { id: 'nama', label: 'Nama Lengkap', type: 'text', options: '' },
         { id: 'jk', label: 'Jenis Kelamin', type: 'select', options: 'Laki-Laki, Perempuan' },
-        { id: 'prodi', label: 'Program Studi / Unit Kerja', type: 'text', options: '' },
+        { id: 'prodi', label: 'Program Studi', type: 'text', options: '' },
         { id: 'jabatan', label: 'Jabatan Fungsional', type: 'text', options: '' },
         { id: 'ikatan', label: 'Status Ikatan Kerja', type: 'text', options: '' },
         { id: 'pendidikan', label: 'Pendidikan Terakhir', type: 'select', options: 'SMA/SMK, D3, D4, S1, S2, S3' },
         { id: 'gelar', label: 'Gelar Akademik', type: 'text', options: '' },
         { id: 'tahun_lulus', label: 'Tahun', type: 'number', options: '' },
-        { id: 'status', label: 'Status Civitas', type: 'select', options: 'Aktif, Pensiun, Keluar' }
+        { id: 'status', label: 'Status', type: 'select', options: 'Aktif, Pensiun, Keluar' }
     ];
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -579,8 +581,15 @@
         
         const container = document.getElementById('dynamic-fields-container');
         let html = '';
-        
         let activeSchema = schemas[tipe];
+
+        // Menyimpan current ID agar kalau diedit, API tahu mana yang dihapus dan diganti
+        let idField = activeSchema.find(f => f.id.toLowerCase() === 'nim' || f.id.toLowerCase() === 'nip' || f.label.toLowerCase().includes('nim') || f.label.toLowerCase().includes('nip') || f.label.toLowerCase().includes('nidn'));
+        if(isEditMode && idField) {
+            currentEditId = data[idField.id];
+        } else {
+            currentEditId = null;
+        }
 
         activeSchema.forEach(field => {
             const val = data ? (data[field.id] || '') : '';
@@ -609,12 +618,13 @@
             }
             else {
                 let stepStr = field.type === 'number' ? 'step="any"' : '';
-                let readonlyStr = ((field.id.toLowerCase() === 'nim' || field.id.toLowerCase() === 'nip') && isEditMode) ? 'readonly style="background:#e2e8f0;"' : 'required';
+                // Menghapus readonly untuk ID agar NIDN/NIP/NIM BISA DI-CRUD!
+                let requiredStr = 'required';
                 
                 html += `
                 <div style="margin-bottom: 15px;">
                     <label class="neo-label">${field.label}</label>
-                    <input type="${field.type}" class="neo-input" id="dyn_${field.id}" value="${val}" ${readonlyStr} ${stepStr}>
+                    <input type="${field.type}" class="neo-input" id="dyn_${field.id}" value="${val}" ${requiredStr} ${stepStr}>
                 </div>`;
             }
         });
@@ -664,7 +674,6 @@
             if(el) payload[field.id] = el.value;
         });
 
-        // Inject tipe_pegawai automatically for DB differentiation
         if(tipe !== 'mhs') payload.tipe_pegawai = tipe; 
 
         let idField = activeSchema.find(f => f.id.toLowerCase() === 'nim' || f.id.toLowerCase() === 'nip' || f.label.toLowerCase().includes('nim') || f.label.toLowerCase().includes('nip') || f.label.toLowerCase().includes('nidn'));
@@ -680,9 +689,25 @@
 
         try {
             let basePath = tipe === 'mhs' ? '/api/mhs' : '/api/civitas';
-            let apiUrl = isEditMode ? `${basePath}/${uniqueId}` : basePath;
+            let apiUrl = isEditMode ? `${basePath}/${currentEditId || uniqueId}` : basePath;
             let method = isEditMode ? 'PUT' : 'POST';
-            if(window.location.origin === "null") apiUrl = `https://bemkbmfkgumi.com${apiUrl}`;
+
+            // Jika dalam mode Edit dan NIP/NIM diubah oleh user, hapus data lama dan buat data baru
+            if (isEditMode && currentEditId && currentEditId !== uniqueId) {
+                let delUrl = window.location.origin === "null" ? `https://bemkbmfkgumi.com${basePath}/${currentEditId}` : `${basePath}/${currentEditId}`;
+                await fetch(delUrl, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }
+                });
+                
+                // Ubah menjadi mode POST agar disimpan dengan ID yang baru
+                method = 'POST';
+                apiUrl = basePath;
+            }
+
+            if(window.location.origin === "null" && !apiUrl.startsWith('http')) {
+                apiUrl = `https://bemkbmfkgumi.com${apiUrl}`;
+            }
 
             const res = await fetch(apiUrl, {
                 method: method,
@@ -700,7 +725,6 @@
         } catch (error) {
             showToast("✅ Simulasi: Data tersimpan lokal.");
             closeDynamicModal();
-            // Local fallback logic
             if(tipe === 'mhs') {
                 if(!isEditMode) databaseMhs.push(payload);
                 loadAllMhs();
@@ -953,7 +977,6 @@
         const tbody = document.getElementById('pegawai-tbody');
         const thead = document.getElementById('pegawai-thead-tr');
         
-        // Memperbarui header agar ada slot untuk FOTO (7 Kolom)
         let thHtml = `<th>FOTO</th><th>TIPE</th><th>NIP / NIDN</th><th>NAMA LENGKAP</th><th>PRODI / UNIT</th><th>STATUS</th><th>AKSI</th>`;
         thead.innerHTML = thHtml;
         tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
@@ -970,7 +993,6 @@
             } else { showCustomAlert("Gagal memuat data pegawai: " + json.message); }
         } catch (e) {
             tbody.innerHTML = `<tr><td colspan="7" class="text-center neo-bg-pink">Gagal koneksi ke server. Mode Lokal aktif.</td></tr>`;
-            // Fallback for simulation rendering
             renderDynamicTablePegawai(databasePegawai);
             updateStatsPegawai();
         }
@@ -991,7 +1013,6 @@
             let status = (p.status || p.Status || 'Aktif').toLowerCase();
             let cStatus = status.includes('aktif') ? 'neo-bg-green' : (status.includes('pensiun') ? 'neo-bg-purple' : (status.includes('keluar') ? 'neo-bg-pink' : 'neo-bg-white'));
             
-            // Logika FOTO: Mencari properti foto pada objek pegawai, fallback ke default jika kosong
             let fotoVal = p.foto || p.Foto || '';
             let imgSrc = fotoVal !== '-' && fotoVal !== '' ? fotoVal : '/img/bemprofilmhs.png';
             
@@ -999,13 +1020,13 @@
             <tr>
                 <td><img src="${imgSrc}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>
                 <td>${typeBadge}</td>
-                <td style="font-family:'Space Mono', monospace; font-weight:700;">${p.nip || p.NIP || '-'}</td>
+                <td style="font-family:'Space Mono', monospace; font-weight:700;">${p.nip || p.NIP || p.nidn || p.NIDN || '-'}</td>
                 <td style="font-weight:700; font-size:1.1rem;">${p.nama || p.Nama || p['Nama Lengkap'] || '-'}</td>
                 <td style="font-weight:600;">${p.prodi || p.unit || '-'}</td>
                 <td><span class="neo-badge ${cStatus}">${status.toUpperCase()}</span></td>
                 <td>
                     <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='openDynamicModal("${tp}", ${JSON.stringify(p).replace(/'/g, "&apos;")})'>✏️</button>
-                    <button class="neo-btn neo-bg-pink" style="padding: 5px 10px; font-size:0.8rem;" onclick="deleteData('civitas', '${p.nip || p.NIP}')">🗑️</button>
+                    <button class="neo-btn neo-bg-pink" style="padding: 5px 10px; font-size:0.8rem;" onclick="deleteData('civitas', '${p.nip || p.NIP || p.nidn || p.NIDN}')">🗑️</button>
                 </td>
             </tr>`;
         });
