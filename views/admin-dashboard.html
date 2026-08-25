@@ -1315,14 +1315,7 @@
         }
 
         function updateArtPreviewUrl(url) {
-            let safeUrl = url;
-            if (safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
-                let match = safeUrl.match(/[-\w]{25,33}/);
-                if (match && match[0]) {
-                    safeUrl = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
-                }
-            }
-            updateArtPreviewUI(safeUrl);
+            updateArtPreviewUI(url);
         }
 
         async function previewArtImage(input) {
@@ -1367,10 +1360,6 @@
                 document.getElementById('artKategori').value = art.Kategori || "Kegiatan Sosial";
                 
                 let safeUrl = art.Gambar_URL || "";
-                if(safeUrl && (safeUrl.indexOf('drive.google.com') !== -1 || safeUrl.indexOf('drive.usercontent.com') !== -1)) {
-                    let match = safeUrl.match(/[-\w]{25,33}/);
-                    if (match && match[0]) safeUrl = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
-                }
                 
                 document.getElementById('artGambar').value = safeUrl;
                 if(safeUrl) updateArtPreviewUI(safeUrl);
@@ -1428,10 +1417,6 @@
             const waktuBaca = Math.ceil(wordCount / 200) + " min read";
 
             let finalImageURL = document.getElementById('artGambar').value; 
-            if (finalImageURL && (finalImageURL.indexOf('drive.google.com') !== -1 || finalImageURL.indexOf('drive.usercontent.com') !== -1)) {
-                let match = finalImageURL.match(/[-\w]{25,33}/);
-                if (match && match[0]) finalImageURL = "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
-            }
             
             const fileInput = document.getElementById('artFileImage');
             if (fileInput.files.length > 0 && !finalImageURL.startsWith('/api/uploads/')) {
