@@ -921,7 +921,7 @@
             if(data.success) {
                 showToast("✅ Berhasil disimpan secara Realtime!");
                 closeDynamicModal();
-                if(tipe === 'mhs') { loadAllMhs(); updateStatsMhs(); } else { loadAllPegawai(); updateStatsPegawai(); }
+                if(tipe === 'mhs') { loadAllMhs(); } else { loadAllPegawai(); }
             } else { showCustomAlert("Gagal menyimpan: " + data.message); }
         } catch (error) {
             showToast("✅ Simulasi: Data tersimpan lokal.");
@@ -930,12 +930,10 @@
                 if(isEditMode && currentEditId && currentEditId !== uniqueId) databaseMhs = databaseMhs.filter(m => m.nim !== currentEditId);
                 if(!isEditMode || (currentEditId && currentEditId !== uniqueId)) databaseMhs.push(payload);
                 loadAllMhs();
-                updateStatsMhs();
             } else {
                 if(isEditMode && currentEditId && currentEditId !== uniqueId) databasePegawai = databasePegawai.filter(p => p.nip !== currentEditId);
                 if(!isEditMode || (currentEditId && currentEditId !== uniqueId)) databasePegawai.push(payload);
                 loadAllPegawai();
-                updateStatsPegawai();
             }
         }
         btn.innerText = "💾 Simpan Data"; btn.disabled = false;
@@ -1047,8 +1045,8 @@
                 document.getElementById('excel-preview-section').style.display = 'none';
                 document.getElementById('file-excel').value = '';
                 excelDataPayload = [];
-                if(activeType === 'mhs') { loadAllMhs(); updateStatsMhs(); switchTab('list'); }
-                else { loadAllPegawai(); updateStatsPegawai(); switchTab('list-civitas'); }
+                if(activeType === 'mhs') { loadAllMhs(); switchTab('list'); }
+                else { loadAllPegawai(); switchTab('list-civitas'); }
             } else showCustomAlert("Gagal: " + data.message);
         } catch (e) {
             showToast("🎉 Simulasi: Sinkronisasi lokal sukses.");
@@ -1058,21 +1056,6 @@
     }
 
     // ================= CHART RENDERING LOGIC =================
-    
-    // FORMAT TANGGAL INDONESIA LENGKAP
-    function getIndoFormattedDate() {
-        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-        const d = new Date();
-        const dayName = days[d.getDay()];
-        const date = d.getDate();
-        const monthName = months[d.getMonth()];
-        const year = d.getFullYear();
-        const h = d.getHours().toString().padStart(2, '0');
-        const m = d.getMinutes().toString().padStart(2, '0');
-        return `${dayName}, ${date} ${monthName} ${year}, Jam ${h}:${m} WITA`;
-    }
-
     function renderMhsCharts(statusData, angkatanLabels, angkatanCounts) {
         if(chartMhsStatus) chartMhsStatus.destroy();
         chartMhsStatus = new Chart(document.getElementById('mhsStatusChart'), {
@@ -1145,7 +1128,11 @@
             let apiUrl = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/mhs' : '/api/mhs';
             const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             const json = await res.json();
-            if (json.success) { databaseMhs = json.data; renderDynamicTableMhs(databaseMhs); updateStatsMhs(); }
+            if (json.success) { 
+                databaseMhs = json.data; 
+                renderDynamicTableMhs(databaseMhs); 
+                updateStatsMhs(json.lastUpdate); // Menangkap tanggal dari backend
+            }
         } catch (e) { tbody.innerHTML = `<tr><td colspan="7" class="text-center neo-bg-pink">Gagal koneksi server. Mode Lokal.</td></tr>`; }
     }
 
@@ -1187,7 +1174,7 @@
         renderDynamicTableMhs(filtered);
     }
 
-    function updateStatsMhs() {
+    function updateStatsMhs(serverLastUpdate = null) {
         document.getElementById('stat-total').innerText = databaseMhs.length;
         let aktif=0, lulus=0, cuti=0, do_mhs=0;
         let angkatanMap = {};
@@ -1203,8 +1190,7 @@
         document.getElementById('stat-aktif').innerText = aktif; document.getElementById('stat-lulus').innerText = lulus;
         document.getElementById('stat-cuti').innerText = cuti; document.getElementById('stat-do').innerText = do_mhs;
 
-        // PEMBARUAN TANGGAL INDONESIA
-        document.getElementById('stat-date').innerText = getIndoFormattedDate();
+        if (serverLastUpdate) document.getElementById('stat-date').innerText = serverLastUpdate;
 
         // Render Charts MHS
         let sortedAngkatan = Object.keys(angkatanMap).sort();
@@ -1224,7 +1210,11 @@
             let apiUrl = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/civitas' : '/api/civitas';
             const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             const json = await res.json();
-            if (json.success) { databasePegawai = json.data; renderDynamicTablePegawai(databasePegawai); updateStatsPegawai(); }
+            if (json.success) { 
+                databasePegawai = json.data; 
+                renderDynamicTablePegawai(databasePegawai); 
+                updateStatsPegawai(json.lastUpdate); 
+            }
         } catch (e) {
             tbody.innerHTML = `<tr><td colspan="7" class="text-center neo-bg-pink">Gagal koneksi server. Mode Lokal.</td></tr>`;
             renderDynamicTablePegawai(databasePegawai); updateStatsPegawai();
@@ -1265,7 +1255,7 @@
         renderDynamicTablePegawai(filtered);
     }
 
-    function updateStatsPegawai() {
+    function updateStatsPegawai(serverLastUpdate = null) {
         let metrics = { dosenTotal:0, civitasTotal:0, dosenAktif:0, civitasAktif:0, dosenPensiun:0, civitasPensiun:0, dosenCuti:0, dosenTb:0, dosenKeluar:0, civitasKeluar:0 };
         let jabMap = {}, pendMap = {}, ikaMap = {};
 
@@ -1304,8 +1294,7 @@
         document.getElementById('stat-dosen-tb').innerText = metrics.dosenTb; document.getElementById('stat-dosen-cuti').innerText = metrics.dosenCuti;
         document.getElementById('stat-dosen-keluar').innerText = metrics.dosenKeluar; document.getElementById('stat-civitas-keluar').innerText = metrics.civitasKeluar;
 
-        // PEMBARUAN TANGGAL INDONESIA DI DASHBOARD PEGAWAI
-        document.getElementById('stat-date-pegawai').innerText = getIndoFormattedDate();
+        if (serverLastUpdate) document.getElementById('stat-date-pegawai').innerText = serverLastUpdate;
 
         if(pegawaiChart) { pegawaiChart.destroy(); }
         pegawaiChart = new Chart(document.getElementById('civitasChart').getContext('2d'), {
@@ -1332,8 +1321,8 @@
                 const data = await res.json();
                 if(data.success) { 
                     showToast("🗑️ Data dihapus."); 
-                    if(basePathType === 'mhs') { loadAllMhs(); updateStatsMhs(); } 
-                    else { loadAllPegawai(); updateStatsPegawai(); } 
+                    if(basePathType === 'mhs') { loadAllMhs(); } 
+                    else { loadAllPegawai(); } 
                 }
             } catch (e) { showToast("🗑️ Simulasi: Data dihapus."); }
         }
