@@ -213,7 +213,7 @@
                 <button class="action-btn view" onclick="tambahProkerDept()" style="margin-top: 15px; padding: 15px 30px; font-weight:bold; font-size:1rem;">+ Tambah Proker Baru</button>
             </section>
 
-            <!-- 6. KALENDER DENGAN CUSTOM SLUG -->
+            <!-- 6. KALENDER DENGAN CUSTOM SLUG & SEO -->
             <section id="sec-kalender" class="admin-section">
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
@@ -985,16 +985,20 @@
                             <input type="text" class="neo-input" value="${k.targetPeserta || ''}" oninput="db.kalender[${i}].targetPeserta=this.value">
                         </div>
                         <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Biaya Registrasi</label>
+                            <input type="text" class="neo-input" value="${k.biayaRegistrasi || ''}" placeholder="Gratis / Rp. 50.000" oninput="db.kalender[${i}].biayaRegistrasi=this.value">
+                        </div>
+                        <div>
                             <label style="font-size:0.8rem; color:var(--text-muted);">Status Pendaftaran</label>
                             <select class="neo-input" onchange="db.kalender[${i}].statusDaftar=this.value">
                                 <option value="Tutup" ${k.statusDaftar==='Tutup'?'selected':''}>Belum Dibuka / Tutup</option>
                                 <option value="Buka" ${k.statusDaftar==='Buka'?'selected':''}>Telah Dibuka</option>
                             </select>
                         </div>
-                        <div>
-                            <label style="font-size:0.8rem; color:var(--text-muted);">Link Pendaftaran</label>
-                            <input type="text" class="neo-input" value="${k.linkDaftar || ''}" placeholder="https://..." oninput="db.kalender[${i}].linkDaftar=this.value">
-                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Link Pendaftaran</label>
+                        <input type="text" class="neo-input" value="${k.linkDaftar || ''}" placeholder="https://..." oninput="db.kalender[${i}].linkDaftar=this.value">
                     </div>
 
                     <div style="margin-top:20px; border-top:1px solid var(--border-light); padding-top:15px;">
@@ -1021,7 +1025,7 @@
             });
         }
         
-        function tambahAgenda() { db.kalender.push({id: "evt-"+Date.now(), slug: "", nama:"Agenda Baru", dept:"", tglMulai:"", tglSelesai:"", deskripsi:"", lokasi:"", targetPeserta:"", statusDaftar:"Tutup", linkDaftar:"", banner:"", kepanitiaan:[]}); renderKalender(); }
+        function tambahAgenda() { db.kalender.push({id: "evt-"+Date.now(), slug: "", nama:"Agenda Baru", dept:"", tglMulai:"", tglSelesai:"", deskripsi:"", lokasi:"", targetPeserta:"", biayaRegistrasi: "", statusDaftar:"Tutup", linkDaftar:"", banner:"", kepanitiaan:[]}); renderKalender(); }
         function tambahPanitiaDivisi(kIdx) { if(!db.kalender[kIdx].kepanitiaan) db.kalender[kIdx].kepanitiaan = []; db.kalender[kIdx].kepanitiaan.push({namaDivisi:"Divisi Baru", anggota:[]}); renderKalender(); }
         function tambahPanitiaAnggota(kIdx, divIdx) { db.kalender[kIdx].kepanitiaan[divIdx].anggota.push({nama:"", jabatan:""}); renderKalender(); }
 
