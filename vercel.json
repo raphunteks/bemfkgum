@@ -28,16 +28,29 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src * data: blob: 'unsafe-inline';"
+          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; img-src * data: blob: 'unsafe-inline';"
         },
         {
           "key": "Referrer-Policy",
-          "value": "no-referrer-when-downgrade"
+          "value": "no-referrer"
         }
       ]
     },
     {
-      "source": "/(css|js|img)/(.*)",
+      "source": "/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    },
+    {
+      "source": "/css/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -57,19 +70,6 @@
           "value": "application/xml; charset=utf-8"
         }
       ]
-    },
-    {
-      "source": "/api/uploads/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
     }
   ],
   "routes": [
@@ -77,16 +77,20 @@
       "handle": "filesystem"
     },
     {
+      "src": "/sitemap.xml",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/public/(.*)",
+      "dest": "/public/$1"
+    },
+    {
       "src": "/favicon.ico",
-      "dest": "/img/bemfkgumi.png"
+      "dest": "/public/img/bemfkgumi.png"
     },
     {
       "src": "/favicon.png",
-      "dest": "/img/bemfkgumi.png"
-    },
-    {
-      "src": "/sitemap.xml",
-      "dest": "/server.js"
+      "dest": "/public/img/bemfkgumi.png"
     },
     {
       "src": "/admin-linktree",
@@ -125,20 +129,12 @@
       "dest": "/serverV2.js"
     },
     {
-      "src": "/api/upload/(.*)",
+      "src": "/api/upload(.*)",
       "dest": "/serverV2.js"
-    },
-    {
-      "src": "/api/uploads/(.*)",
-      "dest": "/server.js"
     },
     {
       "src": "/api/admin(.*)",
       "dest": "/serverV2.js"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
     },
     {
       "src": "/(.*)",
