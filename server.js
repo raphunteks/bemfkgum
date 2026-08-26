@@ -85,7 +85,8 @@ const escapeXml = (unsafe) => {
 // SEO UPGRADE: Filter Base64 agar tidak masuk ke Sitemap dan membuat GSC Error
 const sanitizeImageUrl = (imgStr, domain) => {
     if (!imgStr) return `${domain}/img/bemfkgumi.png`;
-    if (imgStr.startsWith('data:image/')) return `${domain}/img/bemfkgumi.png`; // Cegah Base64 merusak XML
+    // FIX GSC 100%: Otomatis membuang string base64 dan menggantinya dengan placeholder yang valid bagi Googlebot
+    if (imgStr.startsWith('data:image/')) return `${domain}/img/bemfkgumi.png`; 
     if (imgStr.startsWith('/')) return `${domain}${imgStr}`;
     return imgStr;
 };
@@ -300,7 +301,15 @@ app.get('/informasi/proker/proker-deskripsi/:slug', async (req, res) => {
             const orgStructure = safeParse(rawOrg, defaultOrg);
             
             orgDepartemen = orgStructure.departemen || [];
-            prokerData = allProker.find(p => p.slug === req.params.slug || p.id === req.params.slug);
+            let foundProker = allProker.find(p => p.slug === req.params.slug || p.id === req.params.slug);
+            
+            // FIX BASE64 GSC ISSUE (Mencegah "Halaman tidak dapat diindeks: Soft 404")
+            if (foundProker) {
+                const domain = 'https://bemkbmfkgumi.com';
+                foundProker.bgImage = sanitizeImageUrl(foundProker.bgImage, domain);
+                foundProker.fotoPengurus = sanitizeImageUrl(foundProker.fotoPengurus, domain);
+                prokerData = foundProker;
+            }
         } catch (e) {
             console.error("SSR Proker Fetch Error:", e);
         }
@@ -321,7 +330,14 @@ app.get('/informasi/kalender/proker-detail/:slug', async (req, res) => {
         try {
             const rawKalender = await redis.get('Kalender_Data');
             const allKalender = safeParse(rawKalender, defaultKalender);
-            eventData = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
+            let foundEvent = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
+            
+            // FIX BASE64 GSC ISSUE
+            if (foundEvent) {
+                const domain = 'https://bemkbmfkgumi.com';
+                foundEvent.banner = sanitizeImageUrl(foundEvent.banner, domain);
+                eventData = foundEvent;
+            }
         } catch (e) {}
     }
     res.render('proker-detail', { slug: req.params.slug, sourceTab: 'kalender', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
@@ -333,7 +349,14 @@ app.get('/informasi/timeline/proker-detail/:slug', async (req, res) => {
         try {
             const rawKalender = await redis.get('Kalender_Data');
             const allKalender = safeParse(rawKalender, defaultKalender);
-            eventData = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
+            let foundEvent = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
+            
+            // FIX BASE64 GSC ISSUE
+            if (foundEvent) {
+                const domain = 'https://bemkbmfkgumi.com';
+                foundEvent.banner = sanitizeImageUrl(foundEvent.banner, domain);
+                eventData = foundEvent;
+            }
         } catch (e) {}
     }
     res.render('proker-detail', { slug: req.params.slug, sourceTab: 'timeline', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
@@ -416,7 +439,14 @@ app.get('/berita/:slug', async (req, res) => {
     let articleInfo = null;
 
     if (articles.length > 0) {
-        articleInfo = articles.find(a => (a.Slug_URL || a.ID_Berita) === req.params.slug);
+        let foundArt = articles.find(a => (a.Slug_URL || a.ID_Berita) === req.params.slug);
+        
+        // FIX BASE64 GSC ISSUE PADA BERITA
+        if(foundArt) {
+            const domain = 'https://bemkbmfkgumi.com';
+            foundArt.Gambar_URL = sanitizeImageUrl(foundArt.Gambar_URL, domain);
+            articleInfo = foundArt;
+        }
     }
     
     // Mengirim Data Artikel (Metadata) ke dalam File HTML EJS
