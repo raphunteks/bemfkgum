@@ -77,16 +77,32 @@
       "handle": "filesystem"
     },
     {
+      "src": "/css/(.*)",
+      "dest": "/public/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/public/js/$1"
+    },
+    {
+      "src": "/img/(.*)",
+      "dest": "/public/img/$1"
+    },
+    {
       "src": "/sitemap.xml",
       "dest": "/server.js"
     },
     {
+      "src": "/public/(.*)",
+      "dest": "/public/$1"
+    },
+    {
       "src": "/favicon.ico",
-      "dest": "/img/bemfkgumi.png"
+      "dest": "/public/img/bemfkgumi.png"
     },
     {
       "src": "/favicon.png",
-      "dest": "/img/bemfkgumi.png"
+      "dest": "/public/img/bemfkgumi.png"
     },
     {
       "src": "/admin-linktree",
@@ -137,12 +153,12 @@
       "dest": "/server.js"
     },
     {
-      "src": "/api/admin(.*)",
-      "dest": "/serverV2.js"
+      "src": "/api/upload(.*)",
+      "dest": "/server.js"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
+      "src": "/api/admin(.*)",
+      "dest": "/serverV2.js"
     },
     {
       "src": "/(.*)",
