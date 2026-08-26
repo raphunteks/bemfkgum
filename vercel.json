@@ -70,36 +70,11 @@
           "value": "application/xml; charset=utf-8"
         }
       ]
-    },
-    {
-      "source": "/api/uploads/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
     }
   ],
   "routes": [
     {
       "handle": "filesystem"
-    },
-    {
-      "src": "/css/(.*)",
-      "dest": "/public/css/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/public/js/$1"
-    },
-    {
-      "src": "/img/(.*)",
-      "dest": "/public/img/$1"
     },
     {
       "src": "/sitemap.xml",
@@ -154,19 +129,11 @@
       "dest": "/serverV2.js"
     },
     {
-      "src": "/api/upload/(.*)",
-      "dest": "/serverV2.js"
-    },
-    {
       "src": "/api/upload(.*)",
       "dest": "/serverV2.js"
     },
     {
       "src": "/api/uploads/(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/api/upload(.*)",
       "dest": "/server.js"
     },
     {
