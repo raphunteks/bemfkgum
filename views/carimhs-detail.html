@@ -13,56 +13,101 @@
     <link rel="stylesheet" href="/css/mainV5.css">
     <style>
         /* Mobile Specific Adjustments */
+        .table-left-col {
+            width: 40%; 
+            background-color: var(--bg-yellow); 
+            font-weight: 900; 
+            font-size: clamp(0.9rem, 3vw, 1rem); 
+            border-right: 3px solid #000; 
+            border-bottom: 3px solid #000; 
+            padding: clamp(10px, 3vw, 15px);
+        }
+        .table-right-col {
+            font-weight: 800; 
+            font-size: clamp(0.9rem, 3vw, 1rem); 
+            border-bottom: 3px solid #000; 
+            padding: clamp(10px, 3vw, 15px);
+            word-break: break-word; /* Mencegah tabel melebar jika teks sangat panjang */
+        }
+        .riwayat-header-cell {
+            padding: clamp(10px, 3vw, 15px); 
+            text-align: left; 
+            font-weight: 800; 
+            border-bottom: 4px solid #000; 
+            font-size: clamp(0.85rem, 3vw, 1rem);
+        }
+        .riwayat-body-cell {
+            padding: clamp(10px, 3vw, 15px); 
+            border-bottom: 2px solid #cbd5e1; 
+            font-weight: 600; 
+            font-size: clamp(0.85rem, 3vw, 1rem);
+        }
+        
         @media (max-width: 600px) {
-            .table-mobile-responsive th, .table-mobile-responsive td {
-                padding: 10px !important;
-                font-size: 0.95rem !important;
-            }
-            .riwayat-card-header {
-                font-size: 1.3rem !important;
-                padding: 12px !important;
-            }
+            .table-left-col { width: 45%; }
+            .riwayat-card-header { font-size: 1.2rem !important; padding: 12px !important; }
         }
     </style>
 </head>
 <body class="neo-bg-bg" style="display: flex; justify-content: center; padding: clamp(20px, 5vw, 50px) 20px;">
 
-    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 650px; width: 100%; position: relative; padding: clamp(30px, 5vw, 50px);">
+    <!-- MAX WIDTH DIPERKECIL MENJADI 600px AGAR RAPI DI DESKTOP SEPERTI GBR 1 -->
+    <div class="neo-card neo-bg-white" id="detail-container" style="max-width: 600px; width: 100%; position: relative; padding: clamp(30px, 5vw, 40px);">
         <a href="/carimhs" class="neo-btn neo-bg-yellow" style="position: absolute; top: -15px; left: 15px; text-decoration:none; padding: 10px 20px; font-size: 0.9rem;">⬅ KEMBALI</a>
         
         <!-- HEADER PROFIL (FOTO, NAMA, ID) -->
         <div style="text-align: center; margin-top: 25px; margin-bottom: clamp(25px, 5vw, 40px);">
-            <img id="d-foto" src="/img/bemprofilmhs.png" style="width: clamp(100px, 20vw, 140px); height: clamp(100px, 20vw, 140px); border-radius: 50%; border: clamp(3px, 1vw, 5px) solid #000; box-shadow: 4px 4px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:block; object-fit: cover;">
-            <h1 class="neo-heading" id="d-nama" style="font-size: clamp(1.6rem, 5vw, 2.2rem); line-height:1.2; margin-bottom: 5px;">Memuat...</h1>
-            <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: clamp(1.1rem, 4vw, 1.5rem); margin-top:5px;">-</h2>
+            <img id="d-foto" src="/img/bemprofilmhs.png" style="width: clamp(100px, 20vw, 130px); height: clamp(100px, 20vw, 130px); border-radius: 50%; border: clamp(3px, 1vw, 4px) solid #000; box-shadow: 4px 4px 0px #000; background: var(--bg-blue); margin: 0 auto 20px; display:block; object-fit: cover;">
+            <h1 class="neo-heading" id="d-nama" style="font-size: clamp(1.5rem, 5vw, 2rem); line-height:1.2; margin-bottom: 5px;">Memuat...</h1>
+            <h2 class="neo-heading-sm" id="d-nim" style="color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: clamp(1.1rem, 4vw, 1.3rem); margin-top:5px;">-</h2>
             <div id="d-badge-tipe" style="margin-top: 15px; display: none;"></div>
         </div>
 
         <!-- TABEL BIODATA UTAMA -->
         <div style="overflow-x: auto; border: 4px solid #000; border-radius: 8px;">
-            <table class="neo-table table-mobile-responsive" style="width: 100%; border: none; margin: 0;">
+            <table class="neo-table" style="width: 100%; border: none; margin: 0; table-layout: fixed;">
                 <tbody id="dynamic-tbody">
-                    <tr><td class="text-center" style="font-weight: 700;">Menarik data dari database...</td></tr>
+                    <tr><td class="text-center" style="font-weight: 700; padding: 20px;">Menarik data dari database...</td></tr>
                 </tbody>
             </table>
         </div>
         
-        <!-- KONTOTAINER KHUSUS RIWAYAT DOSEN -->
+        <!-- KONTOTAINER KHUSUS RIWAYAT PENDIDIKAN DOSEN -->
         <div id="riwayat-container"></div>
 
         <div style="text-align: center; margin-top: 40px; border-top: 4px dashed #000; padding-top: 20px;">
-            <p style="font-weight: 800; font-size: 0.95rem; color: #1e1e1e;">Sumber Data: Database Resmi Institusi KBMFKG UMI</p>
+            <p style="font-weight: 800; font-size: 0.9rem; color: #1e1e1e;">Sumber Data: Database Resmi Institusi KBMFKG UMI</p>
         </div>
     </div>
 
 <script>
-    // Skema Default Fallback
+    // Skema Default (Up to Date 26 Form Mahasiswa)
     const DEFAULT_SCHEMA_MHS = [
         { id: 'foto', label: 'Foto Profil', type: 'image' },
-        { id: 'nim', label: 'NIM (Nomor Induk)', type: 'text' },
-        { id: 'nama', label: 'Nama Lengkap', type: 'text' },
-        { id: 'angkatan', label: 'Tahun Angkatan', type: 'number' },
-        { id: 'prodi', label: 'Program Studi', type: 'select' },
+        { id: 'jenjang', label: 'Jenjang Studi', type: 'select' },
+        { id: 'nim_sarjana', label: 'STAMBUK/NIM SARJANA', type: 'text' },
+        { id: 'nim_profesi', label: 'STAMBUK/NIM PROFESI', type: 'text' },
+        { id: 'nama', label: 'NAMA LENGKAP', type: 'text' },
+        { id: 'nama_panggilan', label: 'NAMA PANGGILAN', type: 'text' },
+        { id: 'angkatan', label: 'TAHUN ANGKATAN', type: 'number' },
+        { id: 'ttl', label: 'TEMPAT TANGGAL LAHIR', type: 'text' },
+        { id: 'alamat_makassar', label: 'ALAMAT DI MAKASSAR', type: 'text' },
+        { id: 'asal_daerah', label: 'ASAL DAERAH', type: 'text' },
+        { id: 'alamat_daerah', label: 'ALAMAT DAERAH ASAL', type: 'text' },
+        { id: 'no_hp', label: 'NO. TELEPON / HP & WA', type: 'text' },
+        { id: 'id_line', label: 'ID LINE', type: 'text' },
+        { id: 'email', label: 'E-MAIL', type: 'text' },
+        { id: 'nama_ayah', label: 'NAMA AYAH', type: 'text' },
+        { id: 'nama_ibu', label: 'NAMA IBU', type: 'text' },
+        { id: 'pekerjaan_ayah', label: 'PEKERJAAN AYAH', type: 'text' },
+        { id: 'pekerjaan_ibu', label: 'PEKERJAAN IBU', type: 'text' },
+        { id: 'alamat_ortu', label: 'ALAMAT ORANG TUA', type: 'text' },
+        { id: 'hp_ortu', label: 'NO. TELEPON / HP ORANG TUA', type: 'text' },
+        { id: 'pendidikan_ayah', label: 'PENDIDIKAN TERAKHIR AYAH', type: 'select' },
+        { id: 'pendidikan_ibu', label: 'PENDIDIKAN TERAKHIR IBU', type: 'select' },
+        { id: 'asal_sma', label: 'ASAL SMA', type: 'text' },
+        { id: 'motivasi', label: 'MOTIVASI MASUK FKG', type: 'text' },
+        { id: 'harapan', label: 'HARAPAN KEDEPANNYA UNTUK KBMFKG-UMI & FKG-UMI', type: 'text' },
         { id: 'status', label: 'Status Akademik', type: 'select' }
     ];
 
@@ -95,7 +140,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        // Bisa menangkap nim, nidn, ataupun nip
+        // Menangkap nim, nidn, ataupun nip
         const idParam = urlParams.get('nim') || urlParams.get('nidn') || urlParams.get('nip'); 
         const typeParam = urlParams.get('type') || 'mhs'; 
 
@@ -136,8 +181,8 @@
                     const badgeEl = document.getElementById('d-badge-tipe');
                     badgeEl.style.display = 'block';
                     badgeEl.innerHTML = tp === 'dosen' 
-                        ? `<span class="neo-badge neo-bg-blue" style="font-size: clamp(0.85rem, 3vw, 1rem); padding: 8px 18px;">Dosen Pengajar</span>`
-                        : `<span class="neo-badge neo-bg-yellow" style="font-size: clamp(0.85rem, 3vw, 1rem); padding: 8px 18px;">Staf Civitas</span>`;
+                        ? `<span class="neo-badge neo-bg-blue" style="font-size: clamp(0.85rem, 3vw, 0.95rem); padding: 8px 18px;">Dosen Pengajar</span>`
+                        : `<span class="neo-badge neo-bg-yellow" style="font-size: clamp(0.85rem, 3vw, 0.95rem); padding: 8px 18px;">Staf Civitas</span>`;
                 }
 
                 if(window.location.origin === "null") schemaUrl = `https://bemkbmfkgumi.com${schemaUrl}`;
@@ -151,15 +196,30 @@
                         schema = jsonSchema.data;
                     }
                 } catch(err) {
-                    console.log("Menggunakan skema default fallback.");
+                    console.log("Skema gagal ditarik, menggunakan fallback.");
                 }
 
                 schema = schema || defaultSchema;
 
-                // 4. Render Data
-                let fotoUrl = '/img/bemprofilmhs.png';
-                let namaVal = '-';
+                // 4. Proses Header Profil Terlebih Dahulu
+                let fotoUrl = d.foto && d.foto !== '-' && d.foto !== '' ? d.foto : '/img/bemprofilmhs.png';
+                let namaVal = d.nama || d['Nama Lengkap'] || d.NAMA || '-';
                 let identitasVal = idParam;
+                
+                if (typeParam === 'mhs') {
+                    // Prioritas NIM Profesi, lalu NIM Sarjana, lalu fallback
+                    identitasVal = (d.nim_profesi && d.nim_profesi !== '-' && d.nim_profesi !== '') 
+                        ? d.nim_profesi 
+                        : (d.nim_sarjana || d.nim || d.NIM || idParam);
+                } else {
+                    let tp = d.tipe_pegawai || typeParam;
+                    if (tp === 'dosen') {
+                        identitasVal = d.nidn || d.NIDN || d.nip || d.NIP || idParam;
+                    } else {
+                        identitasVal = d.nip || d.NIP || d.nidn || d.NIDN || idParam;
+                    }
+                }
+
                 let tableHtml = '';
                 let riwayatHtml = '';
 
@@ -168,21 +228,11 @@
                     let fId = field.id.toLowerCase();
                     let fLabel = field.label.toLowerCase();
 
-                    // SKIP: Foto, Nama, NIP/NIDN/NIM
-                    if (field.type === 'image') {
-                        if(val !== '-') fotoUrl = val;
-                        return; 
-                    }
-                    if (fId.includes('nama') || fLabel.includes('nama')) {
-                        if(val !== '-') namaVal = val;
-                        return; 
-                    }
-                    if (fId === 'nim' || fId === 'nip' || fId === 'nidn' || fLabel.includes('nim') || fLabel.includes('nip') || fLabel.includes('nidn')) {
-                        if(val !== '-') identitasVal = val;
-                        return; 
-                    }
+                    // SKIP FIELD YANG SUDAH ADA DI HEADER (Foto & Nama Lengkap)
+                    if (field.type === 'image') return; 
+                    if (fId === 'nama' || fLabel === 'nama lengkap') return; 
 
-                    // KHUSUS RENDER SUB-FORM RIWAYAT (TABEL TERPISAH)
+                    // KHUSUS RENDER SUB-FORM RIWAYAT PENDIDIKAN
                     if (field.type === 'riwayat') {
                         let rwData = [];
                         try { rwData = JSON.parse(val); } catch(e) {}
@@ -192,31 +242,27 @@
                             rwData.forEach(rw => {
                                 rows += `
                                 <tr>
-                                    <td style="padding: clamp(10px, 3vw, 15px); border-bottom:2px solid #cbd5e1; font-weight:600; font-size: clamp(0.9rem, 3vw, 1rem);">${rw.pt || '-'}</td>
-                                    <td style="padding: clamp(10px, 3vw, 15px); border-bottom:2px solid #cbd5e1; font-weight:600; font-size: clamp(0.9rem, 3vw, 1rem);">${rw.gelar_akademik || '-'}</td>
-                                    <td style="padding: clamp(10px, 3vw, 15px); border-bottom:2px solid #cbd5e1; font-weight:600; font-size: clamp(0.9rem, 3vw, 1rem);">${rw.tahun || '-'}</td>
-                                    <td style="padding: clamp(10px, 3vw, 15px); border-bottom:2px solid #cbd5e1; font-weight:600; font-size: clamp(0.9rem, 3vw, 1rem);">${rw.jenjang || '-'}</td>
+                                    <td class="riwayat-body-cell">${rw.pt || '-'}</td>
+                                    <td class="riwayat-body-cell">${rw.gelar_akademik || '-'}</td>
+                                    <td class="riwayat-body-cell">${rw.tahun || '-'}</td>
+                                    <td class="riwayat-body-cell">${rw.jenjang || '-'}</td>
                                 </tr>`;
                             });
 
                             riwayatHtml += `
                             <div style="margin-top: 40px;">
                                 <div class="riwayat-card-header" style="background: linear-gradient(90deg, #d946ef, #8b5cf6); color: white; padding: 18px; text-align: center; border-radius: 12px; margin-bottom: 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000;">
-                                    <h2 style="margin:0; font-family:'Outfit', sans-serif; font-size: clamp(1.4rem, 4vw, 1.6rem); letter-spacing:1px;">Riwayat Dosen</h2>
-                                </div>
-                                
-                                <div style="display:flex; justify-content:center; margin-bottom: 15px;">
-                                    <div style="background: linear-gradient(90deg, #f472b6, #c084fc); color: white; padding: 12px 30px; border-radius: 8px; font-weight: bold; border: 2px solid #000; font-size: clamp(0.9rem, 3vw, 1.1rem); width: 100%; text-align: center;">Riwayat Pendidikan</div>
+                                    <h2 style="margin:0; font-family:'Outfit', sans-serif; font-size: clamp(1.2rem, 4vw, 1.5rem); letter-spacing:1px;">Riwayat Pendidikan</h2>
                                 </div>
 
                                 <div style="overflow-x: auto; border: 4px solid #000; border-radius: 8px; box-shadow: 5px 5px 0px #000;">
-                                    <table style="width: 100%; border-collapse: collapse; background: #fff; min-width: 500px;">
+                                    <table style="width: 100%; border-collapse: collapse; background: #fff; min-width: 450px;">
                                         <thead>
                                             <tr style="background: #e9d5ff;">
-                                                <th style="padding: clamp(10px, 3vw, 15px); text-align: left; font-weight: 800; border-bottom: 4px solid #000; font-size: clamp(0.9rem, 3vw, 1rem);">Perguruan Tinggi</th>
-                                                <th style="padding: clamp(10px, 3vw, 15px); text-align: left; font-weight: 800; border-bottom: 4px solid #000; font-size: clamp(0.9rem, 3vw, 1rem);">Gelar Akademik</th>
-                                                <th style="padding: clamp(10px, 3vw, 15px); text-align: left; font-weight: 800; border-bottom: 4px solid #000; font-size: clamp(0.9rem, 3vw, 1rem);">Tahun</th>
-                                                <th style="padding: clamp(10px, 3vw, 15px); text-align: left; font-weight: 800; border-bottom: 4px solid #000; font-size: clamp(0.9rem, 3vw, 1rem);">Jenjang</th>
+                                                <th class="riwayat-header-cell">Perguruan Tinggi</th>
+                                                <th class="riwayat-header-cell">Gelar Akademik</th>
+                                                <th class="riwayat-header-cell">Tahun</th>
+                                                <th class="riwayat-header-cell">Jenjang</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -236,16 +282,16 @@
                         let st_lower = val.toLowerCase();
                         if (st_lower.includes('lulus')) statusColor = 'neo-bg-blue';
                         else if (st_lower.includes('pensiun')) statusColor = 'neo-bg-purple';
-                        else if (st_lower.includes('cuti') || st_lower.includes('belajar') || st_lower.includes('tb') || st_lower.includes('tetap')) statusColor = 'neo-bg-pink'; // Khusus Tetap
+                        else if (st_lower.includes('cuti') || st_lower.includes('belajar') || st_lower.includes('tb') || st_lower.includes('tetap')) statusColor = 'neo-bg-pink'; 
                         else if (st_lower.includes('do') || st_lower.includes('keluar')) statusColor = 'neo-bg-pink';
                         
-                        displayVal = `<span class="neo-badge ${statusColor}" style="font-size: clamp(0.85rem, 3vw, 1rem); padding: 6px 15px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${val}</span>`;
+                        displayVal = `<span class="neo-badge ${statusColor}" style="font-size: clamp(0.85rem, 3vw, 0.95rem); padding: 5px 12px; color: ${statusColor === 'neo-bg-purple' ? '#fff' : '#000'}">${val}</span>`;
                     }
 
                     tableHtml += `
                     <tr>
-                        <td class="neo-bg-yellow" style="width: 40%; font-weight: 900; font-size: clamp(0.95rem, 3vw, 1.1rem); border-right: 3px solid #000; border-bottom: 3px solid #000;">${field.label}</td>
-                        <td style="font-weight: 800; font-size: clamp(0.95rem, 3vw, 1.1rem); border-bottom: 3px solid #000;">${displayVal}</td>
+                        <td class="table-left-col">${field.label}</td>
+                        <td class="table-right-col">${displayVal}</td>
                     </tr>`;
                 });
 
@@ -257,11 +303,11 @@
 
             } else {
                 document.getElementById('d-nama').innerText = "Data Tidak Ditemukan";
-                document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Data tidak ada di dalam database.</td></tr>`;
+                document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700; padding: 20px;">Data tidak ada di dalam database.</td></tr>`;
             }
         } catch(e) {
             document.getElementById('d-nama').innerText = "Gangguan Server";
-            document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700;">Gagal menghubungi server database.</td></tr>`;
+            document.getElementById('dynamic-tbody').innerHTML = `<tr><td class="text-center neo-bg-pink" style="font-weight: 700; padding: 20px;">Gagal menghubungi server database.</td></tr>`;
         }
     });
 </script>
