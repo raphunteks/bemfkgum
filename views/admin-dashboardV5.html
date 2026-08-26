@@ -181,11 +181,17 @@
                 <table class="neo-table" id="mhs-table">
                     <thead>
                         <tr class="neo-bg-green" id="mhs-thead-tr">
+                            <!-- Diisi Otomatis Berdasarkan Logika Custom Tampilan -->
+                            <th>FOTO PROFIL</th>
+                            <th>NAMA LENGKAP</th>
+                            <th>STAMBUK SARJANA</th>
+                            <th>STAMBUK PROFESI / TAHUN ANGKATAN</th>
+                            <th>ALAMAT</th>
                             <th>AKSI</th>
                         </tr>
                     </thead>
                     <tbody id="mhs-tbody">
-                        <tr><td colspan="10" class="text-center">Memuat database dari Redis...</td></tr>
+                        <tr><td colspan="6" class="text-center">Memuat database dari Redis...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -275,6 +281,7 @@
                 <table class="neo-table" id="pegawai-table">
                     <thead>
                         <tr class="neo-bg-yellow" id="pegawai-thead-tr">
+                            <!-- Generate Dinamis (Kombinasi / General fields) -->
                             <th>AKSI</th>
                         </tr>
                     </thead>
@@ -305,6 +312,8 @@
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <button class="neo-btn neo-bg-yellow" onclick="addBuilderField()">+ Tambah Field Baru</button>
+                    <!-- TOMBOL RESET DITAMBAHKAN DI SINI -->
+                    <button class="neo-btn neo-bg-white" onclick="resetSchemaToDefault()">🔄 Reset Skema ke Default</button>
                     <button class="neo-btn neo-bg-blue" onclick="saveFormSchema()">💾 Simpan Skema Form</button>
                 </div>
             </div>
@@ -401,7 +410,7 @@
     // Palet Warna Neubrutalism untuk Chart
     const neoColorsArray = ['#4ade80', '#60a5fa', '#fde047', '#f472b6', '#a78bfa', '#fb923c', '#38bdf8', '#e879f9'];
     
-    // Skema Default Mahasiswa (Ter-upgrade Berdasarkan File Arsip)
+    // Skema Default Mahasiswa (Ter-upgrade Berdasarkan File Arsip 26 Form)
     const DEFAULT_SCHEMA_MHS = [
         { id: 'foto', label: 'Foto Profil', type: 'image', options: '' },
         { id: 'jenjang', label: 'Jenjang Studi', type: 'select', options: 'Sarjana, Profesi' },
@@ -557,6 +566,17 @@
         activeBuilderType = document.getElementById('builder-type-selector').value;
         renderBuilderUI();
     }
+    
+    // FUNGSI RESET SKEMA
+    function resetSchemaToDefault() {
+        if(confirm("Yakin ingin mereset skema ini ke pengaturan default bawaan sistem (26 Form Lengkap)? Skema di database Anda akan tertimpa setelah klik tombol Simpan.")) {
+            if(activeBuilderType === 'mhs') schemas.mhs = JSON.parse(JSON.stringify(DEFAULT_SCHEMA_MHS));
+            else if(activeBuilderType === 'dosen') schemas.dosen = JSON.parse(JSON.stringify(DEFAULT_SCHEMA_DOSEN));
+            else schemas.civitas = JSON.parse(JSON.stringify(DEFAULT_SCHEMA_CIVITAS));
+            renderBuilderUI();
+            showToast("✅ Skema berhasil direset di layar. JANGAN LUPA KLIK 'Simpan Skema Form' agar tersimpan di Database!");
+        }
+    }
 
     function renderBuilderUI() {
         const container = document.getElementById('form-builder-container');
@@ -656,21 +676,19 @@
     // ================= DYNAMIC FORM MODAL =================
     let isEditMode = false;
     
-    // Logika Menampilkan/Menyembunyikan NIM Profesi
+    // Logika Menampilkan/Menyembunyikan NIM Profesi untuk Mahasiswa
     window.toggleMhsNimFields = function() {
         const jenjangEl = document.getElementById('dyn_jenjang');
         const profesiWrap = document.getElementById('wrap_nim_profesi');
         const profesiInput = document.getElementById('dyn_nim_profesi');
 
-        if(jenjangEl && profesiWrap && profesiInput) {
+        if(jenjangEl) {
             if(jenjangEl.value.toLowerCase() === 'sarjana') {
-                profesiWrap.style.display = 'none';
-                profesiInput.removeAttribute('required');
-                profesiInput.value = '-'; 
+                if(profesiWrap) profesiWrap.style.display = 'none';
+                if(profesiInput) { profesiInput.removeAttribute('required'); profesiInput.value = '-'; }
             } else {
-                profesiWrap.style.display = 'block';
-                profesiInput.setAttribute('required', 'true');
-                if(profesiInput.value === '-') profesiInput.value = '';
+                if(profesiWrap) profesiWrap.style.display = 'block';
+                if(profesiInput) { profesiInput.setAttribute('required', 'true'); if(profesiInput.value === '-') profesiInput.value = ''; }
             }
         }
     };
@@ -783,7 +801,6 @@
                 let stepStr = field.type === 'number' ? 'step="any"' : '';
                 let requiredStr = 'required';
                 
-                // Extra class khusus text area alamat dsb jika butuh full width bisa disesuaikan. Kita buat standard grid.
                 html += `
                 <div id="wrap_${field.id}" class="${gridClass}" style="margin-bottom: 10px;">
                     <label class="neo-label">${field.label}</label>
@@ -795,7 +812,7 @@
         container.innerHTML = html;
         document.getElementById('dynamicFormModal').classList.add('active');
 
-        // Jalankan fungsi toggleNIM untuk form Mahasiswa (menghilangkan nim profesi jika hanya sarjana)
+        // Jalankan fungsi toggleNIM untuk form Mahasiswa
         if(tipe === 'mhs') {
             setTimeout(toggleMhsNimFields, 100);
         }
@@ -1068,40 +1085,55 @@
         const tbody = document.getElementById('mhs-tbody');
         const thead = document.getElementById('mhs-thead-tr');
         
-        let thHtml = '';
-        const visibleFields = schemas.mhs.slice(0, 6);
-        visibleFields.forEach(f => thHtml += `<th>${f.label.toUpperCase()}</th>`);
-        thHtml += `<th>AKSI</th>`;
-        thead.innerHTML = thHtml;
-        tbody.innerHTML = `<tr><td colspan="${visibleFields.length + 1}" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
+        // CUSTOM HEADER RENDERING
+        thead.innerHTML = `
+            <th>FOTO PROFIL</th>
+            <th>NAMA LENGKAP</th>
+            <th>STAMBUK SARJANA</th>
+            <th>STAMBUK PROFESI / TAHUN ANGKATAN</th>
+            <th>ALAMAT</th>
+            <th>AKSI</th>
+        `;
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
         
         try {
             let apiUrl = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/mhs' : '/api/mhs';
             const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             const json = await res.json();
-            if (json.success) { databaseMhs = json.data; renderDynamicTableMhs(databaseMhs, visibleFields); updateStatsMhs(); }
-        } catch (e) { tbody.innerHTML = `<tr><td colspan="${visibleFields.length + 1}" class="text-center neo-bg-pink">Gagal koneksi server. Mode Lokal.</td></tr>`; }
+            if (json.success) { databaseMhs = json.data; renderDynamicTableMhs(databaseMhs); updateStatsMhs(); }
+        } catch (e) { tbody.innerHTML = `<tr><td colspan="6" class="text-center neo-bg-pink">Gagal koneksi server. Mode Lokal.</td></tr>`; }
     }
 
-    function renderDynamicTableMhs(dataArray, visibleFields) {
+    function renderDynamicTableMhs(dataArray) {
         const tbody = document.getElementById('mhs-tbody');
-        if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="${visibleFields.length + 1}" class="text-center" style="font-weight:bold;">Data Kosong.</td></tr>`; return; }
+        if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="font-weight:bold;">Data Kosong.</td></tr>`; return; }
 
         let html = '';
         dataArray.forEach(mhs => {
-            html += `<tr>`;
-            visibleFields.forEach(f => {
-                let val = mhs[f.id] || '-';
-                if(f.type === 'image') html += `<td><img src="${val !== '-' && val !== '' ? val : '/img/bemprofilmhs.png'}" onerror="this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>`;
-                else if(f.id.toLowerCase() === 'status' || val.toString().toLowerCase() === 'aktif') {
-                    let c = val.toLowerCase() === 'aktif' ? 'neo-bg-green' : (val.toLowerCase() === 'lulus' ? 'neo-bg-blue' : 'neo-bg-yellow');
-                    html += `<td><span class="neo-badge ${c}">${val}</span></td>`;
-                } else html += `<td style="font-weight:700;">${val}</td>`;
-            });
-            html += `<td>
-                <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='openDynamicModal("mhs", ${JSON.stringify(mhs).replace(/'/g, "&apos;")})'>✏️</button>
-                <button class="neo-btn neo-bg-pink" style="padding: 5px 10px; font-size:0.8rem;" onclick="deleteData('mhs', '${mhs.nim || mhs.NIM || mhs.nim_sarjana || mhs.nim_profesi}')">🗑️</button>
-            </td></tr>`;
+            // Evaluasi Properti Dinamis
+            let foto = mhs.foto || mhs.Foto || '';
+            let imgSrc = foto !== '-' && foto !== '' ? foto : '/img/bemprofilmhs.png';
+            
+            let nama = mhs.nama || mhs.Nama || mhs['NAMA LENGKAP'] || '-';
+            let nimSarjana = mhs.nim_sarjana || mhs['STAMBUK/NIM SARJANA'] || '-';
+            
+            let nimProfesi = mhs.nim_profesi || mhs['STAMBUK/NIM PROFESI'] || '-';
+            let angkatan = mhs.angkatan || mhs.Angkatan || mhs['TAHUN ANGKATAN'] || '-';
+            let stambukOrAngkatan = (nimProfesi !== '-' && nimProfesi !== '') ? nimProfesi : `Angkatan ${angkatan}`;
+            
+            let alamat = mhs.alamat_makassar || mhs['ALAMAT DI MAKASSAR'] || mhs.alamat_daerah || mhs['ALAMAT DAERAH ASAL'] || '-';
+
+            html += `<tr>
+                <td><img src="${imgSrc}" onerror="this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>
+                <td style="font-weight:700;">${nama}</td>
+                <td style="font-family:'Space Mono', monospace; font-weight:700;">${nimSarjana}</td>
+                <td style="font-weight:600;">${stambukOrAngkatan}</td>
+                <td style="font-size:0.9rem;">${alamat}</td>
+                <td>
+                    <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='openDynamicModal("mhs", ${JSON.stringify(mhs).replace(/'/g, "&apos;")})'>✏️</button>
+                    <button class="neo-btn neo-bg-pink" style="padding: 5px 10px; font-size:0.8rem;" onclick="deleteData('mhs', '${mhs.nim || mhs.NIM || mhs.nim_sarjana || mhs.nim_profesi}')">🗑️</button>
+                </td>
+            </tr>`;
         });
         tbody.innerHTML = html;
     }
@@ -1109,7 +1141,7 @@
     function filterTableMhs() {
         const q = document.getElementById('search-mhs').value.toLowerCase();
         const filtered = databaseMhs.filter(mhs => Object.values(mhs).some(val => String(val).toLowerCase().includes(q)));
-        renderDynamicTableMhs(filtered, schemas.mhs.slice(0, 6));
+        renderDynamicTableMhs(filtered);
     }
 
     function updateStatsMhs() {
@@ -1122,7 +1154,7 @@
             if(st.includes('aktif')) aktif++; else if(st.includes('lulus')) lulus++; else if(st.includes('cuti')) cuti++; else if(st.includes('do') || st.includes('keluar')) do_mhs++;
             
             let thn = m.angkatan || m.Angkatan || m['Tahun Angkatan'] || 'N/A';
-            angkatanMap[thn] = (angkatanMap[thn] || 0) + 1;
+            if(thn !== 'N/A' && thn !== '-') angkatanMap[thn] = (angkatanMap[thn] || 0) + 1;
         });
 
         document.getElementById('stat-aktif').innerText = aktif; document.getElementById('stat-lulus').innerText = lulus;
@@ -1201,9 +1233,10 @@
             let jab = p.jabatan || p.Jabatan || p['Jabatan Fungsional'] || 'Belum Diisi';
             let pend = p.pendidikan || p.Pendidikan || p['Pendidikan (Jenjang Terakhir)'] || p['Pendidikan Terakhir'] || 'Belum Diisi';
             let ika = p.ikatan || p.Ikatan || p['Status Ikatan Kerja'] || 'Belum Diisi';
-            jabMap[jab] = (jabMap[jab] || 0) + 1;
-            pendMap[pend] = (pendMap[pend] || 0) + 1;
-            ikaMap[ika] = (ikaMap[ika] || 0) + 1;
+            
+            if(jab !== '-' && jab !== '') jabMap[jab] = (jabMap[jab] || 0) + 1;
+            if(pend !== '-' && pend !== '') pendMap[pend] = (pendMap[pend] || 0) + 1;
+            if(ika !== '-' && ika !== '') ikaMap[ika] = (ikaMap[ika] || 0) + 1;
 
             // Counters
             if(tp === 'dosen') {
