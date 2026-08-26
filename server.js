@@ -263,6 +263,7 @@ app.get('/ourteam', (req, res) => res.render('ourteam'));
 
 // =========================================================================
 // SUPER BIG UPGRADE SEO ROUTING: INFORMASI & DETAIL (CLEAN URL HIERARCHY)
+// Mencegah masalah Soft 404 pada Google Search Console
 // =========================================================================
 
 // 1. Redirect URL Lama ke URL Baru (301 Permanent Redirect) untuk menjaga SEO GSC
@@ -285,18 +286,57 @@ app.get('/informasi/:tab', (req, res, next) => {
     }
 });
 
-// 4. Hirarki Clean URL untuk Proker Deskripsi
-app.get('/informasi/proker/proker-deskripsi/:slug', (req, res) => {
-    res.render('proker-deskripsi', { slug: req.params.slug, siteUrl: 'https://bemkbmfkgumi.com' });
+// 4. Hirarki Clean URL untuk Proker Deskripsi (Full SSR Support untuk cegah Soft 404 GSC)
+app.get('/informasi/proker/proker-deskripsi/:slug', async (req, res) => {
+    let prokerData = null;
+    let orgDepartemen = [];
+
+    if (redis) {
+        try {
+            const rawProker = await redis.get('Proker_Data');
+            const rawOrg = await redis.get('Org_Structure');
+            
+            const allProker = safeParse(rawProker, defaultProker);
+            const orgStructure = safeParse(rawOrg, defaultOrg);
+            
+            orgDepartemen = orgStructure.departemen || [];
+            prokerData = allProker.find(p => p.slug === req.params.slug || p.id === req.params.slug);
+        } catch (e) {
+            console.error("SSR Proker Fetch Error:", e);
+        }
+    }
+
+    res.render('proker-deskripsi', { 
+        slug: req.params.slug, 
+        siteUrl: 'https://bemkbmfkgumi.com',
+        prokerData: prokerData,
+        orgDepartemen: orgDepartemen
+    });
 });
 
-// 5. Hirarki Clean URL untuk Detail Kalender & Timeline
-app.get('/informasi/kalender/proker-detail/:slug', (req, res) => {
-    res.render('proker-detail', { slug: req.params.slug, sourceTab: 'kalender', siteUrl: 'https://bemkbmfkgumi.com' });
+// 5. Hirarki Clean URL untuk Detail Kalender & Timeline (Full SSR Support)
+app.get('/informasi/kalender/proker-detail/:slug', async (req, res) => {
+    let eventData = null;
+    if (redis) {
+        try {
+            const rawKalender = await redis.get('Kalender_Data');
+            const allKalender = safeParse(rawKalender, defaultKalender);
+            eventData = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
+        } catch (e) {}
+    }
+    res.render('proker-detail', { slug: req.params.slug, sourceTab: 'kalender', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
 });
 
-app.get('/informasi/timeline/proker-detail/:slug', (req, res) => {
-    res.render('proker-detail', { slug: req.params.slug, sourceTab: 'timeline', siteUrl: 'https://bemkbmfkgumi.com' });
+app.get('/informasi/timeline/proker-detail/:slug', async (req, res) => {
+    let eventData = null;
+    if (redis) {
+        try {
+            const rawKalender = await redis.get('Kalender_Data');
+            const allKalender = safeParse(rawKalender, defaultKalender);
+            eventData = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
+        } catch (e) {}
+    }
+    res.render('proker-detail', { slug: req.params.slug, sourceTab: 'timeline', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
 });
 
 // ROUTES BEM-FORM & ADMIN DASHBOARD V2
