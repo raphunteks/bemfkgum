@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pencarian Database | BEM KBMFKG UMI</title>
+    <title>Pencarian Data BEM | PDDIKTI BEM</title>
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <!-- Load Google Fonts -->
@@ -14,7 +14,11 @@
     <!-- CSS Neubrutalism -->
     <link rel="stylesheet" href="/css/mainV5.css">
     <style>
-        /* Extra Tweaks for Global Mobile View */
+        /* Mobile Specific Adjustments for UI/UX */
+        .search-group { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
+        .search-group input { width: 100%; max-width: 550px; font-size: clamp(1rem, 4vw, 1.2rem); padding: 18px; border-radius: 12px; border-width: 4px; text-align: center; }
+        .search-group button { font-size: clamp(1rem, 4vw, 1.2rem); padding: 15px 50px; width: 100%; max-width: 300px; }
+        
         .result-card-inner {
             display: flex; 
             justify-content: space-between; 
@@ -22,12 +26,20 @@
             flex-wrap: wrap; 
             gap: 20px; 
             padding: clamp(20px, 4vw, 25px) clamp(15px, 4vw, 30px);
+            border: 4px solid #000;
+            box-shadow: 6px 6px 0px #000;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
         }
         .result-info { flex: 1 1 250px; }
-        .result-btn { flex: 1 1 150px; max-width: 250px; text-align: center; }
+        .result-btn { flex: 0 1 auto; white-space: nowrap; text-align: center; }
         
-        @media (max-width: 500px) {
-            .result-btn { max-width: 100%; width: 100%; }
+        @media (max-width: 550px) {
+            .result-card-inner { flex-direction: column; align-items: stretch; }
+            .result-btn { width: 100%; display: block; }
+            .search-group input { padding: 15px; border-width: 3px; }
+            .search-group button { max-width: 100%; }
         }
     </style>
 </head>
@@ -36,26 +48,26 @@
     <!-- HEADER / HERO -->
     <div class="neo-card neo-bg-yellow text-center" style="max-width: 700px; width: 100%; margin-bottom: 40px; padding: clamp(30px, 6vw, 50px) clamp(15px, 5vw, 30px);">
         <img src="/img/bemfkgumi.png" alt="Logo" style="width: clamp(70px, 15vw, 90px); height: clamp(70px, 15vw, 90px); border: 4px solid #000; border-radius: 50%; box-shadow: 4px 4px 0px #000; background: #fff; object-fit: cover; margin-bottom: 15px;">
-        <h1 class="neo-heading" style="font-size: clamp(2rem, 6vw, 2.8rem); margin-bottom: 10px;">PORTAL DATA BEM</h1>
+        <h1 class="neo-heading" style="font-size: clamp(1.8rem, 6vw, 2.8rem); margin-bottom: 10px;">PORTAL DATA BEM</h1>
         <p class="neo-subtitle" style="font-weight: 800; color: #1e1e1e; font-size: clamp(0.95rem, 3vw, 1.1rem);">Pencarian Terpusat Database Institusi KBMFKG UMI.</p>
         
         <div style="margin-top: 35px;">
             <!-- Toggle Mode Pencarian -->
-            <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap;">
                 <button id="btn-mode-mhs" class="neo-btn neo-bg-blue" style="flex: 1 1 200px; font-size: clamp(0.9rem, 3vw, 1.1rem); padding: 15px;" onclick="setMode('mhs')">🎓 Cari Mahasiswa</button>
                 <button id="btn-mode-civ" class="neo-btn neo-bg-white" style="flex: 1 1 200px; font-size: clamp(0.9rem, 3vw, 1.1rem); padding: 15px;" onclick="setMode('civitas')">👨‍🏫 Cari Dosen/Civitas</button>
             </div>
 
             <!-- Form Pencarian Dinamis -->
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-                <input type="text" id="search-input" class="neo-input" placeholder="Masukkan NIM, Nama / Angkatan (Cth: 2020)" style="width: 100%; max-width: 550px; font-size: clamp(1rem, 4vw, 1.2rem); padding: 18px; border-radius: 12px; border-width: 4px; text-align: center;" onkeypress="handleEnter(event)">
-                <button class="neo-btn neo-bg-green" style="font-size: clamp(1rem, 4vw, 1.2rem); padding: 15px 50px; width: 100%; max-width: 300px;" onclick="searchData()">CARI DATA 🔍</button>
+            <div class="search-group">
+                <input type="text" id="search-input" class="neo-input" placeholder="Masukkan NIM, Nama, atau Angkatan (Cth: 2020)..." onkeypress="handleEnter(event)">
+                <button class="neo-btn neo-bg-green" onclick="searchData()">CARI DATA 🔍</button>
             </div>
         </div>
     </div>
 
     <!-- RESULT CONTAINER -->
-    <div id="result-container" style="max-width: 700px; width: 100%; display: grid; gap: 20px;">
+    <div id="result-container" style="max-width: 700px; width: 100%;">
         <div class="neo-card neo-bg-white text-center" style="padding: 40px;" id="default-helper-text">
             <h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>
         </div>
@@ -76,13 +88,13 @@
         if (mode === 'mhs') {
             btnMhs.className = 'neo-btn neo-bg-blue';
             btnCiv.className = 'neo-btn neo-bg-white';
-            input.placeholder = 'Masukkan NIM/Nama/Angkatan (Cth: 2020)';
+            input.placeholder = 'Masukkan NIM, Nama, atau Angkatan (Cth: 2020)...';
             document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIM, Nama, atau Tahun Angkatan untuk memulai pencarian.</h3>`;
         } else {
             btnCiv.className = 'neo-btn neo-bg-blue';
             btnMhs.className = 'neo-btn neo-bg-white';
-            input.placeholder = 'Masukkan NIP/NIDN/Nama/Ikatan Kerja (Cth: Dosen tetap)';
-            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIP, NIDN, Nama, atau Ikatan Kerja untuk memulai pencarian.</h3>`;
+            input.placeholder = 'Masukkan NIP/NIDN, Nama, atau Unit Kerja...';
+            document.getElementById('default-helper-text').innerHTML = `<h3 class="neo-heading-sm" style="color: var(--text-muted); font-size: clamp(1rem, 4vw, 1.2rem);">Silakan ketikkan NIP, NIDN, Nama, atau Unit Kerja untuk memulai pencarian.</h3>`;
         }
         
         input.value = '';
@@ -130,7 +142,7 @@
                     let d_tipe_url = searchMode; // Parameter URL spesifik (mhs / dosen / civitas)
 
                     if (searchMode === 'mhs') {
-                        d_id = item.nim || item.NIM || '-';
+                        d_id = item.nim || item.nim_profesi || item.nim_sarjana || item.NIM || '-';
                         for(let key in item) {
                             let k = key.toLowerCase();
                             if(k.includes('nama')) d_nama = item[key];
@@ -198,7 +210,7 @@
                 });
                 
                 let tipeTeks = searchMode === 'mhs' ? 'Mahasiswa' : 'Pegawai';
-                const resultHeader = `<div style="text-align:left; font-weight:800; font-size:1.1rem; color:var(--text-main); margin-bottom:-5px; padding-left:10px;">Menemukan ${json.data.length} Data ${tipeTeks}</div>`;
+                const resultHeader = `<div style="text-align:left; font-weight:800; font-size:1.1rem; color:var(--text-main); margin-bottom:15px; padding-left:10px;">Menemukan ${json.data.length} Data ${tipeTeks}</div>`;
                 
                 container.innerHTML = resultHeader + html;
             } else { throw new Error(); }
