@@ -181,16 +181,18 @@
                 <table class="neo-table" id="mhs-table">
                     <thead>
                         <tr class="neo-bg-green" id="mhs-thead-tr">
+                            <!-- Diisi Otomatis Berdasarkan Logika Custom Tampilan 7 KOLOM -->
                             <th>FOTO PROFIL</th>
                             <th>NAMA LENGKAP</th>
                             <th>STAMBUK SARJANA</th>
-                            <th>STAMBUK PROFESI / TAHUN ANGKATAN</th>
+                            <th>STAMBUK PROFESI</th>
+                            <th>ANGKATAN</th>
                             <th>ALAMAT</th>
                             <th>AKSI</th>
                         </tr>
                     </thead>
                     <tbody id="mhs-tbody">
-                        <tr><td colspan="6" class="text-center">Memuat database dari Redis...</td></tr>
+                        <tr><td colspan="7" class="text-center">Memuat database dari Redis...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -280,6 +282,7 @@
                 <table class="neo-table" id="pegawai-table">
                     <thead>
                         <tr class="neo-bg-yellow" id="pegawai-thead-tr">
+                            <!-- Generate Dinamis (Kombinasi / General fields) -->
                             <th>AKSI</th>
                         </tr>
                     </thead>
@@ -310,6 +313,7 @@
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <button class="neo-btn neo-bg-yellow" onclick="addBuilderField()">+ Tambah Field Baru</button>
+                    <!-- TOMBOL RESET DITAMBAHKAN DI SINI -->
                     <button class="neo-btn neo-bg-white" onclick="resetSchemaToDefault()">🔄 Reset Skema ke Default</button>
                     <button class="neo-btn neo-bg-blue" onclick="saveFormSchema()">💾 Simpan Skema Form</button>
                 </div>
@@ -1096,23 +1100,24 @@
             <th>FOTO PROFIL</th>
             <th>NAMA LENGKAP</th>
             <th>STAMBUK SARJANA</th>
-            <th>STAMBUK PROFESI / TAHUN ANGKATAN</th>
+            <th>STAMBUK PROFESI</th>
+            <th>ANGKATAN</th>
             <th>ALAMAT</th>
             <th>AKSI</th>
         `;
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Memuat database dari Redis... ⏳</td></tr>`;
         
         try {
             let apiUrl = window.location.origin === "null" ? 'https://bemkbmfkgumi.com/api/mhs' : '/api/mhs';
             const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
             const json = await res.json();
             if (json.success) { databaseMhs = json.data; renderDynamicTableMhs(databaseMhs); updateStatsMhs(); }
-        } catch (e) { tbody.innerHTML = `<tr><td colspan="6" class="text-center neo-bg-pink">Gagal koneksi server. Mode Lokal.</td></tr>`; }
+        } catch (e) { tbody.innerHTML = `<tr><td colspan="7" class="text-center neo-bg-pink">Gagal koneksi server. Mode Lokal.</td></tr>`; }
     }
 
     function renderDynamicTableMhs(dataArray) {
         const tbody = document.getElementById('mhs-tbody');
-        if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="font-weight:bold;">Data Kosong.</td></tr>`; return; }
+        if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="font-weight:bold;">Data Kosong.</td></tr>`; return; }
 
         let html = '';
         dataArray.forEach(mhs => {
@@ -1121,19 +1126,17 @@
             let imgSrc = foto !== '-' && foto !== '' ? foto : '/img/bemprofilmhs.png';
             
             let nama = mhs.nama || mhs.Nama || mhs['NAMA LENGKAP'] || '-';
-            let nimSarjana = mhs.nim_sarjana || mhs['STAMBUK/NIM SARJANA'] || '-';
-            
+            let nimSarjana = mhs.nim_sarjana || mhs['STAMBUK/NIM SARJANA'] || mhs.nim || mhs.NIM || '-';
             let nimProfesi = mhs.nim_profesi || mhs['STAMBUK/NIM PROFESI'] || '-';
             let angkatan = mhs.angkatan || mhs.Angkatan || mhs['TAHUN ANGKATAN'] || '-';
-            let stambukOrAngkatan = (nimProfesi !== '-' && nimProfesi !== '') ? nimProfesi : `Angkatan ${angkatan}`;
-            
             let alamat = mhs.alamat_makassar || mhs['ALAMAT DI MAKASSAR'] || mhs.alamat_daerah || mhs['ALAMAT DAERAH ASAL'] || '-';
 
             html += `<tr>
                 <td><img src="${imgSrc}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>
                 <td style="font-weight:700;">${nama}</td>
                 <td style="font-family:'Space Mono', monospace; font-weight:700;">${nimSarjana}</td>
-                <td style="font-weight:600;">${stambukOrAngkatan}</td>
+                <td style="font-family:'Space Mono', monospace; font-weight:700;">${nimProfesi}</td>
+                <td style="font-weight:600;">${angkatan}</td>
                 <td style="font-size:0.9rem;">${alamat}</td>
                 <td>
                     <button class="neo-btn neo-bg-yellow" style="padding: 5px 10px; font-size:0.8rem;" onclick='openDynamicModal("mhs", ${JSON.stringify(mhs).replace(/'/g, "&apos;")})'>✏️</button>
