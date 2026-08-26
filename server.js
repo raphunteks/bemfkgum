@@ -870,12 +870,11 @@ app.get('/sitemap.xml', async (req, res) => {
     <!-- ========================================= -->
     <!-- PUSAT INFORMASI & SUB-TAB (SPA ROUTING)   -->
     <!-- ========================================= -->
-    <url><loc>${domain}/informasi</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-    <url><loc>${domain}/informasi#proker</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/informasi#kalender</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/informasi#timeline</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/informasi#galeri</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/informasi#plasma</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi/proker</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
+    <url><loc>${domain}/informasi/kalender</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi/timeline</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi/galeri</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi/plasma</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
 
     <!-- ========================================= -->
     <!-- TENTANG KAMI & SUB-SECTION (SPA ROUTING)  -->
@@ -896,9 +895,7 @@ app.get('/sitemap.xml', async (req, res) => {
 
     <!-- ========================================= -->
     <!-- INDUK ROUTING KEGIATAN & DEPARTEMEN       -->
-    <!-- ========================================= -->
-    <url><loc>${domain}/proker-deskripsi</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>${domain}/proker-detail</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>`;
+    <!-- ========================================= -->`;
 
         if (Array.isArray(prokerData) && prokerData.length > 0) {
             xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (PROKER & DEPARTEMEN) -->`;
@@ -909,7 +906,7 @@ app.get('/sitemap.xml', async (req, res) => {
                     const itemLastMod = formatSitemapDate(p.startDate);
                     xmlUrls += `
     <url>
-        <loc>${domain}/proker-deskripsi/${escapeXml(slug)}</loc>
+        <loc>${domain}/informasi/proker/proker-deskripsi/${escapeXml(slug)}</loc>
         <lastmod>${itemLastMod}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
@@ -931,7 +928,7 @@ app.get('/sitemap.xml', async (req, res) => {
                     const itemLastMod = formatSitemapDate(k.tglMulai);
                     xmlUrls += `
     <url>
-        <loc>${domain}/proker-detail/${escapeXml(slug)}</loc>
+        <loc>${domain}/informasi/kalender/proker-detail/${escapeXml(slug)}</loc>
         <lastmod>${itemLastMod}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
