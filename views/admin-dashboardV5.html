@@ -921,7 +921,7 @@
             if(data.success) {
                 showToast("✅ Berhasil disimpan secara Realtime!");
                 closeDynamicModal();
-                if(tipe === 'mhs') loadAllMhs(); else loadAllPegawai(); 
+                if(tipe === 'mhs') { loadAllMhs(); updateStatsMhs(); } else { loadAllPegawai(); updateStatsPegawai(); }
             } else { showCustomAlert("Gagal menyimpan: " + data.message); }
         } catch (error) {
             showToast("✅ Simulasi: Data tersimpan lokal.");
@@ -930,10 +930,12 @@
                 if(isEditMode && currentEditId && currentEditId !== uniqueId) databaseMhs = databaseMhs.filter(m => m.nim !== currentEditId);
                 if(!isEditMode || (currentEditId && currentEditId !== uniqueId)) databaseMhs.push(payload);
                 loadAllMhs();
+                updateStatsMhs();
             } else {
                 if(isEditMode && currentEditId && currentEditId !== uniqueId) databasePegawai = databasePegawai.filter(p => p.nip !== currentEditId);
                 if(!isEditMode || (currentEditId && currentEditId !== uniqueId)) databasePegawai.push(payload);
                 loadAllPegawai();
+                updateStatsPegawai();
             }
         }
         btn.innerText = "💾 Simpan Data"; btn.disabled = false;
@@ -1045,8 +1047,8 @@
                 document.getElementById('excel-preview-section').style.display = 'none';
                 document.getElementById('file-excel').value = '';
                 excelDataPayload = [];
-                if(activeType === 'mhs') { loadAllMhs(); switchTab('list'); }
-                else { loadAllPegawai(); switchTab('list-civitas'); }
+                if(activeType === 'mhs') { loadAllMhs(); updateStatsMhs(); switchTab('list'); }
+                else { loadAllPegawai(); updateStatsPegawai(); switchTab('list-civitas'); }
             } else showCustomAlert("Gagal: " + data.message);
         } catch (e) {
             showToast("🎉 Simulasi: Sinkronisasi lokal sukses.");
@@ -1328,7 +1330,11 @@
                 let apiUrl = window.location.origin === "null" ? `https://bemkbmfkgumi.com/api/${basePathType}/${id}` : `/api/${basePathType}/${id}`;
                 const res = await fetch(apiUrl, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` } });
                 const data = await res.json();
-                if(data.success) { showToast("🗑️ Data dihapus."); if(basePathType === 'mhs') loadAllMhs(); else loadAllPegawai(); }
+                if(data.success) { 
+                    showToast("🗑️ Data dihapus."); 
+                    if(basePathType === 'mhs') { loadAllMhs(); updateStatsMhs(); } 
+                    else { loadAllPegawai(); updateStatsPegawai(); } 
+                }
             } catch (e) { showToast("🗑️ Simulasi: Data dihapus."); }
         }
     }
