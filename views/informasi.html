@@ -1,61 +1,162 @@
+<!-- FILE: views/informasi.html --->
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SUPER UPGRADE FIX: Mencegah Flash of Incorrect Theme (FOIT) -->
-    <script>
-        (function() {
-            try {
-                var savedTheme = localStorage.getItem('theme');
-                if (savedTheme === 'dark') {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                } else if (savedTheme === 'light') {
-                    document.documentElement.removeAttribute('data-theme');
-                }
-            } catch (e) {}
-        })();
-    </script>
-    
     <!-- =========================================================================
-         SEO EXPERT 100% UPGRADE (GSC GOLD STANDARD - DYNAMIC TAB ROUTING)
-         Di-render oleh Express EJS untuk menghasilkan Meta Unik tiap Tab!
+         SUPER BIG UPGRADE: SSR DYNAMIC SEO METADATA UNTUK TAB ROUTING BARU
          ========================================================================= -->
     <% 
-        let tabSlug = typeof currentTab !== 'undefined' ? currentTab : 'proker';
-        let sUrl = typeof siteUrl !== 'undefined' ? siteUrl : 'https://bemkbmfkgumi.com';
-        let pageUrl = sUrl + "/informasi/" + tabSlug;
-
-        let pageTitle = "Program Kerja Departemen | BEM KBMFKG UMI";
-        let pageDesc = "Jelajahi seluruh struktur dan rincian program kerja departemen BEM KBMFKG UMI untuk periode ini.";
+        let currentTab = (typeof activeTab !== 'undefined' && activeTab) ? activeTab : 'proker';
         
-        if (tabSlug === 'kalender') {
-            pageTitle = "Kalender Kegiatan (Event) | BEM KBMFKG UMI";
-            pageDesc = "Jadwal dan agenda kegiatan terdekat dari BEM KBMFKG UMI. Ikuti event dan pendaftaran kegiatan terbaru kami.";
-        } else if (tabSlug === 'timeline') {
-            pageTitle = "Timeline Organisasi | BEM KBMFKG UMI";
-            pageDesc = "Peta linimasa (timeline) sejarah dan agenda besar BEM KBMFKG UMI sepanjang periode.";
-        } else if (tabSlug === 'galeri') {
-            pageTitle = "Galeri Dokumentasi | BEM KBMFKG UMI";
-            pageDesc = "Arsip galeri foto dan dokumentasi kegiatan aksi nyata BEM KBMFKG UMI.";
-        } else if (tabSlug === 'plasma') {
-            pageTitle = "Layanan PLASMA (Aspirasi) | BEM KBMFKG UMI";
-            pageDesc = "Platform Aspirasi Mahasiswa (PLASMA). Suarakan kritik, saran, dan ide Anda demi kemajuan kampus.";
-        }
+        // Konfigurasi SEO Terpusat Berdasarkan URL /informasi/:tab
+        const tabSEOConfig = {
+            'proker': {
+                title: 'Program Kerja (Work Programs) | BEM KBMFKG UMI',
+                desc: 'Daftar lengkap Program Kerja (Work Programs) dari seluruh kementerian dan departemen BEM KBMFKG UMI.',
+                bcName: 'Program Kerja'
+            },
+            'kalender': {
+                title: 'Kalender Kegiatan (Event Calendar) | BEM KBMFKG UMI',
+                desc: 'Kalender resmi agenda kegiatan (Event Calendar) dan jadwal pelaksanaan program kerja BEM KBMFKG UMI secara lengkap.',
+                bcName: 'Kalender Kegiatan'
+            },
+            'timeline': {
+                title: 'Timeline Pergerakan & Proker | BEM KBMFKG UMI',
+                desc: 'Timeline perjalanan program kerja dan rekam jejak agenda pergerakan BEM KBMFKG UMI selama satu periode kepengurusan.',
+                bcName: 'Timeline Proker'
+            },
+            'galeri': {
+                title: 'Galeri Dokumentasi (Gallery) | BEM KBMFKG UMI',
+                desc: 'Galeri dokumentasi arsip kegiatan, acara, dan pengabdian yang telah dilaksanakan oleh BEM KBMFKG UMI.',
+                bcName: 'Galeri Dokumentasi'
+            },
+            'plasma': {
+                title: 'Layanan PLASMA (Aspirasi Mahasiswa) | BEM KBMFKG UMI',
+                desc: 'Pusat Layanan Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk menyampaikan saran, kritik, dan pengaduan kepada BEM KBMFKG UMI.',
+                bcName: 'Layanan PLASMA'
+            }
+        };
+
+        const currentSEO = tabSEOConfig[currentTab] || tabSEOConfig['proker'];
+        const fullUrl = (typeof siteUrl !== 'undefined' ? siteUrl : 'https://bemkbmfkgumi.com') + '/informasi/' + currentTab;
     %>
 
-    <title><%= pageTitle %></title>
+    <title><%= currentSEO.title %></title>
     
+    <!-- SEO EXPERT 100% UPGRADE & CANONICAL -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
-    <meta name="description" content="<%= pageDesc %>">
-    <meta name="keywords" content="Informasi BEM FKG UMI, Work Programs, Event Calendar, Student Aspirations, Proker BEM FKG, Kalender BEM FKG UMI, Aspirasi Mahasiswa FKG UMI, PLASMA BEM FKG">
+    <meta name="description" id="metaDesc" content="<%= currentSEO.desc %>">
+    <meta name="keywords" content="Informasi BEM FKG UMI, Information Center BEM KBMFKG UMI, Work Programs, Event Calendar, Student Aspirations, Proker BEM FKG, Kalender BEM FKG UMI, Aspirasi Mahasiswa FKG UMI, PLASMA BEM FKG, Universitas Muslim Indonesia">
     <meta name="author" content="BEM KBMFKG UMI">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" id="metaCanonical" href="<%= fullUrl %>">
     
-    <!-- TAG KANONIS BERSIH (ABSOLUTE DEEP LINK) -->
-    <link rel="canonical" id="canonicalUrl" href="<%= pageUrl %>">
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" id="ogUrl" content="<%= fullUrl %>">
+    <meta property="og:site_name" content="BEM KBMFKG UMI">
+    <meta property="og:title" id="ogTitle" content="<%= currentSEO.title %>">
+    <meta property="og:description" id="ogDesc" content="<%= currentSEO.desc %>">
+    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+    <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
     
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" id="twUrl" content="<%= fullUrl %>">
+    <meta property="twitter:title" id="twTitle" content="<%= currentSEO.title %>">
+    <meta property="twitter:description" id="twDesc" content="<%= currentSEO.desc %>">
+    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+
+    <!-- ADVANCED JSON-LD Schema.org (@graph Format - ENTERPRISE SITELINKS INCLUDED) -->
+    <script type="application/ld+json" id="structuredData">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "@id": "<%= fullUrl %>/#webpage",
+          "url": "<%= fullUrl %>",
+          "name": "<%= currentSEO.title %>",
+          "description": "<%= currentSEO.desc %>",
+          "inLanguage": "id-ID",
+          "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://bemkbmfkgumi.com/#organization",
+          "name": "BEM KBMFKG UMI",
+          "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+          "url": "https://bemkbmfkgumi.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Beranda",
+              "item": "https://bemkbmfkgumi.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "<%= currentSEO.bcName %>",
+              "item": "<%= fullUrl %>"
+            }
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "@id": "https://bemkbmfkgumi.com/informasi/#sitelinks",
+          "name": "Informasi Tab Navigation",
+          "itemListElement": [
+            {
+              "@type": "SiteNavigationElement",
+              "position": 1,
+              "name": "Program Kerja",
+              "description": "Daftar lengkap Program Kerja dari seluruh kementerian dan departemen BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/informasi/proker"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 2,
+              "name": "Kalender Kegiatan",
+              "description": "Kalender resmi agenda kegiatan dan jadwal pelaksanaan program kerja.",
+              "url": "https://bemkbmfkgumi.com/informasi/kalender"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 3,
+              "name": "Timeline Proker",
+              "description": "Timeline perjalanan program kerja dan rekam jejak agenda pergerakan.",
+              "url": "https://bemkbmfkgumi.com/informasi/timeline"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 4,
+              "name": "Galeri Dokumentasi",
+              "description": "Galeri dokumentasi arsip kegiatan, acara, dan pengabdian BEM KBMFKG UMI.",
+              "url": "https://bemkbmfkgumi.com/informasi/galeri"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 5,
+              "name": "Layanan PLASMA",
+              "description": "Pusat Layanan Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk saran dan kritik.",
+              "url": "https://bemkbmfkgumi.com/informasi/plasma"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
     <!-- FIX RENDER BLOCKING -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,102 +165,14 @@
     <link rel="preload" href="/css/main.css" as="style">
     <link rel="stylesheet" href="/css/main.css">
     
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" id="ogUrl" content="<%= pageUrl %>">
-    <meta property="og:site_name" content="BEM KBMFKG UMI">
-    <meta property="og:title" id="ogTitle" content="<%= pageTitle %>">
-    <meta property="og:description" id="ogDesc" content="<%= pageDesc %>">
-    <meta property="og:image" content="<%= sUrl %>/img/bemfkgumi.png">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" id="twUrl" content="<%= pageUrl %>">
-    <meta property="twitter:title" id="twTitle" content="<%= pageTitle %>">
-    <meta property="twitter:description" id="twDesc" content="<%= pageDesc %>">
-    <meta property="twitter:image" content="<%= sUrl %>/img/bemfkgumi.png">
-
-    <!-- JSON-LD SCHEMA DYNAMIC TABS -->
-    <script type="application/ld+json" id="structuredData">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "CollectionPage",
-          "@id": "<%= pageUrl %>#webpage",
-          "url": "<%= pageUrl %>",
-          "name": "<%= pageTitle %>",
-          "description": "<%= pageDesc %>",
-          "inLanguage": "id-ID",
-          "publisher": { "@id": "<%= sUrl %>/#organization" }
-        },
-        {
-          "@type": "Organization",
-          "@id": "<%= sUrl %>/#organization",
-          "name": "BEM KBMFKG UMI",
-          "url": "<%= sUrl %>/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "<%= sUrl %>/img/bemfkgumi.png"
-          }
-        },
-        {
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= sUrl %>/" },
-            { "@type": "ListItem", "position": 2, "name": "Pusat Informasi", "item": "<%= sUrl %>/informasi/proker" },
-            { "@type": "ListItem", "position": 3, "name": "<%= tabSlug.charAt(0).toUpperCase() + tabSlug.slice(1) %>", "item": "<%= pageUrl %>" }
-          ]
-        },
-        {
-          "@type": "ItemList",
-          "@id": "<%= sUrl %>/informasi/#sitelinks",
-          "name": "Informasi Tab Navigation",
-          "itemListElement": [
-            {
-              "@type": "SiteNavigationElement",
-              "position": 1,
-              "name": "Program Kerja",
-              "description": "Daftar lengkap Program Kerja dari seluruh kementerian.",
-              "url": "<%= sUrl %>/informasi/proker"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 2,
-              "name": "Kalender Kegiatan",
-              "description": "Kalender resmi agenda kegiatan BEM FKG UMI.",
-              "url": "<%= sUrl %>/informasi/kalender"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 3,
-              "name": "Timeline Proker",
-              "description": "Timeline perjalanan program kerja BEM FKG UMI.",
-              "url": "<%= sUrl %>/informasi/timeline"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 4,
-              "name": "Galeri Dokumentasi",
-              "description": "Galeri dokumentasi arsip kegiatan BEM FKG UMI.",
-              "url": "<%= sUrl %>/informasi/galeri"
-            },
-            {
-              "@type": "SiteNavigationElement",
-              "position": 5,
-              "name": "Layanan PLASMA",
-              "description": "Pusat Layanan Aspirasi Mahasiswa (PLASMA).",
-              "url": "<%= sUrl %>/informasi/plasma"
-            }
-          ]
-        }
-      ]
-    }
-    </script>
-
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <script src="/js/protect-devtools.js"></script>
+
+    <!-- Server-Side Variable Injection to JS -->
+    <script>
+        const INITIAL_ACTIVE_TAB = "<%= currentTab %>";
+    </script>
 </head>
 <body>
     <%- include('partials/header.html') %>
@@ -171,22 +184,22 @@
         </div>
 
         <nav class="tab-nav reveal" id="tabNavMenu" style="transition-delay: 0.1s;" role="tablist">
-            <button class="tab-btn <%= tabSlug === 'proker' ? 'active' : '' %>" onclick="switchTab('proker')" role="tab">Program Kerja</button>
-            <button class="tab-btn <%= tabSlug === 'kalender' ? 'active' : '' %>" onclick="switchTab('kalender')" role="tab">Kalender Proker</button>
-            <button class="tab-btn <%= tabSlug === 'timeline' ? 'active' : '' %>" onclick="switchTab('timeline')" role="tab">Timeline Proker</button>
-            <button class="tab-btn <%= tabSlug === 'galeri' ? 'active' : '' %>" onclick="switchTab('galeri')" role="tab">Dokumentasi</button>
-            <button class="tab-btn <%= tabSlug === 'plasma' ? 'active' : '' %>" onclick="switchTab('plasma')" role="tab">PLASMA (Aspirasi)</button>
+            <button class="tab-btn active" onclick="switchTab('proker')" role="tab" aria-selected="true" aria-label="Lihat Program Kerja Departemen">Program Kerja</button>
+            <button class="tab-btn" onclick="switchTab('kalender')" role="tab" aria-selected="false" aria-label="Lihat Kalender Program Kerja">Kalender Proker</button>
+            <button class="tab-btn" onclick="switchTab('timeline')" role="tab" aria-selected="false" aria-label="Lihat Timeline Proker">Timeline Proker</button>
+            <button class="tab-btn" onclick="switchTab('galeri')" role="tab" aria-selected="false" aria-label="Lihat Dokumentasi Kegiatan">Dokumentasi</button>
+            <button class="tab-btn" onclick="switchTab('plasma')" role="tab" aria-selected="false" aria-label="Form Aspirasi PLASMA">PLASMA (Aspirasi)</button>
         </nav>
 
-        <!-- TAB 1: PROKER -->
-        <section id="proker" class="tab-content <%= tabSlug === 'proker' ? 'active' : '' %>" role="tabpanel">
+        <!-- ================= SUPER UPGRADE: TAB 1 PROKER (APPLE GLASSMORPHISM) ================= -->
+        <section id="proker" class="tab-content active" role="tabpanel">
             <div id="prokerContainer" class="proker-grid-apple">
                 <div style="text-align:center; grid-column: 1/-1; color: var(--text-muted); padding: 50px 0;">Mensinkronisasi data 9 Departemen...</div>
             </div>
         </section>
 
         <!-- TAB 2: KALENDER -->
-        <section id="kalender" class="tab-content <%= tabSlug === 'kalender' ? 'active' : '' %>" role="tabpanel">
+        <section id="kalender" class="tab-content" role="tabpanel">
             <div class="calendar-wrapper">
                 <div class="glass-card" style="padding: 30px; border-top: 4px solid var(--accent-neon); align-self: start;">
                     <div class="calendar-header" style="margin-bottom: 30px;">
@@ -199,7 +212,9 @@
                 
                 <div class="agenda-list">
                     <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;" id="agendaSubtitle">DAFTAR AGENDA</div>
-                    <h3 style="border-bottom: 1px solid var(--border-light); padding-bottom: 15px; margin-bottom: 20px; font-size: 1.5rem;" id="agendaTglFormat">Semua Agenda Bulan Ini</h3>
+                    <h3 style="border-bottom: 1px solid var(--border-light); padding-bottom: 15px; margin-bottom: 20px; font-size: 1.5rem;" id="agendaTglFormat">
+                        Semua Agenda Bulan Ini
+                    </h3>
                     <div id="agendaContent" aria-live="polite">
                         <div style="text-align:center;">Memuat agenda...</div>
                     </div>
@@ -208,7 +223,7 @@
         </section>
 
         <!-- TAB 3: TIMELINE PROKER VERTICAL -->
-        <section id="timeline" class="tab-content <%= tabSlug === 'timeline' ? 'active' : '' %>" role="tabpanel">
+        <section id="timeline" class="tab-content" role="tabpanel">
             <div class="reveal" style="text-align: center; margin-bottom: 40px;">
                 <h2 style="font-size: 2.5rem; color: var(--text-light);">Timeline <span style="color: var(--accent-neon);">Program Kerja</span></h2>
                 <p style="color: var(--text-muted); margin-top: 10px;">Perjalanan program kerja dan agenda BEM selama satu periode kepengurusan.</p>
@@ -220,12 +235,12 @@
         </section>
 
         <!-- TAB 4: DOKUMENTASI (GALERI) -->
-        <section id="galeri" class="tab-content <%= tabSlug === 'galeri' ? 'active' : '' %>" role="tabpanel">
+        <section id="galeri" class="tab-content" role="tabpanel">
             <div class="gallery-grid" id="galleryContainer"></div>
         </section>
 
         <!-- TAB 5: PLASMA (ASPIRASI) -->
-        <section id="plasma" class="tab-content <%= tabSlug === 'plasma' ? 'active' : '' %>" role="tabpanel">
+        <section id="plasma" class="tab-content" role="tabpanel">
             <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-top: 3px solid var(--accent-neon);">
                 <h2 style="color: var(--accent-neon); text-align: center; margin-bottom: 10px; font-size: 2.5rem;">P.L.A.S.M.A</h2>
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Pusat Layanan Aspirasi Mahasiswa</p>
@@ -266,7 +281,7 @@
                         <label for="setuju" style="color: var(--text-light); font-size: 0.95rem; line-height: 1.6; cursor: pointer;">Saya bersedia dihubungi oleh pihak Admin BEM FKG UMI apabila diperlukan klarifikasi lebih lanjut mengenai aspirasi ini <span style="color:#ef4444">*</span></label>
                     </div>
             
-                    <button type="submit" class="holo-btn" style="width: 100%; font-size: 1.1rem; padding: 16px;" id="btnSubmitAsp">Kirim Aspirasi</button>
+                    <button type="submit" class="holo-btn" style="width: 100%; font-size: 1.1rem; padding: 16px;">Kirim Aspirasi</button>
                 </form>
                 <div id="plasmaResult" style="margin-top:20px; text-align:center; display:none; padding:15px; border-radius:10px; font-weight: bold;" aria-live="polite"></div>
             </div>
@@ -289,39 +304,105 @@
         </div>
     </div>
 
-    <!-- UI Toast Notifikasi -->
-    <div id="shareToast" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #10b981; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 0.9rem; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.3s; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);">Notifikasi</div>
-
     <%- include('partials/footer.html') %>
 
     <script>
-        // Menerima nilai server-side tab dari EJS
-        const serverTab = "<%= typeof tabSlug !== 'undefined' ? tabSlug : 'proker' %>";
-        let isDataLoaded = false;
-        
+        // ================= GRACEFUL DEGRADATION: DATA DUMMY JIKA API ERROR =================
+        const FALLBACK_PROKER = [
+            {
+                id: "pubmed",
+                dept: "DEPT. INFOCOM",
+                fotoPengurus: "/img/bemfkgumi.png", 
+                shortDesc: "PubMed (PublikasiMedia Elektronik & Media Cetak) BukuKBMFKG-UMI"
+            }
+        ];
+
         let kalenderData = [];
         let curDate = new Date(); 
         const monthNames = ["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"];
         const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-
-        window.onload = function() {
-            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
-            loadCMSData(); 
+        
+        // ================= BIG UPGRADE: DYNAMIC SEO METADATA CONFIG UNTUK SPA NAVIGATION =================
+        const tabSEO = {
+            'proker': {
+                title: 'Program Kerja (Work Programs) | BEM KBMFKG UMI',
+                desc: 'Daftar lengkap Program Kerja (Work Programs) dari seluruh kementerian dan departemen BEM KBMFKG UMI.',
+                bcName: 'Program Kerja'
+            },
+            'kalender': {
+                title: 'Kalender Kegiatan (Event Calendar) | BEM KBMFKG UMI',
+                desc: 'Kalender resmi agenda kegiatan (Event Calendar) dan jadwal pelaksanaan program kerja BEM KBMFKG UMI secara lengkap.',
+                bcName: 'Kalender Kegiatan'
+            },
+            'timeline': {
+                title: 'Timeline Pergerakan & Proker | BEM KBMFKG UMI',
+                desc: 'Timeline perjalanan program kerja dan rekam jejak agenda pergerakan BEM KBMFKG UMI selama satu periode kepengurusan.',
+                bcName: 'Timeline Proker'
+            },
+            'galeri': {
+                title: 'Galeri Dokumentasi (Gallery) | BEM KBMFKG UMI',
+                desc: 'Galeri dokumentasi arsip kegiatan, acara, dan pengabdian yang telah dilaksanakan oleh BEM KBMFKG UMI.',
+                bcName: 'Galeri Dokumentasi'
+            },
+            'plasma': {
+                title: 'Layanan PLASMA (Aspirasi Mahasiswa) | BEM KBMFKG UMI',
+                desc: 'Pusat Layanan Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk menyampaikan saran, kritik, dan pengaduan kepada BEM KBMFKG UMI.',
+                bcName: 'Layanan PLASMA'
+            }
         };
 
-        // =========================================================================
-        // HISTORY API: SPA TAB ROUTING (SEO GOLD STANDARD)
-        // =========================================================================
-        window.addEventListener('popstate', function(event) { 
-            const stateTab = event.state && event.state.tab ? event.state.tab : serverTab;
-            switchTabLogic(stateTab, false);
+        // Fungsi Update SEO di Client saat user menekan Tab (Tanpa Reload)
+        function updateClientSEO(tabId) {
+            const seo = tabSEO[tabId];
+            if(!seo) return;
+
+            // UBAH JADI HIERARCHICAL CLEAN URL BUKAN HASHTAG
+            const pageUrl = `https://bemkbmfkgumi.com/informasi/${tabId}`;
+
+            document.title = seo.title;
+            document.getElementById('metaDesc')?.setAttribute('content', seo.desc);
+            document.getElementById('metaCanonical')?.setAttribute('href', pageUrl);
+            
+            document.getElementById('ogTitle')?.setAttribute('content', seo.title);
+            document.getElementById('ogDesc')?.setAttribute('content', seo.desc);
+            document.getElementById('ogUrl')?.setAttribute('content', pageUrl);
+            
+            document.getElementById('twTitle')?.setAttribute('content', seo.title);
+            document.getElementById('twDesc')?.setAttribute('content', seo.desc);
+            document.getElementById('twUrl')?.setAttribute('content', pageUrl);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            let resData = { proker: [], dokumentasi: [], kalender: [] };
+            
+            try {
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                const req = await fetch(apiUrl);
+                if (req.ok) {
+                    resData = await req.json();
+                } else {
+                    throw new Error("Fetch Error");
+                }
+            } catch (err) { 
+                console.warn("⚠️ API Error, menggunakan data lokal (Fallback) untuk mencegah layout rusak."); 
+                resData.proker = FALLBACK_PROKER; 
+            }
+            
+            renderProker(resData.proker);
+            renderDokumentasi(resData.dokumentasi);
+            kalenderData = resData.kalender || [];
+            
+            renderCalendar();
+            renderTimelineProker();
+
+            // SINKRONISASI INITIAL TAB DARI SERVER (EJS)
+            switchTab(INITIAL_ACTIVE_TAB, true);
         });
 
-        function switchTab(t) {
-            switchTabLogic(t, true);
-        }
-        
-        function switchTabLogic(t, pushToHistory) {
+        // ================= SUPER UPGRADE: PUSH STATE HIERARCHY ROUTING =================
+        function switchTab(t, isInitialLoad = false) {
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
                 btn.setAttribute('aria-selected', 'false');
@@ -340,70 +421,31 @@
                 targetSection.style.opacity = '0';
                 setTimeout(() => { targetSection.style.opacity = '1'; }, 50);
 
-                if (pushToHistory && window.location.pathname !== '/informasi/' + t) {
-                    window.history.pushState({ tab: t }, null, '/informasi/' + t);
+                // HISTORY PUSH STATE MENGGUNAKAN CLEAN URL HIRARKI (/informasi/proker)
+                if(!isInitialLoad) {
+                    window.history.pushState({ tab: t }, '', '/informasi/' + t);
+                    updateClientSEO(t);
                 }
-                
-                updateSEOClientSide(t);
 
                 if(t === 'kalender') { renderCalendar(); tampilkanAgendaSebulan(); }
             }
         }
 
-        // ================= BIG UPGRADE: DYNAMIC SEO METADATA CONFIG =================
-        const tabSEO = {
-            'proker': { title: 'Program Kerja (Work Programs) | BEM KBMFKG UMI', desc: 'Daftar lengkap Program Kerja (Work Programs) dari seluruh departemen.' },
-            'kalender': { title: 'Kalender Kegiatan (Event Calendar) | BEM KBMFKG UMI', desc: 'Kalender resmi agenda kegiatan (Event Calendar) BEM KBMFKG UMI.' },
-            'timeline': { title: 'Timeline Pergerakan & Proker | BEM KBMFKG UMI', desc: 'Timeline perjalanan program kerja BEM KBMFKG UMI.' },
-            'galeri': { title: 'Galeri Dokumentasi (Gallery) | BEM KBMFKG UMI', desc: 'Galeri dokumentasi arsip kegiatan BEM KBMFKG UMI.' },
-            'plasma': { title: 'Layanan PLASMA (Aspirasi Mahasiswa) | BEM KBMFKG UMI', desc: 'Pusat Layanan Aspirasi Mahasiswa (PLASMA). Wadah interaktif untuk saran dan kritik.' }
-        };
-
-        function updateSEOClientSide(tabId) {
-            const seo = tabSEO[tabId];
-            if(!seo) return;
-
-            const pageUrl = window.location.origin + `/informasi/${tabId}`;
-
-            document.title = seo.title;
-            document.querySelector('meta[name="description"]')?.setAttribute('content', seo.desc);
-            document.getElementById('canonicalUrl')?.setAttribute('href', pageUrl);
-            
-            document.getElementById('ogTitle')?.setAttribute('content', seo.title);
-            document.getElementById('ogDesc')?.setAttribute('content', seo.desc);
-            document.getElementById('ogUrl')?.setAttribute('content', pageUrl);
-            
-            document.getElementById('twTitle')?.setAttribute('content', seo.title);
-            document.getElementById('twDesc')?.setAttribute('content', seo.desc);
-            document.getElementById('twUrl')?.setAttribute('content', pageUrl);
-        }
-
-        // =========================================================================
-        // DATA FETCHING & RENDERING (LOKAL API)
-        // =========================================================================
-        async function loadCMSData() {
-            if (isDataLoaded) return;
-            try {
-                let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
-                
-                const req = await fetch(apiUrl);
-                if (!req.ok) throw new Error();
-                const resData = await req.json();
-                
-                renderProker(resData.proker || []);
-                kalenderData = resData.kalender || [];
-                renderDokumentasi(resData.dokumentasi || []);
-                
-                if (serverTab === 'kalender') { renderCalendar(); tampilkanAgendaSebulan(); }
-                renderTimelineProker();
-                
-                isDataLoaded = true;
-            } catch (e) {
-                console.warn("⚠️ API Error, menggunakan data kosong sebagai Fallback.");
-                document.getElementById('prokerContainer').innerHTML = '<div style="text-align:center; grid-column: 1/-1; color: #ef4444; padding: 50px 0;">Gagal memuat data dari server. Pastikan koneksi internet stabil.</div>';
+        // TANGKAP TOMBOL BACK BROWSER (POPSTATE)
+        window.addEventListener('popstate', (event) => {
+            if(event.state && event.state.tab) {
+                switchTab(event.state.tab, true);
+                updateClientSEO(event.state.tab);
+            } else {
+                // Fallback dengan memecah URL Pathname
+                const pathParts = window.location.pathname.split('/');
+                const currentUrlTab = pathParts[2] || 'proker';
+                if (tabSEO[currentUrlTab]) {
+                    switchTab(currentUrlTab, true);
+                    updateClientSEO(currentUrlTab);
+                }
             }
-        }
+        });
 
         // ================= RENDER DEPARTEMEN GLASSMORPHISM =================
         function renderProker(prokerData) {
@@ -414,16 +456,16 @@
                 prokerData.forEach(p => {
                     const bgImg = p.fotoPengurus || '/img/bemfkgumi.png';
                     const desc = p.shortDesc || 'Deskripsi program kerja departemen akan segera diperbarui.';
-                    const slugUrl = p.slug || p.id;
-                    // HIERARCHICAL SEO URL
-                    const targetUrl = `/informasi/proker/proker-deskripsi/${slugUrl}`;
+                    
+                    // URL BARU (HIERARKIS 100% GSC VALID)
+                    const targetUrl = `/informasi/proker/proker-deskripsi/${p.slug || p.id}`;
 
                     pCont.innerHTML += `
                         <div class="proker-card-apple reveal active" 
                              style="aspect-ratio: 3/2; width: 100%; max-width: 900px; margin: 0 auto; display: block; position: relative; overflow: hidden; border-radius: 24px; box-shadow: 0 15px 35px var(--card-shadow); cursor: pointer;" 
                              onclick="window.location.href='${targetUrl}'" tabindex="0" role="button" aria-label="Lihat detail program kerja departemen ${p.dept}" onkeydown="if(event.key==='Enter') window.location.href='${targetUrl}'">
                             
-                            <img src="${bgImg}" alt="Foto Pengurus ${p.dept}" class="pca-bg-img" loading="lazy" width="900" height="600" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;" onerror="this.onerror=null; this.src='/img/bemfkgumi.png';">
+                            <img src="${bgImg}" alt="Foto Pengurus ${p.dept}" class="pca-bg-img" loading="lazy" width="900" height="600" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
                             <div class="pca-default-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); z-index: 2;"></div>
                             
                             <div class="pca-default-content" style="position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; transition: transform 0.4s ease, opacity 0.4s ease;">
@@ -457,7 +499,7 @@
                 window.globalDocData = docData; 
                 docData.forEach((d, i) => {
                     const fallbackImg = d.foto ? d.foto : '/img/bemfkgumi.png';
-                    gCont.innerHTML += `<div class="gallery-card" onclick="openDoc(${i})"><div style="width: 100%; height: 100%; background: var(--bg-dark-overlay); display:flex; align-items:center; justify-content:center;"><img src="${fallbackImg}" class="gallery-img" alt="${d.judul}" loading="lazy" width="300" height="225" onerror="this.onerror=null; this.src='/img/bemfkgumi.png';"></div><div class="gallery-info" style="background: linear-gradient(to top, var(--bg-dark-heavy), transparent);"><h4 style="color: var(--accent-neon);">${d.judul}</h4><span style="font-size:0.85rem; color: var(--text-muted);">${formatTgl(d.tanggal)}</span></div></div>`;
+                    gCont.innerHTML += `<div class="gallery-card" onclick="openDoc(${i})"><div style="width: 100%; height: 100%; background: var(--bg-dark-overlay); display:flex; align-items:center; justify-content:center;"><img src="${fallbackImg}" class="gallery-img" alt="${d.judul}" loading="lazy" width="300" height="225"></div><div class="gallery-info" style="background: linear-gradient(to top, var(--bg-dark-heavy), transparent);"><h4 style="color: var(--accent-neon);">${d.judul}</h4><span style="font-size:0.85rem; color: var(--text-muted);">${formatTgl(d.tanggal)}</span></div></div>`;
                 });
             } else { gCont.innerHTML = `<div style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Belum ada dokumentasi.</div>`; }
         }
@@ -558,10 +600,9 @@
                 events.sort((a,b) => new Date(b.tglMulai) - new Date(a.tglMulai));
                 events.forEach(e => { 
                     const status = getAgendaStatus(e.tglMulai, e.tglSelesai);
-                    const slugUrl = e.slug || e.id;
-                    // HIERARCHICAL SEO URL
-                    const targetUrl = `/informasi/kalender/proker-detail/${slugUrl}`;
-                    
+                    // URL BARU (HIERARKIS 100% GSC VALID UNTUK KALENDER)
+                    const targetUrl = `/informasi/kalender/proker-detail/${e.slug || e.id}`;
+
                     cont.innerHTML += `
                     <div class="agenda-card">
                         <div class="agenda-card-header">
@@ -579,6 +620,7 @@
             }
         }
 
+        // ================= TIMELINE PROKER (URL BARU) =================
         function renderTimelineProker() {
             const cont = document.getElementById('timelineProkerContainer');
             cont.innerHTML = '';
@@ -594,9 +636,6 @@
                 const status = getAgendaStatus(e.tglMulai, e.tglSelesai);
                 const formatWaktu = formatTglRange(e.tglMulai, e.tglSelesai);
                 const bannerImg = e.banner || '/img/bemfkgumi.png';
-                const slugUrl = e.slug || e.id;
-                // HIERARCHICAL SEO URL
-                const targetUrl = `/informasi/timeline/proker-detail/${slugUrl}`;
                 
                 let shortDesc = e.deskripsi ? e.deskripsi.replace(/\n/g, ' ') : 'Tidak ada deskripsi singkat untuk program kerja ini.';
                 if(shortDesc.length > 110) shortDesc = shortDesc.substring(0, 110) + '...';
@@ -605,13 +644,16 @@
                 if(status.text.includes("BERLANGSUNG")) badgeStyle = "background: #2563eb; color: #ffffff; border: 1px solid #60a5fa;";
                 else if(status.text.includes("HADIR")) badgeStyle = "background: var(--accent-neon); color: #000000; border: 1px solid var(--accent-glow);";
 
+                // URL BARU (HIERARKIS 100% GSC VALID UNTUK TIMELINE)
+                const targetUrl = `/informasi/timeline/proker-detail/${e.slug || e.id}`;
+
                 cont.innerHTML += `
                     <div class="v-timeline-item reveal active" style="transition-delay: ${idx * 0.15}s">
                         <div class="v-timeline-dot"></div>
                         <div class="v-timeline-card">
                             <div class="v-tl-banner">
                                 <div class="v-tl-badge" style="${badgeStyle}">${status.text}</div>
-                                <img src="${bannerImg}" alt="Banner ${e.nama}" width="400" height="170" loading="lazy" onerror="this.onerror=null; this.src='/img/bemfkgumi.png';">
+                                <img src="${bannerImg}" alt="Banner ${e.nama}" width="400" height="170" loading="lazy">
                             </div>
                             <div class="v-tl-meta">
                                 <span style="color: var(--accent-neon);">${e.dept || 'BEM KBMFKG UMI'}</span>
@@ -628,9 +670,10 @@
             cont.innerHTML += `<div style="clear:both;" aria-hidden="true"></div>`;
         }
 
+        // ================= PLASMA SUBMIT =================
         document.getElementById('plasmaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnSubmitAsp');
+            const btn = e.target.querySelector('button[type="submit"]');
             btn.innerText = "Mengirim..."; btn.disabled = true;
 
             const judul = document.getElementById('judul').value;
