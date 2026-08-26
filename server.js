@@ -256,17 +256,48 @@ app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/
 
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
-app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/radarbem', (req, res) => res.render('radarbem'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
 
-// Rute Dinamis Proker
-app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
-app.get('/proker-deskripsi/:slug', (req, res) => res.render('proker-deskripsi'));
-app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proker-detail/${req.query.id}`) : res.render('proker-detail'));
-app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
+// =========================================================================
+// SUPER BIG UPGRADE SEO ROUTING: INFORMASI & DETAIL (CLEAN URL HIERARCHY)
+// =========================================================================
+
+// 1. Redirect URL Lama ke URL Baru (301 Permanent Redirect) untuk menjaga SEO GSC
+app.get('/proker-deskripsi/:slug', (req, res) => res.redirect(301, `/informasi/proker/proker-deskripsi/${req.params.slug}`));
+app.get('/proker-detail/:slug', (req, res) => res.redirect(301, `/informasi/kalender/proker-detail/${req.params.slug}`));
+app.get('/proker-deskripsi', (req, res) => res.redirect(301, '/informasi/proker'));
+app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/informasi/kalender/proker-detail/${req.query.id}`) : res.redirect(301, '/informasi/kalender'));
+
+// 2. Induk Routing Informasi (Default ke Tab Proker)
+app.get('/informasi', (req, res) => res.redirect(301, '/informasi/proker'));
+
+// 3. SSR Dinamis Tab Informasi (proker, kalender, timeline, galeri, plasma)
+const validInfoTabs = ['proker', 'kalender', 'timeline', 'galeri', 'plasma'];
+app.get('/informasi/:tab', (req, res, next) => {
+    const tab = req.params.tab;
+    if (validInfoTabs.includes(tab)) {
+        res.render('informasi', { activeTab: tab, siteUrl: 'https://bemkbmfkgumi.com' });
+    } else {
+        next();
+    }
+});
+
+// 4. Hirarki Clean URL untuk Proker Deskripsi
+app.get('/informasi/proker/proker-deskripsi/:slug', (req, res) => {
+    res.render('proker-deskripsi', { slug: req.params.slug, siteUrl: 'https://bemkbmfkgumi.com' });
+});
+
+// 5. Hirarki Clean URL untuk Detail Kalender & Timeline
+app.get('/informasi/kalender/proker-detail/:slug', (req, res) => {
+    res.render('proker-detail', { slug: req.params.slug, sourceTab: 'kalender', siteUrl: 'https://bemkbmfkgumi.com' });
+});
+
+app.get('/informasi/timeline/proker-detail/:slug', (req, res) => {
+    res.render('proker-detail', { slug: req.params.slug, sourceTab: 'timeline', siteUrl: 'https://bemkbmfkgumi.com' });
+});
 
 // ROUTES BEM-FORM & ADMIN DASHBOARD V2
 app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
@@ -868,11 +899,12 @@ app.get('/sitemap.xml', async (req, res) => {
     </url>
 
     <!-- ========================================= -->
-    <!-- PUSAT INFORMASI & SUB-TAB (SPA ROUTING)   -->
+    <!-- PUSAT INFORMASI & SUB-TAB (CLEAN ROUTING) -->
     <!-- ========================================= -->
+    <url><loc>${domain}/informasi</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
     <url><loc>${domain}/informasi/proker</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-    <url><loc>${domain}/informasi/kalender</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/informasi/timeline</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi/kalender</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
+    <url><loc>${domain}/informasi/timeline</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
     <url><loc>${domain}/informasi/galeri</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
     <url><loc>${domain}/informasi/plasma</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
 
@@ -895,7 +927,9 @@ app.get('/sitemap.xml', async (req, res) => {
 
     <!-- ========================================= -->
     <!-- INDUK ROUTING KEGIATAN & DEPARTEMEN       -->
-    <!-- ========================================= -->`;
+    <!-- ========================================= -->
+    <url><loc>${domain}/informasi/proker</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>${domain}/informasi/kalender</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>`;
 
         if (Array.isArray(prokerData) && prokerData.length > 0) {
             xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (PROKER & DEPARTEMEN) -->`;
