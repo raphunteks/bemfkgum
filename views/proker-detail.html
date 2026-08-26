@@ -4,55 +4,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Kegiatan | Program Kerja BEM KBMFKG UMI</title>
     
-    <!-- ================= SEO EXPERT (DYNAMIC EVENT & SITELINKS READY) ================= -->
-    <meta name="description" content="Informasi dan detail lengkap program kerja serta agenda kegiatan dari BEM KBMFKG UMI.">
-    <meta name="keywords" content="Program Kerja BEM FKG UMI, Work Programs, Event Agenda, Mahasiswa FKG UMI, Kegiatan Mahasiswa Makassar, Pendaftaran BEM FKG">
-    <meta name="author" content="BEM KBMFKG UMI">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://bemkbmfkgumi.com/proker-detail">
-    
-    <!-- Open Graph / Facebook / WhatsApp -->
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://bemkbmfkgumi.com/proker-detail">
-    <meta property="og:title" content="Detail Kegiatan | Program Kerja BEM KBMFKG UMI">
-    <meta property="og:description" content="Informasi dan detail lengkap program kerja serta agenda kegiatan dari BEM KBMFKG UMI.">
-    <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
-    <meta property="og:site_name" content="BEM KBMFKG UMI">
+    <!-- =========================================================================
+         SUPER BIG UPGRADE: SSR DYNAMIC SEO METADATA & CANONICAL TAGS
+         Di-render langsung dari Server Express.js (EJS) sebelum memuat JS Client!
+         Menyelesaikan isu GSC "Halaman alternatif dengan tag kanonis yang tepat"
+         ========================================================================= -->
+    <% if (typeof eventData !== 'undefined' && eventData) { %>
+        <% 
+            const finalSlug = eventData.slug || eventData.id || (typeof slug !== 'undefined' ? slug : '');
+            const baseUrl = typeof siteUrl !== 'undefined' ? siteUrl : 'https://bemkbmfkgumi.com';
+            const tabPath = (typeof sourceTab !== 'undefined' && sourceTab) ? sourceTab : 'kalender';
+            const pageUrl = `${baseUrl}/informasi/${tabPath}/proker-detail/${finalSlug}`;
+            
+            const pageTitle = `${eventData.nama} | Program Kerja BEM KBMFKG UMI`;
+            let rawDesc = eventData.deskripsi || '';
+            let descText = rawDesc.length > 155 ? rawDesc.substring(0, 155) + '...' : (rawDesc || `Informasi dan detail lengkap program kerja ${eventData.nama} dari BEM KBMFKG UMI.`);
+            
+            let ogImgUrl = eventData.banner || `${baseUrl}/img/bemfkgumi.png`;
+            if (ogImgUrl.startsWith('/')) ogImgUrl = baseUrl + ogImgUrl;
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://bemkbmfkgumi.com/proker-detail">
-    <meta property="twitter:title" content="Detail Kegiatan | Program Kerja BEM KBMFKG UMI">
-    <meta property="twitter:description" content="Informasi dan detail lengkap program kerja serta agenda kegiatan dari BEM KBMFKG UMI.">
-    <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
+            // HELPER: Convert Date to ISO
+            function createValidISODateEJS(dateStr, defaultTime) {
+                if (!dateStr) return new Date().toISOString(); 
+                try {
+                    const d = new Date(dateStr);
+                    if (isNaN(d.getTime())) return new Date().toISOString();
+                    const yyyy = d.getFullYear();
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    return `${yyyy}-${mm}-${dd}T${defaultTime}+08:00`; 
+                } catch (e) { return new Date().toISOString(); }
+            }
+            
+            const startDateISO = createValidISODateEJS(eventData.tglMulai, "08:00:00");
+            const endDateISO = createValidISODateEJS(eventData.tglSelesai || eventData.tglMulai, "17:00:00");
+            
+            let offersDataStr = "";
+            let urlDaftar = eventData.linkDaftar ? eventData.linkDaftar.trim() : "";
+            if (urlDaftar && urlDaftar.startsWith('http')) {
+                offersDataStr = `,"offers": {
+                    "@type": "Offer",
+                    "url": "${urlDaftar}",
+                    "price": "0",
+                    "priceCurrency": "IDR",
+                    "availability": "https://schema.org/InStock",
+                    "validFrom": "${startDateISO}"
+                }`;
+            }
 
-    <!-- BASE STATIC SCHEMA (Akan di-update dinamis oleh JS, bebas dari Microdata konflik) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
+            const fullSEO_Description = rawDesc.substring(0, 4500).replace(/"/g, '&quot;').replace(/\n/g, ' ');
+        %>
+        
+        <title><%= pageTitle %></title>
+        <meta name="description" content="<%= descText %>">
+        <meta name="keywords" content="<%= eventData.nama %>, Program Kerja BEM FKG UMI, Work Programs, Event Agenda, Mahasiswa FKG UMI, Kegiatan Mahasiswa Makassar, Pendaftaran BEM FKG">
+        <meta name="author" content="BEM KBMFKG UMI">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        
+        <link rel="canonical" id="canonicalUrl" href="<%= pageUrl %>">
+
+        <meta property="og:site_name" content="BEM KBMFKG UMI">
+        <meta property="og:type" id="ogType" content="article">
+        <meta property="og:url" id="ogUrl" content="<%= pageUrl %>">
+        <meta property="og:title" id="ogTitle" content="<%= pageTitle %>">
+        <meta property="og:description" id="ogDesc" content="<%= descText %>">
+        <meta property="og:image" id="ogImage" content="<%= ogImgUrl %>">
+        
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:url" content="<%= pageUrl %>">
+        <meta name="twitter:title" id="twTitle" content="<%= pageTitle %>">
+        <meta name="twitter:description" content="<%= descText %>">
+        <meta name="twitter:image" content="<%= ogImgUrl %>">
+
+        <!-- =========================================================================
+             ADVANCED JSON-LD Schema.org (@graph Format - ENTERPRISE EVENT & BREADCRUMB)
+             ========================================================================= -->
+        <script type="application/ld+json" id="dynamic-event-schema">
         {
-          "@type": "Organization",
-          "@id": "https://bemkbmfkgumi.com/#organization",
-          "name": "BEM KBMFKG UMI",
-          "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
-          "url": "https://bemkbmfkgumi.com/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
-          }
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+                "@type": "WebPage",
+                "@id": "<%= pageUrl %>/#webpage",
+                "url": "<%= pageUrl %>",
+                "name": "<%= pageTitle %>",
+                "description": "<%= descText %>",
+                "inLanguage": "id-ID",
+                "publisher": { "@id": "<%= baseUrl %>/#organization" }
+            },
+            {
+                "@type": "Event",
+                "@id": "<%= pageUrl %>/#event",
+                "name": "<%= eventData.nama %>",
+                "description": "<%= fullSEO_Description || descText %>",
+                "url": "<%= pageUrl %>",
+                "image": ["<%= ogImgUrl %>"],
+                "eventStatus": "https://schema.org/EventScheduled",
+                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                "startDate": "<%= startDateISO %>",
+                "endDate": "<%= endDateISO %>",
+                "location": {
+                    "@type": "Place",
+                    "name": "<%= eventData.lokasi || 'Universitas Muslim Indonesia, Makassar' %>",
+                    "address": { 
+                        "@type": "PostalAddress", 
+                        "streetAddress": "Jl. Pajonga Dg. Ngalle No. 27 A",
+                        "addressLocality": "Makassar", 
+                        "addressRegion": "Sulawesi Selatan", 
+                        "postalCode": "90122",
+                        "addressCountry": "ID" 
+                    }
+                },
+                "performer": [
+                    { "@type": "Organization", "name": "<%= eventData.dept || 'BEM KBMFKG UMI' %>" }
+                ],
+                "organizer": { 
+                    "@type": "Organization", 
+                    "@id": "<%= baseUrl %>/#organization",
+                    "name": "BEM KBMFKG UMI",
+                    "url": "<%= baseUrl %>"
+                }
+                <%- offersDataStr %>
+            },
+            {
+                "@type": "Organization",
+                "@id": "<%= baseUrl %>/#organization",
+                "name": "BEM KBMFKG UMI",
+                "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+                "url": "<%= baseUrl %>",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "<%= baseUrl %>/img/bemfkgumi.png"
+                }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "<%= pageUrl %>/#breadcrumb",
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= baseUrl %>/" },
+                    { "@type": "ListItem", "position": 2, "name": "Program Kerja", "item": "<%= baseUrl %>/informasi#<%= tabPath %>" },
+                    { "@type": "ListItem", "position": 3, "name": "<%= eventData.nama %>", "item": "<%= pageUrl %>" }
+                ]
+            }
+          ]
         }
-      ]
-    }
-    </script>
+        </script>
+    <% } else { %>
+        <!-- ================= FALLBACK SSR SEO DEFAULT ================= -->
+        <title>Detail Kegiatan | Program Kerja BEM KBMFKG UMI</title>
+        <meta name="description" content="Informasi dan detail lengkap program kerja serta agenda kegiatan dari BEM KBMFKG UMI.">
+        <meta name="keywords" content="Program Kerja BEM FKG UMI, Work Programs, Event Agenda, Mahasiswa FKG UMI, Kegiatan Mahasiswa Makassar, Pendaftaran BEM FKG">
+        <meta name="author" content="BEM KBMFKG UMI">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        <link rel="canonical" href="https://bemkbmfkgumi.com/informasi/kalender">
+
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://bemkbmfkgumi.com/#organization",
+              "name": "BEM KBMFKG UMI",
+              "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+              "url": "https://bemkbmfkgumi.com/",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+              }
+            }
+          ]
+        }
+        </script>
+    <% } %>
 
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     <link rel="stylesheet" href="/css/main.css">
     
     <script src="/js/protect-devtools.js"></script>
+
+    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript -->
+    <script>
+        window.SSR_EVENT_DATA = <%- typeof eventData !== 'undefined' && eventData ? JSON.stringify(eventData) : 'null' %>;
+        window.SSR_SLUG = "<%= typeof slug !== 'undefined' ? slug : '' %>";
+        window.SSR_SOURCE_TAB = "<%= typeof sourceTab !== 'undefined' ? sourceTab : 'kalender' %>";
+    </script>
 </head>
 <body>
     <%- include('partials/header.html') %>
@@ -62,14 +200,14 @@
         <!-- BREADCRUMB & BACK BUTTON -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
             <div style="font-size: 0.95rem; color: var(--text-muted); background: var(--bg-dark-overlay); padding: 10px 22px; border-radius: 30px; border: 1px solid var(--border-light); backdrop-filter: blur(10px);">
-                <a href="/informasi#kalender" style="color: var(--accent-neon); text-decoration: none; font-weight: 600;">🗓️ Program Kerja</a> 
+                <a id="bcBackLink1" href="/informasi/kalender" style="color: var(--accent-neon); text-decoration: none; font-weight: 600;">🗓️ Program Kerja</a> 
                 <span style="margin: 0 12px; color: var(--text-muted);">/</span> 
                 <span id="bcTitle" style="color: var(--text-light); font-weight: 600;">Mencari Data...</span>
             </div>
             
-            <a href="/informasi#kalender" class="action-btn view" style="text-decoration:none; display:flex; align-items:center; gap:8px; padding: 10px 20px; border-radius: 20px;">
+            <a id="bcBackLink2" href="/informasi/kalender" class="action-btn view" style="text-decoration:none; display:flex; align-items:center; gap:8px; padding: 10px 20px; border-radius: 20px;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Kembali ke Kalender
+                Kembali ke Daftar
             </a>
         </div>
 
@@ -219,7 +357,7 @@
                     </div>
                     <h3 style="color: #ef4444; font-size: 1.5rem; margin-bottom: 15px; font-weight: 800;">Oops! Terjadi Kesalahan</h3>
                     <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 25px;">${message}</p>
-                    <a href="/informasi#kalender" class="glass-btn">Kembali ke Kalender</a>
+                    <a href="/informasi/kalender" class="glass-btn">Kembali ke Kalender</a>
                 </div>
             `;
         }
@@ -238,10 +376,20 @@
                 return new Date().toISOString();
             }
         }
+        
+        function updateMeta(nameOrProperty, attrName, value) {
+            let meta = document.querySelector(`meta[${nameOrProperty}="${attrName}"]`);
+            if (!meta) {
+                meta = document.createElement('meta');
+                meta.setAttribute(nameOrProperty, attrName);
+                document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', value);
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null";
+            const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.protocol === 'file:';
             
             // Pengambilan ID yang Diperketat (.filter(Boolean) untuk cegah trailing slash bug)
             let eventId = window.location.pathname.split('/').filter(Boolean).pop();
@@ -249,7 +397,19 @@
                 eventId = urlParams.get('id');
             }
 
-            if(!eventId) {
+            // Set Breadcrumb Link Berdasarkan Source (Kalender / Timeline)
+            const sourceTab = window.SSR_SOURCE_TAB || 'kalender';
+            const backLinkUrl = `/informasi/${sourceTab}`;
+            document.getElementById('bcBackLink1').href = backLinkUrl;
+            document.getElementById('bcBackLink2').href = backLinkUrl;
+
+            // JIKA DATA SUDAH TEREDIA DARI SSR NODE.JS (EJS INJECTION), RENDER LANGSUNG TANPA LOADING
+            if (window.SSR_EVENT_DATA && !isPreview) {
+                renderUI(window.SSR_EVENT_DATA, eventId, false);
+                return;
+            }
+
+            if(!eventId && !isPreview) {
                 showErrorState("URL tidak memiliki parameter ID Kegiatan yang valid. Silakan pilih kegiatan melalui halaman utama atau menu informasi.");
                 return;
             }
@@ -275,7 +435,7 @@
                             dept: prokerMatch.dept,
                             tglMulai: prokerMatch.startDate,
                             tglSelesai: prokerMatch.endDate,
-                            performer: prokerMatch.performer || prokerMatch.dept, // Extract performer
+                            performer: prokerMatch.performer || prokerMatch.dept, 
                             banner: prokerMatch.bgImage || prokerMatch.fotoPengurus,
                             deskripsi: prokerMatch.latarBelakang || prokerMatch.shortDesc,
                             lokasi: "Cek Detail Proposal",
@@ -297,226 +457,7 @@
                 
                 if(!eventData) throw new Error(`Kegiatan dengan ID "<b>${eventId}</b>" tidak ditemukan di dalam database kami.`);
 
-                // =========================================================
-                // INJEKSI SEO DINAMIS (SUPER BIG UPGRADE - 100% GSC VALID)
-                // =========================================================
-                const baseUrl = "https://bemkbmfkgumi.com";
-                const pageTitle = `${eventData.nama} - BEM KBMFKG UMI`;
-                document.title = pageTitle;
-                
-                const rawDesc = eventData.deskripsi || '';
-                const descText = rawDesc.length > 155 ? rawDesc.substring(0, 155) + '...' : (rawDesc || `Informasi detail kegiatan ${eventData.nama} oleh BEM KBMFKG UMI.`);
-                
-                const finalSlug = eventData.slug || eventData.id || eventId;
-                const pageUrl = `${baseUrl}/proker-detail/${finalSlug}`;
-                const imgUrl = eventData.banner ? (eventData.banner.startsWith('http') ? eventData.banner : `${baseUrl}${eventData.banner}`) : `${baseUrl}/img/bemfkgumi.png`;
-
-                // SUPER UPGRADE: Auto-Rewrite Address Bar History (Jika user masuk pakai ?id=)
-                // Ini men-force Struktur Clean URL secara visual & behavior SEO tanpa mereload
-                if (window.location.search.includes('id=') && !isPreview) {
-                    window.history.replaceState({}, '', `/proker-detail/${finalSlug}`);
-                }
-
-                // Update HTML Meta Tags
-                document.querySelector('meta[name="description"]')?.setAttribute('content', descText);
-                document.querySelector('link[rel="canonical"]')?.setAttribute('href', pageUrl);
-                document.querySelector('meta[property="og:title"]')?.setAttribute('content', pageTitle);
-                document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
-                document.querySelector('meta[property="og:url"]')?.setAttribute('content', pageUrl);
-                document.querySelector('meta[property="og:image"]')?.setAttribute('content', imgUrl);
-                document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', pageTitle);
-                document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', descText);
-                document.querySelector('meta[property="twitter:url"]')?.setAttribute('content', pageUrl);
-                document.querySelector('meta[property="twitter:image"]')?.setAttribute('content', imgUrl);
-
-                // Build Strict ISO 8601 Dates to Fix GSC Critical Errors
-                const startDateISO = createValidISODate(eventData.tglMulai, "08:00:00");
-                const endDateISO = createValidISODate(eventData.tglSelesai || eventData.tglMulai, "17:00:00");
-
-                // Performers Fallback to Fix GSC Warning
-                let performerArr = [];
-                if (eventData.performer) performerArr.push({ "@type": "Person", "name": eventData.performer });
-                else if (eventData.dept) performerArr.push({ "@type": "Organization", "name": eventData.dept });
-                else performerArr.push({ "@type": "Organization", "name": "BEM KBMFKG UMI" });
-
-                // Offers Logic to Fix GSC URL/ValidFrom/Availability Warning
-                let offersData = undefined;
-                const urlDaftar = eventData.linkDaftar && eventData.linkDaftar.trim();
-                if (urlDaftar && urlDaftar.startsWith('http')) {
-                    offersData = {
-                        "@type": "Offer",
-                        "url": urlDaftar,
-                        "price": "0",
-                        "priceCurrency": "IDR",
-                        "availability": "https://schema.org/InStock",
-                        "validFrom": startDateISO
-                    };
-                }
-
-                try {
-                    const schemaGraph = [
-                        {
-                            "@type": "WebPage",
-                            "@id": `${pageUrl}/#webpage`,
-                            "url": pageUrl,
-                            "name": pageTitle,
-                            "description": descText,
-                            "inLanguage": "id-ID",
-                            "publisher": { "@id": `${baseUrl}/#organization` }
-                        },
-                        {
-                            "@type": "Event",
-                            "@id": `${pageUrl}/#event`,
-                            "name": eventData.nama,
-                            "description": eventData.deskripsi || descText,
-                            "url": pageUrl,
-                            "image": [imgUrl], // GSC sometimes prefers an array for images
-                            "eventStatus": "https://schema.org/EventScheduled",
-                            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-                            "startDate": startDateISO,
-                            "endDate": endDateISO,
-                            "location": {
-                                "@type": "Place",
-                                "name": eventData.lokasi || "Universitas Muslim Indonesia, Makassar",
-                                "address": { 
-                                    "@type": "PostalAddress", 
-                                    "streetAddress": "Jl. Pajonga Dg. Ngalle No. 27 A",
-                                    "addressLocality": "Makassar", 
-                                    "addressRegion": "Sulawesi Selatan", 
-                                    "postalCode": "90122",
-                                    "addressCountry": "ID" 
-                                }
-                            },
-                            "performer": performerArr,
-                            "organizer": { 
-                                "@type": "Organization", 
-                                "@id": `${baseUrl}/#organization`,
-                                "name": "BEM KBMFKG UMI",
-                                "url": baseUrl
-                            },
-                            "offers": offersData // Will be omitted if undefined
-                        },
-                        {
-                            "@type": "BreadcrumbList",
-                            "@id": `${pageUrl}/#breadcrumb`,
-                            "itemListElement": [
-                                { "@type": "ListItem", "position": 1, "name": "Beranda", "item": baseUrl },
-                                { "@type": "ListItem", "position": 2, "name": "Program Kerja", "item": `${baseUrl}/informasi#kalender` },
-                                { "@type": "ListItem", "position": 3, "name": eventData.nama, "item": pageUrl }
-                            ]
-                        }
-                    ];
-
-                    // Hapus schema lama dan injeksi yang baru (bersih, valid)
-                    const oldScript = document.getElementById('dynamic-event-schema');
-                    if(oldScript) oldScript.remove();
-
-                    const dynamicSchemaScript = document.createElement('script');
-                    dynamicSchemaScript.type = 'application/ld+json';
-                    dynamicSchemaScript.id = 'dynamic-event-schema';
-                    // Membersihkan undefined properties (seperti offers jika tidak valid)
-                    dynamicSchemaScript.text = JSON.stringify({ 
-                        "@context": "https://schema.org", 
-                        "@graph": schemaGraph 
-                    }, (key, value) => {
-                         if (value !== undefined) return value;
-                    });
-                    
-                    document.head.appendChild(dynamicSchemaScript);
-                } catch (schemaErr) {
-                    console.warn("Peringatan Schema Dinamis:", schemaErr.message); 
-                }
-                // ==================== END SEO DYNAMIC ====================
-
-                // POPULATE DATA KE UI
-                document.getElementById('bcTitle').innerText = eventData.nama || "Detail Kegiatan";
-                document.getElementById('detailTitle').innerText = eventData.nama || "Tanpa Judul";
-                
-                const deptDisplay = eventData.dept || "-";
-                document.getElementById('detailDept').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> <span>${deptDisplay}</span>`;
-                
-                const formatWaktu = formatTglRange(eventData.tglMulai, eventData.tglSelesai);
-                document.getElementById('detailWaktuBanner').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${formatWaktu}`;
-                
-                document.getElementById('detailDesc').innerText = eventData.deskripsi || "Tidak ada deskripsi tersedia untuk kegiatan ini.";
-                document.getElementById('detailLokasi').innerText = eventData.lokasi || "-";
-                document.getElementById('detailWaktu').innerText = formatWaktu;
-                document.getElementById('detailTarget').innerText = eventData.targetPeserta || "-";
-                
-                if(eventData.banner) document.getElementById('detailBanner').src = imgUrl;
-
-                // Status Badge
-                const statusInfo = getAgendaStatus(eventData.tglMulai, eventData.tglSelesai);
-                const badgeEl = document.getElementById('detailBadgeStatus');
-                badgeEl.innerText = statusInfo.text;
-                badgeEl.style.cssText = statusInfo.style; 
-                
-                // Logika Tombol Daftar
-                const btn = document.getElementById('btnDaftar');
-                if(eventData.statusDaftar && eventData.statusDaftar.toLowerCase() === 'buka') {
-                    btn.innerHTML = "Daftar Sekarang &rarr;";
-                    btn.href = eventData.linkDaftar || "#";
-                    btn.className = "holo-btn active-daftar";
-                    btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; font-size: 1.05rem; border-radius: 12px; cursor: pointer; pointer-events: auto;";
-                    btn.removeAttribute('disabled');
-                    document.getElementById('daftarKeterangan').innerText = "Pendaftaran sedang berlangsung. Segera daftarkan diri Anda!";
-                } else {
-                    btn.innerHTML = "Pendaftaran Belum Dibuka / Ditutup";
-                    btn.href = "javascript:void(0)";
-                    btn.className = "";
-                    btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; background: var(--bg-dark-overlay); color: var(--text-muted); border: 1px dashed var(--border-light); border-radius: 12px; cursor: not-allowed; pointer-events: none; text-decoration: none; font-weight: 600;";
-                    btn.setAttribute('disabled', 'true');
-                    document.getElementById('daftarKeterangan').innerText = "*Tombol aktif jika pengelola membuka formulir pendaftaran.";
-                }
-
-                // Render Kepanitiaan (Kontributor)
-                const panitiaCont = document.getElementById('detailKepanitiaan');
-                panitiaCont.innerHTML = '';
-                if(eventData.kepanitiaan && eventData.kepanitiaan.length > 0) {
-                    eventData.kepanitiaan.forEach(divisi => {
-                        let rowsHtml = '';
-                        if(divisi.anggota && divisi.anggota.length > 0) {
-                            divisi.anggota.forEach(ang => {
-                                rowsHtml += `<tr>
-                                    <td style="font-weight:700; color:var(--text-light); width:55%;">${ang.nama}</td>
-                                    <td style="color:var(--text-muted); font-size: 0.95rem;">${ang.jabatan}</td>
-                                </tr>`;
-                            });
-                            
-                            panitiaCont.innerHTML += `
-                                <div class="panitia-box" style="margin-bottom: 25px;">
-                                    <h4 class="panitia-title" style="color:var(--text-light); font-size:1.15rem; margin-bottom:15px; padding-bottom:12px; border-bottom:1px solid var(--border-light);">${divisi.namaDivisi}</h4>
-                                    <table class="panitia-table" style="width: 100%; text-align: left; border-collapse: collapse;">
-                                        <thead>
-                                            <tr>
-                                                <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">NAMA</th>
-                                                <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">SEBAGAI</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>${rowsHtml}</tbody>
-                                    </table>
-                                </div>
-                            `;
-                        }
-                    });
-                } 
-                
-                if (panitiaCont.innerHTML === '') {
-                    panitiaCont.innerHTML = "<div style='text-align:left; padding:20px; background:var(--bg-dark-overlay); border-radius:12px; color:var(--text-muted); border: 1px dashed var(--border-light);'>Struktur kepanitiaan atau kontributor belum dipublikasikan untuk kegiatan ini.</div>";
-                }
-
-                // Sembunyikan Loader, Tampilkan Konten
-                document.getElementById('loaderData').style.display = 'none';
-                document.getElementById('mainDetailContent').style.display = 'block'; 
-
-                // Auto Scroll Handler 
-                if (window.location.hash) {
-                    const targetId = window.location.hash.substring(1);
-                    const target = document.getElementById(targetId);
-                    if (target) {
-                        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 500);
-                    }
-                }
+                renderUI(eventData, eventId, true);
 
             } catch (error) {
                 console.warn("Peringatan Sistem:", error.message);
@@ -529,6 +470,149 @@
                 showErrorState(userFriendlyMessage);
             }
         });
+
+        function renderUI(eventData, eventId, executeClientSEO) {
+            const baseUrl = "https://bemkbmfkgumi.com";
+            const imgUrl = eventData.banner ? (eventData.banner.startsWith('http') ? eventData.banner : `${baseUrl}${eventData.banner}`) : `${baseUrl}/img/bemfkgumi.png`;
+            
+            // POPULATE DATA KE UI
+            document.getElementById('bcTitle').innerText = eventData.nama || "Detail Kegiatan";
+            document.getElementById('detailTitle').innerText = eventData.nama || "Tanpa Judul";
+            
+            const deptDisplay = eventData.dept || "-";
+            document.getElementById('detailDept').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> <span>${deptDisplay}</span>`;
+            
+            const formatWaktu = formatTglRange(eventData.tglMulai, eventData.tglSelesai);
+            document.getElementById('detailWaktuBanner').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${formatWaktu}`;
+            
+            document.getElementById('detailDesc').innerText = eventData.deskripsi || "Tidak ada deskripsi tersedia untuk kegiatan ini.";
+            document.getElementById('detailLokasi').innerText = eventData.lokasi || "-";
+            document.getElementById('detailWaktu').innerText = formatWaktu;
+            document.getElementById('detailTarget').innerText = eventData.targetPeserta || "-";
+            
+            if(eventData.banner) document.getElementById('detailBanner').src = imgUrl;
+
+            // Status Badge
+            const statusInfo = getAgendaStatus(eventData.tglMulai, eventData.tglSelesai);
+            const badgeEl = document.getElementById('detailBadgeStatus');
+            badgeEl.innerText = statusInfo.text;
+            badgeEl.style.cssText = statusInfo.style; 
+            
+            // Logika Tombol Daftar
+            const btn = document.getElementById('btnDaftar');
+            if(eventData.statusDaftar && eventData.statusDaftar.toLowerCase() === 'buka') {
+                btn.innerHTML = "Daftar Sekarang &rarr;";
+                btn.href = eventData.linkDaftar || "#";
+                btn.className = "holo-btn active-daftar";
+                btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; font-size: 1.05rem; border-radius: 12px; cursor: pointer; pointer-events: auto;";
+                btn.removeAttribute('disabled');
+                document.getElementById('daftarKeterangan').innerText = "Pendaftaran sedang berlangsung. Segera daftarkan diri Anda!";
+            } else {
+                btn.innerHTML = "Pendaftaran Belum Dibuka / Ditutup";
+                btn.href = "javascript:void(0)";
+                btn.className = "";
+                btn.style.cssText = "width:100%; text-align:center; padding:16px; display:block; background: var(--bg-dark-overlay); color: var(--text-muted); border: 1px dashed var(--border-light); border-radius: 12px; cursor: not-allowed; pointer-events: none; text-decoration: none; font-weight: 600;";
+                btn.setAttribute('disabled', 'true');
+                document.getElementById('daftarKeterangan').innerText = "*Tombol aktif jika pengelola membuka formulir pendaftaran.";
+            }
+
+            // Render Kepanitiaan (Kontributor)
+            const panitiaCont = document.getElementById('detailKepanitiaan');
+            panitiaCont.innerHTML = '';
+            if(eventData.kepanitiaan && eventData.kepanitiaan.length > 0) {
+                eventData.kepanitiaan.forEach(divisi => {
+                    let rowsHtml = '';
+                    if(divisi.anggota && divisi.anggota.length > 0) {
+                        divisi.anggota.forEach(ang => {
+                            rowsHtml += `<tr>
+                                <td style="font-weight:700; color:var(--text-light); width:55%;">${ang.nama}</td>
+                                <td style="color:var(--text-muted); font-size: 0.95rem;">${ang.jabatan}</td>
+                            </tr>`;
+                        });
+                        
+                        panitiaCont.innerHTML += `
+                            <div class="panitia-box" style="margin-bottom: 25px;">
+                                <h4 class="panitia-title" style="color:var(--text-light); font-size:1.15rem; margin-bottom:15px; padding-bottom:12px; border-bottom:1px solid var(--border-light);">${divisi.namaDivisi}</h4>
+                                <table class="panitia-table" style="width: 100%; text-align: left; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">NAMA</th>
+                                            <th style="color: var(--text-muted); font-size: 0.8rem; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">SEBAGAI</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${rowsHtml}</tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+                });
+            } 
+            
+            if (panitiaCont.innerHTML === '') {
+                panitiaCont.innerHTML = "<div style='text-align:left; padding:20px; background:var(--bg-dark-overlay); border-radius:12px; color:var(--text-muted); border: 1px dashed var(--border-light);'>Struktur kepanitiaan atau kontributor belum dipublikasikan untuk kegiatan ini.</div>";
+            }
+
+            // Sembunyikan Loader, Tampilkan Konten
+            document.getElementById('loaderData').style.display = 'none';
+            document.getElementById('mainDetailContent').style.display = 'block'; 
+
+            // Auto Scroll Handler 
+            if (window.location.hash) {
+                const targetId = window.location.hash.substring(1);
+                const target = document.getElementById(targetId);
+                if (target) {
+                    setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 500);
+                }
+            }
+
+            // Execute Client-Side SEO ONLY if it's fallback/CSR
+            if (executeClientSEO) {
+                generateDynamicSEO_ClientFallback(eventData, eventId, imgUrl, baseUrl);
+            }
+        }
+
+        // =========================================================
+        // CLIENT-SIDE SEO FALLBACK (JIKA SSR GAGAL / SPA ROUTING)
+        // =========================================================
+        function generateDynamicSEO_ClientFallback(eventData, eventId, imgUrl, baseUrl) {
+            const finalSlug = eventData.slug || eventData.id || eventId;
+            const sourceTab = window.SSR_SOURCE_TAB || 'kalender';
+            const pageUrl = `${baseUrl}/informasi/${sourceTab}/proker-detail/${finalSlug}`;
+            
+            const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.protocol === 'file:';
+            if (window.location.search.includes('id=') && !isPreview) {
+                window.history.replaceState({}, '', `/informasi/${sourceTab}/proker-detail/${finalSlug}`);
+            }
+
+            const pageTitle = `${eventData.nama} | Program Kerja BEM KBMFKG UMI`;
+            document.title = pageTitle;
+            
+            const rawDesc = eventData.deskripsi || '';
+            const descText = rawDesc.length > 155 ? rawDesc.substring(0, 155) + '...' : (rawDesc || `Informasi dan detail lengkap program kerja ${eventData.nama} dari BEM KBMFKG UMI.`);
+
+            // Update HTML Meta Tags
+            updateMeta('name', 'description', descText);
+            
+            let canonicalLink = document.querySelector('link[rel="canonical"]');
+            if (!canonicalLink) {
+                canonicalLink = document.createElement('link');
+                canonicalLink.setAttribute('rel', 'canonical');
+                document.head.appendChild(canonicalLink);
+            }
+            canonicalLink.setAttribute('href', pageUrl);
+
+            updateMeta('property', 'og:url', pageUrl);
+            updateMeta('property', 'og:title', pageTitle);
+            updateMeta('property', 'og:description', descText);
+            updateMeta('property', 'og:image', imgUrl);
+            
+            updateMeta('property', 'twitter:title', pageTitle);
+            updateMeta('property', 'twitter:description', descText);
+            updateMeta('property', 'twitter:url', pageUrl);
+            updateMeta('property', 'twitter:image', imgUrl);
+
+            // Schema JSON-LD DOM Modification is skipped because EJS Handles it perfectly on first load.
+        }
     </script>
 </body>
 </html>
