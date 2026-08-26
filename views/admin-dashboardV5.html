@@ -181,7 +181,6 @@
                 <table class="neo-table" id="mhs-table">
                     <thead>
                         <tr class="neo-bg-green" id="mhs-thead-tr">
-                            <!-- Diisi Otomatis Berdasarkan Logika Custom Tampilan -->
                             <th>FOTO PROFIL</th>
                             <th>NAMA LENGKAP</th>
                             <th>STAMBUK SARJANA</th>
@@ -281,7 +280,6 @@
                 <table class="neo-table" id="pegawai-table">
                     <thead>
                         <tr class="neo-bg-yellow" id="pegawai-thead-tr">
-                            <!-- Generate Dinamis (Kombinasi / General fields) -->
                             <th>AKSI</th>
                         </tr>
                     </thead>
@@ -740,8 +738,16 @@
         let html = '';
         let activeSchema = schemas[tipe];
 
-        let idField = activeSchema.find(f => f.id.toLowerCase() === 'nim' || f.id.toLowerCase() === 'nip' || f.id.toLowerCase() === 'nim_sarjana' || f.label.toLowerCase().includes('nim') || f.label.toLowerCase().includes('nip') || f.label.toLowerCase().includes('nidn'));
-        if(isEditMode && idField) { currentEditId = data[idField.id]; } else { currentEditId = null; }
+        // 1. Amankan currentEditId dengan pasti menggunakan Identifier Asli yang disetel oleh Server Backend (data.nim/data.nip)
+        if (isEditMode) {
+            if (tipe === 'mhs') {
+                currentEditId = data.nim || data.NIM || data.nim_profesi || data.nim_sarjana;
+            } else {
+                currentEditId = data.nip || data.NIP || data.nidn || data.NIDN;
+            }
+        } else {
+            currentEditId = null;
+        }
 
         activeSchema.forEach(field => {
             const val = data ? (data[field.id] || '') : '';
@@ -860,21 +866,21 @@
 
         if(tipe !== 'mhs') payload.tipe_pegawai = tipe; 
 
-        // Penentuan Unique ID khusus Mahasiswa
+        // Penentuan Unique ID (Memastikan logic terpusat sama seperti Backend)
         let uniqueId = null;
         if (tipe === 'mhs') {
-            uniqueId = payload.nim_profesi && payload.nim_profesi !== '-' ? payload.nim_profesi : payload.nim_sarjana;
-            if(!uniqueId) uniqueId = payload.nim; // fallback
+            uniqueId = payload.nim_profesi && payload.nim_profesi.trim() !== '' && payload.nim_profesi !== '-' 
+                ? payload.nim_profesi 
+                : payload.nim_sarjana;
+                
+            if(!uniqueId || uniqueId.trim() === '' || uniqueId === '-') uniqueId = payload.nim; // fallback final
             payload.nim = uniqueId; 
         } else {
-            let idField = activeSchema.find(f => f.id.toLowerCase() === 'nip' || f.label.toLowerCase().includes('nip') || f.label.toLowerCase().includes('nidn'));
-            if(idField && payload[idField.id]) {
-                uniqueId = payload[idField.id];
-                payload.nip = uniqueId;
-            }
+            uniqueId = payload.nip || payload.nidn;
+            payload.nip = uniqueId;
         }
 
-        if(!uniqueId) {
+        if(!uniqueId || uniqueId === '-' || uniqueId === '') {
             showCustomAlert("Error: Sistem tidak menemukan field Identifier (NIM/NIP/NIDN).");
             btn.innerText = "💾 Simpan Data"; btn.disabled = false; return;
         }
@@ -884,6 +890,7 @@
             let apiUrl = isEditMode ? `${basePath}/${currentEditId || uniqueId}` : basePath;
             let method = isEditMode ? 'PUT' : 'POST';
 
+            // Jika dalam mode Edit dan NIP/NIM diubah oleh user, hapus data lama dan buat data baru
             if (isEditMode && currentEditId && currentEditId !== uniqueId) {
                 let delUrl = window.location.origin === "null" ? `https://bemkbmfkgumi.com${basePath}/${currentEditId}` : `${basePath}/${currentEditId}`;
                 await fetch(delUrl, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('axa_admin_token')}` }});
@@ -908,12 +915,12 @@
             showToast("✅ Simulasi: Data tersimpan lokal.");
             closeDynamicModal();
             if(tipe === 'mhs') {
-                if(isEditMode && currentEditId !== uniqueId) databaseMhs = databaseMhs.filter(m => (m.nim || m.NIM || m.nim_sarjana) !== currentEditId);
-                if(!isEditMode || currentEditId !== uniqueId) databaseMhs.push(payload);
+                if(isEditMode && currentEditId && currentEditId !== uniqueId) databaseMhs = databaseMhs.filter(m => m.nim !== currentEditId);
+                if(!isEditMode || (currentEditId && currentEditId !== uniqueId)) databaseMhs.push(payload);
                 loadAllMhs();
             } else {
-                if(isEditMode && currentEditId !== uniqueId) databasePegawai = databasePegawai.filter(p => (p.nip || p.NIP || p.nidn || p.NIDN) !== currentEditId);
-                if(!isEditMode || currentEditId !== uniqueId) databasePegawai.push(payload);
+                if(isEditMode && currentEditId && currentEditId !== uniqueId) databasePegawai = databasePegawai.filter(p => p.nip !== currentEditId);
+                if(!isEditMode || (currentEditId && currentEditId !== uniqueId)) databasePegawai.push(payload);
                 loadAllPegawai();
             }
         }
@@ -1123,7 +1130,7 @@
             let alamat = mhs.alamat_makassar || mhs['ALAMAT DI MAKASSAR'] || mhs.alamat_daerah || mhs['ALAMAT DAERAH ASAL'] || '-';
 
             html += `<tr>
-                <td><img src="${imgSrc}" onerror="this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>
+                <td><img src="${imgSrc}" onerror="this.onerror=null;this.src='/img/bemprofilmhs.png';" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #000;"></td>
                 <td style="font-weight:700;">${nama}</td>
                 <td style="font-family:'Space Mono', monospace; font-weight:700;">${nimSarjana}</td>
                 <td style="font-weight:600;">${stambukOrAngkatan}</td>
