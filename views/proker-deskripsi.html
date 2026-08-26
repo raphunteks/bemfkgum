@@ -4,36 +4,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Judul sementara, akan ditimpa JS -->
-    <title>Deskripsi Program Kerja | BEM KBMFKG UMI</title>
     
-    <!-- ================= STATIC SEO BASE ================= -->
-    <meta name="keywords" content="Deskripsi Program Kerja, Department Profile, Work Programs, Struktur Departemen, Department Structure, BEM FKG UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia">
-    <meta name="author" content="BEM KBMFKG UMI">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    
-    <!-- TAG META, OG, TWITTER & CANONICAL STATIS DIHAPUS. AKAN DIBANGUN 100% OLEH JAVASCRIPT -->
+    <!-- =========================================================================
+         SUPER BIG UPGRADE: SSR DYNAMIC SEO METADATA & CANONICAL TAGS
+         Di-render langsung dari Server Express.js (EJS) sebelum memuat JS Client!
+         Menyelesaikan isu GSC "Halaman alternatif dengan tag kanonis yang tepat"
+         ========================================================================= -->
+    <% if (typeof prokerData !== 'undefined' && prokerData) { %>
+        <% 
+            const finalSlug = prokerData.slug || prokerData.id || (typeof slug !== 'undefined' ? slug : '');
+            const baseUrl = typeof siteUrl !== 'undefined' ? siteUrl : 'https://bemkbmfkgumi.com';
+            const pageUrl = `${baseUrl}/informasi/proker/proker-deskripsi/${finalSlug}`;
+            
+            const deptText = prokerData.dept ? prokerData.dept.toUpperCase() : 'DEPARTEMEN';
+            const prokerText = prokerData.namaProker ? prokerData.namaProker.toUpperCase() : 'PROGRAM KERJA';
+            const pageTitle = `${deptText} - Department Profile | BEM KBMFKG UMI`;
+            const titleBanner = prokerText ? `${deptText} - ${prokerText}` : deptText;
+            
+            let rawDesc = prokerData.shortDesc || '';
+            let descText = rawDesc.length > 155 ? rawDesc.substring(0, 155) + '...' : (rawDesc || `Informasi detail mengenai program kerja dan struktur kepengurusan dari ${prokerData.dept} BEM KBMFKG UMI.`);
+            
+            let ogImgUrl = prokerData.bgImage || prokerData.fotoPengurus || `${baseUrl}/img/bemfkgumi.png`;
+            if (ogImgUrl.startsWith('/')) ogImgUrl = baseUrl + ogImgUrl;
 
-    <!-- BASE STATIC SCHEMA (Aman dari Parsing Error - Akan Dihapus dan Ditimpa oleh JS) -->
-    <script type="application/ld+json" id="structuredData">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
+            // HELPER: Convert Date to ISO
+            function createValidISODateEJS(dateStr, defaultTime) {
+                if (!dateStr) return new Date().toISOString(); 
+                try {
+                    const d = new Date(dateStr);
+                    if (isNaN(d.getTime())) return new Date().toISOString();
+                    const yyyy = d.getFullYear();
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    return `${yyyy}-${mm}-${dd}T${defaultTime}+08:00`; 
+                } catch (e) { return new Date().toISOString(); }
+            }
+            
+            const startDateISO = createValidISODateEJS(prokerData.startDate, "08:00:00");
+            const endDateISO = createValidISODateEJS(prokerData.endDate || prokerData.startDate, "17:00:00");
+            
+            let priceValue = "0";
+            if (prokerData.anggaran && prokerData.anggaran.toLowerCase() !== 'gratis') {
+                priceValue = prokerData.anggaran.replace(/[^0-9]/g, '') || "0";
+            }
+            
+            const fullSEO_Description = `${prokerData.shortDesc || ''} Latar Belakang: ${prokerData.latarBelakang || '-'} Tujuan: ${prokerData.tujuan || '-'} Parameter Keberhasilan: ${prokerData.parameterKeberhasilan || '-'}`.substring(0, 4500).replace(/"/g, '&quot;').replace(/\n/g, ' ');
+        %>
+        
+        <title><%= pageTitle %></title>
+        <meta name="description" content="<%= descText %>">
+        <meta name="keywords" content="<%= deptText %>, <%= prokerText %>, Deskripsi Program Kerja, Department Profile, Work Programs, Struktur Departemen, Department Structure, BEM FKG UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia">
+        <meta name="author" content="BEM KBMFKG UMI">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        
+        <link rel="canonical" id="canonicalUrl" href="<%= pageUrl %>">
+
+        <meta property="og:site_name" content="BEM KBMFKG UMI">
+        <meta property="og:title" id="ogTitle" content="<%= pageTitle %>">
+        <meta property="og:description" id="ogDesc" content="<%= descText %>">
+        <meta property="og:type" id="ogType" content="website">
+        <meta property="og:url" id="ogUrl" content="<%= pageUrl %>">
+        <meta property="og:image" id="ogImage" content="<%= ogImgUrl %>">
+        
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" id="twTitle" content="<%= pageTitle %>">
+        <meta name="twitter:description" content="<%= descText %>">
+        <meta name="twitter:image" content="<%= ogImgUrl %>">
+        <meta name="twitter:url" content="<%= pageUrl %>">
+
+        <!-- =========================================================================
+             ADVANCED JSON-LD Schema.org (@graph Format - ENTERPRISE EVENT & BREADCRUMB)
+             ========================================================================= -->
+        <script type="application/ld+json" id="structuredData">
         {
-          "@type": "Organization",
-          "@id": "https://bemkbmfkgumi.com/#organization",
-          "name": "BEM KBMFKG UMI",
-          "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
-          "url": "https://bemkbmfkgumi.com/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
-          }
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+                "@type": "AboutPage",
+                "@id": "<%= pageUrl %>/#webpage",
+                "name": "<%= pageTitle %>",
+                "description": "<%= descText %>",
+                "url": "<%= pageUrl %>",
+                "inLanguage": "id-ID",
+                "publisher": { "@id": "<%= baseUrl %>/#organization" }
+            },
+            {
+                "@type": "Event",
+                "@id": "<%= pageUrl %>/#event",
+                "name": "<%= titleBanner %>",
+                "description": "<%= fullSEO_Description %>",
+                "url": "<%= pageUrl %>",
+                "image": "<%= ogImgUrl %>",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                "startDate": "<%= startDateISO %>",
+                "endDate": "<%= endDateISO %>",
+                "location": {
+                    "@type": "Place",
+                    "name": "<%= prokerData.sasaranPeserta || 'Ruang lingkup internal hingga eksternal FKG-UMI.' %>",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "addressLocality": "Makassar",
+                        "addressRegion": "Sulawesi Selatan",
+                        "addressCountry": "ID"
+                    }
+                },
+                "organizer": {
+                    "@type": "Organization",
+                    "name": "BEM KBMFKG UMI",
+                    "url": "<%= baseUrl %>"
+                },
+                "performer": {
+                    "@type": "Organization",
+                    "name": "<%= prokerData.performer || `Pengurus ${prokerData.dept || 'Departemen'}` %>"
+                },
+                "offers": {
+                    "@type": "Offer",
+                    "price": "<%= priceValue %>",
+                    "priceCurrency": "IDR",
+                    "url": "<%= pageUrl %>",
+                    "validFrom": "<%= new Date().toISOString().split('T')[0] %>",
+                    "availability": "https://schema.org/InStock"
+                }
+            },
+            {
+                "@type": "Organization",
+                "@id": "<%= baseUrl %>/#organization",
+                "name": "BEM KBMFKG UMI",
+                "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+                "url": "<%= baseUrl %>",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "<%= baseUrl %>/img/bemfkgumi.png"
+                }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "<%= pageUrl %>/#breadcrumb",
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= baseUrl %>/" },
+                    { "@type": "ListItem", "position": 2, "name": "Program Kerja (Work Programs)", "item": "<%= baseUrl %>/informasi/proker" },
+                    { "@type": "ListItem", "position": 3, "name": "<%= deptText %>", "item": "<%= pageUrl %>" }
+                ]
+            }
+          ]
         }
-      ]
-    }
-    </script>
-    <!-- ================= END STATIC SEO BASE ================= -->
+        </script>
+    <% } else { %>
+        <!-- ================= FALLBACK SSR SEO DEFAULT ================= -->
+        <title>Deskripsi Program Kerja | BEM KBMFKG UMI</title>
+        <meta name="keywords" content="Deskripsi Program Kerja, Department Profile, Work Programs, Struktur Departemen, Department Structure, BEM FKG UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia">
+        <meta name="author" content="BEM KBMFKG UMI">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        
+        <script type="application/ld+json" id="structuredData">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://bemkbmfkgumi.com/#organization",
+              "name": "BEM KBMFKG UMI",
+              "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+              "url": "https://bemkbmfkgumi.com/",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+              }
+            }
+          ]
+        }
+        </script>
+    <% } %>
     
     <!-- OPTIMASI RENDER BLOCKING (LCP & FCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -190,6 +332,13 @@
             }
         }
     </style>
+    
+    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript -->
+    <script>
+        window.SSR_PROKER_DATA = <%- typeof prokerData !== 'undefined' && prokerData ? JSON.stringify(prokerData) : 'null' %>;
+        window.SSR_ORG_DATA = <%- typeof orgDepartemen !== 'undefined' && orgDepartemen ? JSON.stringify(orgDepartemen) : 'null' %>;
+        window.SSR_SLUG = "<%= typeof slug !== 'undefined' ? slug : '' %>";
+    </script>
 </head>
 <body itemscope itemtype="https://schema.org/WebPage">
     <%- include('partials/header.html') %>
@@ -205,20 +354,6 @@
     <%- include('partials/footer.html') %>
 
     <script>
-        // MOCK DATA: Hanya berjalan di Canvas Simulator untuk keperluan Development UI.
-        const PREVIEW_MOCK_DATA = {
-            id: "pubmed", dept: "DEPT. INFOCOM", namaProker: "PUBMED",
-            bgImage: "/img/bannerprokerdeskripsi.png", fotoPengurus: "/img/bemfkgumi.png",
-            shortDesc: "Membuat konten-konten menarik yang memuat tentang informasi (berita, pemberitahuan, peringatan hari besar, isu-isu yang berkembang)...",
-            sasaranPeserta: "Ruang lingkup internal hingga eksternal FKG-UMI.",
-            targetPelaksanaan: "Triwulan I", startDate: "2026-01-01", endDate: "2026-12-31", performer: "Pengurus Dept. Infocom", anggaran: "7000000",
-            koordinator: "Silviyananda", penanggungJawab: "Silvy Ananda, Muh. Syauqi Zahran. B, Daegal Fauza Iryanto",
-            latarBelakang: "Memasuki Era Revolusi Industri 5.0 yang lebih menitik beratkan pada pengembangan teknologi...",
-            tujuan: "Memberikan kemudahan akses informasi yang cepat dan akurat...",
-            swot: "Strength: Tim yang solid dan melek teknologi...\nWeakness: Keterbatasan alat dokumentasi...",
-            parameterKeberhasilan: "Semua media informasi dapat memberikan konten..."
-        };
-
         // Helper Konversi Tanggal ISO 8601 Valid GSC
         function createValidISODate(dateStr, defaultTime) {
             if (!dateStr) return new Date().toISOString(); 
@@ -234,7 +369,7 @@
             }
         }
 
-        // Helper untuk membuang dan membuat ulang elemen <meta>
+        // Helper untuk membuang dan membuat ulang elemen <meta> (Untuk Fallback CSR SPA)
         function updateMeta(nameOrProperty, attrName, value) {
             let meta = document.querySelector(`meta[${nameOrProperty}="${attrName}"]`);
             if (!meta) {
@@ -248,7 +383,13 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.protocol === 'file:';
             
-            // Relative Path API Call
+            // JIKA DATA SUDAH TEREDIA DARI SSR NODE.JS (EJS INJECTION), RENDER LANGSUNG TANPA LOADING
+            if (window.SSR_PROKER_DATA) {
+                renderDetail(window.SSR_PROKER_DATA, window.SSR_ORG_DATA || [], window.SSR_SLUG);
+                return;
+            }
+
+            // Relative Path API Call (Fallback AJAX jika SSR Gagal/Client Side Navigation)
             let apiUrl = '/api/content'; 
             if (isPreview) apiUrl = 'https://bemkbmfkgumi.com/api/content';
             
@@ -285,11 +426,6 @@
                 renderDetail(deptData, allOrgDept, slug);
 
             } catch (err) {
-                if (isPreview) {
-                    console.info("🛠️ [SIMULATOR]: Koneksi ke API terblokir. Merender UI dengan data Simulasi.");
-                    renderDetail(PREVIEW_MOCK_DATA, [], PREVIEW_MOCK_DATA.id);
-                    return;
-                }
                 console.warn("[SISTEM]: Terjadi kendala saat mengambil data.", err.message);
                 showErrorState("Oops! Terjadi Kesalahan", "Koneksi ke database terputus. Pastikan koneksi internet Anda stabil atau server sedang aktif.");
             }
@@ -303,7 +439,7 @@
                     </div>
                     <h2 style="font-size: 2.2rem; color: #ef4444; margin-bottom: 10px;">${title}</h2>
                     <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">${message}</p>
-                    <a href="/informasi#proker" class="holo-btn">Kembali ke Pusat Informasi</a>
+                    <a href="/informasi/proker" class="holo-btn">Kembali ke Pusat Informasi</a>
                 </div>
             `;
         }
@@ -443,24 +579,26 @@
                 </div>
                 
                 <div style="text-align: center; margin-top: 50px;">
-                    <a href="/informasi#proker" class="glass-btn">&larr; Kembali ke Pusat Informasi</a>
+                    <a href="/informasi/proker" class="glass-btn">&larr; Kembali ke Pusat Informasi</a>
                 </div>
             `;
 
-            // Eksekusi Pembangkitan SEO
-            generateDynamicSEO(data, slug, titleBanner, bgImg, baseUrl);
+            // Eksekusi Pembangkitan SEO (Hanya Jika Client Side Navigation / Tidak SSR)
+            if (!window.SSR_PROKER_DATA) {
+                generateDynamicSEO_ClientFallback(data, slug, titleBanner, bgImg, baseUrl);
+            }
         }
 
         // =========================================================
-        // SUPER UPGRADE: DYNAMIC JSON-LD GENERATOR (100% GSC VALID)
+        // CLIENT-SIDE SEO FALLBACK (JIKA SSR GAGAL / SPA ROUTING)
         // =========================================================
-        function generateDynamicSEO(data, slug, titleBanner, imgUrl, baseUrl) {
+        function generateDynamicSEO_ClientFallback(data, slug, titleBanner, imgUrl, baseUrl) {
             const finalSlug = data.slug || data.id || slug;
-            const pageUrl = `${baseUrl}/proker-deskripsi/${finalSlug}`;
+            const pageUrl = `${baseUrl}/informasi/proker/proker-deskripsi/${finalSlug}`;
             
             const isPreview = window.location.protocol === 'blob:' || window.location.origin === "null" || window.location.protocol === 'file:';
             if (window.location.search.includes('id=') && !isPreview) {
-                window.history.replaceState({}, '', `/proker-deskripsi/${finalSlug}`);
+                window.history.replaceState({}, '', `/informasi/proker/proker-deskripsi/${finalSlug}`);
             }
 
             const deptText = data.dept ? data.dept.toUpperCase() : 'DEPARTEMEN';
@@ -492,115 +630,7 @@
             updateMeta('property', 'twitter:url', pageUrl);
             updateMeta('property', 'twitter:image', imgUrl);
 
-            // Sanitasi Strict untuk Google Schema (Event)
-            let priceValue = "0";
-            if (data.anggaran && data.anggaran.toLowerCase() !== 'gratis') {
-                priceValue = data.anggaran.replace(/[^0-9]/g, '') || "0";
-            }
-            
-            const startDateISO = createValidISODate(data.startDate, "08:00:00");
-            const endDateISO = createValidISODate(data.endDate || data.startDate, "17:00:00");
-            
-            const fullSEO_Description = `${data.shortDesc || ''} Latar Belakang: ${data.latarBelakang || '-'} Tujuan: ${data.tujuan || '-'} Parameter Keberhasilan: ${data.parameterKeberhasilan || '-'}`.substring(0, 4500);
-
-            try {
-                // MURNI SESUAI INSTRUKSI: Format @graph yang Komprehensif
-                const schemaGraph = [
-                    {
-                        "@type": "AboutPage",
-                        "@id": `${pageUrl}/#webpage`,
-                        "name": pageTitle,
-                        "description": descText,
-                        "url": pageUrl,
-                        "inLanguage": "id-ID",
-                        "publisher": { "@id": `${baseUrl}/#organization` }
-                    },
-                    {
-                        "@type": "Event",
-                        "@id": `${pageUrl}/#event`,
-                        "name": titleBanner,
-                        "description": fullSEO_Description,
-                        "url": pageUrl,
-                        "image": imgUrl,
-                        "eventStatus": "https://schema.org/EventScheduled",
-                        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-                        "startDate": startDateISO,
-                        "endDate": endDateISO,
-                        "location": {
-                            "@type": "Place",
-                            "name": data.sasaranPeserta || "Ruang lingkup internal hingga eksternal FKG-UMI.",
-                            "address": {
-                                "@type": "PostalAddress",
-                                "addressLocality": "Makassar",
-                                "addressRegion": "Sulawesi Selatan",
-                                "addressCountry": "ID"
-                            }
-                        },
-                        "organizer": {
-                            "@type": "Organization",
-                            "name": "BEM KBMFKG UMI",
-                            "url": baseUrl
-                        },
-                        "performer": {
-                            "@type": "Organization",
-                            "name": data.performer || `Pengurus ${data.dept || 'Departemen'}`
-                        },
-                        "offers": {
-                            "@type": "Offer",
-                            "price": priceValue,
-                            "priceCurrency": "IDR",
-                            "url": pageUrl,
-                            "validFrom": new Date().toISOString().split('T')[0],
-                            "availability": "https://schema.org/InStock"
-                        }
-                    },
-                    {
-                        "@type": "Organization",
-                        "@id": `${baseUrl}/#organization`,
-                        "name": "BEM KBMFKG UMI",
-                        "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
-                        "url": baseUrl,
-                        "logo": {
-                            "@type": "ImageObject",
-                            "url": `${baseUrl}/img/bemfkgumi.png`
-                        }
-                    },
-                    {
-                        "@type": "BreadcrumbList",
-                        "@id": `${pageUrl}/#breadcrumb`,
-                        "itemListElement": [
-                            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": baseUrl },
-                            { "@type": "ListItem", "position": 2, "name": "Program Kerja (Work Programs)", "item": `${baseUrl}/informasi#proker` },
-                            { "@type": "ListItem", "position": 3, "name": deptText, "item": pageUrl }
-                        ]
-                    }
-                ];
-
-                const schemaScript = document.getElementById('structuredData') || document.createElement('script');
-                schemaScript.id = 'structuredData';
-                schemaScript.type = 'application/ld+json';
-                
-                schemaScript.text = JSON.stringify({
-                    "@context": "https://schema.org",
-                    "@graph": schemaGraph
-                });
-                
-                if (!document.getElementById('structuredData')) {
-                    document.head.appendChild(schemaScript);
-                }
-                
-                if (window.location.hash) {
-                    const targetId = window.location.hash.substring(1);
-                    const target = document.getElementById(targetId);
-                    if (target) {
-                        setTimeout(() => {
-                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 500);
-                    }
-                }
-            } catch (e) {
-                console.warn("Sistem SEO Terjadi Peringatan (Diabaikan):", e.message);
-            }
+            // Schema JSON-LD DOM Modification is skipped because EJS Handles it perfectly on first load.
         }
     </script>
 </body>
