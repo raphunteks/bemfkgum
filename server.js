@@ -85,8 +85,7 @@ const escapeXml = (unsafe) => {
 // SEO UPGRADE: Filter Base64 agar tidak masuk ke Sitemap dan membuat GSC Error
 const sanitizeImageUrl = (imgStr, domain) => {
     if (!imgStr) return `${domain}/img/bemfkgumi.png`;
-    // FIX GSC 100%: Otomatis membuang string base64 dan menggantinya dengan placeholder yang valid bagi Googlebot
-    if (imgStr.startsWith('data:image/')) return `${domain}/img/bemfkgumi.png`; 
+    if (imgStr.startsWith('data:image/')) return `${domain}/img/bemfkgumi.png`; // Cegah Base64 merusak XML
     if (imgStr.startsWith('/')) return `${domain}${imgStr}`;
     return imgStr;
 };
@@ -257,110 +256,17 @@ app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/
 
 app.get('/', (req, res) => res.render('index'));
 app.get('/tentang', (req, res) => res.render('tentang'));
+app.get('/informasi', (req, res) => res.render('informasi'));
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/radarbem', (req, res) => res.render('radarbem'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
 app.get('/ourteam', (req, res) => res.render('ourteam'));
 
-// =========================================================================
-// SUPER BIG UPGRADE SEO ROUTING: INFORMASI & DETAIL (CLEAN URL HIERARCHY)
-// Mencegah masalah Soft 404 pada Google Search Console
-// =========================================================================
-
-// 1. Redirect URL Lama ke URL Baru (301 Permanent Redirect) untuk menjaga SEO GSC
-app.get('/proker-deskripsi/:slug', (req, res) => res.redirect(301, `/informasi/proker/proker-deskripsi/${req.params.slug}`));
-app.get('/proker-detail/:slug', (req, res) => res.redirect(301, `/informasi/kalender/proker-detail/${req.params.slug}`));
-app.get('/proker-deskripsi', (req, res) => res.redirect(301, '/informasi/proker'));
-app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/informasi/kalender/proker-detail/${req.query.id}`) : res.redirect(301, '/informasi/kalender'));
-
-// 2. Induk Routing Informasi (Default ke Tab Proker)
-app.get('/informasi', (req, res) => res.redirect(301, '/informasi/proker'));
-
-// 3. SSR Dinamis Tab Informasi (proker, kalender, timeline, galeri, plasma)
-const validInfoTabs = ['proker', 'kalender', 'timeline', 'galeri', 'plasma'];
-app.get('/informasi/:tab', (req, res, next) => {
-    const tab = req.params.tab;
-    if (validInfoTabs.includes(tab)) {
-        res.render('informasi', { activeTab: tab, siteUrl: 'https://bemkbmfkgumi.com' });
-    } else {
-        next();
-    }
-});
-
-// 4. Hirarki Clean URL untuk Proker Deskripsi (Full SSR Support untuk cegah Soft 404 GSC)
-app.get('/informasi/proker/proker-deskripsi/:slug', async (req, res) => {
-    let prokerData = null;
-    let orgDepartemen = [];
-
-    if (redis) {
-        try {
-            const rawProker = await redis.get('Proker_Data');
-            const rawOrg = await redis.get('Org_Structure');
-            
-            const allProker = safeParse(rawProker, defaultProker);
-            const orgStructure = safeParse(rawOrg, defaultOrg);
-            
-            orgDepartemen = orgStructure.departemen || [];
-            let foundProker = allProker.find(p => p.slug === req.params.slug || p.id === req.params.slug);
-            
-            // FIX BASE64 GSC ISSUE (Mencegah "Halaman tidak dapat diindeks: Soft 404")
-            if (foundProker) {
-                const domain = 'https://bemkbmfkgumi.com';
-                foundProker.bgImage = sanitizeImageUrl(foundProker.bgImage, domain);
-                foundProker.fotoPengurus = sanitizeImageUrl(foundProker.fotoPengurus, domain);
-                prokerData = foundProker;
-            }
-        } catch (e) {
-            console.error("SSR Proker Fetch Error:", e);
-        }
-    }
-
-    res.render('proker-deskripsi', { 
-        slug: req.params.slug, 
-        siteUrl: 'https://bemkbmfkgumi.com',
-        prokerData: prokerData,
-        orgDepartemen: orgDepartemen
-    });
-});
-
-// 5. Hirarki Clean URL untuk Detail Kalender & Timeline (Full SSR Support)
-app.get('/informasi/kalender/proker-detail/:slug', async (req, res) => {
-    let eventData = null;
-    if (redis) {
-        try {
-            const rawKalender = await redis.get('Kalender_Data');
-            const allKalender = safeParse(rawKalender, defaultKalender);
-            let foundEvent = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
-            
-            // FIX BASE64 GSC ISSUE
-            if (foundEvent) {
-                const domain = 'https://bemkbmfkgumi.com';
-                foundEvent.banner = sanitizeImageUrl(foundEvent.banner, domain);
-                eventData = foundEvent;
-            }
-        } catch (e) {}
-    }
-    res.render('proker-detail', { slug: req.params.slug, sourceTab: 'kalender', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
-});
-
-app.get('/informasi/timeline/proker-detail/:slug', async (req, res) => {
-    let eventData = null;
-    if (redis) {
-        try {
-            const rawKalender = await redis.get('Kalender_Data');
-            const allKalender = safeParse(rawKalender, defaultKalender);
-            let foundEvent = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
-            
-            // FIX BASE64 GSC ISSUE
-            if (foundEvent) {
-                const domain = 'https://bemkbmfkgumi.com';
-                foundEvent.banner = sanitizeImageUrl(foundEvent.banner, domain);
-                eventData = foundEvent;
-            }
-        } catch (e) {}
-    }
-    res.render('proker-detail', { slug: req.params.slug, sourceTab: 'timeline', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
-});
+// Rute Dinamis Proker
+app.get('/proker-deskripsi', (req, res) => res.render('proker-deskripsi'));
+app.get('/proker-deskripsi/:slug', (req, res) => res.render('proker-deskripsi'));
+app.get('/proker-detail', (req, res) => req.query.id ? res.redirect(301, `/proker-detail/${req.query.id}`) : res.render('proker-detail'));
+app.get('/proker-detail/:slug', (req, res) => res.render('proker-detail'));
 
 // ROUTES BEM-FORM & ADMIN DASHBOARD V2
 app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
@@ -439,14 +345,7 @@ app.get('/berita/:slug', async (req, res) => {
     let articleInfo = null;
 
     if (articles.length > 0) {
-        let foundArt = articles.find(a => (a.Slug_URL || a.ID_Berita) === req.params.slug);
-        
-        // FIX BASE64 GSC ISSUE PADA BERITA
-        if(foundArt) {
-            const domain = 'https://bemkbmfkgumi.com';
-            foundArt.Gambar_URL = sanitizeImageUrl(foundArt.Gambar_URL, domain);
-            articleInfo = foundArt;
-        }
+        articleInfo = articles.find(a => (a.Slug_URL || a.ID_Berita) === req.params.slug);
     }
     
     // Mengirim Data Artikel (Metadata) ke dalam File HTML EJS
@@ -969,14 +868,14 @@ app.get('/sitemap.xml', async (req, res) => {
     </url>
 
     <!-- ========================================= -->
-    <!-- PUSAT INFORMASI & SUB-TAB (CLEAN ROUTING) -->
+    <!-- PUSAT INFORMASI & SUB-TAB (SPA ROUTING)   -->
     <!-- ========================================= -->
     <url><loc>${domain}/informasi</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-    <url><loc>${domain}/informasi/proker</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-    <url><loc>${domain}/informasi/kalender</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-    <url><loc>${domain}/informasi/timeline</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-    <url><loc>${domain}/informasi/galeri</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/informasi/plasma</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi#proker</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi#kalender</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi#timeline</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi#galeri</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/informasi#plasma</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
 
     <!-- ========================================= -->
     <!-- TENTANG KAMI & SUB-SECTION (SPA ROUTING)  -->
@@ -998,8 +897,8 @@ app.get('/sitemap.xml', async (req, res) => {
     <!-- ========================================= -->
     <!-- INDUK ROUTING KEGIATAN & DEPARTEMEN       -->
     <!-- ========================================= -->
-    <url><loc>${domain}/informasi/proker</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>${domain}/informasi/kalender</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>`;
+    <url><loc>${domain}/proker-deskripsi</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>${domain}/proker-detail</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>`;
 
         if (Array.isArray(prokerData) && prokerData.length > 0) {
             xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (PROKER & DEPARTEMEN) -->`;
@@ -1010,7 +909,7 @@ app.get('/sitemap.xml', async (req, res) => {
                     const itemLastMod = formatSitemapDate(p.startDate);
                     xmlUrls += `
     <url>
-        <loc>${domain}/informasi/proker/proker-deskripsi/${escapeXml(slug)}</loc>
+        <loc>${domain}/proker-deskripsi/${escapeXml(slug)}</loc>
         <lastmod>${itemLastMod}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
@@ -1032,7 +931,7 @@ app.get('/sitemap.xml', async (req, res) => {
                     const itemLastMod = formatSitemapDate(k.tglMulai);
                     xmlUrls += `
     <url>
-        <loc>${domain}/informasi/kalender/proker-detail/${escapeXml(slug)}</loc>
+        <loc>${domain}/proker-detail/${escapeXml(slug)}</loc>
         <lastmod>${itemLastMod}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
@@ -1354,6 +1253,7 @@ app.get('/api/interactions', async (req, res) => {
     }
 });
 
+// ================= SUPER UPGRADE FIX: API PENERIMA TRANSAKSIONAL (MENANGKAP FILE) =================
 app.post('/api/plasma', async (req, res) => {
   try {
     const { judul, kategori, jenis, isi, bukti } = req.body;
@@ -1368,9 +1268,12 @@ app.post('/api/plasma', async (req, res) => {
 
 app.post('/api/message', async (req, res) => {
   try {
-    const { nama, kontak, subjek, pesan } = req.body;
+    // MENANGKAP VARIABEL dokumen DARI REQ.BODY
+    const { nama, kontak, subjek, pesan, dokumen } = req.body;
     const id = `MSG-${Date.now()}`;
-    const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
+    
+    // MEMASUKKAN dokumen KE DALAM PAYLOAD JSON
+    const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), dokumen: dokumen || null, timestamp: new Date().toISOString() };
     
     // Simpan sebagai STRING Sesuai Format Upstash Anda (GBR 1)
     if (redis) await redis.set(`BEM_Messages:${id}`, JSON.stringify(payload));
