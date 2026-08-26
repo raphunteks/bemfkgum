@@ -166,10 +166,34 @@ app.get('/api/uploads/:filename', async (req, res) => {
 // ================= REDIS KEYS CONFIGURATION =================
 const MHS_HASH_KEY = 'BEM_MHS_DB';
 const MHS_SCHEMA_KEY = 'BEM_MHS_FORM_SCHEMA'; 
+const MHS_LAST_UPDATE_KEY = 'BEM_LAST_UPDATE_MHS';
 
 const CIVITAS_HASH_KEY = 'BEM_CIVITAS_DB'; 
 const DOSEN_SCHEMA_KEY = 'BEM_DOSEN_FORM_SCHEMA';
 const CIVITAS_SCHEMA_KEY = 'BEM_CIVITAS_FORM_SCHEMA';
+const CIVITAS_LAST_UPDATE_KEY = 'BEM_LAST_UPDATE_CIVITAS';
+
+// Helper Function: Generate Indo Formatted Date
+function getIndoFormattedDate() {
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    // Setting timezone to Asia/Makassar (WITA)
+    const options = { timeZone: 'Asia/Makassar', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    const formatter = new Intl.DateTimeFormat([], options);
+    const dateStr = formatter.format(new Date());
+    
+    const d = new Date(dateStr);
+    
+    // In case formatter is not supported properly, fallback to native methods (which will use server time)
+    const dayName = days[d.getDay() || new Date().getDay()];
+    const date = d.getDate() || new Date().getDate();
+    const monthName = months[d.getMonth() || new Date().getMonth()];
+    const year = d.getFullYear() || new Date().getFullYear();
+    const h = (d.getHours() || new Date().getHours()).toString().padStart(2, '0');
+    const m = (d.getMinutes() || new Date().getMinutes()).toString().padStart(2, '0');
+    
+    return `${dayName}, ${date} ${monthName} ${year}, Jam ${h}:${m} WITA`;
+}
 
 // ================= ENDPOINT API MAHASISWA =================
 app.get('/api/mhs/schema', async (req, res) => {
@@ -192,6 +216,8 @@ app.get('/api/mhs', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const allData = await redis.hgetall(MHS_HASH_KEY);
+        const lastUpdate = await redis.get(MHS_LAST_UPDATE_KEY) || '-';
+        
         let resultArray = [];
         if (allData) {
             for (const [id, dataStr] of Object.entries(allData)) { resultArray.push(safeParse(dataStr, {})); }
@@ -200,7 +226,7 @@ app.get('/api/mhs', async (req, res) => {
             const q = req.query.q.toLowerCase();
             resultArray = resultArray.filter(m => Object.values(m).some(val => String(val).toLowerCase().includes(q)));
         }
-        res.json({ success: true, data: resultArray });
+        res.json({ success: true, data: resultArray, lastUpdate: lastUpdate });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database' }); }
 });
 
@@ -240,6 +266,7 @@ app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
         await p.exec();
         if(successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIM/STAMBUK) yang ditemukan pada file Excel.' });
         
+        await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: `Berhasil sinkronisasi ${successCount} mahasiswa ke database.` });
     } catch (error) { 
         console.error(error);
@@ -261,6 +288,7 @@ app.post('/api/mhs', verifyToken, async (req, res) => {
         
         std.nim = idMhs; 
         await redis.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) });
+        await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data' }); }
 });
@@ -274,6 +302,7 @@ app.put('/api/mhs/:id', verifyToken, async (req, res) => {
         
         req.body.nim = id; 
         await redis.hset(MHS_HASH_KEY, { [id]: JSON.stringify(req.body) });
+        await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Diperbarui' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data' }); }
 });
@@ -282,6 +311,7 @@ app.delete('/api/mhs/:id', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         await redis.hdel(MHS_HASH_KEY, req.params.id);
+        await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Mahasiswa Terhapus' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data' }); }
 });
@@ -326,6 +356,8 @@ app.get('/api/civitas', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const allData = await redis.hgetall(CIVITAS_HASH_KEY);
+        const lastUpdate = await redis.get(CIVITAS_LAST_UPDATE_KEY) || '-';
+        
         let resultArray = [];
         if (allData) {
             for (const [id, dataStr] of Object.entries(allData)) {
@@ -336,7 +368,7 @@ app.get('/api/civitas', async (req, res) => {
             const q = req.query.q.toLowerCase();
             resultArray = resultArray.filter(p => Object.values(p).some(val => String(val).toLowerCase().includes(q)));
         }
-        res.json({ success: true, data: resultArray });
+        res.json({ success: true, data: resultArray, lastUpdate: lastUpdate });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database pegawai' }); }
 });
 
@@ -371,6 +403,7 @@ app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
         await p.exec();
         if(successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIDN/NIP) yang ditemukan pada file Excel.' });
 
+        await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: `Berhasil sinkronisasi ${successCount} pegawai` });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database pegawai' }); }
 });
@@ -384,6 +417,7 @@ app.post('/api/civitas', verifyToken, async (req, res) => {
 
         peg.nip = idPegawai; // Standarisasi
         await redis.hset(CIVITAS_HASH_KEY, { [idPegawai]: JSON.stringify(peg) });
+        await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Pegawai Berhasil Dibuat' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data pegawai' }); }
 });
@@ -397,6 +431,7 @@ app.put('/api/civitas/:id', verifyToken, async (req, res) => {
 
         req.body.nip = id; // Standarisasi 
         await redis.hset(CIVITAS_HASH_KEY, { [id]: JSON.stringify(req.body) });
+        await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Pegawai Berhasil Diperbarui' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data pegawai' }); }
 });
@@ -405,6 +440,7 @@ app.delete('/api/civitas/:id', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         await redis.hdel(CIVITAS_HASH_KEY, req.params.id);
+        await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Pegawai Terhapus' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data pegawai' }); }
 });
