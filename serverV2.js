@@ -220,27 +220,46 @@ app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
         if (!students || !Array.isArray(students)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
         
         const p = redis.pipeline();
+        let successCount = 0;
+
         students.forEach(std => { 
-            const idMhs = std.nim || std.nim_profesi || std.nim_sarjana;
-            if (idMhs) {
-                std.nim = idMhs; // Standarisasi object identifier
+            // ROBUST ID EXTRACTION (Menangkap semua kemungkinan penamaan STAMBUK)
+            let idMhs = std.nim_profesi && std.nim_profesi !== '-' && std.nim_profesi !== '' ? std.nim_profesi : null;
+            if(!idMhs) idMhs = std['STAMBUK/NIM PROFESI'] && std['STAMBUK/NIM PROFESI'] !== '-' ? std['STAMBUK/NIM PROFESI'] : null;
+            if(!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
+            if(!idMhs) idMhs = std['STAMBUK/NIM SARJANA'] && std['STAMBUK/NIM SARJANA'] !== '-' ? std['STAMBUK/NIM SARJANA'] : null;
+            if(!idMhs) idMhs = std.nim || std.NIM;
+
+            if (idMhs && idMhs !== '' && idMhs !== '-') {
+                std.nim = idMhs; // Menstandarkan object identifier
                 p.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) }); 
+                successCount++;
             }
         });
+
         await p.exec();
-        res.json({ success: true, message: `Berhasil sinkronisasi ${students.length} mahasiswa` });
-    } catch (error) { res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database' }); }
+        if(successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIM/STAMBUK) yang ditemukan pada file Excel.' });
+        
+        res.json({ success: true, message: `Berhasil sinkronisasi ${successCount} mahasiswa ke database.` });
+    } catch (error) { 
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database' }); 
+    }
 });
 
 app.post('/api/mhs', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const std = req.body;
-        const idMhs = std.nim || std.nim_profesi || std.nim_sarjana;
-
-        if (!idMhs) return res.status(400).json({ success: false, message: 'NIM / STAMBUK Wajib Diisi (Identifier Database)' });
         
-        std.nim = idMhs; // Standarisasi object identifier
+        // ROBUST ID EXTRACTION
+        let idMhs = std.nim_profesi && std.nim_profesi !== '-' && std.nim_profesi !== '' ? std.nim_profesi : null;
+        if(!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
+        if(!idMhs) idMhs = std.nim;
+
+        if (!idMhs || idMhs === '-' || idMhs === '') return res.status(400).json({ success: false, message: 'NIM / STAMBUK Wajib Diisi (Identifier Database)' });
+        
+        std.nim = idMhs; 
         await redis.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data' }); }
@@ -321,7 +340,7 @@ app.get('/api/civitas', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database pegawai' }); }
 });
 
-// GET SINGLE PEGAWAI (MENDUKUNG PARAMETER DINAMIS :id UNTUK NIDN/NIP)
+// GET SINGLE PEGAWAI
 app.get('/api/civitas/:id', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -338,12 +357,21 @@ app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
         if (!pegawai || !Array.isArray(pegawai)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
         
         const p = redis.pipeline();
+        let successCount = 0;
+
         pegawai.forEach(peg => {
             const pegId = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
-            if (pegId) p.hset(CIVITAS_HASH_KEY, { [pegId]: JSON.stringify(peg) });
+            if (pegId && pegId !== '-' && pegId !== '') {
+                peg.nip = pegId; // Standarisasi
+                p.hset(CIVITAS_HASH_KEY, { [pegId]: JSON.stringify(peg) });
+                successCount++;
+            }
         });
+
         await p.exec();
-        res.json({ success: true, message: `Berhasil sinkronisasi ${pegawai.length} pegawai` });
+        if(successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIDN/NIP) yang ditemukan pada file Excel.' });
+
+        res.json({ success: true, message: `Berhasil sinkronisasi ${successCount} pegawai` });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database pegawai' }); }
 });
 
@@ -352,8 +380,9 @@ app.post('/api/civitas', verifyToken, async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const peg = req.body;
         const idPegawai = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
-        if (!idPegawai) return res.status(400).json({ success: false, message: 'NIP / NIDN Wajib Diisi (Identifier Database)' });
+        if (!idPegawai || idPegawai === '-' || idPegawai === '') return res.status(400).json({ success: false, message: 'NIP / NIDN Wajib Diisi (Identifier Database)' });
 
+        peg.nip = idPegawai; // Standarisasi
         await redis.hset(CIVITAS_HASH_KEY, { [idPegawai]: JSON.stringify(peg) });
         res.json({ success: true, message: 'Data Pegawai Berhasil Dibuat' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data pegawai' }); }
@@ -366,6 +395,7 @@ app.put('/api/civitas/:id', verifyToken, async (req, res) => {
         const exists = await redis.hexists(CIVITAS_HASH_KEY, id);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
 
+        req.body.nip = id; // Standarisasi 
         await redis.hset(CIVITAS_HASH_KEY, { [id]: JSON.stringify(req.body) });
         res.json({ success: true, message: 'Data Pegawai Berhasil Diperbarui' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data pegawai' }); }
