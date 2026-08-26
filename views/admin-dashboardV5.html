@@ -182,7 +182,7 @@
             </div>
 
             <div class="neo-card neo-bg-white" style="padding: 0; overflow-x: auto;">
-                <table class="neo-table table-scrollable" id="mhs-table">
+                <table class="neo-table" id="mhs-table">
                     <thead>
                         <tr class="neo-bg-green" id="mhs-thead-tr">
                             <th>FOTO PROFIL</th>
@@ -282,7 +282,7 @@
             </div>
 
             <div class="neo-card neo-bg-white" style="padding: 0; overflow-x: auto;">
-                <table class="neo-table table-scrollable" id="pegawai-table">
+                <table class="neo-table" id="pegawai-table">
                     <thead>
                         <tr class="neo-bg-yellow" id="pegawai-thead-tr">
                             <th>AKSI</th>
@@ -978,24 +978,29 @@
                 document.getElementById('excel-preview-section').style.display = 'block';
                 document.getElementById('preview-count').innerText = excelDataPayload.length;
                 
-                const visFields = currentSchema.slice(0, 6);
+                // MENGUBAH VISIBLE FIELDS UNTUK MENAMPILKAN SEMUA KOLOM (SELAIN IMAGE DAN RIWAYAT)
+                const visFields = currentSchema.filter(f => f.type !== 'image' && f.type !== 'riwayat');
+                
                 let theadHtml = '<tr class="neo-bg-pink">';
-                visFields.forEach(f => { theadHtml += `<th>${f.label.toUpperCase()}</th>`; });
+                theadHtml += `<th>FOTO PROFIL</th>`; // Header manual untuk foto
+                visFields.forEach(f => {
+                    theadHtml += `<th>${f.label.toUpperCase()}</th>`;
+                });
                 theadHtml += '</tr>';
                 document.getElementById('preview-thead').innerHTML = theadHtml;
 
                 let previewHtml = '';
                 excelDataPayload.slice(0, 50).forEach(item => { 
                     previewHtml += `<tr>`;
+                    previewHtml += `<td><img src="${item.foto !== '-' && item.foto !== '' && item.foto !== undefined ? item.foto : '/img/bemprofilmhs.png'}" onerror="this.src='/img/bemprofilmhs.png';" style="width:40px; height:40px; border-radius:50%; object-fit:cover;"></td>`; // Cell manual untuk foto
                     visFields.forEach(f => {
                         let val = item[f.id] || '-';
-                        if(f.type === 'image') previewHtml += `<td><img src="${val !== '-' && val !== '' ? val : '/img/bemprofilmhs.png'}" onerror="this.src='/img/bemprofilmhs.png';" style="width:40px; height:40px; border-radius:50%; object-fit:cover;"></td>`;
-                        else previewHtml += `<td style="font-weight:700;">${val}</td>`;
+                        previewHtml += `<td style="font-weight:700;">${val}</td>`;
                     });
                     previewHtml += `</tr>`;
                 });
                 
-                if(excelDataPayload.length > 50) previewHtml += `<tr><td colspan="${visFields.length}" class="text-center">... dan ${excelDataPayload.length - 50} data lainnya</td></tr>`;
+                if(excelDataPayload.length > 50) previewHtml += `<tr><td colspan="${visFields.length + 1}" class="text-center">... dan ${excelDataPayload.length - 50} data lainnya</td></tr>`;
                 document.getElementById('preview-tbody').innerHTML = previewHtml;
                 showToast("✅ Berhasil memetakan file Excel.");
                 
@@ -1160,8 +1165,8 @@
             const st = (m.status || m.Status || Object.values(m).find(v => typeof v === 'string' && ['aktif','lulus','cuti','do','keluar'].some(s => v.toLowerCase().includes(s))) || '').toLowerCase();
             if(st.includes('aktif')) aktif++; else if(st.includes('lulus')) lulus++; else if(st.includes('cuti')) cuti++; else if(st.includes('do') || st.includes('keluar')) do_mhs++;
             
-            let thn = m.angkatan || m.Angkatan || m['Tahun ANGKATAN'] || m['TAHUN ANGKATAN'] || 'N/A';
-            if(thn !== 'N/A' && thn !== '-' && thn !== '') angkatanMap[thn] = (angkatanMap[thn] || 0) + 1;
+            let thn = m.angkatan || m.Angkatan || m['Tahun Angkatan'] || 'N/A';
+            if(thn !== 'N/A' && thn !== '-') angkatanMap[thn] = (angkatanMap[thn] || 0) + 1;
         });
 
         document.getElementById('stat-aktif').innerText = aktif; document.getElementById('stat-lulus').innerText = lulus;
