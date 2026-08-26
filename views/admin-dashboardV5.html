@@ -36,6 +36,10 @@
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .full-width { grid-column: 1 / -1; }
 
+        /* HORIZONTAL SCROLL FIX UNTUK PREVIEW EXCEL */
+        .table-scrollable { width: 100%; white-space: nowrap; }
+        .table-scrollable th, .table-scrollable td { padding: 12px 20px !important; }
+
         /* ================= MOBILE UI/UX FIXES ================= */
         .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9998; backdrop-filter: blur(2px); opacity: 0; transition: opacity 0.3s; }
         .mobile-overlay.show { display: block; opacity: 1; }
@@ -178,10 +182,9 @@
             </div>
 
             <div class="neo-card neo-bg-white" style="padding: 0; overflow-x: auto;">
-                <table class="neo-table" id="mhs-table">
+                <table class="neo-table table-scrollable" id="mhs-table">
                     <thead>
                         <tr class="neo-bg-green" id="mhs-thead-tr">
-                            <!-- Diisi Otomatis Berdasarkan Logika Custom Tampilan 7 KOLOM -->
                             <th>FOTO PROFIL</th>
                             <th>NAMA LENGKAP</th>
                             <th>STAMBUK SARJANA</th>
@@ -279,10 +282,9 @@
             </div>
 
             <div class="neo-card neo-bg-white" style="padding: 0; overflow-x: auto;">
-                <table class="neo-table" id="pegawai-table">
+                <table class="neo-table table-scrollable" id="pegawai-table">
                     <thead>
                         <tr class="neo-bg-yellow" id="pegawai-thead-tr">
-                            <!-- Generate Dinamis (Kombinasi / General fields) -->
                             <th>AKSI</th>
                         </tr>
                     </thead>
@@ -313,7 +315,6 @@
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <button class="neo-btn neo-bg-yellow" onclick="addBuilderField()">+ Tambah Field Baru</button>
-                    <!-- TOMBOL RESET DITAMBAHKAN DI SINI -->
                     <button class="neo-btn neo-bg-white" onclick="resetSchemaToDefault()">🔄 Reset Skema ke Default</button>
                     <button class="neo-btn neo-bg-blue" onclick="saveFormSchema()">💾 Simpan Skema Form</button>
                 </div>
@@ -349,8 +350,8 @@
                     <h3 class="neo-heading-sm">Preview Data (<span id="preview-count">0</span> baris)</h3>
                     <button class="neo-btn neo-bg-green" id="btn-sync-redis" onclick="syncToRedis()">🚀 Sinkronisasi ke Redis Database</button>
                 </div>
-                <div style="overflow-x: auto; max-height: 400px;">
-                    <table class="neo-table" id="preview-table">
+                <div style="overflow-x: auto; max-height: 400px; border: 4px solid #000; border-radius: 8px;">
+                    <table class="neo-table table-scrollable" id="preview-table">
                         <thead id="preview-thead">
                             <!-- Dinamis via JS -->
                         </thead>
@@ -570,7 +571,7 @@
     
     // FUNGSI RESET SKEMA
     function resetSchemaToDefault() {
-        if(confirm("Yakin ingin mereset skema ini ke pengaturan default bawaan sistem (26 Form Lengkap)? Skema di database Anda akan tertimpa setelah klik tombol Simpan.")) {
+        if(confirm("Yakin ingin mereset skema ini ke pengaturan default bawaan sistem? Skema di database Anda akan tertimpa setelah klik tombol Simpan.")) {
             if(activeBuilderType === 'mhs') schemas.mhs = JSON.parse(JSON.stringify(DEFAULT_SCHEMA_MHS));
             else if(activeBuilderType === 'dosen') schemas.dosen = JSON.parse(JSON.stringify(DEFAULT_SCHEMA_DOSEN));
             else schemas.civitas = JSON.parse(JSON.stringify(DEFAULT_SCHEMA_CIVITAS));
@@ -742,16 +743,9 @@
         let html = '';
         let activeSchema = schemas[tipe];
 
-        // 1. Amankan currentEditId dengan pasti menggunakan Identifier Asli yang disetel oleh Server Backend (data.nim/data.nip)
-        if (isEditMode) {
-            if (tipe === 'mhs') {
-                currentEditId = data.nim || data.NIM || data.nim_profesi || data.nim_sarjana;
-            } else {
-                currentEditId = data.nip || data.NIP || data.nidn || data.NIDN;
-            }
-        } else {
-            currentEditId = null;
-        }
+        // Amankan ID lama untuk Update
+        let idField = activeSchema.find(f => f.id.toLowerCase() === 'nim' || f.id.toLowerCase() === 'nip' || f.id.toLowerCase() === 'nim_sarjana' || f.label.toLowerCase().includes('nim') || f.label.toLowerCase().includes('nip') || f.label.toLowerCase().includes('nidn'));
+        if(isEditMode && idField) { currentEditId = data[idField.id]; } else { currentEditId = null; }
 
         activeSchema.forEach(field => {
             const val = data ? (data[field.id] || '') : '';
@@ -937,8 +931,10 @@
         if(!hintEl) return;
         const activeType = document.getElementById('import-type-selector').value;
         const currentSchema = schemas[activeType];
-        const headersArr = currentSchema.filter(f => f.type !== 'image').map(f => f.label.toUpperCase());
-        hintEl.innerHTML = `<strong>Format Header Wajib saat ini untuk <span style="color:var(--bg-blue);">${activeType.toUpperCase()}</span>:</strong><br><br> ${headersArr.join(' | ')}<br><br><span style="font-size:0.85rem; color:var(--text-muted); font-weight:normal;">*Sistem pintar (Smart-Mapping) otomatis mendeteksi nama kolom Excel yang mirip dengan Label Skema Anda di atas. Terdapat toleransi huruf besar/kecil. Untuk sub-form riwayat gunakan format string JSON.</span>`;
+        
+        // PENGECUALIAN FIELD RIWAYAT DARI HEADER EXCEL (KARENA TIDAK BISA DIIMPORT VIA EXCEL MELAINKAN MANUAL DARI FORM)
+        const headersArr = currentSchema.filter(f => f.type !== 'image' && f.type !== 'riwayat').map(f => f.label.toUpperCase());
+        hintEl.innerHTML = `<strong>Format Header Wajib saat ini untuk <span style="color:var(--bg-blue);">${activeType.toUpperCase()}</span>:</strong><br><br> ${headersArr.join(' | ')}<br><br><span style="font-size:0.85rem; color:var(--text-muted); font-weight:normal;">*Sistem pintar (Smart-Mapping) otomatis mendeteksi nama kolom Excel yang mirip dengan Label Skema Anda di atas. Terdapat toleransi huruf besar/kecil. (Catatan: Data Riwayat Pendidikan harus diinput manual via form).</span>`;
     }
 
     function handleExcelUpload(e) {
@@ -959,6 +955,8 @@
 
                     currentSchema.forEach(f => {
                         if (f.type === 'image') { mappedObj[f.id] = '/img/bemprofilmhs.png'; return; }
+                        if (f.type === 'riwayat') { mappedObj[f.id] = '[]'; return; } // Riwayat dikosongkan saat import
+                        
                         const searchRegex = new RegExp(f.label.replace(/[^a-zA-Z0-9]/g, ''), 'i');
                         const idRegex = new RegExp(f.id.replace(/[^a-zA-Z0-9]/g, ''), 'i');
                         const matchedKey = Object.keys(row).find(k => {
@@ -1162,8 +1160,8 @@
             const st = (m.status || m.Status || Object.values(m).find(v => typeof v === 'string' && ['aktif','lulus','cuti','do','keluar'].some(s => v.toLowerCase().includes(s))) || '').toLowerCase();
             if(st.includes('aktif')) aktif++; else if(st.includes('lulus')) lulus++; else if(st.includes('cuti')) cuti++; else if(st.includes('do') || st.includes('keluar')) do_mhs++;
             
-            let thn = m.angkatan || m.Angkatan || m['Tahun Angkatan'] || 'N/A';
-            if(thn !== 'N/A' && thn !== '-') angkatanMap[thn] = (angkatanMap[thn] || 0) + 1;
+            let thn = m.angkatan || m.Angkatan || m['Tahun ANGKATAN'] || m['TAHUN ANGKATAN'] || 'N/A';
+            if(thn !== 'N/A' && thn !== '-' && thn !== '') angkatanMap[thn] = (angkatanMap[thn] || 0) + 1;
         });
 
         document.getElementById('stat-aktif').innerText = aktif; document.getElementById('stat-lulus').innerText = lulus;
