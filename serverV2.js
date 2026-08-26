@@ -194,7 +194,7 @@ app.get('/api/mhs', async (req, res) => {
         const allData = await redis.hgetall(MHS_HASH_KEY);
         let resultArray = [];
         if (allData) {
-            for (const [nim, dataStr] of Object.entries(allData)) { resultArray.push(safeParse(dataStr, {})); }
+            for (const [id, dataStr] of Object.entries(allData)) { resultArray.push(safeParse(dataStr, {})); }
         }
         if (req.query.q) {
             const q = req.query.q.toLowerCase();
@@ -204,10 +204,10 @@ app.get('/api/mhs', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database' }); }
 });
 
-app.get('/api/mhs/:nim', async (req, res) => {
+app.get('/api/mhs/:id', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        const dataStr = await redis.hget(MHS_HASH_KEY, req.params.nim);
+        const dataStr = await redis.hget(MHS_HASH_KEY, req.params.id);
         if (!dataStr) return res.status(404).json({ success: false, message: 'Data tidak ditemukan' });
         res.json({ success: true, data: safeParse(dataStr, {}) });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil data' }); }
@@ -220,7 +220,13 @@ app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
         if (!students || !Array.isArray(students)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
         
         const p = redis.pipeline();
-        students.forEach(std => { if (std.nim) p.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) }); });
+        students.forEach(std => { 
+            const idMhs = std.nim || std.nim_profesi || std.nim_sarjana;
+            if (idMhs) {
+                std.nim = idMhs; // Standarisasi object identifier
+                p.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) }); 
+            }
+        });
         await p.exec();
         res.json({ success: true, message: `Berhasil sinkronisasi ${students.length} mahasiswa` });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database' }); }
@@ -230,27 +236,33 @@ app.post('/api/mhs', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const std = req.body;
-        if (!std.nim) return res.status(400).json({ success: false, message: 'NIM Wajib Diisi (Identifier Database)' });
-        await redis.hset(MHS_HASH_KEY, { [std.nim]: JSON.stringify(std) });
+        const idMhs = std.nim || std.nim_profesi || std.nim_sarjana;
+
+        if (!idMhs) return res.status(400).json({ success: false, message: 'NIM / STAMBUK Wajib Diisi (Identifier Database)' });
+        
+        std.nim = idMhs; // Standarisasi object identifier
+        await redis.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data' }); }
 });
 
-app.put('/api/mhs/:nim', verifyToken, async (req, res) => {
+app.put('/api/mhs/:id', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        const exists = await redis.hexists(MHS_HASH_KEY, req.params.nim);
+        const { id } = req.params;
+        const exists = await redis.hexists(MHS_HASH_KEY, id);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
-        req.body.nim = req.params.nim; 
-        await redis.hset(MHS_HASH_KEY, { [req.params.nim]: JSON.stringify(req.body) });
+        
+        req.body.nim = id; 
+        await redis.hset(MHS_HASH_KEY, { [id]: JSON.stringify(req.body) });
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Diperbarui' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data' }); }
 });
 
-app.delete('/api/mhs/:nim', verifyToken, async (req, res) => {
+app.delete('/api/mhs/:id', verifyToken, async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
-        await redis.hdel(MHS_HASH_KEY, req.params.nim);
+        await redis.hdel(MHS_HASH_KEY, req.params.id);
         res.json({ success: true, message: 'Data Mahasiswa Terhapus' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data' }); }
 });
