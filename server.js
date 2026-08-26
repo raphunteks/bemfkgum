@@ -366,7 +366,47 @@ app.get('/informasi/timeline/proker-detail/:slug', async (req, res) => {
 
 // ROUTES BEM-FORM & ADMIN DASHBOARD V2
 app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
-app.get('/form/:slug', (req, res) => res.render('bem-form', { slug: req.params.slug }));
+
+// =========================================================================
+// UPGRADE SSR UNTUK FORM BEM: Menyuntikkan Data Form ke UI dari Backend
+// =========================================================================
+app.get('/form/:slug', async (req, res) => {
+    let formData = null;
+    if (redis) {
+        try {
+            let allForms = [];
+            // ENGINE 1: Ambil data dari format HASH (Legacy)
+            const hashForms = await redis.hgetall('BEM_Forms');
+            if (hashForms) {
+                Object.values(hashForms).forEach(formStr => {
+                    allForms.push(safeParse(formStr, null));
+                });
+            }
+
+            // ENGINE 2: Ambil data dari format STRING (New Pattern)
+            const stringKeys = await redis.keys('BEM_Forms:*');
+            if (stringKeys.length > 0) {
+                const stringForms = await redis.mget(...stringKeys);
+                stringForms.forEach(formStr => {
+                    if (formStr) allForms.push(safeParse(formStr, null));
+                });
+            }
+            
+            // Hapus duplikat dan cari form yang diminta
+            const uniqueForms = Array.from(new Map(allForms.filter(f=>f!=null).map(item => [item.id, item])).values());
+            formData = uniqueForms.find(f => f.slug === req.params.slug);
+        } catch (e) {
+            console.error("SSR Form Fetch Error:", e);
+        }
+    }
+
+    res.render('bem-form', { 
+        slug: req.params.slug,
+        siteUrl: 'https://bemkbmfkgumi.com',
+        formData: formData 
+    });
+});
+
 
 // ============================================================================
 // SUPER BIG UPGRADE: SSR ROUTING UNTUK BERITA & KATEGORI DINAMIS (SEO ENTERPRISE)
