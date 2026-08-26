@@ -216,6 +216,7 @@ const defaultRadar = [
     }
 ];
 
+// MENDUKUNG KEY BIAYAREGISTRASI PADA DATA DEFAULT KALENDER
 const defaultKalender = [
     {
         id: "umi-amal-senyuman-uas-vol-iv", 
@@ -228,6 +229,7 @@ const defaultKalender = [
         deskripsi: "WELCOME TO UAS VOL. IV\n\nSaatnya membawa nama himpunan menuju arena pengabdian terbesar di FKG UMI! Kegiatan ini merupakan wujud nyata Tridharma Perguruan Tinggi yang menjunjung tinggi nilai kemanusiaan dan kepedulian sosial.",
         lokasi: "Desa Binaan FKG UMI",
         targetPeserta: "Seluruh Mahasiswa FKG UMI",
+        biayaRegistrasi: "Gratis / Tidak Dipungut Biaya", // BIAYA REGISTRASI
         statusDaftar: "Buka",
         linkDaftar: "https://bit.ly/DaftarUASVol4",
         kepanitiaan: [
