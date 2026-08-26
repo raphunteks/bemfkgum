@@ -42,11 +42,21 @@
             
             let offersDataStr = "";
             let urlDaftar = eventData.linkDaftar ? eventData.linkDaftar.trim() : "";
+            
+            // Extract numbers from price string (e.g. "Rp. 50.000" -> "50000") for SEO Schema
+            let priceValue = "0";
+            if (eventData.biayaRegistrasi && typeof eventData.biayaRegistrasi === 'string') {
+                let cleanPrice = eventData.biayaRegistrasi.replace(/[^0-9]/g, '');
+                if (cleanPrice && cleanPrice !== "") {
+                    priceValue = cleanPrice;
+                }
+            }
+
             if (urlDaftar && urlDaftar.startsWith('http')) {
                 offersDataStr = `,"offers": {
                     "@type": "Offer",
                     "url": "${urlDaftar}",
-                    "price": "0",
+                    "price": "${priceValue}",
                     "priceCurrency": "IDR",
                     "availability": "https://schema.org/InStock",
                     "validFrom": "${startDateISO}"
@@ -292,13 +302,23 @@
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 35px;">
+                        <div style="margin-bottom: 25px;">
                             <span class="detail-info-label">TARGET PESERTA</span>
                             <div class="info-row">
                                 <div class="info-icon-wrapper ic-target">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                                 </div>
                                 <strong id="detailTarget" style="color:var(--text-light); font-size:1.05rem; line-height: 1.4;">-</strong>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 35px;">
+                            <span class="detail-info-label">BIAYA REGISTRASI</span>
+                            <div class="info-row">
+                                <div class="info-icon-wrapper ic-biaya">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                </div>
+                                <strong id="detailBiaya" style="color:var(--text-light); font-size:1.05rem; line-height: 1.4;">-</strong>
                             </div>
                         </div>
 
@@ -362,7 +382,6 @@
             `;
         }
 
-        // Helper untuk menghasilkan ISO 8601 Date yang valid untuk GSC
         function createValidISODate(dateStr, defaultTime) {
             if (!dateStr) return new Date().toISOString(); 
             try {
@@ -440,6 +459,7 @@
                             deskripsi: prokerMatch.latarBelakang || prokerMatch.shortDesc,
                             lokasi: "Cek Detail Proposal",
                             targetPeserta: prokerMatch.sasaranPeserta,
+                            biayaRegistrasi: prokerMatch.biayaRegistrasi || "Gratis / Tidak Dipungut Biaya",
                             statusDaftar: "Tutup",
                             linkDaftar: "",
                             kepanitiaan: [
@@ -489,6 +509,7 @@
             document.getElementById('detailLokasi').innerText = eventData.lokasi || "-";
             document.getElementById('detailWaktu').innerText = formatWaktu;
             document.getElementById('detailTarget').innerText = eventData.targetPeserta || "-";
+            document.getElementById('detailBiaya').innerText = eventData.biayaRegistrasi || "Gratis / Tidak Dipungut Biaya";
             
             if(eventData.banner) document.getElementById('detailBanner').src = imgUrl;
 
