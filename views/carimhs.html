@@ -142,13 +142,18 @@
                     let d_tipe_url = searchMode; // Parameter URL spesifik (mhs / dosen / civitas)
 
                     if (searchMode === 'mhs') {
-                        d_id = item.nim || item.nim_profesi || item.nim_sarjana || item.NIM || '-';
-                        for(let key in item) {
-                            let k = key.toLowerCase();
-                            if(k.includes('nama')) d_nama = item[key];
-                            if(k.includes('angkat') || k.includes('tahun')) d_desc = `Angkatan ${item[key]}`;
-                            if(k.includes('status')) d_status = item[key];
-                        }
+                        // Menangani prioritas pengambilan ID jika jenjang Profesi
+                        d_id = item.nim_profesi && item.nim_profesi !== '-' && item.nim_profesi !== '' 
+                            ? item.nim_profesi 
+                            : (item.nim_sarjana || item.nim || item.NIM || '-');
+                            
+                        // Menggunakan pendekatan spesifik untuk menghindari tercampurnya field 'nama_ibu' / 'nama_ayah'
+                        d_nama = item.nama || item['Nama Lengkap'] || item.NAMA || '-';
+                        
+                        let angkatan = item.angkatan || item['Tahun Angkatan'] || '-';
+                        d_desc = angkatan !== '-' ? `Angkatan ${angkatan}` : '-';
+                        d_status = item.status || item['Status Akademik'] || 'Aktif';
+                        
                     } else {
                         // Prioritas Pencarian ID Pegawai
                         d_tipe = (item.tipe_pegawai || 'civitas');
@@ -162,12 +167,10 @@
                         
                         d_tipe = d_tipe.toUpperCase();
 
-                        for(let key in item) {
-                            let k = key.toLowerCase();
-                            if(k.includes('nama')) d_nama = item[key];
-                            if(k.includes('prodi') || k.includes('unit')) d_desc = item[key];
-                            if(k.includes('status')) d_status = item[key];
-                        }
+                        // Menggunakan pendekatan spesifik untuk menghindari tercampurnya field
+                        d_nama = item.nama || item['Nama Lengkap'] || item.NAMA || '-';
+                        d_desc = item.prodi || item['Program Studi / Unit Kerja'] || item.unit || '-';
+                        d_status = item.status || item['Status Aktif'] || item.Status || 'Aktif';
                     }
 
                     // Logika Pewarnaan Badge Status
