@@ -24,33 +24,20 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; img-src * data: blob: 'unsafe-inline';"
+          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src * data: blob: 'unsafe-inline';"
         },
         {
           "key": "Referrer-Policy",
-          "value": "no-referrer"
+          "value": "no-referrer-when-downgrade"
         }
       ]
     },
     {
-      "source": "/img/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "no-referrer"
-        }
-      ]
-    },
-    {
-      "source": "/css/(.*)",
+      "source": "/(css|js|img)/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -70,6 +57,19 @@
           "value": "application/xml; charset=utf-8"
         }
       ]
+    },
+    {
+      "source": "/api/uploads/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
     }
   ],
   "routes": [
@@ -81,16 +81,12 @@
       "dest": "/server.js"
     },
     {
-      "src": "/public/(.*)",
-      "dest": "/public/$1"
-    },
-    {
       "src": "/favicon.ico",
-      "dest": "/public/img/bemfkgumi.png"
+      "dest": "/img/bemfkgumi.png"
     },
     {
       "src": "/favicon.png",
-      "dest": "/public/img/bemfkgumi.png"
+      "dest": "/img/bemfkgumi.png"
     },
     {
       "src": "/admin-linktree",
@@ -125,12 +121,28 @@
       "dest": "/serverV2.js"
     },
     {
+      "src": "/api/civitas(.*)",
+      "dest": "/serverV2.js"
+    },
+    {
+      "src": "/api/upload/(.*)",
+      "dest": "/serverV2.js"
+    },
+    {
       "src": "/api/upload(.*)",
       "dest": "/serverV2.js"
     },
     {
+      "src": "/api/uploads/(.*)",
+      "dest": "/server.js"
+    },
+    {
       "src": "/api/admin(.*)",
       "dest": "/serverV2.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
     },
     {
       "src": "/(.*)",
