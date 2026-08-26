@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEM Admin CMS | BEM Admin V1</title>
+    <title>BEM Admin | BEM Dashboard CMS V1</title>
     <meta name="description" content="Sistem Manajemen Database dan Konten Internal BEM KBMFKG UMI. Restricted Access.">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     
@@ -205,7 +205,7 @@
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
                         <h2 style="color: var(--text-light);">DESKRIPSI PROGRAM KERJA</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Data Card Departemen dan Halaman Deskripsi Lengkap</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Data Card Departemen dan Halaman Deskripsi Lengkap <strong style="color: var(--accent-neon);">(/informasi/proker/proker-deskripsi/slug)</strong></p>
                     </div>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('proker', this)">💾 Simpan Departemen</button>
                 </div>
@@ -218,7 +218,7 @@
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
                         <h2 style="color: var(--text-light);">Manajemen Agenda Kalender & Detail Proker</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Untuk Event Kegiatan Spesifik</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manajemen Event Spesifik <strong style="color: #10b981;">(/informasi/kalender/proker-detail/slug)</strong></p>
                     </div>
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('kalender', this)">💾 Simpan Semua Agenda</button>
                 </div>
@@ -241,7 +241,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap:10px;">
                     <div>
                         <h2 style="color: var(--text-light);">Manajemen Artikel & Berita</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Kelola publikasi ke Portal Publik E-Zine BEM (Tersimpan Lokal di Upstash Redis)</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Kelola publikasi ke Portal Publik E-Zine BEM <strong style="color: #00ffaa;">(URL: /berita/slug)</strong> - Tersimpan Lokal di Upstash Redis</p>
                     </div>
                     <div style="display:flex; gap:15px; align-items:center;">
                         <input type="text" id="searchArtikel" class="neo-input" placeholder="🔍 Cari artikel..." style="margin-bottom:0; width:250px;" onkeyup="cariArtikel(this.value)">
@@ -816,7 +816,7 @@
                     </h3>
                     
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
-                        <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">ID Slug Proker (URL)</label>
+                        <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">ID Slug Proker (Clean SEO URL)</label>
                         <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${p.slug || p.id || ''}" placeholder="contoh: pubmed" oninput="db.proker[${i}].slug=this.value; db.proker[${i}].id=this.value">
                     </div>
 
@@ -966,7 +966,7 @@
                     </div>
                     
                     <div style="margin-bottom:20px; background: rgba(0,229,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0,229,255,0.3);">
-                        <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">Custom Link / Slug (Opsional - SEO URL)</label>
+                        <label style="font-size:0.8rem; color:var(--accent-neon); font-weight:bold;">Custom Link / Slug (Opsional - Clean SEO URL)</label>
                         <input type="text" class="neo-input" style="border-color: rgba(0,229,255,0.3); margin-bottom: 5px; margin-top: 5px;" value="${k.slug || k.id || ''}" placeholder="contoh: umi-amal-senyuman-vol-3" oninput="db.kalender[${i}].slug=this.value; db.kalender[${i}].id=this.value">
                         <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">*Biarkan kosong agar sistem otomatis membuat link dari Nama Kegiatan secara rapi.</p>
                     </div>
