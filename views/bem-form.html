@@ -3,7 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulir - BEM KBMFKG UMI (Futuristic Edition)</title>
+    
+    <!-- =========================================================================
+         SUPER BIG UPGRADE: SSR DYNAMIC SEO METADATA & CANONICAL TAGS
+         Di-render langsung dari Server Express.js (EJS) sebelum memuat JS Client!
+         Menyelesaikan isu GSC "Halaman alternatif dengan tag kanonis yang tepat"
+         ========================================================================= -->
+    <% if (typeof formData !== 'undefined' && formData) { %>
+        <% 
+            const finalSlug = formData.slug || formData.id || (typeof slug !== 'undefined' ? slug : '');
+            const baseUrl = typeof siteUrl !== 'undefined' ? siteUrl : 'https://bemkbmfkgumi.com';
+            const pageUrl = `${baseUrl}/form/${finalSlug}`;
+            
+            const pageTitle = `${formData.title} | Formulir BEM KBMFKG UMI`;
+            let rawDesc = formData.description || '';
+            let descText = rawDesc.length > 155 ? rawDesc.substring(0, 155) + '...' : (rawDesc || `Silakan isi formulir ${formData.title} dari BEM KBMFKG UMI secara online.`);
+            
+            // Gunakan headerImage dari theme jika ada, jika tidak gunakan logo default
+            let ogImgUrl = (formData.theme && formData.theme.headerImage) ? formData.theme.headerImage : `${baseUrl}/img/bemfkgumi.png`;
+            if (ogImgUrl.startsWith('/')) ogImgUrl = baseUrl + ogImgUrl;
+
+            // Pastikan URL aman untuk SEO Description
+            const fullSEO_Description = rawDesc.substring(0, 4500).replace(/"/g, '&quot;').replace(/\n/g, ' ');
+            
+            // Konversi Deadline ISO 8601 Date untuk Schema jika ada
+            let endDateISO = "";
+            if (formData.settings && formData.settings.deadline) {
+                try {
+                    const d = new Date(formData.settings.deadline);
+                    if (!isNaN(d.getTime())) endDateISO = d.toISOString();
+                } catch(e) {}
+            }
+        %>
+        
+        <title><%= pageTitle %></title>
+        <meta name="description" content="<%= descText %>">
+        <meta name="keywords" content="<%= formData.title %>, Formulir Online, BEM FKG UMI, Pendaftaran Kegiatan BEM, Survey Mahasiswa, Form BEM KBMFKG UMI">
+        <meta name="author" content="BEM KBMFKG UMI">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        
+        <link rel="canonical" id="canonicalUrl" href="<%= pageUrl %>">
+
+        <meta property="og:site_name" content="BEM KBMFKG UMI">
+        <meta property="og:type" id="ogType" content="website">
+        <meta property="og:url" id="ogUrl" content="<%= pageUrl %>">
+        <meta property="og:title" id="ogTitle" content="<%= pageTitle %>">
+        <meta property="og:description" id="ogDesc" content="<%= descText %>">
+        <meta property="og:image" id="ogImage" content="<%= ogImgUrl %>">
+        
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:url" content="<%= pageUrl %>">
+        <meta name="twitter:title" id="twTitle" content="<%= pageTitle %>">
+        <meta name="twitter:description" content="<%= descText %>">
+        <meta name="twitter:image" content="<%= ogImgUrl %>">
+
+        <!-- =========================================================================
+             ADVANCED JSON-LD Schema.org (@graph Format - WEBPAGE & BREADCRUMB)
+             ========================================================================= -->
+        <script type="application/ld+json" id="dynamic-form-schema">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+                "@type": "WebPage",
+                "@id": "<%= pageUrl %>/#webpage",
+                "url": "<%= pageUrl %>",
+                "name": "<%= pageTitle %>",
+                "description": "<%= fullSEO_Description || descText %>",
+                "inLanguage": "id-ID",
+                "publisher": { "@id": "<%= baseUrl %>/#organization" },
+                "primaryImageOfPage": {
+                    "@type": "ImageObject",
+                    "url": "<%= ogImgUrl %>"
+                }
+            },
+            {
+                "@type": "Organization",
+                "@id": "<%= baseUrl %>/#organization",
+                "name": "BEM KBMFKG UMI",
+                "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+                "url": "<%= baseUrl %>",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "<%= baseUrl %>/img/bemfkgumi.png"
+                }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "<%= pageUrl %>/#breadcrumb",
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= baseUrl %>/" },
+                    { "@type": "ListItem", "position": 2, "name": "Layanan Formulir", "item": "<%= baseUrl %>" },
+                    { "@type": "ListItem", "position": 3, "name": "<%= formData.title %>", "item": "<%= pageUrl %>" }
+                ]
+            }
+          ]
+        }
+        </script>
+    <% } else { %>
+        <!-- ================= FALLBACK SSR SEO DEFAULT ================= -->
+        <title>Formulir - BEM KBMFKG UMI</title>
+        <meta name="description" content="Layanan Formulir Online Resmi Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia.">
+        <meta name="keywords" content="Formulir Online, BEM FKG UMI, Pendaftaran Kegiatan BEM, Survey Mahasiswa, Form BEM KBMFKG UMI">
+        <meta name="author" content="BEM KBMFKG UMI">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        <link rel="canonical" href="https://bemkbmfkgumi.com">
+
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://bemkbmfkgumi.com/#organization",
+              "name": "BEM KBMFKG UMI",
+              "alternateName": "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia",
+              "url": "https://bemkbmfkgumi.com/",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://bemkbmfkgumi.com/img/bemfkgumi.png"
+              }
+            }
+          ]
+        }
+        </script>
+    <% } %>
+
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     
     <!-- SUPER UPGRADE: Load SEMUA Google Fonts Lengkap (20+ Fonts) & Seluruh Ketebalan (100-900) -->
@@ -108,6 +233,11 @@
         .duration-container { display: flex; gap: 15px; align-items: center; }
         .duration-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
     </style>
+
+    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript (Fallback JS Renderer) -->
+    <script>
+        window.SSR_FORM_DATA = <%- typeof formData !== 'undefined' && formData ? JSON.stringify(formData) : 'null' %>;
+    </script>
 </head>
 <body class="public-form-body">
     <!-- HEADER STANDAR BEM -->
@@ -227,14 +357,18 @@
 
         async function loadPublicForm() {
             try {
-                const res = await fetch(`/api/forms/${slug}`);
-                const json = await res.json();
-                
-                if(!json.success || !json.data) { 
-                    return renderError("Data Anomali! Formulir tidak ditemukan di server atau URL tidak sah."); 
+                // Gunakan Injection SSR Jika Ada (Lebih Cepat & Tidak Perlu Fetch ke Server Lagi)
+                if (window.SSR_FORM_DATA) {
+                    formData = window.SSR_FORM_DATA;
+                } else {
+                    const res = await fetch(`/api/forms/${slug}`);
+                    const json = await res.json();
+                    
+                    if(!json.success || !json.data) { 
+                        return renderError("Data Anomali! Formulir tidak ditemukan di server atau URL tidak sah."); 
+                    }
+                    formData = json.data;
                 }
-                
-                formData = json.data;
                 
                 if (!formData.settings) formData.settings = {};
                 
@@ -782,14 +916,17 @@
                 nativeSelect.parentNode.insertBefore(wrapper, nativeSelect.nextSibling);
             });
 
-            document.addEventListener('click', () => {
-                document.querySelectorAll('.custom-select-options').forEach(el => {
-                    el.style.display = 'none';
-                    el.parentElement.classList.remove('open');
-                    let parentCard = el.closest('.form-question-card');
-                    if(parentCard) parentCard.style.zIndex = '1';
+            if(!window.customSelectListenerAttached) {
+                document.addEventListener('click', () => {
+                    document.querySelectorAll('.custom-select-options').forEach(el => {
+                        el.style.display = 'none';
+                        el.parentElement.classList.remove('open');
+                        let parentCard = el.closest('.form-question-card');
+                        if(parentCard) parentCard.style.zIndex = '1';
+                    });
                 });
-            });
+                window.customSelectListenerAttached = true;
+            }
         }
 
         function checkCheckboxValidation(qId) {
