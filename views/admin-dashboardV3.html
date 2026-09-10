@@ -355,8 +355,35 @@
 
 <script>
     // ================= SECURITY & AUTHENTICATION =================
+    function getAuthToken() {
+        return localStorage.getItem('axa_admin_token') || '';
+    }
+
+    function getAuthHeaders(extraHeaders = {}) {
+        const token = getAuthToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            ...extraHeaders
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        return headers;
+    }
+
+    function handleAuthError(status) {
+        if (status === 401 || status === 403) {
+            window.showCustomAlert("Sesi login Anda kedaluwarsa atau token tidak valid. Silakan login kembali.");
+            localStorage.removeItem('axa_admin_token');
+            document.getElementById('loginGate').style.display = 'flex';
+            document.getElementById('loginGate').style.opacity = '1';
+            return true;
+        }
+        return false;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        const token = localStorage.getItem('axa_admin_token');
+        const token = getAuthToken();
         if (token) {
             document.getElementById('loginGate').style.display = 'none';
             document.getElementById('main-layout').style.display = 'flex';
@@ -389,16 +416,16 @@
             });
             const data = await res.json();
 
-            if(data.success) { 
+            if(data.success && data.token) { 
                 localStorage.setItem('axa_admin_token', data.token); 
                 unlockDashboard(); 
-            } else {
+            } else { 
                 throw new Error();
             }
         } catch(e) {
             if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
-                localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); 
-                showToast("✅ Simulasi Canvas Aktif."); 
+                localStorage.setItem('axa_admin_token', 'AXA-XYZ-SECURE-TOKEN'); 
+                window.showToast("✅ Simulasi Canvas Aktif."); 
                 unlockDashboard(); 
             } else { 
                 document.getElementById('loginError').style.display = 'block'; 
@@ -515,7 +542,6 @@
         window.copyToClipboard(url);
     }
 
-
     // ================= 50+ AESTHETIC GEN Z FONTS =================
     const fontLibrary = [
         "Inter", "Poppins", "Outfit", "Plus Jakarta Sans", "Space Grotesk", 
@@ -562,7 +588,7 @@
         {val: "pastel", name: "Pastel Dream"}, {val: "cyberpunk", name: "Cyberpunk Glitch", needBorder: true}, {val: "hologram-dark", name: "Hologram Dark"}
     ];
 
-    // ================= 30 BACKGROUND TEMPLATES (UPDATED) =================
+    // ================= 30 BACKGROUND TEMPLATES =================
     const bgTemplates = [
         {val: "grid-light", name: "Grid Lines Light"}, {val: "grid-dark", name: "Grid Lines Dark"},
         {val: "polka-light", name: "Polka Dots Light"}, {val: "polka-dark", name: "Polka Dots Dark"},
@@ -574,7 +600,6 @@
         {val: "hexagons", name: "Hexagon Hive"}, {val: "clouds", name: "Soft Clouds"},
         {val: "mesh-1", name: "Aurora Mesh 1"}, {val: "mesh-2", name: "Aurora Mesh 2"},
         {val: "liquid-1", name: "Liquid Gradient 1"}, {val: "liquid-2", name: "Liquid Gradient 2"},
-        // --- 10 NEW TEMPLATES ---
         {val: "neo-brutalism", name: "Neobrutalism Playful"}, {val: "glass-blobs", name: "Glassmorphism Blobs"},
         {val: "y2k-holo", name: "Y2K Hologram"}, {val: "cyber-grid", name: "Cyberpunk Grid"},
         {val: "retro-sunset", name: "Retro Sunset"}, {val: "bauhaus", name: "Bauhaus Geometric"},
@@ -604,7 +629,6 @@
         'gift': '<polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>',
         'coffee': '<path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line>',
         'mic': '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line>',
-        // More typical UI icons
         'home': '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>',
         'search': '<circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>',
         'settings': '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>',
@@ -648,8 +672,6 @@
             case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.3) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.3) 0px, transparent 50%); background-color: var(--theme-bg, #ffffff);`;
             case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(0,0,255,0.1)); filter: contrast(1.5); background-color: var(--theme-bg, #ffffff);`;
             case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,0,0.1), rgba(255,0,255,0.1)); background-color: var(--theme-bg, #ffffff);`;
-            
-            // --- 10 NEW TEMPLATES ---
             case 'neo-brutalism': return `background-color: var(--theme-bg, #ffde59); background-image: radial-gradient(circle, #000 2px, transparent 2px); background-size: 30px 30px;`;
             case 'glass-blobs': return `background-color: var(--theme-bg, #f3f4f6); background-image: radial-gradient(circle at 15% 50%, rgba(255,105,180,0.4), transparent 50%), radial-gradient(circle at 85% 30%, rgba(0,255,255,0.4), transparent 50%); filter: blur(0px);`;
             case 'y2k-holo': return `background: linear-gradient(120deg, #ff00cc, #333399, #00ffff); background-size: 200% 200%; animation: gradientMove 5s ease infinite;`;
@@ -660,7 +682,6 @@
             case 'pastel-dream': return `background: linear-gradient(45deg, #ffc3a0 0%, #ffafbd 100%);`;
             case 'dark-academia': return `background-color: #3e2723; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.15) 10px, rgba(0,0,0,0.15) 20px);`;
             case 'minimal-zen': return `background-color: var(--theme-bg, #fafafa); background-image: repeating-radial-gradient(circle at center, transparent 0, transparent 20px, rgba(0,0,0,0.04) 21px, rgba(0,0,0,0.04) 22px);`;
-            
             default: return '';
         }
     }
@@ -704,7 +725,6 @@
     let activeIconLinkId = null;
 
     function populateSelectors() {
-        // 1. Populate Fonts
         let fontHtml = '';
         fontLibrary.forEach(font => {
             fontHtml += `<option value="'${font}', sans-serif">${font}</option>`;
@@ -715,28 +735,24 @@
         document.getElementById('inp-font-title').value = "'Outfit', sans-serif";
         document.getElementById('inp-font-btn').value = "'Plus Jakarta Sans', sans-serif";
 
-        // 2. Populate Shapes
         let shapesHtml = '';
         buttonShapes.forEach(sh => {
             shapesHtml += `<div class="selector-item btn-shape-sel" data-val="${sh.val}" onclick="selectThemeOpt('btnShape', '${sh.val}')">${sh.name}</div>`;
         });
         document.getElementById('grid-shapes').innerHTML = shapesHtml;
 
-        // 3. Populate Types
         let typesHtml = '';
         buttonTypes.forEach(ty => {
             typesHtml += `<div class="selector-item btn-type-sel" data-val="${ty.val}" onclick="selectThemeOpt('btnType', '${ty.val}')">${ty.name}</div>`;
         });
         document.getElementById('grid-types').innerHTML = typesHtml;
 
-        // 4. Populate Background Templates
         let templateHtml = '<div class="selector-item btn-template-sel active" data-val="" onclick="selectBgTemplate(\'\')">Tanpa Template</div>';
         bgTemplates.forEach(tp => {
             templateHtml += `<div class="selector-item btn-template-sel" data-val="${tp.val}" onclick="selectBgTemplate('${tp.val}')">${tp.name}</div>`;
         });
         document.getElementById('grid-bg-templates').innerHTML = templateHtml;
 
-        // 5. Populate SVG Icons Grid in Modal
         let svgHtml = '';
         for(let key in svgIconsCollection) {
             svgHtml += `<div class="selector-item" onclick="selectIcon('svg:${key}')" style="padding:15px; font-size:1.5rem;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[key]}</svg></div>`;
@@ -833,7 +849,14 @@
         const container = document.getElementById('linktree-list-container');
         container.innerHTML = "<div style='text-align:center; padding:50px; color:var(--text-muted);'>Memuat daftar Linktree dari server...</div>";
         try {
-            const res = await fetch('/api/linktrees');
+            const res = await fetch('/api/linktrees', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+            if(!res.ok) {
+                if (handleAuthError(res.status)) return;
+                throw new Error("Gagal load API");
+            }
             const json = await res.json();
 
             allLinktrees = json.data || [];
@@ -895,11 +918,19 @@
     function deleteLinktree(id) {
         window.showCustomConfirm("Apakah Anda yakin ingin menghapus Linktree ini secara permanen?", async function() {
             try {
-                const res = await fetch(`/api/linktrees/${id}`, { method: 'DELETE' });
+                const res = await fetch(`/api/linktrees/${id}`, { 
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                if (handleAuthError(res.status)) return;
+
                 const json = await res.json();
                 if(json.success) {
                     window.showToast("🗑️ Berhasil dihapus!");
                     loadAllLinktrees();
+                } else {
+                    window.showCustomAlert("Gagal menghapus: " + (json.message || "Akses Ditolak"));
                 }
             } catch (e) {
                 window.showCustomAlert("Gagal menghapus.");
@@ -1064,7 +1095,7 @@
                         iconPreviewHtml = `<div style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[svgKey]}</svg></div>`;
                     }
                 } else {
-                    iconPreviewHtml = `<img src="${l.icon}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">`;
+                    iconPreviewHtml = `<img src="${l.icon}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='/img/bemfkgumi.png'">`;
                 }
             }
 
@@ -1157,7 +1188,6 @@
         container.innerHTML = html;
     }
 
-
     // ================= FILE UPLOAD =================
     async function handleImageUpload(input, type) {
         if(input.files && input.files[0]) {
@@ -1169,8 +1199,13 @@
                 const base64 = e.target.result;
 
                 try {
-                    const res = await fetch('/api/upload', {
-                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                    let apiUrl = '/api/upload';
+                    if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                        apiUrl = 'https://bemkbmfkgumi.com/api/upload';
+                    }
+                    const res = await fetch(apiUrl, {
+                        method: 'POST', 
+                        headers: getAuthHeaders(),
                         body: JSON.stringify({ filename: file.name, base64: base64 })
                     });
                     const data = await res.json();
@@ -1187,6 +1222,8 @@
                             selectIcon(window.location.origin + data.url);
                         }
                         if(type !== 'link-icon') renderLivePreview();
+                    } else {
+                        throw new Error();
                     }
                 } catch(err) {
                     console.error("Gagal Upload via API. Menggunakan Base64 Local.");
@@ -1220,12 +1257,10 @@
         const screen = document.getElementById('live-preview-screen');
         const t = state.theme;
 
-        // Reset Styles & Classes
         screen.classList.remove('has-bg-image');
         screen.style.background = ''; 
-        screen.style.backgroundColor = t.bgColor; // Base
+        screen.style.backgroundColor = t.bgColor;
 
-        // Background Logic Fix
         if(t.bgType === 'color') {
             screen.style.backgroundColor = t.bgColor;
         } else if (t.bgType === 'gradient') {
@@ -1250,12 +1285,10 @@
             loadGoogleFont(t.fontButton);
         } catch(e) { console.log("Gagal memuat font", e); }
 
-        // Profile Section
-        html += `<img id="pv-profile-img" src="${state.profile.image || '/img/bemfkgumi.png'}" alt="Profile">`;
+        html += `<img id="pv-profile-img" src="${state.profile.image || '/img/bemfkgumi.png'}" alt="Profile" onerror="this.src='/img/bemfkgumi.png'">`;
         html += `<h2 id="pv-title" style="font-family:${t.fontTitle}; color:${t.textColor}">${state.profile.title || '@namaprofil'}</h2>`;
         html += `<p id="pv-bio" style="font-family:${t.fontButton}; color:${t.textColor}">${state.profile.bio || ''}</p>`;
 
-        // Link Buttons Logic (35 TYPES CSS GENERATOR - FIXED BORDER RADIUS OVERRIDE)
         let btnCssObj = `font-family:${t.fontButton}; display:flex; align-items:center; justify-content:center; position:relative; `;
         let bg = t.btnColor;
         let borderC = t.borderColor || '#0f172a';
@@ -1309,7 +1342,7 @@
                         let k = l.icon.split(':')[1];
                         if(svgIconsCollection[k]) renderIcon = `<div class="link-icon-thumbnail svg-icon" style="color:inherit;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">${svgIconsCollection[k]}</svg></div>`;
                     } else {
-                        renderIcon = `<img src="${l.icon}" class="link-icon-thumbnail">`;
+                        renderIcon = `<img src="${l.icon}" class="link-icon-thumbnail" onerror="this.style.display='none'">`;
                     }
                 }
 
@@ -1321,7 +1354,6 @@
         });
         html += `</div>`;
 
-        // Socials Logic
         if(state.socials && state.socials.length > 0) {
             html += `<div id="pv-socials">`;
             state.socials.forEach(s => {
@@ -1338,7 +1370,6 @@
             html += `</div>`;
         }
 
-        // Footer Watermark Logic (Dinamis dari state)
         const fText = state.settings.footerText || defaultState.settings.footerText;
         const fUrl = state.settings.footerUrl || defaultState.settings.footerUrl;
 
@@ -1349,34 +1380,42 @@
         screen.innerHTML = html;
     }
 
-    // ================= API SAVE LOGIC =================
+    // ================= API SAVE LOGIC (BEARER TOKEN TERINTEGRASI) =================
     async function saveLinktree() {
-        try {
-            const btn = document.getElementById('btn-global-action');
-            btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
+        const btn = document.getElementById('btn-global-action');
+        const origText = btn.innerText;
+        btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
 
+        try {
             const res = await fetch('/api/linktrees/save', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(state)
             });
+
+            if (handleAuthError(res.status)) {
+                btn.innerText = origText; btn.disabled = false;
+                return;
+            }
 
             const data = await res.json();
             if(data.success) {
                 state = data.data; 
                 window.showSuccessModal(`${window.location.origin}/link/${state.slug}`);
             } else {
-                window.showCustomAlert("Gagal: " + data.message);
+                window.showCustomAlert("Gagal: " + (data.message || "Akses Ditolak"));
             }
-            btn.innerText = "🚀 Simpan & Publikasi"; btn.disabled = false;
+            btn.innerText = origText; btn.disabled = false;
         } catch(e) {
             console.error(e);
             window.showCustomAlert("Terjadi kesalahan jaringan saat menyimpan data.");
-            const btn = document.getElementById('btn-global-action');
-            btn.innerText = "🚀 Simpan & Publikasi"; btn.disabled = false;
+            btn.innerText = origText; btn.disabled = false;
         }
     }
-
 </script>
+
+<!-- Script Protect DevTools -->
+<script src="/js/protect-devtools.js"></script>
+
 </body>
 </html>
