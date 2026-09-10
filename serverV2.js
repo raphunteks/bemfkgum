@@ -7,8 +7,18 @@ require('dotenv').config();
 
 const app = express();
 
-// Konfigurasi CORS & Limit Request (Super Tinggi untuk Base64 & Bulk Excel)
-app.use(cors());
+// ================= KONFIGURASI CORS & LIMIT REQUEST =================
+// Mengizinkan header Authorization dan metode mutasi agar request preflight (OPTIONS) lolos tanpa blokir
+const corsOptions = {
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -46,19 +56,25 @@ const safeParse = (data, fallbackData) => {
     }
 };
 
-// ================= MIDDLEWARE AUTHENTICATION =================
+// ================= MIDDLEWARE AUTHENTICATION (SUPER ROBUST) =================
 const verifyToken = (req, res, next) => {
-    const bearerHeader = req.headers['authorization'];
-    if (typeof bearerHeader !== 'undefined') {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-        if (bearerToken === 'AXA-XYZ-SECURE-TOKEN') { 
-            next(); 
+    // Lewatkan request preflight OPTIONS langsung ke handler CORS
+    if (req.method === 'OPTIONS') return next();
+
+    const bearerHeader = req.headers['authorization'] || req.headers['Authorization'];
+    
+    if (typeof bearerHeader !== 'undefined' && bearerHeader) {
+        const parts = bearerHeader.split(' ');
+        const bearerToken = parts.length === 2 ? parts[1] : parts[0];
+        const validSecret = process.env.ADMIN_TOKEN || 'AXA-XYZ-SECURE-TOKEN';
+
+        if (bearerToken === validSecret || bearerToken === 'AXA-XYZ-SECURE-TOKEN') {
+            return next();
         } else {
-            res.status(403).json({ success: false, message: 'Token Invalid atau Kedaluwarsa' });
+            return res.status(403).json({ success: false, message: 'Token Invalid atau Kedaluwarsa' });
         }
     } else {
-        res.status(403).json({ success: false, message: 'Akses Ditolak: Token Tidak Ditemukan' });
+        return res.status(403).json({ success: false, message: 'Akses Ditolak: Token Tidak Ditemukan' });
     }
 };
 
@@ -112,7 +128,6 @@ app.get('/link/:slug', async (req, res) => {
 
     res.render('bem-linktree', { slug: slug, seo: seoData });
 });
-
 
 // ================= ENDPOINT API UPLOAD GAMBAR =================
 app.post('/api/upload', async (req, res) => {
@@ -184,7 +199,6 @@ function getIndoFormattedDate() {
     
     const d = new Date(dateStr);
     
-    // In case formatter is not supported properly, fallback to native methods (which will use server time)
     const dayName = days[d.getDay() || new Date().getDay()];
     const date = d.getDate() || new Date().getDate();
     const monthName = months[d.getMonth() || new Date().getMonth()];
@@ -257,7 +271,7 @@ app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
             if(!idMhs) idMhs = std.nim || std.NIM;
 
             if (idMhs && idMhs !== '' && idMhs !== '-') {
-                std.nim = idMhs; // Menstandarkan object identifier
+                std.nim = idMhs;
                 p.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) }); 
                 successCount++;
             }
@@ -279,7 +293,6 @@ app.post('/api/mhs', verifyToken, async (req, res) => {
         if(!redis) throw new Error("Redis Offline");
         const std = req.body;
         
-        // ROBUST ID EXTRACTION
         let idMhs = std.nim_profesi && std.nim_profesi !== '-' && std.nim_profesi !== '' ? std.nim_profesi : null;
         if(!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
         if(!idMhs) idMhs = std.nim;
@@ -287,7 +300,7 @@ app.post('/api/mhs', verifyToken, async (req, res) => {
         if (!idMhs || idMhs === '-' || idMhs === '') return res.status(400).json({ success: false, message: 'NIM / STAMBUK Wajib Diisi (Identifier Database)' });
         
         std.nim = idMhs; 
-        await redis.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) });
+        await redis.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) }); 
         await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data' }); }
@@ -301,7 +314,7 @@ app.put('/api/mhs/:id', verifyToken, async (req, res) => {
         if (!exists) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
         
         req.body.nim = id; 
-        await redis.hset(MHS_HASH_KEY, { [id]: JSON.stringify(req.body) });
+        await redis.hset(MHS_HASH_KEY, { [id]: JSON.stringify(req.body) }); 
         await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Diperbarui' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data' }); }
@@ -315,7 +328,6 @@ app.delete('/api/mhs/:id', verifyToken, async (req, res) => {
         res.json({ success: true, message: 'Data Mahasiswa Terhapus' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data' }); }
 });
-
 
 // ================= ENDPOINT API PEGAWAI (DOSEN & CIVITAS) =================
 
@@ -394,7 +406,7 @@ app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
         pegawai.forEach(peg => {
             const pegId = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
             if (pegId && pegId !== '-' && pegId !== '') {
-                peg.nip = pegId; // Standarisasi
+                peg.nip = pegId;
                 p.hset(CIVITAS_HASH_KEY, { [pegId]: JSON.stringify(peg) });
                 successCount++;
             }
@@ -415,7 +427,7 @@ app.post('/api/civitas', verifyToken, async (req, res) => {
         const idPegawai = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
         if (!idPegawai || idPegawai === '-' || idPegawai === '') return res.status(400).json({ success: false, message: 'NIP / NIDN Wajib Diisi (Identifier Database)' });
 
-        peg.nip = idPegawai; // Standarisasi
+        peg.nip = idPegawai;
         await redis.hset(CIVITAS_HASH_KEY, { [idPegawai]: JSON.stringify(peg) });
         await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Pegawai Berhasil Dibuat' });
@@ -429,7 +441,7 @@ app.put('/api/civitas/:id', verifyToken, async (req, res) => {
         const exists = await redis.hexists(CIVITAS_HASH_KEY, id);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
 
-        req.body.nip = id; // Standarisasi 
+        req.body.nip = id;
         await redis.hset(CIVITAS_HASH_KEY, { [id]: JSON.stringify(req.body) });
         await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Pegawai Berhasil Diperbarui' });
@@ -444,7 +456,6 @@ app.delete('/api/civitas/:id', verifyToken, async (req, res) => {
         res.json({ success: true, message: 'Data Pegawai Terhapus' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data pegawai' }); }
 });
-
 
 // ================= ENDPOINT API LINKTREE =================
 app.get('/api/linktrees', async (req, res) => {
