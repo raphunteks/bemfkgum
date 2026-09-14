@@ -685,144 +685,168 @@ h1, h2, h3, h4, h5, h6 {
     padding: 10px;
 }
 
-@media (max-width: 1024px) {
-    .builder-layout {
-        flex-direction: column;
-        height: auto;
-        overflow-y: auto;
-    }
-    
-    .sidebar-panel {
-        width: 100%;
-        flex-direction: row;
-        flex-wrap: wrap;
-        border-right: none;
-        border-bottom: var(--border-width) solid var(--border-color);
-        padding: 15px;
-        position: sticky;
-        top: 0;
-        background: #fff;
-        z-index: 50;
-    }
-    
-    .brand-box {
-        margin-bottom: 0;
-        border-bottom: none;
-        margin-right: 20px;
-        padding-bottom: 0;
-    }
-    
-    .sidebar-nav {
-        display: flex;
-        flex: 1;
-        gap: 10px;
-        overflow-x: auto;
-        padding-bottom: 5px;
-    }
-    
-    .sidebar-link {
-        margin-bottom: 0;
-        white-space: nowrap;
-        width: auto;
-    }
-    
-    .sidebar-bottom {
-        padding-top: 0;
-        margin-top: 0;
-        margin-left: 10px;
-        display: flex;
-        flex-direction: row;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-    
-    .editor-panel {
-        width: 100%;
-        max-width: 100%;
-        border-right: none;
-        border-bottom: var(--border-width) solid var(--border-color);
-        height: auto;
-        min-height: auto;
-    }
+/* ==========================================================================
+   SUPER BIG UPGRADE: STANDARDISED RESPONSIVE ENGINE (MOBILE, TABLET, DESKTOP)
+   ========================================================================== */
 
-    .preview-panel {
-        width: 100%;
-        height: auto;
-        min-height: 100vh;
-        padding: 40px 20px;
-        justify-content: flex-start;
+/* 1. MOBILE (320px - 767.98px) */
+@media screen and (min-width: 320px) and (max-width: 767.98px) {
+    .builder-layout {
+        flex-direction: column !important;
+        height: auto !important;
+        overflow-y: auto !important;
     }
-    
-    .preview-header {
-        position: relative;
-        top: 0;
-        margin-bottom: 30px;
+    .mobile-menu-toggle {
+        display: flex !important;
+    }
+    .sidebar-panel {
+        width: 100% !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 14px !important;
+        border-right: none !important;
+        border-bottom: var(--border-width) solid var(--border-color) !important;
+    }
+    .brand-box {
+        width: 100% !important;
+        justify-content: space-between !important;
+        margin-bottom: 0 !important;
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
+    .sidebar-nav {
+        display: none; 
+        flex-direction: column !important;
+        width: 100% !important;
+        margin-top: 12px !important;
+        gap: 6px !important;
+    }
+    .sidebar-nav.show {
+        display: flex !important;
+    }
+    .sidebar-link {
+        width: 100% !important;
+        min-height: 44px !important;
+        box-sizing: border-box !important;
+    }
+    .sidebar-bottom {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 12px !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+    }
+    .sidebar-bottom button {
+        width: 100% !important;
+        min-height: 42px !important;
+    }
+    .editor-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-right: none !important;
+        border-bottom: var(--border-width) solid var(--border-color) !important;
+        padding: 20px 14px !important;
+        height: auto !important;
+    }
+    .editor-header {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    .editor-header .neo-btn {
+        width: 100% !important;
+        min-height: 44px !important;
+    }
+    .color-group-row {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+    .grid-options {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    .preview-panel {
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        padding: 30px 14px !important;
+    }
+    .qr-preview-wrapper {
+        padding: 16px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    .qr-preview-wrapper canvas, .qr-preview-wrapper img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    .list-item-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        padding: 14px !important;
+    }
+    .list-item-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
     }
 }
 
-@media (max-width: 768px) {
-    /* Collapse sidebar on very small screens */
-    .mobile-menu-toggle {
-        display: flex;
+/* 2. TABLET (768px - 1199.98px) */
+@media screen and (min-width: 768px) and (max-width: 1199.98px) {
+    .builder-layout {
+        flex-direction: column !important;
+        height: auto !important;
+        overflow-y: auto !important;
     }
-    
-    .sidebar-nav {
-        display: none; 
-        flex-direction: column;
-        width: 100%;
-        margin-top: 15px;
-    }
-    
-    .sidebar-nav.show {
-        display: flex;
-    }
-    
     .sidebar-panel {
-        flex-direction: column;
-        align-items: flex-start;
+        width: 100% !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        padding: 16px 20px !important;
+        border-right: none !important;
+        border-bottom: var(--border-width) solid var(--border-color) !important;
     }
-    
-    .brand-box {
-        width: 100%;
-        justify-content: space-between;
+    .sidebar-nav {
+        display: flex !important;
+        flex: 1 !important;
+        gap: 10px !important;
+        overflow-x: auto !important;
     }
-    
-    .sidebar-bottom {
-        width: 100%;
-        margin-left: 0;
-        margin-top: 15px;
-        flex-direction: column;
+    .editor-panel {
+        width: 100% !important;
+        padding: 30px 24px !important;
+        border-right: none !important;
+        border-bottom: var(--border-width) solid var(--border-color) !important;
     }
+    .preview-panel {
+        width: 100% !important;
+        padding: 40px 20px !important;
+    }
+}
 
-    .editor-header {
-        flex-direction: column;
-        gap: 15px;
+/* 3. DESKTOP (1200px+) */
+@media screen and (min-width: 1200px) {
+    .builder-layout {
+        display: flex !important;
+        flex-direction: row !important;
+        height: 100vh !important;
+        overflow: hidden !important;
     }
-    
-    .editor-header .neo-btn {
-        width: 100%;
+    .sidebar-panel {
+        width: 250px !important;
+        min-width: 250px !important;
+        border-right: var(--border-width) solid var(--border-color) !important;
     }
-
-    .color-group-row {
-        grid-template-columns: 1fr;
+    .editor-panel {
+        flex: 1 !important;
+        border-right: var(--border-width) solid var(--border-color) !important;
+        overflow-y: auto !important;
+        padding: 35px 30px !important;
     }
-    
-    .grid-options {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .qr-preview-wrapper {
-        padding: 20px;
-    }
-    
-    .list-item-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    
-    .list-item-actions {
-        width: 100%;
-        justify-content: flex-end;
+    .preview-panel {
+        width: 440px !important;
+        min-width: 440px !important;
+        overflow-y: auto !important;
+        padding: 40px !important;
     }
 }
