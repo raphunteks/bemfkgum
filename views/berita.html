@@ -395,19 +395,12 @@
                 }
             });
             
-            const themeCheckbox = document.getElementById('checkboxTheme');
-            if(themeCheckbox) {
-                themeCheckbox.checked = document.documentElement.hasAttribute('data-theme');
-                
-                themeCheckbox.addEventListener('change', (e) => {
-                    if(e.target.checked) {
-                        document.documentElement.setAttribute('data-theme', 'dark');
-                        localStorage.setItem('theme', 'dark');
-                    } else {
-                        document.documentElement.removeAttribute('data-theme');
-                        localStorage.setItem('theme', 'light');
-                    }
-                });
+            // Sinkronisasi status tema terpadu via Universal Theme Engine
+            if (window.ThemeEngine && typeof window.ThemeEngine.getTheme === 'function') {
+                const themeCheckbox = document.getElementById('checkboxTheme');
+                if (themeCheckbox) {
+                    themeCheckbox.checked = (window.ThemeEngine.getTheme() === 'dark');
+                }
             }
         }
 
