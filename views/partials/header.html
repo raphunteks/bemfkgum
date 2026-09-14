@@ -416,30 +416,38 @@
                 </button>
             </div>
 
-            <!-- SUPER UPGRADE SEO: Penambahan Role & Aria Label untuk struktur DIV agar Sitelinks berfungsi -->
-            <nav class="nav-links" role="menubar" aria-label="Navigasi Utama" itemscope
+            <!-- SUPER UPGRADE SEO & UI/UX: Full-Width Mobile Navigation Drawer dengan Chevron & Full-Width CTA (Gambar 3 Style) -->
+            <nav class="nav-links" id="mainNavLinks" role="menubar" aria-label="Navigasi Utama" itemscope
                 itemtype="https://schema.org/SiteNavigationElement">
 
                 <div class="nav-item" itemprop="name" role="none">
-                    <a href="/" itemprop="url" role="menuitem">Beranda</a>
+                    <a href="/" itemprop="url" role="menuitem">
+                        <span>Beranda</span>
+                        <svg class="mobile-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
                 </div>
 
-                <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
+                <div class="nav-item has-dropdown" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
                     <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true"
-                        aria-expanded="false">Tentang ▾</a>
+                        aria-expanded="false">
+                        <span>Tentang</span>
+                        <svg class="mobile-chevron chevron-toggle" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
                     <div class="mega-menu" role="menu" aria-label="Submenu Tentang">
                         <a href="/tentang/visimisi" itemprop="url" role="menuitem">Visi & Misi</a>
                         <a href="/tentang/struktur" itemprop="url" role="menuitem">Struktur Kepengurusan</a>
                         <a href="/tentang/filosofi" itemprop="url" role="menuitem">Filosofi Logo & Warna</a>
-                        <a href="/tentang/sejarah-pembentukan" itemprop="url" role="menuitem">Sejarah Terbentuk
-                            BEMKBMFKG UMI</a>
+                        <a href="/tentang/sejarah-pembentukan" itemprop="url" role="menuitem">Sejarah Terbentuk BEMKBMFKG UMI</a>
                         <a href="/tentang/sejarah" itemprop="url" role="menuitem">Timeline Sejarah Kepengurusan</a>
                     </div>
                 </div>
 
-                <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
+                <div class="nav-item has-dropdown" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
                     <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true"
-                        aria-expanded="false">Informasi ▾</a>
+                        aria-expanded="false">
+                        <span>Informasi</span>
+                        <svg class="mobile-chevron chevron-toggle" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
                     <div class="mega-menu" role="menu" aria-label="Submenu Informasi">
                         <a href="/informasi#proker" itemprop="url" role="menuitem">Program Kerja</a>
                         <a href="/informasi#kalender" itemprop="url" role="menuitem">Kalender Proker</a>
@@ -450,7 +458,10 @@
                 </div>
 
                 <div class="nav-item" itemprop="name" role="none">
-                    <a href="/berita" itemprop="url" role="menuitem">Artikel</a>
+                    <a href="/berita" itemprop="url" role="menuitem">
+                        <span>Artikel</span>
+                        <svg class="mobile-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
                 </div>
 
                 <!-- TAB RADAR BEM (Sementara dinonaktifkan dari tampilan header publik sesuai instruksi, SC & route tetap utuh) -->
@@ -460,23 +471,29 @@
                 </div>
                 -->
 
-                <div class="nav-item" style="margin-left: 5px;" itemprop="name" role="none">
-                    <a href="/narahubung" class="holo-btn header-contact-btn" itemprop="url" role="menuitem">Hubungi
-                        Kami</a>
+                <!-- Full-Width Bottom CTA Button (Gambar 3 Standard) -->
+                <div class="nav-item nav-contact-item" itemprop="name" role="none">
+                    <a href="/narahubung" class="holo-btn header-contact-btn" itemprop="url" role="menuitem">
+                        <svg class="contact-btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        <span>Hubungi Kami</span>
+                    </a>
                 </div>
 
             </nav>
 
-            <!-- FIX AGENTIC ACCESSIBILITY: Aria Expanded Dynamic -->
-            <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false"
-                onclick="const nav = document.querySelector('.nav-links'); nav.classList.toggle('active'); this.setAttribute('aria-expanded', nav.classList.contains('active'));">
-                <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true">
+            <!-- FIX AGENTIC ACCESSIBILITY: Dynamic Menu Toggle -->
+            <button class="menu-toggle" id="menuToggleBtn" aria-label="Buka Menu Navigasi" aria-expanded="false"
+                onclick="toggleMobileNav()">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--accent-neon)" aria-hidden="true">
                     <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
                 </svg>
             </button>
         </div>
     </div>
 </header>
+
+<!-- Mobile Navigation Backdrop Overlay -->
+<div class="mobile-nav-backdrop" id="mobileNavBackdrop" onclick="closeMobileNav()"></div>
 
 <script>
     // Logika Shrink Header saat di Scroll (Passive Listener untuk PageSpeed)
@@ -490,8 +507,52 @@
         }
     }, { passive: true });
 
+    // ================= MOBILE NAVIGATION CONTROLLER (FULL-WIDTH DRAWER) =================
+    function toggleMobileNav() {
+        const nav = document.getElementById('mainNavLinks') || document.querySelector('.nav-links');
+        const btn = document.getElementById('menuToggleBtn') || document.querySelector('.menu-toggle');
+        const backdrop = document.getElementById('mobileNavBackdrop');
+        if (!nav) return;
+        const isActive = nav.classList.toggle('active');
+        if (btn) btn.setAttribute('aria-expanded', isActive);
+        if (backdrop) backdrop.classList.toggle('active', isActive);
+        document.body.classList.toggle('nav-mobile-open', isActive);
+    }
+
+    function closeMobileNav() {
+        const nav = document.getElementById('mainNavLinks') || document.querySelector('.nav-links');
+        const btn = document.getElementById('menuToggleBtn') || document.querySelector('.menu-toggle');
+        const backdrop = document.getElementById('mobileNavBackdrop');
+        if (nav) nav.classList.remove('active');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+        if (backdrop) backdrop.classList.remove('active');
+        document.body.classList.remove('nav-mobile-open');
+    }
+
+    // Portal Nav Links ke body di Mobile agar lepas 100% dari CSS containing block backdrop-filter
+    function ensureMobileNavPortalled() {
+        const nav = document.getElementById('mainNavLinks') || document.querySelector('.nav-links');
+        if (!nav) return;
+        if (window.innerWidth <= 768) {
+            if (nav.parentElement !== document.body) {
+                document.body.appendChild(nav);
+            }
+        } else {
+            const group = document.querySelector('.nav-right-group');
+            const toggle = document.querySelector('.menu-toggle');
+            if (group && toggle && nav.parentElement === document.body) {
+                group.insertBefore(nav, toggle);
+            }
+            closeMobileNav();
+        }
+    }
+    window.addEventListener('resize', ensureMobileNavPortalled, { passive: true });
+    document.addEventListener('DOMContentLoaded', ensureMobileNavPortalled);
+
     function toggleMobileMenu(element) {
         if (window.innerWidth <= 768) {
+            // Cegah klik berpindah halaman jika mengklik parent dropdown
+            event.preventDefault();
             element.classList.toggle('mobile-expand');
 
             // SEO Upgrade: Sinkronisasi aria-expanded untuk screen reader & Bot GSC
@@ -517,10 +578,7 @@
                 setTimeout(() => { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
             }
             if (window.innerWidth <= 768) {
-                const navLinks = document.querySelector('.nav-links');
-                if (navLinks) navLinks.classList.remove('active');
-                const menuBtn = document.querySelector('.menu-toggle');
-                if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+                closeMobileNav();
             }
         }
     }
