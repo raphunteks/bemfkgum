@@ -540,12 +540,20 @@ select.neo-input option { background: var(--bg-dark); color: var(--text-light); 
 header#main-header {
     position: sticky;
     top: 20px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
     z-index: 1000;
     display: flex;
     justify-content: center;
+    align-items: center;
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     pointer-events: none; /* Biarkan area samping bisa di-klik jika transparan */
     margin-bottom: 40px;
+    box-sizing: border-box;
 }
 
 .header-inner {
@@ -557,12 +565,15 @@ header#main-header {
     border-radius: 50px;
     padding: 12px 30px;
     width: 95%;
-    max-width: 1200px;
+    max-width: 1240px;
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
     pointer-events: auto; /* Aktifkan interaksi klik khusus di pill ini */
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-sizing: border-box;
 }
 [data-theme="dark"] .header-inner {
     background: rgba(11, 19, 43, 0.75);
@@ -570,13 +581,16 @@ header#main-header {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
-/* Scroll Effect Shrink (Mengecil Sedikit) */
+/* Scroll Effect Shrink (Mengecil Sedikit & Tetap Center Proporsional) */
 header#main-header.scrolled {
     top: 10px;
 }
 header#main-header.scrolled .header-inner {
     padding: 8px 25px;
     width: 90%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
     border-radius: 40px;
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
@@ -2415,10 +2429,21 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     
     #main-header {
         top: 14px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+    #main-header .header-inner {
         width: calc(100% - 40px) !important;
         max-width: 1100px !important;
-    }
-    .header-inner {
+        margin-left: auto !important;
+        margin-right: auto !important;
         padding: 10px 20px !important;
     }
     .menu-toggle {
@@ -2481,8 +2506,21 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     }
     
     #main-header {
-        max-width: 1240px !important;
         width: 100% !important;
+        max-width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+    #main-header .header-inner {
+        width: 95% !important;
+        max-width: 1240px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
     .menu-toggle {
         display: none !important;
