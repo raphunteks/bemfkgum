@@ -1,35 +1,56 @@
 // FILE: public/js/protect-devtools.js
 
-// ================= THEME ENGINE (LIGHT/DARK MODE) =================
+// ================= THEME ENGINE (LIGHT/DARK MODE SAFEGUARD) =================
 // Menjalankan inisialisasi tema sebelum DOM dirender (Mencegah FOUC/Berkedip)
 (function() {
-    const savedTheme = localStorage.getItem('axa_theme');
-    // Jika tidak ada data tersimpan, default akan menggunakan LIGHT MODE (Putih)
-    if (savedTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-        document.documentElement.removeAttribute('data-theme');
-    }
+    try {
+        const savedTheme = localStorage.getItem('axa_theme') || localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else if (savedTheme === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+        }
+    } catch(e) {}
 })();
 
-// Fungsi Toggle Tema (Dipanggil oleh Tombol Switch)
+// Fungsi Toggle Tema (Fail-safe delegator)
 function toggleTheme() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    if (isDark) {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('axa_theme', 'light');
-    } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('axa_theme', 'dark');
+    if (window.ThemeEngine && typeof window.ThemeEngine.toggle === 'function') {
+        window.ThemeEngine.toggle();
+        return;
     }
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    if (next === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        try {
+            localStorage.setItem('axa_theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } catch(e) {}
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        try {
+            localStorage.setItem('axa_theme', 'light');
+            localStorage.setItem('theme', 'light');
+        } catch(e) {}
+    }
+    const themeCheckbox = document.getElementById('checkboxTheme');
+    if (themeCheckbox) themeCheckbox.checked = (next === 'dark');
 }
 
-// Sinkronisasi status checkbox toggle saat halaman sudah selesai dimuat
+// Sinkronisasi status checkbox toggle secara idempoten (Mencegah Double-Listener Bug)
 document.addEventListener('DOMContentLoaded', () => {
     const themeCheckbox = document.getElementById('checkboxTheme');
-    if (themeCheckbox) {
+    if (themeCheckbox && !themeCheckbox._themeEngineBound && !themeCheckbox._protectDevtoolsBound) {
+        themeCheckbox._protectDevtoolsBound = true;
         themeCheckbox.checked = document.documentElement.getAttribute('data-theme') === 'dark';
-        themeCheckbox.addEventListener('change', toggleTheme);
+        themeCheckbox.addEventListener('change', (e) => {
+            if (window.ThemeEngine && typeof window.ThemeEngine.setTheme === 'function') {
+                window.ThemeEngine.setTheme(e.target.checked ? 'dark' : 'light');
+            } else {
+                toggleTheme();
+            }
+        });
     }
 });
 
