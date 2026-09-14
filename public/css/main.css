@@ -1,7 +1,7 @@
 /* FILE: public/css/main.css */
 /* SUPER UPGRADE PERFORMA: @import DIHAPUS - Font Google dimuat di file HTML untuk menghindari Render-Blocking! */
 
-:root {
+:root, [data-theme="light"] {
   /* ================= LIGHT MODE VARIABLES (SOFT, BRIGHT & TECHNICAL) ================= */
   --bg-dark: #f8fafc; 
   --text-light: #0f172a; 
@@ -432,11 +432,15 @@ html.theme-transitioning *::after {
     touch-action: manipulation;
 }
 .theme-switch input { 
-    opacity: 0; 
-    width: 0; 
-    height: 0; 
     position: absolute;
-    pointer-events: none;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+    margin: 0;
+    padding: 0;
 }
 .theme-slider { 
     position: absolute; 
@@ -1917,20 +1921,115 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
         -webkit-overflow-scrolling: touch !important;
     }
 
-    /* Footer Mobile */
+    /* Footer Mobile: 3-Kolom Berjajar Proporsional (Side-by-Side Asli) */
+    .footer-wrapper {
+        padding: 22px 10px !important;
+        margin: 0 8px 25px 8px !important;
+        border-radius: 20px !important;
+    }
     .custom-footer-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr 1.45fr 1fr !important;
+        text-align: left !important;
+        gap: 6px !important;
+        align-items: start !important;
+    }
+    .footer-col h3 {
+        font-size: 0.72rem !important;
+        margin-bottom: 8px !important;
+        letter-spacing: 0 !important;
+    }
+    .footer-links {
+        gap: 5px !important;
+    }
+    .footer-links li a {
+        font-size: 0.62rem !important;
+        line-height: 1.3 !important;
+    }
+    .footer-center {
+        border: none !important;
+        border-left: 1px solid var(--border-light) !important;
+        border-right: 1px solid var(--border-light) !important;
+        padding: 0 6px !important;
         text-align: center !important;
-        gap: 28px !important;
+        order: unset !important;
     }
     .footer-brand {
+        display: flex !important;
+        flex-direction: row !important;
         justify-content: center !important;
+        align-items: center !important;
+        gap: 4px !important;
+        margin-bottom: 6px !important;
+        flex-wrap: nowrap !important;
+    }
+    .footer-brand img {
+        height: 30px !important;
+        width: auto !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+    }
+    .footer-brand-text h2 {
+        font-size: 0.78rem !important;
+        letter-spacing: 0 !important;
+        margin-bottom: 2px !important;
+    }
+    .footer-brand-text p {
+        font-size: 0.48rem !important;
+        letter-spacing: 0 !important;
+        line-height: 1.2 !important;
+        margin-top: 3px !important;
     }
     .footer-socials {
+        display: flex !important;
+        gap: 4px !important;
         justify-content: center !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
+        flex-wrap: wrap !important;
+    }
+    .social-circle {
+        width: 24px !important;
+        height: 24px !important;
+    }
+    .social-circle svg {
+        width: 11px !important;
+        height: 11px !important;
+    }
+    .flag-counter-wrapper {
+        margin-top: 10px !important;
+        margin-bottom: 4px !important;
+        transform: scale(0.92) !important;
+        transform-origin: center top !important;
+    }
+    .footer-contact-list {
+        gap: 6px !important;
     }
     .footer-contact-list li {
-        justify-content: center !important;
+        font-size: 0.58rem !important;
+        gap: 4px !important;
+        line-height: 1.25 !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+    }
+    .footer-contact-list li svg {
+        width: 11px !important;
+        height: 11px !important;
+        margin-top: 1px !important;
+        flex-shrink: 0 !important;
+    }
+    .footer-col .holo-btn, .footer-col .glass-btn {
+        margin-top: 8px !important;
+        padding: 5px 8px !important;
+        font-size: 0.62rem !important;
+        border-radius: 14px !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+    .footer-bottom {
+        margin-top: 16px !important;
+        padding-top: 12px !important;
+        font-size: 0.6rem !important;
     }
 
     /* Admin Mobile Fix */
