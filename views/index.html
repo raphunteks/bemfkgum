@@ -220,6 +220,302 @@
 
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
+
+    <!-- =========================================================================
+         FLOATING WHATSAPP CHAT WIDGET & SCROLL TO TOP VERTICAL STACKING (GBR 1 & 2)
+         ========================================================================= -->
+    <style>
+        /* 1. Vertically Stacked Scroll-to-Top (Tepat di Atas Bubble WA - Gambar 1) */
+        .scroll-to-top {
+            bottom: 104px !important;
+            right: 32px !important;
+            width: 50px !important;
+            height: 50px !important;
+            background-color: #0284c7 !important; /* Warna Biru Elegan Sesuai Gambar 1 */
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4) !important;
+            border-radius: 50% !important;
+            z-index: 9997 !important;
+            border: none !important;
+        }
+        .scroll-to-top svg {
+            width: 26px !important;
+            height: 26px !important;
+            fill: #ffffff !important;
+            stroke: none !important;
+        }
+        .scroll-to-top:hover {
+            background-color: #0369a1 !important;
+            transform: translateY(-4px) scale(1.05) !important;
+            box-shadow: 0 12px 24px rgba(2, 132, 199, 0.5) !important;
+        }
+
+        @media (max-width: 768px) {
+            .scroll-to-top {
+                bottom: 84px !important;
+                right: 22px !important;
+                width: 44px !important;
+                height: 44px !important;
+            }
+            .scroll-to-top svg {
+                width: 22px !important;
+                height: 22px !important;
+            }
+        }
+
+        /* 2. Floating WhatsApp Bubble Button (Gambar 1) */
+        .wa-chat-widget-container {
+            position: fixed;
+            bottom: 30px;
+            right: 28px;
+            z-index: 9998;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .wa-floating-btn {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background-color: #25D366;
+            border: 3.5px solid #ffffff;
+            box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45), 0 2px 6px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            outline: none;
+            padding: 0;
+            margin: 0;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .wa-floating-btn:hover {
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 12px 28px rgba(37, 211, 102, 0.55), 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .wa-floating-btn:active {
+            transform: scale(0.95);
+        }
+
+        .wa-floating-btn svg {
+            width: 32px;
+            height: 32px;
+            fill: #ffffff;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+            transition: transform 0.25s ease;
+        }
+
+        .wa-floating-btn.active svg {
+            transform: rotate(15deg) scale(0.95);
+        }
+
+        @media (max-width: 768px) {
+            .wa-chat-widget-container {
+                bottom: 20px;
+                right: 18px;
+            }
+            .wa-floating-btn {
+                width: 52px;
+                height: 52px;
+                border-width: 3px;
+            }
+            .wa-floating-btn svg {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        /* 3. Custom Chat Popup Box (Gambar 2) */
+        .wa-chat-popup {
+            position: absolute;
+            bottom: 74px;
+            right: 0;
+            width: 340px;
+            max-width: calc(100vw - 36px);
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(16px) scale(0.95);
+            transform-origin: bottom right;
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s ease;
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        [data-theme="dark"] .wa-chat-popup {
+            background: #0d1527;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(37, 211, 102, 0.2);
+        }
+
+        .wa-chat-popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Header Popup (Gambar 2) */
+        .wa-popup-header {
+            background: #e8f5e9;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(37, 211, 102, 0.2);
+        }
+
+        [data-theme="dark"] .wa-popup-header {
+            background: rgba(37, 211, 102, 0.12);
+            border-bottom-color: rgba(37, 211, 102, 0.25);
+        }
+
+        .wa-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .wa-header-icon {
+            width: 22px;
+            height: 22px;
+            fill: #16a34a;
+            flex-shrink: 0;
+        }
+
+        [data-theme="dark"] .wa-header-icon {
+            fill: #25D366;
+        }
+
+        .wa-header-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #15803d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: -0.2px;
+        }
+
+        [data-theme="dark"] .wa-header-title {
+            color: #4ade80;
+        }
+
+        .wa-close-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.35rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wa-close-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Body Popup (Gambar 2) */
+        .wa-popup-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .wa-popup-desc {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #475569;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .wa-popup-desc {
+            color: #94a3b8;
+        }
+
+        .wa-input-wrapper {
+            position: relative;
+        }
+
+        .wa-message-textarea {
+            width: 100%;
+            border-radius: 14px;
+            border: 1.5px solid #d1d5db;
+            background: #ffffff;
+            color: #1e293b;
+            padding: 12px 14px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            line-height: 1.45;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        [data-theme="dark"] .wa-message-textarea {
+            background: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+
+        .wa-message-textarea:focus {
+            border-color: #25D366;
+            box-shadow: 0 0 0 3.5px rgba(37, 211, 102, 0.2);
+        }
+
+        .wa-send-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            background: #25D366;
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+        }
+
+        .wa-send-btn:hover {
+            background: #22c55e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45);
+        }
+
+        .wa-send-btn:active {
+            transform: translateY(0);
+        }
+
+        .wa-send-btn svg {
+            transition: transform 0.2s ease;
+        }
+
+        .wa-send-btn:hover svg {
+            transform: translateX(4px);
+        }
+    </style>
 </head>
 
 <!-- PERBAIKAN KRUSIAL: Menghapus atribut itemscope itemtype dari <body> karena memicu peringatan konflik JSON-LD di Google Search Console -->
@@ -463,6 +759,45 @@
         </main>
 
         <%- include('partials/footer.html') %>
+
+        <!-- =========================================================================
+             SUPER BIG UPGRADE: FLOATING WHATSAPP CHAT WIDGET & POPUP BOX (GAMBAR 1 & 2)
+             Terintegrasi dinamis dengan nomor Narahubung Humas/Infocom dari Admin Dashboard
+             ========================================================================= -->
+        <div id="waChatWidgetContainer" class="wa-chat-widget-container">
+            <!-- POPUP BOX (GAMBAR 2) -->
+            <div id="waChatPopup" class="wa-chat-popup" role="dialog" aria-modal="true" aria-labelledby="waChatTitle">
+                <div class="wa-popup-header">
+                    <div class="wa-header-left">
+                        <svg class="wa-header-icon" viewBox="0 0 24 24">
+                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                        </svg>
+                        <span id="waChatTitle" class="wa-header-title">Chat Admin BEM KBMFKG UMI</span>
+                    </div>
+                    <button type="button" id="waPopupCloseBtn" class="wa-close-btn" aria-label="Tutup Obrolan">&times;</button>
+                </div>
+                <div class="wa-popup-body">
+                    <p class="wa-popup-desc" id="waPopupDesc">Ada yang bisa kami bantu seputar informasi organisasi, kegiatan, atau layanan mahasiswa?</p>
+                    <div class="wa-input-wrapper">
+                        <textarea id="waUserMessage" class="wa-message-textarea" rows="3" placeholder="Ketik pesan konsultasi singkat..."></textarea>
+                    </div>
+                    <button type="button" id="waSendBtn" class="wa-send-btn">
+                        <span>Kirim ke WhatsApp</span>
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FLOATING BUBBLE BUTTON (GAMBAR 1) -->
+            <button type="button" id="waFloatingBtn" class="wa-floating-btn" aria-label="Buka Chat WhatsApp Admin" title="Chat WhatsApp BEM FKG UMI">
+                <svg viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                </svg>
+            </button>
+        </div>
 
             <script>
                 // Data Fallback Filosofi untuk Index
@@ -891,6 +1226,108 @@
                             }
                         }, 50);
                     }
+
+                    // SINKRONISASI KONTAK ADMIN WHATSAPP DARI DATABASE (HUMAS / INFOCOM)
+                    if (res && res.kontak) {
+                        syncWhatsAppAdminInfo(res.kontak);
+                    }
+                }
+
+                // ================= FLOATING WHATSAPP CHAT CONTROLLER =================
+                let _adminWhatsAppNumber = "+62 813-4879-1099"; // Default Humas/Infocom
+                let _adminWhatsAppName = "Silvyananda";
+
+                function syncWhatsAppAdminInfo(kontakData) {
+                    if (!kontakData) return;
+                    if (kontakData.wa && String(kontakData.wa).trim() !== '') {
+                        _adminWhatsAppNumber = String(kontakData.wa).trim();
+                    }
+                    if (kontakData.waName && String(kontakData.waName).trim() !== '') {
+                        _adminWhatsAppName = String(kontakData.waName).trim();
+                    }
+                    const titleEl = document.getElementById('waChatTitle');
+                    if (titleEl) {
+                        titleEl.innerText = _adminWhatsAppName 
+                            ? `Chat Admin BEM (${_adminWhatsAppName})` 
+                            : 'Chat Admin BEM KBMFKG UMI';
+                    }
+                }
+
+                function initWhatsAppChatWidget() {
+                    const floatingBtn = document.getElementById('waFloatingBtn');
+                    const popup = document.getElementById('waChatPopup');
+                    const closeBtn = document.getElementById('waPopupCloseBtn');
+                    const sendBtn = document.getElementById('waSendBtn');
+                    const textarea = document.getElementById('waUserMessage');
+                    if (!floatingBtn || !popup) return;
+
+                    const togglePopup = (e) => {
+                        if (e) { e.preventDefault(); e.stopPropagation(); }
+                        const isOpen = popup.classList.toggle('active');
+                        floatingBtn.classList.toggle('active', isOpen);
+                        if (isOpen && textarea) {
+                            setTimeout(() => textarea.focus(), 150);
+                        }
+                    };
+
+                    const closePopup = () => {
+                        popup.classList.remove('active');
+                        floatingBtn.classList.remove('active');
+                    };
+
+                    floatingBtn.addEventListener('click', togglePopup);
+                    if (closeBtn) closeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        closePopup();
+                    });
+
+                    // Tutup saat klik di luar popup
+                    document.addEventListener('click', (e) => {
+                        if (!popup.contains(e.target) && !floatingBtn.contains(e.target)) {
+                            closePopup();
+                        }
+                    });
+
+                    // Tutup saat tombol Escape ditekan
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && popup.classList.contains('active')) {
+                            closePopup();
+                        }
+                    });
+
+                    // Kirim ke WhatsApp
+                    const sendWhatsAppMessage = () => {
+                        let text = textarea ? textarea.value.trim() : '';
+                        if (!text) {
+                            text = 'Halo Admin BEM KBMFKG UMI, saya ingin bertanya seputar informasi kegiatan dan layanan mahasiswa.';
+                        }
+                        let cleanPhone = String(_adminWhatsAppNumber || '+62 813-4879-1099').replace(/\D/g, '');
+                        if (cleanPhone.startsWith('0')) {
+                            cleanPhone = '62' + cleanPhone.slice(1);
+                        }
+                        const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
+                        window.open(waUrl, '_blank', 'noopener,noreferrer');
+                        closePopup();
+                        if (textarea) textarea.value = '';
+                    };
+
+                    if (sendBtn) sendBtn.addEventListener('click', sendWhatsAppMessage);
+
+                    // Kirim pesan dengan Enter (Shift+Enter untuk baris baru)
+                    if (textarea) {
+                        textarea.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendWhatsAppMessage();
+                            }
+                        });
+                    }
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initWhatsAppChatWidget);
+                } else {
+                    initWhatsAppChatWidget();
                 }
 
                 // ================= UNIVERSAL REALTIME SYNC (ANTI-MEMORY LEAK) =================
