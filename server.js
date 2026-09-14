@@ -3,6 +3,8 @@ const express = require('express');
 const { Redis } = require('@upstash/redis');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+const compression = require('compression');
 const xlsx = require('xlsx'); // PACKAGE BARU UNTUK EXPORT EXCEL FORM
 const crypto = require('crypto');
 require('dotenv').config();
@@ -17,6 +19,17 @@ process.on('uncaughtException', (err) => {
 
 const app = express();
 
+// ================= SUPER BIG UPGRADE: HTTP GZIP / BROTLI COMPRESSION =================
+// Mengurangi transfer payload CSS (132KB -> 22KB), HTML (64KB -> 11KB), dan JSON hingga 80%
+app.use(compression({
+    level: 6,
+    threshold: 1024,
+    filter: (req, res) => {
+        if (req.headers['x-no-compression']) return false;
+        return compression.filter(req, res);
+    }
+}));
+
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -26,7 +39,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/api', (req, res, next) => {
     // SEO UPGRADE: Bypass Anti-Cache untuk Gambar agar bisa diindeks Google Images
     if (req.path.startsWith('/uploads/')) {
-        return next(); 
+        return next();
     }
     // Bypass Anti-Cache untuk endpoint yang dikelola oleh Zero-Delay In-Memory SWR Cache
     if (req.path === '/content' || req.path === '/articles') {
@@ -45,6 +58,26 @@ const staticOptions = {
     etag: true,
     lastModified: true
 };
+
+// SUPER UPGRADE: Content Negotiation untuk Otomatisasi Serving Format WebP (Hemat 97% Bandwidth)
+app.use('/img', (req, res, next) => {
+    const accept = req.headers.accept || '';
+    if (accept.includes('image/webp')) {
+        const ext = path.extname(req.path).toLowerCase();
+        if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
+            const webpRelativePath = req.path.replace(/\.(png|jpe?g)$/i, '.webp');
+            const webpFullPath = path.join(__dirname, 'public/img', webpRelativePath);
+            if (fs.existsSync(webpFullPath)) {
+                res.setHeader('Vary', 'Accept');
+                res.setHeader('Content-Type', 'image/webp');
+                res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+                return res.sendFile(webpFullPath);
+            }
+        }
+    }
+    next();
+});
+
 // Memastikan file statis bisa diakses langsung oleh Express dengan Cache-Control
 app.use(express.static(path.join(__dirname, 'public'), staticOptions));
 
@@ -78,9 +111,9 @@ const redisToken = process.env.KV_REST_API_TOKEN || 'AYtKAAIncDIzYmQyNWM4YTM2Y2E
 
 let redis = null;
 try {
-    redis = new Redis({ 
-        url: redisUrl, 
-        token: redisToken 
+    redis = new Redis({
+        url: redisUrl,
+        token: redisToken
     });
     console.log("✅ Sistem Database Upstash Redis Berhasil Terkoneksi. (REALTIME DUAL-ENGINE MODE)");
 } catch (error) {
@@ -117,7 +150,7 @@ const escapeXml = (unsafe) => {
 const sanitizeImageUrl = (imgStr, domain) => {
     if (!imgStr) return `${domain}/img/bemfkgumi.png`;
     // FIX GSC 100%: Otomatis membuang string base64 dan menggantinya dengan placeholder yang valid bagi Googlebot
-    if (imgStr.startsWith('data:image/')) return `${domain}/img/bemfkgumi.png`; 
+    if (imgStr.startsWith('data:image/')) return `${domain}/img/bemfkgumi.png`;
     if (imgStr.startsWith('/')) return `${domain}${imgStr}`;
     return imgStr;
 };
@@ -159,14 +192,14 @@ const defaultOrg = {
         { jabatan: "Bendahara BEM KBMFKG UMI", nama: "Nurul Amelia Limbu. S", foto: "/img/bemfkgumi.png" }
     ],
     departemen: [
-        { nama: "Dept. of Information and Communication", anggota: [{jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zahwa Alzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Novita Widyantari", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Science Education and Research", anggota: [{jabatan: "Koordinator", nama: "Muh. Alif Perdana Putra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fatahillah Fadhillah", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Islamic", anggota: [{jabatan: "Koordinator", nama: "Maysar Ma'ruf", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ahmad Syafii", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Sekretariat", anggota: [{jabatan: "Koordinator", nama: "Febrio Arya Pradana", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Muhammad Dwiansyah", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Treasure", anggota: [{jabatan: "Koordinator", nama: "Putri Amaliah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Jiyaad Taqi Rozan", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Art and Sport", anggota: [{jabatan: "Koordinator", nama: "Ilham Subhan Rafikal", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fajak Ryamizard Kasvari", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Dedication Humanity", anggota: [{jabatan: "Koordinator", nama: "Moh. Rayyan Ghazali", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Yusuf Wahyuni", foto: "/img/bemfkgumi.png"}] },
-        { nama: "Dept. of Study and Strategy", anggota: [{jabatan: "Koordinator", nama: "Irfan Maulana Irwan", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Saiful S", foto: "/img/bemfkgumi.png"}] }
+        { nama: "Dept. of Information and Communication", anggota: [{ jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Zahwa Alzahra", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Novita Widyantari", foto: "/img/bemfkgumi.png" }] },
+        { nama: "Dept. of Science Education and Research", anggota: [{ jabatan: "Koordinator", nama: "Muh. Alif Perdana Putra", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Fatahillah Fadhillah", foto: "/img/bemfkgumi.png" }] },
+        { nama: "Dept. of Islamic", anggota: [{ jabatan: "Koordinator", nama: "Maysar Ma'ruf", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Ahmad Syafii", foto: "/img/bemfkgumi.png" }] },
+        { nama: "Dept. of Sekretariat", anggota: [{ jabatan: "Koordinator", nama: "Febrio Arya Pradana", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Andi Muhammad Dwiansyah", foto: "/img/bemfkgumi.png" }] },
+        { nama: "Dept. of Treasure", anggota: [{ jabatan: "Koordinator", nama: "Putri Amaliah", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Jiyaad Taqi Rozan", foto: "/img/bemfkgumi.png" }] },
+        { nama: "Dept. of Art and Sport", anggota: [{ jabatan: "Koordinator", nama: "Ilham Subhan Rafikal", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Fajak Ryamizard Kasvari", foto: "/img/bemfkgumi.png" }] },
+        { nama: "Dept. of Dedication Humanity", anggota: [{ jabatan: "Koordinator", nama: "Moh. Rayyan Ghazali", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Muh. Yusuf Wahyuni", foto: "/img/bemfkgumi.png" }] },
+        { nama: "Dept. of Study and Strategy", anggota: [{ jabatan: "Koordinator", nama: "Irfan Maulana Irwan", foto: "/img/bemfkgumi.png" }, { jabatan: "Anggota", nama: "Saiful S", foto: "/img/bemfkgumi.png" }] }
     ]
 };
 
@@ -204,10 +237,10 @@ const defaultSettings = {
 };
 
 const defaultTeam = [
-    { category: "FullStack Development", members: [ { nama: "drg. M. Aksa Arsyad, S.KG", foto: "/img/axaprofil.jpg", ig: "https://www.instagram.com/axaaxyz_01" } ] },
-    { category: "Backend Development", members: [ { nama: "Silvy Ananda", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/oenandaa" }, { nama: "Muh. Sauqi Zahran. B", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/sauqizhran" } ] },
-    { category: "Frontend Development", members: [ { nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/daegalfauzaaa" }, { nama: "Zahwa Alzahra Djohan", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zahwadjohan" } ] },
-    { category: "UI/UX Design (CSS)", members: [ { nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zanetazahraa" }, { nama: "Novita Widyantari", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/novvwdyn__" } ] }
+    { category: "FullStack Development", members: [{ nama: "drg. M. Aksa Arsyad, S.KG", foto: "/img/axaprofil.jpg", ig: "https://www.instagram.com/axaaxyz_01" }] },
+    { category: "Backend Development", members: [{ nama: "Silvy Ananda", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/oenandaa" }, { nama: "Muh. Sauqi Zahran. B", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/sauqizhran" }] },
+    { category: "Frontend Development", members: [{ nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/daegalfauzaaa" }, { nama: "Zahwa Alzahra Djohan", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zahwadjohan" }] },
+    { category: "UI/UX Design (CSS)", members: [{ nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/zanetazahraa" }, { nama: "Novita Widyantari", foto: "/img/bemfkgumi.png", ig: "https://www.instagram.com/novvwdyn__" }] }
 ];
 
 const defaultSejarah = [
@@ -254,16 +287,16 @@ const defaultKontak = {
 };
 
 const defaultRadar = [
-    { 
-        departemen: "Dept. of Art and Sport", 
-        embed: '<script src="https://elfsightcdn.com/platform.js" async></script>\n<div class="elfsight-app-d45c7363-2d29-4b5f-b704-ea3501da1023" data-elfsight-app-lazy></div>' 
+    {
+        departemen: "Dept. of Art and Sport",
+        embed: '<script src="https://elfsightcdn.com/platform.js" async></script>\n<div class="elfsight-app-d45c7363-2d29-4b5f-b704-ea3501da1023" data-elfsight-app-lazy></div>'
     }
 ];
 
 // MENDUKUNG KEY BIAYAREGISTRASI PADA DATA DEFAULT KALENDER
 const defaultKalender = [
     {
-        id: "umi-amal-senyuman-uas-vol-iv", 
+        id: "umi-amal-senyuman-uas-vol-iv",
         slug: "umi-amal-senyuman-uas-vol-iv",
         nama: "UMI Amal Senyuman (UAS) Vol. IV",
         dept: "Dept. of Dedication Humanity",
@@ -390,13 +423,13 @@ app.get('/informasi/proker/proker-deskripsi/:slug', async (req, res) => {
         try {
             const rawProker = await redis.get('Proker_Data');
             const rawOrg = await redis.get('Org_Structure');
-            
+
             const allProker = safeParse(rawProker, defaultProker);
             const orgStructure = safeParse(rawOrg, defaultOrg);
-            
+
             orgDepartemen = orgStructure.departemen || [];
             let foundProker = allProker.find(p => p.slug === req.params.slug || p.id === req.params.slug);
-            
+
             // FIX BASE64 GSC ISSUE (Mencegah "Halaman tidak dapat diindeks: Soft 404")
             if (foundProker) {
                 const domain = 'https://bemkbmfkgumi.com';
@@ -409,8 +442,8 @@ app.get('/informasi/proker/proker-deskripsi/:slug', async (req, res) => {
         }
     }
 
-    res.render('proker-deskripsi', { 
-        slug: req.params.slug, 
+    res.render('proker-deskripsi', {
+        slug: req.params.slug,
         siteUrl: 'https://bemkbmfkgumi.com',
         prokerData: prokerData,
         orgDepartemen: orgDepartemen
@@ -425,14 +458,14 @@ app.get('/informasi/kalender/proker-detail/:slug', async (req, res) => {
             const rawKalender = await redis.get('Kalender_Data');
             const allKalender = safeParse(rawKalender, defaultKalender);
             let foundEvent = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
-            
+
             // FIX BASE64 GSC ISSUE
             if (foundEvent) {
                 const domain = 'https://bemkbmfkgumi.com';
                 foundEvent.banner = sanitizeImageUrl(foundEvent.banner, domain);
                 eventData = foundEvent;
             }
-        } catch (e) {}
+        } catch (e) { }
     }
     res.render('proker-detail', { slug: req.params.slug, sourceTab: 'kalender', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
 });
@@ -444,14 +477,14 @@ app.get('/informasi/timeline/proker-detail/:slug', async (req, res) => {
             const rawKalender = await redis.get('Kalender_Data');
             const allKalender = safeParse(rawKalender, defaultKalender);
             let foundEvent = allKalender.find(ev => ev.slug === req.params.slug || ev.id === req.params.slug);
-            
+
             // FIX BASE64 GSC ISSUE
             if (foundEvent) {
                 const domain = 'https://bemkbmfkgumi.com';
                 foundEvent.banner = sanitizeImageUrl(foundEvent.banner, domain);
                 eventData = foundEvent;
             }
-        } catch (e) {}
+        } catch (e) { }
     }
     res.render('proker-detail', { slug: req.params.slug, sourceTab: 'timeline', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
 });
@@ -477,20 +510,20 @@ app.get('/link/:slug', async (req, res) => {
     };
 
     try {
-        if(redis) {
+        if (redis) {
             const trees = await redis.hgetall('BEM_Linktrees') || {};
             const treeArr = Object.values(trees).map(item => safeParse(item, {}));
             const tree = treeArr.find(t => t.slug === slug);
-            
-            if(tree) {
+
+            if (tree) {
                 seoData.title = tree.settings?.seoTitle || tree.profile?.title || seoData.title;
                 seoData.desc = tree.profile?.bio || seoData.desc;
                 let img = tree.profile?.image || seoData.image;
-                if(img.startsWith('/')) img = `https://bemkbmfkgumi.com${img}`;
+                if (img.startsWith('/')) img = `https://bemkbmfkgumi.com${img}`;
                 seoData.image = img;
             }
         }
-    } catch(e) { console.error("Gagal memuat SSR SEO Linktree:", e); }
+    } catch (e) { console.error("Gagal memuat SSR SEO Linktree:", e); }
 
     res.render('bem-linktree', { slug: slug, seo: seoData });
 });
@@ -519,19 +552,19 @@ app.get('/form/:slug', async (req, res) => {
                     if (formStr) allForms.push(safeParse(formStr, null));
                 });
             }
-            
+
             // Hapus duplikat dan cari form yang diminta
-            const uniqueForms = Array.from(new Map(allForms.filter(f=>f!=null).map(item => [item.id, item])).values());
+            const uniqueForms = Array.from(new Map(allForms.filter(f => f != null).map(item => [item.id, item])).values());
             formData = uniqueForms.find(f => f.slug === req.params.slug);
         } catch (e) {
             console.error("SSR Form Fetch Error:", e);
         }
     }
 
-    res.render('bem-form', { 
+    res.render('bem-form', {
         slug: req.params.slug,
         siteUrl: 'https://bemkbmfkgumi.com',
-        formData: formData 
+        formData: formData
     });
 });
 
@@ -548,7 +581,7 @@ async function getArticlesAndCategories() {
         if (keys.length === 0) return { articles: [], categories: [] };
         const raw = await redis.mget(...keys);
         const articles = raw.filter(a => a != null).map(a => typeof a === 'string' ? safeParse(a, null) : a).filter(Boolean);
-        
+
         // Ekstrak nama kategori yang unik
         const categories = [...new Set(articles.map(a => a.Kategori).filter(Boolean))];
         return { articles, categories };
@@ -561,10 +594,10 @@ async function getArticlesAndCategories() {
 app.get('/berita', async (req, res) => {
     // SUPER UPGRADE SEO FIX (Halaman Perujuk GSC): Lempar artikel terbaru ke SSR HTML agar Googlebot melihat tautan fisik
     const { articles, categories } = await getArticlesAndCategories();
-    const sortedArticles = articles.sort((a,b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
-    
-    res.render('berita', { 
-        articleInfo: null, 
+    const sortedArticles = articles.sort((a, b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
+
+    res.render('berita', {
+        articleInfo: null,
         siteUrl: 'https://bemkbmfkgumi.com',
         currentCategory: 'All',
         categorySlug: null,
@@ -577,7 +610,7 @@ app.get('/berita', async (req, res) => {
 app.get('/berita/kategori/:kategori_slug', async (req, res) => {
     const { articles, categories } = await getArticlesAndCategories();
     const catSlugReq = req.params.kategori_slug;
-    
+
     // Konversi slug kembali menjadi nama Kategori asli
     let actualCategoryName = 'All';
     const sampleArticle = articles.find(a => {
@@ -589,11 +622,11 @@ app.get('/berita/kategori/:kategori_slug', async (req, res) => {
     if (sampleArticle) {
         actualCategoryName = sampleArticle.Kategori;
     }
-    
-    const sortedArticles = articles.sort((a,b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
 
-    res.render('berita', { 
-        articleInfo: null, 
+    const sortedArticles = articles.sort((a, b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
+
+    res.render('berita', {
+        articleInfo: null,
         siteUrl: 'https://bemkbmfkgumi.com',
         currentCategory: actualCategoryName,
         categorySlug: catSlugReq,
@@ -610,19 +643,19 @@ app.get('/berita/:slug', async (req, res) => {
 
     if (articles.length > 0) {
         let foundArt = articles.find(a => (a.Slug_URL || a.ID_Berita) === req.params.slug);
-        
+
         // FIX BASE64 GSC ISSUE PADA BERITA
-        if(foundArt) {
+        if (foundArt) {
             const domain = 'https://bemkbmfkgumi.com';
             foundArt.Gambar_URL = sanitizeImageUrl(foundArt.Gambar_URL, domain);
             articleInfo = foundArt;
         }
     }
-    
+
     // Mengirim Data Artikel (Metadata) ke dalam File HTML EJS
-    res.render('berita', { 
-        articleInfo: articleInfo, 
-        siteUrl: 'https://bemkbmfkgumi.com', 
+    res.render('berita', {
+        articleInfo: articleInfo,
+        siteUrl: 'https://bemkbmfkgumi.com',
         currentSlug: req.params.slug,
         currentCategory: articleInfo ? articleInfo.Kategori : 'All',
         categorySlug: null,
@@ -637,24 +670,24 @@ app.get('/berita/:slug', async (req, res) => {
 // ============================================================================
 app.post('/api/upload', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const { filename, base64 } = req.body;
-        
-        if(!filename || !base64) return res.status(400).json({ success: false, message: "File kosong atau tidak valid." });
-        
+
+        if (!filename || !base64) return res.status(400).json({ success: false, message: "File kosong atau tidak valid." });
+
         // 🔒 SAFETY CHECK: Upstash Redis free-tier strict 1MB Request Limit Guard
         const sizeInBytes = Buffer.byteLength(base64, 'utf8');
-        if (sizeInBytes > 1048000) { 
+        if (sizeInBytes > 1048000) {
             console.warn(`⚠️ Peringatan Kapasitas: File ${filename} mendekati/melebihi batas Upstash 1MB. (Size: ${sizeInBytes} bytes)`);
         }
 
         let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
         const uniqueFilename = `${Date.now()}-${safeName}`;
-        
+
         // Simpan sbg STRING murni -> BEM_Files:1234-nama.jpg (Sesuai GBR 6 & 7)
         const redisKey = `BEM_Files:${uniqueFilename}`;
         await redis.set(redisKey, JSON.stringify({ filename: safeName, data: base64 }));
-        
+
         const fileUrl = `/api/uploads/${uniqueFilename}`;
         res.status(200).json({ success: true, url: fileUrl });
     } catch (e) {
@@ -665,8 +698,8 @@ app.post('/api/upload', async (req, res) => {
 
 app.get('/api/uploads/:filename', async (req, res) => {
     try {
-        if(!redis) return res.status(503).send("Server Storage Offline");
-        
+        if (!redis) return res.status(503).send("Server Storage Offline");
+
         const filename = req.params.filename;
         let fileObj = null;
 
@@ -686,8 +719,8 @@ app.get('/api/uploads/:filename', async (req, res) => {
 
         // 3. Fallback Variasi Prefix: Toleransi nama file dengan atau tanpa awalan 'file-'
         if (!fileObj || !fileObj.data) {
-            const alternateFilename = filename.startsWith('file-') 
-                ? filename.replace(/^file-/, '') 
+            const alternateFilename = filename.startsWith('file-')
+                ? filename.replace(/^file-/, '')
                 : `file-${filename}`;
 
             const altStringVal = await redis.get(`BEM_Files:${alternateFilename}`);
@@ -701,11 +734,11 @@ app.get('/api/uploads/:filename', async (req, res) => {
             }
         }
 
-        if(!fileObj || !fileObj.data) return res.status(404).send("File tidak ditemukan.");
-        
+        if (!fileObj || !fileObj.data) return res.status(404).send("File tidak ditemukan.");
+
         const parts = fileObj.data.split(',');
         if (parts.length !== 2) return res.status(400).send("Format Base64 tidak valid.");
-        
+
         let mimeType = 'application/octet-stream';
         const headerMatch = parts[0].match(/^data:(.*?);base64/);
         if (headerMatch && headerMatch[1]) {
@@ -714,20 +747,20 @@ app.get('/api/uploads/:filename', async (req, res) => {
 
         const base64Data = parts[1];
         const buffer = Buffer.from(base64Data, 'base64');
-        
+
         res.type(mimeType);
-        
+
         // SEO SUPER UPGRADE: Pastikan Googlebot Image dapat meng-cache dan merayapi ini
         res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         res.setHeader('Pragma', 'cache');
         res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
         res.removeHeader('Surrogate-Control');
-        
-        if(!mimeType.startsWith('image/')) {
+
+        if (!mimeType.startsWith('image/')) {
             res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename || filename}"`);
         }
         res.send(buffer);
-    } catch(e) {
+    } catch (e) {
         console.error("Error Loading File:", e);
         res.status(500).send("Gagal memuat file.");
     }
@@ -739,8 +772,8 @@ app.get('/api/uploads/:filename', async (req, res) => {
 // ============================================================================
 app.get('/api/forms', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
-        
+        if (!redis) throw new Error("Redis Offline");
+
         let allForms = [];
 
         // ENGINE 1: Ambil data jika tersimpan dalam format HASH `BEM_Forms` (Sesuai GBR 5)
@@ -763,18 +796,18 @@ app.get('/api/forms', async (req, res) => {
                 }
             });
         }
-        
+
         // Hilangkan Duplikat (Bila tersimpan di kedua tempat dengan ID yang sama)
         const uniqueForms = Array.from(new Map(allForms.map(item => [item.id, item])).values());
-        
+
         res.status(200).json({ success: true, data: uniqueForms });
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
 app.get('/api/forms/:slug', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
-        
+        if (!redis) throw new Error("Redis Offline");
+
         let allForms = [];
 
         const hashForms = await redis.hgetall('BEM_Forms');
@@ -795,26 +828,26 @@ app.get('/api/forms/:slug', async (req, res) => {
                 }
             });
         }
-        
+
         const form = allForms.find(f => f.slug === req.params.slug);
-        
-        if(!form) return res.status(404).json({ success: false, message: "Form tidak ditemukan" });
+
+        if (!form) return res.status(404).json({ success: false, message: "Form tidak ditemukan" });
         res.status(200).json({ success: true, data: form });
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
 app.post('/api/forms/save', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const formData = req.body;
-        
+
         formData.slug = formData.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-        if(!formData.id) formData.id = `FRM-${Date.now()}`;
-        
-        if(formData.sections && Array.isArray(formData.sections)) {
+        if (!formData.id) formData.id = `FRM-${Date.now()}`;
+
+        if (formData.sections && Array.isArray(formData.sections)) {
             formData.sections.forEach((sec, idx) => {
-                if(!sec.stepName || sec.stepName.trim() === '') {
-                    sec.stepName = `Tahap ${idx + 1}`; 
+                if (!sec.stepName || sec.stepName.trim() === '') {
+                    sec.stepName = `Tahap ${idx + 1}`;
                 }
             });
         }
@@ -828,7 +861,7 @@ app.post('/api/forms/save', async (req, res) => {
         };
         formData.settings = { ...defaultFormSettings, ...formData.settings };
 
-        if(!formData.theme) formData.theme = {};
+        if (!formData.theme) formData.theme = {};
         const defaultTheme = {
             headerFont: 'Outfit', headerFontSize: 28, headerFontWeight: 700,
             questionFont: 'Plus Jakarta Sans', questionFontSize: 14, questionFontWeight: 600,
@@ -836,33 +869,33 @@ app.post('/api/forms/save', async (req, res) => {
             color: '#8b5cf6', bgColor: '#f5f3ff', headerImage: ''
         };
         formData.theme = { ...defaultTheme, ...formData.theme };
-        
+
         // Selalu simpan di struktur String yang mutakhir (Sesuai GBR 4)
         const redisKey = `BEM_Forms:${formData.id}`;
         await redis.set(redisKey, JSON.stringify(formData));
-        
+
         // Kita juga pastikan menimpa Hash lawas (GBR 5) agar benar-benar tersinkronisasi 100%
         await redis.hset('BEM_Forms', { [formData.id]: JSON.stringify(formData) });
-        
+
         res.status(200).json({ success: true, message: "Form berhasil disimpan", id: formData.id });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
 app.delete('/api/forms/:id', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
-        
+
         // Hapus dari Format STRING dan HASH sekalian agar tidak tersisa bangkai data
         await redis.del(`BEM_Forms:${formId}`);
         await redis.hdel('BEM_Forms', formId);
-        
+
         // Hapus seluruh respons terkait (Sesuai GBR 2/3 BEM_Responses:FRM-...)
         const resKeys = await redis.keys(`BEM_Responses:${formId}:*`);
-        if(resKeys.length > 0) {
+        if (resKeys.length > 0) {
             await redis.del(...resKeys);
         }
-        
+
         res.status(200).json({ success: true, message: "Form dan respons berhasil dihapus permanen." });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
@@ -870,16 +903,16 @@ app.delete('/api/forms/:id', async (req, res) => {
 // Submit Jawaban Form (Untuk Publik)
 app.post('/api/forms/submit', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const { formId, responses, email } = req.body;
         const resId = `RES-${Date.now()}`;
-        
+
         // Cek STRING Dulu, kalau tidak ada, cek HASH (Dual Engine Validation)
         let formStr = await redis.get(`BEM_Forms:${formId}`);
-        if(!formStr) {
+        if (!formStr) {
             formStr = await redis.hget('BEM_Forms', formId);
         }
-        
+
         const formObj = safeParse(formStr, null);
 
         if (!formObj) return res.status(404).json({ success: false, message: "Formulir tidak valid atau telah dihapus." });
@@ -894,7 +927,7 @@ app.post('/api/forms/submit', async (req, res) => {
         // VALIDASI BATASI 1 JAWABAN (Sesuai GBR 2 & 3 - BEM_Responses adalah string pattern)
         if (formObj.settings && formObj.settings.limitOne && email) {
             const keys = await redis.keys(`BEM_Responses:${formId}:*`);
-            if(keys.length > 0) {
+            if (keys.length > 0) {
                 const rawData = await redis.mget(...keys);
                 const hasAnswered = rawData.some(r => {
                     let parsed = typeof r === 'string' ? JSON.parse(r) : r;
@@ -913,7 +946,7 @@ app.post('/api/forms/submit', async (req, res) => {
 
         if (isQuiz && formObj.sections) {
             formObj.sections.forEach(sec => {
-                if(sec.questions) {
+                if (sec.questions) {
                     sec.questions.forEach(q => {
                         let pts = parseInt(q.points) || formObj.settings.quizDefaultPoints || 0;
                         let ans = responses[q.id];
@@ -930,15 +963,15 @@ app.post('/api/forms/submit', async (req, res) => {
                             let isCorrect = ansArr.length > 0 && ansArr.length === corrArr.length && corrArr.every(c => ansArr.includes(c));
                             if (isCorrect) totalScore += pts;
                         } else if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
-                            if(q.rows) {
+                            if (q.rows) {
                                 q.rows.forEach((r, rIdx) => {
                                     let rowPts = (q.rowPoints && q.rowPoints[rIdx]) ? parseInt(q.rowPoints[rIdx]) : 0;
                                     maxScore += rowPts;
-                                    
+
                                     let rAns = responses[`${q.id}_row_${rIdx}`];
                                     let rAnsArr = Array.isArray(rAns) ? rAns : [rAns];
                                     let rCorrArr = (q.gridCorrectAnswers && q.gridCorrectAnswers[rIdx]) ? q.gridCorrectAnswers[rIdx] : [];
-                                    
+
                                     if (q.type === 'kisi_pilihan_ganda') {
                                         if (rCorrArr.includes(rAns)) totalScore += rowPts;
                                     } else {
@@ -954,23 +987,23 @@ app.post('/api/forms/submit', async (req, res) => {
         }
 
         const payload = {
-            id: resId, 
-            formId: formId, 
+            id: resId,
+            formId: formId,
             email: email,
             timestamp: new Date().toISOString(),
             answers: responses,
             score: isQuiz ? totalScore : null,
             maxScore: isQuiz ? maxScore : null
         };
-        
+
         // Simpan langsung ke struktur Kunci string tersendiri (GBR 2 & GBR 3 - BEM_Responses:FRM:RES)
         const redisKey = `BEM_Responses:${formId}:${resId}`;
         await redis.set(redisKey, JSON.stringify(payload));
-        
+
         res.status(200).json({ success: true, message: "Jawaban berhasil dikirim!" });
-    } catch (e) { 
+    } catch (e) {
         console.error(e);
-        res.status(500).json({ success: false, message: "Terjadi kesalahan server internal." }); 
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server internal." });
     }
 });
 
@@ -979,54 +1012,54 @@ app.post('/api/forms/submit', async (req, res) => {
 // ============================================================================
 app.get('/api/forms/:id/responses', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
-        
+
         // Sesuai GBR 2 & 3, Responses disimpan sebagai string di BEM_Responses:FRM-xxx:RES-xxx
         const keys = await redis.keys(`BEM_Responses:${formId}:*`);
         let responses = [];
-        
-        if(keys.length > 0) {
+
+        if (keys.length > 0) {
             const raw = await redis.mget(...keys);
             responses = raw.map(r => typeof r === 'string' ? JSON.parse(r) : r);
         }
-        
+
         res.status(200).json({ success: true, data: responses });
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
 app.put('/api/forms/:formId/responses/:resId', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const { formId, resId } = req.params;
         const { answers, email } = req.body;
-        
+
         const redisKey = `BEM_Responses:${formId}:${resId}`;
         const existingStr = await redis.get(redisKey);
-        
-        if(!existingStr) return res.status(404).json({ success: false, message: "Data respon tidak ditemukan." });
-        
+
+        if (!existingStr) return res.status(404).json({ success: false, message: "Data respon tidak ditemukan." });
+
         let existingObj = typeof existingStr === 'string' ? JSON.parse(existingStr) : existingStr;
-        
-        if(email !== undefined) existingObj.email = email;
-        if(answers !== undefined) existingObj.answers = answers;
+
+        if (email !== undefined) existingObj.email = email;
+        if (answers !== undefined) existingObj.answers = answers;
 
         await redis.set(redisKey, JSON.stringify(existingObj));
         res.status(200).json({ success: true, message: "Jawaban berhasil diperbarui." });
-    } catch(e) {
+    } catch (e) {
         res.status(500).json({ success: false, message: "Gagal memperbarui jawaban." });
     }
 });
 
 app.delete('/api/forms/:formId/responses/:resId', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const { formId, resId } = req.params;
-        
+
         await redis.del(`BEM_Responses:${formId}:${resId}`);
-        
+
         res.status(200).json({ success: true, message: "Jawaban berhasil dihapus." });
-    } catch(e) {
+    } catch (e) {
         res.status(500).json({ success: false, message: "Gagal menghapus jawaban." });
     }
 });
@@ -1034,48 +1067,48 @@ app.delete('/api/forms/:formId/responses/:resId', async (req, res) => {
 // EXPORT KE EXCEL (.XLSX)
 app.get('/api/forms/:id/export', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const formId = req.params.id;
-        
+
         let formStr = await redis.get(`BEM_Forms:${formId}`);
-        if(!formStr) {
+        if (!formStr) {
             formStr = await redis.hget('BEM_Forms', formId); // Fallback to Hash Engine
         }
-        if(!formStr) return res.status(404).send("Form tidak ditemukan");
+        if (!formStr) return res.status(404).send("Form tidak ditemukan");
         const form = typeof formStr === 'string' ? JSON.parse(formStr) : formStr;
 
         const keys = await redis.keys(`BEM_Responses:${formId}:*`);
         let responses = [];
-        if(keys.length > 0) {
+        if (keys.length > 0) {
             const raw = await redis.mget(...keys);
             responses = raw.map(r => typeof r === 'string' ? JSON.parse(r) : r);
         }
 
         const excelData = responses.map((resp, index) => {
-            let row = { 
-                "No": index + 1, 
+            let row = {
+                "No": index + 1,
                 "Timestamp (Waktu)": new Date(resp.timestamp).toLocaleString('id-ID'),
                 "Email Responden": resp.email || "-"
             };
-            
+
             if (form.settings && form.settings.isQuiz) {
                 row["Skor Total"] = `${resp.score !== null ? resp.score : 0} / ${resp.maxScore || 0}`;
             }
 
             form.sections.forEach(sec => {
                 sec.questions.forEach(q => {
-                    if(q.type !== 'title_only') {
+                    if (q.type !== 'title_only') {
                         if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
                             if (q.rows && Array.isArray(q.rows)) {
                                 q.rows.forEach((rowName, rIdx) => {
                                     let ans = resp.answers[`${q.id}_row_${rIdx}`];
-                                    if(Array.isArray(ans)) ans = ans.join(', '); 
+                                    if (Array.isArray(ans)) ans = ans.join(', ');
                                     row[`${q.title || "Grid"} [${rowName}]`] = ans || "";
                                 });
                             }
                         } else {
                             let ans = resp.answers[q.id];
-                            if(Array.isArray(ans)) ans = ans.join(', '); 
+                            if (Array.isArray(ans)) ans = ans.join(', ');
                             row[q.title || "Pertanyaan Tanpa Judul"] = ans || "";
                         }
                     }
@@ -1112,14 +1145,14 @@ app.get('/robots.txt', (req, res) => {
 app.get('/sitemap.xml', async (req, res) => {
     try {
         const domain = "https://bemkbmfkgumi.com";
-        
+
         const formatSitemapDate = (dateStr) => {
             try {
                 const fallback = new Date().toISOString().split('T')[0];
                 if (!dateStr) return fallback;
-                
+
                 if (dateStr.includes('T')) return new Date(dateStr).toISOString().split('T')[0];
-                
+
                 if (dateStr.includes('-')) {
                     const parts = dateStr.split('-');
                     if (parts[0].length === 4) {
@@ -1136,12 +1169,12 @@ app.get('/sitemap.xml', async (req, res) => {
             } catch (e) { return new Date().toISOString().split('T')[0]; }
         };
 
-        const today = formatSitemapDate(); 
-        
+        const today = formatSitemapDate();
+
         let prokerData = defaultProker;
         let kalenderData = defaultKalender;
 
-        if(redis) {
+        if (redis) {
             // Murni Key Sesuai Upstash: Proker_Data & Kalender_Data (Tanpa Prefix apapun)
             const rawProker = await redis.get('Proker_Data');
             const rawKalender = await redis.get('Kalender_Data');
@@ -1250,14 +1283,14 @@ app.get('/sitemap.xml', async (req, res) => {
                 if (articleKeys.length > 0) {
                     const rawArticles = await redis.mget(...articleKeys);
                     const articles = rawArticles.filter(a => a != null).map(a => typeof a === 'string' ? safeParse(a, null) : a).filter(Boolean);
-                    
+
                     if (articles.length > 0) {
                         xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (ARTIKEL/PUBMED) -->`;
                         articles.forEach(art => {
                             const slug = art.Slug_URL || art.ID_Berita;
                             const img = sanitizeImageUrl(art.Gambar_URL, domain);
                             const itemLastMod = formatSitemapDate(art.Tgl_Rilis);
-                            if(slug) {
+                            if (slug) {
                                 xmlUrls += `
     <url>
         <loc>${domain}/berita/${escapeXml(slug)}</loc>
@@ -1275,7 +1308,7 @@ app.get('/sitemap.xml', async (req, res) => {
                     }
                 }
             }
-        } catch(e) {
+        } catch (e) {
             console.warn("⚠️ Sitemap: Gagal sinkronisasi artikel lokal", e);
         }
 
@@ -1324,7 +1357,7 @@ const invalidateArticlesCache = () => {
 // Ambil Seluruh Data Berita (Support Pagination & Filter Kategori + In-Memory Micro-Cache)
 app.get('/api/articles', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const category = req.query.category || 'All';
@@ -1338,12 +1371,12 @@ app.get('/api/articles', async (req, res) => {
         } else {
             // Ambil Seluruh Data Berita Dari Namespace `BEM_Articles:*`
             const keys = await redis.keys('BEM_Articles:*');
-            if(keys.length > 0) {
+            if (keys.length > 0) {
                 const raw = await redis.mget(...keys);
                 articles = raw.filter(i => i != null).map(i => typeof i === 'string' ? safeParse(i, null) : i).filter(Boolean);
             }
             // Sortir Artikel dari Tanggal Terbaru (Descending)
-            articles.sort((a,b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
+            articles.sort((a, b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
             articlesMemoryCache = articles;
             articlesMemoryTime = now;
         }
@@ -1361,70 +1394,70 @@ app.get('/api/articles', async (req, res) => {
 
         res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=60');
         res.status(200).json({ success: true, data: paginatedArticles, total: filteredArticles.length });
-    } catch (e) { 
-        res.status(500).json({ success: false, data: [] }); 
+    } catch (e) {
+        res.status(500).json({ success: false, data: [] });
     }
 });
 
 // Increment Jumlah View Berita
 app.post('/api/articles/view/:id', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const key = `BEM_Articles:${req.params.id}`;
         const raw = await redis.get(key);
-        
-        if(raw) {
+
+        if (raw) {
             let art = typeof raw === 'string' ? JSON.parse(raw) : raw;
             art.Jumlah_View = (parseInt(art.Jumlah_View) || 0) + 1;
             await redis.set(key, JSON.stringify(art));
             invalidateArticlesCache();
         }
         res.status(200).json({ success: true });
-    } catch(e) { res.status(500).json({ success: false }); }
+    } catch (e) { res.status(500).json({ success: false }); }
 });
 
 // Increment Jumlah Like Berita
 app.post('/api/articles/like/:id', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const key = `BEM_Articles:${req.params.id}`;
         const raw = await redis.get(key);
-        
-        if(raw) {
+
+        if (raw) {
             let art = typeof raw === 'string' ? JSON.parse(raw) : raw;
             art.Jumlah_Like = (parseInt(art.Jumlah_Like) || 0) + 1;
             await redis.set(key, JSON.stringify(art));
             invalidateArticlesCache();
         }
         res.status(200).json({ success: true });
-    } catch(e) { res.status(500).json({ success: false }); }
+    } catch (e) { res.status(500).json({ success: false }); }
 });
 
 // ADMIN: Simpan atau Edit Berita
 app.post('/api/articles/save', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         let art = req.body;
-        
+
         if (!art.ID_Berita) art.ID_Berita = `ART-${Date.now()}`;
         if (!art.Slug_URL) art.Slug_URL = art.Judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         if (!art.Tgl_Rilis) art.Tgl_Rilis = new Date().toISOString();
         if (!art.Jumlah_View) art.Jumlah_View = 0;
         if (!art.Jumlah_Like) art.Jumlah_Like = 0;
-        
+
         await redis.set(`BEM_Articles:${art.ID_Berita}`, JSON.stringify(art));
         invalidateArticlesCache(); // Kosongkan cache artikel seketika
         res.status(200).json({ success: true, message: "Artikel berhasil disimpan", id: art.ID_Berita });
-    } catch(e) { res.status(500).json({ success: false }); }
+    } catch (e) { res.status(500).json({ success: false }); }
 });
 
 // ADMIN: Hapus Berita
 app.delete('/api/articles/:id', async (req, res) => {
     try {
-         if(redis) await redis.del(`BEM_Articles:${req.params.id}`);
-         invalidateArticlesCache(); // Kosongkan cache artikel seketika
-         res.status(200).json({ success: true, message: "Artikel dihapus." });
-    } catch(e) { res.status(500).json({ success: false }); }
+        if (redis) await redis.del(`BEM_Articles:${req.params.id}`);
+        invalidateArticlesCache(); // Kosongkan cache artikel seketika
+        res.status(200).json({ success: true, message: "Artikel dihapus." });
+    } catch (e) { res.status(500).json({ success: false }); }
 });
 
 // ================= API CMS ENDPOINTS (ZERO-DELAY MULTI-TIER CACHE DENGAN ETAG & MGET) =================
@@ -1443,8 +1476,8 @@ app.get('/api/content', async (req, res) => {
             return res.status(200).json(contentMemoryCache);
         }
 
-        if(!redis) throw new Error("Redis Offline");
-        
+        if (!redis) throw new Error("Redis Offline");
+
         // 2. LAYER 2: UPSTASH REDIS MGET
         // Menggunakan KEY ASLI MURNI sesuai screenshot struktur utama Anda.
         const keysToFetch = [
@@ -1457,7 +1490,7 @@ app.get('/api/content', async (req, res) => {
         const rawData = await redis.mget(...keysToFetch);
 
         const [
-            org, proker, kalender, dokumentasi, 
+            org, proker, kalender, dokumentasi,
             settings, team, sejarah, filosofi, kontak, radar
         ] = rawData;
 
@@ -1490,8 +1523,8 @@ app.get('/api/content', async (req, res) => {
         if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) parsedOrg.misi = defaultOrg.misi;
         if (!parsedOrg.artiKabinet) parsedOrg.artiKabinet = defaultOrg.artiKabinet;
 
-        const responsePayload = { 
-            success: true, 
+        const responsePayload = {
+            success: true,
             org: parsedOrg,
             proker: safeParse(proker, defaultProker),
             kalender: safeParse(kalender, defaultKalender),
@@ -1528,11 +1561,11 @@ app.get('/api/content', async (req, res) => {
 
 app.post('/api/content/:type', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const type = req.params.type;
-        
-        let bodyData = req.body; 
-        
+
+        let bodyData = req.body;
+
         if ((type === 'kalender' || type === 'proker') && Array.isArray(bodyData)) {
             bodyData.forEach(item => {
                 let textToSlug = item.slug || item.id || item.nama || item.namaProker || item.dept || "kegiatan";
@@ -1542,9 +1575,9 @@ app.post('/api/content/:type', async (req, res) => {
                     .replace(/\-\-+/g, '-')
                     .replace(/^-+/, '')
                     .replace(/-+$/, '');
-                
+
                 item.slug = safeSlug;
-                item.id = safeSlug; 
+                item.id = safeSlug;
             });
         }
 
@@ -1564,17 +1597,17 @@ app.post('/api/content/:type', async (req, res) => {
             }
         }
 
-        const payload = JSON.stringify(bodyData); 
-        
+        const payload = JSON.stringify(bodyData);
+
         // Pemetaan MURNI untuk disimpan kembali ke Redis tanpa Prefix aneh-aneh
         const dbMapping = {
-            'org': 'Org_Structure', 'proker': 'Proker_Data', 'kalender': 'Kalender_Data', 
-            'dokumentasi': 'Dokumentasi_Data', 'settings': 'Settings_Data', 'team': 'Team_Data', 
+            'org': 'Org_Structure', 'proker': 'Proker_Data', 'kalender': 'Kalender_Data',
+            'dokumentasi': 'Dokumentasi_Data', 'settings': 'Settings_Data', 'team': 'Team_Data',
             'sejarah': 'Sejarah_Data', 'filosofi': 'Filosofi_Data', 'kontak': 'Kontak_Data', 'radar': 'Radar_Data'
         };
-        
+
         if (dbMapping[type]) {
-            const redisKey = dbMapping[type]; 
+            const redisKey = dbMapping[type];
             await redis.set(redisKey, payload);
             invalidateContentCache(); // KOSONGKAN IN-MEMORY CACHE SERVER INSTAN AGAR REALTIME
             res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
@@ -1589,36 +1622,36 @@ app.post('/api/content/:type', async (req, res) => {
 // ================= SUPER UPGRADE: API ADMIN DASHBOARD STATS =================
 app.get('/api/admin/stats', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
-        
+        if (!redis) throw new Error("Redis Offline");
+
         // Menghitung Forms (Hitung Hash Forms + Hitung String Forms)
         const hashForms = await redis.hkeys('BEM_Forms');
         const stringFormKeys = await redis.keys('BEM_Forms:*');
         const totalForms = (hashForms ? hashForms.length : 0) + stringFormKeys.length;
-        
+
         // Menghitung Responses
         const responseKeys = await redis.keys('BEM_Responses:*:*');
         const totalResponses = responseKeys.length;
-        
+
         // Sesuai GBR 1 (Tipe STRING Pattern untuk Message dan Aspirasi)
         const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
         const totalAspirasi = aspirasiKeys.length;
-        
+
         const messageKeys = await redis.keys('BEM_Messages:*'); // GBR 1: BEM_Messages:MSG-...
         const totalPesan = messageKeys.length;
-        
+
         // Bonus Update: Menghitung total artikel
         const articleKeys = await redis.keys('BEM_Articles:*');
         const totalArticles = articleKeys.length;
-        
-        res.status(200).json({ 
-            success: true, 
-            data: { 
-                totalForms, 
-                totalResponses, 
-                totalAspirasi, 
+
+        res.status(200).json({
+            success: true,
+            data: {
+                totalForms,
+                totalResponses,
+                totalAspirasi,
                 totalPesan,
-                totalArticles 
+                totalArticles
             }
         });
     } catch (e) {
@@ -1629,28 +1662,28 @@ app.get('/api/admin/stats', async (req, res) => {
 // ================= API ENDPOINTS: TRANSAKSIONAL (MGET STRING KEYS FIX Sesuai GBR 1) =================
 app.get('/api/interactions', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
-        
+        if (!redis) throw new Error("Redis Offline");
+
         // AMBIL DATA ASPIRASI STRING VIA MGET
         const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
         let aspirasi = [];
-        if(aspirasiKeys.length > 0) {
+        if (aspirasiKeys.length > 0) {
             const raw = await redis.mget(...aspirasiKeys);
             aspirasi = raw.filter(i => i != null)
-                          .map(i => typeof i === 'string' ? JSON.parse(i) : i)
-                          .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                .map(i => typeof i === 'string' ? JSON.parse(i) : i)
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
 
         // AMBIL DATA PESAN STRING VIA MGET (Cocok dengan GBR 1: BEM_Messages:MSG-1786632166001)
         const messageKeys = await redis.keys('BEM_Messages:*');
         let pesan = [];
-        if(messageKeys.length > 0) {
+        if (messageKeys.length > 0) {
             const raw = await redis.mget(...messageKeys);
             pesan = raw.filter(i => i != null)
-                       .map(i => typeof i === 'string' ? JSON.parse(i) : i)
-                       .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                .map(i => typeof i === 'string' ? JSON.parse(i) : i)
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
-        
+
         res.status(200).json({ success: true, aspirasi, pesan });
     } catch (error) {
         console.error("API Interactions Error:", error);
@@ -1659,50 +1692,50 @@ app.get('/api/interactions', async (req, res) => {
 });
 
 app.post('/api/plasma', async (req, res) => {
-  try {
-    const { judul, kategori, jenis, isi, bukti } = req.body;
-    const id = `ASP-${Date.now()}`;
-    const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
-    
-    // Simpan sebagai STRING Sesuai Format Upstash Anda
-    if (redis) await redis.set(`BEM_Aspirations:${id}`, JSON.stringify(payload));
-    res.status(200).json({ success: true, message: 'Aspirasi berhasil dikirim!' });
-  } catch (error) { res.status(500).json({ success: false }); }
+    try {
+        const { judul, kategori, jenis, isi, bukti } = req.body;
+        const id = `ASP-${Date.now()}`;
+        const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
+
+        // Simpan sebagai STRING Sesuai Format Upstash Anda
+        if (redis) await redis.set(`BEM_Aspirations:${id}`, JSON.stringify(payload));
+        res.status(200).json({ success: true, message: 'Aspirasi berhasil dikirim!' });
+    } catch (error) { res.status(500).json({ success: false }); }
 });
 
 app.post('/api/message', async (req, res) => {
-  try {
-    const { nama, kontak, subjek, pesan } = req.body;
-    const id = `MSG-${Date.now()}`;
-    const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
-    
-    // Simpan sebagai STRING Sesuai Format Upstash Anda (GBR 1)
-    if (redis) await redis.set(`BEM_Messages:${id}`, JSON.stringify(payload));
-    res.status(200).json({ success: true, message: 'Pesan terkirim!' });
-  } catch (error) { res.status(500).json({ success: false }); }
+    try {
+        const { nama, kontak, subjek, pesan } = req.body;
+        const id = `MSG-${Date.now()}`;
+        const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
+
+        // Simpan sebagai STRING Sesuai Format Upstash Anda (GBR 1)
+        if (redis) await redis.set(`BEM_Messages:${id}`, JSON.stringify(payload));
+        res.status(200).json({ success: true, message: 'Pesan terkirim!' });
+    } catch (error) { res.status(500).json({ success: false }); }
 });
 
 app.post('/api/delete-interaction', async (req, res) => {
     try {
         const { type, id } = req.body;
         // Hapus Kunci STRING Spesifik
-        if(type === 'aspirasi' && redis) await redis.del(`BEM_Aspirations:${id}`);
-        if(type === 'pesan' && redis) await redis.del(`BEM_Messages:${id}`);
+        if (type === 'aspirasi' && redis) await redis.del(`BEM_Aspirations:${id}`);
+        if (type === 'pesan' && redis) await redis.del(`BEM_Messages:${id}`);
         res.status(200).json({ success: true });
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
 app.post('/api/admin/auth', (req, res) => {
-  const { username, password } = req.body;
-  
-  const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
-  const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
+    const { username, password } = req.body;
 
-  if (username === validUser && password === validPass) {
-    res.status(200).json({ success: true, token: process.env.ADMIN_TOKEN || 'AXA-XYZ-SECURE-TOKEN' });
-  } else {
-    res.status(401).json({ success: false, message: 'Kredensial salah!' });
-  }
+    const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
+    const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
+
+    if (username === validUser && password === validPass) {
+        res.status(200).json({ success: true, token: process.env.ADMIN_TOKEN || 'AXA-XYZ-SECURE-TOKEN' });
+    } else {
+        res.status(401).json({ success: false, message: 'Kredensial salah!' });
+    }
 });
 
 // ================= MIDDLEWARE AUTHENTICATION (SUPER ROBUST) =================
@@ -1710,7 +1743,7 @@ const verifyToken = (req, res, next) => {
     if (req.method === 'OPTIONS') return next();
 
     const bearerHeader = req.headers['authorization'] || req.headers['Authorization'];
-    
+
     if (typeof bearerHeader !== 'undefined' && bearerHeader) {
         const parts = bearerHeader.split(' ');
         const bearerToken = parts.length === 2 ? parts[1] : parts[0];
@@ -1728,10 +1761,10 @@ const verifyToken = (req, res, next) => {
 
 // ================= REDIS KEYS CONFIGURATION FOR MHS, CIVITAS, LINKTREE, QR =================
 const MHS_HASH_KEY = 'BEM_MHS_DB';
-const MHS_SCHEMA_KEY = 'BEM_MHS_FORM_SCHEMA'; 
+const MHS_SCHEMA_KEY = 'BEM_MHS_FORM_SCHEMA';
 const MHS_LAST_UPDATE_KEY = 'BEM_LAST_UPDATE_MHS';
 
-const CIVITAS_HASH_KEY = 'BEM_CIVITAS_DB'; 
+const CIVITAS_HASH_KEY = 'BEM_CIVITAS_DB';
 const DOSEN_SCHEMA_KEY = 'BEM_DOSEN_FORM_SCHEMA';
 const CIVITAS_SCHEMA_KEY = 'BEM_CIVITAS_FORM_SCHEMA';
 const CIVITAS_LAST_UPDATE_KEY = 'BEM_LAST_UPDATE_CIVITAS';
@@ -1760,7 +1793,7 @@ function getIndoFormattedDate() {
 // ================= ENDPOINT API MAHASISWA =================
 app.get('/api/mhs/schema', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const schema = await redis.get(MHS_SCHEMA_KEY);
         res.json({ success: true, data: safeParse(schema, []) });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema' }); }
@@ -1768,7 +1801,7 @@ app.get('/api/mhs/schema', async (req, res) => {
 
 app.post('/api/mhs/schema', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         await redis.set(MHS_SCHEMA_KEY, JSON.stringify(req.body));
         res.json({ success: true, message: 'Skema Berhasil Disimpan' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema' }); }
@@ -1776,10 +1809,10 @@ app.post('/api/mhs/schema', verifyToken, async (req, res) => {
 
 app.get('/api/mhs', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const allData = await redis.hgetall(MHS_HASH_KEY);
         const lastUpdate = await redis.get(MHS_LAST_UPDATE_KEY) || '-';
-        
+
         let resultArray = [];
         if (allData) {
             for (const [id, dataStr] of Object.entries(allData)) { resultArray.push(safeParse(dataStr, {})); }
@@ -1794,7 +1827,7 @@ app.get('/api/mhs', async (req, res) => {
 
 app.get('/api/mhs/:id', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const dataStr = await redis.hget(MHS_HASH_KEY, req.params.id);
         if (!dataStr) return res.status(404).json({ success: false, message: 'Data tidak ditemukan' });
         res.json({ success: true, data: safeParse(dataStr, {}) });
@@ -1803,51 +1836,51 @@ app.get('/api/mhs/:id', async (req, res) => {
 
 app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const { students } = req.body;
         if (!students || !Array.isArray(students)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
-        
+
         const p = redis.pipeline();
         let successCount = 0;
 
-        students.forEach(std => { 
+        students.forEach(std => {
             let idMhs = std.nim_profesi && std.nim_profesi !== '-' && std.nim_profesi !== '' ? std.nim_profesi : null;
-            if(!idMhs) idMhs = std['STAMBUK/NIM PROFESI'] && std['STAMBUK/NIM PROFESI'] !== '-' ? std['STAMBUK/NIM PROFESI'] : null;
-            if(!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
-            if(!idMhs) idMhs = std['STAMBUK/NIM SARJANA'] && std['STAMBUK/NIM SARJANA'] !== '-' ? std['STAMBUK/NIM SARJANA'] : null;
-            if(!idMhs) idMhs = std.nim || std.NIM;
+            if (!idMhs) idMhs = std['STAMBUK/NIM PROFESI'] && std['STAMBUK/NIM PROFESI'] !== '-' ? std['STAMBUK/NIM PROFESI'] : null;
+            if (!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
+            if (!idMhs) idMhs = std['STAMBUK/NIM SARJANA'] && std['STAMBUK/NIM SARJANA'] !== '-' ? std['STAMBUK/NIM SARJANA'] : null;
+            if (!idMhs) idMhs = std.nim || std.NIM;
 
             if (idMhs && idMhs !== '' && idMhs !== '-') {
                 std.nim = idMhs;
-                p.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) }); 
+                p.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) });
                 successCount++;
             }
         });
 
         await p.exec();
-        if(successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIM/STAMBUK) yang ditemukan pada file Excel.' });
-        
+        if (successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIM/STAMBUK) yang ditemukan pada file Excel.' });
+
         await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: `Berhasil sinkronisasi ${successCount} mahasiswa ke database.` });
-    } catch (error) { 
+    } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database' }); 
+        res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database' });
     }
 });
 
 app.post('/api/mhs', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const std = req.body;
-        
+
         let idMhs = std.nim_profesi && std.nim_profesi !== '-' && std.nim_profesi !== '' ? std.nim_profesi : null;
-        if(!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
-        if(!idMhs) idMhs = std.nim;
+        if (!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
+        if (!idMhs) idMhs = std.nim;
 
         if (!idMhs || idMhs === '-' || idMhs === '') return res.status(400).json({ success: false, message: 'NIM / STAMBUK Wajib Diisi (Identifier Database)' });
-        
-        std.nim = idMhs; 
-        await redis.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) }); 
+
+        std.nim = idMhs;
+        await redis.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) });
         await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data' }); }
@@ -1855,13 +1888,13 @@ app.post('/api/mhs', verifyToken, async (req, res) => {
 
 app.put('/api/mhs/:id', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const { id } = req.params;
         const exists = await redis.hexists(MHS_HASH_KEY, id);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
-        
-        req.body.nim = id; 
-        await redis.hset(MHS_HASH_KEY, { [id]: JSON.stringify(req.body) }); 
+
+        req.body.nim = id;
+        await redis.hset(MHS_HASH_KEY, { [id]: JSON.stringify(req.body) });
         await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Mahasiswa Berhasil Diperbarui' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data' }); }
@@ -1869,7 +1902,7 @@ app.put('/api/mhs/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/mhs/:id', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         await redis.hdel(MHS_HASH_KEY, req.params.id);
         await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Mahasiswa Terhapus' });
@@ -1879,7 +1912,7 @@ app.delete('/api/mhs/:id', verifyToken, async (req, res) => {
 // ================= ENDPOINT API PEGAWAI (DOSEN & CIVITAS) =================
 app.get('/api/civitas/schema/dosen', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const schema = await redis.get(DOSEN_SCHEMA_KEY);
         res.json({ success: true, data: safeParse(schema, []) });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema Dosen' }); }
@@ -1887,7 +1920,7 @@ app.get('/api/civitas/schema/dosen', async (req, res) => {
 
 app.post('/api/civitas/schema/dosen', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         await redis.set(DOSEN_SCHEMA_KEY, JSON.stringify(req.body));
         res.json({ success: true, message: 'Skema Dosen Berhasil Disimpan' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema Dosen' }); }
@@ -1895,7 +1928,7 @@ app.post('/api/civitas/schema/dosen', verifyToken, async (req, res) => {
 
 app.get('/api/civitas/schema/civitas', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const schema = await redis.get(CIVITAS_SCHEMA_KEY);
         res.json({ success: true, data: safeParse(schema, []) });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema Civitas' }); }
@@ -1903,7 +1936,7 @@ app.get('/api/civitas/schema/civitas', async (req, res) => {
 
 app.post('/api/civitas/schema/civitas', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         await redis.set(CIVITAS_SCHEMA_KEY, JSON.stringify(req.body));
         res.json({ success: true, message: 'Skema Civitas Berhasil Disimpan' });
     } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema Civitas' }); }
@@ -1911,10 +1944,10 @@ app.post('/api/civitas/schema/civitas', verifyToken, async (req, res) => {
 
 app.get('/api/civitas', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const allData = await redis.hgetall(CIVITAS_HASH_KEY);
         const lastUpdate = await redis.get(CIVITAS_LAST_UPDATE_KEY) || '-';
-        
+
         let resultArray = [];
         if (allData) {
             for (const [id, dataStr] of Object.entries(allData)) {
@@ -1931,7 +1964,7 @@ app.get('/api/civitas', async (req, res) => {
 
 app.get('/api/civitas/:id', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const dataStr = await redis.hget(CIVITAS_HASH_KEY, req.params.id);
         if (!dataStr) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
         res.json({ success: true, data: safeParse(dataStr, {}) });
@@ -1940,10 +1973,10 @@ app.get('/api/civitas/:id', async (req, res) => {
 
 app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const { pegawai } = req.body;
         if (!pegawai || !Array.isArray(pegawai)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
-        
+
         const p = redis.pipeline();
         let successCount = 0;
 
@@ -1957,7 +1990,7 @@ app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
         });
 
         await p.exec();
-        if(successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIDN/NIP) yang ditemukan pada file Excel.' });
+        if (successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIDN/NIP) yang ditemukan pada file Excel.' });
 
         await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: `Berhasil sinkronisasi ${successCount} pegawai` });
@@ -1966,7 +1999,7 @@ app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
 
 app.post('/api/civitas', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const peg = req.body;
         const idPegawai = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
         if (!idPegawai || idPegawai === '-' || idPegawai === '') return res.status(400).json({ success: false, message: 'NIP / NIDN Wajib Diisi (Identifier Database)' });
@@ -1980,7 +2013,7 @@ app.post('/api/civitas', verifyToken, async (req, res) => {
 
 app.put('/api/civitas/:id', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const { id } = req.params;
         const exists = await redis.hexists(CIVITAS_HASH_KEY, id);
         if (!exists) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
@@ -1994,7 +2027,7 @@ app.put('/api/civitas/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/civitas/:id', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         await redis.hdel(CIVITAS_HASH_KEY, req.params.id);
         await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
         res.json({ success: true, message: 'Data Pegawai Terhapus' });
@@ -2004,7 +2037,7 @@ app.delete('/api/civitas/:id', verifyToken, async (req, res) => {
 // ================= ENDPOINT API LINKTREE =================
 app.get('/api/linktrees', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const trees = await redis.hgetall('BEM_Linktrees') || {};
         const parsedTrees = Object.values(trees).map(item => safeParse(item, {}));
         res.status(200).json({ success: true, data: parsedTrees });
@@ -2013,32 +2046,32 @@ app.get('/api/linktrees', async (req, res) => {
 
 app.get('/api/linktrees/:slug', async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const trees = await redis.hgetall('BEM_Linktrees') || {};
         const treeArr = Object.values(trees).map(item => safeParse(item, {}));
         const tree = treeArr.find(t => t.slug === req.params.slug);
-        
-        if(!tree) return res.status(404).json({ success: false, message: "Linktree tidak ditemukan" });
+
+        if (!tree) return res.status(404).json({ success: false, message: "Linktree tidak ditemukan" });
         res.status(200).json({ success: true, data: tree });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
 app.post('/api/linktrees/save', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const payload = req.body;
-        
+
         payload.slug = payload.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/(^-|-$)+/g, '');
-        if(!payload.id) payload.id = `LNK-${Date.now()}`;
-        
+        if (!payload.id) payload.id = `LNK-${Date.now()}`;
+
         const trees = await redis.hgetall('BEM_Linktrees') || {};
         const treeArr = Object.values(trees).map(item => safeParse(item, {}));
         const isSlugTaken = treeArr.some(t => t.slug === payload.slug && t.id !== payload.id);
-        
-        if(isSlugTaken) {
-            payload.slug = payload.slug + '-' + Math.floor(Math.random() * 1000); 
+
+        if (isSlugTaken) {
+            payload.slug = payload.slug + '-' + Math.floor(Math.random() * 1000);
         }
-        
+
         await redis.hset('BEM_Linktrees', { [payload.id]: JSON.stringify(payload) });
         res.status(200).json({ success: true, message: "Linktree disimpan!", data: payload });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
@@ -2046,7 +2079,7 @@ app.post('/api/linktrees/save', verifyToken, async (req, res) => {
 
 app.delete('/api/linktrees/:id', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         await redis.hdel('BEM_Linktrees', req.params.id);
         res.status(200).json({ success: true, message: "Dihapus" });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
@@ -2055,53 +2088,53 @@ app.delete('/api/linktrees/:id', verifyToken, async (req, res) => {
 // ================= ENDPOINT API QR CODES =================
 app.get(['/api/qrcodes', '/api/qrcodes/'], async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
-        
+        if (!redis) throw new Error("Redis Offline");
+
         const keys = await redis.keys('BEM_QRCodes:*');
         let parsedQRs = [];
-        
-        if(keys && keys.length > 0) {
+
+        if (keys && keys.length > 0) {
             const raw = await redis.mget(...keys);
             parsedQRs = raw.filter(i => i != null).map(item => safeParse(item, {}));
-            
+
             parsedQRs.sort((a, b) => {
                 const dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0);
                 const dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
                 return dateB - dateA;
             });
         }
-        
+
         res.status(200).json({ success: true, data: parsedQRs });
-    } catch (e) { 
+    } catch (e) {
         console.error("Gagal load QR Codes:", e.message);
-        res.status(500).json({ success: false, message: e.message }); 
+        res.status(500).json({ success: false, message: e.message });
     }
 });
 
 app.post('/api/qrcodes/save', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         const payload = req.body;
-        
-        if(!payload.id) payload.id = `QR-${Date.now()}`;
+
+        if (!payload.id) payload.id = `QR-${Date.now()}`;
         payload.updatedAt = new Date().toISOString();
-        
+
         const redisKey = `BEM_QRCodes:${payload.id}`;
         await redis.set(redisKey, JSON.stringify(payload));
-        
+
         res.status(200).json({ success: true, message: "Desain QR Code disimpan ke Cloud!", data: payload });
-    } catch (e) { 
-        res.status(500).json({ success: false, message: e.message }); 
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
     }
 });
 
 app.delete('/api/qrcodes/:id', verifyToken, async (req, res) => {
     try {
-        if(!redis) throw new Error("Redis Offline");
+        if (!redis) throw new Error("Redis Offline");
         await redis.del(`BEM_QRCodes:${req.params.id}`);
         res.status(200).json({ success: true, message: "QR Code Permanen Dihapus" });
-    } catch (e) { 
-        res.status(500).json({ success: false, message: e.message }); 
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
     }
 });
 
