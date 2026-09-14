@@ -4,14 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Kami (About Us) | Profil, Visi Misi & Sejarah BEM KBMFKG UMI</title>
+    <meta name="theme-color" content="#10b981">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BEM FKG UMI">
+    <!-- =========================================================================
+         SUPER BIG UPGRADE: SSR DYNAMIC SEO METADATA GOLD STANDARD GSC
+         Mendukung Clean URL /tentang/:slug (/tentang/visimisi, /tentang/struktur, dll.)
+         Serta Sinkronisasi Otomatis Database Upstash Redis
+         ========================================================================= -->
+    <% 
+        let currentSection = (typeof activeSection !== 'undefined' && activeSection) ? activeSection : null;
+        let siteBase = (typeof siteUrl !== 'undefined' && siteUrl) ? siteUrl : 'https://bemkbmfkgumi.com';
+        let ssrOrg = (typeof orgData !== 'undefined' && orgData) ? orgData : null;
+        let namaKabinetSSR = (ssrOrg && ssrOrg.namaKabinet) ? ssrOrg.namaKabinet : 'Kabinet Ananta Anardhaya';
+        let periodeSSR = (ssrOrg && ssrOrg.periode) ? ssrOrg.periode : '2025 - 2026';
+
+        const sectionSEOConfig = {
+            'visimisi': {
+                title: `Visi & Misi (Vision & Mission) - ${namaKabinetSSR} | BEM KBMFKG UMI`,
+                desc: `Kenali Visi dan Misi (Vision & Mission) yang menjadi arah gerak dan landasan perjuangan ${namaKabinetSSR} BEM KBMFKG UMI Periode ${periodeSSR}.`,
+                bcName: 'Visi & Misi',
+                slug: 'visimisi'
+            },
+            'struktur': {
+                title: `Struktur Kepengurusan (Organization Structure) - ${namaKabinetSSR} | BEM KBMFKG UMI`,
+                desc: `Profil lengkap pimpinan inti dan struktur kepengurusan departemen (Organization Structure) BEM KBMFKG UMI ${namaKabinetSSR} Periode ${periodeSSR}.`,
+                bcName: 'Struktur Kepengurusan',
+                slug: 'struktur'
+            },
+            'filosofi': {
+                title: `Filosofi Logo & Warna (Logo Philosophy) - ${namaKabinetSSR} | BEM KBMFKG UMI`,
+                desc: `Pelajari makna mendalam dari setiap elemen filosofi logo dan enam warna (Logo & Color Philosophy) yang menjadi identitas BEM KBMFKG UMI.`,
+                bcName: 'Filosofi Logo & Warna',
+                slug: 'filosofi'
+            },
+            'sejarah-pembentukan': {
+                title: `Sejarah Terbentuknya (History of Formation) KBMFKG UMI | BEM KBMFKG UMI`,
+                desc: `Menelusuri jejak awal pergerakan, latar belakang, dan sejarah terbentuknya (History of Formation) Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi UMI sejak 2014.`,
+                bcName: 'Sejarah Pembentukan',
+                slug: 'sejarah-pembentukan'
+            },
+            'sejarah': {
+                title: `Timeline Sejarah Kepengurusan (Leadership Timeline) | BEM KBMFKG UMI`,
+                desc: `Rekam jejak kepemimpinan dan timeline sejarah kepengurusan (Leadership Timeline) BEM KBMFKG UMI dari masa ke masa.`,
+                bcName: 'Timeline Kepengurusan',
+                slug: 'sejarah'
+            }
+        };
+
+        let currentSEO = {
+            title: `Tentang Kami (About Us) | Profil, Visi Misi & Sejarah BEM KBMFKG UMI`,
+            desc: `About Us - Kenali lebih dekat profil organisasi, visi misi, struktur kepengurusan ${namaKabinetSSR} Periode ${periodeSSR}, makna filosofi logo, serta sejarah (History) pergerakan BEM KBMFKG UMI secara komprehensif.`,
+            bcName: 'Tentang Kami',
+            slug: ''
+        };
+
+        if (currentSection && sectionSEOConfig[currentSection]) {
+            currentSEO = sectionSEOConfig[currentSection];
+        }
+
+        const fullUrl = currentSEO.slug ? `${siteBase}/tentang/${currentSEO.slug}` : `${siteBase}/tentang`;
+    %>
+
+    <title><%= currentSEO.title %></title>
     
-    <!-- ================= SEO EXPERT 100% UPGRADE (DYNAMIC READY) ================= -->
-    <meta name="description" content="About Us - Kenali lebih dekat profil organisasi, visi misi, struktur kepengurusan kabinet (Organization Structure), makna filosofi logo, serta sejarah (History) pergerakan BEM KBMFKG UMI secara komprehensif.">
-    <meta name="keywords" content="Tentang BEM FKG UMI, About Us BEM KBMFKG UMI, Sejarah BEM KBMFKG UMI, Visi Misi BEM FKG UMI, Struktur Organisasi BEM FKG, Organization Profile, History of BEM, Kabinet Ananta Anardhaya, Fakultas Kedokteran Gigi UMI, Universitas Muslim Indonesia Makassar">
+    <!-- ================= SEO EXPERT 100% UPGRADE (SSR GOLD STANDARD GSC) ================= -->
+    <meta name="description" content="<%= currentSEO.desc %>">
+    <meta name="keywords" content="Tentang BEM FKG UMI, About Us BEM KBMFKG UMI, Sejarah BEM KBMFKG UMI, Visi Misi BEM FKG UMI, Struktur Organisasi BEM FKG, Organization Profile, History of BEM, <%= namaKabinetSSR %>, Fakultas Kedokteran Gigi UMI, Universitas Muslim Indonesia Makassar">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://bemkbmfkgumi.com/tentang">
+    <link rel="canonical" href="<%= fullUrl %>">
     
     <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,18 +90,18 @@
     
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://bemkbmfkgumi.com/tentang">
+    <meta property="og:url" content="<%= fullUrl %>">
     <meta property="og:site_name" content="BEM KBMFKG UMI">
-    <meta property="og:title" content="Tentang Kami (About Us) | Profil & Sejarah BEM KBMFKG UMI">
-    <meta property="og:description" content="Organization Profile - Kenali lebih dekat profil organisasi, visi misi, struktur kepengurusan, serta sejarah pergerakan BEM KBMFKG UMI.">
+    <meta property="og:title" content="<%= currentSEO.title %>">
+    <meta property="og:description" content="<%= currentSEO.desc %>">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://bemkbmfkgumi.com/tentang">
-    <meta property="twitter:title" content="Tentang Kami (About Us) | Profil & Sejarah BEM KBMFKG UMI">
-    <meta property="twitter:description" content="Organization Profile - Kenali lebih dekat profil organisasi, visi misi, struktur kepengurusan, serta sejarah pergerakan BEM KBMFKG UMI.">
+    <meta property="twitter:url" content="<%= fullUrl %>">
+    <meta property="twitter:title" content="<%= currentSEO.title %>">
+    <meta property="twitter:description" content="<%= currentSEO.desc %>">
     <meta property="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
     <!-- ADVANCED JSON-LD Schema.org (AboutPage, Organization, Breadcrumb & Sitelinks Navigation) -->
@@ -45,10 +111,10 @@
       "@graph": [
         {
           "@type": "AboutPage",
-          "@id": "https://bemkbmfkgumi.com/tentang/#webpage",
-          "url": "https://bemkbmfkgumi.com/tentang",
-          "name": "Tentang Kami (About Us) | Profil, Visi Misi & Sejarah BEM KBMFKG UMI",
-          "description": "Profil, Visi Misi, Struktur, Filosofi, dan Sejarah BEM KBMFKG UMI (Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia).",
+          "@id": "<%= fullUrl %>/#webpage",
+          "url": "<%= fullUrl %>",
+          "name": "<%= currentSEO.title %>",
+          "description": "<%= currentSEO.desc %>",
           "inLanguage": ["id-ID", "en-US"],
           "publisher": { "@id": "https://bemkbmfkgumi.com/#organization" }
         },
@@ -82,9 +148,16 @@
             {
               "@type": "ListItem",
               "position": 2,
-              "name": "Tentang Kami (About Us)",
+              "name": "Tentang Kami",
               "item": "https://bemkbmfkgumi.com/tentang"
+            }<% if (currentSEO.slug) { %>,
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "<%= currentSEO.bcName %>",
+              "item": "<%= fullUrl %>"
             }
+            <% } %>
           ]
         },
         {
@@ -94,17 +167,22 @@
             "Visi & Misi", 
             "Struktur Kepengurusan", 
             "Filosofi Logo", 
-            "Sejarah KBMFKG UMI"
+            "Sejarah KBMFKG UMI",
+            "Timeline Kepengurusan"
           ],
           "url": [
-            "https://bemkbmfkgumi.com/tentang#visimisi",
-            "https://bemkbmfkgumi.com/tentang#struktur",
-            "https://bemkbmfkgumi.com/tentang#filosofi",
-            "https://bemkbmfkgumi.com/tentang#sejarah-pembentukan"
+            "https://bemkbmfkgumi.com/tentang/visimisi",
+            "https://bemkbmfkgumi.com/tentang/struktur",
+            "https://bemkbmfkgumi.com/tentang/filosofi",
+            "https://bemkbmfkgumi.com/tentang/sejarah-pembentukan",
+            "https://bemkbmfkgumi.com/tentang/sejarah"
           ]
         }
       ]
     }
+    </script>
+    <script>
+        const INITIAL_ACTIVE_SECTION = "<%= currentSection || '' %>";
     </script>
     <!-- ================= END SEO ================= -->
 
@@ -127,7 +205,7 @@
         
         <div class="reveal" style="text-align: center; margin-bottom: 70px;">
             <div class="clay-badge" style="margin-bottom: 15px;">PROFIL ORGANISASI</div>
-            <h1 style="font-size: 3.5rem; font-weight: 900; color: var(--text-light);">Visi & Misi <br><span class="script-font" style="font-size: 1.2em; display:block; margin-top:10px;">Ananta Anardhaya</span></h1>
+            <h1 style="font-size: 3.5rem; font-weight: 900; color: var(--text-light);">Visi & Misi <br><span class="script-font" id="namaKabinetVisiTentang" style="font-size: 1.2em; display:block; margin-top:10px;">Ananta Anardhaya</span></h1>
             
             <div id="uiArtiKabinet" class="arti-kabinet-wrapper" style="display: none; margin-top: 40px;">
                 <div class="arti-grid">
@@ -156,15 +234,27 @@
             </div>
         </section>
 
-        <!-- MISI -->
-        <section class="reveal" style="margin-bottom: 100px;">
-            <div class="glass-card">
-                <h2 style="font-size: 1.5rem; margin-bottom: 25px; border-bottom: 1px solid var(--border-light); padding-bottom: 15px; color: var(--text-light);">Misi Kami</h2>
-                <ul id="listMisi" style="list-style: none; display: flex; flex-direction: column; gap: 15px; padding-left: 10px;">
-                    <li style="color: var(--text-muted);">Memuat misi organisasi...</li>
-                </ul>
+        <!-- MISI INTERACTIVE (UPGRADED MATCHING INDEX.HTML) -->
+        <div class="reveal" style="text-align: center; margin-bottom: 30px; margin-top: 50px;">
+            <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; color: var(--text-light);">Misi Kami</h2>
+            <p style="color: var(--text-muted);">Nilai-nilai utama yang membentuk pergerakan kami</p>
+        </div>
+
+        <div class="misi-interactive-wrapper reveal" style="margin-bottom: 100px;">
+            <!-- Kiri: Daftar Tab -->
+            <div class="misi-sidebar" id="misiSidebarTentang" role="tablist">
+                <!-- JS Mengisi Daftar Misi -->
             </div>
-        </section>
+            <!-- Kanan: Konten Detail -->
+            <div class="misi-content-box" id="misiContentTentang" role="tabpanel" aria-live="polite">
+                <div style="display:inline-block; background:rgba(0,229,255,0.1); color:var(--accent-neon); padding:5px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold; margin-bottom:15px; width:max-content;" id="misiDetailBadgeTentang">POIN MISI 1</div>
+                <h3 style="font-size: 1.8rem; margin-bottom: 20px; color: var(--text-light);" id="misiDetailTitleTentang">Langkah <span style="color:var(--accent-neon);">Strategis 1</span></h3>
+                <div style="width: 50px; height: 4px; background: var(--accent-neon); border-radius: 2px; margin-bottom: 20px;"></div>
+                <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.1rem;" id="misiDetailDescTentang">
+                    Memuat deskripsi misi...
+                </p>
+            </div>
+        </div>
 
         <!-- ================= 2. STRUKTUR KEPENGURUSAN ================= -->
         <section id="struktur" class="reveal" style="margin-bottom: 100px;">
@@ -413,7 +503,7 @@
             const seo = sectionSEO[sectionId];
             if(!seo) return;
 
-            const pageUrl = `https://bemkbmfkgumi.com/tentang#${sectionId}`;
+            const pageUrl = `https://bemkbmfkgumi.com/tentang/${sectionId}`;
 
             // Update Meta Tags HTML
             document.title = seo.title;
@@ -441,7 +531,7 @@
                     }
 
                     const breadcrumb = schema["@graph"].find(item => item["@type"] === "BreadcrumbList");
-                    if(breadcrumb && breadcrumb.itemListElement[1]) {
+                    if(breadcrumb && breadcrumb.itemListElement && breadcrumb.itemListElement[1]) {
                         if(!breadcrumb.itemListElement[2]) {
                             breadcrumb.itemListElement.push({
                                 "@type": "ListItem",
@@ -463,8 +553,43 @@
 
         // ================= END DYNAMIC SEO =================
 
-        const FALLBACK_ORG_DATA = { visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI...", misi: ["Menampung dan menyalurkan aspirasi...", "Mendorong prestasi..."], pimpinan: [], departemen: [] };
-        const FALLBACK_SEJARAH = [{ tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" }];
+        const FALLBACK_ORG_DATA = { 
+            visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.", 
+            misi: [
+                "MENAMPUNG DAN MENYALURKAN ASPIRASI MAHASISWA SECARA TRANSPARAN DAN AKTIF.",
+                "MENDORONG DAN MEMFASILITASI PENGEMBANGAN PRESTASI AKADEMIK DAN NON-AKADEMIK MAHASISWA.",
+                "MENGINTEGRASIKAN NILAI-NILAI ISLAMI DALAM PROGRAM KERJA DAN KEGIATAN ORGANISASI.",
+                "MEMBANGUN LINGKUNGAN KAMPUS YANG HARMONIS, BERAKHLAK MULIA, DAN BERDAYA SAING.",
+                "MENINGKATKAN KAPASITAS DAN KUALITAS KADER MELALUI PENDIDIKAN DAN PELATIHAN BERPRINSIP ISLAMI."
+            ], 
+            artiKabinet: {
+                kata1: "ANANTA",
+                arti1: "SEMANGAT PERJUANGAN TANPA BATAS",
+                kata2: "ANARDHAYA",
+                arti2: "SESUATU YANG ABADI",
+                kesimpulan: "DAPAT DIARTIKAN SEBAGAI PERJUANGAN YANG TAK TERBATAS DAN TIDAK RUSAK/HANCUR, MENGGAMBARKAN SESUATU YANG ABADI, KEKAL, DAN TIDAK TERHALANG OLEH WAKTU."
+            },
+            pimpinan: [
+                { jabatan: "Ketua BEM KBMFKG UMI", nama: "Ailan Alif Wajdi Daya", foto: "/img/bemfkgumi.png" },
+                { jabatan: "Wakil Ketua BEM KBMFKG UMI", nama: "Akram Husain", foto: "/img/bemfkgumi.png" },
+                { jabatan: "Sekretaris BEM KBMFKG UMI", nama: "Dian Sancika Rizky. S", foto: "/img/bemfkgumi.png" },
+                { jabatan: "Bendahara BEM KBMFKG UMI", nama: "Nurul Amelia Limbu. S", foto: "/img/bemfkgumi.png" }
+            ], 
+            departemen: [
+                { nama: "Dept. of Information and Communication", anggota: [{jabatan: "Koordinator", nama: "Silviyananda", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Syauqi Zahran. B", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Daegal Fauza Iryanto", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zahwa Alzahra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Zaneta Zahra Zulaikha", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Novita Widyantari", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Science Education and Research", anggota: [{jabatan: "Koordinator", nama: "Muh. Alif Perdana Putra", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fatahillah Fadhillah", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Islamic", anggota: [{jabatan: "Koordinator", nama: "Maysar Ma'ruf", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Ahmad Syafii", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Sekretariat", anggota: [{jabatan: "Koordinator", nama: "Febrio Arya Pradana", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Andi Muhammad Dwiansyah", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Treasure", anggota: [{jabatan: "Koordinator", nama: "Putri Amaliah", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Jiyaad Taqi Rozan", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Art and Sport", anggota: [{jabatan: "Koordinator", nama: "Ilham Subhan Rafikal", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Fajak Ryamizard Kasvari", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Dedication Humanity", anggota: [{jabatan: "Koordinator", nama: "Moh. Rayyan Ghazali", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Muh. Yusuf Wahyuni", foto: "/img/bemfkgumi.png"}] },
+                { nama: "Dept. of Study and Strategy", anggota: [{jabatan: "Koordinator", nama: "Irfan Maulana Irwan", foto: "/img/bemfkgumi.png"}, {jabatan: "Anggota", nama: "Saiful S", foto: "/img/bemfkgumi.png"}] }
+            ] 
+        };
+        const FALLBACK_SEJARAH = [
+            { tahun: "2025-2026", kabinet: "Kabinet Ananta Anardhaya", logo: "/img/bemfkgumi.png", ketua: "Ailan Alif Wajdi Daya", wakil: "Akram Husain" },
+            { tahun: "2024-2025", kabinet: "Kabinet Cakra Abhipraya", logo: "/img/bemfkgumi.png", ketua: "Faisal Trista Alfarizi, S.KG", wakil: "Muhammad Fachri Aras, S.KG" }
+        ];
         
         const FALLBACK_FILOSOFI = {
             logo: [
@@ -504,9 +629,10 @@
 
         function initSliderLogic() {
             const track = document.getElementById('containerFilosofiLogo');
+            if (!track || track._hasScrollListener) return;
             const cards = document.querySelectorAll('#containerFilosofiLogo .filosofi-slide-card');
-            
-            if (!track || cards.length === 0) return;
+            if (cards.length === 0) return;
+            track._hasScrollListener = true;
 
             track.addEventListener('scroll', () => {
                 let centerPoint = track.scrollLeft + (track.clientWidth / 2);
@@ -524,7 +650,7 @@
 
                 cards.forEach(c => c.classList.remove('active'));
                 if(cards[activeIndex]) cards[activeIndex].classList.add('active');
-            });
+            }, { passive: true });
         }
 
         function toggleAccordion(element) {
@@ -581,6 +707,37 @@
             }, 100);
         }
 
+        // Logika Tab Misi Interaktif (Identik dengan Beranda)
+        let globalMisiTentang = [];
+        function openMisiTabTentang(index, btnElement) {
+            document.querySelectorAll('#misiSidebarTentang .misi-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            if (btnElement) {
+                btnElement.classList.add('active');
+                btnElement.setAttribute('aria-selected', 'true');
+            }
+            
+            const box = document.getElementById('misiContentTentang');
+            if (!box) return;
+            box.style.opacity = '0';
+            box.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                const elBadge = document.getElementById('misiDetailBadgeTentang');
+                const elTitle = document.getElementById('misiDetailTitleTentang');
+                const elDesc = document.getElementById('misiDetailDescTentang');
+                if (elBadge) elBadge.innerText = `POIN MISI ${index + 1}`;
+                if (elTitle) elTitle.innerHTML = `Langkah <span style="color:var(--accent-neon);">Strategis ${index + 1}</span>`;
+                if (elDesc) elDesc.innerText = globalMisiTentang[index] || '';
+                
+                box.style.opacity = '1';
+                box.style.transform = 'translateY(0)';
+                box.style.transition = 'all 0.4s ease';
+            }, 300);
+        }
+
         function renderTentangUI(orgData) {
             // Arrays untuk menampung Data Dynamic Schema SEO JSON-LD
             let personsSchema = [];
@@ -596,13 +753,31 @@
                 document.getElementById('uiArtiKabinet').style.display = 'block';
             }
 
+            if (orgData.namaKabinet) {
+                const elVisiKabinet = document.getElementById('namaKabinetVisiTentang');
+                if (elVisiKabinet) {
+                    elVisiKabinet.innerText = orgData.namaKabinet.replace(/^Kabinet\s+/i, '');
+                }
+            }
+
             document.getElementById('teksVisi').innerText = `"${orgData.visi}"`;
-            const ulMisi = document.getElementById('listMisi');
-            ulMisi.innerHTML = '';
+
+            // Render Tab Misi Interaktif
             if(orgData.misi && orgData.misi.length > 0) {
-                orgData.misi.forEach(m => {
-                    ulMisi.innerHTML += `<li style="display:flex; gap:15px; align-items:flex-start;"><span style="color:var(--accent-neon); font-size:1.2rem;">&#10004;</span> <span style="font-size: 1.1rem; line-height: 1.5; color: var(--text-muted);">${m}</span></li>`;
-                });
+                globalMisiTentang = orgData.misi;
+                const sidebar = document.getElementById('misiSidebarTentang');
+                if(sidebar) {
+                    sidebar.innerHTML = '';
+                    globalMisiTentang.forEach((misi, idx) => {
+                        sidebar.innerHTML += `
+                            <button class="misi-tab-btn ${idx === 0 ? 'active' : ''}" onclick="openMisiTabTentang(${idx}, this)" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
+                                Pilar Misi Ke-${idx + 1} <span aria-hidden="true">&rarr;</span>
+                            </button>
+                        `;
+                    });
+                    const firstBtn = sidebar.querySelector('.misi-tab-btn');
+                    if (firstBtn) openMisiTabTentang(0, firstBtn);
+                }
             }
 
             // ================= 1. Pimpinan Inti (HTML + Dynamic Schema JSON-LD) =================
@@ -613,14 +788,32 @@
                     const pic = pim.foto || '/img/bemfkgumi.png';
                     const fullPicUrl = pic.startsWith('http') ? pic : baseUrl + pic;
                     
+                    const igUrl = (pim.ig || pim.instagram || '').trim();
+                    let cleanIg = '';
+                    let igHtml = '';
+                    if (igUrl) {
+                        cleanIg = igUrl.startsWith('http://') || igUrl.startsWith('https://') 
+                            ? igUrl 
+                            : 'https://instagram.com/' + igUrl.replace(/^@/, '');
+                        igHtml = `
+                            <div style="display:flex; justify-content:center; margin-top:10px;">
+                                <a href="${cleanIg}" target="_blank" rel="noopener noreferrer" class="team-social-icon" title="Instagram ${pim.nama}" aria-label="Instagram ${pim.nama}" itemprop="sameAs" style="width:36px; height:36px;">
+                                    <svg viewBox="0 0 24 24" style="width:18px; height:18px;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                                </a>
+                            </div>
+                        `;
+                    }
+                    
                     // Push ke Array Schema JSON-LD
-                    personsSchema.push({
+                    const personItem = {
                         "@type": "Person",
                         "name": pim.nama,
                         "jobTitle": pim.jabatan,
                         "worksFor": { "@id": baseUrl + "/#organization" },
                         "image": fullPicUrl
-                    });
+                    };
+                    if (cleanIg) personItem.sameAs = cleanIg;
+                    personsSchema.push(personItem);
 
                     // UPGRADE SEO: Menambahkan itemscope & itemprop ke HTML Card
                     pimContainer.innerHTML += `
@@ -628,7 +821,8 @@
                             <meta itemprop="image" content="${fullPicUrl}">
                             <div class="leader-photo" style="background-image: url('${pic}'); border-color: var(--accent-neon);"></div>
                             <h3 itemprop="name" style="font-size: 1.2rem; margin-bottom: 5px; color: var(--text-light);">${pim.nama}</h3>
-                            <p itemprop="jobTitle" style="color: var(--accent-neon); font-size: 0.85rem; font-weight:bold;">${pim.jabatan}</p>
+                            <p itemprop="jobTitle" style="color: var(--accent-neon); font-size: 0.85rem; font-weight:bold; margin-bottom:0;">${pim.jabatan}</p>
+                            ${igHtml}
                         </div>
                     `;
                 });
@@ -645,14 +839,32 @@
                             const angPic = ang.foto || '/img/bemfkgumi.png';
                             const fullAngPicUrl = angPic.startsWith('http') ? angPic : baseUrl + angPic;
                             
+                            const angIgUrl = (ang.ig || ang.instagram || '').trim();
+                            let cleanAngIg = '';
+                            let angIgHtml = '';
+                            if (angIgUrl) {
+                                cleanAngIg = angIgUrl.startsWith('http://') || angIgUrl.startsWith('https://') 
+                                    ? angIgUrl 
+                                    : 'https://instagram.com/' + angIgUrl.replace(/^@/, '');
+                                angIgHtml = `
+                                    <div style="display:flex; justify-content:center; margin-top:8px;">
+                                        <a href="${cleanAngIg}" target="_blank" rel="noopener noreferrer" class="team-social-icon" title="Instagram ${ang.nama}" aria-label="Instagram ${ang.nama}" itemprop="sameAs" style="width:32px; height:32px;">
+                                            <svg viewBox="0 0 24 24" style="width:16px; height:16px;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                                        </a>
+                                    </div>
+                                `;
+                            }
+                            
                             // Push ke Array Schema JSON-LD
-                            personsSchema.push({
+                            const angPersonItem = {
                                 "@type": "Person",
                                 "name": ang.nama,
                                 "jobTitle": ang.jabatan + " - " + dep.nama,
                                 "worksFor": { "@id": baseUrl + "/#organization" },
                                 "image": fullAngPicUrl
-                            });
+                            };
+                            if (cleanAngIg) angPersonItem.sameAs = cleanAngIg;
+                            personsSchema.push(angPersonItem);
 
                             // UPGRADE SEO: Menambahkan itemscope & itemprop ke HTML Card
                             anggotaHTML += `
@@ -660,7 +872,8 @@
                                     <meta itemprop="image" content="${fullAngPicUrl}">
                                     <div class="leader-photo" style="width: 80px; height: 80px; border-width: 2px; background-image: url('${angPic}'); margin-bottom: 15px;"></div>
                                     <h4 itemprop="name" style="font-size: 1rem; margin-bottom: 5px; color: var(--text-light);">${ang.nama}</h4>
-                                    <p itemprop="jobTitle" style="color: var(--text-muted); font-size: 0.8rem;">${ang.jabatan}</p>
+                                    <p itemprop="jobTitle" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom:0;">${ang.jabatan}</p>
+                                    ${angIgHtml}
                                 </div>
                             `;
                         });
@@ -719,28 +932,81 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
-            
-            try {
-                let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") { apiUrl = 'https://bemkbmfkgumi.com/api/content'; }
-                
-                const req = await fetch(apiUrl);
-                if (!req.ok) throw new Error("API Gagal");
-                const res = await req.json();
-                
-                // Eksekusi Render
-                if (res.org) renderTentangUI(res.org); else throw new Error();
-                if (res.filosofi) renderFilosofiUI(res.filosofi); else throw new Error();
-                if (res.sejarah) renderSejarahUI(res.sejarah); else throw new Error();
+        function loadAndRenderTentang(res) {
+            if (!res) return;
+            if (res.org) renderTentangUI(res.org);
+            if (res.filosofi) renderFilosofiUI(res.filosofi);
+            if (res.sejarah) renderSejarahUI(res.sejarah);
+        }
 
-            } catch (err) { 
-                console.warn("⚠️ Mode Simulasi. Data lokal dimuat.");
-                renderTentangUI(FALLBACK_ORG_DATA);
-                renderFilosofiUI(FALLBACK_FILOSOFI);
-                renderSejarahUI(FALLBACK_SEJARAH);
+        // ================= ZERO-DELAY OPTIMISTIC CACHE ENGINE =================
+        function getInitialTentangData() {
+            // 1. In-Memory Cache (0ms)
+            if (window.BEM_DATABASE_CACHE && window.BEM_DATABASE_CACHE.org) {
+                return window.BEM_DATABASE_CACHE;
             }
+            // 2. SessionStorage Cache (0ms saat berpindah tab)
+            try {
+                const cachedStr = sessionStorage.getItem('BEM_CONTENT_CACHE_V1');
+                if (cachedStr) {
+                    const parsed = JSON.parse(cachedStr);
+                    if (parsed && parsed.org) return parsed;
+                }
+            } catch(e) {}
+            // 3. Fallback Default Data (0ms jika cold load pertama)
+            return {
+                org: FALLBACK_ORG_DATA,
+                filosofi: FALLBACK_FILOSOFI,
+                sejarah: FALLBACK_SEJARAH
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // STEP 1: Render Secara Instan di 0ms Tanpa Menunggu Fetch Jaringan!
+            const initialData = getInitialTentangData();
+            loadAndRenderTentang(initialData);
+
+            // Aktifkan transisi reveal secara instan saat DOM siap
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+
+            // STEP 2: Background SWR Revalidation (Non-blocking)
+            if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+                window.BEM_API.getData().then(freshData => {
+                    if (freshData && freshData.org) {
+                        loadAndRenderTentang(freshData);
+                    }
+                }).catch(() => {});
+            } else {
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                }
+                fetch(apiUrl)
+                    .then(r => r.json())
+                    .then(freshData => {
+                        if (freshData && freshData.org) {
+                            loadAndRenderTentang(freshData);
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            // STEP 3: Dengarkan Event Realtime Update Data (Anti-Duplicate Debounce)
+            let tentangRenderTimer = null;
+            const handleTentangUpdate = (e) => {
+                if (e.detail && e.detail.org) {
+                    clearTimeout(tentangRenderTimer);
+                    tentangRenderTimer = setTimeout(() => {
+                        loadAndRenderTentang(e.detail);
+                        document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+                    }, 40);
+                }
+            };
+            document.addEventListener('BemDataUpdated', handleTentangUpdate);
+            document.addEventListener('BemDatabaseReady', handleTentangUpdate);
+
+            // Pastikan semua elemen reveal aktif setelah render
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
 
             // ================= SCROLL TO SEO OBSERVER =================
             // Sistem deteksi scroll (Intersection Observer) untuk mengubah SEO dinamis
@@ -750,8 +1016,8 @@
                     if (entry.isIntersecting) {
                         const id = entry.target.getAttribute('id');
                         if (sectionSEO[id]) {
-                            // Update Hash URL tanpa efek loncat (scroll jump)
-                            history.replaceState(null, null, `#${id}`);
+                            // Update Clean URL tanpa reload
+                            history.replaceState(null, null, `/tentang/${id}`);
                             // Trigger Update SEO GSC
                             updateSEO(id);
                         }
@@ -762,17 +1028,19 @@
             sections.forEach(section => observer.observe(section));
             // ================= END SCROLL TO SEO OBSERVER =================
 
-            // Jika pengguna mengakses langsung via Link Hash (misal: bem.com/tentang#struktur)
+            // Auto-scroll ke section yang dituju (dari SSR Clean URL /tentang/:slug atau Hash #)
             setTimeout(() => {
-                if (window.location.hash) {
-                    const targetId = window.location.hash.substring(1);
-                    const target = document.getElementById(targetId);
+                const targetSlug = (typeof INITIAL_ACTIVE_SECTION !== 'undefined' && INITIAL_ACTIVE_SECTION)
+                    ? INITIAL_ACTIVE_SECTION
+                    : (window.location.hash ? window.location.hash.substring(1) : '');
+                if (targetSlug) {
+                    const target = document.getElementById(targetSlug);
                     if (target) {
                         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        updateSEO(targetId);
+                        updateSEO(targetSlug);
                     }
                 }
-            }, 500);
+            }, 350);
         });
     </script>
 </body>
