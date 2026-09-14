@@ -167,6 +167,12 @@
     
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BEM FKG UMI">
     <script src="/js/protect-devtools.js"></script>
 
     <!-- Server-Side Variable Injection to JS -->
@@ -372,33 +378,47 @@
             document.getElementById('twUrl')?.setAttribute('content', pageUrl);
         }
 
+        function loadAndRenderInformasi(resData) {
+            if (!resData) return;
+            renderProker(resData.proker || FALLBACK_PROKER);
+            renderDokumentasi(resData.dokumentasi || []);
+            kalenderData = resData.kalender || [];
+            
+            renderCalendar();
+            renderTimelineProker();
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
             let resData = { proker: [], dokumentasi: [], kalender: [] };
             
             try {
-                let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
-                const req = await fetch(apiUrl);
-                if (req.ok) {
-                    resData = await req.json();
+                if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+                    const data = await window.BEM_API.getData();
+                    if (data) resData = data;
                 } else {
-                    throw new Error("Fetch Error");
+                    let apiUrl = '/api/content';
+                    if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                    const req = await fetch(apiUrl);
+                    if (req.ok) {
+                        resData = await req.json();
+                    } else {
+                        throw new Error("Fetch Error");
+                    }
                 }
             } catch (err) { 
-                console.warn("⚠️ API Error, menggunakan data lokal (Fallback) untuk mencegah layout rusak."); 
+                console.warn("⚠️ Menggunakan data fallback lokal."); 
                 resData.proker = FALLBACK_PROKER; 
             }
             
-            renderProker(resData.proker);
-            renderDokumentasi(resData.dokumentasi);
-            kalenderData = resData.kalender || [];
-            
-            renderCalendar();
-            renderTimelineProker();
+            loadAndRenderInformasi(resData);
 
             // SINKRONISASI INITIAL TAB DARI SERVER (EJS)
             switchTab(INITIAL_ACTIVE_TAB, true);
+        });
+
+        document.addEventListener('BemDataUpdated', (e) => {
+            if (e.detail) loadAndRenderInformasi(e.detail);
         });
 
         // ================= SUPER UPGRADE: PUSH STATE HIERARCHY ROUTING =================
