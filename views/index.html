@@ -519,6 +519,30 @@
                     }
                 });
 
+                // Helper Format Tanggal ISO Super Tangguh (Bebas RangeError Invalid time value)
+                function safeFormatIsoDate(dateStr) {
+                    if (!dateStr) return new Date().toISOString();
+                    try {
+                        var clean = String(dateStr).trim();
+                        var d = new Date(clean);
+                        if (!isNaN(d.getTime())) return d.toISOString();
+
+                        if (clean.includes(' ')) {
+                            d = new Date(clean.replace(' ', 'T'));
+                            if (!isNaN(d.getTime())) return d.toISOString();
+                        }
+
+                        if (clean.includes('-')) {
+                            var parts = clean.split('-');
+                            if (parts.length === 3 && parts[0].length <= 2 && parts[2].length === 4) {
+                                d = new Date(parts[2] + '-' + parts[1] + '-' + parts[0]);
+                                if (!isNaN(d.getTime())) return d.toISOString();
+                            }
+                        }
+                    } catch (e) {}
+                    return new Date().toISOString();
+                }
+
                 // FUNGSI INJEKSI DYNAMIC SITELINKS NEWSARTICLE
                 async function injectDynamicSitelinksFromGas() {
                     try {
@@ -547,7 +571,7 @@
                                         "@type": "NewsArticle",
                                         "headline": item.Judul,
                                         "image": item.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png",
-                                        "datePublished": item.Tgl_Rilis ? new Date(item.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString(),
+                                        "datePublished": safeFormatIsoDate(item.Tgl_Rilis),
                                         "url": url,
                                         "author": {
                                             "@type": "Organization",
