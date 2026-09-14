@@ -604,13 +604,119 @@ textarea.form-desc, .form-desc,
 .error-message { color: #ef4444; font-size: 0.85rem; font-weight: 600; margin-top: 10px; display: none; }
 .gf-input:invalid:focus { border-color: #ef4444 !important; box-shadow: 0 0 10px rgba(239,68,68,0.3) !important; }
 
-/* RESPONSIVE FIXES */
-@media (max-width: 768px) {
-    .admin-v2-container, .form-wrapper { padding: 20px 10px; }
-    .form-header-card, .form-question-card, .admin-header-main, .list-form-card { padding: 25px 20px; }
+/* ==========================================================================
+   SUPER BIG UPGRADE: STANDARDISED RESPONSIVE ENGINE (MOBILE, TABLET, DESKTOP)
+   ========================================================================== */
+
+/* 1. MOBILE (320px - 767.98px) */
+@media screen and (min-width: 320px) and (max-width: 767.98px) {
+    .admin-v2-container, .form-wrapper { 
+        padding: 16px 10px !important; 
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    .form-header-card, .form-question-card, .admin-header-main, .list-form-card { 
+        padding: 18px 14px !important; 
+        border-radius: 14px !important;
+        margin-bottom: 16px !important;
+    }
+    .form-title {
+        font-size: clamp(1.3rem, 5vw, 1.8rem) !important;
+        line-height: 1.25 !important;
+    }
     .floating-toolbar {
-        position: fixed; bottom: 25px; right: 50%; transform: translateX(50%); top: auto !important;
-        flex-direction: row; padding: 10px 20px !important; width: max-content;
+        position: fixed !important; 
+        bottom: calc(15px + env(safe-area-inset-bottom, 0px)) !important; 
+        left: 50% !important;
+        transform: translateX(-50%) !important; 
+        top: auto !important;
+        right: auto !important;
+        flex-direction: row !important; 
+        padding: 8px 16px !important; 
+        width: calc(100% - 30px) !important;
+        max-width: 360px !important;
+        justify-content: space-around !important;
+        border-radius: 30px !important;
+        backdrop-filter: blur(20px) !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+        z-index: 9999 !important;
+    }
+    .countdown-live-wrapper {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 10px !important;
+        padding: 14px !important;
+    }
+    .countdown-live-box {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+    .cd-item {
+        min-width: 42px !important;
+        padding: 4px 8px !important;
+    }
+    .cd-number {
+        font-size: 1rem !important;
+    }
+    .option-label {
+        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        word-break: break-word !important;
+    }
+    .builder-card-footer {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+    }
+    .builder-card-footer button {
+        width: 100% !important;
+        min-height: 44px !important;
+    }
+}
+
+/* 2. TABLET (768px - 1199.98px) */
+@media screen and (min-width: 768px) and (max-width: 1199.98px) {
+    .admin-v2-container, .form-wrapper { 
+        padding: 25px 20px !important; 
+        max-width: 740px !important;
+        margin: 0 auto !important;
+    }
+    .form-header-card, .form-question-card, .admin-header-main, .list-form-card { 
+        padding: 28px 24px !important; 
+    }
+    .floating-toolbar {
+        position: fixed !important; 
+        bottom: 25px !important; 
+        right: 30px !important; 
+        left: auto !important;
+        transform: none !important;
+        flex-direction: column !important; 
+        padding: 12px !important;
+    }
+}
+
+/* 3. DESKTOP (1200px+) */
+@media screen and (min-width: 1200px) {
+    .form-wrapper { 
+        max-width: 860px !important; 
+        margin: 0 auto !important;
+        padding: 35px 0 !important;
+    }
+    .admin-v2-container {
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+        padding: 35px 20px !important;
+    }
+    .floating-toolbar {
+        position: fixed !important; 
+        bottom: 35px !important; 
+        right: calc(50% - 480px) !important; 
+        left: auto !important;
+        transform: none !important;
+        flex-direction: column !important; 
+        padding: 14px !important;
     }
 }
 
