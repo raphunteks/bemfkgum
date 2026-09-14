@@ -127,138 +127,143 @@
       });
   }
 
-  // Load Pengaturan Dinamis Footer (Data Redis untuk 3 Logo & Teks)
-  document.addEventListener('DOMContentLoaded', async () => {
+  // Load Pengaturan Dinamis Footer Menggunakan Universal Engine (Zero-Delay 0ms)
+  function renderFooterSettings(res) {
+    if (!res || !res.settings) return;
     try {
-        let apiUrl = '/api/content';
-        if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
-        
-        const req = await fetch(apiUrl);
-        const res = await req.json();
-        
-        if(res.settings) {
-            // Update Teks Dinamis
-            if(res.settings.headerText) {
-                const headTxt = document.getElementById('footerHeaderText');
-                const botTxt = document.getElementById('footerBottomText');
-                if(headTxt) headTxt.innerText = res.settings.headerText;
-                if(botTxt) botTxt.innerText = res.settings.headerText;
-            }
-            if(res.settings.footerSlogan) {
-                const sloganEl = document.getElementById('footerSloganText');
-                if(sloganEl) sloganEl.innerText = res.settings.footerSlogan;
-            }
-            if(res.settings.footerAlamat) {
-                const alamatEl = document.getElementById('footerAlamatText');
-                if(alamatEl) alamatEl.innerText = res.settings.footerAlamat;
-            }
-            
-            // Update 3 Logo Dinamis
-            if(res.settings.logo1) {
-                const l1 = document.getElementById('footerLogo1');
-                if(l1) l1.src = res.settings.logo1;
-            }
-            if(res.settings.logo2) {
-                const l2 = document.getElementById('footerLogo2');
-                if(l2) l2.src = res.settings.logo2;
-            }
-            if(res.settings.logo3) {
-                const l3 = document.getElementById('footerLogo3');
-                if(l3) l3.src = res.settings.logo3;
-            }
+        if(res.settings.headerText) {
+            const headTxt = document.getElementById('footerHeaderText');
+            const botTxt = document.getElementById('footerBottomText');
+            if(headTxt) headTxt.innerText = res.settings.headerText;
+            if(botTxt) botTxt.innerText = res.settings.headerText;
         }
-    } catch (e) { 
-        console.log("Footer fallback local data used (Offline Mode)"); 
-    }
-  });
+        if(res.settings.footerSlogan) {
+            const sloganEl = document.getElementById('footerSloganText');
+            if(sloganEl) sloganEl.innerText = res.settings.footerSlogan;
+        }
+        if(res.settings.footerAlamat) {
+            const alamatEl = document.getElementById('footerAlamatText');
+            if(alamatEl) alamatEl.innerText = res.settings.footerAlamat;
+        }
+        if(res.settings.logo1) {
+            const l1 = document.getElementById('footerLogo1');
+            if(l1) l1.src = res.settings.logo1;
+        }
+        if(res.settings.logo2) {
+            const l2 = document.getElementById('footerLogo2');
+            if(l2) l2.src = res.settings.logo2;
+        }
+        if(res.settings.logo3) {
+            const l3 = document.getElementById('footerLogo3');
+            if(l3) l3.src = res.settings.logo3;
+        }
+    } catch(e) {}
+  }
+
+  if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+      window.BEM_API.getData().then(renderFooterSettings);
+  } else {
+      document.addEventListener('DOMContentLoaded', () => {
+          if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+              window.BEM_API.getData().then(renderFooterSettings);
+          }
+      });
+  }
+  document.addEventListener('BemDataUpdated', (e) => renderFooterSettings(e.detail));
 </script>
 
-<!-- SCRIPT FLAG COUNTER KHUSUS (MENCEGAH DOUBLE COUNT BERDASARKAN CACHE & IPV4/IPV6) -->
+<!-- SCRIPT FLAG COUNTER KHUSUS (NON-BLOCKING VIA REQUESTIDLECALLBACK & TIMEOUT SAFEGUARDS) -->
 <script>
-  document.addEventListener('DOMContentLoaded', async () => {
-      // PERHATIAN: Masukan URL Macro Anda secara langsung di sini
+  const runFlagCounter = async () => {
       const gasUrl = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
       const container = document.getElementById('flagCounterContainer');
-      
+      if (!container) return;
+
+      const fetchWithTimeout = async (url, timeoutMs = 2000) => {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), timeoutMs);
+          try {
+              const res = await fetch(url, { signal: controller.signal });
+              clearTimeout(timer);
+              return await res.json();
+          } catch(e) {
+              clearTimeout(timer);
+              return null;
+          }
+      };
+
       try {
           let ipv4 = 'UNKNOWN_IPV4';
           let ipv6 = 'UNKNOWN_IPV6';
           let currentCountry = 'UNKNOWN';
 
-          // 1. Tarik IPv4 dengan memaksa api untuk mengeluarkan IPv4 (Menggunakan api.ipify.org)
-          try {
-              const res4 = await fetch('https://api.ipify.org?format=json');
-              const data4 = await res4.json();
-              if(data4 && data4.ip) ipv4 = data4.ip;
-          } catch(e) { console.log('Gagal menarik IPv4'); }
+          // 1. Tarik IPv4 dengan timeout 1.5s
+          const data4 = await fetchWithTimeout('https://api.ipify.org?format=json', 1500);
+          if (data4 && data4.ip) ipv4 = data4.ip;
 
-          // 2. Tarik IPv6 jika tersedia (Menggunakan api6.ipify.org)
-          try {
-              const res6 = await fetch('https://api6.ipify.org?format=json');
-              const data6 = await res6.json();
-              if(data6 && data6.ip && data6.ip !== ipv4) ipv6 = data6.ip;
-          } catch(e) { console.log('Gagal menarik IPv6 / Tidak didukung'); }
+          // 2. Tarik IPv6 jika didukung (timeout 1.5s agar tidak hang)
+          const data6 = await fetchWithTimeout('https://api6.ipify.org?format=json', 1500);
+          if (data6 && data6.ip && data6.ip !== ipv4) ipv6 = data6.ip;
 
           // 3. Tarik Kode Negara (GeoJS)
-          try {
-              const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
-              const geoData = await geoRes.json();
-              if (geoData && geoData.country_code) currentCountry = geoData.country_code;
-          } catch(e) { console.log('Gagal menarik Lokasi (GeoJS)'); }
+          const geoData = await fetchWithTimeout('https://get.geojs.io/v1/ip/geo.json', 1500);
+          if (geoData && geoData.country_code) currentCountry = geoData.country_code;
 
-          // LAYER 1 (FRONTEND PROTECTION): Mengambil cache untuk mencegah SPAM/Double Count
+          // LAYER 1: Cek perlindungan cache lokal
           let cachedIpv4 = localStorage.getItem('user_ipv4');
           let cachedIpv6 = localStorage.getItem('user_ipv6');
           let isIpLogged = localStorage.getItem('is_ip_logged');
           let shouldLog = false;
 
-          // Cek perlindungan: Apakah salah satu IP ini baru, ATAU belum pernah dilog?
           if ((ipv4 !== 'UNKNOWN_IPV4' && ipv4 !== cachedIpv4) || 
               (ipv6 !== 'UNKNOWN_IPV6' && ipv6 !== cachedIpv6) || 
               isIpLogged !== 'true') {
               shouldLog = true;
-              
-              // Update cache memori lokal
               localStorage.setItem('user_ipv4', ipv4);
               localStorage.setItem('user_ipv6', ipv6);
               localStorage.setItem('user_country_code', currentCountry);
           }
 
-          // LAYER 2 (BACKEND PROTECTION): Fetch API ke Google Apps Script
+          // LAYER 2: Fetch API ke Google Apps Script
           const action = shouldLog ? 'log_and_get' : 'get';
           const fetchUrl = shouldLog 
               ? `${gasUrl}?action=${action}&country=${currentCountry}&ipv4=${encodeURIComponent(ipv4)}&ipv6=${encodeURIComponent(ipv6)}` 
               : `${gasUrl}?action=${action}`;
           
-          const statRes = await fetch(fetchUrl);
-          const statData = await statRes.json();
+          const statData = await fetchWithTimeout(fetchUrl, 4000);
 
-          // Render Custom Flags (Dibatasi 10 teratas)
-          if (statData.success && statData.data) {
+          if (statData && statData.success && statData.data) {
               if (shouldLog) localStorage.setItem('is_ip_logged', 'true');
               
               container.innerHTML = ''; 
               statData.data.slice(0, 10).forEach(stat => {
                   if(stat.country === 'UNKNOWN' || !stat.country) return;
-                  
-                  // Menggunakan CDN gratis berkecepatan tinggi FlagCDN
                   const flagUrl = `https://flagcdn.com/w20/${stat.country.toLowerCase()}.png`;
-                  
                   container.innerHTML += `
                       <div class="flag-item" title="${stat.country}">
-                          <img src="${flagUrl}" alt="${stat.country}" loading="lazy">
+                          <img src="${flagUrl}" alt="${stat.country}" width="20" height="15" loading="lazy">
                           <span>${stat.count.toLocaleString()}</span>
                       </div>
                   `;
               });
-          } else {
-              container.innerHTML = '<div class="flag-error">Gagal memuat Statistik</div>';
           }
-      } catch (err) {
-          console.error("Flag Counter API Error:", err);
-          container.innerHTML = '<div class="flag-error">Koneksi Terputus</div>';
-      }
-  });
+      } catch (err) {}
+  };
+
+  if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => runFlagCounter(), { timeout: 2500 });
+  } else {
+      setTimeout(runFlagCounter, 1200);
+  }
 </script>
 
-<script src="/js/protect-devtools.js"></script>
+<script>
+    // Nonaktifkan PWA Service Worker (Dukungan Android, iOS & Chrome via Manifest.json Asli Tanpa SW)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+            for (let reg of registrations) { reg.unregister(); }
+        }).catch(() => {});
+    }
+</script>
+
+<script src="/js/protect-devtools.js" defer></script>
