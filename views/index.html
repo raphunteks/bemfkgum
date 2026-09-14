@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,36 +11,56 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="BEM FKG UMI">
-    
+
+    <!-- ANTI-FOIT THEME ENGINE INITIALIZER (Zero-Flicker) -->
+    <script>
+        (function() {
+            try {
+                var t = localStorage.getItem('axa_theme') || localStorage.getItem('theme');
+                if (t === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else if (t === 'light') {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+            } catch(e) {}
+        })();
+    </script>
+
     <!-- UPGRADE 1 (FIXED): Format Title "Nama Brand Utama - Judul" untuk memicu Site Name Google -->
     <title>BEM KBMFKG UMI OFFICIAL - Beranda</title>
-    
+
     <!-- ================= SEO GOLD STANDARD GSC (SUPER BIG UPGRADE) ================= -->
     <meta name="google-site-verification" content="HOYu_9mzpV_WcNdVlpdW4qzkAVt2p9f3C1kE7tY-8G8" />
-    <meta name="description" content="Website resmi Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia (BEM KBMFKG UMI). Wadah pergerakan, kolaborasi, dan penyaluran aspirasi mahasiswa.">
-    <meta name="keywords" content="BEM FKG UMI, BEM KBMFKG UMI, Fakultas Kedokteran Gigi UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia, Makassar, Kabinet Ananta Anardhaya">
+    <meta name="description"
+        content="Website resmi Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia (BEM KBMFKG UMI). Wadah pergerakan, kolaborasi, dan penyaluran aspirasi mahasiswa.">
+    <meta name="keywords"
+        content="BEM FKG UMI, BEM KBMFKG UMI, Fakultas Kedokteran Gigi UMI, Mahasiswa FKG UMI, Universitas Muslim Indonesia, Makassar, Kabinet Ananta Anardhaya">
     <meta name="author" content="BEM KBMFKG UMI">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    
+
     <!-- UPGRADE 2: Pastikan Canonical URL diakhiri dengan slash (/) untuk homepage -->
     <link rel="canonical" href="https://bemkbmfkgumi.com/">
-    <link rel="sitemap" type="application/xml" title="Sitemap BEM KBMFKG UMI" href="https://bemkbmfkgumi.com/sitemap.xml">
-    
+    <link rel="sitemap" type="application/xml" title="Sitemap BEM KBMFKG UMI"
+        href="https://bemkbmfkgumi.com/sitemap.xml">
+
     <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap"
+        rel="stylesheet">
+
     <!-- Preload CSS Utama untuk mempercepat FCP -->
     <link rel="preload" href="/css/main.css" as="style">
     <link rel="stylesheet" href="/css/main.css">
-    
+
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bemkbmfkgumi.com/">
     <meta property="og:site_name" content="BEM KBMFKG UMI OFFICIAL">
     <meta property="og:title" content="BEM KBMFKG UMI OFFICIAL - Beranda">
-    <meta property="og:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
+    <meta property="og:description"
+        content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta property="og:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
     <meta property="og:image:alt" content="Logo BEM KBMFKG UMI">
 
@@ -47,7 +68,8 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://bemkbmfkgumi.com/">
     <meta name="twitter:title" content="BEM KBMFKG UMI OFFICIAL - Beranda">
-    <meta name="twitter:description" content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
+    <meta name="twitter:description"
+        content="Website resmi BEM KBMFKG UMI. Mari bersama merajut asa dan menggerakkan perubahan untuk FKG UMI yang lebih baik.">
     <meta name="twitter:image" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
 
     <!-- =======================================================================================
@@ -201,564 +223,617 @@
 </head>
 
 <!-- PERBAIKAN KRUSIAL: Menghapus atribut itemscope itemtype dari <body> karena memicu peringatan konflik JSON-LD di Google Search Console -->
+
 <body class="public-form-body">
     <%- include('partials/header.html') %>
 
-    <main>
-        <section class="hero-section">
-            <div class="reveal" style="max-width: 900px; margin: 0 auto;">
-                <div class="clay-badge" style="margin-bottom: 30px; letter-spacing: 2px; font-size: 0.85rem; text-transform: uppercase;">
-                    Welcome to
-                    Official Website BEM KBMFKG UMI
-                </div>
-                
-                <h1 style="font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px;">
-                    Kabinet <span class="script-font" id="namaKabinetHero">Ananta Anardhaya</span>
-                </h1>
-                
-                <p class="hero-quote" style="font-size: 1.1rem; color: var(--text-light); max-width: 700px; margin: 0 auto;">
-                    <span id="heroArtiKesimpulan">"Perjuangan yang tak batas dan tidak Rusak/Hancur, Menggambarkan sesuatu yang abadi kekal, dan tidak terhalang oleh waktu."</span><br>
-                    <span id="heroArtiSub" style="font-size: 0.95rem; color: var(--accent-neon); display: block; margin-top: 15px; font-weight: bold; letter-spacing: 1px;">Semangat Perjuangan Tanpa Batas, Sesuatu yang Abadi.</span>
-                </p>
-                
-                <div class="btn-group" style="margin-top: 40px;">
-                    <a href="/berita" class="holo-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span>Berita & Artikel &rarr;</span></a>
-                    <a href="/tentang" class="glass-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span>Tentang Kami</span></a>
-                </div>
-            </div>
-        </section>
+        <main>
+            <section class="hero-section">
+                <div class="reveal" style="max-width: 900px; margin: 0 auto;">
+                    <div class="clay-badge"
+                        style="margin-bottom: 30px; letter-spacing: 2px; font-size: 0.85rem; text-transform: uppercase;">
+                        Welcome to
+                        Official Website BEM KBMFKG UMI
+                    </div>
 
-        <!-- UPGRADE: SAMBUTAN KETUA BEM (GLASSMORPHISM UI) -->
-        <section class="container" style="padding: 60px 20px;">
-            <div style="text-align: center; margin-bottom: 30px;" class="reveal">
-                <div class="sambutan-title-badge">
-                    &#9679; SAMBUTAN KETUA BEM
-                </div>
-            </div>
+                    <h1 style="font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px;">
+                        Kabinet <span class="script-font" id="namaKabinetHero">Ananta Anardhaya</span>
+                    </h1>
 
-            <div class="sambutan-split reveal">
-                <!-- BOX KIRI (LOGO) -->
-                <div class="sambutan-logo-box">
-                    <img id="imgSambutanLogo" src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" width="315" height="315" loading="lazy">
-                    <div class="badge-periode-modern">
-                        <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;" aria-hidden="true">📅</div>
-                        <div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px;">PERIODE</div>
-                            <strong style="color: var(--text-light); font-size: 1rem;" id="periodeSambutan">2025 - 2026</strong>
+                    <p class="hero-quote"
+                        style="font-size: 1.1rem; color: var(--text-light); max-width: 700px; margin: 0 auto;">
+                        <span id="heroArtiKesimpulan">"Perjuangan yang tak batas dan tidak Rusak/Hancur, Menggambarkan
+                            sesuatu yang abadi kekal, dan tidak terhalang oleh waktu."</span><br>
+                        <span id="heroArtiSub"
+                            style="font-size: 0.95rem; color: var(--accent-neon); display: block; margin-top: 15px; font-weight: bold; letter-spacing: 1px;">Semangat
+                            Perjuangan Tanpa Batas, Sesuatu yang Abadi.</span>
+                    </p>
+
+                    <div class="btn-group" style="margin-top: 40px;">
+                        <a href="/berita" class="holo-btn" style="padding: 15px 35px; font-size: 1.1rem;"><span>Berita &
+                                Artikel &rarr;</span></a>
+                        <a href="/tentang" class="glass-btn"
+                            style="padding: 15px 35px; font-size: 1.1rem;"><span>Tentang Kami</span></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- UPGRADE: SAMBUTAN KETUA BEM (GLASSMORPHISM UI) -->
+            <section class="container" style="padding: 60px 20px;">
+                <div style="text-align: center; margin-bottom: 30px;" class="reveal">
+                    <div class="sambutan-title-badge">
+                        &#9679; SAMBUTAN KETUA BEM
+                    </div>
+                </div>
+
+                <div class="sambutan-split reveal">
+                    <!-- BOX KIRI (LOGO) -->
+                    <div class="sambutan-logo-box">
+                        <img id="imgSambutanLogo" src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" width="315"
+                            height="315" loading="lazy">
+                        <div class="badge-periode-modern">
+                            <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;"
+                                aria-hidden="true">📅</div>
+                            <div>
+                                <div style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px;">PERIODE
+                                </div>
+                                <strong style="color: var(--text-light); font-size: 1rem;" id="periodeSambutan">2025 -
+                                    2026</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOX KANAN (TEKS) - GLASSMORPHISM UI UPGRADE -->
+                    <div class="sambutan-text-box">
+                        <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.2; margin-bottom: 30px; color: var(--text-light);"
+                            id="judulSambutan">
+                            "Bergerak Bersama,<br><span style="color: var(--accent-neon);">Merajut Asa"</span>
+                        </h2>
+
+                        <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 25px; font-size: 1.05rem;"
+                            id="teksSambutan1">
+                            Assalamu'alaikum Warahmatullahi Wabarakatuh.<br><br>
+                            Selamat datang di official website BEM KBMFKG UMI. Di era digital ini, kami berkomitmen
+                            untuk menjadikan BEM sebagai wadah yang tidak hanya menampung aspirasi, tetapi juga
+                            <strong>mewujudkan aksi nyata</strong>.
+                        </p>
+
+                        <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 35px; font-size: 1.05rem;"
+                            id="teksSambutan2">
+                            Kabinet Ananta Anardhaya hadir dengan semangat kolaborasi tiada batas. Kami percaya bahwa
+                            setiap mahasiswa FKG UMI memiliki potensi luar biasa. Mari kita satukan langkah, sinergikan
+                            pikiran, dan rajut masa depan almamater yang lebih gemilang.
+                        </p>
+
+                        <div
+                            style="border-top: 1px solid var(--border-light); padding-top: 25px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 id="namaKetuaSambutan"
+                                    style="font-size: 1.5rem; margin-bottom: 5px; color: var(--text-light);">Ailan Alif
+                                    Wajdi Daya</h3>
+                                <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Ketua BEM KBMFKG UMI
+                                </p>
+                            </div>
+                            <a href="/tentang" class="sambutan-arrow-btn"
+                                aria-label="Lihat profil lengkap tentang kami">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                                    <polyline points="5 12 12 5 19 12"></polyline>
+                                </svg>
+                            </a>
                         </div>
                     </div>
                 </div>
-                
-                <!-- BOX KANAN (TEKS) - GLASSMORPHISM UI UPGRADE -->
-                <div class="sambutan-text-box">
-                    <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.2; margin-bottom: 30px; color: var(--text-light);" id="judulSambutan">
-                        "Bergerak Bersama,<br><span style="color: var(--accent-neon);">Merajut Asa"</span>
-                    </h2>
-                    
-                    <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 25px; font-size: 1.05rem;" id="teksSambutan1">
-                        Assalamu'alaikum Warahmatullahi Wabarakatuh.<br><br>
-                        Selamat datang di official website BEM KBMFKG UMI. Di era digital ini, kami berkomitmen untuk menjadikan BEM sebagai wadah yang tidak hanya menampung aspirasi, tetapi juga <strong>mewujudkan aksi nyata</strong>.
-                    </p>
+            </section>
 
-                    <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 35px; font-size: 1.05rem;" id="teksSambutan2">
-                        Kabinet Ananta Anardhaya hadir dengan semangat kolaborasi tiada batas. Kami percaya bahwa setiap mahasiswa FKG UMI memiliki potensi luar biasa. Mari kita satukan langkah, sinergikan pikiran, dan rajut masa depan almamater yang lebih gemilang.
+            <!-- UPGRADE: VISI & MISI -->
+            <section class="container" style="padding: 100px 20px;">
+                <div class="reveal" style="text-align: center; margin-bottom: 50px;">
+                    <div
+                        style="display: inline-block; padding: 6px 20px; border-radius: 30px; background: rgba(0,210,255,0.08); color: var(--accent-neon); font-size: 0.85rem; font-weight: bold; letter-spacing: 1.5px; border: 1px solid rgba(0,229,255,0.2); margin-bottom: 15px;">
+                        &#9679; ARAH GERAK KABINET
+                    </div>
+                    <h2 style="font-size: 3rem; font-weight: 900;">Visi & Misi<br><span class="script-font"
+                            style="font-size: 1em; display:block; margin-top:5px;" id="namaKabinetVisi">Ananta
+                            Anardhaya</span></h2>
+                </div>
+
+                <!-- VISI BOX -->
+                <div class="visi-box-modern reveal">
+                    <h3
+                        style="color: var(--accent-neon); font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 25px;">
+                        VISI KAMI</h3>
+                    <p id="teksVisiIndex"
+                        style="font-size: 1.6rem; font-style: italic; line-height: 1.6; font-weight: 500; color: var(--text-light); max-width: 900px; margin: 0 auto; text-shadow: 0 0 15px var(--shadow-text);">
+                        "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI
+                        ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA."
                     </p>
-                    
-                    <div style="border-top: 1px solid var(--border-light); padding-top: 25px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h3 id="namaKetuaSambutan" style="font-size: 1.5rem; margin-bottom: 5px; color: var(--text-light);">Ailan Alif Wajdi Daya</h3>
-                            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Ketua BEM KBMFKG UMI</p>
+                </div>
+
+                <!-- MISI INTERACTIVE -->
+                <div class="reveal" style="text-align: center; margin-bottom: 30px; margin-top: 60px;">
+                    <h3 style="font-size: 2rem; margin-bottom: 10px;">Misi Kami</h3>
+                    <p style="color: var(--text-muted);">Nilai-nilai utama yang membentuk pergerakan kami</p>
+                </div>
+
+                <div class="misi-interactive-wrapper reveal">
+                    <!-- Kiri: Daftar Tab -->
+                    <div class="misi-sidebar" id="misiSidebarIndex" role="tablist">
+                        <!-- JS Mengisi Daftar Misi -->
+                    </div>
+                    <!-- Kanan: Konten Detail -->
+                    <div class="misi-content-box" id="misiContentIndex" role="tabpanel" aria-live="polite">
+                        <div style="display:inline-block; background:rgba(0,229,255,0.1); color:var(--accent-neon); padding:5px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold; margin-bottom:15px; width:max-content;"
+                            id="misiDetailBadge">POIN MISI 1</div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px; color: var(--text-light);"
+                            id="misiDetailTitle">Silakan Pilih Misi</h3>
+                        <div
+                            style="width: 50px; height: 4px; background: var(--accent-neon); border-radius: 2px; margin-bottom: 20px;">
                         </div>
-                        <a href="/tentang" class="sambutan-arrow-btn" aria-label="Lihat profil lengkap tentang kami">
-                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <line x1="12" y1="19" x2="12" y2="5"></line>
-                                <polyline points="5 12 12 5 19 12"></polyline>
-                            </svg>
-                        </a>
+                        <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.1rem;" id="misiDetailDesc">
+                            Klik salah satu poin di sebelah kiri untuk melihat deskripsi lengkap misi.
+                        </p>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- UPGRADE: VISI & MISI -->
-        <section class="container" style="padding: 100px 20px;">
-            <div class="reveal" style="text-align: center; margin-bottom: 50px;">
-                <div style="display: inline-block; padding: 6px 20px; border-radius: 30px; background: rgba(0,210,255,0.08); color: var(--accent-neon); font-size: 0.85rem; font-weight: bold; letter-spacing: 1.5px; border: 1px solid rgba(0,229,255,0.2); margin-bottom: 15px;">
-                    &#9679; ARAH GERAK KABINET
-                </div>
-                <h2 style="font-size: 3rem; font-weight: 900;">Visi & Misi<br><span class="script-font" style="font-size: 1em; display:block; margin-top:5px;" id="namaKabinetVisi">Ananta Anardhaya</span></h2>
-            </div>
+            <!-- NEW SUPER UI: FILOSOFI LOGO & WARNA DI INDEX.HTML -->
+            <section id="filosofi" class="container"
+                style="padding: 100px 20px; border-top: 1px solid var(--border-light); margin-top: 50px;">
 
-            <!-- VISI BOX -->
-            <div class="visi-box-modern reveal">
-                <h3 style="color: var(--accent-neon); font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 25px;">VISI KAMI</h3>
-                <p id="teksVisiIndex" style="font-size: 1.6rem; font-style: italic; line-height: 1.6; font-weight: 500; color: var(--text-light); max-width: 900px; margin: 0 auto; text-shadow: 0 0 15px var(--shadow-text);">
-                    "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA."
-                </p>
-            </div>
+                <div class="reveal" style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="font-size: 3rem; font-weight: 900;">Makna <span
+                            style="color: var(--accent-neon);">Filosofi Logo</span></h2>
 
-            <!-- MISI INTERACTIVE -->
-            <div class="reveal" style="text-align: center; margin-bottom: 30px; margin-top: 60px;">
-                <h3 style="font-size: 2rem; margin-bottom: 10px;">Misi Kami</h3>
-                <p style="color: var(--text-muted);">Nilai-nilai utama yang membentuk pergerakan kami</p>
-            </div>
+                    <div style="margin: 30px auto;">
+                        <img src="/img/bemfkgumi.png" alt="Logo Animasi BEM KBMFKG UMI" class="floating-logo"
+                            width="160" height="160" loading="lazy">
+                    </div>
 
-            <div class="misi-interactive-wrapper reveal">
-                <!-- Kiri: Daftar Tab -->
-                <div class="misi-sidebar" id="misiSidebarIndex" role="tablist">
-                    <!-- JS Mengisi Daftar Misi -->
-                </div>
-                <!-- Kanan: Konten Detail -->
-                <div class="misi-content-box" id="misiContentIndex" role="tabpanel" aria-live="polite">
-                    <div style="display:inline-block; background:rgba(0,229,255,0.1); color:var(--accent-neon); padding:5px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold; margin-bottom:15px; width:max-content;" id="misiDetailBadge">POIN MISI 1</div>
-                    <h3 style="font-size: 1.8rem; margin-bottom: 20px; color: var(--text-light);" id="misiDetailTitle">Silakan Pilih Misi</h3>
-                    <div style="width: 50px; height: 4px; background: var(--accent-neon); border-radius: 2px; margin-bottom: 20px;"></div>
-                    <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.1rem;" id="misiDetailDesc">
-                        Klik salah satu poin di sebelah kiri untuk melihat deskripsi lengkap misi.
+                    <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap
+                        elemen dalam logo memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.
                     </p>
                 </div>
-            </div>
-        </section>
 
-        <!-- NEW SUPER UI: FILOSOFI LOGO & WARNA DI INDEX.HTML -->
-        <section id="filosofi" class="container" style="padding: 100px 20px; border-top: 1px solid var(--border-light); margin-top: 50px;">
-            
-            <div class="reveal" style="text-align: center; margin-bottom: 40px;">
-                <h2 style="font-size: 3rem; font-weight: 900;">Makna <span style="color: var(--accent-neon);">Filosofi Logo</span></h2>
-                
-                <div style="margin: 30px auto;">
-                    <img src="/img/bemfkgumi.png" alt="Logo Animasi BEM KBMFKG UMI" class="floating-logo" width="160" height="160" loading="lazy">
+                <!-- Carousel Cover Flow UI Logo -->
+                <div class="filosofi-slider-wrapper reveal">
+                    <button class="slider-nav-btn prev" onclick="scrollSlider(-340)"
+                        aria-label="Geser slider logo ke kiri">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" />
+                        </svg>
+                    </button>
+                    <div class="filosofi-slider-track" id="indexLogoSlider">
+                        <!-- Inject via JS -->
+                    </div>
+                    <button class="slider-nav-btn next" onclick="scrollSlider(340)"
+                        aria-label="Geser slider logo ke kanan">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </button>
                 </div>
 
-                <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap elemen dalam logo memiliki filosofi yang saling terhubung dan membentuk satu harmoni pergerakan.</p>
-            </div>
+                <!-- Interactive Pills UI Warna -->
+                <div class="warna-ui-container reveal" style="margin-top: 120px;">
+                    <div style="text-align: center; margin-bottom: 40px;">
+                        <h2 style="font-size: 3rem; font-weight: 900;">Filosofi <span
+                                style="color: var(--accent-neon);">Warna</span></h2>
+                        <p style="color: var(--text-muted); margin-top: 10px;">Palet warna merepresentasikan keteguhan,
+                            kreativitas, dan keterbukaan dalam merajut gerakan mahasiswa yang kolaboratif.</p>
+                    </div>
 
-            <!-- Carousel Cover Flow UI Logo -->
-            <div class="filosofi-slider-wrapper reveal">
-                <button class="slider-nav-btn prev" onclick="scrollSlider(-340)" aria-label="Geser slider logo ke kiri">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
-                </button>
-                <div class="filosofi-slider-track" id="indexLogoSlider">
-                    <!-- Inject via JS -->
-                </div>
-                <button class="slider-nav-btn next" onclick="scrollSlider(340)" aria-label="Geser slider logo ke kanan">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-                </button>
-            </div>
+                    <div class="warna-pills-wrapper" id="indexWarnaPills" role="tablist">
+                        <!-- Inject via JS -->
+                    </div>
 
-            <!-- Interactive Pills UI Warna -->
-            <div class="warna-ui-container reveal" style="margin-top: 120px;">
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <h2 style="font-size: 3rem; font-weight: 900;">Filosofi <span style="color: var(--accent-neon);">Warna</span></h2>
-                    <p style="color: var(--text-muted); margin-top: 10px;">Palet warna merepresentasikan keteguhan, kreativitas, dan keterbukaan dalam merajut gerakan mahasiswa yang kolaboratif.</p>
-                </div>
-
-                <div class="warna-pills-wrapper" id="indexWarnaPills" role="tablist">
-                    <!-- Inject via JS -->
-                </div>
-
-                <div class="warna-detail-box" id="indexWarnaDetail" role="tabpanel" aria-live="polite">
-                    <!-- Detail Warna Aktif -->
-                    <div class="warna-detail-swatch" style="background: #10b981;"></div>
-                    <div class="warna-detail-text">
-                        <h3 style="color: var(--text-light);" id="indexWarnaTitle">Warna Hijau</h3>
-                        <p id="indexWarnaDesc">Melambangkan kesuburan dan harapan.</p>
+                    <div class="warna-detail-box" id="indexWarnaDetail" role="tabpanel" aria-live="polite">
+                        <!-- Detail Warna Aktif -->
+                        <div class="warna-detail-swatch" style="background: #10b981;"></div>
+                        <div class="warna-detail-text">
+                            <h3 style="color: var(--text-light);" id="indexWarnaTitle">Warna Hijau</h3>
+                            <p id="indexWarnaDesc">Melambangkan kesuburan dan harapan.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- UPGRADE: QUOTE BESAR KABINET -->
-        <section class="big-quote-section reveal" style="margin-top: 50px;">
-            <div class="quote-marks left" aria-hidden="true">"</div>
-            <div class="quote-marks right" aria-hidden="true">"</div>
-            <div class="container">
-                <p class="big-quote-text" id="teksQuoteKetua">
-                    Kabinet Ananta Anardhaya adalah tentang <span>merangkai</span> yang tercerai, <span>menyatukan</span> yang berjalan sendiri, dan <span>mengubah</span> harapan menjadi kerja bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <span>merajut perubahan</span>.
-                </p>
-                <div style="width: 60px; height: 3px; background: var(--accent-neon); margin: 0 auto 30px; border-radius: 2px;"></div>
-                <h4 style="font-size: 1.3rem; letter-spacing: 2px; color: var(--text-light); text-transform: uppercase;" id="namaKetuaQuote">AILAN ALIF WAJDI DAYA</h4>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;" id="jabatanKetuaQuote">Ketua BEM KBMFKG UMI</p>
-            </div>
-        </section>
+            <!-- UPGRADE: QUOTE BESAR KABINET -->
+            <section class="big-quote-section reveal" style="margin-top: 50px;">
+                <div class="quote-marks left" aria-hidden="true">"</div>
+                <div class="quote-marks right" aria-hidden="true">"</div>
+                <div class="container">
+                    <p class="big-quote-text" id="teksQuoteKetua">
+                        Kabinet Ananta Anardhaya adalah tentang <span>merangkai</span> yang tercerai,
+                        <span>menyatukan</span> yang berjalan sendiri, dan <span>mengubah</span> harapan menjadi kerja
+                        bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <span>merajut
+                            perubahan</span>.
+                    </p>
+                    <div
+                        style="width: 60px; height: 3px; background: var(--accent-neon); margin: 0 auto 30px; border-radius: 2px;">
+                    </div>
+                    <h4 style="font-size: 1.3rem; letter-spacing: 2px; color: var(--text-light); text-transform: uppercase;"
+                        id="namaKetuaQuote">AILAN ALIF WAJDI DAYA</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;" id="jabatanKetuaQuote">
+                        Ketua BEM KBMFKG UMI</p>
+                </div>
+            </section>
 
-    </main>
+        </main>
 
-    <%- include('partials/footer.html') %>
+        <%- include('partials/footer.html') %>
 
-    <!-- PERBAIKAN 1: Tambahkan 'defer' agar script proteksi tidak menahan loading halaman -->
-    <script src="/js/protect-devtools.js" defer></script>
+            <script>
+                // Data Fallback Filosofi untuk Index
+                const FALLBACK_FILOSOFI = {
+                    logo: [
+                        { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
+                        { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang." },
+                        { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar." },
+                        { elemen: "Molar", arti: "Gigi yang paling sering digunakan.", makna: "Kuat menghadapi masalah-masalah." },
+                        { elemen: "Perahu Phinisi", arti: "Khas Sulawesi Selatan.", makna: "Mampu bersaing dimanapun." },
+                        { elemen: "Angka 2014", arti: "Tahun Berdiri.", makna: "KBMFKG-UMI didirikan tahun 2014." }
+                    ],
+                    warna: [
+                        { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
+                        { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
+                        { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian dan kesucian." }
+                    ]
+                };
 
-    <script>
-        // Data Fallback Filosofi untuk Index
-        const FALLBACK_FILOSOFI = {
-            logo: [
-                { elemen: "Bulan Bintang", arti: "Merupakan lambang keislaman.", makna: "Melambangkan persatuan umat dan rahmat bagi alam semesta." },
-                { elemen: "Tongkat", arti: "Merupakan lambang Aesculapius.", makna: "Sebagai identitas mahasiswa kedokteran yang harus bisa mandiri dalam bekerja dan mengobati selain itu dapat juga berperan sebagai penopang." },
-                { elemen: "Ular", arti: "Merupakan lambang kesehatan.", makna: "Berganti kulit layaknya kesembuhan, racun menjadi penawar." },
-                { elemen: "Molar", arti: "Gigi yang paling sering digunakan.", makna: "Kuat menghadapi masalah-masalah." },
-                { elemen: "Perahu Phinisi", arti: "Khas Sulawesi Selatan.", makna: "Mampu bersaing dimanapun." },
-                { elemen: "Angka 2014", arti: "Tahun Berdiri.", makna: "KBMFKG-UMI didirikan tahun 2014." }
-            ],
-            warna: [
-                { warna: "Hijau", hex: "#10b981", makna: "Melambangkan kesuburan dan harapan." },
-                { warna: "Ungu", hex: "#8b5cf6", makna: "Melambangkan ambisi, empati, dan pencerahan." },
-                { warna: "Putih", hex: "#ffffff", makna: "Melambangkan kedamaian dan kesucian." }
-            ]
-        };
-
-        // Fungsi Smart Generator SVG Icon 
-        function getSvgIcon(elemen) {
-            const el = elemen.toLowerCase();
-            if(el.includes('bintang')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
-            if(el.includes('tongkat')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
-            if(el.includes('ular')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`; 
-            if(el.includes('molar')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`; 
-            if(el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
-            if(el.includes('segitiga')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M1 21h22L12 2 1 21z"/></svg>`;
-            return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
-        }
-
-        // Animasi Scroll
-        document.addEventListener('DOMContentLoaded', () => {
-            const reveals = document.querySelectorAll('.reveal');
-            const revealOnScroll = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } });
-            }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
-            reveals.forEach(reveal => revealOnScroll.observe(reveal));
-            setTimeout(() => { document.querySelector('.hero-section .reveal').classList.add('active'); }, 100);
-            
-            // Ambil Data DB untuk Beranda (Zero-Delay Instant Load) & Realtime Sync Bersih (Anti-Leak)
-            fetchDataBeranda();
-            setupBerandaSync();
-            
-            // =========================================================================
-            // SUPER BIG UPGRADE: DYNAMIC SITELINKS INJECTION (Metode Client-Side)
-            // Memaksa Google untuk melihat artikel E-Zine terbaru langsung dari beranda
-            // persis seperti metode HMI, namun diadaptasi untuk arsitektur API BEM UMI.
-            // =========================================================================
-            if ('requestIdleCallback' in window) {
-                window.requestIdleCallback(() => injectDynamicSitelinksFromGas(), { timeout: 3000 });
-            } else {
-                setTimeout(injectDynamicSitelinksFromGas, 1000);
-            }
-        });
-        
-        // FUNGSI INJEKSI DYNAMIC SITELINKS NEWSARTICLE
-        async function injectDynamicSitelinksFromGas() {
-            try {
-                // Endpoint yang sama dengan berita.html untuk menarik artikel
-                const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
-                const controller = new AbortController();
-                const timeoutTimer = setTimeout(() => controller.abort(), 3500);
-                const response = await fetch(GAS_ARTIKEL_URL + "?action=getArticles&page=1&limit=4", { signal: controller.signal });
-                clearTimeout(timeoutTimer);
-                const resData = await response.json();
-                
-                const rawArticles = typeof resData === 'string' ? JSON.parse(resData).data : resData.data;
-                const articles = rawArticles || [];
-
-                if (articles.length > 0) {
-                    const itemListElements = articles.map((item, index) => {
-                        const slug = item.Slug_URL || item.ID_Berita;
-                        const url = "https://bemkbmfkgumi.com/berita?article=" + slug;
-                        
-                        return {
-                            "@type": "ListItem",
-                            "position": index + 1,
-                            "url": url,
-                            "name": item.Judul,
-                            "item": {
-                                "@type": "NewsArticle",
-                                "headline": item.Judul,
-                                "image": item.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png",
-                                "datePublished": item.Tgl_Rilis ? new Date(item.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString(),
-                                "url": url,
-                                "author": {
-                                    "@type": "Organization",
-                                    "name": "Admin BEM FKG UMI"
-                                }
-                            }
-                        };
-                    });
-
-                    // Schema ItemList Dinamis untuk Artikel Terbaru
-                    const dynamicSchema = {
-                        "@context": "https://schema.org",
-                        "@type": "ItemList",
-                        "@id": "https://bemkbmfkgumi.com/#dynamic-news-sitelinks",
-                        "name": "Update Berita dan Artikel E-Zine Terbaru BEM FKG UMI",
-                        "itemListElement": itemListElements
-                    };
-
-                    const scriptTag = document.createElement('script');
-                    scriptTag.type = 'application/ld+json';
-                    scriptTag.text = JSON.stringify(dynamicSchema);
-                    document.head.appendChild(scriptTag);
-                    
-                    console.log("✅ Dynamic News Sitelinks Schema successfully injected for Googlebot.");
+                // Fungsi Smart Generator SVG Icon 
+                function getSvgIcon(elemen) {
+                    const el = elemen.toLowerCase();
+                    if (el.includes('bintang')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+                    if (el.includes('tongkat')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 2H8v2h2v16h4V4h2V2z"/></svg>`;
+                    if (el.includes('ular')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.8 6.42L16 4 12 7.5 8 4 5.2 6.42 10.4 12 5.2 17.58 8 20l4-3.5 4 3.5 2.8-2.42L13.6 12z"/></svg>`;
+                    if (el.includes('molar')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.69 2 6 4.69 6 8v3.5c0 1.93 1.57 3.5 3.5 3.5h5c1.93 0 3.5-1.57 3.5-3.5V8c0-3.31-2.69-6-6-6zm0 2c2.21 0 4 1.79 4 4v3.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5V8c0-2.21 1.79-4 4-4zM8 17h8v3H8v-3z"/></svg>`;
+                    if (el.includes('phinisi') || el.includes('perahu')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z"/></svg>`;
+                    if (el.includes('segitiga')) return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M1 21h22L12 2 1 21z"/></svg>`;
+                    return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`;
                 }
-            } catch (err) {
-                console.warn("Silent fallback: Gagal menarik data E-Zine untuk dynamic sitelinks di beranda.", err);
-            }
-        }
 
-        // Logika Tab Misi
-        let globalMisiData = [];
-        function openMisiTab(index, btnElement) {
-            document.querySelectorAll('.misi-tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.setAttribute('aria-selected', 'false');
-            });
-            btnElement.classList.add('active');
-            btnElement.setAttribute('aria-selected', 'true');
-            
-            const box = document.getElementById('misiContentIndex');
-            box.style.opacity = '0';
-            box.style.transform = 'translateY(10px)';
-            
-            setTimeout(() => {
-                document.getElementById('misiDetailBadge').innerText = `POIN MISI ${index + 1}`;
-                document.getElementById('misiDetailTitle').innerHTML = `Langkah <span style="color:var(--accent-neon);">Strategis ${index + 1}</span>`;
-                document.getElementById('misiDetailDesc').innerText = globalMisiData[index];
-                
-                box.style.opacity = '1';
-                box.style.transform = 'translateY(0)';
-                box.style.transition = 'all 0.4s ease';
-            }, 300);
-        }
+                // Animasi Scroll
+                document.addEventListener('DOMContentLoaded', () => {
+                    const reveals = document.querySelectorAll('.reveal');
+                    const revealOnScroll = new IntersectionObserver((entries, observer) => {
+                        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } });
+                    }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+                    reveals.forEach(reveal => revealOnScroll.observe(reveal));
+                    setTimeout(() => { document.querySelector('.hero-section .reveal').classList.add('active'); }, 100);
 
-        // Logika Slider Logo Filosofi (Cover Flow Effect)
-        function scrollSlider(amount) {
-            const track = document.getElementById('indexLogoSlider');
-            if(track) track.scrollBy({ left: amount, behavior: 'smooth' });
-        }
+                    // Ambil Data DB untuk Beranda (Zero-Delay Instant Load) & Realtime Sync Bersih (Anti-Leak)
+                    fetchDataBeranda();
+                    setupBerandaSync();
 
-        function initSliderLogic() {
-            const track = document.getElementById('indexLogoSlider');
-            if(!track || track._hasScrollListener) return;
-            track._hasScrollListener = true;
-
-            const cards = document.querySelectorAll('.filosofi-slide-card');
-
-            track.addEventListener('scroll', () => {
-                let centerPoint = track.scrollLeft + (track.clientWidth / 2);
-                let activeIndex = 0;
-                let minDistance = Infinity;
-
-                cards.forEach((card, index) => {
-                    let cardCenter = card.offsetLeft + (card.clientWidth / 2) - track.offsetLeft;
-                    let distance = Math.abs(centerPoint - cardCenter);
-                    if(distance < minDistance) {
-                        minDistance = distance;
-                        activeIndex = index;
+                    // =========================================================================
+                    // SUPER BIG UPGRADE: DYNAMIC SITELINKS INJECTION (Metode Client-Side)
+                    // Memaksa Google untuk melihat artikel E-Zine terbaru langsung dari beranda
+                    // persis seperti metode HMI, namun diadaptasi untuk arsitektur API BEM UMI.
+                    // =========================================================================
+                    if ('requestIdleCallback' in window) {
+                        window.requestIdleCallback(() => injectDynamicSitelinksFromGas(), { timeout: 3000 });
+                    } else {
+                        setTimeout(injectDynamicSitelinksFromGas, 1000);
                     }
                 });
 
-                cards.forEach(c => c.classList.remove('active'));
-                if(cards[activeIndex]) cards[activeIndex].classList.add('active');
-            }, { passive: true });
-        }
+                // FUNGSI INJEKSI DYNAMIC SITELINKS NEWSARTICLE
+                async function injectDynamicSitelinksFromGas() {
+                    try {
+                        // Endpoint yang sama dengan berita.html untuk menarik artikel
+                        const GAS_ARTIKEL_URL = "https://script.google.com/macros/s/AKfycbyLBA_p2AF41FqQXJn2GxINtaCJKzjVaDiWVq4nBe6X-fDi4cLJA02jaTMiB03VCTE/exec";
+                        const controller = new AbortController();
+                        const timeoutTimer = setTimeout(() => controller.abort(), 3500);
+                        const response = await fetch(GAS_ARTIKEL_URL + "?action=getArticles&page=1&limit=4", { signal: controller.signal });
+                        clearTimeout(timeoutTimer);
+                        const resData = await response.json();
 
-        // Logika Pilih Warna Interaktif (Pills System)
-        let globalWarnaData = [];
-        function selectWarna(index, btnElement) {
-            document.querySelectorAll('.warna-pill').forEach(b => {
-                b.classList.remove('active');
-                b.setAttribute('aria-selected', 'false');
-            });
-            btnElement.classList.add('active');
-            btnElement.setAttribute('aria-selected', 'true');
+                        const rawArticles = typeof resData === 'string' ? JSON.parse(resData).data : resData.data;
+                        const articles = rawArticles || [];
 
-            const data = globalWarnaData[index];
-            const detailBox = document.getElementById('indexWarnaDetail');
-            
-            detailBox.classList.remove('show');
-            setTimeout(() => {
-                detailBox.innerHTML = `
+                        if (articles.length > 0) {
+                            const itemListElements = articles.map((item, index) => {
+                                const slug = item.Slug_URL || item.ID_Berita;
+                                const url = "https://bemkbmfkgumi.com/berita?article=" + slug;
+
+                                return {
+                                    "@type": "ListItem",
+                                    "position": index + 1,
+                                    "url": url,
+                                    "name": item.Judul,
+                                    "item": {
+                                        "@type": "NewsArticle",
+                                        "headline": item.Judul,
+                                        "image": item.Gambar_URL || "https://bemkbmfkgumi.com/img/bemfkgumi.png",
+                                        "datePublished": item.Tgl_Rilis ? new Date(item.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString(),
+                                        "url": url,
+                                        "author": {
+                                            "@type": "Organization",
+                                            "name": "Admin BEM FKG UMI"
+                                        }
+                                    }
+                                };
+                            });
+
+                            // Schema ItemList Dinamis untuk Artikel Terbaru
+                            const dynamicSchema = {
+                                "@context": "https://schema.org",
+                                "@type": "ItemList",
+                                "@id": "https://bemkbmfkgumi.com/#dynamic-news-sitelinks",
+                                "name": "Update Berita dan Artikel E-Zine Terbaru BEM FKG UMI",
+                                "itemListElement": itemListElements
+                            };
+
+                            const scriptTag = document.createElement('script');
+                            scriptTag.type = 'application/ld+json';
+                            scriptTag.text = JSON.stringify(dynamicSchema);
+                            document.head.appendChild(scriptTag);
+
+                            console.log("✅ Dynamic News Sitelinks Schema successfully injected for Googlebot.");
+                        }
+                    } catch (err) {
+                        console.warn("Silent fallback: Gagal menarik data E-Zine untuk dynamic sitelinks di beranda.", err);
+                    }
+                }
+
+                // Logika Tab Misi
+                let globalMisiData = [];
+                function openMisiTab(index, btnElement) {
+                    document.querySelectorAll('.misi-tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-selected', 'false');
+                    });
+                    btnElement.classList.add('active');
+                    btnElement.setAttribute('aria-selected', 'true');
+
+                    const box = document.getElementById('misiContentIndex');
+                    box.style.opacity = '0';
+                    box.style.transform = 'translateY(10px)';
+
+                    setTimeout(() => {
+                        document.getElementById('misiDetailBadge').innerText = `POIN MISI ${index + 1}`;
+                        document.getElementById('misiDetailTitle').innerHTML = `Langkah <span style="color:var(--accent-neon);">Strategis ${index + 1}</span>`;
+                        document.getElementById('misiDetailDesc').innerText = globalMisiData[index];
+
+                        box.style.opacity = '1';
+                        box.style.transform = 'translateY(0)';
+                        box.style.transition = 'all 0.4s ease';
+                    }, 300);
+                }
+
+                // Logika Slider Logo Filosofi (Cover Flow Effect)
+                function scrollSlider(amount) {
+                    const track = document.getElementById('indexLogoSlider');
+                    if (track) track.scrollBy({ left: amount, behavior: 'smooth' });
+                }
+
+                function initSliderLogic() {
+                    const track = document.getElementById('indexLogoSlider');
+                    if (!track || track._hasScrollListener) return;
+                    track._hasScrollListener = true;
+
+                    const cards = document.querySelectorAll('.filosofi-slide-card');
+
+                    track.addEventListener('scroll', () => {
+                        let centerPoint = track.scrollLeft + (track.clientWidth / 2);
+                        let activeIndex = 0;
+                        let minDistance = Infinity;
+
+                        cards.forEach((card, index) => {
+                            let cardCenter = card.offsetLeft + (card.clientWidth / 2) - track.offsetLeft;
+                            let distance = Math.abs(centerPoint - cardCenter);
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                activeIndex = index;
+                            }
+                        });
+
+                        cards.forEach(c => c.classList.remove('active'));
+                        if (cards[activeIndex]) cards[activeIndex].classList.add('active');
+                    }, { passive: true });
+                }
+
+                // Logika Pilih Warna Interaktif (Pills System)
+                let globalWarnaData = [];
+                function selectWarna(index, btnElement) {
+                    document.querySelectorAll('.warna-pill').forEach(b => {
+                        b.classList.remove('active');
+                        b.setAttribute('aria-selected', 'false');
+                    });
+                    btnElement.classList.add('active');
+                    btnElement.setAttribute('aria-selected', 'true');
+
+                    const data = globalWarnaData[index];
+                    const detailBox = document.getElementById('indexWarnaDetail');
+
+                    detailBox.classList.remove('show');
+                    setTimeout(() => {
+                        detailBox.innerHTML = `
                     <div class="warna-detail-swatch" style="background-color: ${data.hex}; border-color: ${data.hex === '#ffffff' ? 'var(--border-light)' : 'transparent'};"></div>
                     <div class="warna-detail-text">
                         <h3>${data.warna} <span>${data.hex}</span></h3>
                         <p>${data.makna}</p>
                     </div>
                 `;
-                detailBox.classList.add('show');
-            }, 300);
-        }
-
-        const defaultOrgClientSeed = {
-            namaKabinet: "Kabinet Ananta Anardhaya",
-            periode: "2025 - 2026",
-            sambutan: {
-                judul: "\"Bergerak Bersama,\nMerajut Asa\"",
-                teks1: "Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSelamat datang di official website BEM KBMFKG UMI. Di era digital ini, kami berkomitmen untuk menjadikan BEM sebagai wadah yang tidak hanya menampung aspirasi, tetapi juga <strong>mewujudkan aksi nyata</strong>.",
-                teks2: "Kabinet Ananta Anardhaya hadir dengan semangat kolaborasi tiada batas. Kami percaya bahwa setiap mahasiswa FKG UMI memiliki potensi luar biasa. Mari kita satukan langkah, sinergikan pikiran, dan rajut masa depan almamater yang lebih gemilang.",
-                foto: "/img/bemfkgumi.png"
-            },
-            quote: {
-                teks: "Kabinet Ananta Anardhaya adalah tentang <span>merangkai</span> yang tercerai, <span>menyatukan</span> yang berjalan sendiri, dan <span>mengubah</span> harapan menjadi kerja bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <span>merajut perubahan</span>.",
-                author: "Ailan Alif Wajdi Daya",
-                jabatan: "Ketua BEM KBMFKG UMI"
-            },
-            visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
-            misi: [
-                "MENAMPUNG DAN MENYALURKAN ASPIRASI MAHASISWA SECARA TRANSPARAN DAN AKTIF.",
-                "MENDORONG DAN MEMFASILITASI PENGEMBANGAN PRESTASI AKADEMIK DAN NON-AKADEMIK MAHASISWA.",
-                "MENGINTEGRASIKAN NILAI-NILAI ISLAMI DALAM PROGRAM KERJA DAN KEGIATAN ORGANISASI.",
-                "MEMBANGUN LINGKUNGAN KAMPUS YANG HARMONIS, BERAKHLAK MULIA, DAN BERDAYA SAING.",
-                "MENINGKATKAN KAPASITAS DAN KUALITAS KADER MELALUI PENDIDIKAN DAN PELATIHAN BERPRINSIP ISLAMI."
-            ],
-            pimpinan: [
-                { jabatan: "Ketua BEM KBMFKG UMI", nama: "Ailan Alif Wajdi Daya", foto: "/img/bemfkgumi.png" }
-            ]
-        };
-
-        function getInitialBerandaData() {
-            if (window.BEM_DATABASE_CACHE && window.BEM_DATABASE_CACHE.org) {
-                return window.BEM_DATABASE_CACHE;
-            }
-            try {
-                const cachedStr = sessionStorage.getItem('BEM_CONTENT_CACHE_V1');
-                if (cachedStr) {
-                    const parsed = JSON.parse(cachedStr);
-                    if (parsed && parsed.org) return parsed;
+                        detailBox.classList.add('show');
+                    }, 300);
                 }
-            } catch(e) {}
-            return {
-                org: defaultOrgClientSeed,
-                filosofi: FALLBACK_FILOSOFI
-            };
-        }
 
-        function renderBerandaUI(res) {
-            if (!res) return;
-            let dataFilosofi = (res.filosofi && res.filosofi.logo && res.filosofi.logo.length > 0) ? res.filosofi : FALLBACK_FILOSOFI;
+                const defaultOrgClientSeed = {
+                    namaKabinet: "Kabinet Ananta Anardhaya",
+                    periode: "2025 - 2026",
+                    sambutan: {
+                        judul: "\"Bergerak Bersama,\nMerajut Asa\"",
+                        teks1: "Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSelamat datang di official website BEM KBMFKG UMI. Di era digital ini, kami berkomitmen untuk menjadikan BEM sebagai wadah yang tidak hanya menampung aspirasi, tetapi juga <strong>mewujudkan aksi nyata</strong>.",
+                        teks2: "Kabinet Ananta Anardhaya hadir dengan semangat kolaborasi tiada batas. Kami percaya bahwa setiap mahasiswa FKG UMI memiliki potensi luar biasa. Mari kita satukan langkah, sinergikan pikiran, dan rajut masa depan almamater yang lebih gemilang.",
+                        foto: "/img/bemfkgumi.png"
+                    },
+                    quote: {
+                        teks: "Kabinet Ananta Anardhaya adalah tentang <span>merangkai</span> yang tercerai, <span>menyatukan</span> yang berjalan sendiri, dan <span>mengubah</span> harapan menjadi kerja bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <span>merajut perubahan</span>.",
+                        author: "Ailan Alif Wajdi Daya",
+                        jabatan: "Ketua BEM KBMFKG UMI"
+                    },
+                    visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
+                    misi: [
+                        "MENAMPUNG DAN MENYALURKAN ASPIRASI MAHASISWA SECARA TRANSPARAN DAN AKTIF.",
+                        "MENDORONG DAN MEMFASILITASI PENGEMBANGAN PRESTASI AKADEMIK DAN NON-AKADEMIK MAHASISWA.",
+                        "MENGINTEGRASIKAN NILAI-NILAI ISLAMI DALAM PROGRAM KERJA DAN KEGIATAN ORGANISASI.",
+                        "MEMBANGUN LINGKUNGAN KAMPUS YANG HARMONIS, BERAKHLAK MULIA, DAN BERDAYA SAING.",
+                        "MENINGKATKAN KAPASITAS DAN KUALITAS KADER MELALUI PENDIDIKAN DAN PELATIHAN BERPRINSIP ISLAMI."
+                    ],
+                    pimpinan: [
+                        { jabatan: "Ketua BEM KBMFKG UMI", nama: "Ailan Alif Wajdi Daya", foto: "/img/bemfkgumi.png" }
+                    ]
+                };
 
-            if (res.org) {
-                const org = res.org;
-                let ketuaNama = "Ailan Alif Wajdi Daya";
-                let ketuaFoto = "/img/bemfkgumi.png";
-                if (org.pimpinan && Array.isArray(org.pimpinan) && org.pimpinan.length > 0) {
-                    const foundKetua = org.pimpinan.find(p => p && /ketua\s*bem/i.test(p.jabatan || '')) || org.pimpinan[0];
-                    if (foundKetua) {
-                        ketuaNama = foundKetua.nama || ketuaNama;
-                        ketuaFoto = foundKetua.foto || ketuaFoto;
+                function getInitialBerandaData() {
+                    if (window.BEM_DATABASE_CACHE && window.BEM_DATABASE_CACHE.org) {
+                        return window.BEM_DATABASE_CACHE;
                     }
-                }
-
-                // 1. Sambutan Ketua BEM
-                const elNama = document.getElementById('namaKetuaSambutan');
-                const elFoto = document.getElementById('imgSambutanLogo');
-                const elPeriode = document.getElementById('periodeSambutan');
-                const elJudul = document.getElementById('judulSambutan');
-                const elTeks1 = document.getElementById('teksSambutan1');
-                const elTeks2 = document.getElementById('teksSambutan2');
-
-                if (elNama) elNama.innerText = ketuaNama;
-                if (elFoto) {
-                    const fotoSrc = (org.sambutan && org.sambutan.foto) ? org.sambutan.foto : ketuaFoto;
-                    if (fotoSrc) { elFoto.src = fotoSrc; elFoto.classList.add('loaded'); }
-                }
-                if (elPeriode && org.periode) elPeriode.innerText = org.periode;
-                if (elJudul && org.sambutan && org.sambutan.judul) {
-                    let j = org.sambutan.judul.trim();
-                    if (!j.includes('<span')) {
-                        let cleanQuotes = j.replace(/^"+|"+$/g, '');
-                        if (cleanQuotes.includes('\n')) {
-                            const lines = cleanQuotes.split('\n');
-                            elJudul.innerHTML = `"${lines[0]}<br><span style="color: var(--accent-neon);">${lines.slice(1).join(' ')}"</span>`;
-                        } else {
-                            elJudul.innerHTML = `"${cleanQuotes}"`;
+                    try {
+                        const cachedStr = sessionStorage.getItem('BEM_CONTENT_CACHE_V1');
+                        if (cachedStr) {
+                            const parsed = JSON.parse(cachedStr);
+                            if (parsed && parsed.org) return parsed;
                         }
-                    } else {
-                        elJudul.innerHTML = j.replace(/\n/g, '<br>');
-                    }
-                }
-                if (elTeks1 && org.sambutan && org.sambutan.teks1) {
-                    elTeks1.innerHTML = org.sambutan.teks1.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
-                }
-                if (elTeks2 && org.sambutan && org.sambutan.teks2) {
-                    elTeks2.innerHTML = org.sambutan.teks2.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+                    } catch (e) { }
+                    return {
+                        org: defaultOrgClientSeed,
+                        filosofi: FALLBACK_FILOSOFI
+                    };
                 }
 
-                // 2. Quote Ketua BEM (SATU FORMAT PERSIS DENGAN NAMA KETUA BEM DARI INTI BEM)
-                const elQuoteTeks = document.getElementById('teksQuoteKetua');
-                const elQuoteNama = document.getElementById('namaKetuaQuote');
-                const elQuoteJabatan = document.getElementById('jabatanKetuaQuote');
+                function renderBerandaUI(res) {
+                    if (!res) return;
+                    let dataFilosofi = (res.filosofi && res.filosofi.logo && res.filosofi.logo.length > 0) ? res.filosofi : FALLBACK_FILOSOFI;
 
-                if (org.quote && elQuoteTeks && org.quote.teks) {
-                    elQuoteTeks.innerHTML = org.quote.teks;
-                }
-                if (elQuoteNama) {
-                    elQuoteNama.innerText = ketuaNama.toUpperCase();
-                }
-                if (elQuoteJabatan) {
-                    elQuoteJabatan.innerText = (org.quote && org.quote.jabatan) ? org.quote.jabatan : "Ketua BEM KBMFKG UMI";
-                }
+                    if (res.org) {
+                        const org = res.org;
+                        let ketuaNama = "Ailan Alif Wajdi Daya";
+                        let ketuaFoto = "/img/bemfkgumi.png";
+                        if (org.pimpinan && Array.isArray(org.pimpinan) && org.pimpinan.length > 0) {
+                            const foundKetua = org.pimpinan.find(p => p && /ketua\s*bem/i.test(p.jabatan || '')) || org.pimpinan[0];
+                            if (foundKetua) {
+                                ketuaNama = foundKetua.nama || ketuaNama;
+                                ketuaFoto = foundKetua.foto || ketuaFoto;
+                            }
+                        }
 
-                // 3. Nama Kabinet di Header, Hero & Visi
-                if (org.namaKabinet) {
-                    const elHeaderKabinet = document.getElementById('header-kabinet-name');
-                    if (elHeaderKabinet) elHeaderKabinet.innerText = org.namaKabinet;
-                    const elFooterSlogan = document.getElementById('footerSloganText');
-                    if (elFooterSlogan) elFooterSlogan.innerText = org.namaKabinet;
+                        // 1. Sambutan Ketua BEM
+                        const elNama = document.getElementById('namaKetuaSambutan');
+                        const elFoto = document.getElementById('imgSambutanLogo');
+                        const elPeriode = document.getElementById('periodeSambutan');
+                        const elJudul = document.getElementById('judulSambutan');
+                        const elTeks1 = document.getElementById('teksSambutan1');
+                        const elTeks2 = document.getElementById('teksSambutan2');
 
-                    const namaClean = org.namaKabinet.replace(/^Kabinet\s+/i, '');
-                    const elKabinetHero = document.getElementById('namaKabinetHero');
-                    if (elKabinetHero) elKabinetHero.innerText = namaClean;
-                    const elKabinetVisi = document.getElementById('namaKabinetVisi');
-                    if (elKabinetVisi) elKabinetVisi.innerText = namaClean;
-                }
+                        if (elNama) elNama.innerText = ketuaNama;
+                        if (elFoto) {
+                            const fotoSrc = (org.sambutan && org.sambutan.foto) ? org.sambutan.foto : ketuaFoto;
+                            if (fotoSrc) { elFoto.src = fotoSrc; elFoto.classList.add('loaded'); }
+                        }
+                        if (elPeriode && org.periode) elPeriode.innerText = org.periode;
+                        if (elJudul && org.sambutan && org.sambutan.judul) {
+                            let j = org.sambutan.judul.trim();
+                            if (!j.includes('<span')) {
+                                let cleanQuotes = j.replace(/^"+|"+$/g, '');
+                                if (cleanQuotes.includes('\n')) {
+                                    const lines = cleanQuotes.split('\n');
+                                    elJudul.innerHTML = `"${lines[0]}<br><span style="color: var(--accent-neon);">${lines.slice(1).join(' ')}"</span>`;
+                                } else {
+                                    elJudul.innerHTML = `"${cleanQuotes}"`;
+                                }
+                            } else {
+                                elJudul.innerHTML = j.replace(/\n/g, '<br>');
+                            }
+                        }
+                        if (elTeks1 && org.sambutan && org.sambutan.teks1) {
+                            elTeks1.innerHTML = org.sambutan.teks1.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+                        }
+                        if (elTeks2 && org.sambutan && org.sambutan.teks2) {
+                            elTeks2.innerHTML = org.sambutan.teks2.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+                        }
 
-                // 3B. Quote Arti Kabinet di Hero Section
-                if (org.artiKabinet) {
-                    const elKesimpulan = document.getElementById('heroArtiKesimpulan');
-                    if (elKesimpulan && org.artiKabinet.kesimpulan) {
-                        elKesimpulan.innerText = `"${org.artiKabinet.kesimpulan}"`;
-                    }
-                    const elSub = document.getElementById('heroArtiSub');
-                    if (elSub && (org.artiKabinet.arti1 || org.artiKabinet.arti2)) {
-                        const parts = [];
-                        if (org.artiKabinet.arti1) parts.push(org.artiKabinet.arti1);
-                        if (org.artiKabinet.arti2) parts.push(org.artiKabinet.arti2);
-                        elSub.innerText = parts.join(', ') + '.';
-                    }
-                }
+                        // 2. Quote Ketua BEM (SATU FORMAT PERSIS DENGAN NAMA KETUA BEM DARI INTI BEM)
+                        const elQuoteTeks = document.getElementById('teksQuoteKetua');
+                        const elQuoteNama = document.getElementById('namaKetuaQuote');
+                        const elQuoteJabatan = document.getElementById('jabatanKetuaQuote');
 
-                // 4. Visi & Misi
-                if (org.visi) {
-                    const elVisi = document.getElementById('teksVisiIndex');
-                    if (elVisi) elVisi.innerText = `"${org.visi}"`;
-                }
+                        if (org.quote && elQuoteTeks && org.quote.teks) {
+                            elQuoteTeks.innerHTML = org.quote.teks;
+                        }
+                        if (elQuoteNama) {
+                            elQuoteNama.innerText = ketuaNama.toUpperCase();
+                        }
+                        if (elQuoteJabatan) {
+                            elQuoteJabatan.innerText = (org.quote && org.quote.jabatan) ? org.quote.jabatan : "Ketua BEM KBMFKG UMI";
+                        }
 
-                if (org.misi && org.misi.length > 0) {
-                    globalMisiData = org.misi;
-                    const sidebar = document.getElementById('misiSidebarIndex');
-                    if (sidebar) {
-                        sidebar.innerHTML = '';
-                        globalMisiData.forEach((misi, idx) => {
-                            sidebar.innerHTML += `
+                        // 3. Nama Kabinet di Header, Hero & Visi
+                        if (org.namaKabinet) {
+                            const elHeaderKabinet = document.getElementById('header-kabinet-name');
+                            if (elHeaderKabinet) elHeaderKabinet.innerText = org.namaKabinet;
+                            const elFooterSlogan = document.getElementById('footerSloganText');
+                            if (elFooterSlogan) elFooterSlogan.innerText = org.namaKabinet;
+
+                            const namaClean = org.namaKabinet.replace(/^Kabinet\s+/i, '');
+                            const elKabinetHero = document.getElementById('namaKabinetHero');
+                            if (elKabinetHero) elKabinetHero.innerText = namaClean;
+                            const elKabinetVisi = document.getElementById('namaKabinetVisi');
+                            if (elKabinetVisi) elKabinetVisi.innerText = namaClean;
+                        }
+
+                        // 3B. Quote Arti Kabinet di Hero Section
+                        if (org.artiKabinet) {
+                            const elKesimpulan = document.getElementById('heroArtiKesimpulan');
+                            if (elKesimpulan && org.artiKabinet.kesimpulan) {
+                                elKesimpulan.innerText = `"${org.artiKabinet.kesimpulan}"`;
+                            }
+                            const elSub = document.getElementById('heroArtiSub');
+                            if (elSub && (org.artiKabinet.arti1 || org.artiKabinet.arti2)) {
+                                const parts = [];
+                                if (org.artiKabinet.arti1) parts.push(org.artiKabinet.arti1);
+                                if (org.artiKabinet.arti2) parts.push(org.artiKabinet.arti2);
+                                elSub.innerText = parts.join(', ') + '.';
+                            }
+                        }
+
+                        // 4. Visi & Misi
+                        if (org.visi) {
+                            const elVisi = document.getElementById('teksVisiIndex');
+                            if (elVisi) elVisi.innerText = `"${org.visi}"`;
+                        }
+
+                        if (org.misi && org.misi.length > 0) {
+                            globalMisiData = org.misi;
+                            const sidebar = document.getElementById('misiSidebarIndex');
+                            if (sidebar) {
+                                sidebar.innerHTML = '';
+                                globalMisiData.forEach((misi, idx) => {
+                                    sidebar.innerHTML += `
                                 <button class="misi-tab-btn ${idx === 0 ? 'active' : ''}" onclick="openMisiTab(${idx}, this)" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
                                     Pilar Misi Ke-${idx + 1} <span aria-hidden="true">&rarr;</span>
                                 </button>
                             `;
-                        });
-                        // Preservasi State: Hanya auto-click pilar 1 jika belum ada pilar yang aktif
-                        const activeBtn = sidebar.querySelector('.misi-tab-btn.active');
-                        if (!activeBtn) {
-                            const firstBtn = sidebar.querySelector('.misi-tab-btn');
-                            if (firstBtn) firstBtn.click();
+                                });
+                                // Preservasi State: Hanya auto-click pilar 1 jika belum ada pilar yang aktif
+                                const activeBtn = sidebar.querySelector('.misi-tab-btn.active');
+                                if (!activeBtn) {
+                                    const firstBtn = sidebar.querySelector('.misi-tab-btn');
+                                    if (firstBtn) firstBtn.click();
+                                }
+                            }
                         }
                     }
-                }
-            }
 
-            // 5. Render Filosofi Logo Slider & Warna
-            const track = document.getElementById('indexLogoSlider');
-            if (track) {
-                track.innerHTML = '';
-                dataFilosofi.logo.forEach((item, idx) => {
-                    track.innerHTML += `
+                    // 5. Render Filosofi Logo Slider & Warna
+                    const track = document.getElementById('indexLogoSlider');
+                    if (track) {
+                        track.innerHTML = '';
+                        dataFilosofi.logo.forEach((item, idx) => {
+                            track.innerHTML += `
                         <div class="filosofi-slide-card ${idx === 0 ? 'active' : ''}">
                             <div class="filo-icon-box">${getSvgIcon(item.elemen)}</div>
                             <h3>${item.elemen}</h3>
@@ -766,69 +841,70 @@
                             <p class="filo-makna"><strong>Makna:</strong> ${item.makna}</p>
                         </div>
                     `;
-                });
-                track.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
-                initSliderLogic();
-            }
+                        });
+                        track.innerHTML += `<div style="flex: 0 0 10vw;" aria-hidden="true"></div>`;
+                        initSliderLogic();
+                    }
 
-            globalWarnaData = dataFilosofi.warna;
-            const pillsCont = document.getElementById('indexWarnaPills');
-            if (pillsCont) {
-                pillsCont.innerHTML = '';
-                globalWarnaData.forEach((item, idx) => {
-                    pillsCont.innerHTML += `
+                    globalWarnaData = dataFilosofi.warna;
+                    const pillsCont = document.getElementById('indexWarnaPills');
+                    if (pillsCont) {
+                        pillsCont.innerHTML = '';
+                        globalWarnaData.forEach((item, idx) => {
+                            pillsCont.innerHTML += `
                         <button class="warna-pill" onclick="selectWarna(${idx}, this)" role="tab" aria-selected="false">
                             <div class="warna-pill-dot" style="background-color: ${item.hex}; border: 1px solid rgba(255,255,255,0.2);"></div>
                             ${item.warna}
                         </button>
                     `;
-                });
-                setTimeout(() => {
-                    // Preservasi State: Hanya auto-click pill 1 jika belum ada pill yang aktif
-                    const activePill = document.querySelector('.warna-pill.active');
-                    if (!activePill) {
-                        const firstPill = document.querySelector('.warna-pill');
-                        if (firstPill) firstPill.click();
+                        });
+                        setTimeout(() => {
+                            // Preservasi State: Hanya auto-click pill 1 jika belum ada pill yang aktif
+                            const activePill = document.querySelector('.warna-pill.active');
+                            if (!activePill) {
+                                const firstPill = document.querySelector('.warna-pill');
+                                if (firstPill) firstPill.click();
+                            }
+                        }, 50);
                     }
-                }, 50);
-            }
-        }
-
-        // ================= UNIVERSAL REALTIME SYNC (ANTI-MEMORY LEAK) =================
-        let _isBerandaListening = false;
-        function setupBerandaSync() {
-            if (_isBerandaListening) return;
-            _isBerandaListening = true;
-            const onSyncData = (e) => {
-                if (e && e.detail) renderBerandaUI(e.detail);
-            };
-            document.addEventListener('BemDataUpdated', onSyncData);
-            document.addEventListener('BemDatabaseReady', onSyncData);
-        }
-
-        function fetchDataBeranda() {
-            // STEP 1: Render Secara Instan di 0ms dari In-Memory Cache, SessionStorage, atau Seed!
-            const initial = getInitialBerandaData();
-            renderBerandaUI(initial);
-
-            // STEP 2: Background SWR Revalidation (Non-blocking)
-            if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
-                window.BEM_API.getData().then(freshData => {
-                    if (freshData) renderBerandaUI(freshData);
-                }).catch(() => {});
-            } else {
-                let apiUrl = '/api/content';
-                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
                 }
-                fetch(apiUrl)
-                    .then(r => r.json())
-                    .then(freshData => {
-                        if (freshData) renderBerandaUI(freshData);
-                    })
-                    .catch(() => {});
-            }
-        }
-</script>
+
+                // ================= UNIVERSAL REALTIME SYNC (ANTI-MEMORY LEAK) =================
+                let _isBerandaListening = false;
+                function setupBerandaSync() {
+                    if (_isBerandaListening) return;
+                    _isBerandaListening = true;
+                    const onSyncData = (e) => {
+                        if (e && e.detail) renderBerandaUI(e.detail);
+                    };
+                    document.addEventListener('BemDataUpdated', onSyncData);
+                    document.addEventListener('BemDatabaseReady', onSyncData);
+                }
+
+                function fetchDataBeranda() {
+                    // STEP 1: Render Secara Instan di 0ms dari In-Memory Cache, SessionStorage, atau Seed!
+                    const initial = getInitialBerandaData();
+                    renderBerandaUI(initial);
+
+                    // STEP 2: Background SWR Revalidation (Non-blocking)
+                    if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+                        window.BEM_API.getData().then(freshData => {
+                            if (freshData) renderBerandaUI(freshData);
+                        }).catch(() => { });
+                    } else {
+                        let apiUrl = '/api/content';
+                        if (window.location.protocol === 'blob:' || window.location.origin === "null") {
+                            apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                        }
+                        fetch(apiUrl)
+                            .then(r => r.json())
+                            .then(freshData => {
+                                if (freshData) renderBerandaUI(freshData);
+                            })
+                            .catch(() => { });
+                    }
+                }
+            </script>
 </body>
+
 </html>
