@@ -195,11 +195,31 @@
     
     <script src="/js/protect-devtools.js"></script>
 
-    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript -->
+    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript (Safe JSON Container) -->
+    <script id="ssr-event-json" type="application/json"><%- typeof eventData !== 'undefined' && eventData ? JSON.stringify(eventData) : 'null' %></script>
+    <script id="ssr-slug-json" type="application/json"><%- typeof slug !== 'undefined' ? JSON.stringify(slug) : '""' %></script>
+    <script id="ssr-sourcetab-json" type="application/json"><%- typeof sourceTab !== 'undefined' ? JSON.stringify(sourceTab) : '"kalender"' %></script>
     <script>
-        window.SSR_EVENT_DATA = <%- typeof eventData !== 'undefined' && eventData ? JSON.stringify(eventData) : 'null' %>;
-        window.SSR_SLUG = "<%= typeof slug !== 'undefined' ? slug : '' %>";
-        window.SSR_SOURCE_TAB = "<%= typeof sourceTab !== 'undefined' ? sourceTab : 'kalender' %>";
+        (function() {
+            try {
+                var elEvent = document.getElementById('ssr-event-json');
+                window.SSR_EVENT_DATA = elEvent ? JSON.parse(elEvent.textContent || 'null') : null;
+            } catch (e) {
+                window.SSR_EVENT_DATA = null;
+            }
+            try {
+                var elSlug = document.getElementById('ssr-slug-json');
+                window.SSR_SLUG = elSlug ? JSON.parse(elSlug.textContent || '""') : "";
+            } catch (e) {
+                window.SSR_SLUG = "";
+            }
+            try {
+                var elSource = document.getElementById('ssr-sourcetab-json');
+                window.SSR_SOURCE_TAB = elSource ? JSON.parse(elSource.textContent || '"kalender"') : "kalender";
+            } catch (e) {
+                window.SSR_SOURCE_TAB = "kalender";
+            }
+        })();
     </script>
 </head>
 <body>
@@ -434,12 +454,16 @@
             }
 
             try {
-                let apiUrl = isPreview ? 'https://bemkbmfkgumi.com/api/content' : '/api/content';
-                const req = await fetch(apiUrl);
+                let res = null;
+                if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+                    res = await window.BEM_API.getData();
+                } else {
+                    let apiUrl = isPreview ? 'https://bemkbmfkgumi.com/api/content' : '/api/content';
+                    const req = await fetch(apiUrl);
+                    if(!req.ok) throw new Error("Gagal terhubung ke database server (HTTP " + req.status + ").");
+                    res = await req.json();
+                }
                 
-                if(!req.ok) throw new Error("Gagal terhubung ke database server (HTTP " + req.status + ").");
-                
-                const res = await req.json();
                 let eventData = null;
 
                 if (res.kalender && Array.isArray(res.kalender)) {
