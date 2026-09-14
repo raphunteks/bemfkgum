@@ -77,8 +77,8 @@
             <h2 style="color: var(--text-light);">Portal Admin</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Sistem Manajemen Database Organisasi</p>
             
-            <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin" aria-label="Username">
-            <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin" aria-label="Password">
+            <input type="text" id="adminUser" class="neo-input" placeholder="Username Admin" aria-label="Username" onkeydown="if(event.key==='Enter') login()">
+            <input type="password" id="adminPass" class="neo-input" placeholder="Password Admin" aria-label="Password" onkeydown="if(event.key==='Enter') login()">
             
             <button class="holo-btn" onclick="login()" style="width:100%; margin-top: 10px;">Akses Sistem</button>
             <div id="loginError" style="color: #ef4444; margin-top: 15px; font-size: 0.9rem; display: none;" aria-live="polite">Kredensial tidak valid.</div>
@@ -111,6 +111,7 @@
                 <button onclick="window.location.href='/admin-v2'" style="color: #a78bfa;"><span aria-hidden="true">📝</span> Admin Form</button>
                 <button onclick="window.location.href='/admin-linktree'" style="color: #38bdf8;"><span aria-hidden="true">🌳</span> Admin Linktree</button>
                 <button onclick="window.location.href='/admin-qrcode'" style="color: #facc15;"><span aria-hidden="true">🔳</span> Admin QR Code</button>
+                <button onclick="window.location.href='/admin-mhs'" style="color: #34d399;"><span aria-hidden="true">🎓</span> Admin Database Mhs</button>
 
                 <button onclick="logout()" style="margin-top: 20px; color: #ef4444;"><span aria-hidden="true">🚪</span> Logout</button>
             </nav>
@@ -139,24 +140,88 @@
                     <button class="holo-btn" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveData('org', this)">💾 Simpan Ke Database</button>
                 </div>
 
+                <!-- 0A. IDENTITAS KABINET & PERIODE (CLEAN WHITE GLASS-CARD) -->
+                <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
+                    <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px; display:flex; align-items:center; gap:8px;">
+                        <span>🏛️</span> Identitas & Periode Kabinet
+                    </h3>
+                    <div class="grid-2">
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Nama Kabinet (Muncul di Header & Seluruh Tab)</label>
+                            <input type="text" id="editNamaKabinet" class="neo-input" placeholder="Contoh: Kabinet Ananta Anardhaya" oninput="db.org.namaKabinet=this.value">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Periode Kepengurusan (Contoh: 2025 - 2026)</label>
+                            <input type="text" id="editPeriodeKabinet" class="neo-input" placeholder="Contoh: 2025 - 2026" oninput="db.org.periode=this.value">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 0B. SAMBUTAN KETUA BEM (TAMPIL DI BERANDA) -->
+                <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
+                    <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px; display:flex; align-items:center; gap:8px;">
+                        <span>🎙️</span> Sambutan Ketua BEM (Tampil di Beranda)
+                    </h3>
+                    <div class="grid-2" style="margin-bottom: 14px;">
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Judul Sambutan (Dapat menggunakan baris baru)</label>
+                            <textarea id="editSambutanJudul" class="neo-input" rows="2" placeholder="Contoh: Bergerak Bersama, Merajut Asa" oninput="if(!db.org.sambutan) db.org.sambutan={}; db.org.sambutan.judul=this.value"></textarea>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Foto / Logo Sambutan</label>
+                            <div style="display:flex; gap:12px; align-items:center;">
+                                <img id="previewSambutanFoto" src="/img/bemfkgumi.png" style="width:50px; height:50px; object-fit:contain; border-radius:8px; background:var(--bg-dark-heavy); border:1px solid var(--border-light);" alt="Foto Sambutan">
+                                <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.sambutan, 'foto', () => { document.getElementById('previewSambutanFoto').src = db.org.sambutan.foto; })" style="flex:1;">
+                            </div>
+                        </div>
+                    </div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted);">Isi Sambutan - Paragraf 1 (Pembuka & Komitmen)</label>
+                    <textarea id="editSambutanTeks1" class="neo-input" rows="3" placeholder="Assalamu'alaikum... Selamat datang di official website..." oninput="if(!db.org.sambutan) db.org.sambutan={}; db.org.sambutan.teks1=this.value"></textarea>
+                    
+                    <label style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; display:block;">Isi Sambutan - Paragraf 2 (Kolaborasi & Harapan)</label>
+                    <textarea id="editSambutanTeks2" class="neo-input" rows="3" placeholder="Kabinet hadir dengan semangat kolaborasi..." oninput="if(!db.org.sambutan) db.org.sambutan={}; db.org.sambutan.teks2=this.value"></textarea>
+                </div>
+
+                <!-- 0C. QUOTE UTAMA KETUA BEM (TAMPIL DI BERANDA) -->
+                <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
+                    <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px; display:flex; align-items:center; gap:8px;">
+                        <span>💬</span> Quote Utama Ketua BEM (Tampil di Beranda)
+                    </h3>
+                    <label style="font-size: 0.8rem; color: var(--text-muted);">Teks Quote Inspiratif</label>
+                    <textarea id="editQuoteTeks" class="neo-input" rows="3" placeholder="Kabinet adalah tentang merangkai yang tercerai..." oninput="if(!db.org.quote) db.org.quote={}; db.org.quote.teks=this.value"></textarea>
+                    
+                    <div class="grid-2" style="margin-top: 12px;">
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted); display:flex; align-items:center; gap:5px;">
+                                <span>👤</span> Nama Pengutip (Ketua BEM) <span style="font-size:0.72rem; color:var(--accent-neon); font-weight:600;">(Tersinkron 1 Format dari Pimpinan Inti)</span>
+                            </label>
+                            <input type="text" id="editQuoteAuthor" class="neo-input" placeholder="Contoh: Ailan Alif Wajdi Daya" oninput="syncQuoteAuthorToKetua(this.value)">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Jabatan Pengutip</label>
+                            <input type="text" id="editQuoteJabatan" class="neo-input" placeholder="Contoh: Ketua BEM KBMFKG UMI" oninput="if(!db.org.quote) db.org.quote={}; db.org.quote.jabatan=this.value">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="glass-card" style="margin-bottom: 30px; border-left: 4px solid var(--accent-neon);">
                     <h3 style="color:var(--accent-neon); margin-bottom: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px;">Arti Nama Kabinet</h3>
                     <div class="grid-2">
                         <div>
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Suku Kata 1</label>
-                            <input type="text" id="editKata1" class="neo-input" placeholder="Contoh: ANANTA" oninput="db.org.artiKabinet.kata1=this.value">
+                            <input type="text" id="editKata1" class="neo-input" placeholder="Contoh: ANANTA" oninput="if(!db.org.artiKabinet) db.org.artiKabinet={}; db.org.artiKabinet.kata1=this.value">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Arti Suku Kata 1</label>
-                            <input type="text" id="editArti1" class="neo-input" placeholder="Semangat perjuangan tanpa batas" oninput="db.org.artiKabinet.arti1=this.value">
+                            <input type="text" id="editArti1" class="neo-input" placeholder="Semangat perjuangan tanpa batas" oninput="if(!db.org.artiKabinet) db.org.artiKabinet={}; db.org.artiKabinet.arti1=this.value">
                         </div>
                         <div>
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Suku Kata 2</label>
-                            <input type="text" id="editKata2" class="neo-input" placeholder="Contoh: ANARDHAYA" oninput="db.org.artiKabinet.kata2=this.value">
+                            <input type="text" id="editKata2" class="neo-input" placeholder="Contoh: ANARDHAYA" oninput="if(!db.org.artiKabinet) db.org.artiKabinet={}; db.org.artiKabinet.kata2=this.value">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Arti Suku Kata 2</label>
-                            <input type="text" id="editArti2" class="neo-input" placeholder="Sesuatu yang abadi" oninput="db.org.artiKabinet.arti2=this.value">
+                            <input type="text" id="editArti2" class="neo-input" placeholder="Sesuatu yang abadi" oninput="if(!db.org.artiKabinet) db.org.artiKabinet={}; db.org.artiKabinet.arti2=this.value">
                         </div>
                     </div>
                     <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 10px;">Kesimpulan Makna (Gabungan)</label>
-                    <textarea id="editKesimpulan" class="neo-input" rows="3" placeholder="Dapat diartikan sebagai perjuangan..." oninput="db.org.artiKabinet.kesimpulan=this.value"></textarea>
+                    <textarea id="editKesimpulan" class="neo-input" rows="3" placeholder="Dapat diartikan sebagai perjuangan..." oninput="if(!db.org.artiKabinet) db.org.artiKabinet={}; db.org.artiKabinet.kesimpulan=this.value"></textarea>
                 </div>
                 
                 <label style="color:var(--accent-neon);">Visi Kabinet</label>
@@ -521,6 +586,19 @@
 
         // ================= STATE & DATA =================
         const FALLBACK_ADMIN_ORG = { 
+            namaKabinet: "Kabinet Ananta Anardhaya",
+            periode: "2025 - 2026",
+            sambutan: {
+                judul: "\"Bergerak Bersama,\nMerajut Asa\"",
+                teks1: "Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSelamat datang di official website BEM KBMFKG UMI. Di era digital ini, kami berkomitmen untuk menjadikan BEM sebagai wadah yang tidak hanya menampung aspirasi, tetapi juga <strong>mewujudkan aksi nyata</strong>.",
+                teks2: "Kabinet Ananta Anardhaya hadir dengan semangat kolaborasi tiada batas. Kami percaya bahwa setiap mahasiswa FKG UMI memiliki potensi luar biasa. Mari kita satukan langkah, sinergikan pikiran, dan rajut masa depan almamater yang lebih gemilang.",
+                foto: "/img/bemfkgumi.png"
+            },
+            quote: {
+                teks: "Kabinet Ananta Anardhaya adalah tentang <span>merangkai</span> yang tercerai, <span>menyatukan</span> yang berjalan sendiri, dan <span>mengubah</span> harapan menjadi kerja bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <span>merajut perubahan</span>.",
+                author: "Ailan Alif Wajdi Daya",
+                jabatan: "Ketua BEM KBMFKG UMI"
+            },
             visi: "", misi: [], pimpinan: [], departemen: [],
             artiKabinet: { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" }
         };
@@ -541,10 +619,12 @@
         const scrollToTopBtnAdmin = document.getElementById("scrollToTopBtnAdmin");
         const adminMainArea = document.querySelector(".admin-main");
         
-        adminMainArea.addEventListener('scroll', () => { 
-            if (adminMainArea.scrollTop > 300) { scrollToTopBtnAdmin.classList.add("show"); } else { scrollToTopBtnAdmin.classList.remove("show"); }
-        });
-        scrollToTopBtnAdmin.addEventListener('click', () => { adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); });
+        if (adminMainArea && scrollToTopBtnAdmin) {
+            adminMainArea.addEventListener('scroll', () => { 
+                if (adminMainArea.scrollTop > 300) { scrollToTopBtnAdmin.classList.add("show"); } else { scrollToTopBtnAdmin.classList.remove("show"); }
+            }, { passive: true });
+            scrollToTopBtnAdmin.addEventListener('click', () => { adminMainArea.scrollTo({ top: 0, behavior: 'smooth' }); });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('axa_admin_token');
@@ -631,6 +711,10 @@
                     if(req.ok) {
                         const data = await req.json();
                         if(data.org) { 
+                            db.org.namaKabinet = data.org.namaKabinet || "Kabinet Ananta Anardhaya";
+                            db.org.periode = data.org.periode || "2025 - 2026";
+                            db.org.sambutan = data.org.sambutan || { ...FALLBACK_ADMIN_ORG.sambutan };
+                            db.org.quote = data.org.quote || { ...FALLBACK_ADMIN_ORG.quote };
                             db.org.visi = data.org.visi || ""; 
                             db.org.misi = data.org.misi || []; 
                             db.org.pimpinan = data.org.pimpinan || []; 
@@ -711,8 +795,52 @@
 
         async function saveData(type, btnElement) {
             if(type === 'org') {
-                db.org.visi = document.getElementById('editVisi').value;
-                db.org.misi = document.getElementById('editMisi').value.split('\n').filter(m => m.trim() !== '');
+                if (!db.org) db.org = {};
+                const elNama = document.getElementById('editNamaKabinet');
+                if (elNama) db.org.namaKabinet = elNama.value;
+                const elPeriode = document.getElementById('editPeriodeKabinet');
+                if (elPeriode) db.org.periode = elPeriode.value;
+
+                if (!db.org.sambutan) db.org.sambutan = {};
+                const elSamJudul = document.getElementById('editSambutanJudul');
+                if (elSamJudul) db.org.sambutan.judul = elSamJudul.value;
+                const elSamTeks1 = document.getElementById('editSambutanTeks1');
+                if (elSamTeks1) db.org.sambutan.teks1 = elSamTeks1.value;
+                const elSamTeks2 = document.getElementById('editSambutanTeks2');
+                if (elSamTeks2) db.org.sambutan.teks2 = elSamTeks2.value;
+
+                if (!db.org.quote) db.org.quote = {};
+                const elQteks = document.getElementById('editQuoteTeks');
+                if (elQteks) db.org.quote.teks = elQteks.value;
+                const elQAuthor = document.getElementById('editQuoteAuthor');
+                if (elQAuthor) db.org.quote.author = elQAuthor.value;
+                const elQJabatan = document.getElementById('editQuoteJabatan');
+                if (elQJabatan) db.org.quote.jabatan = elQJabatan.value;
+
+                if (!db.org.artiKabinet) db.org.artiKabinet = {};
+                const elKata1 = document.getElementById('editKata1');
+                if (elKata1) db.org.artiKabinet.kata1 = elKata1.value;
+                const elArti1 = document.getElementById('editArti1');
+                if (elArti1) db.org.artiKabinet.arti1 = elArti1.value;
+                const elKata2 = document.getElementById('editKata2');
+                if (elKata2) db.org.artiKabinet.kata2 = elKata2.value;
+                const elArti2 = document.getElementById('editArti2');
+                if (elArti2) db.org.artiKabinet.arti2 = elArti2.value;
+                const elKesimpulan = document.getElementById('editKesimpulan');
+                if (elKesimpulan) db.org.artiKabinet.kesimpulan = elKesimpulan.value;
+
+                const elVisi = document.getElementById('editVisi');
+                if (elVisi) db.org.visi = elVisi.value;
+                const elMisi = document.getElementById('editMisi');
+                if (elMisi) db.org.misi = elMisi.value.split('\n').filter(m => m.trim() !== '');
+
+                // Single-Source of Truth: Nama pengutip di Quote selalu sama persis dengan Nama Ketua BEM Inti
+                if (db.org.pimpinan && db.org.pimpinan.length > 0) {
+                    const ketuaObj = db.org.pimpinan.find(p => /ketua\s*bem/i.test(p.jabatan || '')) || db.org.pimpinan[0];
+                    if (ketuaObj && ketuaObj.nama) {
+                        db.org.quote.author = ketuaObj.nama;
+                    }
+                }
             }
 
             let originalText = "💾 Simpan";
@@ -735,6 +863,16 @@
                 });
                 
                 if(req.ok) {
+                    // INVALIDASI CACHE CLIENT LOKAL & PICU SINKRONISASI REALTIME KE SEMUA TAB
+                    try {
+                        sessionStorage.removeItem('BEM_CONTENT_CACHE_V1');
+                        sessionStorage.removeItem('BEM_CONTENT_TIME_V1');
+                        sessionStorage.removeItem('BEM_CONTENT_ETAG_V1');
+                        localStorage.setItem('BEM_DB_UPDATE_EVENT', Date.now().toString());
+                        const bc = new BroadcastChannel('BEM_DB_SYNC');
+                        bc.postMessage({ event: 'DATA_SAVED', type: type, timestamp: Date.now() });
+                    } catch(e) {}
+
                     showToast(`✅ Data ${type.toUpperCase()} Berhasil Tersimpan di Database Server!`); 
                 } else { 
                     throw new Error("Server mengembalikan status HTTP " + req.status); 
@@ -758,6 +896,19 @@
 
         function renderOrg() {
             if(!db.org.artiKabinet) db.org.artiKabinet = { kata1: "", arti1: "", kata2: "", arti2: "", kesimpulan: "" };
+            if(!db.org.sambutan) db.org.sambutan = { ...FALLBACK_ADMIN_ORG.sambutan };
+            if(!db.org.quote) db.org.quote = { ...FALLBACK_ADMIN_ORG.quote };
+
+            if(document.getElementById('editNamaKabinet')) document.getElementById('editNamaKabinet').value = db.org.namaKabinet || '';
+            if(document.getElementById('editPeriodeKabinet')) document.getElementById('editPeriodeKabinet').value = db.org.periode || '';
+            if(document.getElementById('editSambutanJudul')) document.getElementById('editSambutanJudul').value = db.org.sambutan.judul || '';
+            if(document.getElementById('editSambutanTeks1')) document.getElementById('editSambutanTeks1').value = db.org.sambutan.teks1 || '';
+            if(document.getElementById('editSambutanTeks2')) document.getElementById('editSambutanTeks2').value = db.org.sambutan.teks2 || '';
+            if(document.getElementById('previewSambutanFoto')) document.getElementById('previewSambutanFoto').src = db.org.sambutan.foto || '/img/bemfkgumi.png';
+            if(document.getElementById('editQuoteTeks')) document.getElementById('editQuoteTeks').value = db.org.quote.teks || '';
+            if(document.getElementById('editQuoteAuthor')) document.getElementById('editQuoteAuthor').value = db.org.quote.author || (db.org.pimpinan && db.org.pimpinan[0] ? db.org.pimpinan[0].nama : '');
+            if(document.getElementById('editQuoteJabatan')) document.getElementById('editQuoteJabatan').value = db.org.quote.jabatan || 'Ketua BEM KBMFKG UMI';
+
             document.getElementById('editKata1').value = db.org.artiKabinet.kata1 || '';
             document.getElementById('editArti1').value = db.org.artiKabinet.arti1 || '';
             document.getElementById('editKata2').value = db.org.artiKabinet.kata2 || '';
@@ -768,12 +919,33 @@
             document.getElementById('editMisi').value = (db.org.misi || []).join('\n');
             const pCont = document.getElementById('cmsPimpinan'); pCont.innerHTML = '';
             (db.org.pimpinan || []).forEach((p, i) => {
-                pCont.innerHTML += `<div class="glass-card" style="padding:15px; border-left:3px solid var(--accent-neon);">
-                    <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:60px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:10px;" alt="Pimpinan">
+                const isIntiBEM = i < 4 || /ketua\s*bem|wakil\s*ketua|sekretaris|bendahara/i.test(p.jabatan || '');
+                const isKetua = i === 0 || /ketua\s*bem/i.test(p.jabatan || '');
+
+                pCont.innerHTML += `<div class="glass-card" style="padding:18px; border-left:3px solid var(--accent-neon); position:relative;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <img src="${p.foto || '/img/bemfkgumi.png'}" style="height:55px; width:55px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:8px; border:1px solid var(--border-light);" alt="Foto Pimpinan">
+                        ${isIntiBEM ? `<span style="font-size:0.72rem; background:rgba(2,132,199,0.1); color:var(--accent-neon); padding:4px 10px; border-radius:6px; font-weight:700; border:1px solid rgba(2,132,199,0.25);">🔒 INTI BEM (TERKUNCI)</span>` : ''}
+                    </div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:3px;">Foto Pimpinan</label>
                     <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.pimpinan[${i}], 'foto', renderOrg)" style="margin-bottom:10px;">
-                    <input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan || ''}" oninput="db.org.pimpinan[${i}].jabatan=this.value">
-                    <input type="text" class="neo-input" placeholder="Nama Lengkap" value="${p.nama || ''}" oninput="db.org.pimpinan[${i}].nama=this.value">
-                    <button class="action-btn delete" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus</button>
+                    
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:3px;">Jabatan Resmi ${isIntiBEM ? '(Terkunci Permanen)' : ''}</label>
+                    ${isIntiBEM 
+                        ? `<input type="text" class="neo-input" value="${p.jabatan || ''}" readonly style="background:rgba(2, 132, 199, 0.04); cursor:not-allowed; font-weight:700; color:var(--accent-neon); border-color:rgba(2, 132, 199, 0.2); margin-bottom:10px;" title="Jabatan Inti BEM Terkunci Otomatis">`
+                        : `<input type="text" class="neo-input" placeholder="Jabatan" value="${p.jabatan || ''}" oninput="db.org.pimpinan[${i}].jabatan=this.value" style="margin-bottom:10px;">`
+                    }
+
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:3px;">Nama Lengkap ${isKetua ? '<span style=\"color:var(--accent-neon); font-weight:600;\">(Sinkron ke Sambutan & Quote)</span>' : ''}</label>
+                    <input type="text" class="neo-input" placeholder="Nama Lengkap" data-pimpinan-idx="${i}" value="${p.nama || ''}" oninput="onPimpinanNameInput(this.value, ${i})" style="margin-bottom:10px;">
+                    
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:3px;">Link Instagram (Opsional)</label>
+                    <input type="text" class="neo-input" placeholder="https://instagram.com/username atau @username" value="${p.ig || p.instagram || ''}" oninput="db.org.pimpinan[${i}].ig=this.value; db.org.pimpinan[${i}].instagram=this.value;" style="margin-bottom:12px;">
+
+                    ${isIntiBEM
+                        ? `<button class="action-btn" disabled style="width:100%; opacity:0.45; cursor:not-allowed; background:#94a3b8; color:#ffffff; border:none; padding:8px; border-radius:8px; font-size:0.85rem;" title="Jabatan Inti BEM Permanen & Tidak Dapat Dihapus">🔒 Tidak Dapat Dihapus</button>`
+                        : `<button class="action-btn delete" style="width:100%;" onclick="db.org.pimpinan.splice(${i},1); renderOrg();">Hapus Pimpinan</button>`
+                    }
                 </div>`;
             });
 
@@ -782,7 +954,7 @@
                 let html = `<div class="glass-card" style="border-top:2px solid var(--accent-neon); padding:15px;">
                     <input type="text" class="neo-input" value="${d.nama || ''}" placeholder="Nama Departemen" oninput="db.org.departemen[${i}].nama=this.value" style="font-weight:bold; color:var(--accent-neon);">
                     <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                        <button class="action-btn view" onclick="if(!db.org.departemen[${i}].anggota) db.org.departemen[${i}].anggota=[]; db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:'/img/bemfkgumi.png'}); renderOrg();">+ Anggota</button>
+                        <button class="action-btn view" onclick="if(!db.org.departemen[${i}].anggota) db.org.departemen[${i}].anggota=[]; db.org.departemen[${i}].anggota.push({jabatan:'Anggota', nama:'', foto:'/img/bemfkgumi.png', ig:''}); renderOrg();">+ Anggota</button>
                         <button class="action-btn delete" onclick="db.org.departemen.splice(${i},1); renderOrg();">Hapus Dept</button>
                     </div><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">`;
                 if(d.anggota) {
@@ -790,8 +962,9 @@
                         html += `<div style="background:var(--bg-dark-overlay); padding:15px; border-radius:10px; border: 1px solid var(--border-light);">
                             <img src="${a.foto || '/img/bemfkgumi.png'}" style="width:100%; height:80px; object-fit:contain; background:var(--bg-dark-heavy); border-radius:5px; margin-bottom:5px;" alt="Anggota">
                             <input type="file" accept="image/*" class="custom-file-input" onchange="handleImageUpload(this, db.org.departemen[${i}].anggota[${j}], 'foto', renderOrg)" style="margin-bottom:10px;">
-                            <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama || ''}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px;">
-                            <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan || ''}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px;">
+                            <input type="text" class="neo-input" placeholder="Nama Anggota" value="${a.nama || ''}" oninput="db.org.departemen[${i}].anggota[${j}].nama=this.value" style="padding:8px; margin-bottom:6px;">
+                            <input type="text" class="neo-input" placeholder="Jabatan" value="${a.jabatan || ''}" oninput="db.org.departemen[${i}].anggota[${j}].jabatan=this.value" style="padding:8px; margin-bottom:6px;">
+                            <input type="text" class="neo-input" placeholder="Instagram (Opsional)" value="${a.ig || a.instagram || ''}" oninput="db.org.departemen[${i}].anggota[${j}].ig=this.value; db.org.departemen[${i}].anggota[${j}].instagram=this.value;" style="padding:8px; margin-bottom:8px;">
                             <button class="action-btn delete" style="width:100%;" onclick="db.org.departemen[${i}].anggota.splice(${j},1); renderOrg();">X Hapus</button>
                         </div>`;
                     });
@@ -799,7 +972,30 @@
                 dCont.innerHTML += html + `</div></div>`;
             });
         }
-        function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png"}); renderOrg(); }
+
+        // ================= SINKRONISASI SINGLE-SOURCE OF TRUTH NAMA KETUA BEM =================
+        function syncQuoteAuthorToKetua(val) {
+            if (!db.org.quote) db.org.quote = {};
+            db.org.quote.author = val;
+            if (db.org.pimpinan && db.org.pimpinan[0]) {
+                db.org.pimpinan[0].nama = val;
+                const firstPim = document.querySelector('#cmsPimpinan input[data-pimpinan-idx="0"]');
+                if (firstPim) firstPim.value = val;
+            }
+        }
+
+        function onPimpinanNameInput(val, idx) {
+            if (!db.org.pimpinan || !db.org.pimpinan[idx]) return;
+            db.org.pimpinan[idx].nama = val;
+            
+            // Single-source of truth: Jika yang diubah adalah Ketua BEM, langsung sinkronkan ke Quote Author
+            const isKetua = idx === 0 || /ketua\s*bem/i.test(db.org.pimpinan[idx].jabatan || '');
+            if (isKetua) {
+                syncQuoteAuthorToKetua(val);
+            }
+        }
+
+        function tambahPimpinan() { db.org.pimpinan.push({jabatan:"Jabatan", nama:"Nama", foto:"/img/bemfkgumi.png", ig:""}); renderOrg(); }
         function tambahDepartemen() { db.org.departemen.push({nama:"Dept Baru", anggota:[]}); renderOrg(); }
 
         function renderProker() {
