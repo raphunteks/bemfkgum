@@ -6,8 +6,8 @@
             var savedTheme = localStorage.getItem('axa_theme') || localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
-            } else if (savedTheme === 'light') {
-                document.documentElement.removeAttribute('data-theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
             }
         } catch (e) {}
     })();
@@ -563,6 +563,7 @@
         function getCurrentTheme() {
             const docTheme = document.documentElement.getAttribute('data-theme');
             if (docTheme === 'dark') return 'dark';
+            if (docTheme === 'light') return 'light';
             try {
                 const saved = localStorage.getItem('axa_theme') || localStorage.getItem('theme');
                 return saved === 'dark' ? 'dark' : 'light';
@@ -579,13 +580,13 @@
                 document.documentElement.classList.add('theme-transitioning');
             }
 
-            // 2. DOM Attribute Updates
+            // 2. DOM Attribute Updates (Explicit light & dark)
             if (isDark) {
                 document.documentElement.setAttribute('data-theme', 'dark');
                 if (document.body) document.body.setAttribute('data-theme', 'dark');
             } else {
-                document.documentElement.removeAttribute('data-theme');
-                if (document.body) document.body.removeAttribute('data-theme');
+                document.documentElement.setAttribute('data-theme', 'light');
+                if (document.body) document.body.setAttribute('data-theme', 'light');
             }
 
             // 3. LocalStorage Synchronized Persistence (Dual-Key)
@@ -645,6 +646,21 @@
                 cb.checked = (initialTheme === 'dark');
                 cb.addEventListener('change', (e) => {
                     applyTheme(e.target.checked ? 'dark' : 'light', true);
+                });
+                cb.addEventListener('click', (e) => {
+                    applyTheme(e.target.checked ? 'dark' : 'light', true);
+                });
+            }
+
+            const themeSwitch = document.querySelector('.theme-switch');
+            if (themeSwitch && !themeSwitch._themeEngineBound) {
+                themeSwitch._themeEngineBound = true;
+                themeSwitch.addEventListener('click', (e) => {
+                    if (e.target.tagName.toLowerCase() !== 'input') {
+                        e.preventDefault();
+                        const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+                        applyTheme(next, true);
+                    }
                 });
             }
 
