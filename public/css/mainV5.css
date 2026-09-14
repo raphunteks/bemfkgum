@@ -151,12 +151,200 @@ body {
 .login-gate { display: flex; flex-direction: column; }
 .login-logo { width: 90px; height: 90px; border-radius: 50%; border: 4px solid #000; box-shadow: 4px 4px 0px #000; margin-bottom: 20px;}
 
-.mobile-menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 999; }
+/* =========================================================
+   RESPONSIVE DESIGN SYSTEM (3-TIER HIERARCHY)
+   Mobile (320px+) -> Tablet (768px+) -> Desktop (1200px+)
+   ========================================================= */
 
-@media (max-width: 992px) {
-    .builder-layout { flex-direction: column; overflow: auto; }
-    .sidebar-panel { position: fixed; top: 0; left: -100%; width: 300px; transition: 0.3s; z-index: 998; background:var(--bg-white);}
-    .sidebar-panel.show { left: 0; }
-    .editor-panel { padding: 80px 20px 40px; }
-    .mobile-menu-toggle { display: block; }
+/* 1. MOBILE (320px to 767.98px) */
+@media screen and (min-width: 320px) and (max-width: 767.98px) {
+    .builder-layout {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow: auto;
+    }
+    .sidebar-panel {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 88vw;
+        max-width: 300px;
+        height: 100vh;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 998;
+        background: var(--bg-white);
+        box-shadow: none;
+        overflow-y: auto;
+        padding: 65px 20px 30px;
+    }
+    .sidebar-panel.show {
+        left: 0;
+        box-shadow: 10px 0px 30px rgba(0,0,0,0.35);
+    }
+    .editor-panel {
+        padding: 75px 16px 40px;
+        width: 100%;
+        height: auto;
+        overflow-y: visible;
+    }
+    .mobile-menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 1000;
+        min-width: 44px;
+        min-height: 44px;
+        background: var(--bg-yellow);
+        border: 3px solid var(--line-color);
+        box-shadow: 3px 3px 0px var(--line-color);
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .grid-stats {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .neo-card {
+        padding: 18px 14px;
+        box-shadow: 5px 5px 0px var(--line-color);
+    }
+    .neo-btn {
+        min-height: 44px;
+        padding: 10px 18px;
+        font-size: 0.92rem;
+    }
+    .neo-input {
+        min-height: 44px;
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+    .neo-modal-content {
+        width: 94vw;
+        max-width: 500px;
+        padding: 22px 16px;
+        max-height: 88vh;
+        overflow-y: auto;
+        box-shadow: 5px 5px 0px var(--line-color);
+    }
+    .neo-table-responsive,
+    .table-container,
+    .data-table-wrapper,
+    table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .neo-table th, .neo-table td {
+        padding: 10px 12px;
+        font-size: 0.88rem;
+        white-space: nowrap;
+    }
+    .brand-box {
+        margin-bottom: 24px;
+        padding: 12px;
+    }
+    .brand-box img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* 2. TABLET (768px to 1199.98px) */
+@media screen and (min-width: 768px) and (max-width: 1199.98px) {
+    .builder-layout {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .sidebar-panel {
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 230px;
+        height: 100%;
+        padding: 25px 16px;
+        display: flex;
+        flex-direction: column;
+        border-right: 4px solid var(--line-color);
+        background: var(--bg-white);
+        z-index: 10;
+        box-shadow: 5px 0px 0px rgba(0,0,0,0.05);
+    }
+    .editor-panel {
+        flex: 1;
+        height: 100%;
+        overflow-y: auto;
+        padding: 30px 25px;
+    }
+    .mobile-menu-toggle {
+        display: none;
+    }
+    .grid-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    .neo-modal-content {
+        width: 85vw;
+        max-width: 620px;
+        padding: 30px;
+    }
+    .neo-table th, .neo-table td {
+        padding: 12px 14px;
+    }
+    .neo-table-responsive,
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* 3. DESKTOP (1200px and up) */
+@media screen and (min-width: 1200px) {
+    .builder-layout {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .sidebar-panel {
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 280px;
+        height: 100%;
+        border-right: 4px solid var(--line-color);
+        display: flex;
+        flex-direction: column;
+        padding: 30px 25px;
+        box-shadow: 5px 0px 0px rgba(0,0,0,0.05);
+        z-index: 10;
+    }
+    .editor-panel {
+        flex: 1;
+        height: 100%;
+        overflow-y: auto;
+        padding: 40px 50px;
+    }
+    .mobile-menu-toggle {
+        display: none;
+    }
+    .grid-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    .neo-modal-content {
+        width: 90%;
+        max-width: 680px;
+        border: 4px solid var(--line-color);
+        border-radius: 16px;
+        padding: 35px;
+        box-shadow: 8px 8px 0px var(--line-color);
+    }
 }
