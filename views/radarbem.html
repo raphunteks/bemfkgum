@@ -80,6 +80,13 @@
     <!-- ================= END SEO ================= -->
     
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BEM FKG UMI">
     
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="/css/main.css">
@@ -115,13 +122,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            let apiUrl = '/api/content';
-            if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                apiUrl = 'https://bemkbmfkgumi.com/api/content';
-            }
-
-            fetch(apiUrl).then(r => r.json()).then(res => {
+            const renderRadar = (res) => {
+                if(!res || !res.radar) return;
                 const container = document.getElementById('radarContainer');
+                if(!container) return;
                 container.innerHTML = ''; // Hapus loading spinner
 
                 if(res.radar && res.radar.length > 0) {
@@ -148,18 +152,22 @@
 
                         // EKSEKUSI SCRIPT: Inject innerHTML saja tidak memicu script (<script src="...">).
                         // Jadi kita harus melakukan re-append untuk tag <script> yang didapat dari Database API.
-                        const scripts = widgetWrapper.querySelectorAll('script');
-                        scripts.forEach(oldScript => {
+                        const scripts = widgetWrapper.getElementsByTagName('script');
+                        for (let i = 0; i < scripts.length; i++) {
                             const newScript = document.createElement('script');
-                            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                            if(oldScript.innerHTML) newScript.innerHTML = oldScript.innerHTML;
-                            oldScript.parentNode.replaceChild(newScript, oldScript);
-                        });
+                            if (scripts[i].src) {
+                                newScript.src = scripts[i].src;
+                                newScript.defer = true;
+                            } else {
+                                newScript.textContent = scripts[i].textContent;
+                            }
+                            document.body.appendChild(newScript);
+                        }
                     });
                 } else {
                     container.innerHTML = `
-                    <div class="glass-card" style="text-align:center; padding: 50px;">
-                        <p style="color:var(--text-muted); font-size:1.1rem;">Belum ada integrasi feed media sosial yang ditambahkan oleh Admin.</p>
+                    <div class="glass-card" style="text-align:center; padding: 40px; color: var(--text-muted);">
+                        Belum ada radar feed sosial media yang dikonfigurasi.
                     </div>`;
                 }
 
@@ -168,19 +176,49 @@
                     if(e.isIntersecting) { e.target.classList.add('active'); observer.unobserve(e.target); }
                 }), { threshold: 0.15 });
                 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            };
 
-            }).catch(e => {
-                document.getElementById('radarContainer').innerHTML = `
-                <div class="glass-card error-box" style="text-align:center; padding: 30px;">
-                    ⚠️ Gagal memuat data dari server.
-                </div>`;
+            // 1. Optimistic Cache Render (0ms)
+            let initialCache = window.BEM_DATABASE_CACHE;
+            if (!initialCache) {
+                try {
+                    const raw = sessionStorage.getItem('BEM_CONTENT_CACHE_V1');
+                    if (raw) initialCache = JSON.parse(raw);
+                } catch(e) {}
+            }
+            if (initialCache && initialCache.radar) {
+                renderRadar(initialCache);
+            }
+
+            // 2. Background Revalidation
+            if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+                window.BEM_API.getData().then(renderRadar).catch(e => {
+                    if (!initialCache) {
+                        document.getElementById('radarContainer').innerHTML = `
+                        <div class="glass-card error-box" style="text-align:center; padding: 30px;">
+                            ⚠️ Gagal memuat data dari server.
+                        </div>`;
+                    }
+                });
+            } else {
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                }
+                fetch(apiUrl).then(r => r.json()).then(renderRadar).catch(e => {
+                    if (!initialCache) {
+                        document.getElementById('radarContainer').innerHTML = `
+                        <div class="glass-card error-box" style="text-align:center; padding: 30px;">
+                            ⚠️ Gagal memuat data dari server.
+                        </div>`;
+                    }
+                });
+            }
+
+            // 3. Live SWR Update Listener
+            document.addEventListener('BemDataUpdated', (e) => {
+                if (e.detail && e.detail.radar) renderRadar(e.detail);
             });
-
-            // Animasi Awal Header & Footer
-            const observer = new IntersectionObserver(entries => entries.forEach(e => { 
-                if(e.isIntersecting) { e.target.classList.add('active'); observer.unobserve(e.target); }
-            }), { threshold: 0.15 });
-            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         });
     </script>
 </body>
