@@ -234,9 +234,17 @@
         .duration-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
     </style>
 
-    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript (Fallback JS Renderer) -->
+    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript (Safe JSON Container) -->
+    <script id="ssr-form-json" type="application/json"><%- typeof formData !== 'undefined' && formData ? JSON.stringify(formData) : 'null' %></script>
     <script>
-        window.SSR_FORM_DATA = <%- typeof formData !== 'undefined' && formData ? JSON.stringify(formData) : 'null' %>;
+        (function() {
+            try {
+                var elForm = document.getElementById('ssr-form-json');
+                window.SSR_FORM_DATA = elForm ? JSON.parse(elForm.textContent || 'null') : null;
+            } catch (e) {
+                window.SSR_FORM_DATA = null;
+            }
+        })();
     </script>
 </head>
 <body class="public-form-body">
