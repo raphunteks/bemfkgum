@@ -106,6 +106,19 @@
     
     <link rel="preload" href="/css/main.css?v=12.5" as="style">
     <link rel="stylesheet" href="/css/main.css?v=12.5">
+
+    <!-- FIX CONSOLE LOG: Filter peringatan bawaan Tailwind Play CDN agar console bersih dan profesional -->
+    <script>
+        (function() {
+            const _origWarn = console.warn;
+            console.warn = function(...args) {
+                if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) {
+                    return;
+                }
+                _origWarn.apply(console, args);
+            };
+        })();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
@@ -624,6 +637,30 @@
             }
         }
 
+        // Helper Format Tanggal ISO Super Tangguh (Bebas RangeError Invalid time value)
+        function safeFormatIsoDate(dateStr) {
+            if (!dateStr) return new Date().toISOString();
+            try {
+                var clean = String(dateStr).trim();
+                var d = new Date(clean);
+                if (!isNaN(d.getTime())) return d.toISOString();
+
+                if (clean.includes(' ')) {
+                    d = new Date(clean.replace(' ', 'T'));
+                    if (!isNaN(d.getTime())) return d.toISOString();
+                }
+
+                if (clean.includes('-')) {
+                    var parts = clean.split('-');
+                    if (parts.length === 3 && parts[0].length <= 2 && parts[2].length === 4) {
+                        d = new Date(parts[2] + '-' + parts[1] + '-' + parts[0]);
+                        if (!isNaN(d.getTime())) return d.toISOString();
+                    }
+                }
+            } catch (e) {}
+            return new Date().toISOString();
+        }
+
         function injectEnterpriseSEO(article, url) {
             // Karena server telah merender Meta SSR (Clean SEO), kita hanya memperbarui DOM (SPA) untuk User Experience.
             var safeTitle = article.Judul + " | BEM KBMFKG UMI";
@@ -650,7 +687,7 @@
             document.getElementById('ogImage')?.setAttribute("content", safeImg);
             document.getElementById('ogType')?.setAttribute("content", "article");
             
-            var datePub = article.Tgl_Rilis ? new Date(article.Tgl_Rilis.split('-').reverse().join('-')).toISOString() : new Date().toISOString();
+            var datePub = safeFormatIsoDate(article.Tgl_Rilis);
             setOrUpdateMeta('property', 'article:published_time', datePub);
             setOrUpdateMeta('property', 'article:section', article.Kategori || "Berita");
             setOrUpdateMeta('property', 'article:author', article.Penulis || "Admin BEM FKG UMI");
