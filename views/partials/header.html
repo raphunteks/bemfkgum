@@ -1,129 +1,362 @@
 <!-- FILE: views/partials/header.html -->
 
-<!-- ================= SUPER UPGRADE: GLOBAL LOADING SCREEN (CINEMATIC) ================= -->
-<div id="global-loader">
-    <div class="loader-content">
-        <!-- 1. Logo BEM - FIX LCP: fetchpriority="high" untuk aset pertama dimuat -->
-        <img src="/img/bemfkgumi.png" alt="Logo BEM KBMFKG UMI" class="loader-logo" width="100" height="100" fetchpriority="high">
-        
-        <!-- 2. BEM -->
-        <h1 class="loader-title">BEM</h1>
-        
-        <!-- 3. KBMFKG UMI -->
-        <h2 class="loader-subtitle">KBMFKG UMI</h2>
-        
-        <!-- 4. PERIODE (Otomatis menyesuaikan DB) -->
-        <div class="loader-meta" id="loader-meta-text">
-            <span id="loader-periode">MEMUAT PERIODE...</span>
+<!-- ================= SUPER UPGRADE: AESTHETIC GLASSMORPHISM LOADING SCREEN ================= -->
+<div id="global-loader" aria-hidden="false" role="dialog" aria-label="Loading Screen Portal BEM KBMFKG UMI">
+    <!-- Ambient Backdrop Mesh Glow Orbs -->
+    <div class="loader-backdrop">
+        <div class="loader-orb loader-orb-1"></div>
+        <div class="loader-orb loader-orb-2"></div>
+        <div class="loader-orb loader-orb-3"></div>
+    </div>
+
+    <!-- Floating Glassmorphic Card -->
+    <div class="loader-glass-card">
+        <!-- Logo with Ambient Rotating Glow Halo -->
+        <div class="loader-logo-wrapper">
+            <div class="loader-halo"></div>
+            <img src="/img/bemfkgumi.png" alt="Logo BEM KBMFKG UMI" class="loader-logo" width="88" height="88"
+                fetchpriority="high">
         </div>
-        
-        <!-- 5. GARIS PEMISAH & NAMA KABINET -->
-        <div class="loader-divider-wrapper">
-            <div class="loader-line"></div>
-            <span id="loader-kabinet" class="loader-kabinet">MEMUAT KABINET...</span>
-            <div class="loader-line"></div>
+
+        <!-- Typography Branding & Badge -->
+        <div class="loader-brand-group">
+            <div class="loader-badge" id="loader-badge-kabinet">
+                <span class="badge-dot"></span>
+                <span id="loader-kabinet">KABINET ANANTA ANARDHAYA</span>
+            </div>
+            <h1 class="loader-title">BEM KBMFKG UMI</h1>
+            <p class="loader-periode" id="loader-periode">PERIODE 2025 - 2026</p>
         </div>
-        
-        <!-- 6. LOADING PERCENT (Mulai dari 1%) -->
-        <div class="loader-percent" aria-live="polite"><span id="loader-count">1</span>%</div>
+
+        <!-- Glass Progress Bar, Status, and Percentage -->
+        <div class="loader-progress-section">
+            <div class="loader-progress-track">
+                <div class="loader-progress-bar" id="loader-progress-fill">
+                    <span class="loader-progress-glow"></span>
+                </div>
+            </div>
+            <div class="loader-status-row">
+                <span class="loader-status-text" id="loader-status">Sinkronisasi Portal BEM...</span>
+                <span class="loader-percent" aria-live="polite"><span id="loader-count">0</span>%</span>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    // ================= LOADER ENGINE (Pre-DOM Execution with FAILSAFE) =================
-    (function() {
+    // =========================================================================
+    // SUPER BIG UPGRADE: UNIVERSAL BEM DATA ENGINE & ZERO-DELAY LOADER
+    // Mendukung SessionStorage Persistent Cache, Request Deduplication (1 Fetch),
+    // Background SWR Revalidation, dan Instant Tab Switching
+    // =========================================================================
+    (function () {
+        // ================= DUKUNGAN RESMI MANIFEST.JSON (ANDROID, IOS & CHROME) =================
+        try {
+            if (!document.querySelector('link[rel="manifest"]')) {
+                const manifestLink = document.createElement('link');
+                manifestLink.rel = 'manifest';
+                manifestLink.href = '/manifest.json';
+                document.head.appendChild(manifestLink);
+            }
+            if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+                const appleIcon = document.createElement('link');
+                appleIcon.rel = 'apple-touch-icon';
+                appleIcon.href = '/img/bemfkgumi.png';
+                document.head.appendChild(appleIcon);
+            }
+            const addMeta = (n, c) => {
+                if (!document.querySelector(`meta[name="${n}"]`)) {
+                    const m = document.createElement('meta');
+                    m.name = n; m.content = c;
+                    document.head.appendChild(m);
+                }
+            };
+            addMeta('mobile-web-app-capable', 'yes');
+            addMeta('apple-mobile-web-app-capable', 'yes');
+            addMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
+            addMeta('apple-mobile-web-app-title', 'BEM FKG UMI');
+        } catch (e) { }
+
+        const CACHE_KEY = 'BEM_CONTENT_CACHE_V1';
+        const CACHE_TIME_KEY = 'BEM_CONTENT_TIME_V1';
+        const CACHE_ETAG_KEY = 'BEM_CONTENT_ETAG_V1';
+        const SESSION_VISITED_KEY = 'BEM_SESSION_VISITED';
+        const CACHE_TTL = 5 * 60 * 1000; // 5 Menit Cache di Browser
+
         const countEl = document.getElementById('loader-count');
+        const progressFill = document.getElementById('loader-progress-fill');
+        const statusEl = document.getElementById('loader-status');
         const periodeEl = document.getElementById('loader-periode');
         const kabinetEl = document.getElementById('loader-kabinet');
         const loader = document.getElementById('global-loader');
-        
-        if(!loader) return;
 
-        let count = 1;
-        if(countEl) countEl.innerText = count;
-        
-        // Simulasi berjalan realtime perlahan dari 1% ke 85% (Berhenti nunggu database)
-        let slowCrawl = setInterval(() => {
-            if(count < 85) { 
-                count += Math.floor(Math.random() * 3) + 1; 
-                if(count > 85) count = 85;
-                if(countEl) countEl.innerText = count; 
+        function setLoaderProgress(val, customStatus) {
+            if (countEl) countEl.innerText = Math.round(val);
+            if (progressFill) progressFill.style.width = Math.min(100, Math.max(0, val)) + '%';
+            if (statusEl && customStatus) {
+                statusEl.innerText = customStatus;
+            } else if (statusEl) {
+                if (val < 45) statusEl.innerText = 'Sinkronisasi Portal BEM...';
+                else if (val < 85) statusEl.innerText = 'Menghubungkan Data Kabinet...';
+                else statusEl.innerText = 'Portal Siap Ditampilkan...';
             }
-        }, 50); 
-
-        // Fungsi Master untuk Mengakhiri Loader
-        let isFinished = false;
-        function finishLoadingProcess() {
-            if(isFinished) return;
-            isFinished = true;
-            clearInterval(slowCrawl); 
-            
-            // Lari kencang sisa persennya menuju 100% setelah Database SIAP
-            const finishInterval = setInterval(() => {
-                if(count < 100) {
-                    count += 3; // Kecepatan ekstra
-                    if(count > 100) count = 100;
-                    if(countEl) countEl.innerText = count;
-                } else {
-                    clearInterval(finishInterval);
-                    setTimeout(() => {
-                        loader.classList.add('hidden');
-                        setTimeout(() => loader.remove(), 500); // Hapus dari DOM
-                    }, 200);
-                }
-            }, 10);
         }
 
-        // FAILSAFE 1: TIMER DARURAT MAKSIMAL 10 DETIK (Cegah Stuck jika koneksi lambat)
-        const emergencyTimer = setTimeout(() => {
-            finishLoadingProcess();
-        }, 10000);
-
-        let apiUrl = '/api/content';
-        if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/content';
-        
-        const fetchController = new AbortController();
-        const fetchTimeout = setTimeout(() => fetchController.abort(), 8000);
-
-        // ================= SUPER BIG UPGRADE: SYNCHRONIZED LOADING =================
-        // PROMISE 1: Memastikan Aset Visual Halaman (Gambar, CSS) Sudah Siap
-        const domReadyPromise = new Promise(resolve => {
-            if (document.readyState === 'complete') resolve();
-            else window.addEventListener('load', resolve);
-        });
-
-        // PROMISE 2: Memastikan Database dari Backend (Upstash Redis) Selesai Ditarik Mutlak
-        const dbReadyPromise = fetch(apiUrl, { signal: fetchController.signal })
-        .then(r => r.json())
-        .then(res => {
-            clearTimeout(fetchTimeout); 
-            
-            // SIMPAN DATA KE CACHE GLOBAL AGAR HALAMAN LAIN TIDAK PERLU FETCH ULANG
-            window.BEM_DATABASE_CACHE = res;
-            
-            if(res.sejarah && res.sejarah.length > 0) {
-                const current = res.sejarah[0]; 
-                if(periodeEl) periodeEl.innerText = "PERIODE " + current.tahun;
-                if(kabinetEl) kabinetEl.innerText = current.kabinet.toUpperCase();
-                
+        // Helper update UI Header
+        function applyHeaderData(res) {
+            if (!res) return;
+            const doApply = () => {
                 const headerKabinet = document.getElementById('header-kabinet-name');
-                if(headerKabinet) headerKabinet.innerText = current.kabinet;
+                const footerSlogan = document.getElementById('footerSloganText');
+
+                // 1. Nama Kabinet (Prioritas: org.namaKabinet > sejarah[0].kabinet > settings.footerSlogan)
+                let kabinetNama = "";
+                if (res.org && res.org.namaKabinet) {
+                    kabinetNama = res.org.namaKabinet;
+                } else if (res.sejarah && res.sejarah.length > 0) {
+                    kabinetNama = res.sejarah[0].kabinet;
+                } else if (res.settings && res.settings.footerSlogan) {
+                    kabinetNama = res.settings.footerSlogan;
+                }
+                if (kabinetNama) {
+                    if (headerKabinet) headerKabinet.innerText = kabinetNama;
+                    if (footerSlogan) footerSlogan.innerText = kabinetNama;
+                    if (kabinetEl) kabinetEl.innerText = kabinetNama.toUpperCase();
+                }
+
+                // 2. Periode (Prioritas: org.periode > sejarah[0].tahun)
+                let periodeTeks = "";
+                if (res.org && res.org.periode) {
+                    periodeTeks = res.org.periode;
+                } else if (res.sejarah && res.sejarah.length > 0) {
+                    periodeTeks = res.sejarah[0].tahun;
+                }
+                if (periodeTeks && periodeEl) {
+                    periodeEl.innerText = "PERIODE " + periodeTeks;
+                }
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', doApply, { once: true });
+            } else {
+                doApply();
             }
-            return true; // Beri sinyal database berhasil dimuat
-        })
-        .catch((err) => {
-            console.warn("⚠️ API Loading Timeout, menggunakan data default lokal.");
-            if(periodeEl) periodeEl.innerText = "PERIODE 2025 - 2026";
-            if(kabinetEl) kabinetEl.innerText = "KABINET ANANTA ANARDHAYA";
-            return false;
+        }
+
+        // ================= UNIVERSAL DATA PROVIDER (window.BEM_API) =================
+        window.BEM_API = {
+            getData: function () {
+                // 1. In-Memory Cache (0ms)
+                if (window.BEM_DATABASE_CACHE) {
+                    return Promise.resolve(window.BEM_DATABASE_CACHE);
+                }
+
+                // 2. SessionStorage Persistent Cache (0ms saat ganti tab)
+                try {
+                    const cachedStr = sessionStorage.getItem(CACHE_KEY);
+                    const cachedTime = parseInt(sessionStorage.getItem(CACHE_TIME_KEY) || '0', 10);
+                    const now = Date.now();
+
+                    if (cachedStr && (now - cachedTime < CACHE_TTL)) {
+                        const parsed = JSON.parse(cachedStr);
+                        window.BEM_DATABASE_CACHE = parsed;
+                        applyHeaderData(parsed);
+
+                        // Background Revalidation (Stale-While-Revalidate jika > 5 detik)
+                        if (now - cachedTime > 5 * 1000) {
+                            setTimeout(() => window.BEM_API.revalidate(), 50);
+                        }
+
+                        return Promise.resolve(parsed);
+                    }
+                } catch (e) { }
+
+                // 3. Request Collapsing / Deduplikasi: Jika sedang ada request berjalan, tunggu promise yang sama
+                if (window._bemFetchPromise) {
+                    return window._bemFetchPromise;
+                }
+
+                // 4. Lakukan 1 Single Fetch ke Backend
+                let apiUrl = '/api/content';
+                if (window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
+                }
+
+                const fetchController = new AbortController();
+                const timeoutId = setTimeout(() => fetchController.abort(), 6000);
+
+                window._bemFetchPromise = fetch(apiUrl, { signal: fetchController.signal })
+                    .then(r => {
+                        clearTimeout(timeoutId);
+                        const etag = r.headers.get('ETag');
+                        if (etag) sessionStorage.setItem(CACHE_ETAG_KEY, etag);
+                        return r.json();
+                    })
+                    .then(res => {
+                        window.BEM_DATABASE_CACHE = res;
+                        try {
+                            sessionStorage.setItem(CACHE_KEY, JSON.stringify(res));
+                            sessionStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+                        } catch (e) { }
+
+                        applyHeaderData(res);
+                        document.dispatchEvent(new CustomEvent('BemDatabaseReady', { detail: res }));
+                        document.dispatchEvent(new CustomEvent('BemDataUpdated', { detail: res }));
+                        window._bemFetchPromise = null;
+                        return res;
+                    })
+                    .catch(err => {
+                        clearTimeout(timeoutId);
+                        console.warn("⚠️ API Warning, menggunakan fallback default.");
+                        window._bemFetchPromise = null;
+                        return null;
+                    });
+
+                return window._bemFetchPromise;
+            },
+
+            // Background SWR Revalidation (Mendukung Forced Cache-Bust)
+            revalidate: function (force = false) {
+                let apiUrl = '/api/content';
+                if (window.location.protocol === 'blob:' || window.location.origin === "null") return;
+                const headers = {};
+                if (!force) {
+                    const etag = sessionStorage.getItem(CACHE_ETAG_KEY);
+                    if (etag) headers['If-None-Match'] = etag;
+                } else {
+                    apiUrl += '?t=' + Date.now();
+                }
+
+                fetch(apiUrl, { headers })
+                    .then(r => {
+                        if (r.status === 304) return null; // Data belum berubah di DB
+                        const newEtag = r.headers.get('ETag');
+                        if (newEtag) sessionStorage.setItem(CACHE_ETAG_KEY, newEtag);
+                        return r.json();
+                    })
+                    .then(freshData => {
+                        if (freshData && freshData.success) {
+                            window.BEM_DATABASE_CACHE = freshData;
+                            try {
+                                sessionStorage.setItem(CACHE_KEY, JSON.stringify(freshData));
+                                sessionStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+                            } catch (e) { }
+                            applyHeaderData(freshData);
+                            document.dispatchEvent(new CustomEvent('BemDataUpdated', { detail: freshData }));
+                            document.dispatchEvent(new CustomEvent('BemDatabaseReady', { detail: freshData }));
+                        }
+                    })
+                    .catch(() => { });
+            }
+        };
+
+        // ================= CROSS-TAB & VISIBILITY REALTIME SYNC =================
+        try {
+            const bc = new BroadcastChannel('BEM_DB_SYNC');
+            bc.onmessage = function (ev) {
+                if (ev && ev.data && ev.data.event === 'DATA_SAVED') {
+                    try {
+                        sessionStorage.removeItem(CACHE_KEY);
+                        sessionStorage.removeItem(CACHE_TIME_KEY);
+                        sessionStorage.removeItem(CACHE_ETAG_KEY);
+                    } catch (e) { }
+                    window.BEM_DATABASE_CACHE = null;
+                    window.BEM_API.revalidate(true);
+                }
+            };
+        } catch (e) { }
+
+        window.addEventListener('storage', function (e) {
+            if (e.key === 'BEM_DB_UPDATE_EVENT') {
+                try {
+                    sessionStorage.removeItem(CACHE_KEY);
+                    sessionStorage.removeItem(CACHE_TIME_KEY);
+                    sessionStorage.removeItem(CACHE_ETAG_KEY);
+                } catch (e) { }
+                window.BEM_DATABASE_CACHE = null;
+                window.BEM_API.revalidate(true);
+            }
         });
 
-        // KUNCI UTAMA: Loader HANYA akan hilang JIKA DAN HANYA JIKA (DOM Ready + Database Ready) Keduanya Selesai!
-        Promise.all([domReadyPromise, dbReadyPromise]).then(() => {
-            clearTimeout(emergencyTimer); 
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') {
+                const cachedTime = parseInt(sessionStorage.getItem(CACHE_TIME_KEY) || '0', 10);
+                if (Date.now() - cachedTime > 3000) {
+                    window.BEM_API.revalidate();
+                }
+            }
+        });
+
+        // ================= SMART GLOBAL LOADER LOGIC =================
+        const isSessionVisited = sessionStorage.getItem(SESSION_VISITED_KEY) === 'true';
+        const hasExistingCache = !!sessionStorage.getItem(CACHE_KEY);
+
+        const isReload = (function () {
+            try {
+                const nav = performance.getEntriesByType('navigation');
+                if (nav && nav.length > 0) return nav[0].type === 'reload';
+                return performance.navigation && performance.navigation.type === 1;
+            } catch (e) { return false; }
+        })();
+
+        // KASUS A: Pengguna sedang berpindah antar-tab (Data sudah ada di cache & bukan hard reload)
+        if (isSessionVisited && hasExistingCache && !isReload) {
+            if (loader) {
+                loader.classList.add('instant-hide');
+                loader.remove();
+            }
+            // Segera muat data ke memori
+            window.BEM_API.getData();
+            return;
+        }
+
+        // KASUS B: Cold Load atau Halaman di-Refresh -> Tampilkan Aesthetic Glassmorphism Loader
+        sessionStorage.setItem(SESSION_VISITED_KEY, 'true');
+        let count = 5;
+        setLoaderProgress(count);
+
+        let fastCrawl = setInterval(() => {
+            if (count < 88) {
+                count += Math.floor(Math.random() * 9) + 4;
+                if (count > 88) count = 88;
+                setLoaderProgress(count);
+            }
+        }, 25);
+
+        let isFinished = false;
+        function finishLoadingProcess() {
+            if (isFinished) return;
+            isFinished = true;
+            clearInterval(fastCrawl);
+
+            const finishInterval = setInterval(() => {
+                if (count < 100) {
+                    count += 10;
+                    if (count > 100) count = 100;
+                    setLoaderProgress(count, 'Portal Siap Ditampilkan...');
+                } else {
+                    clearInterval(finishInterval);
+                    if (loader) {
+                        loader.classList.add('hidden');
+                        setTimeout(() => loader.remove(), 350);
+                    }
+                }
+            }, 15);
+        }
+
+        // Failsafe 850ms jika koneksi lambat agar TIDAK mengganggu pengalaman pengguna
+        const emergencyTimer = setTimeout(finishLoadingProcess, 850);
+
+        // Tunggu DOM Ready + Single Fast DB Fetch
+        const domReadyPromise = new Promise(resolve => {
+            if (document.readyState !== 'loading') resolve();
+            else document.addEventListener('DOMContentLoaded', resolve);
+        });
+
+        Promise.all([domReadyPromise, window.BEM_API.getData()]).then(([_, res]) => {
+            clearTimeout(emergencyTimer);
+            if (res) applyHeaderData(res);
             finishLoadingProcess();
-            // Opsional: Lempar event ke document bahwa DB sudah siap dirender
-            document.dispatchEvent(new Event('BemDatabaseReady'));
         });
     })();
 </script>
@@ -136,42 +369,57 @@
             <img src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" itemprop="image" class="header-logo-img">
             <div class="header-text-group">
                 <span class="header-title" itemprop="headline">BEM KBMFKG UMI</span>
-                <span class="header-subtitle script-font" id="header-kabinet-name" itemprop="description">Kabinet Ananta Anardhaya</span>
+                <span class="header-subtitle script-font" id="header-kabinet-name" itemprop="description">Kabinet Ananta
+                    Anardhaya</span>
             </div>
         </a>
-        
+
         <div class="nav-right-group">
             <!-- THEME TOGGLE SWITCH (Light/Dark Mode) -->
             <div class="theme-toggle-container">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));" aria-hidden="true">
-                    <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f59e0b" stroke-width="2" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                 </svg>
                 <label class="theme-switch" aria-label="Aktifkan Mode Gelap">
                     <input type="checkbox" id="checkboxTheme">
                     <span class="theme-slider"></span>
                 </label>
             </div>
-            
+
             <!-- SUPER UPGRADE SEO: Penambahan Role & Aria Label untuk struktur DIV agar Sitelinks berfungsi -->
-            <nav class="nav-links" role="menubar" aria-label="Navigasi Utama" itemscope itemtype="https://schema.org/SiteNavigationElement">
-                
+            <nav class="nav-links" role="menubar" aria-label="Navigasi Utama" itemscope
+                itemtype="https://schema.org/SiteNavigationElement">
+
                 <div class="nav-item" itemprop="name" role="none">
                     <a href="/" itemprop="url" role="menuitem">Beranda</a>
                 </div>
-                
+
                 <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
-                    <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true" aria-expanded="false">Tentang ▾</a>
+                    <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true"
+                        aria-expanded="false">Tentang ▾</a>
                     <div class="mega-menu" role="menu" aria-label="Submenu Tentang">
-                        <a href="/tentang#visimisi" itemprop="url" role="menuitem">Visi & Misi</a>
-                        <a href="/tentang#struktur" itemprop="url" role="menuitem">Struktur Kepengurusan</a>
-                        <a href="/tentang#filosofi" itemprop="url" role="menuitem">Filosofi Logo & Warna</a>
-                        <a href="/tentang#sejarah-pembentukan" itemprop="url" role="menuitem">Sejarah Terbentuk BEMKBMFKG UMI</a>
-                        <a href="/tentang#sejarah" itemprop="url" role="menuitem">Timeline Sejarah Kepengurusan</a>
+                        <a href="/tentang/visimisi" itemprop="url" role="menuitem">Visi & Misi</a>
+                        <a href="/tentang/struktur" itemprop="url" role="menuitem">Struktur Kepengurusan</a>
+                        <a href="/tentang/filosofi" itemprop="url" role="menuitem">Filosofi Logo & Warna</a>
+                        <a href="/tentang/sejarah-pembentukan" itemprop="url" role="menuitem">Sejarah Terbentuk
+                            BEMKBMFKG UMI</a>
+                        <a href="/tentang/sejarah" itemprop="url" role="menuitem">Timeline Sejarah Kepengurusan</a>
                     </div>
                 </div>
-            
+
                 <div class="nav-item" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
-                    <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true" aria-expanded="false">Informasi ▾</a>
+                    <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true"
+                        aria-expanded="false">Informasi ▾</a>
                     <div class="mega-menu" role="menu" aria-label="Submenu Informasi">
                         <a href="/informasi#proker" itemprop="url" role="menuitem">Program Kerja</a>
                         <a href="/informasi#kalender" itemprop="url" role="menuitem">Kalender Proker</a>
@@ -184,40 +432,48 @@
                 <div class="nav-item" itemprop="name" role="none">
                     <a href="/berita" itemprop="url" role="menuitem">Artikel</a>
                 </div>
-                
+
+                <!-- TAB RADAR BEM (Sementara dinonaktifkan dari tampilan header publik sesuai instruksi, SC & route tetap utuh) -->
+                <!--
                 <div class="nav-item" itemprop="name" role="none">
                     <a href="/radarbem" itemprop="url" role="menuitem">Radar BEM</a>
                 </div>
-                
+                -->
+
                 <div class="nav-item" style="margin-left: 5px;" itemprop="name" role="none">
-                    <a href="/narahubung" class="holo-btn header-contact-btn" itemprop="url" role="menuitem">Hubungi Kami</a>
+                    <a href="/narahubung" class="holo-btn header-contact-btn" itemprop="url" role="menuitem">Hubungi
+                        Kami</a>
                 </div>
-                
+
             </nav>
-            
+
             <!-- FIX AGENTIC ACCESSIBILITY: Aria Expanded Dynamic -->
-            <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" onclick="const nav = document.querySelector('.nav-links'); nav.classList.toggle('active'); this.setAttribute('aria-expanded', nav.classList.contains('active'));">
-                <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+            <button class="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false"
+                onclick="const nav = document.querySelector('.nav-links'); nav.classList.toggle('active'); this.setAttribute('aria-expanded', nav.classList.contains('active'));">
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent-neon)" aria-hidden="true">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                </svg>
             </button>
         </div>
     </div>
 </header>
 
 <script>
-    // Logika Shrink Header saat di Scroll
+    // Logika Shrink Header saat di Scroll (Passive Listener untuk PageSpeed)
     window.addEventListener('scroll', () => {
         const header = document.getElementById('main-header');
+        if (!header) return;
         if (window.scrollY > 20) {
             header.classList.add('scrolled');
         } else {
             header.classList.remove('scrolled');
         }
-    });
+    }, { passive: true });
 
     function toggleMobileMenu(element) {
-        if(window.innerWidth <= 768) {
+        if (window.innerWidth <= 768) {
             element.classList.toggle('mobile-expand');
-            
+
             // SEO Upgrade: Sinkronisasi aria-expanded untuk screen reader & Bot GSC
             const link = element.querySelector('a');
             if (link) {
@@ -240,13 +496,42 @@
             if (section && !section.classList.contains('tab-content')) {
                 setTimeout(() => { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
             }
-            if(window.innerWidth <= 768) {
+            if (window.innerWidth <= 768) {
                 const navLinks = document.querySelector('.nav-links');
-                navLinks.classList.remove('active');
-                document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
+                if (navLinks) navLinks.classList.remove('active');
+                const menuBtn = document.querySelector('.menu-toggle');
+                if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
             }
         }
     }
     document.addEventListener('DOMContentLoaded', handleHashNavigation);
     window.addEventListener('hashchange', handleHashNavigation);
+
+    // ================= INSTANT TAB PREFETCHER (PREFETCH ON HOVER/TOUCH) =================
+    (function initNavPrefetch() {
+        const prefetched = new Set();
+        function prefetchUrl(url) {
+            if (!url || url.includes('#') || url.startsWith('javascript') || prefetched.has(url)) return;
+            prefetched.add(url);
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = url;
+            document.head.appendChild(link);
+        }
+
+        function setupListeners() {
+            const navLinks = document.querySelectorAll('.nav-links a[href^="/"]');
+            navLinks.forEach(a => {
+                const href = a.getAttribute('href');
+                a.addEventListener('mouseenter', () => prefetchUrl(href), { passive: true });
+                a.addEventListener('touchstart', () => prefetchUrl(href), { passive: true });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupListeners);
+        } else {
+            setupListeners();
+        }
+    })();
 </script>
