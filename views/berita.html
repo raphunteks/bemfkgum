@@ -91,8 +91,11 @@
     <% } %>
 
     <!-- MOBILE WEB APP & FAVICON OPTIMIZATION -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BEM FKG UMI">
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
     <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
     
@@ -381,7 +384,7 @@
             initialLoadDone: false 
         };
 
-        window.onload = function() {
+        function initBeritaApp() {
             loadArticles(true);
             setupScrollListener();
             setupSearchListener();
@@ -406,7 +409,13 @@
                     }
                 });
             }
-        };
+        }
+
+        if (document.readyState !== 'loading') {
+            initBeritaApp();
+        } else {
+            document.addEventListener('DOMContentLoaded', initBeritaApp);
+        }
 
         window.addEventListener('popstate', function(event) { 
             if(event.state && event.state.category) {
