@@ -7,8 +7,8 @@
         const savedTheme = localStorage.getItem('axa_theme') || localStorage.getItem('theme');
         if (savedTheme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
-        } else if (savedTheme === 'light') {
-            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
         }
     } catch(e) {}
 })();
@@ -23,12 +23,14 @@ function toggleTheme() {
     const next = isDark ? 'light' : 'dark';
     if (next === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
+        if (document.body) document.body.setAttribute('data-theme', 'dark');
         try {
             localStorage.setItem('axa_theme', 'dark');
             localStorage.setItem('theme', 'dark');
         } catch(e) {}
     } else {
-        document.documentElement.removeAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme', 'light');
+        if (document.body) document.body.setAttribute('data-theme', 'light');
         try {
             localStorage.setItem('axa_theme', 'light');
             localStorage.setItem('theme', 'light');
