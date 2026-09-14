@@ -613,6 +613,26 @@ header#main-header.scrolled .header-subtitle.script-font { font-size: 1.05rem; }
 .nav-item > a:hover, .nav-item.active > a { background: var(--bg-dark-overlay); color: var(--accent-neon); }
 header#main-header.scrolled .nav-item > a { font-size: 0.9rem; padding: 6px 12px; }
 
+/* DROPDOWN CHEVRON DOWN INDICATOR DESKTOP (GAMBAR 1) */
+.nav-item.has-dropdown > a { display: inline-flex; align-items: center; gap: 6px; }
+.dropdown-arrow {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    stroke-width: 2.5px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.nav-item.has-dropdown:hover > a .dropdown-arrow,
+.nav-item.has-dropdown.active > a .dropdown-arrow,
+.nav-item.has-dropdown:focus-within > a .dropdown-arrow {
+    transform: rotate(180deg);
+    stroke: var(--accent-neon);
+}
+
 .header-contact-btn { padding: 10px 25px !important; font-size: 0.9rem !important; transition: all 0.4s !important; }
 header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; font-size: 0.85rem !important; }
 
@@ -1299,6 +1319,7 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
         color: var(--accent-neon) !important;
         padding-left: 12px !important;
     }
+    .dropdown-arrow { display: none !important; }
     .mobile-chevron {
         display: inline-flex !important;
         align-items: center !important;
@@ -2042,6 +2063,7 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
         color: var(--accent-neon) !important;
         padding-left: 12px !important;
     }
+    .dropdown-arrow { display: none !important; }
     .mobile-chevron {
         display: inline-flex !important;
         align-items: center !important;
