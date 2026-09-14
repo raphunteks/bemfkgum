@@ -321,7 +321,7 @@ body {
   background-position: center top;
   background-attachment: fixed; 
 }
-@media (max-width: 768px) { body { background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px; } }
+@media (max-width: 768px) { body { background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px; background-attachment: scroll !important; } }
 
 body::before, body::after { 
   content: ''; position: fixed; width: 45vw; height: 45vw; min-width: 350px; min-height: 350px; z-index: -1; 
@@ -347,19 +347,23 @@ main { flex: 1; position: relative; z-index: 10; width: 100%; }
 .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
 .reveal.active { opacity: 1; transform: translateY(0); }
 
-/* ================= REALTIME SOFT THEME TRANSITION ================= */
-html.theme-transitioning,
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
-    transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                fill 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                stroke 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    transition-delay: 0s !important;
+/* ================= REALTIME ZERO-FLICKER THEME TRANSITION ENGINE 3.0 ================= */
+body,
+#main-header,
+.header-inner,
+.nav-links,
+.clay-badge,
+.glass-card,
+.sambutan-text-box,
+.sambutan-title-badge,
+.holo-btn,
+.glass-btn,
+.custom-footer-grid,
+footer {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* ================= THEME TOGGLE SWITCH UI (MODERNIZED & TOUCH ERGONOMIC) ================= */
@@ -1427,7 +1431,7 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     .footer-contact-list { gap: 6px; }
     .footer-contact-list li { font-size: 0.56rem; gap: 4px; line-height: 1.2; align-items: flex-start; text-align: left; }
     .footer-contact-list li svg { width: 11px; height: 11px; margin-top: 1px; flex-shrink: 0; }
-    .glass-btn, .holo-btn { font-size: 0.62rem !important; padding: 6px 8px !important; border-radius: 14px; width: 100%; text-align: center; }
+    .footer-col .glass-btn, .footer-col .holo-btn, .custom-footer-grid .glass-btn, .custom-footer-grid .holo-btn { font-size: 0.62rem !important; padding: 6px 8px !important; border-radius: 14px; width: 100%; text-align: center; }
     .footer-bottom { margin-top: 20px; padding-top: 15px; font-size: 0.65rem; }
 
     /* TIMELINE SEJARAH KEPENGURUSAN */
@@ -2131,18 +2135,30 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
         font-size: 0.95rem !important;
         line-height: 1.5 !important;
     }
-    .hero-cta-group {
+    .btn-group, .hero-cta-group {
+        display: flex !important;
         flex-direction: column !important;
         width: 100% !important;
-        gap: 10px !important;
+        gap: 12px !important;
+        margin-top: 25px !important;
+        box-sizing: border-box !important;
     }
-    .holo-btn {
+    .btn-group .holo-btn,
+    .btn-group .glass-btn,
+    .hero-section .holo-btn,
+    .hero-section .glass-btn {
         width: 100% !important;
-        min-height: 46px !important;
+        min-height: 52px !important;
+        padding: 14px 20px !important;
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+        border-radius: 30px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 0.95rem !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+        margin: 0 !important;
     }
 
     /* Grids & Cards Mobile */
