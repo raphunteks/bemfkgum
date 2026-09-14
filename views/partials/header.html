@@ -632,56 +632,49 @@
 
         function applyTheme(targetTheme, isUserTriggered = false) {
             const isDark = (targetTheme === 'dark');
+            const currentTheme = getCurrentTheme();
 
-            // 1. Soft smooth transition temporary class (350ms)
-            if (isUserTriggered) {
-                document.documentElement.classList.add('theme-transitioning');
+            // Idempotency: Jika tema target sudah aktif saat dipicu user, sinkronkan UI dan hentikan eksekusi berulang
+            if (isUserTriggered && currentTheme === targetTheme && document.documentElement.getAttribute('data-theme') === targetTheme) {
+                const allCheckboxes = document.querySelectorAll('#checkboxTheme, .theme-toggle-input');
+                allCheckboxes.forEach(cb => { if (cb.checked !== isDark) cb.checked = isDark; });
+                return;
             }
 
-            // 2. DOM Attribute Updates (Explicit light & dark)
-            if (isDark) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                if (document.body) document.body.setAttribute('data-theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                if (document.body) document.body.setAttribute('data-theme', 'light');
+            // 1. DOM Attribute Updates Atomik (Synchronous)
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            if (document.body) {
+                document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
             }
 
-            // 3. LocalStorage Synchronized Persistence (Dual-Key)
+            // 2. LocalStorage Synchronized Persistence (Dual-Key)
             try {
                 const themeVal = isDark ? 'dark' : 'light';
                 localStorage.setItem('axa_theme', themeVal);
                 localStorage.setItem('theme', themeVal);
             } catch(e) {}
 
-            // 4. Synchronize all checkboxes
+            // 3. Synchronize all checkboxes without triggering secondary change events
             const allCheckboxes = document.querySelectorAll('#checkboxTheme, .theme-toggle-input');
             allCheckboxes.forEach(cb => {
                 if (cb.checked !== isDark) cb.checked = isDark;
             });
 
-            // 5. Synchronize container and icon active states
+            // 4. Synchronize container and icon active states
             const container = document.getElementById('themeToggleContainer');
             if (container) {
                 container.classList.toggle('is-dark', isDark);
                 container.classList.toggle('is-light', !isDark);
             }
 
-            // 6. Meta theme-color update for mobile browser address bars (iOS Safari / Android Chrome)
+            // 5. Meta theme-color update for mobile browser address bars (iOS Safari / Android Chrome)
             const metaTheme = document.querySelector('meta[name="theme-color"]');
             if (metaTheme) {
                 metaTheme.setAttribute('content', isDark ? '#0b132b' : '#f8fafc');
             }
 
-            // 7. Custom Event for external hooks
+            // 6. Custom Event for external hooks
             window.dispatchEvent(new CustomEvent('axaThemeChanged', { detail: { theme: isDark ? 'dark' : 'light' } }));
-
-            // 8. Cleanup soft transition class after animation completes
-            if (isUserTriggered) {
-                setTimeout(() => {
-                    document.documentElement.classList.remove('theme-transitioning');
-                }, 400);
-            }
         }
 
         // Global Public API
@@ -698,6 +691,7 @@
             const initialTheme = getCurrentTheme();
             applyTheme(initialTheme, false);
 
+            // Checkbox Toggle: HANYA dengarkan event 'change' murni (Cegah Race Condition dari click ganda)
             const cb = document.getElementById('checkboxTheme');
             if (cb && !cb._themeEngineBound) {
                 cb._themeEngineBound = true;
@@ -705,28 +699,15 @@
                 cb.addEventListener('change', (e) => {
                     applyTheme(e.target.checked ? 'dark' : 'light', true);
                 });
-                cb.addEventListener('click', (e) => {
-                    applyTheme(e.target.checked ? 'dark' : 'light', true);
-                });
             }
 
-            const themeSwitch = document.querySelector('.theme-switch');
-            if (themeSwitch && !themeSwitch._themeEngineBound) {
-                themeSwitch._themeEngineBound = true;
-                themeSwitch.addEventListener('click', (e) => {
-                    if (e.target.tagName.toLowerCase() !== 'input') {
-                        e.preventDefault();
-                        const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
-                        applyTheme(next, true);
-                    }
-                });
-            }
-
+            // Sun & Moon Direct Buttons
             const sunBtn = document.getElementById('themeSunBtn');
             if (sunBtn && !sunBtn._themeEngineBound) {
                 sunBtn._themeEngineBound = true;
                 sunBtn.addEventListener('click', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     applyTheme('light', true);
                 });
             }
@@ -736,6 +717,7 @@
                 moonBtn._themeEngineBound = true;
                 moonBtn.addEventListener('click', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     applyTheme('dark', true);
                 });
             }
