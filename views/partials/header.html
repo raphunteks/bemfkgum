@@ -427,8 +427,8 @@
                     </a>
                 </div>
 
-                <div class="nav-item has-dropdown" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
-                    <a href="/tentang" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true"
+                <div class="nav-item has-dropdown" itemprop="name" role="none">
+                    <a href="/tentang" onclick="toggleMobileMenu(this, event)" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true"
                         aria-expanded="false">
                         <span>Tentang</span>
                         <svg class="mobile-chevron chevron-toggle" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -442,8 +442,8 @@
                     </div>
                 </div>
 
-                <div class="nav-item has-dropdown" onclick="toggleMobileMenu(this)" itemprop="name" role="none">
-                    <a href="/informasi" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true"
+                <div class="nav-item has-dropdown" itemprop="name" role="none">
+                    <a href="/informasi" onclick="toggleMobileMenu(this, event)" style="cursor: pointer;" itemprop="url" role="menuitem" aria-haspopup="true"
                         aria-expanded="false">
                         <span>Informasi</span>
                         <svg class="mobile-chevron chevron-toggle" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -529,7 +529,6 @@
         document.body.classList.remove('nav-mobile-open');
     }
 
-    // Portal Nav Links ke body di Mobile agar lepas 100% dari CSS containing block backdrop-filter
     function ensureMobileNavPortalled() {
         const nav = document.getElementById('mainNavLinks') || document.querySelector('.nav-links');
         if (!nav) return;
@@ -545,23 +544,89 @@
             }
             closeMobileNav();
         }
+        setupNavLinksRouter();
     }
     window.addEventListener('resize', ensureMobileNavPortalled, { passive: true });
-    document.addEventListener('DOMContentLoaded', ensureMobileNavPortalled);
 
-    function toggleMobileMenu(element) {
+    function toggleMobileMenu(triggerElement, event) {
         if (window.innerWidth <= 768) {
-            // Cegah klik berpindah halaman jika mengklik parent dropdown
-            event.preventDefault();
-            element.classList.toggle('mobile-expand');
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const parentItem = triggerElement.closest('.nav-item') || triggerElement;
+            const isExpanded = parentItem.classList.toggle('mobile-expand');
 
-            // SEO Upgrade: Sinkronisasi aria-expanded untuk screen reader & Bot GSC
-            const link = element.querySelector('a');
+            // SEO & Accessibility: Sinkronisasi aria-expanded untuk screen reader & Bot GSC
+            const link = parentItem.querySelector('a');
             if (link) {
-                const isExpanded = element.classList.contains('mobile-expand');
                 link.setAttribute('aria-expanded', isExpanded);
             }
         }
+    }
+
+    // ================= FAST HYBRID SUBMENU & LINK ROUTER =================
+    function setupNavLinksRouter() {
+        const nav = document.getElementById('mainNavLinks') || document.querySelector('.nav-links');
+        if (!nav || nav._routerBound) return;
+        nav._routerBound = true;
+
+        nav.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (!link) return;
+
+            // 1. Abaikan toggle induk ("Tentang" / "Informasi") karena sudah ditangani toggleMobileMenu
+            if (link.closest('.has-dropdown') && !link.closest('.mega-menu')) {
+                return;
+            }
+
+            const href = link.getAttribute('href');
+            if (!href) return;
+
+            const currentPath = window.location.pathname;
+
+            // KASUS A: Link Submenu /tentang/:slug saat pengguna SUDAH berada di halaman /tentang
+            if (href.startsWith('/tentang/') && currentPath.startsWith('/tentang')) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeMobileNav();
+
+                const slug = href.replace('/tentang/', '').replace('#', '').trim();
+                const targetEl = document.getElementById(slug);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                history.pushState(null, null, href);
+                if (typeof updateSEO === 'function') {
+                    updateSEO(slug);
+                }
+                return;
+            }
+
+            // KASUS B: Link Submenu /informasi (baik /informasi#tab maupun /informasi/:tab) saat pengguna SUDAH di /informasi
+            if ((href.startsWith('/informasi/') || href.includes('/informasi#')) && currentPath.startsWith('/informasi')) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeMobileNav();
+
+                const tabId = href.includes('#') ? href.split('#')[1] : href.replace('/informasi/', '').trim();
+                if (typeof switchTab === 'function') {
+                    switchTab(tabId);
+                }
+                const targetEl = document.getElementById(tabId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                history.pushState(null, null, href);
+                return;
+            }
+
+            // KASUS C: Navigasi umum antar halaman (cth: dari Beranda / ke /tentang/visimisi)
+            // Tutup drawer navigasi mobile seketika dan biarkan browser membuka URL target
+            if (window.innerWidth <= 768) {
+                closeMobileNav();
+            }
+        });
     }
 
     function handleHashNavigation() {
@@ -582,7 +647,11 @@
             }
         }
     }
-    document.addEventListener('DOMContentLoaded', handleHashNavigation);
+    document.addEventListener('DOMContentLoaded', () => {
+        ensureMobileNavPortalled();
+        handleHashNavigation();
+        setupNavLinksRouter();
+    });
     window.addEventListener('hashchange', handleHashNavigation);
 
     // ================= INSTANT TAB PREFETCHER (PREFETCH ON HOVER/TOUCH) =================
