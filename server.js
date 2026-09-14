@@ -4,7 +4,16 @@ const { Redis } = require('@upstash/redis');
 const cors = require('cors');
 const path = require('path');
 const xlsx = require('xlsx'); // PACKAGE BARU UNTUK EXPORT EXCEL FORM
+const crypto = require('crypto');
 require('dotenv').config();
+
+// ================= PROCESS SAFETY NET (CRITICAL ANTI-CRASH) =================
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('⚠️ [CRITICAL FAILSAFE] Unhandled Rejection at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+    console.error('⚠️ [CRITICAL FAILSAFE] Uncaught Exception:', err);
+});
 
 const app = express();
 
@@ -13,11 +22,15 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // ================= SUPER BIG UPGRADE: ANTI-CACHE & IMAGE CACHE BYPASS =================
-// Memastikan request API realtime tidak di-cache, KECUALI untuk aset gambar uploads
+// Memastikan request API realtime tidak di-cache, KECUALI untuk aset gambar uploads & endpoint SWR cache
 app.use('/api', (req, res, next) => {
     // SEO UPGRADE: Bypass Anti-Cache untuk Gambar agar bisa diindeks Google Images
     if (req.path.startsWith('/uploads/')) {
         return next(); 
+    }
+    // Bypass Anti-Cache untuk endpoint yang dikelola oleh Zero-Delay In-Memory SWR Cache
+    if (req.path === '/content' || req.path === '/articles') {
+        return next();
     }
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.setHeader('Pragma', 'no-cache');
@@ -26,16 +39,34 @@ app.use('/api', (req, res, next) => {
     next();
 });
 
-// ================= STATIC FILES & VERCEL ROUTING FIX =================
-// Memastikan file statis bisa diakses langsung oleh Express (Default)
-app.use(express.static(path.join(__dirname, 'public')));
+// ================= STATIC FILES & VERCEL ROUTING FIX (CACHE OPTIMIZED) =================
+const staticOptions = {
+    maxAge: '7d',
+    etag: true,
+    lastModified: true
+};
+// Memastikan file statis bisa diakses langsung oleh Express dengan Cache-Control
+app.use(express.static(path.join(__dirname, 'public'), staticOptions));
 
 // SUPER UPGRADE: Sinkronisasi mutlak dengan vercel.json routing
-// Menangkap rewrite internal dari Vercel agar CSS dan Gambar tidak BLANK (404)
-app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use('/css', express.static(path.join(__dirname, 'public/css')));
-app.use('/img', express.static(path.join(__dirname, 'public/img')));
-app.use('/js', express.static(path.join(__dirname, 'public/js')));
+app.use('/public', express.static(path.join(__dirname, 'public'), staticOptions));
+app.use('/css', express.static(path.join(__dirname, 'public/css'), staticOptions));
+app.use('/img', express.static(path.join(__dirname, 'public/img'), staticOptions));
+app.use('/js', express.static(path.join(__dirname, 'public/js'), staticOptions));
+
+// SUPER UPGRADE: Route Manifest.json Resmi untuk Dukungan Android, iOS, dan Chrome
+app.get('/manifest.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.sendFile(path.join(__dirname, 'manifest.json'));
+});
+
+// Graceful Unregister Service Worker handler untuk membersihkan sisa instalasi lama di browser
+app.get('/sw.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.sendFile(path.join(__dirname, 'sw.js'));
+});
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
@@ -57,7 +88,7 @@ try {
 }
 
 // ================= UTILITY: SAFE JSON PARSER (ANTI-CRASH) =================
-const safeParse = (data, fallbackData) => {
+function safeParse(data, fallbackData) {
     if (!data) return fallbackData;
     try {
         return typeof data === 'string' ? JSON.parse(data) : data;
@@ -65,7 +96,7 @@ const safeParse = (data, fallbackData) => {
         console.error("⚠️ Data terdeteksi korup, menggunakan fallback data.");
         return fallbackData;
     }
-};
+}
 
 // Fungsi krusial untuk mencegah XML Sitemap error karena karakter ilegal (seperti '&' pada URL Gambar)
 const escapeXml = (unsafe) => {
@@ -93,6 +124,19 @@ const sanitizeImageUrl = (imgStr, domain) => {
 
 // ================= DATA SEED (STRUKTUR BEM KBMFKG UMI LENGKAP 100% UTUH) =================
 const defaultOrg = {
+    namaKabinet: "Kabinet Ananta Anardhaya",
+    periode: "2025 - 2026",
+    sambutan: {
+        judul: "\"Bergerak Bersama,\nMerajut Asa\"",
+        teks1: "Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nSelamat datang di official website BEM KBMFKG UMI. Di era digital ini, kami berkomitmen untuk menjadikan BEM sebagai wadah yang tidak hanya menampung aspirasi, tetapi juga <strong>mewujudkan aksi nyata</strong>.",
+        teks2: "Kabinet Ananta Anardhaya hadir dengan semangat kolaborasi tiada batas. Kami percaya bahwa setiap mahasiswa FKG UMI memiliki potensi luar biasa. Mari kita satukan langkah, sinergikan pikiran, dan rajut masa depan almamater yang lebih gemilang.",
+        foto: "/img/bemfkgumi.png"
+    },
+    quote: {
+        teks: "Kabinet Ananta Anardhaya adalah tentang <span>merangkai</span> yang tercerai, <span>menyatukan</span> yang berjalan sendiri, dan <span>mengubah</span> harapan menjadi kerja bersama. Bukan tentang siapa yang paling lantang, tapi siapa yang paling konsisten <span>merajut perubahan</span>.",
+        author: "Ailan Alif Wajdi Daya",
+        jabatan: "Ketua BEM KBMFKG UMI"
+    },
     visi: "MENJADIKAN BEM KBMFKG UMI ORGANISASI YANG PROGRESIF, BERPRESTASI, DAN BERLANDASKAN NILAI-NILAI ISLAMI DALAM MENYALURKAN ASPIRASI MAHASISWA UNTUK KEMAJUAN BERSAMA.",
     misi: [
         "MENAMPUNG DAN MENYALURKAN ASPIRASI MAHASISWA SECARA TRANSPARAN DAN AKTIF.",
@@ -258,7 +302,55 @@ app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/
 app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, 'public/img/bemfkgumi.png')));
 
 app.get('/', (req, res) => res.render('index'));
-app.get('/tentang', (req, res) => res.render('tentang'));
+
+// =========================================================================
+// SUPER BIG UPGRADE: SSR DINAMIS CLEAN URL /tentang & /tentang/:slug
+// Mendukung Pengindeksan Gold Standard Google Search Console (GSC)
+// =========================================================================
+async function getOrgDataForSSR() {
+    if (typeof contentMemoryCache !== 'undefined' && contentMemoryCache && contentMemoryCache.org) {
+        return contentMemoryCache.org;
+    }
+    if (redis) {
+        try {
+            const rawOrg = await redis.get('Org_Structure');
+            if (rawOrg) {
+                const parsed = safeParse(rawOrg, defaultOrg);
+                if (!parsed.namaKabinet) parsed.namaKabinet = defaultOrg.namaKabinet;
+                if (!parsed.periode) parsed.periode = defaultOrg.periode;
+                return parsed;
+            }
+        } catch (e) {
+            console.error("SSR Org Fetch Error:", e);
+        }
+    }
+    return defaultOrg;
+}
+
+const validTentangTabs = ['visimisi', 'struktur', 'filosofi', 'sejarah-pembentukan', 'sejarah'];
+
+app.get('/tentang', async (req, res) => {
+    const org = await getOrgDataForSSR();
+    res.render('tentang', {
+        activeSection: null,
+        siteUrl: 'https://bemkbmfkgumi.com',
+        orgData: org
+    });
+});
+
+app.get('/tentang/:section', async (req, res, next) => {
+    const section = req.params.section;
+    if (validTentangTabs.includes(section)) {
+        const org = await getOrgDataForSSR();
+        res.render('tentang', {
+            activeSection: section,
+            siteUrl: 'https://bemkbmfkgumi.com',
+            orgData: org
+        });
+    } else {
+        next();
+    }
+});
 app.get('/narahubung', (req, res) => res.render('narahubung'));
 app.get('/radarbem', (req, res) => res.render('radarbem'));
 app.get('/admin', (req, res) => res.render('admin-dashboard'));
@@ -364,8 +456,44 @@ app.get('/informasi/timeline/proker-detail/:slug', async (req, res) => {
     res.render('proker-detail', { slug: req.params.slug, sourceTab: 'timeline', siteUrl: 'https://bemkbmfkgumi.com', eventData: eventData });
 });
 
-// ROUTES BEM-FORM & ADMIN DASHBOARD V2
+// =========================================================================
+// ROUTES ADMIN DASHBOARD (V2 Form, V3 Linktree, V4 QR Code, V5 Database Mhs)
+// =========================================================================
 app.get('/admin-v2', (req, res) => res.render('admin-dashboardV2'));
+app.get('/admin-linktree', (req, res) => res.render('admin-dashboardV3'));
+app.get('/admin-qrcode', (req, res) => res.render('admin-dashboardV4'));
+app.get('/admin-mhs', (req, res) => res.render('admin-dashboardV5'));
+app.get('/carimhs', (req, res) => res.render('carimhs'));
+app.get('/carimhs/detail', (req, res) => res.render('carimhs-detail'));
+
+// RUTE PUBLIK LINKTREE DENGAN SSR SEO
+app.get('/link/:slug', async (req, res) => {
+    const slug = req.params.slug;
+    let seoData = {
+        title: 'BEM KBMFKG UMI - Linktree',
+        desc: 'Tautan resmi dan informasi terbaru dari BEM KBMFKG UMI.',
+        image: 'https://bemkbmfkgumi.com/img/bemfkgumi.png',
+        url: `https://bemkbmfkgumi.com/link/${slug}`
+    };
+
+    try {
+        if(redis) {
+            const trees = await redis.hgetall('BEM_Linktrees') || {};
+            const treeArr = Object.values(trees).map(item => safeParse(item, {}));
+            const tree = treeArr.find(t => t.slug === slug);
+            
+            if(tree) {
+                seoData.title = tree.settings?.seoTitle || tree.profile?.title || seoData.title;
+                seoData.desc = tree.profile?.bio || seoData.desc;
+                let img = tree.profile?.image || seoData.image;
+                if(img.startsWith('/')) img = `https://bemkbmfkgumi.com${img}`;
+                seoData.image = img;
+            }
+        }
+    } catch(e) { console.error("Gagal memuat SSR SEO Linktree:", e); }
+
+    res.render('bem-linktree', { slug: slug, seo: seoData });
+});
 
 // =========================================================================
 // UPGRADE SSR UNTUK FORM BEM: Menyuntikkan Data Form ke UI dari Backend
@@ -419,7 +547,7 @@ async function getArticlesAndCategories() {
         const keys = await redis.keys('BEM_Articles:*');
         if (keys.length === 0) return { articles: [], categories: [] };
         const raw = await redis.mget(...keys);
-        const articles = raw.filter(a => a != null).map(a => typeof a === 'string' ? JSON.parse(a) : a);
+        const articles = raw.filter(a => a != null).map(a => typeof a === 'string' ? safeParse(a, null) : a).filter(Boolean);
         
         // Ekstrak nama kategori yang unik
         const categories = [...new Set(articles.map(a => a.Kategori).filter(Boolean))];
@@ -539,14 +667,41 @@ app.get('/api/uploads/:filename', async (req, res) => {
     try {
         if(!redis) return res.status(503).send("Server Storage Offline");
         
-        // Ambil Data sesuai String Key GBR 6 & 7
-        const redisKey = `BEM_Files:${req.params.filename}`;
-        const fileDataStr = await redis.get(redisKey);
-        
-        if(!fileDataStr) return res.status(404).send("File tidak ditemukan.");
-        
-        const fileObj = safeParse(fileDataStr, null);
-        if(!fileObj || !fileObj.data) return res.status(400).send("Data file korup.");
+        const filename = req.params.filename;
+        let fileObj = null;
+
+        // 1. Cek String Key BEM_Files:<filename> (Sesuai format GBR 6 & 7)
+        const rawStringVal = await redis.get(`BEM_Files:${filename}`);
+        if (rawStringVal) {
+            fileObj = typeof rawStringVal === 'string' ? safeParse(rawStringVal, null) : rawStringVal;
+        }
+
+        // 2. Jika tidak ditemukan di String Key, Cek Redis Hash 'BEM_Files'
+        if (!fileObj || !fileObj.data) {
+            const rawHashVal = await redis.hget('BEM_Files', filename);
+            if (rawHashVal) {
+                fileObj = typeof rawHashVal === 'string' ? safeParse(rawHashVal, null) : rawHashVal;
+            }
+        }
+
+        // 3. Fallback Variasi Prefix: Toleransi nama file dengan atau tanpa awalan 'file-'
+        if (!fileObj || !fileObj.data) {
+            const alternateFilename = filename.startsWith('file-') 
+                ? filename.replace(/^file-/, '') 
+                : `file-${filename}`;
+
+            const altStringVal = await redis.get(`BEM_Files:${alternateFilename}`);
+            if (altStringVal) {
+                fileObj = typeof altStringVal === 'string' ? safeParse(altStringVal, null) : altStringVal;
+            } else {
+                const altHashVal = await redis.hget('BEM_Files', alternateFilename);
+                if (altHashVal) {
+                    fileObj = typeof altHashVal === 'string' ? safeParse(altHashVal, null) : altHashVal;
+                }
+            }
+        }
+
+        if(!fileObj || !fileObj.data) return res.status(404).send("File tidak ditemukan.");
         
         const parts = fileObj.data.split(',');
         if (parts.length !== 2) return res.status(400).send("Format Base64 tidak valid.");
@@ -569,7 +724,7 @@ app.get('/api/uploads/:filename', async (req, res) => {
         res.removeHeader('Surrogate-Control');
         
         if(!mimeType.startsWith('image/')) {
-            res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename}"`);
+            res.setHeader('Content-Disposition', `attachment; filename="${fileObj.filename || filename}"`);
         }
         res.send(buffer);
     } catch(e) {
@@ -1021,14 +1176,14 @@ app.get('/sitemap.xml', async (req, res) => {
     <url><loc>${domain}/informasi/plasma</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
 
     <!-- ========================================= -->
-    <!-- TENTANG KAMI & SUB-SECTION (SPA ROUTING)  -->
+    <!-- TENTANG KAMI & SUB-SECTION (SSR CLEAN URL) -->
     <!-- ========================================= -->
     <url><loc>${domain}/tentang</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-    <url><loc>${domain}/tentang#visimisi</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/tentang#struktur</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/tentang#filosofi</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/tentang#sejarah-pembentukan</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
-    <url><loc>${domain}/tentang#sejarah</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/tentang/visimisi</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/tentang/struktur</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/tentang/filosofi</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/tentang/sejarah-pembentukan</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+    <url><loc>${domain}/tentang/sejarah</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
 
     <!-- ========================================= -->
     <!-- HALAMAN PROFIL & KONTAK                   -->
@@ -1094,7 +1249,7 @@ app.get('/sitemap.xml', async (req, res) => {
                 const articleKeys = await redis.keys('BEM_Articles:*');
                 if (articleKeys.length > 0) {
                     const rawArticles = await redis.mget(...articleKeys);
-                    const articles = rawArticles.filter(a => a != null).map(a => typeof a === 'string' ? JSON.parse(a) : a);
+                    const articles = rawArticles.filter(a => a != null).map(a => typeof a === 'string' ? safeParse(a, null) : a).filter(Boolean);
                     
                     if (articles.length > 0) {
                         xmlUrls += `\n\n    <!-- DIRECT DYNAMIC SEO URLs (ARTIKEL/PUBMED) -->`;
@@ -1141,39 +1296,71 @@ ${xmlUrls}
     }
 });
 
+// ================= ZERO-DELAY IN-MEMORY CACHE ENGINE (RAM SPEED < 1ms) =================
+let contentMemoryCache = null;
+let contentMemoryTime = 0;
+let contentMemoryEtag = null;
+const CONTENT_CACHE_TTL = 60 * 1000; // 60 Detik di RAM Node.js
+
+const invalidateContentCache = () => {
+    contentMemoryCache = null;
+    contentMemoryTime = 0;
+    contentMemoryEtag = null;
+    console.log("⚡ [CACHE] In-Memory Cache /api/content Berhasil Dikosongkan (Realtime Refresh).");
+};
+
+let articlesMemoryCache = null;
+let articlesMemoryTime = 0;
+const ARTICLES_CACHE_TTL = 30 * 1000; // 30 Detik di RAM Node.js
+
+const invalidateArticlesCache = () => {
+    articlesMemoryCache = null;
+    articlesMemoryTime = 0;
+    console.log("⚡ [CACHE] In-Memory Cache /api/articles Berhasil Dikosongkan (Realtime Refresh).");
+};
+
 // ================= API ENDPOINTS: ARTIKEL (PUBMED TERINTEGRASI PENUH LOKAL REDIS) =================
 
-// Ambil Seluruh Data Berita (Support Pagination & Filter Kategori)
+// Ambil Seluruh Data Berita (Support Pagination & Filter Kategori + In-Memory Micro-Cache)
 app.get('/api/articles', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const category = req.query.category || 'All';
+        const now = Date.now();
 
-        // 1. Ambil Seluruh Data Berita Dari Namespace `BEM_Articles:*`
-        const keys = await redis.keys('BEM_Articles:*');
         let articles = [];
-        
-        if(keys.length > 0) {
-            const raw = await redis.mget(...keys);
-            articles = raw.filter(i => i != null).map(i => typeof i === 'string' ? JSON.parse(i) : i);
+
+        // 1. Cek In-Memory Cache RAM Server
+        if (articlesMemoryCache && (now - articlesMemoryTime < ARTICLES_CACHE_TTL)) {
+            articles = articlesMemoryCache;
+        } else {
+            // Ambil Seluruh Data Berita Dari Namespace `BEM_Articles:*`
+            const keys = await redis.keys('BEM_Articles:*');
+            if(keys.length > 0) {
+                const raw = await redis.mget(...keys);
+                articles = raw.filter(i => i != null).map(i => typeof i === 'string' ? safeParse(i, null) : i).filter(Boolean);
+            }
+            // Sortir Artikel dari Tanggal Terbaru (Descending)
+            articles.sort((a,b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
+            articlesMemoryCache = articles;
+            articlesMemoryTime = now;
         }
 
-        // 2. Sortir Artikel dari Tanggal Terbaru (Descending)
-        articles.sort((a,b) => new Date(b.Tgl_Rilis || 0) - new Date(a.Tgl_Rilis || 0));
-
-        // 3. Filter berdasarkan Kategori
+        // 2. Filter berdasarkan Kategori
+        let filteredArticles = articles;
         if (category !== 'All') {
-            articles = articles.filter(a => a.Kategori === category);
+            filteredArticles = articles.filter(a => a.Kategori === category);
         }
 
-        // 4. Proses Pagination
+        // 3. Proses Pagination
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-        const paginatedArticles = articles.slice(startIndex, endIndex);
+        const paginatedArticles = filteredArticles.slice(startIndex, endIndex);
 
-        res.status(200).json({ success: true, data: paginatedArticles, total: articles.length });
+        res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=60');
+        res.status(200).json({ success: true, data: paginatedArticles, total: filteredArticles.length });
     } catch (e) { 
         res.status(500).json({ success: false, data: [] }); 
     }
@@ -1190,6 +1377,7 @@ app.post('/api/articles/view/:id', async (req, res) => {
             let art = typeof raw === 'string' ? JSON.parse(raw) : raw;
             art.Jumlah_View = (parseInt(art.Jumlah_View) || 0) + 1;
             await redis.set(key, JSON.stringify(art));
+            invalidateArticlesCache();
         }
         res.status(200).json({ success: true });
     } catch(e) { res.status(500).json({ success: false }); }
@@ -1206,6 +1394,7 @@ app.post('/api/articles/like/:id', async (req, res) => {
             let art = typeof raw === 'string' ? JSON.parse(raw) : raw;
             art.Jumlah_Like = (parseInt(art.Jumlah_Like) || 0) + 1;
             await redis.set(key, JSON.stringify(art));
+            invalidateArticlesCache();
         }
         res.status(200).json({ success: true });
     } catch(e) { res.status(500).json({ success: false }); }
@@ -1224,6 +1413,7 @@ app.post('/api/articles/save', async (req, res) => {
         if (!art.Jumlah_Like) art.Jumlah_Like = 0;
         
         await redis.set(`BEM_Articles:${art.ID_Berita}`, JSON.stringify(art));
+        invalidateArticlesCache(); // Kosongkan cache artikel seketika
         res.status(200).json({ success: true, message: "Artikel berhasil disimpan", id: art.ID_Berita });
     } catch(e) { res.status(500).json({ success: false }); }
 });
@@ -1232,16 +1422,30 @@ app.post('/api/articles/save', async (req, res) => {
 app.delete('/api/articles/:id', async (req, res) => {
     try {
          if(redis) await redis.del(`BEM_Articles:${req.params.id}`);
+         invalidateArticlesCache(); // Kosongkan cache artikel seketika
          res.status(200).json({ success: true, message: "Artikel dihapus." });
     } catch(e) { res.status(500).json({ success: false }); }
 });
 
-// ================= API CMS ENDPOINTS (ZERO-DELAY MGET DENGAN KEYS ASLI) =================
+// ================= API CMS ENDPOINTS (ZERO-DELAY MULTI-TIER CACHE DENGAN ETAG & MGET) =================
 app.get('/api/content', async (req, res) => {
     try {
+        const clientEtag = req.headers['if-none-match'];
+        const now = Date.now();
+
+        // 1. LAYER 1: MEMORY RAM CACHE & ETAG 304 NOT MODIFIED (< 1ms RESPONSE)
+        if (contentMemoryCache && (now - contentMemoryTime < CONTENT_CACHE_TTL)) {
+            if (clientEtag && clientEtag === contentMemoryEtag) {
+                return res.status(304).end(); // 304 Not Modified (0 byte payload)
+            }
+            res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+            res.setHeader('ETag', contentMemoryEtag);
+            return res.status(200).json(contentMemoryCache);
+        }
+
         if(!redis) throw new Error("Redis Offline");
         
-        // MGET (MULTI-GET) UNTUK ZERO DELAY
+        // 2. LAYER 2: UPSTASH REDIS MGET
         // Menggunakan KEY ASLI MURNI sesuai screenshot struktur utama Anda.
         const keysToFetch = [
             'Org_Structure', 'Proker_Data', 'Kalender_Data', 'Dokumentasi_Data',
@@ -1259,10 +1463,34 @@ app.get('/api/content', async (req, res) => {
 
         // Parsing dengan Data Default Utuh (Fallback 100%)
         let parsedOrg = safeParse(org, defaultOrg);
+        if (!parsedOrg.namaKabinet) parsedOrg.namaKabinet = defaultOrg.namaKabinet;
+        if (!parsedOrg.periode) parsedOrg.periode = defaultOrg.periode;
+        if (!parsedOrg.sambutan) {
+            parsedOrg.sambutan = { ...defaultOrg.sambutan };
+        } else {
+            if (!parsedOrg.sambutan.judul) parsedOrg.sambutan.judul = defaultOrg.sambutan.judul;
+            if (!parsedOrg.sambutan.teks1) parsedOrg.sambutan.teks1 = defaultOrg.sambutan.teks1;
+            if (!parsedOrg.sambutan.teks2) parsedOrg.sambutan.teks2 = defaultOrg.sambutan.teks2;
+            if (!parsedOrg.sambutan.foto) parsedOrg.sambutan.foto = defaultOrg.sambutan.foto;
+        }
+        if (!parsedOrg.quote) {
+            parsedOrg.quote = { ...defaultOrg.quote };
+        } else {
+            if (!parsedOrg.quote.teks) parsedOrg.quote.teks = defaultOrg.quote.teks;
+            if (!parsedOrg.quote.author) parsedOrg.quote.author = defaultOrg.quote.author;
+            if (!parsedOrg.quote.jabatan) parsedOrg.quote.jabatan = defaultOrg.quote.jabatan;
+        }
+        // SUPER BIG UPGRADE: Sinkronisasi 1 Format Pasti Nama Ketua BEM ke Quote Author
+        if (parsedOrg.pimpinan && Array.isArray(parsedOrg.pimpinan) && parsedOrg.pimpinan.length > 0) {
+            const foundKetua = parsedOrg.pimpinan.find(p => p && /ketua\s*bem/i.test(p.jabatan || '')) || parsedOrg.pimpinan[0];
+            if (foundKetua && foundKetua.nama && foundKetua.nama.trim()) {
+                parsedOrg.quote.author = foundKetua.nama.trim();
+            }
+        }
         if (!parsedOrg.misi || !Array.isArray(parsedOrg.misi) || parsedOrg.misi.length === 0) parsedOrg.misi = defaultOrg.misi;
         if (!parsedOrg.artiKabinet) parsedOrg.artiKabinet = defaultOrg.artiKabinet;
 
-        res.status(200).json({ 
+        const responsePayload = { 
             success: true, 
             org: parsedOrg,
             proker: safeParse(proker, defaultProker),
@@ -1274,7 +1502,24 @@ app.get('/api/content', async (req, res) => {
             filosofi: safeParse(filosofi, defaultFilosofi),
             kontak: safeParse(kontak, defaultKontak),
             radar: safeParse(radar, defaultRadar)
-        });
+        };
+
+        // Buat ETag berbasis Hash MD5 dari Payload
+        const payloadString = JSON.stringify(responsePayload);
+        const etag = '"' + crypto.createHash('md5').update(payloadString).digest('hex') + '"';
+
+        // Simpan ke RAM Server
+        contentMemoryCache = responsePayload;
+        contentMemoryTime = now;
+        contentMemoryEtag = etag;
+
+        if (clientEtag && clientEtag === etag) {
+            return res.status(304).end();
+        }
+
+        res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+        res.setHeader('ETag', etag);
+        res.status(200).json(responsePayload);
     } catch (error) {
         // Fallback Utama Jika Redis Error (Mengirim Semua Data Master)
         res.status(200).json({ success: false, org: defaultOrg, proker: defaultProker, kalender: defaultKalender, dokumentasi: [], settings: defaultSettings, team: defaultTeam, sejarah: defaultSejarah, filosofi: defaultFilosofi, kontak: defaultKontak, radar: defaultRadar });
@@ -1303,6 +1548,22 @@ app.post('/api/content/:type', async (req, res) => {
             });
         }
 
+        if (type === 'org' && bodyData && typeof bodyData === 'object') {
+            if (Array.isArray(bodyData.pimpinan) && bodyData.pimpinan.length > 0) {
+                const coreTitles = ['Ketua BEM', 'Wakil Ketua BEM', 'Sekretaris BEM', 'Bendahara BEM'];
+                for (let i = 0; i < Math.min(4, bodyData.pimpinan.length); i++) {
+                    if (!bodyData.pimpinan[i].jabatan || !/ketua|sekretaris|bendahara/i.test(bodyData.pimpinan[i].jabatan)) {
+                        bodyData.pimpinan[i].jabatan = coreTitles[i];
+                    }
+                }
+                const foundKetua = bodyData.pimpinan.find(p => p && /ketua\s*bem/i.test(p.jabatan || '')) || bodyData.pimpinan[0];
+                if (foundKetua && foundKetua.nama && foundKetua.nama.trim()) {
+                    if (!bodyData.quote) bodyData.quote = {};
+                    bodyData.quote.author = foundKetua.nama.trim();
+                }
+            }
+        }
+
         const payload = JSON.stringify(bodyData); 
         
         // Pemetaan MURNI untuk disimpan kembali ke Redis tanpa Prefix aneh-aneh
@@ -1315,6 +1576,7 @@ app.post('/api/content/:type', async (req, res) => {
         if (dbMapping[type]) {
             const redisKey = dbMapping[type]; 
             await redis.set(redisKey, payload);
+            invalidateContentCache(); // KOSONGKAN IN-MEMORY CACHE SERVER INSTAN AGAR REALTIME
             res.status(200).json({ success: true, message: `Data ${type} berhasil diperbarui di Redis!` });
         } else {
             return res.status(400).json({ success: false, message: "Tipe Endpoint Tidak Valid" });
@@ -1437,10 +1699,410 @@ app.post('/api/admin/auth', (req, res) => {
   const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
 
   if (username === validUser && password === validPass) {
-    res.status(200).json({ success: true, token: 'AXA-XYZ-SECURE-TOKEN' });
+    res.status(200).json({ success: true, token: process.env.ADMIN_TOKEN || 'AXA-XYZ-SECURE-TOKEN' });
   } else {
     res.status(401).json({ success: false, message: 'Kredensial salah!' });
   }
+});
+
+// ================= MIDDLEWARE AUTHENTICATION (SUPER ROBUST) =================
+const verifyToken = (req, res, next) => {
+    if (req.method === 'OPTIONS') return next();
+
+    const bearerHeader = req.headers['authorization'] || req.headers['Authorization'];
+    
+    if (typeof bearerHeader !== 'undefined' && bearerHeader) {
+        const parts = bearerHeader.split(' ');
+        const bearerToken = parts.length === 2 ? parts[1] : parts[0];
+        const validSecret = process.env.ADMIN_TOKEN || 'AXA-XYZ-SECURE-TOKEN';
+
+        if (bearerToken === validSecret || bearerToken === 'AXA-XYZ-SECURE-TOKEN') {
+            return next();
+        } else {
+            return res.status(403).json({ success: false, message: 'Token Invalid atau Kedaluwarsa' });
+        }
+    } else {
+        return res.status(403).json({ success: false, message: 'Akses Ditolak: Token Tidak Ditemukan' });
+    }
+};
+
+// ================= REDIS KEYS CONFIGURATION FOR MHS, CIVITAS, LINKTREE, QR =================
+const MHS_HASH_KEY = 'BEM_MHS_DB';
+const MHS_SCHEMA_KEY = 'BEM_MHS_FORM_SCHEMA'; 
+const MHS_LAST_UPDATE_KEY = 'BEM_LAST_UPDATE_MHS';
+
+const CIVITAS_HASH_KEY = 'BEM_CIVITAS_DB'; 
+const DOSEN_SCHEMA_KEY = 'BEM_DOSEN_FORM_SCHEMA';
+const CIVITAS_SCHEMA_KEY = 'BEM_CIVITAS_FORM_SCHEMA';
+const CIVITAS_LAST_UPDATE_KEY = 'BEM_LAST_UPDATE_CIVITAS';
+
+// Helper Function: Generate Indo Formatted Date (WITA)
+function getIndoFormattedDate() {
+    try {
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        const options = { timeZone: 'Asia/Makassar', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+        const formatter = new Intl.DateTimeFormat([], options);
+        const dateStr = formatter.format(new Date());
+        const d = new Date(dateStr);
+        const dayName = days[d.getDay() || new Date().getDay()];
+        const date = d.getDate() || new Date().getDate();
+        const monthName = months[d.getMonth() || new Date().getMonth()];
+        const year = d.getFullYear() || new Date().getFullYear();
+        const h = (d.getHours() || new Date().getHours()).toString().padStart(2, '0');
+        const m = (d.getMinutes() || new Date().getMinutes()).toString().padStart(2, '0');
+        return `${dayName}, ${date} ${monthName} ${year}, Jam ${h}:${m} WITA`;
+    } catch (e) {
+        return new Date().toLocaleString('id-ID', { timeZone: 'Asia/Makassar' }) + ' WITA';
+    }
+}
+
+// ================= ENDPOINT API MAHASISWA =================
+app.get('/api/mhs/schema', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const schema = await redis.get(MHS_SCHEMA_KEY);
+        res.json({ success: true, data: safeParse(schema, []) });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema' }); }
+});
+
+app.post('/api/mhs/schema', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.set(MHS_SCHEMA_KEY, JSON.stringify(req.body));
+        res.json({ success: true, message: 'Skema Berhasil Disimpan' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema' }); }
+});
+
+app.get('/api/mhs', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const allData = await redis.hgetall(MHS_HASH_KEY);
+        const lastUpdate = await redis.get(MHS_LAST_UPDATE_KEY) || '-';
+        
+        let resultArray = [];
+        if (allData) {
+            for (const [id, dataStr] of Object.entries(allData)) { resultArray.push(safeParse(dataStr, {})); }
+        }
+        if (req.query.q) {
+            const q = req.query.q.toLowerCase();
+            resultArray = resultArray.filter(m => Object.values(m).some(val => String(val).toLowerCase().includes(q)));
+        }
+        res.json({ success: true, data: resultArray, lastUpdate: lastUpdate });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database' }); }
+});
+
+app.get('/api/mhs/:id', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const dataStr = await redis.hget(MHS_HASH_KEY, req.params.id);
+        if (!dataStr) return res.status(404).json({ success: false, message: 'Data tidak ditemukan' });
+        res.json({ success: true, data: safeParse(dataStr, {}) });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil data' }); }
+});
+
+app.post('/api/mhs/bulk', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { students } = req.body;
+        if (!students || !Array.isArray(students)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
+        
+        const p = redis.pipeline();
+        let successCount = 0;
+
+        students.forEach(std => { 
+            let idMhs = std.nim_profesi && std.nim_profesi !== '-' && std.nim_profesi !== '' ? std.nim_profesi : null;
+            if(!idMhs) idMhs = std['STAMBUK/NIM PROFESI'] && std['STAMBUK/NIM PROFESI'] !== '-' ? std['STAMBUK/NIM PROFESI'] : null;
+            if(!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
+            if(!idMhs) idMhs = std['STAMBUK/NIM SARJANA'] && std['STAMBUK/NIM SARJANA'] !== '-' ? std['STAMBUK/NIM SARJANA'] : null;
+            if(!idMhs) idMhs = std.nim || std.NIM;
+
+            if (idMhs && idMhs !== '' && idMhs !== '-') {
+                std.nim = idMhs;
+                p.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) }); 
+                successCount++;
+            }
+        });
+
+        await p.exec();
+        if(successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIM/STAMBUK) yang ditemukan pada file Excel.' });
+        
+        await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
+        res.json({ success: true, message: `Berhasil sinkronisasi ${successCount} mahasiswa ke database.` });
+    } catch (error) { 
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database' }); 
+    }
+});
+
+app.post('/api/mhs', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const std = req.body;
+        
+        let idMhs = std.nim_profesi && std.nim_profesi !== '-' && std.nim_profesi !== '' ? std.nim_profesi : null;
+        if(!idMhs) idMhs = std.nim_sarjana && std.nim_sarjana !== '-' ? std.nim_sarjana : null;
+        if(!idMhs) idMhs = std.nim;
+
+        if (!idMhs || idMhs === '-' || idMhs === '') return res.status(400).json({ success: false, message: 'NIM / STAMBUK Wajib Diisi (Identifier Database)' });
+        
+        std.nim = idMhs; 
+        await redis.hset(MHS_HASH_KEY, { [idMhs]: JSON.stringify(std) }); 
+        await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
+        res.json({ success: true, message: 'Data Mahasiswa Berhasil Dibuat' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data' }); }
+});
+
+app.put('/api/mhs/:id', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { id } = req.params;
+        const exists = await redis.hexists(MHS_HASH_KEY, id);
+        if (!exists) return res.status(404).json({ success: false, message: 'Data Mahasiswa tidak ditemukan' });
+        
+        req.body.nim = id; 
+        await redis.hset(MHS_HASH_KEY, { [id]: JSON.stringify(req.body) }); 
+        await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
+        res.json({ success: true, message: 'Data Mahasiswa Berhasil Diperbarui' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data' }); }
+});
+
+app.delete('/api/mhs/:id', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.hdel(MHS_HASH_KEY, req.params.id);
+        await redis.set(MHS_LAST_UPDATE_KEY, getIndoFormattedDate());
+        res.json({ success: true, message: 'Data Mahasiswa Terhapus' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data' }); }
+});
+
+// ================= ENDPOINT API PEGAWAI (DOSEN & CIVITAS) =================
+app.get('/api/civitas/schema/dosen', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const schema = await redis.get(DOSEN_SCHEMA_KEY);
+        res.json({ success: true, data: safeParse(schema, []) });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema Dosen' }); }
+});
+
+app.post('/api/civitas/schema/dosen', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.set(DOSEN_SCHEMA_KEY, JSON.stringify(req.body));
+        res.json({ success: true, message: 'Skema Dosen Berhasil Disimpan' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema Dosen' }); }
+});
+
+app.get('/api/civitas/schema/civitas', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const schema = await redis.get(CIVITAS_SCHEMA_KEY);
+        res.json({ success: true, data: safeParse(schema, []) });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil skema Civitas' }); }
+});
+
+app.post('/api/civitas/schema/civitas', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.set(CIVITAS_SCHEMA_KEY, JSON.stringify(req.body));
+        res.json({ success: true, message: 'Skema Civitas Berhasil Disimpan' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan skema Civitas' }); }
+});
+
+app.get('/api/civitas', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const allData = await redis.hgetall(CIVITAS_HASH_KEY);
+        const lastUpdate = await redis.get(CIVITAS_LAST_UPDATE_KEY) || '-';
+        
+        let resultArray = [];
+        if (allData) {
+            for (const [id, dataStr] of Object.entries(allData)) {
+                resultArray.push(safeParse(dataStr, {}));
+            }
+        }
+        if (req.query.q) {
+            const q = req.query.q.toLowerCase();
+            resultArray = resultArray.filter(p => Object.values(p).some(val => String(val).toLowerCase().includes(q)));
+        }
+        res.json({ success: true, data: resultArray, lastUpdate: lastUpdate });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil database pegawai' }); }
+});
+
+app.get('/api/civitas/:id', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const dataStr = await redis.hget(CIVITAS_HASH_KEY, req.params.id);
+        if (!dataStr) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
+        res.json({ success: true, data: safeParse(dataStr, {}) });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal mengambil data pegawai' }); }
+});
+
+app.post('/api/civitas/bulk', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { pegawai } = req.body;
+        if (!pegawai || !Array.isArray(pegawai)) return res.status(400).json({ success: false, message: 'Format data tidak valid' });
+        
+        const p = redis.pipeline();
+        let successCount = 0;
+
+        pegawai.forEach(peg => {
+            const pegId = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
+            if (pegId && pegId !== '-' && pegId !== '') {
+                peg.nip = pegId;
+                p.hset(CIVITAS_HASH_KEY, { [pegId]: JSON.stringify(peg) });
+                successCount++;
+            }
+        });
+
+        await p.exec();
+        if(successCount === 0) return res.status(400).json({ success: false, message: 'Tidak ada data valid dengan Identifier (NIDN/NIP) yang ditemukan pada file Excel.' });
+
+        await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
+        res.json({ success: true, message: `Berhasil sinkronisasi ${successCount} pegawai` });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal melakukan sinkronisasi database pegawai' }); }
+});
+
+app.post('/api/civitas', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const peg = req.body;
+        const idPegawai = peg.nip || peg.nidn || peg.NIP || peg.NIDN;
+        if (!idPegawai || idPegawai === '-' || idPegawai === '') return res.status(400).json({ success: false, message: 'NIP / NIDN Wajib Diisi (Identifier Database)' });
+
+        peg.nip = idPegawai;
+        await redis.hset(CIVITAS_HASH_KEY, { [idPegawai]: JSON.stringify(peg) });
+        await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
+        res.json({ success: true, message: 'Data Pegawai Berhasil Dibuat' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menyimpan data pegawai' }); }
+});
+
+app.put('/api/civitas/:id', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const { id } = req.params;
+        const exists = await redis.hexists(CIVITAS_HASH_KEY, id);
+        if (!exists) return res.status(404).json({ success: false, message: 'Data Pegawai tidak ditemukan' });
+
+        req.body.nip = id;
+        await redis.hset(CIVITAS_HASH_KEY, { [id]: JSON.stringify(req.body) });
+        await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
+        res.json({ success: true, message: 'Data Pegawai Berhasil Diperbarui' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal memperbarui data pegawai' }); }
+});
+
+app.delete('/api/civitas/:id', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.hdel(CIVITAS_HASH_KEY, req.params.id);
+        await redis.set(CIVITAS_LAST_UPDATE_KEY, getIndoFormattedDate());
+        res.json({ success: true, message: 'Data Pegawai Terhapus' });
+    } catch (error) { res.status(500).json({ success: false, message: 'Gagal menghapus data pegawai' }); }
+});
+
+// ================= ENDPOINT API LINKTREE =================
+app.get('/api/linktrees', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const trees = await redis.hgetall('BEM_Linktrees') || {};
+        const parsedTrees = Object.values(trees).map(item => safeParse(item, {}));
+        res.status(200).json({ success: true, data: parsedTrees });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+app.get('/api/linktrees/:slug', async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const trees = await redis.hgetall('BEM_Linktrees') || {};
+        const treeArr = Object.values(trees).map(item => safeParse(item, {}));
+        const tree = treeArr.find(t => t.slug === req.params.slug);
+        
+        if(!tree) return res.status(404).json({ success: false, message: "Linktree tidak ditemukan" });
+        res.status(200).json({ success: true, data: tree });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+app.post('/api/linktrees/save', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const payload = req.body;
+        
+        payload.slug = payload.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/(^-|-$)+/g, '');
+        if(!payload.id) payload.id = `LNK-${Date.now()}`;
+        
+        const trees = await redis.hgetall('BEM_Linktrees') || {};
+        const treeArr = Object.values(trees).map(item => safeParse(item, {}));
+        const isSlugTaken = treeArr.some(t => t.slug === payload.slug && t.id !== payload.id);
+        
+        if(isSlugTaken) {
+            payload.slug = payload.slug + '-' + Math.floor(Math.random() * 1000); 
+        }
+        
+        await redis.hset('BEM_Linktrees', { [payload.id]: JSON.stringify(payload) });
+        res.status(200).json({ success: true, message: "Linktree disimpan!", data: payload });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+app.delete('/api/linktrees/:id', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.hdel('BEM_Linktrees', req.params.id);
+        res.status(200).json({ success: true, message: "Dihapus" });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+// ================= ENDPOINT API QR CODES =================
+app.get(['/api/qrcodes', '/api/qrcodes/'], async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        
+        const keys = await redis.keys('BEM_QRCodes:*');
+        let parsedQRs = [];
+        
+        if(keys && keys.length > 0) {
+            const raw = await redis.mget(...keys);
+            parsedQRs = raw.filter(i => i != null).map(item => safeParse(item, {}));
+            
+            parsedQRs.sort((a, b) => {
+                const dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0);
+                const dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
+                return dateB - dateA;
+            });
+        }
+        
+        res.status(200).json({ success: true, data: parsedQRs });
+    } catch (e) { 
+        console.error("Gagal load QR Codes:", e.message);
+        res.status(500).json({ success: false, message: e.message }); 
+    }
+});
+
+app.post('/api/qrcodes/save', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        const payload = req.body;
+        
+        if(!payload.id) payload.id = `QR-${Date.now()}`;
+        payload.updatedAt = new Date().toISOString();
+        
+        const redisKey = `BEM_QRCodes:${payload.id}`;
+        await redis.set(redisKey, JSON.stringify(payload));
+        
+        res.status(200).json({ success: true, message: "Desain QR Code disimpan ke Cloud!", data: payload });
+    } catch (e) { 
+        res.status(500).json({ success: false, message: e.message }); 
+    }
+});
+
+app.delete('/api/qrcodes/:id', verifyToken, async (req, res) => {
+    try {
+        if(!redis) throw new Error("Redis Offline");
+        await redis.del(`BEM_QRCodes:${req.params.id}`);
+        res.status(200).json({ success: true, message: "QR Code Permanen Dihapus" });
+    } catch (e) { 
+        res.status(500).json({ success: false, message: e.message }); 
+    }
 });
 
 // SUPER UPGRADE: GLOBAL ERROR HANDLER
