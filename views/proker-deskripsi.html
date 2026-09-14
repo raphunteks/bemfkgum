@@ -333,11 +333,31 @@
         }
     </style>
     
-    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript -->
+    <!-- Injection Variabel SSR dari Node.js EJS ke Frontend Javascript (Safe JSON Container) -->
+    <script id="ssr-proker-json" type="application/json"><%- typeof prokerData !== 'undefined' && prokerData ? JSON.stringify(prokerData) : 'null' %></script>
+    <script id="ssr-org-json" type="application/json"><%- typeof orgDepartemen !== 'undefined' && orgDepartemen ? JSON.stringify(orgDepartemen) : 'null' %></script>
+    <script id="ssr-slug-json" type="application/json"><%- typeof slug !== 'undefined' ? JSON.stringify(slug) : '""' %></script>
     <script>
-        window.SSR_PROKER_DATA = <%- typeof prokerData !== 'undefined' && prokerData ? JSON.stringify(prokerData) : 'null' %>;
-        window.SSR_ORG_DATA = <%- typeof orgDepartemen !== 'undefined' && orgDepartemen ? JSON.stringify(orgDepartemen) : 'null' %>;
-        window.SSR_SLUG = "<%= typeof slug !== 'undefined' ? slug : '' %>";
+        (function() {
+            try {
+                var elProker = document.getElementById('ssr-proker-json');
+                window.SSR_PROKER_DATA = elProker ? JSON.parse(elProker.textContent || 'null') : null;
+            } catch (e) {
+                window.SSR_PROKER_DATA = null;
+            }
+            try {
+                var elOrg = document.getElementById('ssr-org-json');
+                window.SSR_ORG_DATA = elOrg ? JSON.parse(elOrg.textContent || 'null') : null;
+            } catch (e) {
+                window.SSR_ORG_DATA = null;
+            }
+            try {
+                var elSlug = document.getElementById('ssr-slug-json');
+                window.SSR_SLUG = elSlug ? JSON.parse(elSlug.textContent || '""') : "";
+            } catch (e) {
+                window.SSR_SLUG = "";
+            }
+        })();
     </script>
 </head>
 <body itemscope itemtype="https://schema.org/WebPage">
@@ -410,11 +430,16 @@
             let allOrgDept = [];
             
             try {
-                const req = await fetch(apiUrl);
-                if(!req.ok) throw new Error("Gagal terhubung ke Database Server (HTTP " + req.status + ").");
+                let res = null;
+                if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+                    res = await window.BEM_API.getData();
+                } else {
+                    const req = await fetch(apiUrl);
+                    if(!req.ok) throw new Error("Gagal terhubung ke Database Server (HTTP " + req.status + ").");
+                    res = await req.json();
+                }
                 
-                const res = await req.json();
-                const allProker = res.proker || [];
+                const allProker = res ? (res.proker || []) : [];
                 allOrgDept = (res.org || {}).departemen || [];
                 
                 deptData = allProker.find(p => p.id === slug || p.slug === slug);
