@@ -43,12 +43,13 @@
     <link rel="sitemap" type="application/xml" title="Sitemap BEM KBMFKG UMI"
         href="https://bemkbmfkgumi.com/sitemap.xml">
 
-    <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts -->
+    <!-- FIX RENDER BLOCKING: Preconnect & Load Google Fonts Asynchronously -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap"
-        rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Dancing+Script:wght@700&display=swap">
+    </noscript>
 
     <!-- Preload CSS Utama untuk mempercepat FCP (Cache-Busting v=12.6) -->
     <link rel="preload" href="/css/main.css?v=12.6" as="style">
@@ -229,7 +230,7 @@
 
         <main>
             <section class="hero-section">
-                <div class="reveal" style="max-width: 900px; margin: 0 auto;">
+                <div class="reveal active" style="max-width: 900px; margin: 0 auto; opacity: 1 !important; transform: none !important;">
                     <div class="clay-badge"
                         style="margin-bottom: 30px; letter-spacing: 2px; font-size: 0.85rem; text-transform: uppercase;">
                         Welcome to
@@ -270,7 +271,7 @@
                     <!-- BOX KIRI (LOGO) -->
                     <div class="sambutan-logo-box">
                         <img id="imgSambutanLogo" src="/img/bemfkgumi.png" alt="Logo BEM FKG UMI" width="315"
-                            height="315" loading="lazy">
+                            height="315" loading="lazy" decoding="async">
                         <div class="badge-periode-modern">
                             <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;"
                                 aria-hidden="true">📅</div>
@@ -388,7 +389,7 @@
 
                     <div style="margin: 30px auto;">
                         <img src="/img/bemfkgumi.png" alt="Logo Animasi BEM KBMFKG UMI" class="floating-logo"
-                            width="160" height="160" loading="lazy">
+                            width="160" height="160" loading="lazy" decoding="async">
                     </div>
 
                     <p style="color: var(--text-muted); margin-top: 10px; max-width: 700px; margin: 10px auto 0;">Setiap
