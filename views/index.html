@@ -19,8 +19,8 @@
                 var t = localStorage.getItem('axa_theme') || localStorage.getItem('theme');
                 if (t === 'dark') {
                     document.documentElement.setAttribute('data-theme', 'dark');
-                } else if (t === 'light') {
-                    document.documentElement.removeAttribute('data-theme');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
                 }
             } catch(e) {}
         })();
