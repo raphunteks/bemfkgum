@@ -1,4 +1,17 @@
 <!-- FILE: views/partials/header.html -->
+<script>
+    /* ANTI-FOIT THEME ENGINE INITIALIZER (Zero-Flicker) */
+    (function() {
+        try {
+            var savedTheme = localStorage.getItem('axa_theme') || localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else if (savedTheme === 'light') {
+                document.documentElement.removeAttribute('data-theme');
+            }
+        } catch (e) {}
+    })();
+</script>
 
 <!-- ================= SUPER UPGRADE: AESTHETIC GLASSMORPHISM LOADING SCREEN ================= -->
 <div id="global-loader" aria-hidden="false" role="dialog" aria-label="Loading Screen Portal BEM KBMFKG UMI">
@@ -375,25 +388,32 @@
         </a>
 
         <div class="nav-right-group">
-            <!-- THEME TOGGLE SWITCH (Light/Dark Mode) -->
-            <div class="theme-toggle-container">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f59e0b" stroke-width="2" fill="none"
-                    stroke-linecap="round" stroke-linejoin="round"
-                    style="filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));" aria-hidden="true">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-                <label class="theme-switch" aria-label="Aktifkan Mode Gelap">
-                    <input type="checkbox" id="checkboxTheme">
+            <!-- THEME TOGGLE SWITCH (Light/Dark Mode) DUAL DYNAMIC ICONS -->
+            <div class="theme-toggle-container" id="themeToggleContainer">
+                <button type="button" class="theme-icon-btn sun-icon" id="themeSunBtn" aria-label="Aktifkan Mode Terang" title="Mode Terang">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <label class="theme-switch" for="checkboxTheme" aria-label="Ganti Mode Tampilan (Terang / Gelap)">
+                    <input type="checkbox" id="checkboxTheme" aria-label="Mode Gelap">
                     <span class="theme-slider"></span>
                 </label>
+                <button type="button" class="theme-icon-btn moon-icon" id="themeMoonBtn" aria-label="Aktifkan Mode Gelap" title="Mode Gelap">
+                    <svg viewBox="0 0 24 24" width="17" height="17" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
             </div>
 
             <!-- SUPER UPGRADE SEO: Penambahan Role & Aria Label untuk struktur DIV agar Sitelinks berfungsi -->
@@ -532,6 +552,133 @@
             document.addEventListener('DOMContentLoaded', setupListeners);
         } else {
             setupListeners();
+        }
+    })();
+
+    // ================= UNIVERSAL THEME ENGINE 2.0 (REALTIME & ULTRA SMOOTH) =================
+    (function initUniversalThemeEngine() {
+        if (window.__THEME_ENGINE_INITIALIZED__) return;
+        window.__THEME_ENGINE_INITIALIZED__ = true;
+
+        function getCurrentTheme() {
+            const docTheme = document.documentElement.getAttribute('data-theme');
+            if (docTheme === 'dark') return 'dark';
+            try {
+                const saved = localStorage.getItem('axa_theme') || localStorage.getItem('theme');
+                return saved === 'dark' ? 'dark' : 'light';
+            } catch(e) {
+                return 'light';
+            }
+        }
+
+        function applyTheme(targetTheme, isUserTriggered = false) {
+            const isDark = (targetTheme === 'dark');
+
+            // 1. Soft smooth transition temporary class (350ms)
+            if (isUserTriggered) {
+                document.documentElement.classList.add('theme-transitioning');
+            }
+
+            // 2. DOM Attribute Updates
+            if (isDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                if (document.body) document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                if (document.body) document.body.removeAttribute('data-theme');
+            }
+
+            // 3. LocalStorage Synchronized Persistence (Dual-Key)
+            try {
+                const themeVal = isDark ? 'dark' : 'light';
+                localStorage.setItem('axa_theme', themeVal);
+                localStorage.setItem('theme', themeVal);
+            } catch(e) {}
+
+            // 4. Synchronize all checkboxes
+            const allCheckboxes = document.querySelectorAll('#checkboxTheme, .theme-toggle-input');
+            allCheckboxes.forEach(cb => {
+                if (cb.checked !== isDark) cb.checked = isDark;
+            });
+
+            // 5. Synchronize container and icon active states
+            const container = document.getElementById('themeToggleContainer');
+            if (container) {
+                container.classList.toggle('is-dark', isDark);
+                container.classList.toggle('is-light', !isDark);
+            }
+
+            // 6. Meta theme-color update for mobile browser address bars (iOS Safari / Android Chrome)
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) {
+                metaTheme.setAttribute('content', isDark ? '#0b132b' : '#f8fafc');
+            }
+
+            // 7. Custom Event for external hooks
+            window.dispatchEvent(new CustomEvent('axaThemeChanged', { detail: { theme: isDark ? 'dark' : 'light' } }));
+
+            // 8. Cleanup soft transition class after animation completes
+            if (isUserTriggered) {
+                setTimeout(() => {
+                    document.documentElement.classList.remove('theme-transitioning');
+                }, 400);
+            }
+        }
+
+        // Global Public API
+        window.ThemeEngine = {
+            getTheme: getCurrentTheme,
+            setTheme: (t) => applyTheme(t, true),
+            toggle: () => {
+                const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+                applyTheme(next, true);
+            }
+        };
+
+        function bindThemeControls() {
+            const initialTheme = getCurrentTheme();
+            applyTheme(initialTheme, false);
+
+            const cb = document.getElementById('checkboxTheme');
+            if (cb && !cb._themeEngineBound) {
+                cb._themeEngineBound = true;
+                cb.checked = (initialTheme === 'dark');
+                cb.addEventListener('change', (e) => {
+                    applyTheme(e.target.checked ? 'dark' : 'light', true);
+                });
+            }
+
+            const sunBtn = document.getElementById('themeSunBtn');
+            if (sunBtn && !sunBtn._themeEngineBound) {
+                sunBtn._themeEngineBound = true;
+                sunBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    applyTheme('light', true);
+                });
+            }
+
+            const moonBtn = document.getElementById('themeMoonBtn');
+            if (moonBtn && !moonBtn._themeEngineBound) {
+                moonBtn._themeEngineBound = true;
+                moonBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    applyTheme('dark', true);
+                });
+            }
+        }
+
+        // Cross-tab real-time synchronization
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'axa_theme' || e.key === 'theme') {
+                const newTheme = e.newValue === 'dark' ? 'dark' : 'light';
+                applyTheme(newTheme, true);
+            }
+        });
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bindThemeControls);
+        } else {
+            bindThemeControls();
         }
     })();
 </script>
