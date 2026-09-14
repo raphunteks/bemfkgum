@@ -104,9 +104,14 @@
       ]
     }
     </script>
-    <!-- ================= END SEO ================= -->
-
     <link rel="icon" type="image/png" href="/img/bemfkgumi.png">
+    <link rel="apple-touch-icon" href="/img/bemfkgumi.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BEM FKG UMI">
     
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="/css/main.css">
@@ -383,33 +388,52 @@
         });
 
         // Initialize Observer & Data Fetching dari Database
+        // Initialize Observer & Data Fetching dari Database (Zero-Delay 0ms)
+        const renderKontakUI = (res) => {
+            if(!res || !res.kontak) return;
+            if(document.getElementById('kontakAlamat')) document.getElementById('kontakAlamat').innerText = res.kontak.alamat;
+            if(document.getElementById('kontakEmail')) document.getElementById('kontakEmail').innerText = res.kontak.email;
+            if(document.getElementById('kontakEmailLink')) document.getElementById('kontakEmailLink').href = `mailto:${res.kontak.email}`;
+            if(document.getElementById('kontakWA')) document.getElementById('kontakWA').innerText = res.kontak.wa;
+            if(document.getElementById('kontakWAName')) document.getElementById('kontakWAName').innerText = res.kontak.waName ? `(${res.kontak.waName})` : '';
+            if(document.getElementById('kontakWALink')) document.getElementById('kontakWALink').href = `https://wa.me/${(res.kontak.wa || '').replace(/\D/g, '')}`;
+            
+            const mapContainer = document.getElementById('kontakMapContainer');
+            if (mapContainer && res.kontak.mapsIframe) {
+                mapContainer.innerHTML = res.kontak.mapsIframe;
+                const iframe = mapContainer.querySelector('iframe');
+                if(iframe) { 
+                    iframe.style.width = "100%"; 
+                    iframe.style.height = "100%"; 
+                    iframe.setAttribute('loading', 'lazy');
+                }
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Ambil data kontak dari API
-            let apiUrl = '/api/content';
-            if(window.location.protocol === 'blob:' || window.location.origin === "null") {
-                apiUrl = 'https://bemkbmfkgumi.com/api/content';
+            // 1. Optimistic Cache Render (0ms)
+            let initialCache = window.BEM_DATABASE_CACHE;
+            if (!initialCache) {
+                try {
+                    const raw = sessionStorage.getItem('BEM_CONTENT_CACHE_V1');
+                    if (raw) initialCache = JSON.parse(raw);
+                } catch(e) {}
+            }
+            if (initialCache && initialCache.kontak) {
+                renderKontakUI(initialCache);
             }
 
-            fetch(apiUrl).then(r => r.json()).then(res => {
-                if(res.kontak) {
-                    document.getElementById('kontakAlamat').innerText = res.kontak.alamat;
-                    
-                    document.getElementById('kontakEmail').innerText = res.kontak.email;
-                    document.getElementById('kontakEmailLink').href = `mailto:${res.kontak.email}`;
-                    
-                    document.getElementById('kontakWA').innerText = res.kontak.wa;
-                    document.getElementById('kontakWAName').innerText = res.kontak.waName ? `(${res.kontak.waName})` : '';
-                    document.getElementById('kontakWALink').href = `https://wa.me/${res.kontak.wa.replace(/\D/g, '')}`;
-                    
-                    const mapContainer = document.getElementById('kontakMapContainer');
-                    mapContainer.innerHTML = res.kontak.mapsIframe;
-                    const iframe = mapContainer.querySelector('iframe');
-                    if(iframe) { 
-                        iframe.style.width = "100%"; 
-                        iframe.style.height = "100%"; 
-                    }
+            // 2. Background Revalidation
+            if (window.BEM_API && typeof window.BEM_API.getData === 'function') {
+                window.BEM_API.getData().then(renderKontakUI).catch(() => {});
+            } else {
+                let apiUrl = '/api/content';
+                if(window.location.protocol === 'blob:' || window.location.origin === "null") {
+                    apiUrl = 'https://bemkbmfkgumi.com/api/content';
                 }
-            }).catch(e => console.warn("API Gagal dimuat, menggunakan template offline."));
+                fetch(apiUrl).then(r => r.json()).then(renderKontakUI).catch(() => {});
+            }
+            document.addEventListener('BemDataUpdated', (e) => renderKontakUI(e.detail));
 
             // Efek Animasi Reveal
             const observer = new IntersectionObserver(entries => entries.forEach(e => { 
