@@ -3,6 +3,7 @@ const express = require('express');
 const { Redis } = require('@upstash/redis');
 const cors = require('cors');
 const path = require('path');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
@@ -458,6 +459,23 @@ app.delete('/api/civitas/:id', verifyToken, async (req, res) => {
 });
 
 // ================= ENDPOINT API LINKTREE =================
+function getMakassarDateInfo() {
+    const now = new Date();
+    // Makassar is WITA (UTC+8)
+    const wita = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+    const todayStr = wita.toISOString().slice(0, 10); // YYYY-MM-DD
+    
+    // ISO week number
+    const temp = new Date(wita.getTime());
+    temp.setHours(0, 0, 0, 0);
+    temp.setDate(temp.getDate() + 3 - (temp.getDay() + 6) % 7);
+    const week1 = new Date(temp.getFullYear(), 0, 4);
+    const weekNum = 1 + Math.round(((temp.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    const weekStr = `${temp.getFullYear()}-W${weekNum}`;
+
+    return { todayStr, weekStr };
+}
+
 app.get('/api/linktrees', async (req, res) => {
     try {
         if(!redis) throw new Error("Redis Offline");
@@ -465,6 +483,62 @@ app.get('/api/linktrees', async (req, res) => {
         const parsedTrees = Object.values(trees).map(item => safeParse(item, {}));
         res.status(200).json({ success: true, data: parsedTrees });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+// Analytics Overview
+app.get('/api/linktrees/analytics/overview', async (req, res) => {
+    try {
+        if (!redis) throw new Error("Redis Offline");
+        const trees = await redis.hgetall('BEM_Linktrees') || {};
+        const treeArr = Object.values(trees).map(item => safeParse(item, {}));
+        const { todayStr, weekStr } = getMakassarDateInfo();
+
+        let totalViewsToday = 0;
+        let totalViewsWeek = 0;
+        let totalViewsAllTime = 0;
+
+        const items = await Promise.all(treeArr.map(async (tree) => {
+            const slug = tree.slug;
+            const title = tree.profile?.title || tree.title || slug;
+            const statsKey = `BEM_Linktree_Stats:${slug}`;
+            const stats = await redis.hgetall(statsKey) || {};
+
+            let total = parseInt(stats.total, 10) || 0;
+            let today = parseInt(stats.today, 10) || 0;
+            let week = parseInt(stats.week, 10) || 0;
+
+            if (stats.today_date !== todayStr) today = 0;
+            if (stats.week_num !== weekStr) week = 0;
+
+            totalViewsToday += today;
+            totalViewsWeek += week;
+            totalViewsAllTime += total;
+
+            return {
+                id: tree.id,
+                slug: slug,
+                title: title,
+                today: today,
+                week: week,
+                total: total,
+                viewsToday: today,
+                viewsWeek: week,
+                totalViews: total
+            };
+        }));
+
+        res.status(200).json({
+            success: true,
+            data: {
+                items,
+                totalViewsToday,
+                totalViewsWeek,
+                totalViewsAllTime
+            }
+        });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
 });
 
 app.get('/api/linktrees/:slug', async (req, res) => {
@@ -477,6 +551,103 @@ app.get('/api/linktrees/:slug', async (req, res) => {
         if(!tree) return res.status(404).json({ success: false, message: "Linktree tidak ditemukan" });
         res.status(200).json({ success: true, data: tree });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+// Unique View Tracking Endpoint dengan Deduplikasi Anti-Spam / Anti-Duplicate
+app.post('/api/linktrees/:slug/view', async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        if (!slug) return res.status(400).json({ success: false, message: "Slug diperlukan" });
+
+        const { todayStr, weekStr } = getMakassarDateInfo();
+
+        if (!redis) {
+            return res.status(200).json({
+                success: true,
+                stats: { today: 1, week: 1, total: 1, viewsToday: 1, viewsWeek: 1, totalViews: 1 },
+                isNew: true
+            });
+        }
+
+        const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+        const ip = String(rawIp).split(',')[0].trim();
+        const ua = String(req.headers['user-agent'] || '').slice(0, 120);
+        const visitorId = String(req.body.visitorId || '');
+
+        const visitorFingerprint = crypto.createHash('md5').update(`${ip}_${ua}_${visitorId}`).digest('hex');
+        const dedupKey = `BEM_Linktree_Dedup:${slug}:${visitorFingerprint}`;
+        const statsKey = `BEM_Linktree_Stats:${slug}`;
+
+        const alreadySeen = await redis.get(dedupKey);
+
+        let stats = await redis.hgetall(statsKey) || {};
+        let total = parseInt(stats.total, 10) || 0;
+        let today = parseInt(stats.today, 10) || 0;
+        let todayDate = stats.today_date || '';
+        let week = parseInt(stats.week, 10) || 0;
+        let weekNum = stats.week_num || '';
+
+        // Reset jika pergantian hari atau minggu
+        if (todayDate !== todayStr) {
+            today = 0;
+            todayDate = todayStr;
+        }
+        if (weekNum !== weekStr) {
+            week = 0;
+            weekNum = weekStr;
+        }
+
+        if (!alreadySeen) {
+            total += 1;
+            today += 1;
+            week += 1;
+
+            // Kunci deduplikasi aktif selama 24 jam (86400 detik)
+            await redis.set(dedupKey, '1', { ex: 86400 });
+            await redis.hset(statsKey, {
+                total: String(total),
+                today: String(today),
+                today_date: todayDate,
+                week: String(week),
+                week_num: weekNum,
+                lastVisit: new Date().toISOString()
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            stats: { today, week, total, viewsToday: today, viewsWeek: week, totalViews: total },
+            isNew: !alreadySeen
+        });
+    } catch (e) {
+        console.error("Gagal mencatat linktree view:", e);
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
+
+// Endpoint Pembacaan Statistik Kunjungan Linktree
+app.get('/api/linktrees/:slug/stats', async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        const { todayStr, weekStr } = getMakassarDateInfo();
+
+        if (!redis) {
+            return res.status(200).json({ success: true, stats: { today: 0, week: 0, total: 0, viewsToday: 0, viewsWeek: 0, totalViews: 0 } });
+        }
+
+        const statsKey = `BEM_Linktree_Stats:${slug}`;
+        let stats = await redis.hgetall(statsKey) || {};
+        let total = parseInt(stats.total, 10) || 0;
+        let today = parseInt(stats.today, 10) || 0;
+        let week = parseInt(stats.week, 10) || 0;
+
+        if (stats.today_date !== todayStr) today = 0;
+        if (stats.week_num !== weekStr) week = 0;
+
+        res.status(200).json({ success: true, stats: { today, week, total, viewsToday: today, viewsWeek: week, totalViews: total } });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
 });
 
 app.post('/api/linktrees/save', verifyToken, async (req, res) => {
