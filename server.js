@@ -800,6 +800,29 @@ app.get('/api/forms', async (req, res) => {
         // Hilangkan Duplikat (Bila tersimpan di kedua tempat dengan ID yang sama)
         const uniqueForms = Array.from(new Map(allForms.map(item => [item.id, item])).values());
 
+        // HITUNG RESPON REAL-TIME UNTUK SETIAP FORM (Kunci BEM_Responses:FRM-...:RES-...)
+        try {
+            const allResKeys = await redis.keys('BEM_Responses:*:*');
+            const countMap = {};
+            if (allResKeys && allResKeys.length > 0) {
+                allResKeys.forEach(k => {
+                    const parts = k.split(':');
+                    if (parts.length >= 3) {
+                        const fId = parts[1];
+                        countMap[fId] = (countMap[fId] || 0) + 1;
+                    }
+                });
+            }
+            uniqueForms.forEach(form => {
+                form.responseCount = countMap[form.id] || 0;
+            });
+        } catch (resErr) {
+            console.error("Gagal menghitung responseCount form:", resErr);
+            uniqueForms.forEach(form => {
+                if (typeof form.responseCount !== 'number') form.responseCount = 0;
+            });
+        }
+
         res.status(200).json({ success: true, data: uniqueForms });
     } catch (e) { res.status(500).json({ success: false }); }
 });
@@ -1597,6 +1620,28 @@ app.post('/api/content/:type', async (req, res) => {
             }
         }
 
+        // Proteksi Integritas Data Developer Team: Pastikan FullStack Development & Lead Developer selalu terjaga
+        if (type === 'team' && Array.isArray(bodyData)) {
+            let fsCat = bodyData.find(c => c && /fullstack/i.test(c.category || ''));
+            if (!fsCat) {
+                fsCat = { category: "FullStack Development", members: [] };
+                bodyData.unshift(fsCat);
+            }
+            if (!Array.isArray(fsCat.members)) fsCat.members = [];
+            let leadDev = fsCat.members.find(m => m && /aksa/i.test(m.nama || ''));
+            if (!leadDev) {
+                fsCat.members.unshift({
+                    nama: "M. Aksa Arsyad, drg., S.KG",
+                    foto: "/img/axaprofil.jpg",
+                    ig: "https://www.instagram.com/axaaxyz_"
+                });
+            } else {
+                leadDev.nama = leadDev.nama || "M. Aksa Arsyad, drg., S.KG";
+                leadDev.foto = leadDev.foto || "/img/axaprofil.jpg";
+                leadDev.ig = leadDev.ig || "https://www.instagram.com/axaaxyz_";
+            }
+        }
+
         const payload = JSON.stringify(bodyData);
 
         // Pemetaan MURNI untuk disimpan kembali ke Redis tanpa Prefix aneh-aneh
@@ -1659,31 +1704,69 @@ app.get('/api/admin/stats', async (req, res) => {
     }
 });
 
-// ================= API ENDPOINTS: TRANSAKSIONAL (MGET STRING KEYS FIX Sesuai GBR 1) =================
+// ================= API ENDPOINT: VERIFIKASI PIN ADMIN/DEVELOPER DARI .ENV =================
+app.post('/api/verify-pin', (req, res) => {
+    try {
+        const { pin } = req.body;
+        const serverPin = process.env.PIN || '999';
+        if (pin && String(pin).trim() === String(serverPin).trim()) {
+            return res.status(200).json({ success: true, message: "PIN berhasil diverifikasi." });
+        }
+        return res.status(403).json({ success: false, message: "PIN salah! Akses ditolak." });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Gagal memproses verifikasi PIN." });
+    }
+});
+
+// ================= API ENDPOINTS: TRANSAKSIONAL (ULTRA-FAST PARALLEL + RAM CACHE) =================
+let interactionsMemoryCache = null;
+let interactionsMemoryTime = 0;
+const INTERACTIONS_CACHE_TTL = 30 * 1000; // 30 Detik di RAM Node.js
+
+const invalidateInteractionsCache = () => {
+    interactionsMemoryCache = null;
+    interactionsMemoryTime = 0;
+    console.log("⚡ [CACHE] In-Memory Cache /api/interactions Berhasil Dikosongkan (Realtime Refresh).");
+};
+
 app.get('/api/interactions', async (req, res) => {
     try {
         if (!redis) throw new Error("Redis Offline");
+        const now = Date.now();
 
-        // AMBIL DATA ASPIRASI STRING VIA MGET
-        const aspirasiKeys = await redis.keys('BEM_Aspirations:*');
-        let aspirasi = [];
-        if (aspirasiKeys.length > 0) {
-            const raw = await redis.mget(...aspirasiKeys);
-            aspirasi = raw.filter(i => i != null)
-                .map(i => typeof i === 'string' ? JSON.parse(i) : i)
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        // 1. Cek In-Memory Cache RAM Server (Ultra-Fast 0ms Latency)
+        if (interactionsMemoryCache && (now - interactionsMemoryTime < INTERACTIONS_CACHE_TTL)) {
+            res.setHeader('Cache-Control', 'public, max-age=10, stale-while-revalidate=30');
+            return res.status(200).json({ success: true, ...interactionsMemoryCache });
         }
 
-        // AMBIL DATA PESAN STRING VIA MGET (Cocok dengan GBR 1: BEM_Messages:MSG-1786632166001)
-        const messageKeys = await redis.keys('BEM_Messages:*');
-        let pesan = [];
-        if (messageKeys.length > 0) {
-            const raw = await redis.mget(...messageKeys);
-            pesan = raw.filter(i => i != null)
-                .map(i => typeof i === 'string' ? JSON.parse(i) : i)
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        }
+        // 2. Fetch Kunci Paralel Menggunakan Promise.all
+        const [aspirasiKeys, messageKeys] = await Promise.all([
+            redis.keys('BEM_Aspirations:*'),
+            redis.keys('BEM_Messages:*')
+        ]);
 
+        // 3. Fetch Data Paralel Menggunakan Promise.all
+        const [rawAspirasi, rawPesan] = await Promise.all([
+            aspirasiKeys.length > 0 ? redis.mget(...aspirasiKeys) : Promise.resolve([]),
+            messageKeys.length > 0 ? redis.mget(...messageKeys) : Promise.resolve([])
+        ]);
+
+        const aspirasi = rawAspirasi.filter(i => i != null)
+            .map(i => typeof i === 'string' ? safeParse(i, null) : i)
+            .filter(Boolean)
+            .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+        const pesan = rawPesan.filter(i => i != null)
+            .map(i => typeof i === 'string' ? safeParse(i, null) : i)
+            .filter(Boolean)
+            .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+        // Simpan ke Cache RAM Server
+        interactionsMemoryCache = { aspirasi, pesan };
+        interactionsMemoryTime = now;
+
+        res.setHeader('Cache-Control', 'public, max-age=10, stale-while-revalidate=30');
         res.status(200).json({ success: true, aspirasi, pesan });
     } catch (error) {
         console.error("API Interactions Error:", error);
@@ -1697,8 +1780,9 @@ app.post('/api/plasma', async (req, res) => {
         const id = `ASP-${Date.now()}`;
         const payload = { id: String(id), judul: String(judul), kategori: String(kategori), jenis: String(jenis), isi: String(isi), bukti: bukti || null, timestamp: new Date().toISOString() };
 
-        // Simpan sebagai STRING Sesuai Format Upstash Anda
+        // Simpan sebagai STRING Sesuai Format Upstash
         if (redis) await redis.set(`BEM_Aspirations:${id}`, JSON.stringify(payload));
+        invalidateInteractionsCache(); // Real-time Invalidation
         res.status(200).json({ success: true, message: 'Aspirasi berhasil dikirim!' });
     } catch (error) { res.status(500).json({ success: false }); }
 });
@@ -1709,8 +1793,9 @@ app.post('/api/message', async (req, res) => {
         const id = `MSG-${Date.now()}`;
         const payload = { id, nama: String(nama), kontak: String(kontak), subjek: String(subjek), pesan: String(pesan), timestamp: new Date().toISOString() };
 
-        // Simpan sebagai STRING Sesuai Format Upstash Anda (GBR 1)
+        // Simpan sebagai STRING Sesuai Format Upstash
         if (redis) await redis.set(`BEM_Messages:${id}`, JSON.stringify(payload));
+        invalidateInteractionsCache(); // Real-time Invalidation
         res.status(200).json({ success: true, message: 'Pesan terkirim!' });
     } catch (error) { res.status(500).json({ success: false }); }
 });
@@ -1721,6 +1806,7 @@ app.post('/api/delete-interaction', async (req, res) => {
         // Hapus Kunci STRING Spesifik
         if (type === 'aspirasi' && redis) await redis.del(`BEM_Aspirations:${id}`);
         if (type === 'pesan' && redis) await redis.del(`BEM_Messages:${id}`);
+        invalidateInteractionsCache(); // Real-time Invalidation
         res.status(200).json({ success: true });
     } catch (error) { res.status(500).json({ success: false }); }
 });
@@ -2035,6 +2121,23 @@ app.delete('/api/civitas/:id', verifyToken, async (req, res) => {
 });
 
 // ================= ENDPOINT API LINKTREE =================
+function getMakassarDateInfo() {
+    const now = new Date();
+    // Makassar is WITA (UTC+8)
+    const wita = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+    const todayStr = wita.toISOString().slice(0, 10); // YYYY-MM-DD
+    
+    // ISO week number
+    const temp = new Date(wita.getTime());
+    temp.setHours(0, 0, 0, 0);
+    temp.setDate(temp.getDate() + 3 - (temp.getDay() + 6) % 7);
+    const week1 = new Date(temp.getFullYear(), 0, 4);
+    const weekNum = 1 + Math.round(((temp.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    const weekStr = `${temp.getFullYear()}-W${weekNum}`;
+
+    return { todayStr, weekStr };
+}
+
 app.get('/api/linktrees', async (req, res) => {
     try {
         if (!redis) throw new Error("Redis Offline");
@@ -2042,6 +2145,62 @@ app.get('/api/linktrees', async (req, res) => {
         const parsedTrees = Object.values(trees).map(item => safeParse(item, {}));
         res.status(200).json({ success: true, data: parsedTrees });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+// Analytics Overview (harus sebelum /api/linktrees/:slug agar tidak tertukar slug)
+app.get('/api/linktrees/analytics/overview', async (req, res) => {
+    try {
+        if (!redis) throw new Error("Redis Offline");
+        const trees = await redis.hgetall('BEM_Linktrees') || {};
+        const treeArr = Object.values(trees).map(item => safeParse(item, {}));
+        const { todayStr, weekStr } = getMakassarDateInfo();
+
+        let totalViewsToday = 0;
+        let totalViewsWeek = 0;
+        let totalViewsAllTime = 0;
+
+        const items = await Promise.all(treeArr.map(async (tree) => {
+            const slug = tree.slug;
+            const title = tree.profile?.title || tree.title || slug;
+            const statsKey = `BEM_Linktree_Stats:${slug}`;
+            const stats = await redis.hgetall(statsKey) || {};
+
+            let total = parseInt(stats.total, 10) || 0;
+            let today = parseInt(stats.today, 10) || 0;
+            let week = parseInt(stats.week, 10) || 0;
+
+            if (stats.today_date !== todayStr) today = 0;
+            if (stats.week_num !== weekStr) week = 0;
+
+            totalViewsToday += today;
+            totalViewsWeek += week;
+            totalViewsAllTime += total;
+
+            return {
+                id: tree.id,
+                slug: slug,
+                title: title,
+                today: today,
+                week: week,
+                total: total,
+                viewsToday: today,
+                viewsWeek: week,
+                totalViews: total
+            };
+        }));
+
+        res.status(200).json({
+            success: true,
+            data: {
+                items,
+                totalViewsToday,
+                totalViewsWeek,
+                totalViewsAllTime
+            }
+        });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
 });
 
 app.get('/api/linktrees/:slug', async (req, res) => {
@@ -2054,6 +2213,103 @@ app.get('/api/linktrees/:slug', async (req, res) => {
         if (!tree) return res.status(404).json({ success: false, message: "Linktree tidak ditemukan" });
         res.status(200).json({ success: true, data: tree });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+// Unique View Tracking Endpoint dengan Deduplikasi Anti-Spam / Anti-Duplicate
+app.post('/api/linktrees/:slug/view', async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        if (!slug) return res.status(400).json({ success: false, message: "Slug diperlukan" });
+
+        const { todayStr, weekStr } = getMakassarDateInfo();
+
+        if (!redis) {
+            return res.status(200).json({
+                success: true,
+                stats: { today: 1, week: 1, total: 1, viewsToday: 1, viewsWeek: 1, totalViews: 1 },
+                isNew: true
+            });
+        }
+
+        const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+        const ip = String(rawIp).split(',')[0].trim();
+        const ua = String(req.headers['user-agent'] || '').slice(0, 120);
+        const visitorId = String(req.body.visitorId || '');
+
+        const visitorFingerprint = crypto.createHash('md5').update(`${ip}_${ua}_${visitorId}`).digest('hex');
+        const dedupKey = `BEM_Linktree_Dedup:${slug}:${visitorFingerprint}`;
+        const statsKey = `BEM_Linktree_Stats:${slug}`;
+
+        const alreadySeen = await redis.get(dedupKey);
+
+        let stats = await redis.hgetall(statsKey) || {};
+        let total = parseInt(stats.total, 10) || 0;
+        let today = parseInt(stats.today, 10) || 0;
+        let todayDate = stats.today_date || '';
+        let week = parseInt(stats.week, 10) || 0;
+        let weekNum = stats.week_num || '';
+
+        // Reset jika pergantian hari atau minggu
+        if (todayDate !== todayStr) {
+            today = 0;
+            todayDate = todayStr;
+        }
+        if (weekNum !== weekStr) {
+            week = 0;
+            weekNum = weekStr;
+        }
+
+        if (!alreadySeen) {
+            total += 1;
+            today += 1;
+            week += 1;
+
+            // Kunci deduplikasi aktif selama 24 jam (86400 detik)
+            await redis.set(dedupKey, '1', { ex: 86400 });
+            await redis.hset(statsKey, {
+                total: String(total),
+                today: String(today),
+                today_date: todayDate,
+                week: String(week),
+                week_num: weekNum,
+                lastVisit: new Date().toISOString()
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            stats: { today, week, total, viewsToday: today, viewsWeek: week, totalViews: total },
+            isNew: !alreadySeen
+        });
+    } catch (e) {
+        console.error("Gagal mencatat linktree view:", e);
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
+
+// Endpoint Pembacaan Statistik Kunjungan Linktree
+app.get('/api/linktrees/:slug/stats', async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        const { todayStr, weekStr } = getMakassarDateInfo();
+
+        if (!redis) {
+            return res.status(200).json({ success: true, stats: { today: 0, week: 0, total: 0, viewsToday: 0, viewsWeek: 0, totalViews: 0 } });
+        }
+
+        const statsKey = `BEM_Linktree_Stats:${slug}`;
+        let stats = await redis.hgetall(statsKey) || {};
+        let total = parseInt(stats.total, 10) || 0;
+        let today = parseInt(stats.today, 10) || 0;
+        let week = parseInt(stats.week, 10) || 0;
+
+        if (stats.today_date !== todayStr) today = 0;
+        if (stats.week_num !== weekStr) week = 0;
+
+        res.status(200).json({ success: true, stats: { today, week, total, viewsToday: today, viewsWeek: week, totalViews: total } });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
 });
 
 app.post('/api/linktrees/save', verifyToken, async (req, res) => {
@@ -2133,6 +2389,498 @@ app.delete('/api/qrcodes/:id', verifyToken, async (req, res) => {
         if (!redis) throw new Error("Redis Offline");
         await redis.del(`BEM_QRCodes:${req.params.id}`);
         res.status(200).json({ success: true, message: "QR Code Permanen Dihapus" });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
+
+// ============================================================================
+// API ENDPOINTS AI ASISTEN REDAKSI & JURNALIS BEM KBMFKG-UMI
+// Sesuai Spesifikasi: AI ASISTEN_BERITA_BEM KBMFKG UMI.md & 9Router Proxy
+// ============================================================================
+
+const AI_EDITORIAL_SYSTEM_PROMPT = `Anda adalah AI Asisten Redaksi & Jurnalis Resmi BEM KBMFKG-UMI (Badan Eksekutif Mahasiswa Keluarga Besar Mahasiswa Fakultas Kedokteran Gigi Universitas Muslim Indonesia).
+Tugas Anda adalah memandu admin/redaksi menyusun artikel atau berita kegiatan secara terstruktur, faktual, sistematis, anti-halusinasi, dan siap dipublikasikan.
+
+ATURAN ANTI-HALUSINASI SANGAT KETAT (WAJIB DIPATUHI):
+1. DILARANG MENGARANG nama pejabat, gelar, jabatan, tanggal, hari, waktu, lokasi, jumlah peserta/penerima manfaat, hasil kegiatan, kutipan langsung, maupun data statistik apapun.
+2. DILARANG MENGARANG kehadiran tokoh/pimpinan jika tidak disebutkan oleh pengguna.
+3. DILARANG MENGARANG pernyataan atau isi sambutan. Jika pengguna hanya memberikan poin sambutan, gunakan kalimat tidak langsung (misal: "Dalam sambutannya, ... menyampaikan bahwa ...").
+4. Jika ada informasi penting yang belum tersedia, jangan mengarang. Tandai secara transparan atau tanyakan dengan sopan dan terarah kepada pengguna.
+
+ATURAN ANTI-FIELD TERLARANG (SANGAT KRUSIAL):
+1. DILARANG membuat Keyword Tags / Tags.
+2. DILARANG membuat Caption Foto.
+3. DILARANG membuat Alt Text.
+Field-field tersebut TIDAK DIGUNAKAN di website BEM KBMFKG-UMI. Hanya gunakan field: Judul, Kategori, Tanggal Rilis, Deskripsi Singkat (SEO Meta 1-2 kalimat), dan Isi Artikel (Paragraf berita).
+
+ALUR KERJA EDITORIAL 10 TAHAP:
+Tahap 1: Identitas Kegiatan (Nama kegiatan, tema/tagline, kategori).
+Tahap 2: Waktu Kegiatan (Tanggal, hari, jam pelaksanaan).
+Tahap 3: Lokasi Kegiatan (Tempat, gedung/ruangan, kota/kabupaten, provinsi).
+Tahap 4: Tokoh & Pejabat Hadir (Universitas, Fakultas, BEM/Panitia, Narasumber/Mitra Eksternal).
+Tahap 5: Penyelenggara & Panitia.
+Tahap 6: Rangkaian Acara (Pembukaan, inti, penyerahan, penutup).
+Tahap 7: Tujuan, Manfaat, & Sasaran Kegiatan.
+Tahap 8: Kutipan/Poin Sambutan.
+Tahap 9: Perumusan Alternatif Judul (1, 3, 5, atau 10 opsi judul jurnalisme informatif, menarik, tanpa clickbait).
+Tahap 10: Konfirmasi Judul, Deskripsi Singkat (SEO Meta), dan Penyusunan Isi Artikel Lengkap (Lead 5W+1H, Detail, Sambutan, Penutup) + Editorial Check.
+
+GAYA BAHASA:
+Bahasa Indonesia baku jurnalistik profesional, objektif, humanis, mengalir, rapi, dan mudah dipahami civitas akademika serta masyarakat umum.
+
+FORMAT RESPON:
+Anda WAJIB memberikan respons HANYA berupa blok JSON valid tanpa teks pengantar di luar blok:
+\`\`\`json
+{
+  "reply": "Pesan penjelasan editorial Anda dalam format Markdown rapi...",
+  "stage": "01_informasi | 02_waktu_lokasi | 03_tokoh | 04_rangkaian | 05_substansi | 06_judul | 07_deskripsi | 08_artikel | 09_review | 10_final",
+  "stepNumber": 1, // integer 1 sampai 10
+  "draft": {
+    "eventName": "...",
+    "theme": "...",
+    "category": "...", // Rekomendasikan salah satu dari 10 Kategori Resmi BEM KBMFKG UMI: Program Kerja Unggulan BEM KBMFKG UMI (UAS, BERKAH, KULKAS, WOHD, DENTIVE, MS, DHC), Pengabdian Masyarakat & Bakti Sosial Kesehatan Gigi, Seminar, Webinar & Kuliah Tamu Kedokteran Gigi, Pengkaderan/Kaderisasi & Latihan Dasar Kegawatdaruratan (LDK), Pelantikan, Rapat Kerja (Raker), Laporan Pertanggung Jawaban Triwulan (LPJ TW), Pramuktamar & Muktamar, Prestasi & Delegasi Ilmiah Mahasiswa, Advokasi, Mengkaji Implementasi Program Kerja (MIPK), & Pengumpulan Aspirasi Mahasiswa (PLASMA), Kajian Strategis, Kebijakan Isu Kesehatan & Jurnalistik, Dies Natalis & Peringatan Milad Fakultas/BEM, Studi Banding, Kemitraan Eksternal & Kerjasama Antar Lembaga.
+    "date": "...",
+    "time": "...",
+    "location": "...",
+    "city": "...",
+    "province": "...",
+    "organizer": "...",
+    "attendees": ["Nama - Jabatan"],
+    "eventSequence": ["Acara 1", "Acara 2"],
+    "purpose": "...",
+    "beneficiaries": "...",
+    "quotes": ["..."],
+    "selectedTitle": "...",
+    "shortDescription": "...",
+    "articleBody": "..."
+  },
+  "titleOptions": ["Judul 1", "Judul 2", ...], // Jika pada tahap judul
+  "readyToPublish": false // true jika naskah final sudah lengkap dan lolos editorial check
+}
+\`\`\`
+ATURAN STRING JSON:
+Pastikan SEMUA tanda kutip ganda di dalam teks string (seperti di shortDescription, articleBody, quotes, dan reply) SELALU di-escape dengan backslash (\\\") atau gunakan tanda kutip tunggal ('...'). Dilarang keras menghasilkan unescaped quotes!`;
+
+function parseResilientEditorialJSON(rawContent) {
+    if (!rawContent) return null;
+
+    // 1. Ekstraksi blok ```json ... ``` jika ada
+    let jsonStr = rawContent.trim();
+    const codeBlockMatch = rawContent.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+    if (codeBlockMatch) {
+        jsonStr = codeBlockMatch[1].trim();
+    } else {
+        const firstBrace = jsonStr.indexOf('{');
+        const lastBrace = jsonStr.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+            jsonStr = jsonStr.substring(firstBrace, lastBrace + 1);
+        }
+    }
+
+    // Attempt 1: Direct JSON.parse
+    try {
+        return JSON.parse(jsonStr);
+    } catch (e1) {}
+
+    // Attempt 2: Perbaiki trailing commas
+    try {
+        const noTrailing = jsonStr.replace(/,\s*([}\]])/g, '$1');
+        return JSON.parse(noTrailing);
+    } catch (e2) {}
+
+    // Attempt 3: Sanitasi unescaped double quotes di dalam value baris per baris
+    try {
+        const lines = jsonStr.split('\n');
+        const fixedLines = lines.map(line => {
+            const m = line.match(/^(\s*"[^"]+"\s*:\s*")(.*)(",?\s*)$/);
+            if (m) {
+                let val = m[2].replace(/(?<!\\)"/g, "'");
+                return m[1] + val + m[3];
+            }
+            return line;
+        });
+        const repaired = fixedLines.join('\n').replace(/,\s*([}\]])/g, '$1');
+        return JSON.parse(repaired);
+    } catch (e3) {}
+
+    // Attempt 4: RegEx Fallback Extractor
+    try {
+        const fallback = {
+            reply: "",
+            stage: "10_final",
+            stepNumber: 10,
+            draft: {},
+            titleOptions: [],
+            readyToPublish: false
+        };
+
+        const stageMatch = jsonStr.match(/"stage"\s*:\s*"([^"]+)"/);
+        if (stageMatch) fallback.stage = stageMatch[1];
+
+        const stepMatch = jsonStr.match(/"stepNumber"\s*:\s*(\d+)/);
+        if (stepMatch) fallback.stepNumber = parseInt(stepMatch[1], 10);
+
+        const replyMatch = jsonStr.match(/"reply"\s*:\s*"([\s\S]*?)(?="\s*,\s*"stage"|"\s*,\s*"stepNumber"|"\s*,\s*"draft")/);
+        if (replyMatch) fallback.reply = replyMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+
+        const titleMatch = jsonStr.match(/"selectedTitle"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+        if (titleMatch) fallback.draft.selectedTitle = titleMatch[1].replace(/\\"/g, '"');
+
+        const descMatch = jsonStr.match(/"shortDescription"\s*:\s*"([\s\S]*?)"\s*,\s*"articleBody"/);
+        if (descMatch) fallback.draft.shortDescription = descMatch[1].replace(/\\"/g, '"');
+
+        const bodyMatch = jsonStr.match(/"articleBody"\s*:\s*"([\s\S]*?)"\s*}/);
+        if (bodyMatch) fallback.draft.articleBody = bodyMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+
+        const eventMatch = jsonStr.match(/"eventName"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+        if (eventMatch) fallback.draft.eventName = eventMatch[1];
+
+        const catMatch = jsonStr.match(/"category"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+        if (catMatch) fallback.draft.category = catMatch[1];
+
+        const dateMatch = jsonStr.match(/"date"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+        if (dateMatch) fallback.draft.date = dateMatch[1];
+
+        const locMatch = jsonStr.match(/"location"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+        if (locMatch) fallback.draft.location = locMatch[1];
+
+        const orgMatch = jsonStr.match(/"organizer"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+        if (orgMatch) fallback.draft.organizer = orgMatch[1];
+
+        const purpMatch = jsonStr.match(/"purpose"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+        if (purpMatch) fallback.draft.purpose = purpMatch[1];
+
+        const titleOptMatch = jsonStr.match(/"titleOptions"\s*:\s*\[([\s\S]*?)\]/);
+        if (titleOptMatch) {
+            const titles = [];
+            const tRegex = /"([^"\\]*(?:\\.[^"\\]*)*)"/g;
+            let tm;
+            while ((tm = tRegex.exec(titleOptMatch[1])) !== null) {
+                titles.push(tm[1].replace(/\\"/g, '"'));
+            }
+            fallback.titleOptions = titles;
+        }
+
+        if (fallback.draft.selectedTitle || fallback.draft.articleBody || fallback.reply) {
+            return fallback;
+        }
+    } catch (e4) {}
+
+    return null;
+}
+
+app.post('/api/ai/editorial', async (req, res) => {
+    try {
+        const apiKey = process.env.APIKEY_9ROUTER;
+        let baseUrl = process.env.BASEURL_9ROUTER || 'http://43.134.43.146:20128/v1/chat/completions';
+        const model = process.env.MODELSCOMBOS_9ROUTER || 'bemfkgumi-combos';
+
+        if (!apiKey) {
+            return res.status(500).json({
+                success: false,
+                message: "Konfigurasi layanan AI (API Key) belum tersedia di server. Hubungi administrator."
+            });
+        }
+
+        // Normalisasi URL
+        let targetUrl = baseUrl.trim();
+        if (targetUrl.includes('/v1chat/completions')) {
+            targetUrl = targetUrl.replace('/v1chat/completions', '/v1/chat/completions');
+        } else if (!targetUrl.includes('/v1/chat/completions')) {
+            targetUrl = targetUrl.replace(/\/+$/, '') + '/v1/chat/completions';
+        }
+
+        const { 
+            messages = [], 
+            draft = {}, 
+            message = '', 
+            conversation_history = [], 
+            current_stage = '01_informasi', 
+            collected_facts = {} 
+        } = req.body;
+
+        // Susun payload percakapan
+        const payloadMessages = [
+            { role: 'system', content: AI_EDITORIAL_SYSTEM_PROMPT }
+        ];
+
+        // Sisipkan draft konteks fakta jika sudah ada
+        const activeDraft = { ...(draft || {}), ...(collected_facts || {}) };
+        if (activeDraft && Object.keys(activeDraft).length > 0) {
+            payloadMessages.push({
+                role: 'system',
+                content: `KONTEKS DRAFT FAKTA SAAT INI (Tahapan Redaksi: ${current_stage}):\n${JSON.stringify(activeDraft, null, 2)}\n\nLanjutkan berdasarkan fakta di atas. Perbarui field draft yang sesuai dengan informasi baru dari pengguna.`
+            });
+        }
+
+        // Masukkan riwayat pesan
+        const historyList = (messages && messages.length > 0) ? messages : (conversation_history || []);
+        historyList.forEach(m => {
+            if (m.role && m.content) {
+                payloadMessages.push({ role: m.role, content: m.content });
+            }
+        });
+
+        // Masukkan user message jika belum ada di history
+        if (message && (!historyList.length || historyList[historyList.length - 1].content !== message)) {
+            payloadMessages.push({ role: 'user', content: message });
+        }
+
+        // Pastikan setidaknya ada 1 user message
+        if (!payloadMessages.some(m => m.role === 'user')) {
+            payloadMessages.push({ role: 'user', content: "Halo, saya ingin meliput kegiatan BEM FKG UMI." });
+        }
+
+        // Request ke 9Router dengan abort controller timeout (60 detik)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+        const response = await fetch(targetUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: payloadMessages,
+                stream: false,
+                temperature: 0.7
+            }),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error("9Router AI Error:", response.status, errText);
+            return res.status(502).json({
+                success: false,
+                message: "Asisten AI sedang sibuk atau tidak dapat dihubungi. Silakan coba kembali."
+            });
+        }
+
+        const data = await response.json();
+        const rawContent = data.choices?.[0]?.message?.content || "";
+
+        // Parse JSON dari output model secara tangguh
+        let parsed = parseResilientEditorialJSON(rawContent);
+
+        if (!parsed) {
+            // Fallback jika model menjawab dalam format teks biasa
+            parsed = {
+                reply: rawContent,
+                stage: current_stage || "01_informasi",
+                stepNumber: 1,
+                draft: activeDraft || {},
+                titleOptions: [],
+                readyToPublish: false
+            };
+        }
+
+        // Bersihkan teks pesan agar TIDAK PERNAH memuat blok ```json mentah ke pengguna
+        let assistantMessage = parsed.reply || "";
+        if (!assistantMessage || assistantMessage.includes("```json")) {
+            if (rawContent.includes("```json")) {
+                const textBeforeCode = rawContent.split("```json")[0].trim();
+                if (textBeforeCode && textBeforeCode.length > 10) {
+                    assistantMessage = textBeforeCode;
+                } else if (parsed.draft && (parsed.draft.articleBody || parsed.draft.selectedTitle)) {
+                    assistantMessage = `## ✅ Naskah Berita Siap Publikasi\n\n**Judul:** ${parsed.draft.selectedTitle || "Naskah Berita"}\n\n${parsed.draft.shortDescription ? `*${parsed.draft.shortDescription}*\n\n---\n\n` : ""}${parsed.draft.articleBody || ""}`;
+                }
+            } else {
+                assistantMessage = rawContent;
+            }
+        }
+        // Hapus segala sisa blok ```json dari pesan chat
+        assistantMessage = assistantMessage.replace(/```(?:json)?[\s\S]*?```/gi, '').trim();
+        if (!assistantMessage && parsed.draft && (parsed.draft.articleBody || parsed.draft.selectedTitle)) {
+            assistantMessage = `## ✅ Naskah Berita Siap Publikasi\n\nNaskah artikel telah selesai disusun dan terverifikasi sesuai kode etik jurnalistik. Silakan periksa pratinjau di panel samping atau klik **"Masukkan ke Form Tambah Artikel"** untuk mempublikasikannya.`;
+        }
+
+        // Tentukan tahap & stepNumber (1..10)
+        const stage = parsed.stage || current_stage || "01_informasi";
+        let stepNumber = parsed.stepNumber;
+        if (!stepNumber) {
+            const s = String(stage).toLowerCase();
+            if (s.includes('10') || s.includes('final')) stepNumber = 10;
+            else if (s.includes('9') || s.includes('review') || s.includes('editorial_check') || s.includes('qc')) stepNumber = 9;
+            else if (s.includes('8') || s.includes('artikel')) stepNumber = 8;
+            else if (s.includes('7') || s.includes('deskripsi') || s.includes('meta')) stepNumber = 7;
+            else if (s.includes('6') || s.includes('judul') || s.includes('title')) stepNumber = 6;
+            else if (s.includes('5') || s.includes('substansi') || s.includes('manfaat') || s.includes('tujuan')) stepNumber = 5;
+            else if (s.includes('4') || s.includes('rangkaian') || s.includes('acara')) stepNumber = 4;
+            else if (s.includes('3') || s.includes('tokoh') || s.includes('pejabat')) stepNumber = 3;
+            else if (s.includes('2') || s.includes('waktu') || s.includes('lokasi')) stepNumber = 2;
+            else stepNumber = 1;
+        }
+
+        // Gabungkan seluruh fakta dengan pemetaan 5W+1H komprehensif
+        const facts = { ...(activeDraft || {}), ...(parsed.draft || {}) };
+
+        // 1. WHAT (Nama Kegiatan / Tema)
+        const mappedWhat = facts.eventName || facts.theme || facts.what || facts.event || facts.namaKegiatan || activeDraft.what || "";
+
+        // 2. WHO (Penyelenggara / Tokoh / Hadir)
+        let mappedWho = facts.organizer || activeDraft.who || "";
+        if (Array.isArray(facts.attendees) && facts.attendees.length > 0) {
+            const attendeesStr = facts.attendees.slice(0, 2).join(', ') + (facts.attendees.length > 2 ? ' dll' : '');
+            mappedWho = mappedWho ? `${mappedWho} (${attendeesStr})` : attendeesStr;
+        } else if (facts.who) {
+            mappedWho = facts.who;
+        }
+
+        // 3. WHEN (Hari, Tanggal, Jam)
+        const whenParts = [facts.date, facts.time].filter(Boolean);
+        const mappedWhen = whenParts.length > 0 ? whenParts.join(' • ') : (facts.when || facts.eventDate || activeDraft.when || "");
+
+        // 4. WHERE (Lokasi, Kota, Provinsi)
+        const whereParts = [facts.location, facts.city, facts.province].filter(Boolean);
+        const mappedWhere = whereParts.length > 0 ? whereParts.join(', ') : (facts.where || activeDraft.where || "");
+
+        // 5. WHY (Tujuan / Latar Belakang)
+        const mappedWhy = facts.purpose || facts.why || facts.objective || facts.tujuan || activeDraft.why || "";
+
+        // 6. HOW (Rangkaian Acara / Penerima Manfaat)
+        let mappedHow = activeDraft.how || "";
+        if (Array.isArray(facts.eventSequence) && facts.eventSequence.length > 0) {
+            mappedHow = facts.eventSequence.slice(0, 3).join(' ➔ ') + (facts.eventSequence.length > 3 ? '...' : '');
+        } else if (facts.beneficiaries) {
+            mappedHow = facts.beneficiaries;
+        } else if (facts.how) {
+            mappedHow = facts.how;
+        }
+
+        // 7. KUTIPAN (Pernyataan Tokoh / Narasumber)
+        let mappedQuote = activeDraft.quote || "";
+        if (Array.isArray(facts.quotes) && facts.quotes.length > 0) {
+            mappedQuote = facts.quotes.join('; ');
+        } else if (facts.quotes) {
+            mappedQuote = String(facts.quotes);
+        } else if (facts.quote) {
+            mappedQuote = facts.quote;
+        }
+
+        const collectedFacts = {
+            what: mappedWhat,
+            who: mappedWho,
+            when: mappedWhen,
+            where: mappedWhere,
+            why: mappedWhy,
+            how: mappedHow,
+            quote: mappedQuote
+        };
+
+        const titleOptions = parsed.titleOptions || parsed.options || [];
+
+        // Build article draft jika ada judul / naskah
+        let articleDraft = null;
+        const selectedTitle = facts.selectedTitle || (parsed.draft && parsed.draft.selectedTitle) || (titleOptions.length === 1 ? titleOptions[0] : "");
+        const articleBody = facts.articleBody || (parsed.draft && parsed.draft.articleBody) || "";
+        const shortDescription = facts.shortDescription || (parsed.draft && parsed.draft.shortDescription) || "";
+        const category = facts.category || (parsed.draft && parsed.draft.category) || "Pengabdian Masyarakat";
+        const dateRelease = facts.date ? facts.date.split(',').pop().trim() : (facts.eventDate || new Date().toISOString().split('T')[0]);
+
+        if (selectedTitle || articleBody || shortDescription) {
+            articleDraft = {
+                judul: selectedTitle || (facts.eventName ? `BEM FKG UMI Gelar ${facts.eventName}` : ""),
+                kategori: category,
+                slug: selectedTitle ? selectedTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : "",
+                penulis: "Humas BEM FKG UMI",
+                meta_desc: shortDescription,
+                konten_bersih: articleBody,
+                tgl_rilis: dateRelease
+            };
+        }
+
+        res.status(200).json({
+            success: true,
+            stage: stage,
+            stepNumber: stepNumber,
+            assistant_message: assistantMessage,
+            collected_facts: collectedFacts,
+            options: titleOptions,
+            article_draft: articleDraft,
+            is_complete: parsed.readyToPublish || (stepNumber === 10),
+            data: parsed
+        });
+    } catch (e) {
+        console.error("Kesalahan API Editorial:", e);
+        if (e.name === 'AbortError') {
+            return res.status(504).json({
+                success: false,
+                message: "Permintaan AI membutuhkan waktu terlalu lama. Silakan coba kembali."
+            });
+        }
+        res.status(500).json({
+            success: false,
+            message: "Gagal memproses permintaan editorial dengan AI."
+        });
+    }
+});
+
+// ============================================================================
+// MANAJEMEN RIWAYAT SESI AI ASISTEN BERITA (REDIS PERSISTENCE)
+// ============================================================================
+app.get('/api/ai/editorial/sessions', async (req, res) => {
+    try {
+        if (!redis) throw new Error("Redis Offline");
+        const keys = await redis.keys('BEM_AI_Sessions:*');
+        let sessions = [];
+        if (keys && keys.length > 0) {
+            const rawSessions = await redis.mget(...keys);
+            rawSessions.forEach(str => {
+                if (str) {
+                    try {
+                        const parsed = typeof str === 'string' ? JSON.parse(str) : str;
+                        sessions.push(parsed);
+                    } catch (pe) {}
+                }
+            });
+        }
+        sessions.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
+        res.status(200).json({ success: true, sessions: sessions, data: sessions });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
+
+app.post('/api/ai/editorial/sessions', async (req, res) => {
+    try {
+        if (!redis) throw new Error("Redis Offline");
+        const session = req.body;
+        if (!session.id) session.id = `AISES-${Date.now()}`;
+        session.updatedAt = new Date().toISOString();
+
+        const redisKey = `BEM_AI_Sessions:${session.id}`;
+        await redis.set(redisKey, JSON.stringify(session));
+
+        res.status(200).json({ success: true, message: "Sesi disimpan ke Riwayat Cloud", data: session });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
+
+app.delete('/api/ai/editorial/sessions/:id', async (req, res) => {
+    try {
+        if (!redis) throw new Error("Redis Offline");
+        await redis.del(`BEM_AI_Sessions:${req.params.id}`);
+        res.status(200).json({ success: true, message: "Sesi berhasil dihapus dari Riwayat" });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
+
+app.delete('/api/ai/editorial/sessions', async (req, res) => {
+    try {
+        if (!redis) throw new Error("Redis Offline");
+        const keys = await redis.keys('BEM_AI_Sessions:*');
+        if (keys && keys.length > 0) {
+            await redis.del(...keys);
+        }
+        res.status(200).json({ success: true, message: "Seluruh riwayat sesi dibersihkan" });
     } catch (e) {
         res.status(500).json({ success: false, message: e.message });
     }
