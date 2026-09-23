@@ -34,54 +34,190 @@
     </div>
 </div>
 
-<!-- Mobile Menu Toggle Button -->
-<button class="neo-btn primary mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
+<!-- Mobile Menu Toggle Button (Hidden on Desktop) -->
+<button class="neo-btn primary mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Buka Menu">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
 
 <div class="builder-layout" id="main-layout" style="display: none; opacity: 0; transition: opacity 0.5s;">
     
-    <!-- LEFT SIDEBAR: MENU -->
-    <aside class="sidebar-panel">
-        <div class="brand-box">
-            <img src="/img/bemfkgumi.png" alt="BEM Logo">
-            <h2>QR BUILDER</h2>
+    <!-- LEFT SIDEBAR: MENU (V1 ARCHITECTURE COLLAPSIBLE) -->
+    <aside class="sidebar-panel admin-sidebar" id="adminSidebar">
+        <div class="brand-box sidebar-header-box" style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="/img/bemfkgumi.png" alt="BEM Logo" style="width:36px; height:36px;">
+                <h2 style="font-size:1.15rem; margin:0; font-weight:800; letter-spacing:-0.02em;">BEM QR Code</h2>
+            </div>
+            <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleV4Sidebar()" title="Perkecil/Perluas Menu" aria-label="Toggle Sidebar">
+                <svg id="toggleChevronSvg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
         </div>
+
+        <!-- QUICK ACTION: BUAT QR CODE -->
+        <button class="sidebar-quick-btn" onclick="createNewQRCode()" title="Buat QR Code Baru">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span class="quick-text">Buat QR Code</span>
+        </button>
         
         <nav class="sidebar-nav" id="sidebarNav">
-            <button class="sidebar-link active" onclick="switchTab('list')">📂 Data Tersimpan</button>
-            <button class="sidebar-link editor-only" onclick="switchTab('data')" style="display:none;">🔗 Data & Konten</button>
-            <button class="sidebar-link editor-only" onclick="switchTab('design')" style="display:none;">🎨 Desain Bentuk</button>
-            <button class="sidebar-link editor-only" onclick="switchTab('logo')" style="display:none;">🖼️ Sisip Logo/Teks</button>
+            <div class="sidebar-nav-cat">Menu QR Code</div>
+            <button class="sidebar-link active" onclick="switchTab('overview')" data-tooltip="Overview QR Code">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+                <span>Overview</span>
+            </button>
+            <button class="sidebar-link" onclick="switchTab('list')" data-tooltip="Daftar QR Code">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <span>Daftar QR Code</span>
+            </button>
+
+            <div class="sidebar-nav-cat editor-only" id="catEditorV4Header" style="display:none;">Editor QR (Subtab Edit)</div>
+            <button class="sidebar-link editor-only" onclick="switchTab('data')" style="display:none;" data-tooltip="Data & Konten">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <span>Data & Konten</span>
+            </button>
+            <button class="sidebar-link editor-only" onclick="switchTab('design')" style="display:none;" data-tooltip="Desain Bentuk">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                <span>Desain Bentuk</span>
+            </button>
+            <button class="sidebar-link editor-only" onclick="switchTab('logo')" style="display:none;" data-tooltip="Sisip Logo/Teks">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Sisip Logo/Teks</span>
+            </button>
+
+            <div class="sidebar-nav-cat">Modul Sistem</div>
+            <a href="/admin" class="sidebar-link" data-tooltip="Admin Utama CMS">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 22"/></svg>
+                <span>Admin Utama</span>
+            </a>
+            <a href="/admin-v2" class="sidebar-link" data-tooltip="Admin Form Builder">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Admin Form</span>
+            </a>
+            <a href="/admin-linktree" class="sidebar-link" data-tooltip="Admin Linktree">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <span>Admin Linktree</span>
+            </a>
+            <a href="/admin-qrcode" class="sidebar-link active" data-tooltip="Admin QR Code">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="8" x="3" y="3" rx="1"/><rect width="8" height="8" x="13" y="3" rx="1"/><rect width="8" height="8" x="3" y="13" rx="1"/><path d="M14 14h2v2h-2z"/><path d="M18 14h3v3h-3z"/><path d="M14 18h3v3h-3z"/><path d="M18 18h3v3h-3z"/></svg>
+                <span>Admin QR Code</span>
+            </a>
+            <a href="/admin-mhs" class="sidebar-link" data-tooltip="Data Mahasiswa">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Data Mahasiswa</span>
+            </a>
         </nav>
         
-        <!-- BUTTON NAVIGASI ADMIN ENTERPRISE -->
-        <div class="sidebar-bottom">
-            <a href="/admin" class="neo-btn accent block">⬅ Admin Utama</a>
-            <a href="/admin-linktree" class="neo-btn secondary block">🌳 Admin Linktree</a>
-            <a href="/admin-v2" class="neo-btn purple block">📝 Admin Form</a>
-            <button class="neo-btn danger block" onclick="logout()">🚪 Keluar Sistem</button>
+        <!-- SIDEBAR FOOTER (KUNJUNGI SITUS & KELUAR SESI - SLEEK COMPACT 18PX SVGs) -->
+        <div class="sidebar-footer-box">
+            <a href="/" target="_blank" class="sidebar-footer-btn" data-tooltip="Kunjungi Situs Publik">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span class="footer-text">Kunjungi Situs</span>
+            </a>
+            <button onclick="logout()" class="sidebar-footer-btn btn-logout" data-tooltip="Keluar Sesi Admin">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span class="footer-text">Keluar Sesi</span>
+            </button>
         </div>
     </aside>
 
     <!-- MID PANEL: EDITOR -->
     <section class="editor-panel">
         
-        <!-- HEADER EDITOR -->
+        <!-- HEADER EDITOR (VISIBLE IN SUBTABS) -->
         <div class="editor-header editor-only" style="display:none;">
             <div class="editor-title-group">
                 <h1>KUSTOMISASI QR</h1>
                 <p>Atur desain QR Code.</p>
             </div>
-            <button class="neo-btn secondary" id="btn-save-cloud" onclick="saveQRCode()">💾 Simpan ke Cloud</button>
+            <button class="neo-btn secondary" id="btn-save-cloud" onclick="saveQRCode()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span>Simpan ke Cloud</span>
+            </button>
         </div>
 
-        <!-- TAB 0: DAFTAR DATA TERSIMPAN -->
-        <div id="tab-list" class="tab-content active">
+        <!-- TAB 0: OVERVIEW (NEUBRUTALISM STYLE) -->
+        <div id="tab-overview" class="tab-content active">
+            <div class="neo-card-header">
+                <h2>Overview QR Code BEM</h2>
+                <p class="form-helper">Ringkasan statistik dan manajemen generator QR Code BEM KBMFKG UMI.</p>
+            </div>
+
+            <!-- 4 NEUBRUTALISM KPI CARDS -->
+            <div class="neo-kpi-grid">
+                <div class="neo-kpi-card yellow">
+                    <div class="neo-kpi-head">
+                        <span class="neo-kpi-title">Total QR Code</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    </div>
+                    <div class="neo-kpi-val" id="statQrTotal">0</div>
+                    <div class="neo-kpi-foot">Terdaftar di Cloud</div>
+                </div>
+
+                <div class="neo-kpi-card blue">
+                    <div class="neo-kpi-head">
+                        <span class="neo-kpi-title">Tipe Link / URL</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    </div>
+                    <div class="neo-kpi-val" id="statQrUrl">0</div>
+                    <div class="neo-kpi-foot">Website & Dokumen</div>
+                </div>
+
+                <div class="neo-kpi-card pink">
+                    <div class="neo-kpi-head">
+                        <span class="neo-kpi-title">Tipe Teks / Kontak</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    </div>
+                    <div class="neo-kpi-val" id="statQrText">0</div>
+                    <div class="neo-kpi-foot">Kontak & Pesan</div>
+                </div>
+
+                <div class="neo-kpi-card green">
+                    <div class="neo-kpi-head">
+                        <span class="neo-kpi-title">Database Status</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div class="neo-kpi-val" style="font-size:1.35rem;">Aktif</div>
+                    <div class="neo-kpi-foot">Terhubung Database</div>
+                </div>
+            </div>
+
+            <!-- ACTION BANNER -->
+            <div class="neo-card" style="background:#fff; margin-bottom: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin-bottom:4px;">Buat Desain QR Baru</h3>
+                        <p class="form-helper" style="margin:0;">Kustomisasi dot pattern, corner frames, warna, dan sematkan logo resmi BEM.</p>
+                    </div>
+                    <button class="neo-btn success" onclick="createNewQRCode()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>+ Buat QR Code</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RECENT QR LIST -->
+            <div class="neo-card" style="background:#fff;">
+                <div class="neo-card-header" style="margin-bottom:14px;">
+                    <h3>QR Code Terkini</h3>
+                    <p class="form-helper">Daftar desain QR Code yang paling baru dibuat atau diperbarui.</p>
+                </div>
+                <div id="qr-overview-list">
+                    <div class="empty-state">Memuat data terkini...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB DAFTAR DATA TERSIMPAN -->
+        <div id="tab-list" class="tab-content">
             <div class="neo-card-header">
                 <h2>Manajemen QR Code</h2>
                 <p class="form-helper">Load, Edit, atau Hapus desain QR Code BEM yang sudah Anda buat sebelumnya.</p>
             </div>
             
-            <button class="neo-btn success block" style="margin-bottom: 24px;" onclick="createNewQRCode()">✨ Buat QR Baru</button>
+            <button class="neo-btn success block" style="margin-bottom: 24px;" onclick="createNewQRCode()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>+ Buat QR Baru</span>
+            </button>
             
             <div id="qr-list-container">
                 <div class="empty-state">Memuat data dari server...</div>
@@ -215,16 +351,36 @@
                     <option value="text">Teks Singkat (Cth: BEM)</option>
                 </select>
 
-                <!-- IMAGE UPLOAD MODE -->
+                <!-- IMAGE UPLOAD MODE (WITH DEFAULT BEM LOGO PREVIEW) -->
                 <div id="wrap-center-image" style="display:none;">
                     <div class="neo-card-header">
-                        <h3>Unggah Logo / Ikon Pusat</h3>
-                        <p class="form-helper">Logo akan ditampilkan di tengah QR Code (Resolusi HD).</p>
+                        <h3>Logo / Ikon Pusat QR</h3>
+                        <p class="form-helper">Pilih logo resmi BEM FKG UMI atau unggah gambar/logo kustom Anda sendiri.</p>
                     </div>
-                    <div style="display:flex; gap:15px; align-items:center; margin-bottom:20px;">
+
+                    <!-- DEFAULT BEM LOGO QUICK SELECTION CARD -->
+                    <div style="display:flex; align-items:center; gap:12px; padding:12px 14px; background:#fef9c3; border:var(--border-width) solid var(--border-color); box-shadow:3px 3px 0 var(--shadow-color); border-radius:10px; margin-bottom:16px;">
+                        <img src="/img/bemfkgumi.png" alt="Logo Resmi BEM" style="width:42px; height:42px; object-fit:contain; background:#ffffff; border:2px solid #0f172a; border-radius:8px; padding:3px;">
+                        <div style="flex:1;">
+                            <strong style="font-size:0.88rem; color:#0f172a; display:block;">Logo Resmi BEM FKG UMI</strong>
+                            <span style="font-size:0.75rem; color:#475569;">Gunakan logo standar BEM jika Anda tidak memiliki file logo sendiri.</span>
+                        </div>
+                        <button type="button" class="neo-btn success" style="padding:7px 12px; font-size:0.8rem; white-space:nowrap;" onclick="useDefaultBemLogo()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Gunakan Logo BEM</span>
+                        </button>
+                    </div>
+
+                    <div style="display:flex; gap:12px; align-items:center; margin-bottom:20px; flex-wrap:wrap;">
                         <input type="file" id="upload-logo-img" accept="image/*,.png,.jpg,.jpeg,.webp,.svg" style="display:none;" onchange="handleLogoUpload(this)">
-                        <button class="neo-btn primary block" onclick="document.getElementById('upload-logo-img').click()">🖼️ Pilih Gambar</button>
-                        <button class="neo-btn danger block" onclick="removeLogo()">🗑️ Hapus</button>
+                        <button class="neo-btn primary" style="flex:1; min-width:180px;" onclick="document.getElementById('upload-logo-img').click()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            <span>Unggah Logo Lain</span>
+                        </button>
+                        <button class="neo-btn danger" onclick="removeLogo()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            <span>Hapus</span>
+                        </button>
                     </div>
                 </div>
 
@@ -284,8 +440,14 @@
         </div>
 
         <div class="preview-actions editor-only" style="display:none;">
-            <button class="neo-btn block" style="background:#fff;" onclick="downloadQR('jpeg')">📥 Download JPEG HD</button>
-            <button class="neo-btn block" style="background:#fff;" onclick="downloadQR('svg')">📥 Download Format SVG</button>
+            <button class="neo-btn block" style="background:#fff;" onclick="downloadQR('jpeg')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Download JPEG HD</span>
+            </button>
+            <button class="neo-btn block" style="background:#fff;" onclick="downloadQR('svg')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Download Format SVG</span>
+            </button>
         </div>
     </section>
 
@@ -294,7 +456,10 @@
 <!-- ================== CUSTOM MODALS ================== -->
 <div class="neo-modal-overlay" id="customAlertModal">
     <div class="neo-modal-content">
-        <h3>⚠️ Pemberitahuan</h3>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <h3 style="margin:0;">Pemberitahuan</h3>
+        </div>
         <p id="customAlertMessage"></p>
         <button class="neo-btn primary block" onclick="closeCustomAlert()">Mengerti</button>
     </div>
@@ -302,7 +467,10 @@
 
 <div class="neo-modal-overlay" id="customConfirmModal">
     <div class="neo-modal-content">
-        <h3>❓ Konfirmasi</h3>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <h3 style="margin:0;">Konfirmasi</h3>
+        </div>
         <p id="customConfirmMessage"></p>
         <div class="modal-actions">
             <button class="neo-btn block" onclick="closeCustomConfirm(false)">Batal</button>
@@ -350,6 +518,7 @@
             setTimeout(() => { document.getElementById('main-layout').style.opacity = '1'; }, 50);
             
             loadAllQRCodes();
+            installCustomQRShapeEngine();
             qrCodeInstance = new QRCodeStyling(getQROptions(state));
         } else {
             document.getElementById('loginGate').style.display = 'flex';
@@ -385,7 +554,7 @@
         } catch(e) {
             if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
                 localStorage.setItem('axa_admin_token', 'AXA-XYZ-SECURE-TOKEN'); 
-                showToast("✅ Simulasi Canvas Aktif."); 
+                showToast("Simulasi Canvas Aktif."); 
                 unlockDashboard(); 
             } else { 
                 document.getElementById('loginError').style.display = 'block'; 
@@ -405,6 +574,7 @@
             layout.style.opacity = '1'; 
             
             loadAllQRCodes();
+            installCustomQRShapeEngine();
             qrCodeInstance = new QRCodeStyling(getQROptions(state));
         }, 500);
     }
@@ -447,8 +617,34 @@
 
     function toggleMobileMenu() {
         const nav = document.getElementById('sidebarNav');
-        nav.classList.toggle('show');
+        if (nav) nav.classList.toggle('show');
     }
+
+    // ================= SIDEBAR COLLAPSE CONTROLLER V4 =================
+    function toggleV4Sidebar() {
+        const sidebar = document.getElementById('adminSidebar');
+        if (!sidebar) return;
+        sidebar.classList.toggle('collapsed');
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        localStorage.setItem('admin_v4_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+        const chevronSvg = document.getElementById('toggleChevronSvg');
+        if (chevronSvg) {
+            chevronSvg.innerHTML = isCollapsed 
+                ? '<polyline points="9 18 15 12 9 6"></polyline>' 
+                : '<polyline points="15 18 9 12 15 6"></polyline>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('admin_v4_sidebar_collapsed') === 'true') {
+            const sidebar = document.getElementById('adminSidebar');
+            if (sidebar) {
+                sidebar.classList.add('collapsed');
+                const chevronSvg = document.getElementById('toggleChevronSvg');
+                if (chevronSvg) chevronSvg.innerHTML = '<polyline points="9 18 15 12 9 6"></polyline>';
+            }
+        }
+    });
 
     // ================= UI & TAB CONTROLLER =================
     function switchTab(tabId) {
@@ -457,25 +653,70 @@
         if(targetBtn) targetBtn.classList.add('active');
         
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.getElementById(`tab-${tabId}`).classList.add('active');
+        const targetTab = document.getElementById(`tab-${tabId}`);
+        if(targetTab) targetTab.classList.add('active');
 
         const editorElements = document.querySelectorAll('.editor-only');
-        if (tabId === 'list') {
+        if (tabId === 'overview') {
+            editorElements.forEach(el => el.style.display = 'none');
+            loadAllQRCodes();
+        } else if (tabId === 'list') {
             editorElements.forEach(el => el.style.display = 'none');
             loadAllQRCodes();
         } else {
             editorElements.forEach(el => el.style.display = 'flex');
-            document.querySelector('.editor-header').style.display = window.innerWidth > 768 ? 'flex' : 'column';
+            const edHead = document.querySelector('.editor-header');
+            if (edHead) edHead.style.display = window.innerWidth > 768 ? 'flex' : 'column';
             populateEditorForm();
             renderLivePreview();
         }
-        document.getElementById('sidebarNav').classList.remove('show');
+        const nav = document.getElementById('sidebarNav');
+        if (nav) nav.classList.remove('show');
+    }
+
+    function renderQROverview() {
+        const statTotal = document.getElementById('statQrTotal');
+        const statUrl = document.getElementById('statQrUrl');
+        const statText = document.getElementById('statQrText');
+        const overviewList = document.getElementById('qr-overview-list');
+
+        const total = allQRCodes.length;
+        const urlCount = allQRCodes.filter(q => (q.dataType === 'url' || (q.data && q.data.startsWith('http')))).length;
+        const textCount = total - urlCount;
+
+        if (statTotal) statTotal.innerText = total;
+        if (statUrl) statUrl.innerText = urlCount;
+        if (statText) statText.innerText = textCount;
+
+        if (overviewList) {
+            if (total === 0) {
+                overviewList.innerHTML = `<div class="empty-state">Belum ada QR Code tersimpan. Klik "+ Buat QR Code" untuk memulai.</div>`;
+                return;
+            }
+            let html = '';
+            allQRCodes.slice(0, 5).forEach(qr => {
+                let typeStr = (qr.dataType || (qr.data && qr.data.startsWith('http') ? 'url' : 'text')).toUpperCase();
+                let nameStr = qr.projectName || qr.name || 'Tanpa Judul';
+                let dataStr = qr.data || '';
+                html += `
+                <div class="list-item-card" style="margin-bottom:10px;">
+                    <div class="list-item-info">
+                        <h4>${nameStr}</h4>
+                        <p>${typeStr}: ${dataStr.substring(0, 35)}${dataStr.length > 35 ? '...' : ''}</p>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="neo-btn secondary" style="padding: 6px 12px; font-size: 0.8rem; display:inline-flex; align-items:center; gap:5px;" onclick="openEditor('${qr.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Edit</button>
+                    </div>
+                </div>`;
+            });
+            overviewList.innerHTML = html;
+        }
     }
 
     // ================= DATA LOGIC (API DENGAN BEARER TOKEN) =================
     async function loadAllQRCodes() {
         const container = document.getElementById('qr-list-container');
-        container.innerHTML = "<div class='empty-state'>Memuat data dari server...</div>";
+        if (container) container.innerHTML = "<div class='empty-state'>Memuat data dari server...</div>";
         try {
             const res = await fetch('/api/qrcodes', {
                 method: 'GET',
@@ -488,7 +729,9 @@
             const json = await res.json();
             
             allQRCodes = json.data || [];
+            renderQROverview();
             
+            if(!container) return;
             if(allQRCodes.length === 0) {
                 container.innerHTML = "<div class='empty-state'>Belum ada QR Code tersimpan. Silakan klik 'Buat QR Baru'.</div>";
                 return;
@@ -507,20 +750,22 @@
                         <p>${typeStr}: ${dataStr.substring(0, 30)}${dataStr.length > 30 ? '...' : ''}</p>
                     </div>
                     <div class="list-item-actions">
-                        <button class="neo-btn secondary" style="padding: 8px 12px; font-size: 0.8rem;" onclick="openEditor('${qr.id}')">✏️ Edit</button>
-                        <button class="neo-btn danger" style="padding: 8px 12px; font-size: 0.8rem;" onclick="deleteQRCode('${qr.id}')">🗑️</button>
+                        <button class="neo-btn secondary" style="padding: 8px 12px; font-size: 0.8rem; display:inline-flex; align-items:center; gap:5px;" onclick="openEditor('${qr.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Edit</button>
+                        <button class="neo-btn danger" style="padding: 8px 12px; font-size: 0.8rem; display:inline-flex; align-items:center; justify-content:center;" onclick="deleteQRCode('${qr.id}')" title="Hapus"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                     </div>
                 </div>`;
             });
             container.innerHTML = html;
         } catch (e) {
             console.error(e);
-            container.innerHTML = "<div class='empty-state' style='color:var(--danger);'>Gagal terhubung ke server. (Mode Lokal Canvas aktif)</div>";
+            if (container) container.innerHTML = "<div class='empty-state' style='color:var(--danger);'>Gagal terhubung ke server. (Mode Lokal Canvas aktif)</div>";
+            renderQROverview();
         }
     }
 
     function createNewQRCode() {
         state = JSON.parse(JSON.stringify(defaultState));
+        document.querySelectorAll('.editor-only').forEach(el => el.style.display = 'flex');
         switchTab('data');
     }
 
@@ -561,6 +806,7 @@
                 state.imageSize = parseFloat(found.imageSize) || 0.3;
                 state.hideBgDots = found.hideBgDots !== undefined ? found.hideBgDots : true;
             }
+            document.querySelectorAll('.editor-only').forEach(el => el.style.display = 'flex');
             switchTab('data');
         }
     }
@@ -568,7 +814,7 @@
     async function saveQRCode() {
         const btn = document.getElementById('btn-save-cloud');
         const origText = btn.innerText;
-        btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
+        btn.innerText = "Menyimpan..."; btn.disabled = true;
 
         try {
             const res = await fetch('/api/qrcodes/save', {
@@ -585,7 +831,7 @@
             const data = await res.json();
             if(data.success) {
                 state = data.data; 
-                showToast("✅ Berhasil disimpan ke Cloud!");
+                showToast("Berhasil disimpan ke Cloud!");
             } else {
                 showCustomAlert("Gagal: " + (data.message || "Akses Ditolak"));
             }
@@ -594,7 +840,7 @@
             const idx = allQRCodes.findIndex(q => q.id === state.id);
             if(idx > -1) allQRCodes[idx] = JSON.parse(JSON.stringify(state));
             else allQRCodes.push(JSON.parse(JSON.stringify(state)));
-            showToast("✅ Tersimpan di Sesi Canvas Lokal!");
+            showToast("Tersimpan di Sesi Canvas Lokal!");
         }
         btn.innerText = origText; btn.disabled = false;
     }
@@ -611,7 +857,7 @@
 
                 const json = await res.json();
                 if(json.success) {
-                    showToast("🗑️ Berhasil dihapus dari Cloud.");
+                    showToast("Berhasil dihapus dari Cloud.");
                     loadAllQRCodes();
                 } else {
                     showCustomAlert("Gagal menghapus: " + (json.message || "Kesalahan Server"));
@@ -619,7 +865,7 @@
             } catch (e) {
                 allQRCodes = allQRCodes.filter(q => q.id !== id);
                 loadAllQRCodes();
-                showToast("🗑️ Dihapus (Sesi Lokal).");
+                showToast("Dihapus (Sesi Lokal).");
             }
         });
     }
@@ -668,7 +914,17 @@
         document.getElementById('wrap-center-image').style.display = mode === 'image' ? 'block' : 'none';
         document.getElementById('wrap-center-text').style.display = mode === 'text' ? 'block' : 'none';
         document.getElementById('wrap-center-settings').style.display = mode !== 'none' ? 'block' : 'none';
-        if (mode === 'none') state.image = '';
+        if (mode === 'image' && !state.image) {
+            state.image = '/img/bemfkgumi.png';
+        } else if (mode === 'none') {
+            state.image = '';
+        }
+        renderLivePreview();
+    }
+
+    function useDefaultBemLogo() {
+        state.image = '/img/bemfkgumi.png';
+        showToast("Logo Default BEM berhasil diterapkan!");
         renderLivePreview();
     }
 
@@ -711,7 +967,7 @@
         if(!file) return;
         if(file.size > 2 * 1024 * 1024) return showCustomAlert("Maksimal ukuran gambar 2MB");
 
-        showToast("⏳ Mengunggah logo...");
+        showToast("Mengunggah logo...");
         try {
             const base64 = await fileToBase64(file);
             let apiUrl = '/api/upload';
@@ -727,13 +983,13 @@
             if(res.ok) {
                 const data = await res.json();
                 state.image = window.location.origin + data.url;
-                showToast("✅ Logo berhasil diunggah!");
+                showToast("Logo berhasil diunggah!");
                 renderLivePreview();
             } else { throw new Error(); }
         } catch(e) {
             const b64 = await fileToBase64(file);
             state.image = b64;
-            showToast("✅ Logo diterapkan (Sesi Lokal).");
+            showToast("Logo diterapkan (Sesi Lokal).");
             renderLivePreview();
         }
     }
@@ -769,6 +1025,389 @@
         return canvas.toDataURL('image/png');
     }
 
+    // ================= CUSTOM 2D CANVAS GEOMETRY ENGINE (15 DOTS, 15 CORNER SQUARES, 5 CORNER DOTS) =================
+    function installCustomQRShapeEngine() {
+        if (!window.QRCodeStyling || window._qrCustomEngineInstalled) return;
+        try {
+            const dummy = new QRCodeStyling({ data: 'test', width: 100, height: 100 });
+            if (!dummy._canvas) return;
+            const CanvasProto = Object.getPrototypeOf(dummy._canvas);
+            const origDrawDots = CanvasProto.drawDots;
+            const origDrawCorners = CanvasProto.drawCorners;
+
+            const nativeDots = ['square', 'dots', 'rounded', 'extra-rounded', 'classy', 'classy-rounded'];
+            const nativeSquares = ['square', 'dot', 'extra-rounded'];
+            const nativeCornerDots = ['square', 'dot'];
+
+            function drawCustomDotShape(ctx, x, y, size, type) {
+                const cx = x + size / 2, cy = y + size / 2;
+                switch(type) {
+                    case 'star': {
+                        const rOut = size * 0.48, rIn = size * 0.22;
+                        for (let i = 0; i < 10; i++) {
+                            const a = (i * Math.PI) / 5 - Math.PI / 2;
+                            const r = i % 2 === 0 ? rOut : rIn;
+                            const px = cx + Math.cos(a) * r, py = cy + Math.sin(a) * r;
+                            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                        }
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'diamond': {
+                        const h = size * 0.46;
+                        ctx.moveTo(cx, cy - h); ctx.lineTo(cx + h, cy); ctx.lineTo(cx, cy + h); ctx.lineTo(cx - h, cy);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'hexagon': {
+                        const r = size * 0.46;
+                        for (let i = 0; i < 6; i++) {
+                            const a = (i * Math.PI) / 3 - Math.PI / 6;
+                            const px = cx + Math.cos(a) * r, py = cy + Math.sin(a) * r;
+                            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                        }
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'octagon': {
+                        const r = size * 0.46;
+                        for (let i = 0; i < 8; i++) {
+                            const a = (i * Math.PI) / 4 - Math.PI / 8;
+                            const px = cx + Math.cos(a) * r, py = cy + Math.sin(a) * r;
+                            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                        }
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'heart': {
+                        const s = size * 0.42;
+                        ctx.moveTo(cx, cy + s * 0.55);
+                        ctx.bezierCurveTo(cx - s * 1.15, cy - s * 0.15, cx - s * 0.9, cy - s * 0.95, cx, cy - s * 0.35);
+                        ctx.bezierCurveTo(cx + s * 0.9, cy - s * 0.95, cx + s * 1.15, cy - s * 0.15, cx, cy + s * 0.55);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'cross': {
+                        const w = size * 0.45, t = size * 0.16;
+                        ctx.rect(cx - t, cy - w, t * 2, w * 2);
+                        ctx.rect(cx - w, cy - t, w * 2, t * 2);
+                        break;
+                    }
+                    case 'fluid': {
+                        const r = size * 0.44;
+                        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                        break;
+                    }
+                    case 'sparkle': {
+                        const r = size * 0.48;
+                        ctx.moveTo(cx, cy - r);
+                        ctx.quadraticCurveTo(cx, cy, cx + r, cy);
+                        ctx.quadraticCurveTo(cx, cy, cx, cy + r);
+                        ctx.quadraticCurveTo(cx, cy, cx - r, cy);
+                        ctx.quadraticCurveTo(cx, cy, cx, cy - r);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'triangle': {
+                        const h = size * 0.46;
+                        ctx.moveTo(cx, cy - h); ctx.lineTo(cx + h, cy + h * 0.85); ctx.lineTo(cx - h, cy + h * 0.85);
+                        ctx.closePath();
+                        break;
+                    }
+                    default:
+                        ctx.rect(x, y, size, size);
+                }
+            }
+
+            function drawCustomCornerSquarePath(ctx, x, y, s, a, type) {
+                const innerSize = s - 2 * a;
+                const ix = x + a, iy = y + a;
+
+                switch(type) {
+                    case 'leaf': {
+                        const r = s * 0.45;
+                        ctx.moveTo(x + r, y);
+                        ctx.lineTo(x + s, y);
+                        ctx.lineTo(x + s, y + s - r);
+                        ctx.quadraticCurveTo(x + s, y + s, x + s - r, y + s);
+                        ctx.lineTo(x, y + s);
+                        ctx.lineTo(x, y + r);
+                        ctx.quadraticCurveTo(x, y, x + r, y);
+                        break;
+                    }
+                    case 'shield': {
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x + s, y);
+                        ctx.lineTo(x + s, y + s * 0.6);
+                        ctx.quadraticCurveTo(x + s, y + s, x + s / 2, y + s);
+                        ctx.quadraticCurveTo(x, y + s, x, y + s * 0.6);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'hexagon':
+                    case 'octagon': {
+                        const c = s * 0.22;
+                        ctx.moveTo(x + c, y); ctx.lineTo(x + s - c, y); ctx.lineTo(x + s, y + c); ctx.lineTo(x + s, y + s - c);
+                        ctx.lineTo(x + s - c, y + s); ctx.lineTo(x + c, y + s); ctx.lineTo(x, y + s - c); ctx.lineTo(x, y + c);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'diamond': {
+                        const cx = x + s / 2, cy = y + s / 2;
+                        ctx.moveTo(cx, y); ctx.lineTo(x + s, cy); ctx.lineTo(cx, y + s); ctx.lineTo(x, cy);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'star': {
+                        const cx = x + s / 2, cy = y + s / 2;
+                        const rOut = s * 0.5, rIn = s * 0.38;
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i * Math.PI) / 4 - Math.PI / 2;
+                            const r = i % 2 === 0 ? rOut : rIn;
+                            const px = cx + Math.cos(angle) * r, py = cy + Math.sin(angle) * r;
+                            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                        }
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'ticket': {
+                        const nr = s * 0.18;
+                        ctx.moveTo(x + nr, y);
+                        ctx.lineTo(x + s - nr, y);
+                        ctx.arc(x + s, y, nr, Math.PI, Math.PI / 2, true);
+                        ctx.lineTo(x + s, y + s - nr);
+                        ctx.arc(x + s, y + s, nr, -Math.PI / 2, Math.PI, true);
+                        ctx.lineTo(x + nr, y + s);
+                        ctx.arc(x, y + s, nr, 0, -Math.PI / 2, true);
+                        ctx.lineTo(x, y + nr);
+                        ctx.arc(x, y, nr, Math.PI / 2, 0, true);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'bubble': {
+                        const r = s * 0.32;
+                        ctx.moveTo(x + r, y);
+                        ctx.lineTo(x + s - r, y);
+                        ctx.quadraticCurveTo(x + s, y, x + s, y + r);
+                        ctx.lineTo(x + s, y + s);
+                        ctx.lineTo(x + r, y + s);
+                        ctx.quadraticCurveTo(x, y + s, x, y + s - r);
+                        ctx.lineTo(x, y + r);
+                        ctx.quadraticCurveTo(x, y, x + r, y);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'slant': {
+                        const c = s * 0.28;
+                        ctx.moveTo(x + c, y); ctx.lineTo(x + s, y); ctx.lineTo(x + s - c, y + s); ctx.lineTo(x, y + s);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'barrel': {
+                        const cx = x + s / 2, cy = y + s / 2, bulge = s * 0.08;
+                        ctx.moveTo(x, y);
+                        ctx.quadraticCurveTo(cx, y - bulge, x + s, y);
+                        ctx.quadraticCurveTo(x + s + bulge, cy, x + s, y + s);
+                        ctx.quadraticCurveTo(cx, y + s + bulge, x, y + s);
+                        ctx.quadraticCurveTo(x - bulge, cy, x, y);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'cross': {
+                        const c = s * 0.22;
+                        ctx.moveTo(x + c, y); ctx.lineTo(x + s - c, y); ctx.lineTo(x + s - c, y + c); ctx.lineTo(x + s, y + c);
+                        ctx.lineTo(x + s, y + s - c); ctx.lineTo(x + s - c, y + s - c); ctx.lineTo(x + s - c, y + s);
+                        ctx.lineTo(x + c, y + s); ctx.lineTo(x + c, y + s - c); ctx.lineTo(x, y + s - c);
+                        ctx.lineTo(x, y + c); ctx.lineTo(x + c, y + c);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'fluid': {
+                        const r = s * 0.35;
+                        ctx.moveTo(x + r, y);
+                        ctx.quadraticCurveTo(x + s, y, x + s, y + r);
+                        ctx.quadraticCurveTo(x + s, y + s, x + s - r, y + s);
+                        ctx.quadraticCurveTo(x, y + s, x, y + s - r);
+                        ctx.quadraticCurveTo(x, y, x + r, y);
+                        ctx.closePath();
+                        break;
+                    }
+                    default:
+                        ctx.rect(x, y, s, s);
+                }
+                ctx.rect(ix, iy, innerSize, innerSize);
+            }
+
+            function drawCustomCornerDotPath(ctx, x, y, u, type) {
+                const cx = x + u / 2, cy = y + u / 2;
+                switch(type) {
+                    case 'star': {
+                        const rOut = u * 0.52, rIn = u * 0.24;
+                        for (let i = 0; i < 10; i++) {
+                            const a = (i * Math.PI) / 5 - Math.PI / 2;
+                            const r = i % 2 === 0 ? rOut : rIn;
+                            const px = cx + Math.cos(a) * r, py = cy + Math.sin(a) * r;
+                            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                        }
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'heart': {
+                        const s = u * 0.46;
+                        ctx.moveTo(cx, cy + s * 0.6);
+                        ctx.bezierCurveTo(cx - s * 1.15, cy - s * 0.15, cx - s * 0.9, cy - s * 0.95, cx, cy - s * 0.35);
+                        ctx.bezierCurveTo(cx + s * 0.9, cy - s * 0.95, cx + s * 1.15, cy - s * 0.15, cx, cy + s * 0.6);
+                        ctx.closePath();
+                        break;
+                    }
+                    case 'diamond': {
+                        const h = u * 0.48;
+                        ctx.moveTo(cx, cy - h); ctx.lineTo(cx + h, cy); ctx.lineTo(cx, cy + h); ctx.lineTo(cx - h, cy);
+                        ctx.closePath();
+                        break;
+                    }
+                    default:
+                        ctx.rect(x, y, u, u);
+                }
+            }
+
+            CanvasProto.drawDots = function(filter) {
+                const dotsType = this._options?.dotsOptions?.type;
+                if (nativeDots.includes(dotsType)) {
+                    return origDrawDots.call(this, filter);
+                }
+
+                if (!this._qr) throw "QR code is not defined";
+                const r = this.context;
+                if (!r) throw "QR code context is not defined";
+                const n = this._options;
+                const o = this._qr.getModuleCount();
+                const i = Math.min(n.width, n.height) - 2 * n.margin;
+                const a = Math.floor(i / o);
+                const s = Math.floor((n.width - o * a) / 2);
+                const u = Math.floor((n.height - o * a) / 2);
+
+                r.beginPath();
+                for (let col = 0; col < o; col++) {
+                    for (let row = 0; row < o; row++) {
+                        if (filter && !filter(col, row)) continue;
+                        if (this._qr.isDark(col, row)) {
+                            const px = s + col * a;
+                            const py = u + row * a;
+                            drawCustomDotShape(r, px, py, a, dotsType);
+                        }
+                    }
+                }
+
+                if (n.dotsOptions?.gradient) {
+                    const g = n.dotsOptions.gradient;
+                    const grad = this._createGradient({ context: r, options: g, x: s, y: u, size: o * a });
+                    g.colorStops.forEach(st => grad.addColorStop(st.offset, st.color));
+                    r.fillStyle = grad;
+                } else {
+                    r.fillStyle = n.dotsOptions?.color || '#000000';
+                }
+                r.fill('evenodd');
+            };
+
+            CanvasProto.drawCorners = function(filter) {
+                const sqType = this._options?.cornersSquareOptions?.type;
+                const dotType = this._options?.cornersDotOptions?.type;
+
+                const isCustomSquare = sqType && !nativeSquares.includes(sqType);
+                const isCustomDot = dotType && !nativeCornerDots.includes(dotType);
+
+                if (!isCustomSquare && !isCustomDot) {
+                    return origDrawCorners.call(this, filter);
+                }
+
+                if (!this._qr) throw "QR code is not defined";
+                const r = this.context;
+                if (!r) throw "QR code context is not defined";
+                const n = this._options;
+                const o = this._qr.getModuleCount();
+                const i = Math.min(n.width, n.height) - 2 * n.margin;
+                const a = Math.floor(i / o);
+                const s = 7 * a;
+                const u = 3 * a;
+                const c = Math.floor((n.width - o * a) / 2);
+                const h = Math.floor((n.height - o * a) / 2);
+
+                const corners = [
+                    [0, 0, 0],
+                    [1, 0, Math.PI / 2],
+                    [0, 1, -Math.PI / 2]
+                ];
+
+                corners.forEach(([M, C, z]) => {
+                    if (filter && !filter(M, C)) return;
+                    const D = c + M * a * (o - 7);
+                    const I = h + C * a * (o - 7);
+
+                    // 1. Draw Corner Square (Outer Frame)
+                    r.save();
+                    r.beginPath();
+                    if (isCustomSquare) {
+                        drawCustomCornerSquarePath(r, D, I, s, a, sqType);
+                    } else {
+                        if (sqType === 'dot') {
+                            r.arc(D + s / 2, I + s / 2, s / 2, 0, Math.PI * 2);
+                            r.rect(D + a, I + a, s - 2 * a, s - 2 * a);
+                        } else if (sqType === 'extra-rounded') {
+                            const rad = s * 0.35;
+                            r.roundRect ? r.roundRect(D, I, s, s, rad) : r.rect(D, I, s, s);
+                            r.rect(D + a, I + a, s - 2 * a, s - 2 * a);
+                        } else {
+                            r.rect(D, I, s, s);
+                            r.rect(D + a, I + a, s - 2 * a, s - 2 * a);
+                        }
+                    }
+
+                    if (n.cornersSquareOptions?.gradient) {
+                        const g = n.cornersSquareOptions.gradient;
+                        const grad = this._createGradient({ context: r, options: g, additionalRotation: z, x: D, y: I, size: s });
+                        g.colorStops.forEach(st => grad.addColorStop(st.offset, st.color));
+                        r.fillStyle = grad;
+                    } else {
+                        r.fillStyle = n.cornersSquareOptions?.color || '#000000';
+                    }
+                    r.fill('evenodd');
+                    r.restore();
+
+                    // 2. Draw Corner Dot (Inner Center)
+                    r.save();
+                    r.beginPath();
+                    const dotX = D + 2 * a;
+                    const dotY = I + 2 * a;
+                    if (isCustomDot) {
+                        drawCustomCornerDotPath(r, dotX, dotY, u, dotType);
+                    } else {
+                        if (dotType === 'dot') {
+                            r.arc(dotX + u / 2, dotY + u / 2, u / 2, 0, Math.PI * 2);
+                        } else {
+                            r.rect(dotX, dotY, u, u);
+                        }
+                    }
+
+                    if (n.cornersDotOptions?.gradient) {
+                        const g = n.cornersDotOptions.gradient;
+                        const grad = this._createGradient({ context: r, options: g, additionalRotation: z, x: dotX, y: dotY, size: u });
+                        g.colorStops.forEach(st => grad.addColorStop(st.offset, st.color));
+                        r.fillStyle = grad;
+                    } else {
+                        r.fillStyle = n.cornersDotOptions?.color || '#000000';
+                    }
+                    r.fill('evenodd');
+                    r.restore();
+                });
+            };
+
+            window._qrCustomEngineInstalled = true;
+        } catch(err) {
+            console.error("Gagal inisialisasi custom QR shape engine:", err);
+        }
+    }
+
     // ================= SUPER BIG UPGRADE: 2048x2048 2K HD QR GENERATOR =================
     function getQROptions(s) {
         let centerImageUri = '';
@@ -797,6 +1436,7 @@
     }
 
     function renderLivePreview() {
+        installCustomQRShapeEngine();
         const container = document.getElementById("qr-canvas-container");
         if (!container || !qrCodeInstance) return;
         container.innerHTML = ""; 
@@ -806,12 +1446,12 @@
 
     // ================= DOWNLOAD LOGIC =================
     function downloadQR(extension) {
+        installCustomQRShapeEngine();
         if(!qrCodeInstance) return;
         let filename = state.projectName ? state.projectName.replace(/\s+/g, '_') : 'BEM_QRCode_HD';
         
         // Memicu download dengan resolusi super besar (2K)
         qrCodeInstance.download({ name: filename, extension: extension });
-        showToast(`📥 Mengunduh Format ${extension.toUpperCase()} Super-HD 2K (2048x2048)...`);
     }
 
     // ================= CUSTOM ALERTS =================
