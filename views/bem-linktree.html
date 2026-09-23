@@ -104,42 +104,118 @@
         'facebook': '<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>'
     };
 
-    function getTemplateCSS(tplName) {
+    function getTemplateCSS(tplName, bgColor) {
+        const base = bgColor || 'var(--theme-bg, #ffffff)';
         switch(tplName) {
-            case 'grid-light': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px); background-color: var(--theme-bg, #ffffff);`;
-            case 'grid-dark': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px); background-color: var(--theme-bg, #0f172a);`;
-            case 'polka-light': return `background-image: radial-gradient(rgba(0,0,0,0.1) 2px, transparent 2px); background-size: 20px 20px; background-color: var(--theme-bg, #ffffff);`;
-            case 'polka-dark': return `background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px); background-size: 20px 20px; background-color: var(--theme-bg, #0f172a);`;
-            case 'diagonal-light': return `background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 10px, transparent 10px, transparent 20px); background-color: var(--theme-bg, #ffffff);`;
-            case 'diagonal-dark': return `background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 10px, transparent 10px, transparent 20px); background-color: var(--theme-bg, #0f172a);`;
-            case 'checkerboard': return `background-image: linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)); background-size: 20px 20px; background-position: 0 0, 10px 10px; background-color: var(--theme-bg, #ffffff);`;
-            case 'zigzag': return `background: linear-gradient(135deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(225deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(315deg, rgba(0,0,0,0.05) 25%, transparent 25%), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%); background-size: 40px 40px; background-color: var(--theme-bg, #ffffff);`;
-            case 'wave-light': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; background-color: var(--theme-bg, #ffffff);`;
-            case 'wave-dark': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; background-color: var(--theme-bg, #0f172a);`;
-            case 'topography': return `background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.05) 10px, transparent 11px, transparent 20px); background-color: var(--theme-bg, #ffffff);`;
-            case 'memphis': return `background-image: radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%), radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px; background-color: var(--theme-bg, #ffffff);`;
-            case 'circuit': return `background-image: radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; background-color: var(--theme-bg, #ffffff);`;
-            case 'starry': return `background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px); background-size: 90px 90px; background-position: 0 0, 45px 45px; background-color: #0f172a;`;
-            case 'hexagons': return `background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(rgba(0,0,0,0.05) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, rgba(0,0,0,0.05) 2px, transparent 2px) -1px 0; background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px; background-color: var(--theme-bg, #ffffff);`;
-            case 'clouds': return `background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 50%); background-size: 100px 100px; background-color: #87CEEB;`;
-            case 'mesh-1': return `background-image: radial-gradient(at 40% 20%, rgba(255,100,100,0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(100,255,100,0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(100,100,255,0.3) 0px, transparent 50%); background-color: var(--theme-bg, #ffffff);`;
-            case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.3) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.3) 0px, transparent 50%); background-color: var(--theme-bg, #ffffff);`;
-            case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(0,0,255,0.1)); filter: contrast(1.5); background-color: var(--theme-bg, #ffffff);`;
-            case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,0,0.1), rgba(255,0,255,0.1)); background-color: var(--theme-bg, #ffffff);`;
-            
-            // --- 10 NEW TEMPLATES ---
-            case 'neo-brutalism': return `background-color: var(--theme-bg, #ffde59); background-image: radial-gradient(circle, #000 2px, transparent 2px); background-size: 30px 30px;`;
-            case 'glass-blobs': return `background-color: var(--theme-bg, #f3f4f6); background-image: radial-gradient(circle at 15% 50%, rgba(255,105,180,0.4), transparent 50%), radial-gradient(circle at 85% 30%, rgba(0,255,255,0.4), transparent 50%); filter: blur(0px);`;
-            case 'y2k-holo': return `background: linear-gradient(120deg, #ff00cc, #333399, #00ffff); background-size: 200% 200%; animation: gradientMove 5s ease infinite;`;
-            case 'cyber-grid': return `background-color: #0d0221; background-image: linear-gradient(transparent 95%, rgba(255,0,60,0.5) 95%), linear-gradient(90deg, transparent 95%, rgba(15,56,15,0.5) 95%); background-size: 40px 40px;`;
-            case 'retro-sunset': return `background: linear-gradient(to bottom, #000033 0%, #cc0066 50%, #ff9933 100%);`;
-            case 'bauhaus': return `background-color: var(--theme-bg, #f4f4f4); background-image: radial-gradient(circle at 20% 20%, rgba(217,32,39,0.2) 10%, transparent 11%), linear-gradient(45deg, transparent 40%, rgba(53,208,186,0.2) 40%, rgba(53,208,186,0.2) 60%, transparent 60%); background-size: 100px 100px;`;
-            case 'vhs-glitch': return `background-color: #111; background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 2px, transparent 2px, transparent 4px);`;
-            case 'pastel-dream': return `background: linear-gradient(45deg, #ffc3a0 0%, #ffafbd 100%);`;
-            case 'dark-academia': return `background-color: #3e2723; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.15) 10px, rgba(0,0,0,0.15) 20px);`;
-            case 'minimal-zen': return `background-color: var(--theme-bg, #fafafa); background-image: repeating-radial-gradient(circle at center, transparent 0, transparent 20px, rgba(0,0,0,0.04) 21px, rgba(0,0,0,0.04) 22px);`;
-            
-            default: return '';
+            // --- 1 to 30: Core & Popular ---
+            case 'grid-light': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px); background-color: ${base};`;
+            case 'grid-dark': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.12) 1px, transparent 1px); background-color: ${base};`;
+            case 'polka-light': return `background-image: radial-gradient(rgba(0,0,0,0.12) 2px, transparent 2px); background-size: 20px 20px; background-color: ${base};`;
+            case 'polka-dark': return `background-image: radial-gradient(rgba(255,255,255,0.18) 2px, transparent 2px); background-size: 20px 20px; background-color: ${base};`;
+            case 'diagonal-light': return `background: repeating-linear-gradient(45deg, rgba(0,0,0,0.04), rgba(0,0,0,0.04) 10px, transparent 10px, transparent 20px); background-color: ${base};`;
+            case 'diagonal-dark': return `background: repeating-linear-gradient(45deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 10px, transparent 10px, transparent 20px); background-color: ${base};`;
+            case 'checkerboard': return `background-image: linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.06) 75%), linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.06) 75%); background-size: 24px 24px; background-position: 0 0, 12px 12px; background-color: ${base};`;
+            case 'zigzag': return `background: linear-gradient(135deg, rgba(0,0,0,0.06) 25%, transparent 25%) -20px 0, linear-gradient(225deg, rgba(0,0,0,0.06) 25%, transparent 25%) -20px 0, linear-gradient(315deg, rgba(0,0,0,0.06) 25%, transparent 25%), linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%); background-size: 40px 40px; background-color: ${base};`;
+            case 'wave-light': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(0,0,0,0.04) 21%, rgba(0,0,0,0.04) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(0,0,0,0.04) 21%, rgba(0,0,0,0.04) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; background-color: ${base};`;
+            case 'wave-dark': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.08) 21%, rgba(255,255,255,0.08) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.08) 21%, rgba(255,255,255,0.08) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; background-color: ${base};`;
+            case 'topography': return `background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.06) 10px, transparent 11px, transparent 20px); background-color: ${base};`;
+            case 'memphis': return `background-image: radial-gradient(circle, rgba(0,0,0,0.12) 10%, transparent 10%), radial-gradient(circle, rgba(0,0,0,0.12) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px; background-color: ${base};`;
+            case 'circuit': return `background-image: radial-gradient(rgba(0,0,0,0.12) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.12) 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; background-color: ${base};`;
+            case 'starry': return `background-image: radial-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.2) 2px, transparent 40px); background-size: 90px 90px; background-position: 0 0, 45px 45px; background-color: ${base};`;
+            case 'hexagons': return `background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.06) 20%, rgba(0,0,0,0.06) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(rgba(0,0,0,0.06) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, rgba(0,0,0,0.06) 2px, transparent 2px) -1px 0; background-size: 50px 50px, 25px 25px, 25px 25px; background-color: ${base};`;
+            case 'clouds': return `background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7) 0%, transparent 60%); background-size: 120px 120px; background-color: ${base};`;
+            case 'mesh-1': return `background-image: radial-gradient(at 40% 20%, rgba(255,100,100,0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(100,255,100,0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(100,100,255,0.3) 0px, transparent 50%); background-color: ${base};`;
+            case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.35) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.35) 0px, transparent 50%); background-color: ${base};`;
+            case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,128,0.15), rgba(0,128,255,0.15)); background-color: ${base};`;
+            case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,128,0.15), rgba(255,0,255,0.15)); background-color: ${base};`;
+            case 'neo-brutalism': return `background-image: radial-gradient(circle, rgba(0,0,0,0.2) 2px, transparent 2px); background-size: 26px 26px; background-color: ${base};`;
+            case 'glass-blobs': return `background-image: radial-gradient(circle at 15% 50%, rgba(255,105,180,0.35), transparent 50%), radial-gradient(circle at 85% 30%, rgba(0,255,255,0.35), transparent 50%); background-color: ${base};`;
+            case 'y2k-holo': return `background: linear-gradient(135deg, rgba(255,0,204,0.3), rgba(51,51,153,0.3), rgba(0,255,255,0.3)); background-color: ${base};`;
+            case 'cyber-grid': return `background-image: linear-gradient(transparent 95%, rgba(255,0,60,0.4) 95%), linear-gradient(90deg, transparent 95%, rgba(0,255,200,0.4) 95%); background-size: 36px 36px; background-color: ${base};`;
+            case 'retro-sunset': return `background: linear-gradient(to bottom, rgba(0,0,51,0.5) 0%, rgba(204,0,102,0.4) 50%, rgba(255,153,51,0.5) 100%); background-color: ${base};`;
+            case 'bauhaus': return `background-image: radial-gradient(circle at 20% 20%, rgba(217,32,39,0.2) 10%, transparent 11%), linear-gradient(45deg, transparent 40%, rgba(53,208,186,0.2) 40%, rgba(53,208,186,0.2) 60%, transparent 60%); background-size: 80px 80px; background-color: ${base};`;
+            case 'vhs-glitch': return `background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 2px, transparent 2px, transparent 4px); background-color: ${base};`;
+            case 'pastel-dream': return `background: linear-gradient(45deg, rgba(255,195,160,0.5) 0%, rgba(255,175,189,0.5) 100%); background-color: ${base};`;
+            case 'dark-academia': return `background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.18) 10px, rgba(0,0,0,0.18) 20px); background-color: ${base};`;
+            case 'minimal-zen': return `background-image: repeating-radial-gradient(circle at center, transparent 0, transparent 20px, rgba(0,0,0,0.05) 21px, rgba(0,0,0,0.05) 22px); background-color: ${base};`;
+
+            // --- 31 to 50: Futuristic & Cyber Gen Z ---
+            case 'matrix-code': return `background-image: linear-gradient(0deg, rgba(0,255,128,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,128,0.15) 1px, transparent 1px); background-size: 20px 30px; background-color: ${base};`;
+            case 'quantum-dots': return `background-image: radial-gradient(circle, rgba(99,102,241,0.3) 1.5px, transparent 1.5px); background-size: 16px 16px; background-color: ${base};`;
+            case 'isometric-cubes': return `background-image: linear-gradient(30deg, rgba(0,0,0,0.05) 12%, transparent 12.5%, transparent 87%, rgba(0,0,0,0.05) 87.5%, rgba(0,0,0,0.05)), linear-gradient(150deg, rgba(0,0,0,0.05) 12%, transparent 12.5%, transparent 87%, rgba(0,0,0,0.05) 87.5%, rgba(0,0,0,0.05)), linear-gradient(30deg, rgba(0,0,0,0.05) 12%, transparent 12.5%, transparent 87%, rgba(0,0,0,0.05) 87.5%, rgba(0,0,0,0.05)), linear-gradient(150deg, rgba(0,0,0,0.05) 12%, transparent 12.5%, transparent 87%, rgba(0,0,0,0.05) 87.5%, rgba(0,0,0,0.05)), linear-gradient(60deg, rgba(0,0,0,0.08) 25%, transparent 25.5%, transparent 75%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.08)), linear-gradient(60deg, rgba(0,0,0,0.08) 25%, transparent 25.5%, transparent 75%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.08)); background-size: 40px 70px; background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px; background-color: ${base};`;
+            case 'neon-lines': return `background: repeating-linear-gradient(-45deg, rgba(168,85,247,0.2), rgba(168,85,247,0.2) 2px, transparent 2px, transparent 24px); background-color: ${base};`;
+            case 'blueprint': return `background-image: linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px; background-color: ${base};`;
+            case 'synthwave-sun': return `background: radial-gradient(circle at 50% 90%, rgba(244,63,94,0.4) 0%, transparent 60%), linear-gradient(to top, rgba(217,70,239,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'holographic-foil': return `background: linear-gradient(45deg, rgba(255,182,193,0.3), rgba(176,224,230,0.3), rgba(255,250,205,0.3), rgba(221,160,221,0.3)); background-size: 200% 200%; background-color: ${base};`;
+            case 'glass-refraction': return `background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.25) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(99,102,241,0.2) 0%, transparent 50%); background-color: ${base};`;
+            case 'cosmic-nebula': return `background: radial-gradient(circle at 30% 40%, rgba(139,92,246,0.35) 0%, transparent 60%), radial-gradient(circle at 70% 60%, rgba(236,72,153,0.35) 0%, transparent 60%); background-color: ${base};`;
+            case 'solar-flare': return `background: radial-gradient(ellipse at top right, rgba(249,115,22,0.4) 0%, transparent 70%), radial-gradient(ellipse at bottom left, rgba(234,179,8,0.3) 0%, transparent 60%); background-color: ${base};`;
+            case 'cyber-hex': return `background-image: radial-gradient(circle, rgba(6,182,212,0.25) 20%, transparent 20%); background-size: 28px 28px; background-color: ${base};`;
+            case 'techno-weave': return `background: linear-gradient(45deg, rgba(0,0,0,0.08) 25%, transparent 25%), linear-gradient(-45deg, rgba(0,0,0,0.08) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.08) 75%), linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.08) 75%); background-size: 20px 20px; background-color: ${base};`;
+            case 'vaporwave-grid': return `background-image: linear-gradient(rgba(236,72,153,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.3) 1px, transparent 1px); background-size: 32px 32px; background-color: ${base};`;
+            case 'lofi-grain': return `background-image: radial-gradient(rgba(0,0,0,0.15) 1px, transparent 0); background-size: 4px 4px; background-color: ${base};`;
+            case 'acid-smiley': return `background: radial-gradient(circle at 50% 50%, rgba(234,179,8,0.25) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(132,204,22,0.25) 0%, transparent 40%); background-color: ${base};`;
+            case 'glitch-matrix': return `background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(168,85,247,0.15) 40px, rgba(168,85,247,0.15) 42px); background-color: ${base};`;
+            case 'brutalist-hazard': return `background: repeating-linear-gradient(-45deg, rgba(0,0,0,0.07), rgba(0,0,0,0.07) 15px, transparent 15px, transparent 30px); background-color: ${base};`;
+            case 'retro-arcade': return `background-image: linear-gradient(rgba(0,0,0,0.08) 2px, transparent 2px), linear-gradient(90deg, rgba(0,0,0,0.08) 2px, transparent 2px); background-size: 16px 16px; background-color: ${base};`;
+            case 'y2k-chrome': return `background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(203,213,225,0.2) 50%, rgba(255,255,255,0.5) 100%); background-color: ${base};`;
+            case 'hyperpop-gradient': return `background: linear-gradient(45deg, rgba(236,72,153,0.3), rgba(245,158,11,0.3), rgba(59,130,246,0.3)); background-color: ${base};`;
+
+            // --- 51 to 70: Organic, Ambient & Modern Gradients ---
+            case 'aurora-borealis': return `background: radial-gradient(circle at 10% 20%, rgba(52,211,153,0.35) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(59,130,246,0.35) 0%, transparent 50%); background-color: ${base};`;
+            case 'nordic-mist': return `background: linear-gradient(180deg, rgba(241,245,249,0.3) 0%, rgba(203,213,225,0.4) 100%); background-color: ${base};`;
+            case 'sunset-gradient': return `background: linear-gradient(135deg, rgba(244,63,94,0.3) 0%, rgba(249,115,22,0.3) 50%, rgba(234,179,8,0.3) 100%); background-color: ${base};`;
+            case 'ocean-abyss': return `background: radial-gradient(ellipse at bottom, rgba(14,165,233,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'emerald-luxe': return `background: radial-gradient(circle at top right, rgba(16,185,129,0.3) 0%, transparent 60%), radial-gradient(circle at bottom left, rgba(245,158,11,0.2) 0%, transparent 60%); background-color: ${base};`;
+            case 'midnight-indigo': return `background: radial-gradient(circle at 50% 30%, rgba(99,102,241,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'rose-gold': return `background: linear-gradient(135deg, rgba(254,205,211,0.4) 0%, rgba(253,164,175,0.3) 50%, rgba(251,113,133,0.3) 100%); background-color: ${base};`;
+            case 'lavender-dream': return `background: linear-gradient(135deg, rgba(233,213,255,0.4) 0%, rgba(196,181,253,0.35) 100%); background-color: ${base};`;
+            case 'peach-blossom': return `background: linear-gradient(135deg, rgba(255,237,213,0.5) 0%, rgba(254,215,170,0.4) 100%); background-color: ${base};`;
+            case 'matcha-latte': return `background: linear-gradient(135deg, rgba(236,252,203,0.4) 0%, rgba(217,249,157,0.3) 100%); background-color: ${base};`;
+            case 'carbon-fiber': return `background: radial-gradient(rgba(0,0,0,0.15) 15%, transparent 16%) 0 0, radial-gradient(rgba(0,0,0,0.15) 15%, transparent 16%) 8px 8px; background-size: 16px 16px; background-color: ${base};`;
+            case 'radar-sweep': return `background: radial-gradient(circle at center, transparent 30%, rgba(16,185,129,0.15) 31%, transparent 32%, transparent 60%, rgba(16,185,129,0.15) 61%, transparent 62%); background-size: 140px 140px; background-color: ${base};`;
+            case 'wireframe-globe': return `background-image: repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 30px, rgba(59,130,246,0.15) 31px, rgba(59,130,246,0.15) 32px); background-color: ${base};`;
+            case 'hud-interface': return `background-image: linear-gradient(to right, rgba(6,182,212,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(6,182,212,0.1) 1px, transparent 1px); background-size: 60px 60px; background-color: ${base};`;
+            case 'data-stream': return `background: repeating-linear-gradient(0deg, rgba(34,197,94,0.15) 0px, rgba(34,197,94,0.15) 1px, transparent 1px, transparent 12px); background-color: ${base};`;
+            case 'fiber-optics': return `background: radial-gradient(circle at 100% 0%, rgba(236,72,153,0.3) 0%, transparent 50%), radial-gradient(circle at 0% 100%, rgba(59,130,246,0.3) 0%, transparent 50%); background-color: ${base};`;
+            case 'space-warp': return `background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 10%), radial-gradient(circle at 50% 50%, rgba(99,102,241,0.2) 20%, transparent 60%); background-size: 80px 80px; background-color: ${base};`;
+            case 'quantum-foam': return `background-image: radial-gradient(rgba(0,0,0,0.07) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.05) 15%, transparent 16%); background-size: 12px 12px; background-position: 0 0, 6px 6px; background-color: ${base};`;
+            case 'laser-beams': return `background: repeating-linear-gradient(60deg, transparent, transparent 30px, rgba(239,68,68,0.15) 30px, rgba(239,68,68,0.15) 32px); background-color: ${base};`;
+            case 'starlight-twinkle': return `background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 2px), radial-gradient(rgba(255,255,255,0.4) 1px, transparent 2px); background-size: 50px 50px, 30px 30px; background-position: 0 0, 15px 15px; background-color: ${base};`;
+
+            // --- 71 to 100: Texture, Art, Minimalist & Trend Gen Z ---
+            case 'terrazzo': return `background-image: radial-gradient(rgba(239,68,68,0.2) 3px, transparent 4px), radial-gradient(rgba(59,130,246,0.2) 2px, transparent 3px), radial-gradient(rgba(245,158,11,0.2) 4px, transparent 5px); background-size: 40px 40px, 30px 30px, 50px 50px; background-position: 0 0, 15px 15px, 25px 5px; background-color: ${base};`;
+            case 'japanese-waves': return `background: radial-gradient(circle at 50% 0%, transparent 40%, rgba(0,0,0,0.06) 41%, rgba(0,0,0,0.06) 46%, transparent 47%); background-size: 30px 15px; background-color: ${base};`;
+            case 'argyle-diamonds': return `background: repeating-linear-gradient(120deg, rgba(0,0,0,0.04), rgba(0,0,0,0.04) 20px, transparent 20px, transparent 40px), repeating-linear-gradient(60deg, rgba(0,0,0,0.04), rgba(0,0,0,0.04) 20px, transparent 20px, transparent 40px); background-color: ${base};`;
+            case 'tartan-plaid': return `background-image: linear-gradient(rgba(0,0,0,0.06) 2px, transparent 2px), linear-gradient(90deg, rgba(0,0,0,0.06) 2px, transparent 2px), linear-gradient(rgba(0,0,0,0.03) 10px, transparent 10px), linear-gradient(90deg, rgba(0,0,0,0.03) 10px, transparent 10px); background-size: 50px 50px; background-color: ${base};`;
+            case 'houndstooth': return `background: linear-gradient(-45deg, transparent 45%, rgba(0,0,0,0.06) 45%, rgba(0,0,0,0.06) 55%, transparent 55%), linear-gradient(45deg, transparent 45%, rgba(0,0,0,0.06) 45%, rgba(0,0,0,0.06) 55%, transparent 55%); background-size: 24px 24px; background-color: ${base};`;
+            case 'art-deco': return `background: radial-gradient(circle at 50% 100%, transparent 30%, rgba(0,0,0,0.06) 31%, rgba(0,0,0,0.06) 35%, transparent 36%); background-size: 40px 20px; background-color: ${base};`;
+            case 'moroccan-tiles': return `background: radial-gradient(circle at 0 0, transparent 40%, rgba(0,0,0,0.06) 41%, rgba(0,0,0,0.06) 45%, transparent 46%) 0 0, radial-gradient(circle at 0 0, transparent 40%, rgba(0,0,0,0.06) 41%, rgba(0,0,0,0.06) 45%, transparent 46%) 20px 20px; background-size: 40px 40px; background-color: ${base};`;
+            case 'origami-fold': return `background: linear-gradient(135deg, rgba(0,0,0,0.04) 50%, transparent 50%), linear-gradient(-135deg, rgba(0,0,0,0.04) 50%, transparent 50%); background-size: 30px 30px; background-color: ${base};`;
+            case 'marble-vein': return `background: radial-gradient(ellipse at 30% 50%, rgba(0,0,0,0.04) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(0,0,0,0.05) 0%, transparent 50%); background-color: ${base};`;
+            case 'honeycomb-gold': return `background: radial-gradient(circle, transparent 20%, rgba(245,158,11,0.15) 20%, rgba(245,158,11,0.15) 80%, transparent 80%); background-size: 32px 32px; background-color: ${base};`;
+            case 'blob-fusion': return `background: radial-gradient(circle at 25% 25%, rgba(168,85,247,0.3) 0%, transparent 45%), radial-gradient(circle at 75% 75%, rgba(236,72,153,0.3) 0%, transparent 45%); background-color: ${base};`;
+            case 'soft-gaussian': return `background: radial-gradient(circle at 80% 20%, rgba(56,189,248,0.3) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(251,113,133,0.3) 0%, transparent 50%); background-color: ${base};`;
+            case 'prismatic-light': return `background: linear-gradient(120deg, rgba(255,0,0,0.15), rgba(255,255,0,0.15), rgba(0,255,0,0.15), rgba(0,255,255,0.15), rgba(0,0,255,0.15)); background-color: ${base};`;
+            case 'subtle-crosses': return `background-image: radial-gradient(rgba(0,0,0,0.09) 1px, transparent 1px), radial-gradient(rgba(0,0,0,0.09) 1px, transparent 1px); background-size: 24px 24px; background-position: 0 0, 12px 12px; background-color: ${base};`;
+            case 'dots-cluster': return `background-image: radial-gradient(rgba(0,0,0,0.12) 1.5px, transparent 1.5px); background-size: 14px 14px; background-color: ${base};`;
+            case 'radial-sunburst': return `background: repeating-conic-gradient(from 0deg, rgba(0,0,0,0.03) 0deg 15deg, transparent 15deg 30deg); background-color: ${base};`;
+            case 'paper-kraft': return `background-image: radial-gradient(rgba(180,120,60,0.08) 1px, transparent 1px); background-size: 8px 8px; background-color: ${base};`;
+            case 'noise-subtle': return `background-image: radial-gradient(rgba(0,0,0,0.1) 0.8px, transparent 0.8px); background-size: 6px 6px; background-color: ${base};`;
+            case 'perforated-metal': return `background-image: radial-gradient(rgba(0,0,0,0.12) 2px, transparent 2px); background-size: 10px 10px; background-color: ${base};`;
+            case 'liquid-smoke': return `background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.4) 0%, transparent 70%), radial-gradient(circle at 50% 100%, rgba(0,0,0,0.1) 0%, transparent 70%); background-color: ${base};`;
+            case 'neon-cyan': return `background: radial-gradient(circle at top, rgba(6,182,212,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'neon-magenta': return `background: radial-gradient(circle at bottom, rgba(217,70,239,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'galaxy-spiral': return `background: radial-gradient(circle at center, rgba(147,51,234,0.35) 0%, rgba(79,70,229,0.2) 40%, transparent 70%); background-color: ${base};`;
+            case 'deep-space': return `background: radial-gradient(ellipse at center, rgba(30,27,75,0.5) 0%, transparent 80%); background-color: ${base};`;
+            case 'zen-bamboo': return `background: repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(0,0,0,0.05) 28px, rgba(0,0,0,0.05) 30px); background-color: ${base};`;
+            case 'sunset-boulevard': return `background: linear-gradient(180deg, rgba(239,68,68,0.25) 0%, rgba(249,115,22,0.25) 50%, rgba(147,51,234,0.25) 100%); background-color: ${base};`;
+            case 'electric-violet': return `background: radial-gradient(circle at center, rgba(139,92,246,0.35) 0%, transparent 70%); background-color: ${base};`;
+            case 'abstract-geometry': return `background: linear-gradient(135deg, rgba(0,0,0,0.05) 25%, transparent 25%), linear-gradient(225deg, rgba(0,0,0,0.05) 25%, transparent 25%); background-size: 50px 50px; background-color: ${base};`;
+            case 'prism-refraction': return `background: linear-gradient(45deg, rgba(236,72,153,0.2) 0%, rgba(59,130,246,0.2) 50%, rgba(16,185,129,0.2) 100%); background-color: ${base};`;
+            case 'future-city': return `background: linear-gradient(to top, rgba(15,23,42,0.5) 0%, transparent 70%), linear-gradient(90deg, rgba(6,182,212,0.1) 1px, transparent 1px); background-size: 100% 100%, 20px 20px; background-color: ${base};`;
+
+            default: return `background-color: ${base};`;
         }
     }
 
@@ -156,8 +232,35 @@
             }
 
             renderPublicLinktree(json.data);
+            trackLinktreeView();
         } catch (error) {
             renderError();
+        }
+    }
+
+    async function trackLinktreeView() {
+        try {
+            let visitorId = localStorage.getItem('bem_lt_visitor_id');
+            if (!visitorId) {
+                visitorId = 'vis_' + Math.random().toString(36).substring(2, 12) + '_' + Date.now();
+                localStorage.setItem('bem_lt_visitor_id', visitorId);
+            }
+            const res = await fetch(`/api/linktrees/${slug}/view`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ visitorId })
+            });
+            const json = await res.json();
+            if (json.success && json.stats) {
+                const elToday = document.getElementById('viewCountToday');
+                const elWeek = document.getElementById('viewCountWeek');
+                const elTotal = document.getElementById('viewCountTotal');
+                if (elToday) elToday.innerText = json.stats.today ?? 0;
+                if (elWeek) elWeek.innerText = json.stats.week ?? 0;
+                if (elTotal) elTotal.innerText = json.stats.total ?? 0;
+            }
+        } catch (e) {
+            console.error("View tracking error:", e);
         }
     }
 
@@ -207,11 +310,8 @@
             wrapper.style.background = `url('${t.bgImage}') no-repeat center center / cover`;
             wrapper.classList.add('has-bg-image');
         } else if (t.bgType === 'template') {
-            wrapper.style.setProperty('--theme-bg', t.bgColor);
-            let cssTpl = getTemplateCSS(t.bgTemplate);
-            if(cssTpl) {
-                wrapper.setAttribute('style', `background-color: ${t.bgColor}; ${cssTpl} color: ${t.textColor};`);
-            }
+            let cssTpl = getTemplateCSS(t.bgTemplate, t.bgColor);
+            wrapper.style.cssText = `--theme-bg: ${t.bgColor}; background-color: ${t.bgColor}; color: ${t.textColor}; ${cssTpl}`;
         }
 
         try {
@@ -319,9 +419,30 @@
         const fText = data.settings?.footerText || "Powered by BEM KBMFKG UMI (Dept. Infocom)";
         const fUrl = data.settings?.footerUrl || "https://www.bemkbmfkgumi.com/ourteam";
 
-        html += `<div style="text-align:center; margin-top:80px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton}; padding-bottom:30px;">
+        html += `<div style="text-align:center; margin-top:80px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton};">
                     <a href="${fUrl}" target="_blank" style="color:${t.textColor}; text-decoration:none;">${fText}</a>
                  </div>`;
+
+        // Small Glassmorphic Views Counter Card Below Watermark
+        html += `
+        <div style="text-align:center; margin-top:14px; padding-bottom:40px;">
+            <div class="linktree-views-card">
+                <div class="linktree-views-item">
+                    <span class="linktree-views-dot today"></span>
+                    <span>Views Hari Ini: <strong id="viewCountToday">0</strong></span>
+                </div>
+                <div class="linktree-views-divider"></div>
+                <div class="linktree-views-item">
+                    <span class="linktree-views-dot week"></span>
+                    <span>Views Minggu Ini: <strong id="viewCountWeek">0</strong></span>
+                </div>
+                <div class="linktree-views-divider"></div>
+                <div class="linktree-views-item">
+                    <span class="linktree-views-dot total"></span>
+                    <span>Total Views: <strong id="viewCountTotal">0</strong></span>
+                </div>
+            </div>
+        </div>`;
 
         screen.innerHTML = html;
 
