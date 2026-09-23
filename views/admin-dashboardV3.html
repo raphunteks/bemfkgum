@@ -32,45 +32,256 @@
     </div>
 </div>
 
-<div class="builder-layout list-mode" id="main-layout" style="display: none; opacity: 0; transition: opacity 0.5s;">
+<!-- MOBILE TOPBAR & DRAWER OVERLAY -->
+<header class="admin-mobile-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="/img/bemfkgumi.png" style="height:34px;" alt="Logo BEM">
+        <span style="font-weight:700; color:#fff; font-size:1.05rem;">BEM Linktree</span>
+    </div>
+    <button class="sidebar-toggle-btn" onclick="toggleMobileV3Menu()" aria-label="Toggle Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+</header>
+<div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="toggleMobileV3Menu(false)"></div>
 
-    <!-- LEFT: EDITOR PANEL -->
-    <div class="editor-panel">
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px; flex-wrap:wrap; gap:15px;">
-            <div style="display:flex; align-items:center; gap:15px;">
-                <img src="/img/bemfkgumi.png" style="width:40px; height:40px;">
-                <h1 style="margin:0; font-family:'Inter', sans-serif;">BEM-Linktree <span style="color:var(--primary)">Builder</span></h1>
-            </div>
-            <button class="btn-primary" id="btn-global-action" onclick="createNewLinktree()">+ Buat Linktree Baru</button>
-        </div>
-
-        <div class="tabs-wrapper glass-card" id="tabs-container">
-            <div class="tab-btn active" onclick="switchTab('list')">📋 Daftar Linktree</div>
-            <div class="tab-btn editor-only" onclick="switchTab('links')" style="display:none;">🔗 Links</div>
-            <div class="tab-btn editor-only" onclick="switchTab('appearance')" style="display:none;">🎨 Appearance</div>
-            <div class="tab-btn editor-only" onclick="switchTab('settings')" style="display:none;">⚙️ Settings</div>
-        </div>
-
-        <!-- TAB 0: DAFTAR LINKTREE -->
-        <div id="tab-list" class="tab-content active">
-            <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h3 style="margin:0; font-family:'Inter', sans-serif;">Manajemen Linktree</h3>
-                    <p style="color:var(--text-muted); font-size:0.95rem; margin:8px 0 0;">Kelola semua halaman Link in Bio (BEM) Anda di sini.</p>
+<div class="admin-layout list-mode" id="main-layout" style="display: none; opacity: 0; transition: opacity 0.5s;">
+    <!-- LEFT SIDEBAR COLLAPSIBLE -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <!-- Brand Header -->
+        <div class="sidebar-header-box">
+            <a href="/admin-linktree" class="sidebar-brand-group">
+                <img src="/img/bemfkgumi.png" alt="Logo Admin">
+                <div class="sidebar-brand-info">
+                    <h3 class="sidebar-brand-title" style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em;">BEM Linktree</h3>
                 </div>
+            </a>
+            <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleV3Sidebar()" title="Perkecil/Perluas Menu" aria-label="Toggle Sidebar">
+                <svg id="toggleChevronSvg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+        </div>
+
+        <!-- Quick Action Button -->
+        <div class="sidebar-action-wrap">
+            <button class="sidebar-quick-btn" onclick="createNewLinktree()" title="Buat Linktree Baru">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span class="quick-text">Buat Linktree</span>
+            </button>
+        </div>
+
+        <!-- Categorized Nav -->
+        <nav class="admin-nav" id="adminNav">
+            <div class="nav-category-header">Menu Linktree</div>
+            <button class="sidebar-nav-btn v3-tab active" id="tabBtnOverview" onclick="switchTab('overview')" data-tooltip="Overview Linktree">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                <span class="nav-text">Overview</span>
+            </button>
+            <button class="sidebar-nav-btn v3-tab" id="tabBtnList" onclick="switchTab('list')" data-tooltip="Daftar Linktree">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="m9 14 2 2 4-4"/></svg>
+                <span class="nav-text">Daftar Linktree</span>
+            </button>
+
+            <button class="sidebar-nav-btn v3-tab editor-only" id="tabBtnLinks" onclick="switchTab('links')" style="display:none;" data-tooltip="Profil & Link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <span class="nav-text">Profil & Link</span>
+            </button>
+            <button class="sidebar-nav-btn v3-tab editor-only" id="tabBtnAppearance" onclick="switchTab('appearance')" style="display:none;" data-tooltip="Tampilan Desain">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                <span class="nav-text">Tampilan</span>
+            </button>
+            <button class="sidebar-nav-btn v3-tab editor-only" id="tabBtnSettings" onclick="switchTab('settings')" style="display:none;" data-tooltip="Setelan Linktree">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span class="nav-text">Setelan</span>
+            </button>
+
+            <div class="nav-category-header">Modul Sistem</div>
+            <button class="sidebar-nav-btn" onclick="window.location.href='/admin'" data-tooltip="Admin Utama CMS">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 22"/></svg>
+                <span class="nav-text">Admin Utama</span>
+            </button>
+            <button class="sidebar-nav-btn" onclick="window.location.href='/admin-v2'" data-tooltip="Admin Form Builder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span class="nav-text">Admin Form</span>
+            </button>
+            <button class="sidebar-nav-btn active" onclick="window.location.href='/admin-linktree'" data-tooltip="Admin Linktree">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <span class="nav-text">Admin Linktree</span>
+            </button>
+            <button class="sidebar-nav-btn" onclick="window.location.href='/admin-qrcode'" data-tooltip="Admin QR Code">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect width="8" height="8" x="3" y="3" rx="1"/><rect width="8" height="8" x="13" y="3" rx="1"/><rect width="8" height="8" x="3" y="13" rx="1"/><path d="M14 14h2v2h-2z"/><path d="M18 14h3v3h-3z"/><path d="M14 18h3v3h-3z"/><path d="M18 18h3v3h-3z"/></svg>
+                <span class="nav-text">Admin QR Code</span>
+            </button>
+            <button class="sidebar-nav-btn" onclick="window.location.href='/admin-mhs'" data-tooltip="Admin Database Mhs">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span class="nav-text">Admin Database Mhs</span>
+            </button>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer-box">
+            <a href="/" target="_blank" class="sidebar-footer-btn" data-tooltip="Kunjungi Situs Publik">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span class="footer-text">Kunjungi Situs</span>
+            </a>
+            <button onclick="logout()" class="sidebar-footer-btn btn-logout" data-tooltip="Keluar Sesi Admin">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span class="footer-text">Keluar Sesi</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="admin-main">
+        <div class="builder-layout list-mode" id="builderWrapper">
+            <!-- LEFT: EDITOR PANEL -->
+            <div class="editor-panel">
+
+        <!-- ================= TAB 0: OVERVIEW (V1 SAAS DASHBOARD) ================= -->
+        <div id="tab-overview" class="tab-content active">
+            <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                <div>
+                    <h2 style="margin:0; font-family:'Outfit', sans-serif; font-size:1.6rem; color:var(--text-main);">Overview BEM Linktree</h2>
+                    <p style="color:var(--text-muted); font-size:0.92rem; margin:6px 0 0;">Ringkasan publikasi link in bio, bio profil, dan statistik tautan aktif.</p>
+                </div>
+                <button class="btn-primary" onclick="createNewLinktree()" style="display:inline-flex; align-items:center; gap:6px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Buat Linktree Baru</span>
+                </button>
+            </div>
+
+            <!-- 4 KPI METRIC CARDS -->
+            <div class="v3-kpi-grid">
+                <div class="v3-kpi-card">
+                    <div class="v3-kpi-head">
+                        <span class="v3-kpi-title">Total Linktree</span>
+                        <div style="color:#8b5cf6;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        </div>
+                    </div>
+                    <div class="v3-kpi-val" id="statV3TotalTrees">0</div>
+                    <div class="v3-kpi-foot">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#8b5cf6;"></span>
+                        <span>Halaman Publikasi</span>
+                    </div>
+                </div>
+
+                <div class="v3-kpi-card">
+                    <div class="v3-kpi-head">
+                        <span class="v3-kpi-title">Total Tautan</span>
+                        <div style="color:#10b981;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                        </div>
+                    </div>
+                    <div class="v3-kpi-val" id="statV3TotalLinks">0</div>
+                    <div class="v3-kpi-foot">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981;"></span>
+                        <span>Tombol Navigasi Aktif</span>
+                    </div>
+                </div>
+
+                <div class="v3-kpi-card">
+                    <div class="v3-kpi-head">
+                        <span class="v3-kpi-title">Sosial Media</span>
+                        <div style="color:#e1306c;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        </div>
+                    </div>
+                    <div class="v3-kpi-val" id="statV3TotalSocials">0</div>
+                    <div class="v3-kpi-foot">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#e1306c;"></span>
+                        <span>Ikon Jejaring Terpasang</span>
+                    </div>
+                </div>
+
+                <div class="v3-kpi-card">
+                    <div class="v3-kpi-head">
+                        <span class="v3-kpi-title">Database Status</span>
+                        <div style="color:#0284c7;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="v3-kpi-val" style="font-size:1.4rem;">Aktif</div>
+                    <div class="v3-kpi-foot">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981;"></span>
+                        <span>Terhubung Database</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GROUPED BAR CHART: STATISTIK KUNJUNGAN LINKTREE (WHITE THEME GBR 1) -->
+            <div class="linktree-chart-card" id="linktreeAnalyticsChartWrapper">
+                <div class="chart-floating-tooltip" id="chartFloatingTooltip"></div>
+                <div class="linktree-chart-header">
+                    <div>
+                        <h3 style="margin:0 0 5px 0; font-size:1.25rem; font-family:'Outfit', sans-serif; font-weight:700;">Statistik Kunjungan Linktree</h3>
+                        <p style="margin:0; font-size:0.85rem; color:#64748b;">Perbandingan Views Hari Ini, Views Minggu Ini & Total Views Tiap Tautan</p>
+                    </div>
+                    <div class="linktree-chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot dot-today"></span>
+                            <span>Views Hari Ini</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot dot-week"></span>
+                            <span>Views Minggu Ini</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot dot-total"></span>
+                            <span>Total Views</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="linktree-chart-container" id="linktreeChartContainer">
+                    <div id="linktreeBarChartSvgWrapper">
+                        <div style="text-align:center; padding:50px 20px; color:#64748b;">Memuat data grafik kunjungan...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OVERVIEW RECENT LINKTREES -->
+            <div class="glass-card">
+                <h3 style="margin: 0 0 16px 0; font-size: 1.15rem; color: var(--text-main);">Linktree Terkini</h3>
+                <div id="overviewLinktreeList">
+                    <div style="text-align:center; padding:30px; color:var(--text-muted);">Memuat linktree terkini...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: DAFTAR LINKTREE -->
+        <div id="tab-list" class="tab-content">
+            <div class="glass-card neumorph-outer" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+                <div>
+                    <h2 style="margin:0; font-family:'Outfit', sans-serif; font-size:1.6rem; color:var(--text-main);">Daftar Linktree</h2>
+                    <p style="color:var(--text-muted); font-size:0.92rem; margin:6px 0 0;">Kelola semua halaman Link in Bio (BEM) Anda di sini.</p>
+                </div>
+                <button class="btn-primary glow-effect" onclick="createNewLinktree()" style="display:inline-flex; align-items:center; gap:8px; border-radius:30px; padding:10px 22px; font-weight:700;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Buat Linktree Baru</span>
+                </button>
             </div>
 
             <div id="linktree-list-container">
                 <div style="text-align:center; padding:50px; color:var(--text-muted);">Memuat daftar Linktree...</div>
             </div>
 
-            <!-- TOMBOL KEMBALI KE ADMIN LAIN -->
-            <div class="sidebar-bottom">
-                <a href="/admin" class="btn-outline btn-block" style="text-decoration:none;">⬅ Admin Utama</a>
-                <a href="/admin-qrcode" class="btn-secondary btn-block" style="text-decoration:none;">🔲 Admin QR Code</a>
-                <a href="/admin-v2" class="btn-purple btn-block" style="text-decoration:none;">📝 Admin Form Builder</a>
-                <button class="btn-danger btn-block" onclick="logout()">🚪 Keluar Sistem</button>
+        </div>
+
+        <!-- TOP ACTION BAR FOR EDITOR (VISIBLE IN LINKS, APPEARANCE, SETTINGS) -->
+        <div class="editor-top-bar editor-only" id="editorTopBar" style="display:none;">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <button class="btn-outline" onclick="switchTab('list')" style="padding:8px 14px; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px; border-radius:12px;" title="Kembali ke Daftar Linktree">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>Kembali</span>
+                </button>
+                <div>
+                    <h4 id="editorCurrentSlugTitle" style="margin:0; font-size:1.15rem; color:var(--text-main); font-family:'Outfit', sans-serif;">@bemfkgumi</h4>
+                </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <button class="btn-primary glow-effect" id="btn-global-action" onclick="saveLinktree()" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; font-weight:700; font-size:0.92rem; border-radius:12px; cursor:pointer;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <span>Simpan & Publikasi</span>
+                </button>
             </div>
         </div>
 
@@ -126,7 +337,7 @@
                     <option value="color">Warna Solid</option>
                     <option value="gradient">Gradient Linear</option>
                     <option value="image">Gambar Wallpaper Custom</option>
-                    <option value="template">Template Estetik (30 Pilihan)</option>
+                    <option value="template">Template Estetik (100 Pilihan)</option>
                 </select>
 
                 <div id="bg-color-picker" class="input-group">
@@ -138,12 +349,12 @@
                     <label class="input-label">Upload Gambar Background</label>
                     <div style="display:flex; gap:15px; align-items:center; background:rgba(255,255,255,0.5); padding:15px; border-radius:16px; border:1px solid var(--border-color); box-shadow:var(--inner-neumorph);">
                         <div id="bg-preview-box" style="width:80px; height:120px; border-radius:12px; border:2px dashed var(--primary); display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(139,92,246,0.1); flex-shrink:0;">
-                            <span style="font-size:1.5rem; opacity:0.5;">🖼️</span>
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.5;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                         </div>
                         <div style="flex:1;">
                             <input type="file" id="upload-bg-img" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'bg')">
-                            <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px;" onclick="document.getElementById('upload-bg-img').click()">📸 Pilih Wallpaper Baru</button>
-                            <button class="btn-danger" style="width:100%; padding:10px; background:#ef4444;" onclick="removeBgImage()" title="Hapus Gambar">🗑️ Hapus Gambar</button>
+                            <button class="btn-outline" style="width:100%; margin-bottom:10px; padding:10px; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="document.getElementById('upload-bg-img').click()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Pilih Wallpaper Baru</button>
+                            <button class="btn-danger" style="width:100%; padding:10px; background:#ef4444; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="removeBgImage()" title="Hapus Gambar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Hapus Gambar</button>
                         </div>
                     </div>
                     <div id="bg-filename" style="font-size:0.85rem; color:var(--primary); margin-top:10px; font-weight:600; text-align:center;"></div>
@@ -189,7 +400,7 @@
             </div>
 
             <div class="glass-card">
-                <h3 style="margin-top:0;">Tipografi (50+ Aesthetic Gen Z Fonts)</h3>
+                <h3 style="margin-top:0;">Tipografi (100+ Fonts)</h3>
                 <div class="input-group">
                     <label class="input-label">Font Judul Utama</label>
                     <select class="gf-input" id="inp-font-title" onchange="updateState('theme', 'fontTitle', this.value); updateFontPreview();"></select>
@@ -232,7 +443,7 @@
                     <label class="input-label">URL / Link Tujuan Footer (Terkunci)</label>
                     <div style="display:flex; gap:10px; align-items:center;">
                         <input type="url" class="gf-input" id="inp-footer-url" readonly oninput="updateState('settings', 'footerUrl', this.value)" placeholder="https://www.bemkbmfkgumi.com/ourteam">
-                        <button class="btn-outline" style="white-space:nowrap; padding:14px 20px;" onclick="unlockFooterUrl()">🔒 Buka Akses</button>
+                        <button class="btn-outline" style="white-space:nowrap; padding:14px 20px; display:inline-flex; align-items:center; gap:6px;" onclick="unlockFooterUrl()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Buka Akses</button>
                     </div>
                     <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">URL Footer dikunci untuk menjaga standarisasi. Butuh PIN untuk mengubah.</p>
                 </div>
@@ -253,8 +464,8 @@
     <div class="preview-panel">
         <!-- Device Toggle -->
         <div class="device-toggle">
-            <button class="device-btn active" id="btn-device-mobile" onclick="toggleDevicePreview('mobile')">📱 Mobile</button>
-            <button class="device-btn" id="btn-device-desktop" onclick="toggleDevicePreview('desktop')">💻 Desktop</button>
+            <button class="device-btn active" id="btn-device-mobile" onclick="toggleDevicePreview('mobile')" style="display:inline-flex; align-items:center; gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Mobile</button>
+            <button class="device-btn" id="btn-device-desktop" onclick="toggleDevicePreview('desktop')" style="display:inline-flex; align-items:center; gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> Desktop</button>
         </div>
 
         <div class="mockup-frame is-mobile" id="mockup-container">
@@ -268,6 +479,8 @@
             </div>
         </div>
     </div>
+        </div>
+    </main>
 </div>
 
 <!-- ================== ICON PICKER MODAL ================== -->
@@ -275,13 +488,13 @@
     <div class="glass-card neumorph-outer" style="width:100%; max-width:500px; padding:30px; animation: popIn 0.3s ease; margin:20px; max-height:85vh; overflow-y:auto;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
             <h3 style="margin:0; font-family:'Outfit', sans-serif;">Pilih Ikon Tautan</h3>
-            <button class="btn-danger" style="padding:5px 12px;" onclick="closeIconPicker()">✕</button>
+            <button class="btn-danger" style="padding:5px 12px; display:inline-flex; align-items:center; justify-content:center;" onclick="closeIconPicker()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
 
         <div style="margin-bottom:20px;">
             <input type="file" id="upload-link-icon" accept="image/*,.heic,.jpeg,.png,.webp" style="display:none;" onchange="handleImageUpload(this, 'link-icon')">
-            <button class="btn-primary" style="width:100%;" onclick="document.getElementById('upload-link-icon').click()">🖼️ Upload Gambar Sendiri</button>
-            <button class="btn-outline" style="width:100%; margin-top:10px; border-color:#ef4444; color:#ef4444;" onclick="selectIcon('')">🗑️ Hapus Ikon</button>
+            <button class="btn-primary" style="width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="document.getElementById('upload-link-icon').click()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Upload Gambar Sendiri</button>
+            <button class="btn-outline" style="width:100%; margin-top:10px; border-color:#ef4444; color:#ef4444; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="selectIcon('')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Hapus Ikon</button>
         </div>
 
         <p style="font-size:0.85rem; font-weight:700; color:var(--text-muted); margin-bottom:10px;">ATAU PILIH DARI 50+ SVG ICONS:</p>
@@ -299,7 +512,9 @@
 <!-- SUCCESS MODAL (CUSTOM POPUP UNTUK SAVE) -->
 <div id="successModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
     <div class="glass-card neumorph-outer" style="width:100%; max-width:420px; text-align:center; padding:40px 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin:20px;">
-        <div style="font-size:4rem; margin-bottom:15px; animation: bounceIn 1s;">✨</div>
+        <div style="width:68px; height:68px; margin:0 auto 18px; border-radius:50%; background:linear-gradient(135deg, rgba(139,92,246,0.15), rgba(16,185,129,0.2)); display:flex; align-items:center; justify-content:center; color:#10b981; animation: bounceIn 1s;">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
         <h2 style="font-family:'Outfit', sans-serif; color:var(--text-main); margin-top:0; font-size:1.6rem;">Publikasi Berhasil!</h2>
         <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px;">Halaman BEM-Linktree Anda telah tersimpan dan siap dibagikan ke publik.</p>
 
@@ -308,8 +523,8 @@
         </div>
 
         <div style="display:flex; gap:10px; margin-top:25px; flex-wrap:wrap;">
-            <button class="btn-outline" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="copyModalLink()">📋 Salin Tautan</button>
-            <button class="btn-primary" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="openModalLink()">👁️ Buka Halaman</button>
+            <button class="btn-outline" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="copyModalLink()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Salin Tautan</button>
+            <button class="btn-primary" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="openModalLink()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Buka Halaman</button>
         </div>
         <button class="btn-outline" style="margin-top:15px; width:100%; background:transparent; color:var(--text-muted); border:1px solid var(--border-color); font-weight:600;" onclick="closeSuccessModal()">Tutup Halaman</button>
     </div>
@@ -318,7 +533,9 @@
 <!-- CUSTOM ALERT MODAL -->
 <div id="customAlertModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10002; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
     <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
-        <div style="font-size:3.5rem; margin-bottom:15px;">⚠️</div>
+        <div style="width:64px; height:64px; margin:0 auto 15px; border-radius:50%; background:rgba(239,68,68,0.1); display:flex; align-items:center; justify-content:center; color:#ef4444;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
         <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Pemberitahuan</h3>
         <p id="customAlertMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
         <button class="btn-primary" style="width:100%; font-family:'Plus Jakarta Sans', sans-serif;" onclick="closeCustomAlert()">Mengerti</button>
@@ -328,7 +545,9 @@
 <!-- CUSTOM CONFIRM MODAL -->
 <div id="customConfirmModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10003; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
     <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
-        <div style="font-size:3.5rem; margin-bottom:15px;">❓</div>
+        <div style="width:64px; height:64px; margin:0 auto 15px; border-radius:50%; background:rgba(139,92,246,0.1); display:flex; align-items:center; justify-content:center; color:var(--primary);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
         <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Konfirmasi Aksi</h3>
         <p id="customConfirmMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:25px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
         <div style="display:flex; gap:10px;">
@@ -341,7 +560,9 @@
 <!-- CUSTOM PROMPT MODAL (FOR PIN SECURITY) -->
 <div id="customPromptModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10004; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);">
     <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:35px 30px; animation: popIn 0.3s ease; margin:20px;">
-        <div style="font-size:3.5rem; margin-bottom:15px;">🔒</div>
+        <div style="width:64px; height:64px; margin:0 auto 15px; border-radius:50%; background:rgba(245,158,11,0.1); display:flex; align-items:center; justify-content:center; color:#f59e0b;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <h3 style="color:var(--text-main); margin-top:0; margin-bottom:15px; font-family:'Outfit', sans-serif;">Akses Keamanan</h3>
         <p id="customPromptMessage" style="color:var(--text-muted); font-size:1rem; margin-bottom:20px; line-height:1.5; font-family:'Inter', sans-serif;"></p>
         <input type="password" id="customPromptInput" class="gf-input" style="text-align:center; font-size:1.5rem; letter-spacing:5px; font-weight:bold; margin-bottom:25px; font-family:'Space Mono', monospace;" placeholder="***" maxlength="3">
@@ -391,6 +612,7 @@
 
             populateSelectors();
             loadAllLinktrees();
+            switchTab('overview');
         } else {
             document.getElementById('loginGate').style.display = 'flex';
         }
@@ -425,7 +647,7 @@
         } catch(e) {
             if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { 
                 localStorage.setItem('axa_admin_token', 'AXA-XYZ-SECURE-TOKEN'); 
-                window.showToast("✅ Simulasi Canvas Aktif."); 
+                window.showToast("Simulasi Canvas Aktif."); 
                 unlockDashboard(); 
             } else { 
                 document.getElementById('loginError').style.display = 'block'; 
@@ -446,6 +668,7 @@
 
             populateSelectors();
             loadAllLinktrees();
+            switchTab('overview');
         }, 500);
     }
 
@@ -465,7 +688,7 @@
     window.copyToClipboard = function(text) {
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(text).then(() => {
-                window.showToast("✅ Tautan berhasil disalin!");
+                window.showToast("Tautan berhasil disalin!");
             });
         } else {
             let textArea = document.createElement("textarea");
@@ -477,7 +700,7 @@
             textArea.select();
             try {
                 document.execCommand('copy');
-                window.showToast("✅ Tautan berhasil disalin!");
+                window.showToast("Tautan berhasil disalin!");
             } catch (err) {
                 window.showCustomAlert("Gagal menyalin tautan.");
             }
@@ -542,18 +765,28 @@
         window.copyToClipboard(url);
     }
 
-    // ================= 50+ AESTHETIC GEN Z FONTS =================
+    // ================= 100 FONTS (AESTHETIC, FUTURISTIC, EDITORIAL, GEN Z) =================
     const fontLibrary = [
         "Inter", "Poppins", "Outfit", "Plus Jakarta Sans", "Space Grotesk", 
         "Montserrat", "Roboto", "Open Sans", "Lato", "Oswald", 
         "Raleway", "Playfair Display", "Merriweather", "Lora", "PT Sans", 
         "Nunito", "Rubik", "Work Sans", "Quicksand", "Syne", 
-        "Cabinet Grotesk", "Manrope", "DM Sans", "Jost", "Epilogue", 
-        "Archivo", "Sora", "Urbanist", "Space Mono", "Fira Code", "Times New Roman",
-        "Arial", "Calibri", "Comic Sans MS", "Impact", "Bebas Neue", "Cormorant",
-        "Lexend", "Clash Display", "Unbounded", "Archivo Black", "Instrument Sans",
+        "Manrope", "DM Sans", "Jost", "Epilogue", "Archivo", 
+        "Sora", "Urbanist", "Space Mono", "Fira Code", "Times New Roman",
+        "Arial", "Calibri", "Comic Sans MS", "Impact", "Bebas Neue", 
+        "Cormorant", "Lexend", "Unbounded", "Archivo Black", "Instrument Sans",
         "Bricolage Grotesque", "Josefin Sans", "Cinzel", "Righteous", "Anton",
-        "Pacifico", "Lobster", "Caveat", "Amatic SC"
+        "Pacifico", "Lobster", "Caveat", "Amatic SC", "Abril Fatface",
+        "Cinzel Decorative", "Great Vibes", "Satisfy", "Dancing Script", "Shadows Into Light",
+        "Permanent Marker", "Kaushan Script", "Sacramento", "Comfortaa", "Fredoka",
+        "Barlow", "Kanit", "Teko", "Russo One", "Orbitron",
+        "Audiowide", "Chakra Petch", "Exo 2", "Rajdhani", "Michroma",
+        "Press Start 2P", "Silkscreen", "VT323", "DotGothic16", "Share Tech Mono",
+        "Inconsolata", "Source Code Pro", "Anonymous Pro", "Spectral", "Libre Baskerville",
+        "Bodoni Moda", "DM Serif Display", "Prata", "Fraunces", "Newsreader",
+        "Albert Sans", "Figtree", "Red Hat Display", "Spline Sans", "Geologica",
+        "Marcellus", "Yeseva One", "Alumni Sans", "Krona One", "Major Mono Display",
+        "Monoton", "Megrim", "Gruppo", "Six Caps", "Bungee"
     ];
 
     // ================= 35 BUTTON SHAPES =================
@@ -588,7 +821,7 @@
         {val: "pastel", name: "Pastel Dream"}, {val: "cyberpunk", name: "Cyberpunk Glitch", needBorder: true}, {val: "hologram-dark", name: "Hologram Dark"}
     ];
 
-    // ================= 30 BACKGROUND TEMPLATES =================
+    // ================= 100 BACKGROUND TEMPLATES (GEN Z & FUTURISTIC) =================
     const bgTemplates = [
         {val: "grid-light", name: "Grid Lines Light"}, {val: "grid-dark", name: "Grid Lines Dark"},
         {val: "polka-light", name: "Polka Dots Light"}, {val: "polka-dark", name: "Polka Dots Dark"},
@@ -604,7 +837,42 @@
         {val: "y2k-holo", name: "Y2K Hologram"}, {val: "cyber-grid", name: "Cyberpunk Grid"},
         {val: "retro-sunset", name: "Retro Sunset"}, {val: "bauhaus", name: "Bauhaus Geometric"},
         {val: "vhs-glitch", name: "VHS Glitch"}, {val: "pastel-dream", name: "Pastel Dream"},
-        {val: "dark-academia", name: "Dark Academia"}, {val: "minimal-zen", name: "Minimal Zen"}
+        {val: "dark-academia", name: "Dark Academia"}, {val: "minimal-zen", name: "Minimal Zen"},
+        {val: "matrix-code", name: "Matrix Cyber Rain"}, {val: "quantum-dots", name: "Quantum Dot Matrix"},
+        {val: "isometric-cubes", name: "Isometric 3D Cubes"}, {val: "neon-lines", name: "Neon Cyber Lines"},
+        {val: "blueprint", name: "Architectural Blueprint"}, {val: "synthwave-sun", name: "Synthwave Horizon"},
+        {val: "holographic-foil", name: "Holographic Iridescent"}, {val: "glass-refraction", name: "Glass Prism Refraction"},
+        {val: "cosmic-nebula", name: "Deep Cosmic Nebula"}, {val: "solar-flare", name: "Solar Flare Gradient"},
+        {val: "cyber-hex", name: "Cyberpunk Hex Glow"}, {val: "techno-weave", name: "Techno Carbon Weave"},
+        {val: "vaporwave-grid", name: "80s Vaporwave Grid"}, {val: "lofi-grain", name: "Lo-Fi Noise Texture"},
+        {val: "acid-smiley", name: "Acid Pop Warp"}, {val: "glitch-matrix", name: "Digital Glitch Bands"},
+        {val: "brutalist-hazard", name: "Brutalist Hazard"}, {val: "retro-arcade", name: "8-Bit Retro Arcade"},
+        {val: "y2k-chrome", name: "Y2K Liquid Chrome"}, {val: "hyperpop-gradient", name: "Hyperpop Candy Wave"},
+        {val: "aurora-borealis", name: "Aurora Borealis Green"}, {val: "nordic-mist", name: "Nordic Mountain Mist"},
+        {val: "sunset-gradient", name: "Tropical Sunset Blend"}, {val: "ocean-abyss", name: "Deep Ocean Trench"},
+        {val: "emerald-luxe", name: "Emerald Gold Luxury"}, {val: "midnight-indigo", name: "Midnight Velvet Indigo"},
+        {val: "rose-gold", name: "Rose Gold Shimmer"}, {val: "lavender-dream", name: "Pastel Lavender Haze"},
+        {val: "peach-blossom", name: "Warm Peach Glow"}, {val: "matcha-latte", name: "Organic Matcha Forest"},
+        {val: "carbon-fiber", name: "High-Tech Carbon Fiber"}, {val: "radar-sweep", name: "Military Radar Sweep"},
+        {val: "wireframe-globe", name: "Wireframe Mesh Terrain"}, {val: "hud-interface", name: "Sci-Fi HUD Crosshairs"},
+        {val: "data-stream", name: "Binary Data Stream"}, {val: "fiber-optics", name: "Glowing Fiber Optics"},
+        {val: "space-warp", name: "Hyperspace Warp Speed"}, {val: "quantum-foam", name: "Quantum Particle Foam"},
+        {val: "laser-beams", name: "Diagonal Laser Beams"}, {val: "starlight-twinkle", name: "Pulsing Starlight"},
+        {val: "terrazzo", name: "Trendy Terrazzo Stone"}, {val: "japanese-waves", name: "Seigaiha Japanese Ocean"},
+        {val: "argyle-diamonds", name: "Argyle Diamond Plaid"}, {val: "tartan-plaid", name: "Preppy Tartan Plaid"},
+        {val: "houndstooth", name: "Vintage Houndstooth"}, {val: "art-deco", name: "1920s Art Deco Fan"},
+        {val: "moroccan-tiles", name: "Moroccan Arabesque"}, {val: "origami-fold", name: "3D Paper Origami Fold"},
+        {val: "marble-vein", name: "Carrara Marble Veins"}, {val: "honeycomb-gold", name: "Royal Honeycomb Amber"},
+        {val: "blob-fusion", name: "Organic Fluid Blobs"}, {val: "soft-gaussian", name: "Multi-Color Gaussian Blur"},
+        {val: "prismatic-light", name: "Prismatic Rainbow Specular"}, {val: "subtle-crosses", name: "Minimalist Swiss Crosses"},
+        {val: "dots-cluster", name: "Dynamic Dot Constellation"}, {val: "radial-sunburst", name: "Comic Retro Sunburst"},
+        {val: "paper-kraft", name: "Organic Kraft Paper"}, {val: "noise-subtle", name: "Subtle Film Noise"},
+        {val: "perforated-metal", name: "Perforated Steel Mesh"}, {val: "liquid-smoke", name: "Ethereal Liquid Smoke"},
+        {val: "neon-cyan", name: "Electric Cyan Ray"}, {val: "neon-magenta", name: "Ultra Magenta Glow"},
+        {val: "galaxy-spiral", name: "Galactic Spiral Arm"}, {val: "deep-space", name: "Deep Cosmic Void"},
+        {val: "zen-bamboo", name: "Minimalist Sand Ripple"}, {val: "sunset-boulevard", name: "Sunset Boulevard Glow"},
+        {val: "electric-violet", name: "High-Voltage Violet"}, {val: "abstract-geometry", name: "Modern Bauhaus Shapes"},
+        {val: "prism-refraction", name: "Crystal Prism Lens"}, {val: "future-city", name: "Cyber Cityscape Skyline"}
     ];
 
     // ================= 50+ SVG ICONS MAP =================
@@ -650,39 +918,118 @@
         'facebook': '<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>'
     };
 
-    function getTemplateCSS(tplName) {
+    function getTemplateCSS(tplName, bgColor) {
+        const base = bgColor || 'var(--theme-bg, #ffffff)';
         switch(tplName) {
-            case 'grid-light': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px); background-color: var(--theme-bg, #ffffff);`;
-            case 'grid-dark': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px); background-color: var(--theme-bg, #0f172a);`;
-            case 'polka-light': return `background-image: radial-gradient(rgba(0,0,0,0.1) 2px, transparent 2px); background-size: 20px 20px; background-color: var(--theme-bg, #ffffff);`;
-            case 'polka-dark': return `background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px); background-size: 20px 20px; background-color: var(--theme-bg, #0f172a);`;
-            case 'diagonal-light': return `background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 10px, transparent 10px, transparent 20px); background-color: var(--theme-bg, #ffffff);`;
-            case 'diagonal-dark': return `background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 10px, transparent 10px, transparent 20px); background-color: var(--theme-bg, #0f172a);`;
-            case 'checkerboard': return `background-image: linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)); background-size: 20px 20px; background-position: 0 0, 10px 10px; background-color: var(--theme-bg, #ffffff);`;
-            case 'zigzag': return `background: linear-gradient(135deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(225deg, rgba(0,0,0,0.05) 25%, transparent 25%) -20px 0, linear-gradient(315deg, rgba(0,0,0,0.05) 25%, transparent 25%), linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%); background-size: 40px 40px; background-color: var(--theme-bg, #ffffff);`;
-            case 'wave-light': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(0,0,0,0.03) 21%, rgba(0,0,0,0.03) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; background-color: var(--theme-bg, #ffffff);`;
-            case 'wave-dark': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.05) 21%, rgba(255,255,255,0.05) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; background-color: var(--theme-bg, #0f172a);`;
-            case 'topography': return `background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.05) 10px, transparent 11px, transparent 20px); background-color: var(--theme-bg, #ffffff);`;
-            case 'memphis': return `background-image: radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%), radial-gradient(circle, rgba(0,0,0,0.1) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px; background-color: var(--theme-bg, #ffffff);`;
-            case 'circuit': return `background-image: radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.1) 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; background-color: var(--theme-bg, #ffffff);`;
-            case 'starry': return `background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px); background-size: 90px 90px; background-position: 0 0, 45px 45px; background-color: #0f172a;`;
-            case 'hexagons': return `background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(rgba(0,0,0,0.05) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, rgba(0,0,0,0.05) 2px, transparent 2px) -1px 0; background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px; background-color: var(--theme-bg, #ffffff);`;
-            case 'clouds': return `background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 50%); background-size: 100px 100px; background-color: #87CEEB;`;
-            case 'mesh-1': return `background-image: radial-gradient(at 40% 20%, rgba(255,100,100,0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(100,255,100,0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(100,100,255,0.3) 0px, transparent 50%); background-color: var(--theme-bg, #ffffff);`;
-            case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.3) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.3) 0px, transparent 50%); background-color: var(--theme-bg, #ffffff);`;
-            case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(0,0,255,0.1)); filter: contrast(1.5); background-color: var(--theme-bg, #ffffff);`;
-            case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,0,0.1), rgba(255,0,255,0.1)); background-color: var(--theme-bg, #ffffff);`;
-            case 'neo-brutalism': return `background-color: var(--theme-bg, #ffde59); background-image: radial-gradient(circle, #000 2px, transparent 2px); background-size: 30px 30px;`;
-            case 'glass-blobs': return `background-color: var(--theme-bg, #f3f4f6); background-image: radial-gradient(circle at 15% 50%, rgba(255,105,180,0.4), transparent 50%), radial-gradient(circle at 85% 30%, rgba(0,255,255,0.4), transparent 50%); filter: blur(0px);`;
-            case 'y2k-holo': return `background: linear-gradient(120deg, #ff00cc, #333399, #00ffff); background-size: 200% 200%; animation: gradientMove 5s ease infinite;`;
-            case 'cyber-grid': return `background-color: #0d0221; background-image: linear-gradient(transparent 95%, rgba(255,0,60,0.5) 95%), linear-gradient(90deg, transparent 95%, rgba(15,56,15,0.5) 95%); background-size: 40px 40px;`;
-            case 'retro-sunset': return `background: linear-gradient(to bottom, #000033 0%, #cc0066 50%, #ff9933 100%);`;
-            case 'bauhaus': return `background-color: var(--theme-bg, #f4f4f4); background-image: radial-gradient(circle at 20% 20%, rgba(217,32,39,0.2) 10%, transparent 11%), linear-gradient(45deg, transparent 40%, rgba(53,208,186,0.2) 40%, rgba(53,208,186,0.2) 60%, transparent 60%); background-size: 100px 100px;`;
-            case 'vhs-glitch': return `background-color: #111; background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 2px, transparent 2px, transparent 4px);`;
-            case 'pastel-dream': return `background: linear-gradient(45deg, #ffc3a0 0%, #ffafbd 100%);`;
-            case 'dark-academia': return `background-color: #3e2723; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.15) 10px, rgba(0,0,0,0.15) 20px);`;
-            case 'minimal-zen': return `background-color: var(--theme-bg, #fafafa); background-image: repeating-radial-gradient(circle at center, transparent 0, transparent 20px, rgba(0,0,0,0.04) 21px, rgba(0,0,0,0.04) 22px);`;
-            default: return '';
+            // --- 1 to 30: Core & Popular ---
+            case 'grid-light': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px); background-color: ${base};`;
+            case 'grid-dark': return `background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.12) 1px, transparent 1px); background-color: ${base};`;
+            case 'polka-light': return `background-image: radial-gradient(rgba(0,0,0,0.12) 2px, transparent 2px); background-size: 20px 20px; background-color: ${base};`;
+            case 'polka-dark': return `background-image: radial-gradient(rgba(255,255,255,0.18) 2px, transparent 2px); background-size: 20px 20px; background-color: ${base};`;
+            case 'diagonal-light': return `background: repeating-linear-gradient(45deg, rgba(0,0,0,0.04), rgba(0,0,0,0.04) 10px, transparent 10px, transparent 20px); background-color: ${base};`;
+            case 'diagonal-dark': return `background: repeating-linear-gradient(45deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 10px, transparent 10px, transparent 20px); background-color: ${base};`;
+            case 'checkerboard': return `background-image: linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.06) 75%), linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.06) 75%); background-size: 24px 24px; background-position: 0 0, 12px 12px; background-color: ${base};`;
+            case 'zigzag': return `background: linear-gradient(135deg, rgba(0,0,0,0.06) 25%, transparent 25%) -20px 0, linear-gradient(225deg, rgba(0,0,0,0.06) 25%, transparent 25%) -20px 0, linear-gradient(315deg, rgba(0,0,0,0.06) 25%, transparent 25%), linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%); background-size: 40px 40px; background-color: ${base};`;
+            case 'wave-light': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(0,0,0,0.04) 21%, rgba(0,0,0,0.04) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(0,0,0,0.04) 21%, rgba(0,0,0,0.04) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; background-color: ${base};`;
+            case 'wave-dark': return `background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.08) 21%, rgba(255,255,255,0.08) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.08) 21%, rgba(255,255,255,0.08) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; background-color: ${base};`;
+            case 'topography': return `background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.06) 10px, transparent 11px, transparent 20px); background-color: ${base};`;
+            case 'memphis': return `background-image: radial-gradient(circle, rgba(0,0,0,0.12) 10%, transparent 10%), radial-gradient(circle, rgba(0,0,0,0.12) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px; background-color: ${base};`;
+            case 'circuit': return `background-image: radial-gradient(rgba(0,0,0,0.12) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.12) 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; background-color: ${base};`;
+            case 'starry': return `background-image: radial-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.2) 2px, transparent 40px); background-size: 90px 90px; background-position: 0 0, 45px 45px; background-color: ${base};`;
+            case 'hexagons': return `background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.06) 20%, rgba(0,0,0,0.06) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(rgba(0,0,0,0.06) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, rgba(0,0,0,0.06) 2px, transparent 2px) -1px 0; background-size: 50px 50px, 25px 25px, 25px 25px; background-color: ${base};`;
+            case 'clouds': return `background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7) 0%, transparent 60%); background-size: 120px 120px; background-color: ${base};`;
+            case 'mesh-1': return `background-image: radial-gradient(at 40% 20%, rgba(255,100,100,0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(100,255,100,0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(100,100,255,0.3) 0px, transparent 50%); background-color: ${base};`;
+            case 'mesh-2': return `background-image: radial-gradient(at 0% 100%, rgba(255,200,0,0.35) 0px, transparent 50%), radial-gradient(at 50% 0%, rgba(0,200,255,0.35) 0px, transparent 50%); background-color: ${base};`;
+            case 'liquid-1': return `background: linear-gradient(45deg, rgba(255,0,128,0.15), rgba(0,128,255,0.15)); background-color: ${base};`;
+            case 'liquid-2': return `background: linear-gradient(to right, rgba(0,255,128,0.15), rgba(255,0,255,0.15)); background-color: ${base};`;
+            case 'neo-brutalism': return `background-image: radial-gradient(circle, rgba(0,0,0,0.2) 2px, transparent 2px); background-size: 26px 26px; background-color: ${base};`;
+            case 'glass-blobs': return `background-image: radial-gradient(circle at 15% 50%, rgba(255,105,180,0.35), transparent 50%), radial-gradient(circle at 85% 30%, rgba(0,255,255,0.35), transparent 50%); background-color: ${base};`;
+            case 'y2k-holo': return `background: linear-gradient(135deg, rgba(255,0,204,0.3), rgba(51,51,153,0.3), rgba(0,255,255,0.3)); background-color: ${base};`;
+            case 'cyber-grid': return `background-image: linear-gradient(transparent 95%, rgba(255,0,60,0.4) 95%), linear-gradient(90deg, transparent 95%, rgba(0,255,200,0.4) 95%); background-size: 36px 36px; background-color: ${base};`;
+            case 'retro-sunset': return `background: linear-gradient(to bottom, rgba(0,0,51,0.5) 0%, rgba(204,0,102,0.4) 50%, rgba(255,153,51,0.5) 100%); background-color: ${base};`;
+            case 'bauhaus': return `background-image: radial-gradient(circle at 20% 20%, rgba(217,32,39,0.2) 10%, transparent 11%), linear-gradient(45deg, transparent 40%, rgba(53,208,186,0.2) 40%, rgba(53,208,186,0.2) 60%, transparent 60%); background-size: 80px 80px; background-color: ${base};`;
+            case 'vhs-glitch': return `background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 2px, transparent 2px, transparent 4px); background-color: ${base};`;
+            case 'pastel-dream': return `background: linear-gradient(45deg, rgba(255,195,160,0.5) 0%, rgba(255,175,189,0.5) 100%); background-color: ${base};`;
+            case 'dark-academia': return `background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.18) 10px, rgba(0,0,0,0.18) 20px); background-color: ${base};`;
+            case 'minimal-zen': return `background-image: repeating-radial-gradient(circle at center, transparent 0, transparent 20px, rgba(0,0,0,0.05) 21px, rgba(0,0,0,0.05) 22px); background-color: ${base};`;
+
+            // --- 31 to 50: Futuristic & Cyber Gen Z ---
+            case 'matrix-code': return `background-image: linear-gradient(0deg, rgba(0,255,128,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,128,0.15) 1px, transparent 1px); background-size: 20px 30px; background-color: ${base};`;
+            case 'quantum-dots': return `background-image: radial-gradient(circle, rgba(99,102,241,0.3) 1.5px, transparent 1.5px); background-size: 16px 16px; background-color: ${base};`;
+            case 'isometric-cubes': return `background-image: linear-gradient(30deg, rgba(0,0,0,0.05) 12%, transparent 12.5%, transparent 87%, rgba(0,0,0,0.05) 87.5%, rgba(0,0,0,0.05)), linear-gradient(150deg, rgba(0,0,0,0.05) 12%, transparent 12.5%, transparent 87%, rgba(0,0,0,0.05) 87.5%, rgba(0,0,0,0.05)), linear-gradient(30deg, rgba(0,0,0,0.05) 12%, transparent 12.5%, transparent 87%, rgba(0,0,0,0.05) 87.5%, rgba(0,0,0,0.05)), linear-gradient(150deg, rgba(0,0,0,0.05) 12%, transparent 12.5%, transparent 87%, rgba(0,0,0,0.05) 87.5%, rgba(0,0,0,0.05)), linear-gradient(60deg, rgba(0,0,0,0.08) 25%, transparent 25.5%, transparent 75%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.08)), linear-gradient(60deg, rgba(0,0,0,0.08) 25%, transparent 25.5%, transparent 75%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.08)); background-size: 40px 70px; background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px; background-color: ${base};`;
+            case 'neon-lines': return `background: repeating-linear-gradient(-45deg, rgba(168,85,247,0.2), rgba(168,85,247,0.2) 2px, transparent 2px, transparent 24px); background-color: ${base};`;
+            case 'blueprint': return `background-image: linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px; background-color: ${base};`;
+            case 'synthwave-sun': return `background: radial-gradient(circle at 50% 90%, rgba(244,63,94,0.4) 0%, transparent 60%), linear-gradient(to top, rgba(217,70,239,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'holographic-foil': return `background: linear-gradient(45deg, rgba(255,182,193,0.3), rgba(176,224,230,0.3), rgba(255,250,205,0.3), rgba(221,160,221,0.3)); background-size: 200% 200%; background-color: ${base};`;
+            case 'glass-refraction': return `background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.25) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(99,102,241,0.2) 0%, transparent 50%); background-color: ${base};`;
+            case 'cosmic-nebula': return `background: radial-gradient(circle at 30% 40%, rgba(139,92,246,0.35) 0%, transparent 60%), radial-gradient(circle at 70% 60%, rgba(236,72,153,0.35) 0%, transparent 60%); background-color: ${base};`;
+            case 'solar-flare': return `background: radial-gradient(ellipse at top right, rgba(249,115,22,0.4) 0%, transparent 70%), radial-gradient(ellipse at bottom left, rgba(234,179,8,0.3) 0%, transparent 60%); background-color: ${base};`;
+            case 'cyber-hex': return `background-image: radial-gradient(circle, rgba(6,182,212,0.25) 20%, transparent 20%); background-size: 28px 28px; background-color: ${base};`;
+            case 'techno-weave': return `background: linear-gradient(45deg, rgba(0,0,0,0.08) 25%, transparent 25%), linear-gradient(-45deg, rgba(0,0,0,0.08) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.08) 75%), linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.08) 75%); background-size: 20px 20px; background-color: ${base};`;
+            case 'vaporwave-grid': return `background-image: linear-gradient(rgba(236,72,153,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.3) 1px, transparent 1px); background-size: 32px 32px; background-color: ${base};`;
+            case 'lofi-grain': return `background-image: radial-gradient(rgba(0,0,0,0.15) 1px, transparent 0); background-size: 4px 4px; background-color: ${base};`;
+            case 'acid-smiley': return `background: radial-gradient(circle at 50% 50%, rgba(234,179,8,0.25) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(132,204,22,0.25) 0%, transparent 40%); background-color: ${base};`;
+            case 'glitch-matrix': return `background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(168,85,247,0.15) 40px, rgba(168,85,247,0.15) 42px); background-color: ${base};`;
+            case 'brutalist-hazard': return `background: repeating-linear-gradient(-45deg, rgba(0,0,0,0.07), rgba(0,0,0,0.07) 15px, transparent 15px, transparent 30px); background-color: ${base};`;
+            case 'retro-arcade': return `background-image: linear-gradient(rgba(0,0,0,0.08) 2px, transparent 2px), linear-gradient(90deg, rgba(0,0,0,0.08) 2px, transparent 2px); background-size: 16px 16px; background-color: ${base};`;
+            case 'y2k-chrome': return `background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(203,213,225,0.2) 50%, rgba(255,255,255,0.5) 100%); background-color: ${base};`;
+            case 'hyperpop-gradient': return `background: linear-gradient(45deg, rgba(236,72,153,0.3), rgba(245,158,11,0.3), rgba(59,130,246,0.3)); background-color: ${base};`;
+
+            // --- 51 to 70: Organic, Ambient & Modern Gradients ---
+            case 'aurora-borealis': return `background: radial-gradient(circle at 10% 20%, rgba(52,211,153,0.35) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(59,130,246,0.35) 0%, transparent 50%); background-color: ${base};`;
+            case 'nordic-mist': return `background: linear-gradient(180deg, rgba(241,245,249,0.3) 0%, rgba(203,213,225,0.4) 100%); background-color: ${base};`;
+            case 'sunset-gradient': return `background: linear-gradient(135deg, rgba(244,63,94,0.3) 0%, rgba(249,115,22,0.3) 50%, rgba(234,179,8,0.3) 100%); background-color: ${base};`;
+            case 'ocean-abyss': return `background: radial-gradient(ellipse at bottom, rgba(14,165,233,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'emerald-luxe': return `background: radial-gradient(circle at top right, rgba(16,185,129,0.3) 0%, transparent 60%), radial-gradient(circle at bottom left, rgba(245,158,11,0.2) 0%, transparent 60%); background-color: ${base};`;
+            case 'midnight-indigo': return `background: radial-gradient(circle at 50% 30%, rgba(99,102,241,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'rose-gold': return `background: linear-gradient(135deg, rgba(254,205,211,0.4) 0%, rgba(253,164,175,0.3) 50%, rgba(251,113,133,0.3) 100%); background-color: ${base};`;
+            case 'lavender-dream': return `background: linear-gradient(135deg, rgba(233,213,255,0.4) 0%, rgba(196,181,253,0.35) 100%); background-color: ${base};`;
+            case 'peach-blossom': return `background: linear-gradient(135deg, rgba(255,237,213,0.5) 0%, rgba(254,215,170,0.4) 100%); background-color: ${base};`;
+            case 'matcha-latte': return `background: linear-gradient(135deg, rgba(236,252,203,0.4) 0%, rgba(217,249,157,0.3) 100%); background-color: ${base};`;
+            case 'carbon-fiber': return `background: radial-gradient(rgba(0,0,0,0.15) 15%, transparent 16%) 0 0, radial-gradient(rgba(0,0,0,0.15) 15%, transparent 16%) 8px 8px; background-size: 16px 16px; background-color: ${base};`;
+            case 'radar-sweep': return `background: radial-gradient(circle at center, transparent 30%, rgba(16,185,129,0.15) 31%, transparent 32%, transparent 60%, rgba(16,185,129,0.15) 61%, transparent 62%); background-size: 140px 140px; background-color: ${base};`;
+            case 'wireframe-globe': return `background-image: repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 30px, rgba(59,130,246,0.15) 31px, rgba(59,130,246,0.15) 32px); background-color: ${base};`;
+            case 'hud-interface': return `background-image: linear-gradient(to right, rgba(6,182,212,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(6,182,212,0.1) 1px, transparent 1px); background-size: 60px 60px; background-color: ${base};`;
+            case 'data-stream': return `background: repeating-linear-gradient(0deg, rgba(34,197,94,0.15) 0px, rgba(34,197,94,0.15) 1px, transparent 1px, transparent 12px); background-color: ${base};`;
+            case 'fiber-optics': return `background: radial-gradient(circle at 100% 0%, rgba(236,72,153,0.3) 0%, transparent 50%), radial-gradient(circle at 0% 100%, rgba(59,130,246,0.3) 0%, transparent 50%); background-color: ${base};`;
+            case 'space-warp': return `background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 10%), radial-gradient(circle at 50% 50%, rgba(99,102,241,0.2) 20%, transparent 60%); background-size: 80px 80px; background-color: ${base};`;
+            case 'quantum-foam': return `background-image: radial-gradient(rgba(0,0,0,0.07) 15%, transparent 16%), radial-gradient(rgba(0,0,0,0.05) 15%, transparent 16%); background-size: 12px 12px; background-position: 0 0, 6px 6px; background-color: ${base};`;
+            case 'laser-beams': return `background: repeating-linear-gradient(60deg, transparent, transparent 30px, rgba(239,68,68,0.15) 30px, rgba(239,68,68,0.15) 32px); background-color: ${base};`;
+            case 'starlight-twinkle': return `background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 2px), radial-gradient(rgba(255,255,255,0.4) 1px, transparent 2px); background-size: 50px 50px, 30px 30px; background-position: 0 0, 15px 15px; background-color: ${base};`;
+
+            // --- 71 to 100: Texture, Art, Minimalist & Trend Gen Z ---
+            case 'terrazzo': return `background-image: radial-gradient(rgba(239,68,68,0.2) 3px, transparent 4px), radial-gradient(rgba(59,130,246,0.2) 2px, transparent 3px), radial-gradient(rgba(245,158,11,0.2) 4px, transparent 5px); background-size: 40px 40px, 30px 30px, 50px 50px; background-position: 0 0, 15px 15px, 25px 5px; background-color: ${base};`;
+            case 'japanese-waves': return `background: radial-gradient(circle at 50% 0%, transparent 40%, rgba(0,0,0,0.06) 41%, rgba(0,0,0,0.06) 46%, transparent 47%); background-size: 30px 15px; background-color: ${base};`;
+            case 'argyle-diamonds': return `background: repeating-linear-gradient(120deg, rgba(0,0,0,0.04), rgba(0,0,0,0.04) 20px, transparent 20px, transparent 40px), repeating-linear-gradient(60deg, rgba(0,0,0,0.04), rgba(0,0,0,0.04) 20px, transparent 20px, transparent 40px); background-color: ${base};`;
+            case 'tartan-plaid': return `background-image: linear-gradient(rgba(0,0,0,0.06) 2px, transparent 2px), linear-gradient(90deg, rgba(0,0,0,0.06) 2px, transparent 2px), linear-gradient(rgba(0,0,0,0.03) 10px, transparent 10px), linear-gradient(90deg, rgba(0,0,0,0.03) 10px, transparent 10px); background-size: 50px 50px; background-color: ${base};`;
+            case 'houndstooth': return `background: linear-gradient(-45deg, transparent 45%, rgba(0,0,0,0.06) 45%, rgba(0,0,0,0.06) 55%, transparent 55%), linear-gradient(45deg, transparent 45%, rgba(0,0,0,0.06) 45%, rgba(0,0,0,0.06) 55%, transparent 55%); background-size: 24px 24px; background-color: ${base};`;
+            case 'art-deco': return `background: radial-gradient(circle at 50% 100%, transparent 30%, rgba(0,0,0,0.06) 31%, rgba(0,0,0,0.06) 35%, transparent 36%); background-size: 40px 20px; background-color: ${base};`;
+            case 'moroccan-tiles': return `background: radial-gradient(circle at 0 0, transparent 40%, rgba(0,0,0,0.06) 41%, rgba(0,0,0,0.06) 45%, transparent 46%) 0 0, radial-gradient(circle at 0 0, transparent 40%, rgba(0,0,0,0.06) 41%, rgba(0,0,0,0.06) 45%, transparent 46%) 20px 20px; background-size: 40px 40px; background-color: ${base};`;
+            case 'origami-fold': return `background: linear-gradient(135deg, rgba(0,0,0,0.04) 50%, transparent 50%), linear-gradient(-135deg, rgba(0,0,0,0.04) 50%, transparent 50%); background-size: 30px 30px; background-color: ${base};`;
+            case 'marble-vein': return `background: radial-gradient(ellipse at 30% 50%, rgba(0,0,0,0.04) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(0,0,0,0.05) 0%, transparent 50%); background-color: ${base};`;
+            case 'honeycomb-gold': return `background: radial-gradient(circle, transparent 20%, rgba(245,158,11,0.15) 20%, rgba(245,158,11,0.15) 80%, transparent 80%); background-size: 32px 32px; background-color: ${base};`;
+            case 'blob-fusion': return `background: radial-gradient(circle at 25% 25%, rgba(168,85,247,0.3) 0%, transparent 45%), radial-gradient(circle at 75% 75%, rgba(236,72,153,0.3) 0%, transparent 45%); background-color: ${base};`;
+            case 'soft-gaussian': return `background: radial-gradient(circle at 80% 20%, rgba(56,189,248,0.3) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(251,113,133,0.3) 0%, transparent 50%); background-color: ${base};`;
+            case 'prismatic-light': return `background: linear-gradient(120deg, rgba(255,0,0,0.15), rgba(255,255,0,0.15), rgba(0,255,0,0.15), rgba(0,255,255,0.15), rgba(0,0,255,0.15)); background-color: ${base};`;
+            case 'subtle-crosses': return `background-image: radial-gradient(rgba(0,0,0,0.09) 1px, transparent 1px), radial-gradient(rgba(0,0,0,0.09) 1px, transparent 1px); background-size: 24px 24px; background-position: 0 0, 12px 12px; background-color: ${base};`;
+            case 'dots-cluster': return `background-image: radial-gradient(rgba(0,0,0,0.12) 1.5px, transparent 1.5px); background-size: 14px 14px; background-color: ${base};`;
+            case 'radial-sunburst': return `background: repeating-conic-gradient(from 0deg, rgba(0,0,0,0.03) 0deg 15deg, transparent 15deg 30deg); background-color: ${base};`;
+            case 'paper-kraft': return `background-image: radial-gradient(rgba(180,120,60,0.08) 1px, transparent 1px); background-size: 8px 8px; background-color: ${base};`;
+            case 'noise-subtle': return `background-image: radial-gradient(rgba(0,0,0,0.1) 0.8px, transparent 0.8px); background-size: 6px 6px; background-color: ${base};`;
+            case 'perforated-metal': return `background-image: radial-gradient(rgba(0,0,0,0.12) 2px, transparent 2px); background-size: 10px 10px; background-color: ${base};`;
+            case 'liquid-smoke': return `background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.4) 0%, transparent 70%), radial-gradient(circle at 50% 100%, rgba(0,0,0,0.1) 0%, transparent 70%); background-color: ${base};`;
+            case 'neon-cyan': return `background: radial-gradient(circle at top, rgba(6,182,212,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'neon-magenta': return `background: radial-gradient(circle at bottom, rgba(217,70,239,0.3) 0%, transparent 70%); background-color: ${base};`;
+            case 'galaxy-spiral': return `background: radial-gradient(circle at center, rgba(147,51,234,0.35) 0%, rgba(79,70,229,0.2) 40%, transparent 70%); background-color: ${base};`;
+            case 'deep-space': return `background: radial-gradient(ellipse at center, rgba(30,27,75,0.5) 0%, transparent 80%); background-color: ${base};`;
+            case 'zen-bamboo': return `background: repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(0,0,0,0.05) 28px, rgba(0,0,0,0.05) 30px); background-color: ${base};`;
+            case 'sunset-boulevard': return `background: linear-gradient(180deg, rgba(239,68,68,0.25) 0%, rgba(249,115,22,0.25) 50%, rgba(147,51,234,0.25) 100%); background-color: ${base};`;
+            case 'electric-violet': return `background: radial-gradient(circle at center, rgba(139,92,246,0.35) 0%, transparent 70%); background-color: ${base};`;
+            case 'abstract-geometry': return `background: linear-gradient(135deg, rgba(0,0,0,0.05) 25%, transparent 25%), linear-gradient(225deg, rgba(0,0,0,0.05) 25%, transparent 25%); background-size: 50px 50px; background-color: ${base};`;
+            case 'prism-refraction': return `background: linear-gradient(45deg, rgba(236,72,153,0.2) 0%, rgba(59,130,246,0.2) 50%, rgba(16,185,129,0.2) 100%); background-color: ${base};`;
+            case 'future-city': return `background: linear-gradient(to top, rgba(15,23,42,0.5) 0%, transparent 70%), linear-gradient(90deg, rgba(6,182,212,0.1) 1px, transparent 1px); background-size: 100% 100%, 20px 20px; background-color: ${base};`;
+
+            default: return `background-color: ${base};`;
         }
     }
 
@@ -801,53 +1148,533 @@
 
     // ================= PIN LOCK FOOTER URL =================
     function unlockFooterUrl() {
-        window.showCustomPrompt("Keamanan Khusus BEM:\nMasukkan PIN Admin (3 Digit) untuk mengubah Link Default BEM:", function(pin) {
-            if (pin === "999") {
-                document.getElementById('inp-footer-url').removeAttribute('readonly');
-                window.showCustomAlert("Akses dibuka. Anda dapat mengedit URL Footer.");
-            } else {
-                window.showCustomAlert("PIN Salah! Akses ditolak.");
+        window.showCustomPrompt("Keamanan Khusus BEM:\nMasukkan PIN Admin (3 Digit) untuk mengubah Link Default BEM:", async function(pin) {
+            if (!pin) return;
+            try {
+                const res = await fetch('/api/verify-pin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin: pin.trim() })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const inp = document.getElementById('inp-footer-url');
+                    if (inp) inp.removeAttribute('readonly');
+                    window.showCustomAlert("Akses dibuka. Anda dapat mengedit URL Footer.");
+                } else {
+                    window.showCustomAlert("PIN Salah! Akses ditolak.");
+                }
+            } catch (err) {
+                console.error(err);
+                window.showCustomAlert("Terjadi kesalahan saat memverifikasi PIN.");
             }
         });
     }
 
-    // ================= TAB CONTROLLER =================
+    // ================= SIDEBAR CONTROLLER V3 =================
+    function toggleV3Sidebar() {
+        const sidebar = document.getElementById('adminSidebar');
+        if (!sidebar) return;
+        sidebar.classList.toggle('collapsed');
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        localStorage.setItem('admin_v3_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+        const chevronSvg = document.getElementById('toggleChevronSvg');
+        if (chevronSvg) {
+            chevronSvg.innerHTML = isCollapsed 
+                ? '<polyline points="9 18 15 12 9 6"></polyline>' 
+                : '<polyline points="15 18 9 12 15 6"></polyline>';
+        }
+    }
+
+    function toggleMobileV3Menu(force) {
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('mobileDrawerOverlay');
+        if (!sidebar || !overlay) return;
+        const isOpen = force !== undefined ? force : !sidebar.classList.contains('mobile-open');
+        if (isOpen) {
+            sidebar.classList.remove('collapsed');
+            sidebar.classList.add('mobile-open');
+            overlay.classList.add('active');
+        } else {
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024) {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('mobileDrawerOverlay');
+            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (overlay) overlay.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('admin_v3_sidebar_collapsed') === 'true') {
+            const sidebar = document.getElementById('adminSidebar');
+            if (sidebar) {
+                sidebar.classList.add('collapsed');
+                const chevronSvg = document.getElementById('toggleChevronSvg');
+                if (chevronSvg) chevronSvg.innerHTML = '<polyline points="9 18 15 12 9 6"></polyline>';
+            }
+        }
+    });
+
+    // In-Memory Cache Variables for Ultra-Fast Instant Tab Switching
+    let cachedAnalyticsData = null;
+    let lastAnalyticsFetchTime = 0;
+    let lastLinktreesFetchTime = 0;
+
+    // Interactive SVG Tooltip Handlers for Bar Chart
+    window.showChartSegmentTooltip = function(e, slug, label, val, color) {
+        const tt = document.getElementById('chartFloatingTooltip');
+        if (!tt) return;
+        tt.innerHTML = `
+            <div style="font-weight:700; color:#38bdf8; margin-bottom:4px; font-size:0.75rem;">/link/${slug}</div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${color};"></span>
+                <span style="color:#94a3b8;">${label}:</span>
+                <strong style="color:#ffffff; font-size:0.9rem;">${val}</strong>
+            </div>
+        `;
+        tt.style.display = 'block';
+        window.moveChartTooltip(e);
+    };
+
+    window.showChartGroupTooltip = function(e, slug, today, week, total) {
+        const tt = document.getElementById('chartFloatingTooltip');
+        if (!tt) return;
+        tt.innerHTML = `
+            <div style="font-weight:700; color:#38bdf8; margin-bottom:6px; font-size:0.8rem; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:4px;">/link/${slug}</div>
+            <div style="display:flex; justify-content:space-between; gap:16px; margin-bottom:3px;">
+                <span style="color:#f97316; display:inline-flex; align-items:center; gap:5px;"><span style="width:7px; height:7px; border-radius:50%; background:#f97316;"></span> Hari Ini:</span>
+                <strong style="color:#ffffff;">${today}</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; gap:16px; margin-bottom:3px;">
+                <span style="color:#a78bfa; display:inline-flex; align-items:center; gap:5px;"><span style="width:7px; height:7px; border-radius:50%; background:#8b5cf6;"></span> Minggu Ini:</span>
+                <strong style="color:#ffffff;">${week}</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; gap:16px;">
+                <span style="color:#22d3ee; display:inline-flex; align-items:center; gap:5px;"><span style="width:7px; height:7px; border-radius:50%; background:#06b6d4;"></span> Total Views:</span>
+                <strong style="color:#ffffff;">${total}</strong>
+            </div>
+        `;
+        tt.style.display = 'block';
+        window.moveChartTooltip(e);
+    };
+
+    window.moveChartTooltip = function(e) {
+        const tt = document.getElementById('chartFloatingTooltip');
+        if (!tt || tt.style.display === 'none') return;
+        const container = document.getElementById('linktreeAnalyticsChartWrapper');
+        if (!container) return;
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left + 15;
+        const y = e.clientY - rect.top - 20;
+        tt.style.left = `${Math.min(x, rect.width - 200)}px`;
+        tt.style.top = `${Math.max(10, y)}px`;
+    };
+
+    window.hideChartTooltip = function() {
+        const tt = document.getElementById('chartFloatingTooltip');
+        if (tt) tt.style.display = 'none';
+    };
+
+    // ================= TAB CONTROLLER (ULTRA FAST INSTANT SWITCH) =================
     function switchTab(tabId) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.v3-tab, .tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-        let targetBtn = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`);
+        let targetBtn = document.getElementById(`tabBtn${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+        if(!targetBtn) targetBtn = document.querySelector(`.v3-tab[onclick="switchTab('${tabId}')"], .tab-btn[onclick="switchTab('${tabId}')"]`);
         if(targetBtn) targetBtn.classList.add('active');
 
-        document.getElementById(`tab-${tabId}`).classList.add('active');
+        let targetContent = document.getElementById(`tab-${tabId}`);
+        if(targetContent) targetContent.classList.add('active');
 
         const layout = document.getElementById('main-layout');
+        const builderWrapper = document.getElementById('builderWrapper');
         const editorTabs = document.querySelectorAll('.editor-only');
         const globalBtn = document.getElementById('btn-global-action');
+        const editorTopBar = document.getElementById('editorTopBar');
+        const editorSlugTitle = document.getElementById('editorCurrentSlugTitle');
 
-        if (tabId === 'list') {
-            layout.classList.add('list-mode');
+        if (tabId === 'list' || tabId === 'overview') {
+            if (layout) layout.classList.add('list-mode');
+            if (builderWrapper) builderWrapper.classList.add('list-mode');
             editorTabs.forEach(t => t.style.display = 'none');
-            globalBtn.innerText = "+ Buat Linktree Baru";
-            globalBtn.setAttribute('onclick', 'createNewLinktree()');
-            globalBtn.className = 'btn-primary';
-            loadAllLinktrees(); 
+            if (editorTopBar) editorTopBar.style.display = 'none';
+            if (globalBtn) {
+                globalBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Buat Linktree Baru';
+                globalBtn.setAttribute('onclick', 'createNewLinktree()');
+                globalBtn.className = 'btn-primary';
+            }
+            if (tabId === 'overview') {
+                renderLinktreeOverview();
+            } else {
+                renderLinktreesListFast();
+            }
         } else {
-            layout.classList.remove('list-mode');
-            editorTabs.forEach(t => t.style.display = 'block');
-            globalBtn.innerText = "🚀 Simpan & Publikasi";
-            globalBtn.setAttribute('onclick', 'saveLinktree()');
-            globalBtn.className = 'btn-primary glow-effect';
+            if (layout) layout.classList.remove('list-mode');
+            if (builderWrapper) builderWrapper.classList.remove('list-mode');
+            editorTabs.forEach(t => {
+                if (t.id === 'editorTopBar') {
+                    t.style.display = 'flex';
+                } else if (t.classList.contains('sidebar-nav-btn')) {
+                    t.style.display = 'flex';
+                } else {
+                    t.style.display = 'block';
+                }
+            });
+            if (editorTopBar) editorTopBar.style.display = 'flex';
+            if (editorSlugTitle) {
+                editorSlugTitle.innerText = (state && state.slug) ? ('/link/' + state.slug) : 'Linktree Baru';
+            }
+
+            if (globalBtn) {
+                globalBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan & Publikasi';
+                globalBtn.setAttribute('onclick', 'saveLinktree()');
+                globalBtn.className = 'btn-primary glow-effect';
+            }
 
             populateEditorForm();
             renderLivePreview();
         }
     }
 
-    // ================= LIST MANAGEMENT =================
+    async function fetchLinktreeAnalytics() {
+        const chartWrapper = document.getElementById('linktreeBarChartSvgWrapper');
+        if (!chartWrapper) return;
+        
+        // Only show loading placeholder if no cache exists
+        if (!cachedAnalyticsData) {
+            chartWrapper.innerHTML = `<div style="text-align:center; padding:50px 20px; color:#64748b; font-family:'Outfit', sans-serif;">Memuat data grafik kunjungan...</div>`;
+        }
+
+        try {
+            const res = await fetch('/api/linktrees/analytics/overview', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+            if (!res.ok) {
+                if (!cachedAnalyticsData) {
+                    chartWrapper.innerHTML = `<div style="text-align:center; padding:40px; color:#ef4444;">Gagal memuat statistik kunjungan.</div>`;
+                }
+                return;
+            }
+            const json = await res.json();
+            if (json.success && json.data) {
+                cachedAnalyticsData = json.data;
+                lastAnalyticsFetchTime = Date.now();
+                renderLinktreeBarChart(cachedAnalyticsData);
+            }
+        } catch(e) {
+            console.error("Gagal fetchLinktreeAnalytics:", e);
+        }
+    }
+
+    function renderLinktreeBarChart(analytics) {
+        const wrapper = document.getElementById('linktreeBarChartSvgWrapper');
+        if (!wrapper) return;
+
+        const items = analytics.items || [];
+        if (items.length === 0) {
+            wrapper.innerHTML = `
+                <div style="text-align:center; padding:60px 20px; color:#64748b; font-family:'Outfit', sans-serif;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px; opacity:0.4;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <div style="font-size:1.05rem; font-weight:600; color:#0f172a; margin-bottom:4px;">Belum ada data Linktree untuk ditampilkan</div>
+                    <div style="font-size:0.85rem;">Buat Linktree baru dan sebarkan tautannya untuk mulai mengumpulkan statistik kunjungan real-time.</div>
+                </div>`;
+            return;
+        }
+
+        // Layout constants
+        const chartTop = 50;
+        const chartBottom = 265;
+        const chartHeight = chartBottom - chartTop; // 215px
+        const chartLeft = 65;
+
+        // Bar dimensions: 1 Single Stacked Bar per slug (Stacked Bar Chart GBR 2)
+        const barW = 44;
+        const barGap = 38; // natural side-by-side spacing
+        const groupWidth = barW + barGap;
+        const startX = chartLeft + 45;
+
+        const totalItemsWidth = startX + items.length * groupWidth + 60;
+        const svgWidth = Math.max(860, totalItemsWidth);
+        const chartRight = svgWidth - 35;
+
+        // Find max stack sum across all items
+        let maxVal = 10;
+        items.forEach(it => {
+            const vT = it.viewsToday || it.today || 0;
+            const vW = it.viewsWeek || it.week || 0;
+            const vTot = it.totalViews || it.total || 0;
+            const sum = vT + vW + vTot;
+            if (sum > maxVal) maxVal = sum;
+        });
+
+        // Round maxVal up to nice step
+        let step = Math.ceil(maxVal / 4);
+        if (step < 1) step = 1;
+        const niceMax = step * 4;
+
+        // Generate Y gridlines (clean subtle grey lines on white)
+        let gridHtml = '';
+        for (let i = 0; i <= 4; i++) {
+            const y = chartBottom - (i / 4) * chartHeight;
+            gridHtml += `
+                <line x1="${chartLeft}" y1="${y}" x2="${chartRight}" y2="${y}" stroke="${i === 0 ? '#cbd5e1' : '#f1f5f9'}" stroke-dasharray="${i === 0 ? 'none' : '4,4'}" stroke-width="${i === 0 ? '1.5' : '1'}" />
+            `;
+        }
+
+        // Upward vertical text label along Y-axis: "Jumlah Views Linktree" (GBR 5 FIX)
+        const yLabelX = chartLeft - 22;
+        const yLabelY = chartTop + chartHeight / 2;
+        gridHtml += `
+            <text x="${yLabelX}" y="${yLabelY}" fill="#64748b" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-90 ${yLabelX} ${yLabelY})" font-family="'Outfit', sans-serif" letter-spacing="0.5">Jumlah Views Linktree</text>
+        `;
+
+        // Generate single stacked bars per slug (Directly side-by-side)
+        let groupsHtml = '';
+        let defsClips = '';
+
+        items.forEach((it, idx) => {
+            const barX = startX + idx * groupWidth;
+            const barCenterX = barX + barW / 2;
+
+            const vToday = it.viewsToday || it.today || 0;
+            const vWeek = it.viewsWeek || it.week || 0;
+            const vTotal = it.totalViews || it.total || 0;
+
+            // Height of each segment proportional to niceMax
+            const minSegH = 8;
+            const hTodayRaw = (vToday / niceMax) * chartHeight;
+            const hWeekRaw = (vWeek / niceMax) * chartHeight;
+            const hTotalRaw = (vTotal / niceMax) * chartHeight;
+
+            const hToday = vToday > 0 ? Math.max(minSegH, hTodayRaw) : 0;
+            const hWeek = vWeek > 0 ? Math.max(minSegH, hWeekRaw) : 0;
+            const hTotal = vTotal > 0 ? Math.max(minSegH, hTotalRaw) : 0;
+
+            const totalBarH = Math.max(4, hToday + hWeek + hTotal);
+
+            // Stacking: Bottom (Today) -> Middle (Week) -> Top (Total)
+            const yToday = chartBottom - hToday;
+            const yWeek = yToday - hWeek;
+            const yTotal = yWeek - hTotal;
+
+            const topY = chartBottom - totalBarH;
+
+            // Clip path for smooth rounded pill shape on the full stacked bar
+            const clipId = `clipStackedBar_${idx}_${it.slug.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            defsClips += `
+                <clipPath id="${clipId}">
+                    <rect x="${barX}" y="${topY}" width="${barW}" height="${totalBarH}" rx="8" ry="8" />
+                </clipPath>
+            `;
+
+            // Badge Pill Top
+            const badgeW = 66;
+            const badgeH = 20;
+            const badgeX = barCenterX - badgeW / 2;
+            const badgeY = Math.max(chartTop - 24, topY - 26);
+
+            groupsHtml += `
+                <g class="chart-slug-group" data-slug="${it.slug}" onmouseenter="window.showChartGroupTooltip(event, '${it.slug}', ${vToday}, ${vWeek}, ${vTotal})" onmousemove="window.moveChartTooltip(event)" onmouseleave="window.hideChartTooltip()">
+                    <!-- Hover Highlight Column -->
+                    <rect x="${barX - 6}" y="${chartTop}" width="${barW + 12}" height="${chartHeight + 20}" rx="12" ry="12" fill="transparent" class="group-hover-bg" style="transition:fill 0.2s ease;">
+                    </rect>
+
+                    <!-- Top Total Badge Pill -->
+                    <rect x="${badgeX}" y="${badgeY}" width="${badgeW}" height="${badgeH}" rx="10" ry="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.04))" />
+                    <text x="${barCenterX}" y="${badgeY + 14}" fill="#0f172a" font-size="10.5" font-weight="800" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif">${vTotal} views</text>
+
+                    <!-- 1 Single Bar with 3 Stacked Segments (GBR 2 Style) -->
+                    <g clip-path="url(#${clipId})">
+                        <!-- Segmen 1 (Bawah): Views Hari Ini (Orange #f97316) -->
+                        <rect class="chart-bar-seg" x="${barX}" y="${yToday}" width="${barW}" height="${hToday}" fill="url(#gradBarOrange)" filter="drop-shadow(0 2px 4px rgba(249,115,22,0.25))" onmouseenter="event.stopPropagation(); window.showChartSegmentTooltip(event, '${it.slug}', 'Views Hari Ini', ${vToday}, '#f97316')" onmousemove="window.moveChartTooltip(event)" onmouseleave="window.hideChartTooltip()">
+                        </rect>
+
+                        <!-- Segmen 2 (Tengah): Views Minggu Ini (Purple #8b5cf6) -->
+                        <rect class="chart-bar-seg" x="${barX}" y="${yWeek}" width="${barW}" height="${hWeek}" fill="url(#gradBarPurple)" filter="drop-shadow(0 2px 4px rgba(139,92,246,0.25))" onmouseenter="event.stopPropagation(); window.showChartSegmentTooltip(event, '${it.slug}', 'Views Minggu Ini', ${vWeek}, '#8b5cf6')" onmousemove="window.moveChartTooltip(event)" onmouseleave="window.hideChartTooltip()">
+                        </rect>
+
+                        <!-- Segmen 3 (Atas): Total Views (Cyan #06b6d4) -->
+                        <rect class="chart-bar-seg" x="${barX}" y="${yTotal}" width="${barW}" height="${hTotal}" fill="url(#gradBarCyan)" filter="drop-shadow(0 2px 4px rgba(6,182,212,0.25))" onmouseenter="event.stopPropagation(); window.showChartSegmentTooltip(event, '${it.slug}', 'Total Views', ${vTotal}, '#06b6d4')" onmousemove="window.moveChartTooltip(event)" onmouseleave="window.hideChartTooltip()">
+                        </rect>
+                    </g>
+
+                    <!-- Slug Label on Bottom -->
+                    <text x="${barCenterX}" y="${chartBottom + 26}" fill="#0f172a" font-size="12" font-weight="700" text-anchor="middle" font-family="'Outfit', sans-serif">/link/${it.slug}</text>
+                </g>
+            `;
+        });
+
+        const svgContent = `
+            <svg width="100%" height="auto" viewBox="0 0 ${svgWidth} 350" preserveAspectRatio="xMidYMid meet" style="display:block; min-width:600px; background:#ffffff;">
+                <defs>
+                    <linearGradient id="gradBarOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#fb923c" />
+                        <stop offset="100%" stop-color="#ea580c" />
+                    </linearGradient>
+                    <linearGradient id="gradBarPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#a78bfa" />
+                        <stop offset="100%" stop-color="#7c3aed" />
+                    </linearGradient>
+                    <linearGradient id="gradBarCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#38bdf8" />
+                        <stop offset="100%" stop-color="#0284c7" />
+                    </linearGradient>
+                    ${defsClips}
+                </defs>
+
+                <!-- Grid & Axes -->
+                ${gridHtml}
+
+                <!-- Stacked Bars Groups -->
+                ${groupsHtml}
+            </svg>
+        `;
+
+        wrapper.innerHTML = svgContent;
+    }
+
+    function renderLinktreeOverview() {
+        try {
+            const totalTreesEl = document.getElementById('statV3TotalTrees');
+            const totalLinksEl = document.getElementById('statV3TotalLinks');
+            const totalSocialsEl = document.getElementById('statV3TotalSocials');
+            const listEl = document.getElementById('overviewLinktreeList');
+
+            const totalTrees = allLinktrees.length;
+            let totalLinks = 0;
+            let totalSocials = 0;
+
+            allLinktrees.forEach(t => {
+                if (Array.isArray(t.links)) totalLinks += t.links.length;
+                if (Array.isArray(t.socials)) totalSocials += t.socials.length;
+            });
+
+            if(totalTreesEl) totalTreesEl.innerText = totalTrees;
+            if(totalLinksEl) totalLinksEl.innerText = totalLinks;
+            if(totalSocialsEl) totalSocialsEl.innerText = totalSocials;
+
+            // Instant synchronous render of chart from cache if available (0ms delay)
+            if (cachedAnalyticsData) {
+                renderLinktreeBarChart(cachedAnalyticsData);
+            }
+
+            // Silent background refresh
+            fetchLinktreeAnalytics();
+
+            if(!listEl) return;
+
+            if(allLinktrees.length === 0) {
+                listEl.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">Belum ada Linktree yang dibuat. Silakan klik <strong>Buat Linktree Baru</strong> di atas.</div>`;
+                return;
+            }
+
+            let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
+            [...allLinktrees].reverse().slice(0, 5).forEach(tree => {
+                const linkUrl = `${window.location.origin}/link/${tree.slug}`;
+                const linkCount = Array.isArray(tree.links) ? tree.links.length : 0;
+                const socialCount = Array.isArray(tree.socials) ? tree.socials.length : 0;
+
+                html += `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-radius:16px; background:var(--card-bg); border:1px solid var(--border-color); box-shadow:var(--outer-neumorph); gap:16px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:14px; flex:1; min-width:200px;">
+                        <img src="${tree.profile?.avatar || '/img/bemfkgumi.png'}" style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);" onerror="this.src='/img/bemfkgumi.png'">
+                        <div>
+                            <div style="font-weight:700; color:var(--text-main); font-size:1.05rem; margin-bottom:3px;">${tree.profile?.title || 'Tanpa Judul'}</div>
+                            <div style="display:flex; align-items:center; gap:10px; font-size:0.83rem; color:var(--text-muted); flex-wrap:wrap;">
+                                <a href="${linkUrl}" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:600;">/link/${tree.slug}</a>
+                                <span>&bull;</span>
+                                <span>${linkCount} Tautan</span>
+                                <span>&bull;</span>
+                                <span>${socialCount} Sosmed</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button class="btn-outline" onclick="openLinktreeEditor('${tree.id}')" style="padding:7px 14px; font-size:0.82rem; display:inline-flex; align-items:center; gap:5px;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            <span>Edit</span>
+                        </button>
+                        <a href="${linkUrl}" target="_blank" class="btn-outline" style="text-decoration:none; padding:7px 14px; font-size:0.82rem; display:inline-flex; align-items:center; gap:5px;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <span>Buka</span>
+                        </a>
+                    </div>
+                </div>`;
+            });
+            html += '</div>';
+            listEl.innerHTML = html;
+        } catch (e) {
+            console.error("Error renderLinktreeOverview:", e);
+        }
+    }
+
+    // ================= LIST MANAGEMENT (ULTRA FAST ZERO DELAY) =================
+    function renderLinktreesListFast() {
+        if (allLinktrees && allLinktrees.length > 0) {
+            renderLinktreeListDOM(allLinktrees);
+            // Silent background update if cache older than 10 seconds
+            if (Date.now() - lastLinktreesFetchTime > 10000) {
+                silentReloadLinktrees();
+            }
+        } else {
+            loadAllLinktrees();
+        }
+    }
+
+    function renderLinktreeListDOM(trees) {
+        const container = document.getElementById('linktree-list-container');
+        if (!container) return;
+
+        if(!trees || trees.length === 0) {
+            container.innerHTML = "<div class='glass-card' style='text-align:center; padding:50px;'>Belum ada Linktree yang dibuat.</div>";
+            return;
+        }
+
+        let html = '';
+        [...trees].reverse().forEach(tree => {
+            const linkUrl = `${window.location.origin}/link/${tree.slug}`;
+            html += `
+            <div class="list-linktree-card">
+                <div style="flex:1;">
+                    <h3 style="margin:0 0 5px 0; font-size:1.3rem;">${tree.profile?.title || 'Tanpa Judul'}</h3>
+                    <a href="${linkUrl}" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:600; font-size:0.9rem;">${linkUrl}</a>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="btn-outline" style="display:inline-flex; align-items:center; gap:5px;" onclick="openLinktreeEditor('${tree.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Edit</button>
+                    <button class="btn-outline" style="display:inline-flex; align-items:center; gap:5px;" onclick="window.copyToClipboard('${linkUrl}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Salin</button>
+                    <a href="${linkUrl}" target="_blank" class="btn-outline" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Buka</a>
+                    <button class="btn-danger" style="display:inline-flex; align-items:center; justify-content:center; padding:10px;" onclick="deleteLinktree('${tree.id}')" title="Hapus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                </div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    async function silentReloadLinktrees() {
+        try {
+            const res = await fetch('/api/linktrees', { method: 'GET', headers: getAuthHeaders() });
+            if (res.ok) {
+                const json = await res.json();
+                allLinktrees = json.data || [];
+                lastLinktreesFetchTime = Date.now();
+                renderLinktreeListDOM(allLinktrees);
+            }
+        } catch(e) {}
+    }
+
     async function loadAllLinktrees() {
         const container = document.getElementById('linktree-list-container');
-        container.innerHTML = "<div style='text-align:center; padding:50px; color:var(--text-muted);'>Memuat daftar Linktree dari server...</div>";
+        if (allLinktrees.length === 0) {
+            container.innerHTML = "<div style='text-align:center; padding:50px; color:var(--text-muted); font-family:\"Outfit\", sans-serif;'>Memuat daftar Linktree dari server...</div>";
+        }
         try {
             const res = await fetch('/api/linktrees', {
                 method: 'GET',
@@ -860,30 +1687,9 @@
             const json = await res.json();
 
             allLinktrees = json.data || [];
-
-            if(allLinktrees.length === 0) {
-                container.innerHTML = "<div class='glass-card' style='text-align:center; padding:50px;'>Belum ada Linktree yang dibuat.</div>";
-                return;
-            }
-
-            let html = '';
-            [...allLinktrees].reverse().forEach(tree => {
-                const linkUrl = `${window.location.origin}/link/${tree.slug}`;
-                html += `
-                <div class="list-linktree-card">
-                    <div style="flex:1;">
-                        <h3 style="margin:0 0 5px 0; font-size:1.3rem;">${tree.profile?.title || 'Tanpa Judul'}</h3>
-                        <a href="${linkUrl}" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:600; font-size:0.9rem;">${linkUrl}</a>
-                    </div>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <button class="btn-outline" onclick="openLinktreeEditor('${tree.id}')">✏️ Edit</button>
-                        <button class="btn-outline" onclick="window.copyToClipboard('${linkUrl}')">📋 Salin</button>
-                        <a href="${linkUrl}" target="_blank" class="btn-outline" style="text-decoration:none;">👁️ Buka</a>
-                        <button class="btn-danger" onclick="deleteLinktree('${tree.id}')">🗑️</button>
-                    </div>
-                </div>`;
-            });
-            container.innerHTML = html;
+            lastLinktreesFetchTime = Date.now();
+            renderLinktreeOverview();
+            renderLinktreeListDOM(allLinktrees);
         } catch (e) {
             container.innerHTML = "<div style='text-align:center; padding:50px; color:#ef4444;'>Gagal memuat data dari server.</div>";
         }
@@ -895,7 +1701,7 @@
         switchTab('links');
     }
 
-    function openLinktreeEditor(id) {
+    async function openLinktreeEditor(id) {
         const found = allLinktrees.find(t => t.id === id);
         if(found) {
             state = JSON.parse(JSON.stringify(found));
@@ -910,6 +1716,19 @@
                     return l;
                 });
             }
+
+            // Fetch live stats for editor preview
+            try {
+                if (state.slug) {
+                    const sRes = await fetch(`/api/linktrees/${state.slug}/stats`);
+                    if (sRes.ok) {
+                        const sJson = await sRes.json();
+                        if (sJson.success && sJson.stats) {
+                            state.stats = sJson.stats;
+                        }
+                    }
+                }
+            } catch(e) {}
 
             switchTab('links');
         }
@@ -927,7 +1746,7 @@
 
                 const json = await res.json();
                 if(json.success) {
-                    window.showToast("🗑️ Berhasil dihapus!");
+                    window.showToast("Berhasil dihapus!");
                     loadAllLinktrees();
                 } else {
                     window.showCustomAlert("Gagal menghapus: " + (json.message || "Akses Ditolak"));
@@ -958,7 +1777,7 @@
             previewBox.innerHTML = `<img src="${state.theme.bgImage}" style="width:100%; height:100%; object-fit:cover;">`;
         } else {
             fileDisplay.innerText = "";
-            previewBox.innerHTML = `<span style="font-size:1.5rem; opacity:0.5;">🖼️</span>`;
+            previewBox.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.5;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
         }
 
         document.querySelectorAll('.btn-template-sel').forEach(el => el.classList.remove('active'));
@@ -1034,6 +1853,16 @@
 
     function selectBgTemplate(val) {
         state.theme.bgTemplate = val;
+        state.theme.bgType = 'template';
+        const bgTypeSelect = document.getElementById('inp-bg-type');
+        if (bgTypeSelect) bgTypeSelect.value = 'template';
+        const bgColorPicker = document.getElementById('bg-color-picker');
+        if (bgColorPicker) bgColorPicker.style.display = 'block';
+        const bgTplPicker = document.getElementById('bg-template-picker');
+        if (bgTplPicker) bgTplPicker.style.display = 'block';
+        const bgImgPicker = document.getElementById('bg-image-picker');
+        if (bgImgPicker) bgImgPicker.style.display = 'none';
+
         document.querySelectorAll('.btn-template-sel').forEach(el => el.classList.remove('active'));
         let tplEl = document.querySelector(`.btn-template-sel[data-val="${val}"]`);
         if(tplEl) tplEl.classList.add('active');
@@ -1087,7 +1916,7 @@
         const container = document.getElementById('links-container');
         let html = '';
         state.links.forEach(l => {
-            let iconPreviewHtml = `<div style="width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; border:1px dashed var(--border-color);"><span style="font-size:1.2rem; opacity:0.5;">🖼️</span></div>`;
+            let iconPreviewHtml = `<div style="width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; border:1px dashed var(--border-color);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.5;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
             if(l.icon) {
                 if(l.icon.startsWith('svg:')) {
                     let svgKey = l.icon.split(':')[1];
@@ -1101,7 +1930,7 @@
 
             html += `
             <div class="link-item" data-id="${l.id}">
-                <div class="drag-handle">⠿</div>
+                <div class="drag-handle" style="display:inline-flex; align-items:center; justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg></div>
                 <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
                     ${iconPreviewHtml}
                     <button class="btn-outline" style="padding:5px 8px; font-size:0.75rem;" onclick="openIconPicker('${l.id}')">Ubah Ikon</button>
@@ -1115,7 +1944,7 @@
                         <input type="checkbox" class="switch-input" ${l.active ? 'checked' : ''} onchange="updateLink('${l.id}', 'active', this.checked)">
                         <span class="slider"></span>
                     </label>
-                    <button class="btn-danger" onclick="deleteLink('${l.id}')">🗑</button>
+                    <button class="btn-danger" style="display:inline-flex; align-items:center; justify-content:center; padding:8px;" onclick="deleteLink('${l.id}')" title="Hapus Link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                 </div>
             </div>`;
         });
@@ -1182,7 +2011,7 @@
                     ${optStr}
                 </select>
                 <input type="text" class="gf-input" style="flex:1; padding:10px;" value="${s.url}" oninput="updateSocial('${s.id}', 'url', this.value)" placeholder="URL Sosmed">
-                <button class="btn-danger" style="padding:10px 15px;" onclick="deleteSocial('${s.id}')">✕</button>
+                <button class="btn-danger" style="padding:10px 15px; display:inline-flex; align-items:center; justify-content:center;" onclick="deleteSocial('${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>`;
         });
         container.innerHTML = html;
@@ -1216,7 +2045,7 @@
                             document.getElementById('edit-profile-img-preview').src = state.profile.image;
                         } else if (type === 'bg') {
                             state.theme.bgImage = window.location.origin + data.url;
-                            document.getElementById('bg-filename').innerText = "✅ Background Berhasil Diunggah.";
+                            document.getElementById('bg-filename').innerText = "Background Berhasil Diunggah.";
                             document.getElementById('bg-preview-box').innerHTML = `<img src="${state.theme.bgImage}" style="width:100%; height:100%; object-fit:cover;">`;
                         } else if (type === 'link-icon') {
                             selectIcon(window.location.origin + data.url);
@@ -1232,7 +2061,7 @@
                         document.getElementById('edit-profile-img-preview').src = base64;
                     } else if (type === 'bg') {
                         state.theme.bgImage = base64;
-                        document.getElementById('bg-filename').innerText = "✅ Background Berhasil Digunakan (Local).";
+                        document.getElementById('bg-filename').innerText = "Background Berhasil Digunakan (Local).";
                         document.getElementById('bg-preview-box').innerHTML = `<img src="${state.theme.bgImage}" style="width:100%; height:100%; object-fit:cover;">`;
                     } else if (type === 'link-icon') {
                         selectIcon(base64);
@@ -1248,7 +2077,7 @@
         state.theme.bgImage = '';
         document.getElementById('bg-filename').innerText = "Background Gambar Dihapus.";
         document.getElementById('upload-bg-img').value = "";
-        document.getElementById('bg-preview-box').innerHTML = `<span style="font-size:1.5rem; opacity:0.5;">🖼️</span>`;
+        document.getElementById('bg-preview-box').innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.5;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
         renderLivePreview();
     }
 
@@ -1270,9 +2099,9 @@
             screen.classList.add('has-bg-image');
         } else if (t.bgType === 'template') {
             screen.style.setProperty('--theme-bg', t.bgColor);
-            let cssTpl = getTemplateCSS(t.bgTemplate);
+            let cssTpl = getTemplateCSS(t.bgTemplate, t.bgColor);
             if(cssTpl) {
-                screen.setAttribute('style', `background-color: ${t.bgColor}; ${cssTpl}`);
+                screen.style.cssText = `--theme-bg: ${t.bgColor}; background-color: ${t.bgColor}; color: ${t.textColor}; ${cssTpl}`;
             }
         }
 
@@ -1373,18 +2202,38 @@
         const fText = state.settings.footerText || defaultState.settings.footerText;
         const fUrl = state.settings.footerUrl || defaultState.settings.footerUrl;
 
-        html += `<div style="text-align:center; margin-top:50px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton};">
+        html += `<div style="text-align:center; margin-top:40px; opacity:0.6; font-size:0.8rem; font-weight:600; font-family:${t.fontButton};">
                     <a href="${fUrl}" target="_blank" style="color:${t.textColor}; text-decoration:none;">${fText}</a>
                  </div>`;
 
+        html += `
+        <div style="display:flex; justify-content:center; margin-top:14px; margin-bottom:12px;">
+            <div class="linktree-views-card" style="font-family:${t.fontButton}; color:${t.textColor};">
+                <span title="Views Hari Ini" style="display:inline-flex; align-items:center; gap:5px;"><span class="views-dot views-dot-today"></span> <strong id="pvViewsToday">0</strong> hari ini</span>
+                <span class="views-divider">|</span>
+                <span title="Views Minggu Ini" style="display:inline-flex; align-items:center; gap:5px;"><span class="views-dot views-dot-week"></span> <strong id="pvViewsWeek">0</strong> minggu</span>
+                <span class="views-divider">|</span>
+                <span title="Total Views" style="display:inline-flex; align-items:center; gap:5px;"><span class="views-dot views-dot-total"></span> <strong id="pvViewsTotal">0</strong> total</span>
+            </div>
+        </div>`;
+
         screen.innerHTML = html;
+
+        if (state.stats) {
+            const vt = document.getElementById('pvViewsToday');
+            const vw = document.getElementById('pvViewsWeek');
+            const vtot = document.getElementById('pvViewsTotal');
+            if (vt) vt.innerText = state.stats.viewsToday || 0;
+            if (vw) vw.innerText = state.stats.viewsWeek || 0;
+            if (vtot) vtot.innerText = state.stats.totalViews || 0;
+        }
     }
 
     // ================= API SAVE LOGIC (BEARER TOKEN TERINTEGRASI) =================
     async function saveLinktree() {
         const btn = document.getElementById('btn-global-action');
         const origText = btn.innerText;
-        btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
+        btn.innerText = "Menyimpan..."; btn.disabled = true;
 
         try {
             const res = await fetch('/api/linktrees/save', {
