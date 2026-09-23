@@ -29,44 +29,141 @@
         }
     </script>
 
-    <!-- Header Panel Atas -->
-    <div class="header-admin-nav glass-panel">
-        <div style="display:flex; align-items:center; gap: 15px;">
-            <button class="gf-btn-clear neumorph-btn" onclick="if(!isPreviewEnv){window.location.href='/admin'}else{window.showCustomAlert('Kembali ke Dashboard V1')}" style="padding: 8px 15px;">🏠 Admin Utama</button>
-            <h2 class="gradient-text form-title" style="font-size:1.4rem; margin:0; font-weight: 700;">BEM-Form Builder</h2>
+    <!-- MOBILE TOPBAR & DRAWER OVERLAY -->
+    <header class="admin-mobile-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img src="/img/bemfkgumi.png" style="height:34px;" alt="Logo BEM">
+            <span style="font-weight:700; color:#fff; font-size:1.05rem;">BEM Forms</span>
         </div>
-        
-        <div id="builderTopIcons" style="display: none; align-items: center; gap: 8px;">
-            <button class="top-icon-btn neumorph-circle" title="Sesuaikan Tema" onclick="event.stopPropagation(); window.toggleThemeSidebar()">🎨</button>
-            <button class="top-icon-btn neumorph-circle" title="Pratinjau" onclick="window.previewForm()">👁️</button>
-            <button class="top-icon-btn neumorph-circle" id="btnUndo" title="Urungkan (Undo)" onclick="window.undoState()" disabled>↩</button>
-            <button class="top-icon-btn neumorph-circle" id="btnRedo" title="Ulangi (Redo)" onclick="window.redoState()" disabled>↪</button>
-            <button class="gf-btn-submit glow-effect" style="margin-left: 10px;" onclick="window.saveFormToDB()">Simpan & Publikasikan</button>
-        </div>
-        
-        <div id="listTopIcons" style="display: flex; gap: 10px; align-items:center;">
-            <!-- ENTERPRISE NAVIGATION BUTTONS -->
-            <button class="gf-btn-clear neumorph-btn" style="color: #3b82f6;" onclick="window.location.href='/admin-linktree'">🌳 Linktree</button>
-            <button class="gf-btn-clear neumorph-btn" style="color: #10b981;" onclick="window.location.href='/admin-qrcode'">🔲 QR Code</button>
-            <button class="gf-btn-clear neumorph-btn" style="color: #a78bfa;" onclick="window.location.href='/admin-mhs'">🎓 Mahasiswa</button>
-            
-            <button class="gf-btn-clear neumorph-btn text-danger" onclick="localStorage.removeItem('axa_admin_token'); if(!isPreviewEnv){window.location.href='/admin'}else{location.reload();}">Logout</button>
-        </div>
-    </div>
+        <button class="sidebar-toggle-btn" onclick="toggleMobileV2Menu()" aria-label="Toggle Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+    </header>
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="toggleMobileV2Menu(false)"></div>
 
-    <!-- TABS MENU -->
-    <div class="builder-tabs glass-panel" id="mainTabs">
-        <div class="b-tab active" onclick="window.switchFormTab('main')" id="tabMain">Daftar Form</div>
-        <div class="b-tab" onclick="window.switchFormTab('pertanyaan')" id="tabPertanyaan" style="display:none;">Pertanyaan</div>
-        <div class="b-tab" onclick="window.switchFormTab('jawaban')" id="tabJawaban" style="display:none;">Jawaban</div>
-        <div class="b-tab" onclick="window.switchFormTab('setelan')" id="tabSetelan" style="display:none;">Setelan Form</div>
-    </div>
+    <div class="admin-layout" id="dashboardContent">
+        <!-- SIDEBAR COLLAPSIBLE -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <!-- SIDEBAR HEADER -->
+            <div class="sidebar-header-box">
+                <a href="/admin-v2" class="sidebar-brand-group">
+                    <img src="/img/bemfkgumi.png" alt="Logo Admin">
+                    <div class="sidebar-brand-info">
+                        <h3 class="sidebar-brand-title" style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em;">BEM Forms</h3>
+                    </div>
+                </a>
+                <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleV2Sidebar()" title="Perkecil/Perluas Menu" aria-label="Toggle Sidebar">
+                    <svg id="toggleChevronSvg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+            </div>
+
+            <!-- QUICK ACTION BUTTON: BUAT FORM BARU -->
+            <div class="sidebar-action-wrap">
+                <button class="sidebar-quick-btn" onclick="window.createNewForm()" title="Buat Formulir Baru">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span class="quick-text">Buat Form</span>
+                </button>
+            </div>
+
+            <!-- NAVIGATION BUTTONS WITH CATEGORIES -->
+            <nav class="admin-nav" id="adminNav">
+                <div class="nav-category-header">Menu Form</div>
+                <button class="sidebar-nav-btn b-tab active" onclick="window.switchFormTab('overview')" id="tabOverview" data-tooltip="Overview Formulir">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+                    <span class="nav-text">Overview</span>
+                </button>
+                <button class="sidebar-nav-btn b-tab" onclick="window.switchFormTab('main')" id="tabMain" data-tooltip="Daftar Form">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span class="nav-text">Daftar Form</span>
+                </button>
+
+                <div class="nav-category-header" id="catEditorHeader" style="display:none;">Editor Form</div>
+                <button class="sidebar-nav-btn b-tab" onclick="window.switchFormTab('pertanyaan')" id="tabPertanyaan" style="display:none;" data-tooltip="Pertanyaan">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <span class="nav-text">Pertanyaan</span>
+                </button>
+                <button class="sidebar-nav-btn b-tab" onclick="window.switchFormTab('jawaban')" id="tabJawaban" style="display:none;" data-tooltip="Jawaban Responden">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <span class="nav-text">Jawaban</span>
+                </button>
+                <button class="sidebar-nav-btn b-tab" onclick="window.switchFormTab('setelan')" id="tabSetelan" style="display:none;" data-tooltip="Setelan Form">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span class="nav-text">Setelan Form</span>
+                </button>
+
+                <div class="nav-category-header">Modul Sistem</div>
+                <button class="sidebar-nav-btn" onclick="window.location.href='/admin'" data-tooltip="Admin Utama CMS">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span class="nav-text">Admin Utama</span>
+                </button>
+                <button class="sidebar-nav-btn active" onclick="window.location.href='/admin-v2'" data-tooltip="Admin Form">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <span class="nav-text">Admin Form</span>
+                </button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='/admin-linktree'" data-tooltip="Admin Linktree">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="5" r="3"></circle><line x1="12" y1="8" x2="12" y2="14"></line><path d="M12 14a5 5 0 0 0-5 5v2"></path><path d="M12 14a5 5 0 0 1 5 5v2"></path></svg>
+                    <span class="nav-text">Admin Linktree</span>
+                </button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='/admin-qrcode'" data-tooltip="Admin QR Code">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span class="nav-text">Admin QR Code</span>
+                </button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='/admin-mhs'" data-tooltip="Admin Database Mhs">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                    <span class="nav-text">Admin Database Mhs</span>
+                </button>
+            </nav>
+
+            <!-- SIDEBAR FOOTER (KUNJUNGI SITUS & KELUAR SESI) -->
+            <div class="sidebar-footer-box">
+                <a href="/" target="_blank" class="sidebar-footer-btn" data-tooltip="Kunjungi Situs Publik">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    <span class="footer-text">Kunjungi Situs</span>
+                </a>
+                <button onclick="localStorage.removeItem('axa_admin_token'); if(!isPreviewEnv){window.location.href='/admin'}else{location.reload();}" class="sidebar-footer-btn btn-logout" data-tooltip="Keluar Sesi Admin">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span class="footer-text">Keluar Sesi</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEWPORT -->
+        <main class="admin-main">
+            <!-- HEADER TOOLBAR INSIDE MAIN (FOR FORM BUILDER ACTIONS) -->
+            <header class="admin-topbar glass-panel" id="adminTopBar" style="display:none; justify-content:space-between; align-items:center; padding:14px 24px; margin-bottom:24px; border-radius:14px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <h2 class="gradient-text form-title" style="font-size:1.35rem; margin:0; font-weight:700; letter-spacing:-0.3px;" id="v2TopTitle">BEM-Form Builder</h2>
+                </div>
+                <div id="builderTopIcons" style="display: none; align-items: center; gap: 8px; flex-wrap:wrap;">
+                    <button class="top-icon-btn neumorph-circle" title="Sesuaikan Tema" onclick="event.stopPropagation(); window.toggleThemeSidebar()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg>
+                    </button>
+                    <button class="top-icon-btn neumorph-circle" title="Pratinjau" onclick="window.previewForm()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                    <button class="top-icon-btn neumorph-circle" id="btnUndo" title="Urungkan (Undo)" onclick="window.undoState()" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                    </button>
+                    <button class="top-icon-btn neumorph-circle" id="btnRedo" title="Ulangi (Redo)" onclick="window.redoState()" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    </button>
+                    <button class="gf-btn-submit glow-effect header-nav-btn" style="margin-left: 6px;" onclick="window.saveFormToDB()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        <span>Simpan & Publikasikan</span>
+                    </button>
+                </div>
+            </header>
 
     <!-- TEMA SIDEBAR (OFFCANVAS) -->
     <div class="theme-sidebar glass-panel-heavy" id="themeSidebar" onclick="event.stopPropagation()">
         <div class="theme-sidebar-header">
-            <h3 style="margin:0; font-size:1.2rem; font-weight:700; color:var(--form-text);">🎨 Tema Dashboard</h3>
-            <button class="top-icon-btn neumorph-circle" onclick="window.toggleThemeSidebar()">✕</button>
+            <h3 style="margin:0; font-size:1.2rem; font-weight:700; color:var(--form-text); display:flex; align-items:center; gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg>
+                <span>Tema Dashboard</span>
+            </h3>
+            <button class="top-icon-btn neumorph-circle" onclick="window.toggleThemeSidebar()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
         <div class="theme-sidebar-content">
             
@@ -78,7 +175,7 @@
                 <div class="custom-font-picker" id="picker-headerFont">
                     <div class="cfp-display" onclick="window.toggleFP('headerFont', event)">
                         <span id="display-headerFont" class="cfp-text">Outfit - Biasa</span>
-                        <span class="arrow">▼</span>
+                        <span class="arrow">&#9660;</span>
                     </div>
                     <div class="cfp-dropdown" id="drop-headerFont"></div>
                 </div>
@@ -87,13 +184,13 @@
                 </select>
             </div>
             
-            <!-- QUESTION FONTS -->
+            <!-- PERTANYAAN FONTS -->
             <label style="font-size:0.85rem; color:var(--form-text-muted);">Pertanyaan</label>
             <div class="font-select-group">
                 <div class="custom-font-picker" id="picker-questionFont">
                     <div class="cfp-display" onclick="window.toggleFP('questionFont', event)">
-                        <span id="display-questionFont" class="cfp-text">Plus Jakarta Sans - Biasa</span>
-                        <span class="arrow">▼</span>
+                        <span id="display-questionFont" class="cfp-text">Plus Jakarta Sans - Sedang</span>
+                        <span class="arrow">&#9660;</span>
                     </div>
                     <div class="cfp-dropdown" id="drop-questionFont"></div>
                 </div>
@@ -102,13 +199,13 @@
                 </select>
             </div>
 
-            <!-- TEXT FONTS -->
-            <label style="font-size:0.85rem; color:var(--form-text-muted);">Teks Dasar</label>
+            <!-- TEKS FONTS -->
+            <label style="font-size:0.85rem; color:var(--form-text-muted);">Teks</label>
             <div class="font-select-group">
                 <div class="custom-font-picker" id="picker-textFont">
                     <div class="cfp-display" onclick="window.toggleFP('textFont', event)">
                         <span id="display-textFont" class="cfp-text">Plus Jakarta Sans - Biasa</span>
-                        <span class="arrow">▼</span>
+                        <span class="arrow">&#9660;</span>
                     </div>
                     <div class="cfp-dropdown" id="drop-textFont"></div>
                 </div>
@@ -121,11 +218,14 @@
             <div class="inner-neumorph" style="padding:20px; text-align:center; border-radius:12px; margin-bottom:20px;">
                 <img id="themeHeaderPreview" src="" style="width:100%; height:100px; object-fit:cover; border-radius:8px; display:none; margin-bottom:10px;">
                 <input type="file" id="themeHeaderUpload" accept="image/*" style="display:none;" onchange="window.handleHeaderImage(this)">
-                <button class="gf-btn-clear neumorph-btn" onclick="document.getElementById('themeHeaderUpload').click()" style="width:100%; color:var(--form-active-border);">🖼️ Pilih Gambar</button>
+                <button class="gf-btn-clear neumorph-btn" onclick="document.getElementById('themeHeaderUpload').click()" style="width:100%; color:var(--form-active-border); display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    <span>Pilih Gambar</span>
+                </button>
                 <button class="gf-btn-clear text-danger" onclick="window.removeHeaderImage()" style="margin-top:10px; width:100%; border:none; display:none;" id="btnRmHeader">Hapus</button>
             </div>
 
-            <div class="theme-section-title">Warna Tema Utama</div>
+            <div class="theme-section-title">Warna Tema</div>
             <div class="color-circle-group" id="themeColorGrid"></div>
 
             <div class="theme-section-title">Warna Latar Belakang</div>
@@ -136,8 +236,108 @@
     <!-- KONTEN UTAMA DASHBOARD -->
     <div class="admin-v2-container">
         
+        <!-- ================= TAB 0: OVERVIEW (V1 SAAS DASHBOARD) ================= -->
+        <div id="tab-overview" class="tab-content active">
+            <div class="admin-header-main glass-card neumorph-outer" style="margin-bottom: 24px;">
+                <div>
+                    <h2 class="form-title" style="color:var(--form-text); font-size:1.6rem; margin:0;">Overview Formulir & Respon</h2>
+                    <p style="color:var(--form-text-muted); margin-top:5px; font-size:0.9rem;">Statistik pendaftaran, kuis, dan formulir aspirasi BEM KBMFKG UMI.</p>
+                </div>
+                <button class="gf-btn-submit glow-effect" onclick="window.createNewForm()" style="border-radius: 30px; display:inline-flex; align-items:center; gap:6px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Buat Form Baru</span>
+                </button>
+            </div>
+
+            <!-- 4 KPI METRIC CARDS -->
+            <div class="v2-kpi-grid">
+                <div class="v2-kpi-card">
+                    <div class="v2-kpi-head">
+                        <span class="v2-kpi-title">Total Formulir</span>
+                        <div style="color:#8b5cf6;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="v2-kpi-val" id="statV2TotalForms">0</div>
+                    <div class="v2-kpi-foot">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#8b5cf6;"></span>
+                        <span>Form Tersimpan</span>
+                    </div>
+                </div>
+
+                <div class="v2-kpi-card">
+                    <div class="v2-kpi-head">
+                        <span class="v2-kpi-title">Formulir Terbuka</span>
+                        <div style="color:#10b981;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="v2-kpi-val" id="statV2ActiveForms">0</div>
+                    <div class="v2-kpi-foot">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981;"></span>
+                        <span>Menerima Tanggapan</span>
+                    </div>
+                </div>
+
+                <div class="v2-kpi-card">
+                    <div class="v2-kpi-head">
+                        <span class="v2-kpi-title">Total Tanggapan</span>
+                        <div style="color:#3b82f6;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                        </div>
+                    </div>
+                    <div class="v2-kpi-val" id="statV2TotalResponses">0</div>
+                    <div class="v2-kpi-foot">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#3b82f6;"></span>
+                        <span>Jawaban Mahasiswa</span>
+                    </div>
+                </div>
+
+                <div class="v2-kpi-card">
+                    <div class="v2-kpi-head">
+                        <span class="v2-kpi-title">Database Status</span>
+                        <div style="color:#0284c7;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="v2-kpi-val" style="font-size:1.4rem;">Aktif</div>
+                    <div class="v2-kpi-foot">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981;"></span>
+                        <span>Terhubung Database</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAR CHART: STATISTIK TANGGAPAN FORM (GBR 4) -->
+            <div class="form-chart-card glass-card neumorph-outer" id="formAnalyticsChartWrapper">
+                <div class="form-chart-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+                    <div>
+                        <h3 style="margin:0 0 5px 0; font-size:1.25rem; font-family:'Outfit', sans-serif; font-weight:700;">Statistik Tanggapan Form</h3>
+                        <p style="margin:0; font-size:0.85rem; color:#64748b;">Perbandingan Total Tanggapan yang Masuk di Setiap Formulir</p>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:600; color:#64748b;">
+                        <span style="display:inline-block; width:10px; height:10px; border-radius:3px; background:#8b5cf6;"></span>
+                        <span>Total Tanggapan</span>
+                    </div>
+                </div>
+                <div class="form-chart-container" id="formChartContainer" style="width:100%; overflow-x:auto; padding-bottom:8px;">
+                    <div id="formBarChartSvgWrapper">
+                        <div style="text-align:center; padding:50px 20px; color:#64748b; font-family:'Outfit', sans-serif;">Memuat data grafik formulir...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OVERVIEW RECENT FORMS -->
+            <div class="glass-card neumorph-outer" style="padding: 24px;">
+                <h3 style="margin: 0 0 16px 0; font-size: 1.15rem; color: var(--form-text);">Formulir Terkini</h3>
+                <div id="overviewFormList">
+                    <div style="text-align:center; padding:30px; color:var(--form-text-muted);">Memuat formulir terkini...</div>
+                </div>
+            </div>
+        </div>
+
         <!-- ================= TAB 1: MAIN (DAFTAR FORM) ================= -->
-        <div id="tab-main" class="tab-content active">
+        <div id="tab-main" class="tab-content">
             <div class="admin-header-main glass-card neumorph-outer">
                 <div>
                     <h2 class="form-title" style="color:var(--form-text); font-size:1.6rem; margin:0;">Formulir Terbaru</h2>
@@ -152,16 +352,18 @@
 
         <!-- ================= TAB 2: PERTANYAAN (BUILDER) ================= -->
         <div id="tab-pertanyaan" class="tab-content">
-            <div style="display: flex; gap: 20px; position:relative;">
-                <div id="builderCanvas" style="flex: 1; padding-bottom: 150px; width: 100%;">
+            <div style="display: flex; gap: 20px; position:relative; max-width: 960px; margin: 0 auto; align-items: flex-start;">
+                <div id="builderCanvas" style="flex: 1; padding-bottom: 150px; min-width: 0;">
                     <!-- Javascript merender pertanyaan disini -->
                 </div>
 
                 <!-- Floating Toolbar (Tools Kanan) -->
-                <div class="floating-toolbar glass-panel" id="floater">
-                    <button class="toolbar-btn neumorph-circle" onclick="window.addQuestion()" title="Tambahkan Pertanyaan">⊕</button>
-                    <button class="toolbar-btn neumorph-circle" onclick="window.addSection()" title="Tambahkan Bagian">◫</button>
-                    <button class="toolbar-btn neumorph-circle" onclick="window.addTitleDesc()" title="Tambahkan Judul dan Deskripsi">Tt</button>
+                <div class="floating-toolbar glass-panel-heavy" id="floatingToolbar">
+                    <button class="tool-btn neumorph-circle" title="Tambahkan pertanyaan" onclick="window.addQuestion()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
+                    <button class="tool-btn neumorph-circle" title="Tambahkan judul dan deskripsi" onclick="window.addTitleDesc()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg></button>
+                    <button class="tool-btn neumorph-circle" title="Tambahkan gambar" onclick="window.addImageBlock()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button>
+                    <button class="tool-btn neumorph-circle" title="Tambahkan video YouTube" onclick="window.addVideoBlock()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
+                    <button class="tool-btn neumorph-circle" title="Tambahkan bagian" onclick="window.addSection()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="8" rx="2"></rect><rect x="3" y="13" width="18" height="8" rx="2"></rect></svg></button>
                 </div>
             </div>
         </div>
@@ -171,7 +373,17 @@
             <div class="form-header-card glass-card neumorph-outer" style="border-top:none; padding-bottom:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom: 20px;">
                     <h2 class="form-title gradient-text" id="respCount" style="font-size:2.2rem; margin:0;">0 Tanggapan</h2>
-                    <button class="gf-btn-submit glow-effect" onclick="window.downloadExcel()" style="background: #10b981;">📥 Ekspor ke Excel (.xlsx)</button>
+                    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                        <div class="toggle-switch" style="font-size:0.9rem; background:rgba(255,255,255,0.6); padding:8px 14px; border-radius:12px; border:1px solid var(--form-border); box-shadow:var(--inner-neumorph);">
+                            <span id="tabRespToggleLabel" style="font-weight:700; color:var(--form-text);">Menerima Tanggapan</span>
+                            <input type="checkbox" id="tabRespToggle" class="switch-input" onchange="window.toggleFormActiveFromTab(this.checked)">
+                            <label for="tabRespToggle" class="switch-label" style="margin-left:8px;"></label>
+                        </div>
+                        <button class="gf-btn-submit glow-effect" onclick="window.downloadExcel()" style="background: #10b981; display:inline-flex; align-items:center; gap:6px;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            <span>Ekspor ke Excel (.xlsx)</span>
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- JAWABAN SUB-TABS MENU -->
@@ -216,15 +428,15 @@
             <div id="j-individual" class="j-content">
                 <div class="form-header-card glass-card neumorph-outer print-hidden" style="padding: 20px; display:flex; justify-content:space-between; align-items:center;">
                     <div class="pagination-controls">
-                        <button onclick="window.changeIndiv(-1)" id="btnIndivPrev">❮</button>
+                        <button onclick="window.changeIndiv(-1)" id="btnIndivPrev" style="display:inline-flex; align-items:center; justify-content:center; padding:8px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
                         <span id="indivLabel" style="font-weight:bold; color:var(--form-text);">0 dari 0</span>
-                        <button onclick="window.changeIndiv(1)" id="btnIndivNext">❯</button>
+                        <button onclick="window.changeIndiv(1)" id="btnIndivNext" style="display:inline-flex; align-items:center; justify-content:center; padding:8px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
                     </div>
                     <div style="display:flex; gap:10px;">
                         <button class="gf-btn-clear neumorph-btn" style="display:flex; align-items:center; gap:5px; padding:8px 15px;" onclick="window.printIndividual()">
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg Cetak
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg> Cetak
                         </button>
-                        <button class="gf-btn-clear neumorph-btn text-danger" style="display:flex; align-items:center; gap:5px; padding:8px 15px;" onclick="window.deleteCurrentIndividual()">🗑️ Hapus</button>
+                        <button class="gf-btn-clear neumorph-btn text-danger" style="display:flex; align-items:center; gap:5px; padding:8px 15px;" onclick="window.deleteCurrentIndividual()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Hapus</button>
                     </div>
                 </div>
                 <div id="individualContainer" style="margin-top:20px;"></div>
@@ -314,7 +526,7 @@
                             <div class="setting-title">Jawaban</div>
                             <div class="setting-desc">Mengelola cara respons dikumpulkan dan dilindungi</div>
                         </div>
-                        <span class="acc-icon" id="iconJawaban">▼</span>
+                        <span class="acc-icon" id="iconJawaban"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
                     </div>
                     
                     <div class="accordion-content" id="accJawaban" style="display:none; margin-top:20px;">
@@ -366,7 +578,7 @@
                             <div class="setting-title">Presentasi</div>
                             <div class="setting-desc">Mengelola cara formulir dan respons dipresentasikan.</div>
                         </div>
-                        <span class="acc-icon" id="iconPresentasi">▼</span>
+                        <span class="acc-icon" id="iconPresentasi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
                     </div>
                     
                     <div class="accordion-content" id="accPresentasi" style="display:none; margin-top:20px;">
@@ -420,7 +632,7 @@
                             <div class="setting-title">Formulir default</div>
                             <div class="setting-desc">Setelan diterapkan untuk formulir ini dan formulir baru</div>
                         </div>
-                        <span class="acc-icon" id="iconFormDefault">▼</span>
+                        <span class="acc-icon" id="iconFormDefault"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
                     </div>
                     
                     <div class="accordion-content" id="accFormDefault" style="display:none; margin-top:20px;">
@@ -445,7 +657,10 @@
 
                         <div class="setting-header">
                             <div style="flex:1;">
-                                <div class="setting-title" style="font-size:1rem; color:#eab308;">Batas Waktu Pengisian (Deadline) 📅</div>
+                                <div class="setting-title" style="font-size:1rem; color:#eab308; display:flex; align-items:center; gap:6px;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    <span>Batas Waktu Pengisian (Deadline)</span>
+                                </div>
                                 <div class="setting-desc">Formulir otomatis tertutup pada waktu yang ditentukan.</div>
                             </div>
                             <input type="datetime-local" class="gf-input inner-neumorph" id="setDeadline" style="width:250px;" onchange="window.updateSetting('deadline', this.value)">
@@ -460,7 +675,7 @@
                             <div class="setting-title">Pertanyaan default</div>
                             <div class="setting-desc">Setelan diterapkan untuk semua pertanyaan</div>
                         </div>
-                        <span class="acc-icon" id="iconQuestionDefault">▼</span>
+                        <span class="acc-icon" id="iconQuestionDefault"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
                     </div>
                     
                     <div class="accordion-content" id="accQuestionDefault" style="display:none; margin-top:20px;">
@@ -475,6 +690,8 @@
         </div>
 
     </div>
+        </main>
+    </div>
 
     <!-- MODAL NOTIFICATIONS -->
     <div class="toast glass-panel glow-effect" id="globalToast" style="position:fixed; bottom:-100px; right:20px; background:var(--form-active-border); color:#fff; padding:15px 30px; border-radius:12px; font-weight:700; transition:0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index:99999;">Notifikasi</div>
@@ -482,7 +699,9 @@
     <!-- CUSTOM SUCCESS MODAL (GLASSMORPHISM) -->
     <div id="successModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
         <div class="glass-card neumorph-outer" style="width:100%; max-width:420px; text-align:center; padding:40px 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-            <div style="font-size:4rem; margin-bottom:15px; animation: bounceIn 1s;">✨</div>
+            <div style="margin-bottom:15px; display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:50%; background:rgba(16,185,129,0.15); color:#10b981;">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
             <h2 class="form-title" style="color:var(--form-text); margin-top:0; font-size:1.6rem;">Publikasi Berhasil!</h2>
             <p style="color:var(--form-text-muted); font-size:0.95rem; margin-bottom:20px;">Formulir Anda telah tersimpan dan siap dibagikan ke publik.</p>
             
@@ -491,8 +710,14 @@
             </div>
             
             <div style="display:flex; gap:10px; margin-top:25px; flex-wrap:wrap;">
-                <button class="gf-btn-clear neumorph-btn" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="copyModalLink()">📋 Salin</button>
-                <button class="gf-btn-submit glow-effect" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px;" onclick="openModalLink()">👁️ Buka</button>
+                <button class="gf-btn-clear neumorph-btn" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="copyModalLink()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span>Salin</span>
+                </button>
+                <button class="gf-btn-submit glow-effect" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px;" onclick="openModalLink()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <span>Buka</span>
+                </button>
             </div>
             <button class="gf-btn-clear text-danger" style="margin-top:15px; width:100%; font-weight:600; background:transparent; border:1px solid var(--form-border);" onclick="closeSuccessModal()">Tutup</button>
         </div>
@@ -501,7 +726,9 @@
     <!-- CUSTOM ALERT MODAL -->
     <div id="customAlertModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10002; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
         <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:30px; animation: popIn 0.3s ease;">
-            <div style="font-size:3rem; margin-bottom:15px;">⚠️</div>
+            <div style="margin-bottom:15px; display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:50%; background:rgba(234,179,8,0.15); color:#eab308;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
             <h3 class="form-title" style="color:var(--form-text); margin-top:0; margin-bottom:15px;">Pemberitahuan</h3>
             <p id="customAlertMessage" style="color:var(--form-text-muted); font-size:1rem; margin-bottom:25px;"></p>
             <button class="gf-btn-submit glow-effect" style="width:100%;" onclick="closeCustomAlert()">Mengerti</button>
@@ -511,7 +738,9 @@
     <!-- CUSTOM CONFIRM MODAL -->
     <div id="customConfirmModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10003; align-items:center; justify-content:center; background:rgba(0,0,0,0.6);">
         <div class="glass-card neumorph-outer" style="width:100%; max-width:400px; text-align:center; padding:30px; animation: popIn 0.3s ease;">
-            <div style="font-size:3rem; margin-bottom:15px;">❓</div>
+            <div style="margin-bottom:15px; display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:50%; background:rgba(59,130,246,0.15); color:#3b82f6;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
             <h3 class="form-title" style="color:var(--form-text); margin-top:0; margin-bottom:15px;">Konfirmasi</h3>
             <p id="customConfirmMessage" style="color:var(--form-text-muted); font-size:1rem; margin-bottom:25px;"></p>
             <div style="display:flex; gap:10px;">
@@ -534,7 +763,10 @@
 
     <div id="editResModal" class="glass-panel-heavy" style="display:none; position:fixed; inset:0; z-index:10001; align-items:center; justify-content:center; background:rgba(0,0,0,0.5);" onclick="window.closeEditResModal()">
         <div class="glass-card neumorph-outer" style="width:100%; max-width:800px; max-height:90vh; overflow-y:auto; padding:30px; background:var(--form-bg); border-radius:16px;" onclick="event.stopPropagation()">
-            <h3 class="form-title" style="margin-top:0; font-size:1.6rem; color:var(--form-text); border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:20px;">✏️ Edit Jawaban Responden</h3>
+            <h3 class="form-title" style="margin-top:0; font-size:1.6rem; color:var(--form-text); border-bottom:1px solid var(--form-border); padding-bottom:15px; margin-bottom:20px; display:flex; align-items:center; gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>Edit Jawaban Responden</span>
+            </h3>
             <div id="editResFormContainer" style="padding-right:10px;"></div>
             <div style="display:flex; justify-content:flex-end; gap:15px; margin-top:25px; position:sticky; bottom:-30px; padding:15px 0; background:var(--form-bg); border-top:1px solid var(--form-border);">
                 <button class="gf-btn-clear neumorph-btn" onclick="window.closeEditResModal()">Batal</button>
@@ -545,6 +777,47 @@
 
     <!-- LOGIC JAVASCRIPT GLOBAL BINDING (ANTI-CRASH) -->
     <script>
+        // ================= SIDEBAR CONTROLLER V2 =================
+        window.toggleV2Sidebar = function() {
+            const sidebar = document.getElementById('adminSidebar');
+            if (!sidebar) return;
+            sidebar.classList.toggle('collapsed');
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            localStorage.setItem('admin_v2_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+            const chevronSvg = document.getElementById('toggleChevronSvg');
+            if (chevronSvg) {
+                chevronSvg.innerHTML = isCollapsed 
+                    ? '<polyline points="9 18 15 12 9 6"></polyline>' 
+                    : '<polyline points="15 18 9 12 15 6"></polyline>';
+            }
+        };
+
+        window.toggleMobileV2Menu = function(force) {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('mobileDrawerOverlay');
+            if (!sidebar || !overlay) return;
+            const isOpen = force !== undefined ? force : !sidebar.classList.contains('mobile-open');
+            if (isOpen) {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('mobile-open');
+                overlay.classList.add('active');
+            } else {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('admin_v2_sidebar_collapsed') === 'true') {
+                const sidebar = document.getElementById('adminSidebar');
+                if (sidebar) {
+                    sidebar.classList.add('collapsed');
+                    const chevronSvg = document.getElementById('toggleChevronSvg');
+                    if (chevronSvg) chevronSvg.innerHTML = '<polyline points="9 18 15 12 9 6"></polyline>';
+                }
+            }
+        });
+
         window.allForms = [];
         window.currentForm = null;
         window.activeSecIdx = 0;
@@ -609,7 +882,7 @@
         window.copyToClipboard = function(text) {
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
-                    window.showToast("✅ Tautan berhasil disalin!");
+                    window.showToast("Tautan berhasil disalin!");
                 });
             } else {
                 let textArea = document.createElement("textarea");
@@ -621,7 +894,7 @@
                 textArea.select();
                 try {
                     document.execCommand('copy');
-                    window.showToast("✅ Tautan berhasil disalin!");
+                    window.showToast("Tautan berhasil disalin!");
                 } catch (err) {
                     window.showCustomAlert("Gagal menyalin tautan.");
                 }
@@ -685,15 +958,19 @@
                 let tabContent = document.getElementById(`tab-${tabId}`);
                 if(tabContent) tabContent.classList.add('active');
                 
-                if(tabId === 'main') {
+                let adminTop = document.getElementById('adminTopBar') || document.querySelector('.admin-topbar');
+                if(tabId === 'main' || tabId === 'overview') {
+                    if(adminTop) adminTop.style.display = 'none';
                     let bTop = document.getElementById('builderTopIcons'); if(bTop) bTop.style.display = 'none';
                     let lTop = document.getElementById('listTopIcons'); if(lTop) lTop.style.display = 'flex';
                     let ts = document.getElementById('themeSidebar'); if(ts) ts.classList.remove('active');
                 } else {
+                    if(adminTop) adminTop.style.display = 'flex';
                     let bTop = document.getElementById('builderTopIcons'); if(bTop) bTop.style.display = 'flex';
                     let lTop = document.getElementById('listTopIcons'); if(lTop) lTop.style.display = 'none';
                 }
 
+                if(tabId === 'overview') { try { window.renderFormOverview(); } catch(e) { console.error("Error Overview", e); } }
                 if(tabId === 'jawaban') { try { window.loadResponses(); } catch(e) { console.error("Error Jawaban", e); } }
                 if(tabId === 'setelan') { try { window.renderSettings(); } catch(e) { console.error("Error Setelan", e); } }
                 if(tabId === 'pertanyaan') { setTimeout(() => { try { window.positionToolbar(); } catch(e) {} }, 50); }
@@ -726,26 +1003,40 @@
                 const container = document.getElementById('charts-container');
                 if(!container) return;
                 
-                if(window.currentResponses.length === 0) {
-                    container.innerHTML = "<div style='padding:30px; text-align:center; color:var(--form-text-muted); border:2px dashed var(--form-border); border-radius:12px;'>Belum ada tanggapan untuk diringkas.</div>";
+                // Sinkronkan toggle Menerima Tanggapan di header
+                const tabToggle = document.getElementById('tabRespToggle');
+                if(tabToggle && window.currentForm) tabToggle.checked = !!window.currentForm.isActive;
+                const tabLbl = document.getElementById('tabRespToggleLabel');
+                if(tabLbl && window.currentForm) tabLbl.innerText = window.currentForm.isActive ? "Menerima Tanggapan" : "Tanggapan Ditutup";
+
+                if(!window.currentResponses || window.currentResponses.length === 0) {
+                    container.innerHTML = `
+                    <div class="gf-summary-card" style="text-align:center; padding:50px 20px;">
+                        <div style="font-size:3rem; margin-bottom:12px;">📊</div>
+                        <h3 style="font-size:1.3rem; color:var(--form-text); margin-bottom:8px;">Menunggu Tanggapan</h3>
+                        <p style="color:var(--form-text-muted); max-width:480px; margin:0 auto; font-size:0.95rem; line-height:1.6;">
+                            Formulir ini belum menerima tanggapan. Begitu responden mengirimkan jawaban, ringkasan analitik visual ala Google Forms (grafik, persentase, dan daftar teks) akan otomatis muncul di sini.
+                        </p>
+                    </div>`;
                     let qStats = document.getElementById('quiz-stats-container');
                     if(qStats) qStats.style.display = 'none';
                     return;
                 }
 
                 if (typeof Chart === 'undefined') {
-                    container.innerHTML = "<div style='padding:30px; text-align:center; color:#ef4444; border:1px solid #ef4444; border-radius:12px; background:rgba(239, 68, 68, 0.05); margin-top:20px;'>⚠️ Peringatan: Library grafik (Chart.js) gagal dimuat.<br>Silakan periksa koneksi internet Anda atau matikan pemblokir iklan (Ad-Blocker) untuk melihat ringkasan visual.</div>";
+                    container.innerHTML = "<div style='padding:30px; text-align:center; color:#ef4444; border:1px solid #ef4444; border-radius:12px; background:rgba(239, 68, 68, 0.05); margin-top:20px;'><svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='vertical-align:middle; margin-right:6px;'><path d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z'></path><line x1='12' y1='9' x2='12' y2='13'></line><line x1='12' y1='17' x2='12.01' y2='17'></line></svg> Peringatan: Library grafik (Chart.js) gagal dimuat.<br>Silakan periksa koneksi internet Anda atau matikan pemblokir iklan (Ad-Blocker) untuk melihat ringkasan visual.</div>";
                     let qStats = document.getElementById('quiz-stats-container');
                     if(qStats) qStats.style.display = 'none';
                     return;
                 }
 
-                if(window.currentForm.settings.isQuiz && window.currentResponses.length > 0) {
+                // STATISTIK KUIS
+                if(window.currentForm.settings && window.currentForm.settings.isQuiz && window.currentResponses.length > 0) {
                     let qStats = document.getElementById('quiz-stats-container');
                     if(qStats) qStats.style.display = 'flex';
-                    let scores = window.currentResponses.map(r => r.score || 0).sort((a,b)=>a-b);
+                    let scores = window.currentResponses.map(r => Number(r.score) || 0).sort((a,b)=>a-b);
                     let sum = scores.reduce((a,b)=>a+b, 0);
-                    let sAvg = document.getElementById('stat-avg'); if(sAvg) sAvg.innerText = (sum / scores.length).toFixed(2);
+                    let sAvg = document.getElementById('stat-avg'); if(sAvg) sAvg.innerText = (sum / scores.length).toFixed(1);
                     let mid = Math.floor(scores.length / 2);
                     let sMed = document.getElementById('stat-med'); if(sMed) sMed.innerText = scores.length % 2 !== 0 ? scores[mid] : ((scores[mid - 1] + scores[mid]) / 2).toFixed(1);
                     let sRange = document.getElementById('stat-range'); if(sRange) sRange.innerText = `${scores[0]} - ${scores[scores.length-1]}`;
@@ -754,81 +1045,650 @@
                     if(qStats) qStats.style.display = 'none';
                 }
 
+                // Bersihkan grafik sebelumnya
                 try {
-                    Object.values(window.chartInstances).forEach(c => {
-                        if (c && typeof c.destroy === 'function') c.destroy();
-                    });
+                    if (window.chartInstances) {
+                        Object.values(window.chartInstances).forEach(c => {
+                            if (c && typeof c.destroy === 'function') c.destroy();
+                        });
+                    }
                 } catch (err) {}
                 window.chartInstances = {};
-                
+
+                const GF_COLORS = [
+                    '#4285F4', '#EA4335', '#FBBC05', '#34A853', '#9334E6', 
+                    '#FF6D01', '#46BDC6', '#E91E63', '#00BCD4', '#795548', 
+                    '#607D8B', '#3F51B5', '#009688', '#FF9800', '#673AB7'
+                ];
+
                 let html = '';
-                let questionsToChart = [];
-                
-                window.currentForm.sections.forEach(sec => {
-                    sec.questions.forEach((q, idx) => {
-                        if (q.type === 'title_only' || q.type === 'upload_file' || q.type === 'tanggal' || q.type === 'waktu' || q.type === 'jawaban_singkat' || q.type === 'paragraf') return;
-                        
-                        html += `<div class="chart-container">
-                                    <h3 class="question-title" style="font-size:1.1rem; color:var(--form-text); margin-bottom:15px; border-bottom:1px solid var(--form-border); padding-bottom:10px;">${q.title}</h3>
-                                    <div style="position: relative; height:300px; width:100%; display:flex; justify-content:center;">
-                                        <canvas id="chart-${q.id}"></canvas>
-                                    </div>
-                                 </div>`;
-                        questionsToChart.push(q);
-                    });
-                });
-                
-                if(html === '') html = "<div style='padding:30px; text-align:center; color:var(--form-text-muted);'>Tidak ada pertanyaan pilihan/opsi untuk dibuat grafik.</div>";
-                container.innerHTML = html;
+                const chartsToInit = [];
+                const totalResAll = window.currentResponses.length;
 
-                questionsToChart.forEach(q => {
-                    let canvas = document.getElementById(`chart-${q.id}`);
-                    if(!canvas) return;
+                window.currentForm.sections.forEach((sec, sIdx) => {
+                    sec.questions.forEach((q, qIdx) => {
+                        // Lewatkan decorative blocks
+                        if (q.type === 'title_only' || q.type === 'image_block' || q.type === 'video_block') return;
 
-                    let labels = q.options || q.columns || ["1","2","3","4","5"]; 
-                    if(q.type === 'skala_linier') {
-                        labels = []; for(let i=(q.scaleMin||1); i<=(q.scaleMax||5); i++) labels.push(i.toString());
-                    } else if (q.type === 'rating') {
-                        labels = []; for(let i=1; i<=(q.ratingLevels||5); i++) labels.push(i.toString());
-                    }
+                        // Ambil seluruh jawaban untuk pertanyaan ini
+                        const answers = [];
+                        window.currentResponses.forEach(r => {
+                            if(r.answers && r.answers[q.id] !== undefined && r.answers[q.id] !== null && r.answers[q.id] !== '') {
+                                answers.push(r.answers[q.id]);
+                            }
+                        });
 
-                    let dataCounts = new Array(labels.length).fill(0);
-                    
-                    window.currentResponses.forEach(res => {
-                        let answers = res.answers || {}; 
-                        let ans = answers[q.id];
-                        if(!ans) return;
-                        
-                        if(Array.isArray(ans)) {
-                            ans.forEach(a => {
-                                let idx = labels.indexOf(a);
-                                if(idx > -1) dataCounts[idx]++;
+                        const totalAns = answers.length;
+                        const pctOfTotal = totalResAll > 0 ? ((totalAns / totalResAll) * 100).toFixed(0) : 0;
+                        const subText = `${totalAns} tanggapan (${pctOfTotal}% dari total responden)`;
+
+                        // ===================================================================
+                        // 1. TIPE: PILIHAN GANDA & DROPDOWN (Google Forms Doughnut Chart + Table)
+                        // ===================================================================
+                        if (q.type === 'pilihan_ganda' || q.type === 'dropdown') {
+                            const optList = (q.options && q.options.length > 0) ? [...q.options] : [];
+                            // Cek jika ada jawaban di luar opsi (opsi "Lainnya")
+                            answers.forEach(a => {
+                                const val = typeof a === 'string' ? a.trim() : String(a);
+                                if(val && !optList.includes(val)) optList.push(val);
                             });
-                        } else {
-                            let idx = labels.indexOf(ans.toString());
-                            if(idx > -1) dataCounts[idx]++;
+
+                            const counts = new Array(optList.length).fill(0);
+                            answers.forEach(a => {
+                                const val = typeof a === 'string' ? a.trim() : String(a);
+                                const idx = optList.indexOf(val);
+                                if (idx > -1) counts[idx]++;
+                            });
+
+                            let tableRows = '';
+                            optList.forEach((opt, idx) => {
+                                const count = counts[idx];
+                                const pct = totalAns > 0 ? ((count / totalAns) * 100).toFixed(1) : '0.0';
+                                const color = GF_COLORS[idx % GF_COLORS.length];
+                                tableRows += `
+                                <tr>
+                                    <td>
+                                        <div class="gf-summary-opt-label">
+                                            <span class="gf-summary-swatch" style="background:${color};"></span>
+                                            <span>${window.escapeHtml(opt)}</span>
+                                        </div>
+                                    </td>
+                                    <td style="width:160px;">
+                                        <div class="gf-summary-progress-bg">
+                                            <div class="gf-summary-progress-fill" style="width:${pct}%; background:${color};"></div>
+                                        </div>
+                                    </td>
+                                    <td class="gf-summary-count-val">${count}</td>
+                                    <td class="gf-summary-pct-val">${pct}%</td>
+                                </tr>`;
+                            });
+
+                            html += `
+                            <div class="gf-summary-card" id="card-${q.id}">
+                                <div class="gf-summary-header">
+                                    <div>
+                                        <h3 class="gf-summary-title">${window.escapeHtml(q.title || 'Pertanyaan Pilihan')}</h3>
+                                        <div class="gf-summary-sub">
+                                            <span class="gf-summary-badge">${subText}</span>
+                                            ${q.required ? '<span style="color:#ef4444; font-size:0.75rem; font-weight:700;">* Wajib</span>' : ''}
+                                        </div>
+                                    </div>
+                                    <button class="gf-summary-copy-btn" onclick="window.copySummaryCard('${q.id}', '${window.escapeHtml(q.title || '')}')" title="Salin Ringkasan">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        <span>Salin</span>
+                                    </button>
+                                </div>
+                                <div class="gf-summary-chart-box">
+                                    <canvas id="chart-${q.id}"></canvas>
+                                </div>
+                                <table class="gf-summary-table">
+                                    <tbody>${tableRows}</tbody>
+                                </table>
+                            </div>`;
+
+                            chartsToInit.push({
+                                id: q.id,
+                                type: 'doughnut',
+                                labels: optList,
+                                data: counts,
+                                colors: optList.map((_, i) => GF_COLORS[i % GF_COLORS.length]),
+                                isDoughnut: true
+                            });
+                        }
+
+                        // ===================================================================
+                        // 2. TIPE: KOTAK CENTANG (Google Forms Horizontal Bar Chart + Table)
+                        // ===================================================================
+                        else if (q.type === 'kotak_centang') {
+                            const optList = (q.options && q.options.length > 0) ? [...q.options] : [];
+                            answers.forEach(a => {
+                                const arr = Array.isArray(a) ? a : [a];
+                                arr.forEach(item => {
+                                    const val = typeof item === 'string' ? item.trim() : String(item);
+                                    if(val && !optList.includes(val)) optList.push(val);
+                                });
+                            });
+
+                            const counts = new Array(optList.length).fill(0);
+                            answers.forEach(a => {
+                                const arr = Array.isArray(a) ? a : [a];
+                                arr.forEach(item => {
+                                    const val = typeof item === 'string' ? item.trim() : String(item);
+                                    const idx = optList.indexOf(val);
+                                    if(idx > -1) counts[idx]++;
+                                });
+                            });
+
+                            let tableRows = '';
+                            optList.forEach((opt, idx) => {
+                                const count = counts[idx];
+                                const pct = totalAns > 0 ? ((count / totalAns) * 100).toFixed(1) : '0.0';
+                                const color = GF_COLORS[idx % GF_COLORS.length];
+                                tableRows += `
+                                <tr>
+                                    <td>
+                                        <div class="gf-summary-opt-label">
+                                            <span class="gf-summary-swatch" style="background:${color};"></span>
+                                            <span>${window.escapeHtml(opt)}</span>
+                                        </div>
+                                    </td>
+                                    <td style="width:160px;">
+                                        <div class="gf-summary-progress-bg">
+                                            <div class="gf-summary-progress-fill" style="width:${pct}%; background:${color};"></div>
+                                        </div>
+                                    </td>
+                                    <td class="gf-summary-count-val">${count}</td>
+                                    <td class="gf-summary-pct-val">${pct}% responden</td>
+                                </tr>`;
+                            });
+
+                            html += `
+                            <div class="gf-summary-card" id="card-${q.id}">
+                                <div class="gf-summary-header">
+                                    <div>
+                                        <h3 class="gf-summary-title">${window.escapeHtml(q.title || 'Pertanyaan Kotak Centang')}</h3>
+                                        <div class="gf-summary-sub">
+                                            <span class="gf-summary-badge">${subText}</span>
+                                            <span style="font-size:0.75rem; color:var(--form-text-muted);">Bisa multi-pilih</span>
+                                        </div>
+                                    </div>
+                                    <button class="gf-summary-copy-btn" onclick="window.copySummaryCard('${q.id}', '${window.escapeHtml(q.title || '')}')" title="Salin Ringkasan">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        <span>Salin</span>
+                                    </button>
+                                </div>
+                                <div class="gf-summary-chart-box">
+                                    <canvas id="chart-${q.id}"></canvas>
+                                </div>
+                                <table class="gf-summary-table">
+                                    <tbody>${tableRows}</tbody>
+                                </table>
+                            </div>`;
+
+                            chartsToInit.push({
+                                id: q.id,
+                                type: 'bar',
+                                labels: optList,
+                                data: counts,
+                                colors: optList.map((_, i) => GF_COLORS[i % GF_COLORS.length]),
+                                horizontal: true
+                            });
+                        }
+
+                        // ===================================================================
+                        // 3. TIPE: SKALA LINIER & RATING (Vertical Bar Chart + Rata-rata Skor)
+                        // ===================================================================
+                        else if (q.type === 'skala_linier' || q.type === 'rating') {
+                            const minVal = q.type === 'rating' ? 1 : (Number(q.scaleMin) || 1);
+                            const maxVal = q.type === 'rating' ? (Number(q.ratingLevels) || 5) : (Number(q.scaleMax) || 5);
+                            const labels = [];
+                            for(let i = minVal; i <= maxVal; i++) labels.push(String(i));
+
+                            const counts = new Array(labels.length).fill(0);
+                            let scoreSum = 0;
+                            let scoreCount = 0;
+
+                            answers.forEach(a => {
+                                const num = Number(a);
+                                if (!isNaN(num) && num >= minVal && num <= maxVal) {
+                                    scoreSum += num;
+                                    scoreCount++;
+                                    const idx = labels.indexOf(String(num));
+                                    if(idx > -1) counts[idx]++;
+                                }
+                            });
+
+                            const avgScore = scoreCount > 0 ? (scoreSum / scoreCount).toFixed(2) : '0.0';
+                            const minLabel = q.scaleMinLabel ? ` (${q.scaleMinLabel})` : '';
+                            const maxLabel = q.scaleMaxLabel ? ` (${q.scaleMaxLabel})` : '';
+
+                            html += `
+                            <div class="gf-summary-card" id="card-${q.id}">
+                                <div class="gf-summary-header">
+                                    <div>
+                                        <h3 class="gf-summary-title">${window.escapeHtml(q.title || 'Skala / Penilaian')}</h3>
+                                        <div class="gf-summary-sub">
+                                            <span class="gf-summary-badge">${subText}</span>
+                                            <span class="gf-summary-badge" style="background:rgba(16, 185, 129, 0.1); color:#10b981;">
+                                                ⭐ Rata-rata: ${avgScore} / ${maxVal}
+                                            </span>
+                                            ${(minLabel || maxLabel) ? `<span style="font-size:0.78rem; color:var(--form-text-muted);">${minVal}${minLabel} s/d ${maxVal}${maxLabel}</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <button class="gf-summary-copy-btn" onclick="window.copySummaryCard('${q.id}', '${window.escapeHtml(q.title || '')}')" title="Salin Ringkasan">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        <span>Salin</span>
+                                    </button>
+                                </div>
+                                <div class="gf-summary-chart-box">
+                                    <canvas id="chart-${q.id}"></canvas>
+                                </div>
+                            </div>`;
+
+                            chartsToInit.push({
+                                id: q.id,
+                                type: 'bar',
+                                labels: labels.map((l, i) => {
+                                    if(i === 0 && minLabel) return `${l}${minLabel}`;
+                                    if(i === labels.length - 1 && maxLabel) return `${l}${maxLabel}`;
+                                    return l;
+                                }),
+                                data: counts,
+                                colors: counts.map(() => '#8b5cf6')
+                            });
+                        }
+
+                        // ===================================================================
+                        // 4. TIPE: JAWABAN SINGKAT & PARAGRAF (Google Forms Text Response List)
+                        // ===================================================================
+                        else if (q.type === 'jawaban_singkat' || q.type === 'paragraf') {
+                            // Hitung frekuensi jawaban yang sama
+                            const freqMap = {};
+                            answers.forEach(a => {
+                                const raw = (typeof a === 'string' ? a : JSON.stringify(a)).trim();
+                                if(!raw) return;
+                                const key = raw.toLowerCase();
+                                if (!freqMap[key]) {
+                                    freqMap[key] = { text: raw, count: 1 };
+                                } else {
+                                    freqMap[key].count++;
+                                }
+                            });
+
+                            const uniqueAnswers = Object.values(freqMap).sort((a,b) => b.count - a.count);
+                            let textItemsHtml = '';
+
+                            if(uniqueAnswers.length === 0) {
+                                textItemsHtml = `<div style="text-align:center; padding:25px; color:var(--form-text-muted); font-size:0.9rem;">Belum ada jawaban untuk pertanyaan ini.</div>`;
+                            } else {
+                                uniqueAnswers.forEach(item => {
+                                    textItemsHtml += `
+                                    <div class="gf-summary-text-item" data-text="${window.escapeHtml(item.text.toLowerCase())}">
+                                        <div class="gf-summary-text-content">${window.escapeHtml(item.text)}</div>
+                                        ${item.count > 1 ? `<span class="gf-summary-text-freq">${item.count} tanggapan</span>` : ''}
+                                    </div>`;
+                                });
+                            }
+
+                            html += `
+                            <div class="gf-summary-card" id="card-${q.id}">
+                                <div class="gf-summary-header">
+                                    <div>
+                                        <h3 class="gf-summary-title">${window.escapeHtml(q.title || 'Teks Respons')}</h3>
+                                        <div class="gf-summary-sub">
+                                            <span class="gf-summary-badge">${subText}</span>
+                                            <span style="font-size:0.8rem; color:var(--form-text-muted);">${uniqueAnswers.length} jawaban unik</span>
+                                        </div>
+                                    </div>
+                                    <button class="gf-summary-copy-btn" onclick="window.copySummaryCard('${q.id}', '${window.escapeHtml(q.title || '')}')" title="Salin Ringkasan">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        <span>Salin</span>
+                                    </button>
+                                </div>
+                                ${uniqueAnswers.length > 5 ? `<input type="text" class="gf-summary-search" placeholder="🔍 Saring jawaban..." oninput="window.filterSummaryText('${q.id}', this.value)">` : ''}
+                                <div class="gf-summary-text-list" id="text-list-${q.id}">
+                                    ${textItemsHtml}
+                                </div>
+                            </div>`;
+                        }
+
+                        // ===================================================================
+                        // 5. TIPE: TANGGAL & WAKTU (Chronological List with Frequency)
+                        // ===================================================================
+                        else if (q.type === 'tanggal' || q.type === 'waktu') {
+                            const freqMap = {};
+                            answers.forEach(a => {
+                                const raw = String(a).trim();
+                                if(!raw) return;
+                                freqMap[raw] = (freqMap[raw] || 0) + 1;
+                            });
+
+                            const sortedKeys = Object.keys(freqMap).sort();
+                            let itemsHtml = '';
+                            if(sortedKeys.length === 0) {
+                                itemsHtml = `<div style="text-align:center; padding:20px; color:var(--form-text-muted);">Belum ada data tanggal/waktu.</div>`;
+                            } else {
+                                sortedKeys.forEach(key => {
+                                    itemsHtml += `
+                                    <div class="gf-summary-text-item">
+                                        <div class="gf-summary-text-content" style="display:flex; align-items:center; gap:8px;">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--form-active-border);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                            <strong>${window.escapeHtml(key)}</strong>
+                                        </div>
+                                        <span class="gf-summary-text-freq">${freqMap[key]} tanggapan</span>
+                                    </div>`;
+                                });
+                            }
+
+                            html += `
+                            <div class="gf-summary-card" id="card-${q.id}">
+                                <div class="gf-summary-header">
+                                    <div>
+                                        <h3 class="gf-summary-title">${window.escapeHtml(q.title || 'Tanggal / Waktu')}</h3>
+                                        <div class="gf-summary-sub">
+                                            <span class="gf-summary-badge">${subText}</span>
+                                        </div>
+                                    </div>
+                                    <button class="gf-summary-copy-btn" onclick="window.copySummaryCard('${q.id}', '${window.escapeHtml(q.title || '')}')" title="Salin Ringkasan">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        <span>Salin</span>
+                                    </button>
+                                </div>
+                                <div class="gf-summary-text-list">${itemsHtml}</div>
+                            </div>`;
+                        }
+
+                        // ===================================================================
+                        // 6. TIPE: UPLOAD FILE (Gallery / Document Links)
+                        // ===================================================================
+                        else if (q.type === 'upload_file') {
+                            let filesHtml = '';
+                            if(answers.length === 0) {
+                                filesHtml = `<div style="text-align:center; padding:25px; color:var(--form-text-muted);">Belum ada berkas diunggah.</div>`;
+                            } else {
+                                answers.forEach((fileUrl, fIdx) => {
+                                    const isImg = typeof fileUrl === 'string' && fileUrl.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i);
+                                    const fileName = typeof fileUrl === 'string' ? fileUrl.split('/').pop() : `Berkas ${fIdx+1}`;
+                                    filesHtml += `
+                                    <div class="gf-summary-file-item">
+                                        <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:0;">
+                                            ${isImg ? `<img src="${fileUrl}" style="width:40px; height:40px; object-fit:cover; border-radius:6px; flex-shrink:0;">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--form-active-border); flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`}
+                                            <span style="font-weight:600; color:var(--form-text); word-break:break-all;">${window.escapeHtml(fileName)}</span>
+                                        </div>
+                                        <a href="${fileUrl}" target="_blank" class="gf-btn-clear neumorph-btn" style="padding:6px 14px; font-size:0.82rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; flex-shrink:0;">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                            <span>Buka Berkas</span>
+                                        </a>
+                                    </div>`;
+                                });
+                            }
+
+                            html += `
+                            <div class="gf-summary-card" id="card-${q.id}">
+                                <div class="gf-summary-header">
+                                    <div>
+                                        <h3 class="gf-summary-title">${window.escapeHtml(q.title || 'Unggah Berkas')}</h3>
+                                        <div class="gf-summary-sub">
+                                            <span class="gf-summary-badge">${answers.length} berkas diunggah</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display:flex; flex-direction:column; gap:8px;">${filesHtml}</div>
+                            </div>`;
+                        }
+
+                        // ===================================================================
+                        // 7. TIPE: KISI PILIHAN GANDA & KOTAK CENTANG (Grid Matrix)
+                        // ===================================================================
+                        else if (q.type === 'kisi_pilihan_ganda' || q.type === 'kisi_kotak_centang') {
+                            const rows = q.rows || [];
+                            const cols = q.columns || [];
+                            let matrixHtml = `
+                            <div style="overflow-x:auto;">
+                                <table class="gf-summary-table" style="min-width:450px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:left; padding:10px 12px; font-weight:700; color:var(--form-text);">Baris</th>
+                                            ${cols.map(c => `<th style="text-align:center; padding:10px 12px; font-weight:700; color:var(--form-text);">${window.escapeHtml(c)}</th>`).join('')}
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+
+                            rows.forEach(r => {
+                                matrixHtml += `<tr><td style="font-weight:600; color:var(--form-text);">${window.escapeHtml(r)}</td>`;
+                                cols.forEach(c => {
+                                    let matchCount = 0;
+                                    answers.forEach(a => {
+                                        if (a && typeof a === 'object') {
+                                            const selected = a[r];
+                                            if (Array.isArray(selected) && selected.includes(c)) matchCount++;
+                                            else if (selected === c) matchCount++;
+                                        }
+                                    });
+                                    const pct = totalAns > 0 ? ((matchCount / totalAns) * 100).toFixed(0) : '0';
+                                    matrixHtml += `<td style="text-align:center; color:var(--form-text-muted); font-size:0.85rem;"><strong>${matchCount}</strong> <span style="font-size:0.75rem;">(${pct}%)</span></td>`;
+                                });
+                                matrixHtml += `</tr>`;
+                            });
+
+                            matrixHtml += `</tbody></table></div>`;
+
+                            html += `
+                            <div class="gf-summary-card" id="card-${q.id}">
+                                <div class="gf-summary-header">
+                                    <div>
+                                        <h3 class="gf-summary-title">${window.escapeHtml(q.title || 'Kisi Pertanyaan')}</h3>
+                                        <div class="gf-summary-sub"><span class="gf-summary-badge">${subText}</span></div>
+                                    </div>
+                                    <button class="gf-summary-copy-btn" onclick="window.copySummaryCard('${q.id}', '${window.escapeHtml(q.title || '')}')" title="Salin Ringkasan">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        <span>Salin</span>
+                                    </button>
+                                </div>
+                                ${matrixHtml}
+                            </div>`;
                         }
                     });
-
-                    let bgColors = labels.map(() => `hsla(${~~(Math.random() * 360)}, 70%, 60%, 0.6)`);
-                    let borderColors = bgColors.map(c => c.replace('0.6', '1'));
-
-                    let chartType = (q.type === 'pilihan_ganda' || q.type === 'dropdown') ? 'pie' : 'bar';
-                    
-                    let newChart = new Chart(canvas, {
-                        type: chartType,
-                        data: {
-                            labels: labels,
-                            datasets: [{ label: 'Jumlah Jawaban', data: dataCounts, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }]
-                        },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-                    });
-                    window.chartInstances[q.id] = newChart;
                 });
+
+                if(html === '') {
+                    html = "<div class='gf-summary-card' style='padding:35px; text-align:center; color:var(--form-text-muted);'>Tidak ada pertanyaan yang dapat dirangkum.</div>";
+                }
+                container.innerHTML = html;
+
+                // INISIALISASI SELURUH GRAFIK CHART.JS
+                chartsToInit.forEach(item => {
+                    const canvas = document.getElementById(`chart-${item.id}`);
+                    if(!canvas) return;
+
+                    const ctx = canvas.getContext('2d');
+                    let config = {};
+
+                    if(item.isDoughnut) {
+                        config = {
+                            type: 'doughnut',
+                            data: {
+                                labels: item.labels,
+                                datasets: [{
+                                    data: item.data,
+                                    backgroundColor: item.colors,
+                                    borderWidth: 2,
+                                    borderColor: '#ffffff',
+                                    hoverOffset: 6
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                cutout: '58%',
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            boxWidth: 12,
+                                            padding: 14,
+                                            font: { family: "'Plus Jakarta Sans', sans-serif", weight: '600', size: 12 }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const val = context.raw || 0;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                                return ` ${label}: ${val} (${pct}%)`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+                    } else if(item.horizontal) {
+                        config = {
+                            type: 'bar',
+                            data: {
+                                labels: item.labels,
+                                datasets: [{
+                                    label: 'Pemilih',
+                                    data: item.data,
+                                    backgroundColor: item.colors,
+                                    borderRadius: 6,
+                                    borderSkipped: false
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false }
+                                },
+                                scales: {
+                                    x: {
+                                        beginAtZero: true,
+                                        ticks: { precision: 0, font: { family: "'Plus Jakarta Sans', sans-serif" } },
+                                        grid: { color: 'rgba(148, 163, 184, 0.15)' }
+                                    },
+                                    y: {
+                                        ticks: { font: { family: "'Plus Jakarta Sans', sans-serif", weight: '600' } },
+                                        grid: { display: false }
+                                    }
+                                }
+                            }
+                        };
+                    } else {
+                        // Bar Vertikal (Skala Linier / Rating)
+                        config = {
+                            type: 'bar',
+                            data: {
+                                labels: item.labels,
+                                datasets: [{
+                                    label: 'Jumlah Jawaban',
+                                    data: item.data,
+                                    backgroundColor: item.colors,
+                                    borderRadius: 8,
+                                    borderSkipped: false
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: { precision: 0, font: { family: "'Plus Jakarta Sans', sans-serif" } },
+                                        grid: { color: 'rgba(148, 163, 184, 0.15)' }
+                                    },
+                                    x: {
+                                        ticks: { font: { family: "'Plus Jakarta Sans', sans-serif", weight: '600' } },
+                                        grid: { display: false }
+                                    }
+                                }
+                            }
+                        };
+                    }
+
+                    window.chartInstances[item.id] = new Chart(ctx, config);
+                });
+
             } catch(e) {
-                console.error("Render Ringkasan Gagal", e);
+                console.error("Render Ringkasan Paripurna Gagal", e);
             }
-        }
+        };
+
+        // HELPER: Escape HTML
+        window.escapeHtml = function(str) {
+            if (typeof str !== 'string') return String(str || '');
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        };
+
+        // HELPER: Saring Teks Jawaban Realtime
+        window.filterSummaryText = function(qId, query) {
+            const list = document.getElementById(`text-list-${qId}`);
+            if(!list) return;
+            const qLower = (query || '').toLowerCase().trim();
+            const items = list.querySelectorAll('.gf-summary-text-item');
+            items.forEach(el => {
+                const text = el.getAttribute('data-text') || '';
+                if(!qLower || text.includes(qLower)) {
+                    el.style.display = 'flex';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        };
+
+        // HELPER: Salin Ringkasan Kartu ke Clipboard
+        window.copySummaryCard = function(qId, title) {
+            const card = document.getElementById(`card-${qId}`);
+            if(!card) return;
+            let textToCopy = `Ringkasan: ${title}\n`;
+            // Cek jika ada tabel
+            const rows = card.querySelectorAll('table tr');
+            if(rows && rows.length > 0) {
+                rows.forEach(r => {
+                    const cols = Array.from(r.querySelectorAll('td, th')).map(c => c.innerText.trim()).filter(Boolean);
+                    if(cols.length > 0) textToCopy += `- ${cols.join(' : ')}\n`;
+                });
+            } else {
+                // Teks items
+                const items = card.querySelectorAll('.gf-summary-text-item');
+                items.forEach(it => {
+                    textToCopy += `- ${it.innerText.replace(/\n+/g, ' ').trim()}\n`;
+                });
+            }
+
+            if(navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    window.showToast("Ringkasan pertanyaan disalin ke papan klip!");
+                }).catch(() => {
+                    window.showToast("Berhasil menyalin ringkasan.");
+                });
+            } else {
+                window.showToast("Ringkasan disalin!");
+            }
+        };
+
+        // HELPER: Toggle Menerima Tanggapan dari Tab Jawaban
+        window.toggleFormActiveFromTab = function(checked) {
+            if(!window.currentForm) return;
+            window.currentForm.isActive = checked;
+            const setInput = document.getElementById('setActive');
+            if(setInput) setInput.checked = checked;
+            const lbl = document.getElementById('tabRespToggleLabel');
+            if(lbl) lbl.innerText = checked ? "Menerima Tanggapan" : "Tanggapan Ditutup";
+            window.saveFormToDB(true);
+            window.showToast(checked ? "Formulir sekarang menerima tanggapan!" : "Formulir telah ditutup untuk tanggapan baru.");
+        };
 
         window.renderQDropdown = function() {
             let sel = document.getElementById('qSelector');
@@ -856,7 +1716,7 @@
                     let displayAns = Array.isArray(ans) ? ans.join(', ') : ans;
                     if(typeof ans === 'string' && ans.includes('/api/uploads/')) {
                         if(ans.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) displayAns = `<img src="${ans}" style="max-height:100px; border-radius:8px;">`;
-                        else displayAns = `<a href="${ans}" target="_blank" class="gf-btn-clear neumorph-btn" style="padding:5px 10px; font-size:0.85rem; text-decoration:none;">📥 File Dokumen</a>`;
+                        else displayAns = `<a href="${ans}" target="_blank" class="gf-btn-clear neumorph-btn" style="padding:5px 10px; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> File Dokumen</a>`;
                     }
                     html += `<div class="glass-card inner-neumorph" style="padding:15px; margin-bottom:10px;">
                                 <div style="font-size:0.8rem; color:var(--form-text-muted); margin-bottom:5px;">Responden ${i+1} (${res.email || 'Anonim'})</div>
@@ -1001,7 +1861,7 @@
                     let subItems = f.weights.map(w => `<div class="cfp-subitem" style="font-family:'${f.name}', sans-serif; font-weight:${w};" onclick="window.selectFont('${type}', '${f.name}', ${w}, event)"><span>${WEIGHT_NAMES[w]}</span></div>`).join('');
                     
                     html += `<div class="cfp-item has-submenu" style="font-family:'${f.name}', sans-serif;" onmouseenter="window.showCFPSubmenu(this)" onmouseleave="window.hideCFPSubmenu(this)">
-                                <span style="flex:1;">${f.name}</span> <span style="font-size:0.65rem; color:var(--form-text-muted);">►</span> 
+                                <span style="flex:1;">${f.name}</span> <span style="font-size:0.65rem; color:var(--form-text-muted); display:inline-flex; align-items:center;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></span> 
                                 <div class="cfp-submenu">${subItems}</div>
                              </div>`;
                 } else {
@@ -1225,9 +2085,11 @@
 
         window.positionToolbar = function() {
             const activeEl = document.querySelector('.form-question-card.active, .form-header-card.active');
-            const floater = document.getElementById('floater');
+            const floater = document.getElementById('floatingToolbar') || document.getElementById('floater');
             if(activeEl && floater) {
-                floater.style.top = activeEl.offsetTop + 'px';
+                const targetY = Math.max(0, activeEl.offsetTop);
+                floater.style.transform = `translateY(${targetY}px)`;
+                floater.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
             }
         }
 
@@ -1290,11 +2152,11 @@
 
             document.querySelectorAll('#themeColorGrid .color-circle').forEach(el => el.innerHTML = '');
             const activeColor = document.getElementById(`tc-${t.color}`);
-            if(activeColor) activeColor.innerHTML = '✓';
+            if(activeColor) activeColor.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
 
             document.querySelectorAll('#themeBgGrid .color-circle').forEach(el => el.innerHTML = '');
             const activeBg = document.getElementById(`tb-${t.bgColor}`);
-            if(activeBg) activeBg.innerHTML = '<span style="color:var(--form-active-border); font-weight:bold;">✓</span>';
+            if(activeBg) activeBg.innerHTML = '<span style="color:var(--form-active-border); font-weight:bold; display:flex; align-items:center; justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>';
 
             const imgPreview = document.getElementById('themeHeaderPreview');
             const btnRm = document.getElementById('btnRmHeader');
@@ -1326,26 +2188,27 @@
                 const json = await res.json();
                 window.allForms = json.data || []; 
                 window.renderFormList();
+                window.renderFormOverview();
             } catch (e) { window.showToast("Gagal memuat form dari Server Redis."); }
         }
 
         window.saveFormToDB = async function(isSilent = false) {
             try {
                 const btn = document.querySelector('.gf-btn-submit[onclick="window.saveFormToDB()"]');
-                if(!isSilent && btn) { btn.innerText = "⏳ Menyimpan..."; btn.disabled = true; }
+                if(!isSilent && btn) { btn.innerText = "Menyimpan..."; btn.disabled = true; }
 
                 const res = await fetch('/api/forms/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(window.currentForm) });
                 const json = await res.json();
                 if(json.success) {
                     if(!isSilent) {
-                        window.showToast("✅ Formulir Tersimpan!");
+                        window.showToast("Formulir Tersimpan!");
                         window.showSuccessModal(`${window.location.origin}/form/${window.currentForm.slug}`);
                     }
                     window.currentForm.id = json.id; window.loadAllForms(); 
                 }
                 if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
             } catch (e) {
-                if(!isSilent) window.showCustomAlert("⚠️ Gagal menyimpan ke server!");
+                if(!isSilent) window.showCustomAlert("Gagal menyimpan ke server!");
                 const btn = document.querySelector('.gf-btn-submit[onclick="window.saveFormToDB()"]');
                 if(!isSilent && btn) { btn.innerText = "Simpan & Publikasikan"; btn.disabled = false; }
             }
@@ -1356,9 +2219,9 @@
                 try {
                     const res = await fetch(`/api/forms/${formId}`, { method: 'DELETE' });
                     const json = await res.json();
-                    if(json.success) { window.showToast("🗑️ Formulir berhasil dihapus permanen."); window.loadAllForms(); } 
+                    if(json.success) { window.showToast("Formulir berhasil dihapus permanen."); window.loadAllForms(); } 
                     else { throw new Error(); }
-                } catch(e) { window.showCustomAlert("⚠️ Gagal menghapus form dari database."); }
+                } catch(e) { window.showCustomAlert("Gagal menghapus form dari database."); }
             });
         }
 
@@ -1390,7 +2253,7 @@
                                 if(ans.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) {
                                     displayAns = `<a href="${ans}" target="_blank" style="display:block; margin-top:10px;"><img src="${ans}" style="max-height:150px; max-width:100%; object-fit:contain; border-radius:10px; box-shadow:var(--outer-neumorph); transition:0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></a>`;
                                 } else {
-                                    displayAns = `<a href="${ans}" target="_blank" class="gf-btn-clear neumorph-btn" style="display:inline-block; margin-top:8px; color:var(--form-active-border); font-size:0.85rem; padding:6px 12px; text-decoration:none;">📥 Unduh / Buka File</a>`;
+                                    displayAns = `<a href="${ans}" target="_blank" class="gf-btn-clear neumorph-btn" style="display:inline-flex; align-items:center; gap:5px; margin-top:8px; color:var(--form-active-border); font-size:0.85rem; padding:6px 12px; text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Unduh / Buka File</a>`;
                                 }
                             } else if(Array.isArray(ans)) {
                                  let arrHtml = [];
@@ -1399,7 +2262,7 @@
                                         if(a.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) {
                                             arrHtml.push(`<a href="${a}" target="_blank" style="display:inline-block; margin:5px 5px 0 0;"><img src="${a}" style="height:80px; border-radius:8px; box-shadow:var(--outer-neumorph);"></a>`);
                                         } else {
-                                            arrHtml.push(`<a href="${a}" target="_blank" class="gf-btn-clear neumorph-btn" style="display:inline-block; margin:5px 5px 0 0; color:var(--form-active-border); font-size:0.85rem; padding:6px 12px; text-decoration:none;">📥 Unduh</a>`);
+                                            arrHtml.push(`<a href="${a}" target="_blank" class="gf-btn-clear neumorph-btn" style="display:inline-flex; align-items:center; gap:5px; margin:5px 5px 0 0; color:var(--form-active-border); font-size:0.85rem; padding:6px 12px; text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Unduh</a>`);
                                         }
                                      } else {
                                          arrHtml.push(a);
@@ -1430,6 +2293,11 @@
                 
                 let countEl = document.getElementById('respCount');
                 if(countEl) countEl.innerText = `${window.currentResponses.length} Tanggapan`;
+
+                let tabToggle = document.getElementById('tabRespToggle');
+                if(tabToggle && window.currentForm) tabToggle.checked = !!window.currentForm.isActive;
+                let tabLbl = document.getElementById('tabRespToggleLabel');
+                if(tabLbl && window.currentForm) tabLbl.innerText = window.currentForm.isActive ? "Menerima Tanggapan" : "Tanggapan Ditutup";
                 
                 let activeSubTab = document.querySelector('.j-tab.active');
                 if(activeSubTab) {
@@ -1445,13 +2313,13 @@
                         <div class="glass-card inner-neumorph" style="padding:25px; border-radius:12px; margin-bottom:20px; border-left: 5px solid var(--form-active-border);">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
                                 <div>
-                                    <div style="color:var(--form-text-muted); font-size:0.85rem; margin-bottom:8px; font-weight:600;">🕒 Waktu Submit: ${new Date(r.timestamp).toLocaleString('id-ID')}</div>
-                                    <strong style="color:var(--form-text); font-size:1.1rem; display:block; letter-spacing:0.5px;">✉️ ${r.email || 'Responden Tanpa Email'}</strong>
-                                    ${r.score !== null ? `<div style="margin-top:8px; font-weight:800; font-size:1.1rem; color:var(--form-active-border); background:var(--form-focus-glow); padding:5px 12px; border-radius:8px; display:inline-block;">⭐ Skor: ${r.score} / ${r.maxScore}</div>` : ''}
+                                    <div style="color:var(--form-text-muted); font-size:0.85rem; margin-bottom:8px; font-weight:600; display:flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Waktu Submit: ${new Date(r.timestamp).toLocaleString('id-ID')}</div>
+                                    <strong style="color:var(--form-text); font-size:1.1rem; display:flex; align-items:center; gap:6px; letter-spacing:0.5px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> ${r.email || 'Responden Tanpa Email'}</strong>
+                                    ${r.score !== null ? `<div style="margin-top:8px; font-weight:800; font-size:1.1rem; color:var(--form-active-border); background:var(--form-focus-glow); padding:5px 12px; border-radius:8px; display:inline-flex; align-items:center; gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> Skor: ${r.score} / ${r.maxScore}</div>` : ''}
                                 </div>
                                 <div style="display:flex; gap:10px;">
-                                    <button onclick="window.editResponse('${r.id}')" class="gf-btn-clear neumorph-btn" style="padding:8px 15px; font-size:0.85rem; display:flex; align-items:center; gap:5px;">✏️ Edit</button>
-                                    <button onclick="window.deleteResponse('${r.id}')" class="gf-btn-clear neumorph-btn text-danger" style="padding:8px 15px; font-size:0.85rem; display:flex; align-items:center; gap:5px;">🗑️ Hapus</button>
+                                    <button onclick="window.editResponse('${r.id}')" class="gf-btn-clear neumorph-btn" style="padding:8px 15px; font-size:0.85rem; display:flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</button>
+                                    <button onclick="window.deleteResponse('${r.id}')" class="gf-btn-clear neumorph-btn text-danger" style="padding:8px 15px; font-size:0.85rem; display:flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Hapus</button>
                                 </div>
                             </div>
                             <div style="margin-top:20px; padding-top:20px; border-top:1px dashed var(--form-border);">
@@ -1503,7 +2371,7 @@
                             html += `<div style="margin-bottom:20px; padding:15px; background:var(--form-card-bg); border-radius:12px; border:1px solid var(--form-border);">
                                 <label style="font-size:0.85rem; font-weight:800; color:var(--form-text-muted); display:block; margin-bottom:8px;">${q.title} <span style="color:#ef4444;">(System File Links)</span></label>
                                 <textarea class="gf-input inner-neumorph edit-res-input" data-key="${q.id}" data-type="array_or_string" rows="2" style="background:rgba(255,255,255,0.7) !important;">${Array.isArray(val) ? val.join('\n') : val}</textarea>
-                                <div style="font-size:0.75rem; color:var(--form-text-muted); margin-top:5px;">⚠️ Pisahkan dengan baris baru (Enter) jika link lebih dari satu.</div>
+                                <div style="font-size:0.75rem; color:var(--form-text-muted); margin-top:5px; display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Pisahkan dengan baris baru (Enter) jika link lebih dari satu.</div>
                             </div>`;
                         } else {
                             let displayVal = Array.isArray(val) ? val.join(', ') : val;
@@ -1522,7 +2390,7 @@
 
         window.saveEditedResponse = async function() {
             if(!window.currentEditingRes) return;
-            document.getElementById('btnSaveEditRes').innerText = "⏳ Menyimpan...";
+            document.getElementById('btnSaveEditRes').innerText = "Menyimpan...";
             
             let updatedAnswers = { ...window.currentEditingRes.answers };
             let newEmail = document.getElementById('editResEmail').value;
@@ -1552,7 +2420,7 @@
                 });
                 const json = await res.json();
                 if(json.success) {
-                    window.showToast("✅ Jawaban berhasil diupdate!");
+                    window.showToast("Jawaban berhasil diupdate!");
                     window.closeEditResModal();
                     window.loadResponses();
                 } else {
@@ -1571,7 +2439,7 @@
                     const res = await fetch(`/api/forms/${window.currentForm.id}/responses/${resId}`, { method: 'DELETE' });
                     const json = await res.json();
                     if(json.success) {
-                        window.showToast("🗑️ Jawaban berhasil dihapus!");
+                        window.showToast("Jawaban berhasil dihapus!");
                         window.loadResponses();
                     } else {
                         window.showCustomAlert(json.message);
@@ -1603,22 +2471,287 @@
                 <div class="list-form-card glass-card neumorph-outer">
                     <div style="flex:1;">
                         <h3 style="font-size: 1.3rem; color:var(--form-text); margin:0; font-weight:700;">${f.title || 'Formulir Tanpa Judul'}</h3>
-                        <div style="display:flex; align-items:center; gap:15px; margin-top:10px; flex-wrap:wrap;">
+                        <div style="display:flex; align-items:center; gap:12px; margin-top:10px; flex-wrap:wrap;">
                             <span style="font-size:0.85rem; color:var(--form-active-border); font-weight:600; background:var(--form-focus-glow); padding:4px 10px; border-radius:6px;">/form/${f.slug}</span>
                             <span style="font-size:0.85rem; color:${f.isActive ? '#10b981' : '#ef4444'}; font-weight:600;"><span style="color:var(--form-text-muted);">Status:</span> ${f.isActive ? 'Dibuka' : 'Ditutup'}</span>
-                            <span style="font-size:0.85rem; color:var(--form-text-muted);"><span style="font-weight:600;">⏳ Deadline:</span> ${deadlineStr}</span>
+                            <span style="font-size:0.85rem; color:#8b5cf6; font-weight:600; background:rgba(139,92,246,0.1); padding:4px 10px; border-radius:6px;"><span style="color:var(--form-text-muted);">Tanggapan:</span> ${f.responseCount || 0}</span>
+                            <span style="font-size:0.85rem; color:var(--form-text-muted); display:inline-flex; align-items:center; gap:4px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span style="font-weight:600;">Deadline:</span> ${deadlineStr}</span>
                         </div>
                     </div>
-                    <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
-                        <button class="gf-btn-submit glow-effect" onclick="window.openFormEditor('${f.id}')" title="Edit Form">✏️ Edit</button>
-                        <a href="${formUrl}" target="_blank" class="gf-btn-clear neumorph-btn" style="text-decoration:none;" title="Pratinjau">👁️ Buka</a>
-                        <button class="gf-btn-clear neumorph-btn" onclick="window.copyToClipboard('${formUrl}')" title="Salin Link">📋 Salin</button>
-                        <button class="gf-btn-clear neumorph-btn text-danger" onclick="window.deleteFormDirect('${f.id}')" title="Hapus Permanen">🗑️</button>
+                    <div style="display:flex; gap: 8px; align-items:center; flex-wrap:wrap;">
+                        <button class="gf-btn-submit glow-effect" onclick="window.openFormEditor('${f.id}')" title="Edit Form" style="display:inline-flex; align-items:center; gap:5px; padding:8px 14px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</button>
+                        <a href="${formUrl}" target="_blank" class="gf-btn-clear neumorph-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; padding:8px 14px;" title="Pratinjau"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> Buka</a>
+                        <button class="gf-btn-clear neumorph-btn" onclick="window.copyToClipboard('${formUrl}')" title="Salin Link" style="display:inline-flex; align-items:center; gap:5px; padding:8px 14px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Salin</button>
+                        <button class="gf-btn-clear neumorph-btn text-danger" onclick="window.deleteFormDirect('${f.id}')" title="Hapus Permanen" style="display:inline-flex; align-items:center; justify-content:center; padding:8px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                     </div>
                 </div>`;
             });
             cont.innerHTML = html;
         }
+
+        window.renderFormOverview = function() {
+            try {
+                const totalEl = document.getElementById('statV2TotalForms');
+                const activeEl = document.getElementById('statV2ActiveForms');
+                const respEl = document.getElementById('statV2TotalResponses');
+                const listEl = document.getElementById('overviewFormList');
+
+                const total = window.allForms.length;
+                const active = window.allForms.filter(f => f.isActive).length;
+                let totalRes = 0;
+                window.allForms.forEach(f => {
+                    if (typeof f.responseCount === 'number') {
+                        totalRes += f.responseCount;
+                    } else if (f.responseCount) {
+                        totalRes += Number(f.responseCount) || 0;
+                    } else if (f.responses && Array.isArray(f.responses)) {
+                        totalRes += f.responses.length;
+                    }
+                });
+
+                if(totalEl) totalEl.innerText = total;
+                if(activeEl) activeEl.innerText = active;
+                if(respEl) respEl.innerText = totalRes;
+
+                if(!listEl) return;
+
+                if(window.allForms.length === 0) {
+                    listEl.innerHTML = `<div style="text-align:center; padding:30px; color:var(--form-text-muted);">Belum ada formulir. Silakan klik <strong>+ Buat Form Baru</strong> di atas.</div>`;
+                    return;
+                }
+
+                let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
+                [...window.allForms].reverse().slice(0, 5).forEach(f => {
+                    const formUrl = `${window.location.origin}/form/${f.slug}`;
+                    let deadlineStr = 'Tanpa Batas';
+                    if(f.settings && f.settings.deadline) {
+                        deadlineStr = new Date(f.settings.deadline).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
+                    }
+
+                    html += `
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-radius:12px; background:var(--form-surface); border:1px solid var(--form-border); gap:16px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:200px;">
+                            <div style="font-weight:700; color:var(--form-text); font-size:1rem; margin-bottom:4px;">${f.title || 'Formulir Tanpa Judul'}</div>
+                            <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:var(--form-text-muted); flex-wrap:wrap;">
+                                <span style="color:var(--form-active-border); font-weight:600;">/form/${f.slug}</span>
+                                <span>&bull;</span>
+                                <span style="color:${f.isActive ? '#10b981' : '#ef4444'}; font-weight:600;">${f.isActive ? 'Dibuka' : 'Ditutup'}</span>
+                                <span>&bull;</span>
+                                <span style="color:#8b5cf6; font-weight:600; background:rgba(139,92,246,0.1); padding:2px 8px; border-radius:9999px;">${f.responseCount || 0} Tanggapan</span>
+                                <span>&bull;</span>
+                                <span>Batas: ${deadlineStr}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button class="gf-btn-submit glow-effect" onclick="window.openFormEditor('${f.id}')" style="padding:6px 12px; font-size:0.82rem; border-radius:8px; display:inline-flex; align-items:center; gap:5px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                <span>Edit</span>
+                            </button>
+                            <a href="${formUrl}" target="_blank" class="gf-btn-clear neumorph-btn" style="text-decoration:none; padding:6px 12px; font-size:0.82rem; border-radius:8px; display:inline-flex; align-items:center; gap:5px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <span>Buka</span>
+                            </a>
+                        </div>
+                    </div>`;
+                });
+                html += '</div>';
+                listEl.innerHTML = html;
+
+                // Render Bar Chart: Statistik Tanggapan Form (GBR 4)
+                if (typeof window.renderFormBarChart === 'function') {
+                    window.renderFormBarChart(window.allForms);
+                }
+            } catch(e) {
+                console.error("Error renderFormOverview:", e);
+            }
+        };
+
+        window.renderFormBarChart = function(forms) {
+            const wrapper = document.getElementById('formBarChartSvgWrapper');
+            if (!wrapper) return;
+
+            const items = forms || [];
+
+            if (items.length === 0) {
+                wrapper.innerHTML = `
+                    <div style="text-align:center; padding:60px 20px; color:#64748b; font-family:'Outfit', sans-serif;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px; opacity:0.4;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        <div style="font-size:1.05rem; font-weight:600; color:#0f172a; margin-bottom:4px;">Belum ada formulir untuk ditampilkan</div>
+                        <div style="font-size:0.85rem;">Buat formulir baru untuk mulai mengumpulkan tanggapan responden secara real-time.</div>
+                    </div>`;
+                return;
+            }
+
+            // Layout constants
+            const chartTop = 50;
+            const chartBottom = 265;
+            const chartHeight = chartBottom - chartTop; // 215px
+            const chartLeft = 65;
+
+            // Bar dimensions: 1 Single Bar per form with generous distributed spacing
+            const barW = 44;
+            const minGroupWidth = 140;
+            const availableWidth = 860 - chartLeft - 60;
+            let groupWidth = Math.max(minGroupWidth, Math.floor(availableWidth / Math.max(items.length, 1)));
+            groupWidth = Math.min(170, groupWidth);
+            const startX = chartLeft + Math.max(30, Math.floor((groupWidth - barW) / 2));
+
+            const totalItemsWidth = startX + items.length * groupWidth + 60;
+            const svgWidth = Math.max(860, totalItemsWidth);
+            const chartRight = svgWidth - 35;
+
+            // Find max response count across all forms
+            let maxVal = 5;
+            items.forEach(f => {
+                let cnt = 0;
+                if (typeof f.responseCount === 'number') cnt = f.responseCount;
+                else if (f.responseCount) cnt = Number(f.responseCount) || 0;
+                else if (f.responses && Array.isArray(f.responses)) cnt = f.responses.length;
+                if (cnt > maxVal) maxVal = cnt;
+            });
+
+            // Round maxVal up to nice step
+            let step = Math.ceil(maxVal / 4);
+            if (step < 1) step = 1;
+            const niceMax = step * 4;
+
+            // Generate Y gridlines (clean subtle grey lines on white)
+            let gridHtml = '';
+            for (let i = 0; i <= 4; i++) {
+                const y = chartBottom - (i / 4) * chartHeight;
+                gridHtml += `
+                    <line x1="${chartLeft}" y1="${y}" x2="${chartRight}" y2="${y}" stroke="${i === 0 ? '#cbd5e1' : '#f1f5f9'}" stroke-dasharray="${i === 0 ? 'none' : '4,4'}" stroke-width="${i === 0 ? '1.5' : '1'}" />
+                `;
+            }
+
+            // Upward vertical text label along Y-axis: "Jumlah Tanggapan Form"
+            const yLabelX = chartLeft - 22;
+            const yLabelY = chartTop + chartHeight / 2;
+            gridHtml += `
+                <text x="${yLabelX}" y="${yLabelY}" fill="#64748b" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-90 ${yLabelX} ${yLabelY})" font-family="'Outfit', sans-serif" letter-spacing="0.5">Jumlah Tanggapan Form</text>
+            `;
+
+            // Helper function to format and wrap slug cleanly across 2 lines if long
+            function getWrappedSlugLines(slugStr, maxLen = 12) {
+                if (slugStr.length <= maxLen) return [slugStr];
+                let splitIdx = -1;
+                for (let i = Math.min(slugStr.length - 1, maxLen); i >= 4; i--) {
+                    if (slugStr[i] === '-' || slugStr[i] === '_') {
+                        splitIdx = i + 1;
+                        break;
+                    }
+                }
+                if (splitIdx === -1) {
+                    splitIdx = Math.min(maxLen, Math.ceil(slugStr.length / 2));
+                }
+                const line1 = slugStr.substring(0, splitIdx);
+                let line2 = slugStr.substring(splitIdx);
+                if (line2.length > maxLen) {
+                    line2 = line2.substring(0, maxLen - 1) + '…';
+                }
+                return [line1, line2];
+            }
+
+            // Generate bars per form
+            let groupsHtml = '';
+            let defsClips = '';
+
+            items.forEach((f, idx) => {
+                const barX = startX + idx * groupWidth;
+                const barCenterX = barX + barW / 2;
+
+                let respCount = 0;
+                if (typeof f.responseCount === 'number') respCount = f.responseCount;
+                else if (f.responseCount) respCount = Number(f.responseCount) || 0;
+                else if (f.responses && Array.isArray(f.responses)) respCount = f.responses.length;
+
+                const minH = 8;
+                const hRaw = (respCount / niceMax) * chartHeight;
+                const barH = respCount > 0 ? Math.max(minH, hRaw) : 4;
+                const barY = chartBottom - barH;
+
+                const clipId = `clipFormBar_${idx}_${(f.slug || f.id || 'f').replace(/[^a-zA-Z0-9]/g, '_')}`;
+                defsClips += `
+                    <clipPath id="${clipId}">
+                        <rect x="${barX}" y="${barY}" width="${barW}" height="${barH}" rx="8" ry="8" />
+                    </clipPath>
+                `;
+
+                // Badge Pill Top (TOTAL TANGGAPAN DI ATAS SEPERTI BIASA)
+                const badgeW = 74;
+                const badgeH = 20;
+                const badgeX = barCenterX - badgeW / 2;
+                const badgeY = Math.max(chartTop - 24, barY - 26);
+
+                // Direct slug format: /regist-uasvol4 without /form/ prefix
+                let cleanSlug = (f.slug || f.id || 'form').trim();
+                cleanSlug = cleanSlug.replace(/^\/?(form\/)?/, '');
+                const fullSlugPath = '/' + cleanSlug;
+
+                const slugLines = getWrappedSlugLines(fullSlugPath, 12);
+                let slugLabelSvg = '';
+                if (slugLines.length === 1) {
+                    slugLabelSvg = `<text x="${barCenterX}" y="${chartBottom + 25}" fill="#0f172a" font-size="11.5" font-weight="700" text-anchor="middle" font-family="'Outfit', sans-serif">${slugLines[0]}</text>`;
+                } else {
+                    slugLabelSvg = `
+                        <text x="${barCenterX}" y="${chartBottom + 21}" fill="#0f172a" font-size="11" font-weight="700" text-anchor="middle" font-family="'Outfit', sans-serif">
+                            <tspan x="${barCenterX}" dy="0">${slugLines[0]}</tspan>
+                            <tspan x="${barCenterX}" dy="15">${slugLines[1]}</tspan>
+                        </text>
+                    `;
+                }
+
+                groupsHtml += `
+                    <g class="form-slug-group" data-slug="${fullSlugPath}">
+                        <!-- Hover Highlight Column -->
+                        <rect x="${barX - 6}" y="${chartTop}" width="${barW + 12}" height="${chartHeight + 20}" rx="12" ry="12" fill="transparent" class="group-hover-bg" style="transition:fill 0.2s ease;">
+                        </rect>
+
+                        <!-- Top Total Badge Pill -->
+                        <rect x="${badgeX}" y="${badgeY}" width="${badgeW}" height="${badgeH}" rx="10" ry="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.04))" />
+                        <text x="${barCenterX}" y="${badgeY + 14}" fill="#0f172a" font-size="10.5" font-weight="800" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif">${respCount} respon</text>
+
+                        <!-- 1 Single Bar -->
+                        <g clip-path="url(#${clipId})">
+                            <rect class="form-bar-seg" x="${barX}" y="${barY}" width="${barW}" height="${barH}" fill="url(#gradBarFormPurple)" filter="drop-shadow(0 2px 4px rgba(139,92,246,0.3))">
+                            </rect>
+                        </g>
+
+                        <!-- Form Slug Label on Bottom (Wrapped, Direct /slug, No Overlap) -->
+                        ${slugLabelSvg}
+                    </g>
+                `;
+            });
+
+            const svgContent = `
+                <svg width="100%" height="auto" viewBox="0 0 ${svgWidth} 365" preserveAspectRatio="xMidYMid meet" style="display:block; min-width:600px; background:#ffffff;">
+                    <defs>
+                        <linearGradient id="gradBarFormPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#a78bfa" />
+                            <stop offset="100%" stop-color="#7c3aed" />
+                        </linearGradient>
+                        ${defsClips}
+                    </defs>
+
+                    <!-- Grid & Axes -->
+                    ${gridHtml}
+
+                    <!-- Form Bars Groups -->
+                    ${groupsHtml}
+                </svg>
+            `;
+
+            wrapper.innerHTML = svgContent;
+        };
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                const sidebar = document.getElementById('adminSidebar');
+                const overlay = document.getElementById('mobileDrawerOverlay');
+                if (sidebar) sidebar.classList.remove('mobile-open');
+                if (overlay) overlay.classList.remove('active');
+            }
+        });
 
         const defaultSettingsJSON = { 
             collectEmail: 'none', limitOne: false, editResponse: false, confirmationMessage: 'Jawaban Anda telah dicatat.', deadline: '',
@@ -1656,9 +2789,14 @@
 
         window.openEditorUI = function() {
             try {
-                document.getElementById('tabPertanyaan').style.display = 'block'; 
-                document.getElementById('tabJawaban').style.display = 'block'; 
-                document.getElementById('tabSetelan').style.display = 'block';
+                let catEditor = document.getElementById('catEditorHeader');
+                if (catEditor) catEditor.style.display = 'block';
+                let tPertanyaan = document.getElementById('tabPertanyaan');
+                let tJawaban = document.getElementById('tabJawaban');
+                let tSetelan = document.getElementById('tabSetelan');
+                if (tPertanyaan) tPertanyaan.style.display = 'flex'; 
+                if (tJawaban) tJawaban.style.display = 'flex'; 
+                if (tSetelan) tSetelan.style.display = 'flex';
                 
                 try { window.applyThemeToDOM(); } catch(e){ console.error(e); }
                 window.switchFormTab('pertanyaan');
@@ -1687,9 +2825,7 @@
                 display.className = 'custom-select-display inner-neumorph ' + extraClasses;
                 
                 let selOpt = nativeSelect.options[nativeSelect.selectedIndex];
-                let text = selOpt ? selOpt.text : 'Pilih...';
-                
-                display.innerHTML = `<span style="font-weight:700; font-size:1rem; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none;" class="cfp-text">${text}</span> <span class="arrow" style="margin-left:10px; transition:0.3s; pointer-events:none;">▼</span>`;
+                display.innerHTML = `<span style="font-weight:700; font-size:1rem; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none;" class="cfp-text">${text}</span> <span class="arrow" style="margin-left:10px; transition:0.3s; pointer-events:none; display:inline-flex; align-items:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>`;
                 display.style.padding = nativeSelect.classList.contains('q-type-select') ? '15px 20px' : '10px 15px';
                 
                 let optionsList = document.createElement('div');
@@ -1794,8 +2930,62 @@
             const { s, q } = window.getSafeIndices();
             const newQ = window.defaultQuestion();
             window.currentForm.sections[s].questions.splice(q + 1, 0, newQ);
-            window.activeQIdx = q + 1; window.debouncedSaveState(); window.renderBuilder();
-        }
+            window.activeSecIdx = s;
+            window.activeQIdx = q + 1;
+            window.debouncedSaveState();
+            window.renderBuilder();
+            setTimeout(() => { try { window.positionToolbar(); } catch(e){} }, 50);
+        };
+        window.addNewQuestion = window.addQuestion;
+        window.addSectionTitle = window.addTitleDesc;
+        window.addNewSection = window.addSection;
+
+        window.addImageBlock = function() {
+            const { s, q } = window.getSafeIndices();
+            const newQ = {
+                id: 'q_' + window.genId(),
+                type: 'image_block',
+                title: 'Judul Gambar',
+                image: '',
+                description: ''
+            };
+            window.currentForm.sections[s].questions.splice(q + 1, 0, newQ);
+            window.activeSecIdx = s;
+            window.activeQIdx = q + 1;
+            window.debouncedSaveState();
+            window.renderBuilder();
+            setTimeout(() => { try { window.positionToolbar(); } catch(e){} }, 50);
+        };
+
+        window.addVideoBlock = function() {
+            const { s, q } = window.getSafeIndices();
+            const newQ = {
+                id: 'q_' + window.genId(),
+                type: 'video_block',
+                title: 'Judul Video',
+                videoUrl: '',
+                description: ''
+            };
+            window.currentForm.sections[s].questions.splice(q + 1, 0, newQ);
+            window.activeSecIdx = s;
+            window.activeQIdx = q + 1;
+            window.debouncedSaveState();
+            window.renderBuilder();
+            setTimeout(() => { try { window.positionToolbar(); } catch(e){} }, 50);
+        };
+
+        window.handleQuestionImageUpload = function(sIdx, qIdx, input) {
+            const file = input.files[0];
+            if(!file) return;
+            if(file.size > 3 * 1024 * 1024) return window.showToast("Maksimal ukuran file 3MB");
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                window.currentForm.sections[sIdx].questions[qIdx].image = e.target.result;
+                window.debouncedSaveState();
+                window.renderBuilder();
+            };
+            reader.readAsDataURL(file);
+        };
 
         window.duplicateQuestion = function(sIdx, qIdx) {
             const qToCopy = window.currentForm.sections[sIdx].questions[qIdx];
@@ -1980,7 +3170,7 @@
                                         </div>
                                         <input type="text" class="gf-input form-title inner-neumorph" style="font-size:1.6rem; border:none; margin:0;" value="${sec.title}" oninput="window.currentForm.sections[${sIdx}].title=this.value; window.debouncedSaveState()" placeholder="Bagian Tanpa Judul">
                                     </div>
-                                    <button class="top-icon-btn neumorph-circle text-danger" title="Hapus Bagian Ini" onclick="window.deleteSection(${sIdx})">🗑️</button>
+                                    <button class="top-icon-btn neumorph-circle text-danger" title="Hapus Bagian Ini" onclick="window.deleteSection(${sIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                                 </div>
                                 <input type="text" class="gf-input form-desc inner-neumorph" style="font-size:${theme.textFontSize}px; border:none;" value="${sec.description}" oninput="window.currentForm.sections[${sIdx}].description=this.value; window.debouncedSaveState()" placeholder="Deskripsi (opsional)">
                             </div>
@@ -1998,13 +3188,65 @@
                         if(q.type === 'title_only') {
                             html += `
                             <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" onclick="window.setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
-                                <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
+                                <div class="drag-handle" title="Seret Atas/Bawah (Smooth)" style="display:inline-flex; align-items:center; justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg></div>
                                 <input type="text" class="gf-input question-title inner-neumorph" style="font-size:1.4rem; font-weight:700;" value="${q.title}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; window.debouncedSaveState()" placeholder="Judul Teks">
                                 <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:10px;" value="${q.image || ''}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value; window.debouncedSaveState()" placeholder="Deskripsi Teks (Opsional)">
                                 <div class="builder-card-footer" style="margin-top:15px; justify-content:flex-end;">
                                     <div style="display:flex; align-items:center; gap:12px;">
-                                        <button class="top-icon-btn neumorph-circle" onclick="window.duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
-                                        <button class="top-icon-btn neumorph-circle text-danger" onclick="window.deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
+                                        <button class="top-icon-btn neumorph-circle" title="Duplikasikan" onclick="window.duplicateQuestion(${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+                                        <button class="top-icon-btn neumorph-circle text-danger" onclick="window.deleteQuestion(${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                                    </div>
+                                </div>
+                            </div>`;
+                            return;
+                        }
+
+                        if(q.type === 'image_block') {
+                            const imgPreview = q.image ? `<img src="${q.image}" style="max-width:100%; max-height:320px; object-fit:contain; border-radius:12px; margin-top:12px; display:block; border:1px solid var(--form-border);" alt="Preview Gambar">` : '';
+                            html += `
+                            <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" onclick="window.setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
+                                <div class="drag-handle" title="Seret Atas/Bawah (Smooth)" style="display:inline-flex; align-items:center; justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg></div>
+                                <input type="text" class="gf-input question-title inner-neumorph" style="font-size:1.4rem; font-weight:700;" value="${q.title || 'Judul Gambar'}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; window.debouncedSaveState()" placeholder="Judul Gambar">
+                                <div style="display:flex; gap:10px; margin-top:12px; align-items:center;">
+                                    <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; flex:1;" value="${q.image || ''}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].image=this.value; window.debouncedSaveState(); window.renderBuilder();" placeholder="URL Gambar (https://...) atau unggah dari perangkat...">
+                                    <label class="top-icon-btn neumorph-circle" style="cursor:pointer; display:inline-flex; align-items:center; justify-content:center;" title="Unggah Gambar">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        <input type="file" accept="image/*" style="display:none;" onchange="window.handleQuestionImageUpload(${sIdx}, ${qIdx}, this)">
+                                    </label>
+                                </div>
+                                ${imgPreview}
+                                <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:10px;" value="${q.description || ''}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].description=this.value; window.debouncedSaveState()" placeholder="Keterangan / Teks Tambahan (Opsional)">
+                                <div class="builder-card-footer" style="margin-top:15px; justify-content:flex-end;">
+                                    <div style="display:flex; align-items:center; gap:12px;">
+                                        <button class="top-icon-btn neumorph-circle" title="Duplikasikan" onclick="window.duplicateQuestion(${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+                                        <button class="top-icon-btn neumorph-circle text-danger" onclick="window.deleteQuestion(${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                                    </div>
+                                </div>
+                            </div>`;
+                            return;
+                        }
+
+                        if(q.type === 'video_block') {
+                            let embedUrl = '';
+                            if(q.videoUrl) {
+                                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                                const match = q.videoUrl.match(regExp);
+                                if(match && match[2].length === 11) {
+                                    embedUrl = 'https://www.youtube.com/embed/' + match[2];
+                                }
+                            }
+                            const vidPreview = embedUrl ? `<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; margin-top:12px;"><iframe src="${embedUrl}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:12px;" allowfullscreen></iframe></div>` : '';
+                            html += `
+                            <div class="form-question-card glass-card neumorph-outer ${isActive}" style="padding-bottom:15px; margin-bottom:30px;" onclick="window.setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
+                                <div class="drag-handle" title="Seret Atas/Bawah (Smooth)" style="display:inline-flex; align-items:center; justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg></div>
+                                <input type="text" class="gf-input question-title inner-neumorph" style="font-size:1.4rem; font-weight:700;" value="${q.title || 'Judul Video'}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; window.debouncedSaveState()" placeholder="Judul Video">
+                                <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:12px;" value="${q.videoUrl || ''}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].videoUrl=this.value; window.debouncedSaveState(); window.renderBuilder();" placeholder="URL Video YouTube (contoh: https://www.youtube.com/watch?v=...)">
+                                ${vidPreview}
+                                <input type="text" class="gf-input inner-neumorph" style="font-size:${theme.textFontSize}px; margin-top:10px;" value="${q.description || ''}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].description=this.value; window.debouncedSaveState()" placeholder="Keterangan Video (Opsional)">
+                                <div class="builder-card-footer" style="margin-top:15px; justify-content:flex-end;">
+                                    <div style="display:flex; align-items:center; gap:12px;">
+                                        <button class="top-icon-btn neumorph-circle" title="Duplikasikan" onclick="window.duplicateQuestion(${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+                                        <button class="top-icon-btn neumorph-circle text-danger" onclick="window.deleteQuestion(${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                                     </div>
                                 </div>
                             </div>`;
@@ -2030,7 +3272,7 @@
                                 corrAns.forEach((ans, i) => {
                                     akHtml += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                                         <input type="text" class="gf-input inner-neumorph" value="${ans}" onchange="window.updateCorrectAns(${sIdx}, ${qIdx}, ${i}, this.value)">
-                                        <button class="top-icon-btn neumorph-circle btn-sm" style="width:35px;height:35px;" onclick="window.removeCorrectAns(${sIdx}, ${qIdx}, ${i})">✕</button>
+                                        <button class="top-icon-btn neumorph-circle btn-sm" style="width:35px;height:35px;display:inline-flex;align-items:center;justify-content:center;" onclick="window.removeCorrectAns(${sIdx}, ${qIdx}, ${i})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                     </div>`;
                                 });
                                 akHtml += `<input type="text" class="gf-input inner-neumorph" placeholder="Tambahkan jawaban yang benar..." onchange="window.addCorrectAns(${sIdx}, ${qIdx}, this.value); this.value='';">`;
@@ -2051,7 +3293,7 @@
                                             <span class="${iconType}"></span>
                                             <span style="font-size:1.05rem;">${opt}</span>
                                         </div>
-                                        <span class="correct-check">✓</span>
+                                        <span class="correct-check" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
                                     </div>`;
                                 });
                             }
@@ -2073,13 +3315,16 @@
                                         </thead>
                                         <tbody>
                                             ${rows.map((r, rIdx) => `
-                                            <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
+                                             <tr style="border-bottom:1px solid rgba(255,255,255,0.2);">
                                                 <td style="padding:15px 10px; font-weight:600; color:var(--form-text);">${r}</td>
                                                 ${cols.map((c, cIdx) => {
                                                     let isSel = gCorr[rIdx] && gCorr[rIdx].includes(c);
                                                     let selStyle = isSel ? 'color:#10b981;' : 'color:var(--form-border);';
-                                                    let shape = q.type==='kisi_pilihan_ganda' ? (isSel?'◉':'○') : (isSel?'☑':'☐');
-                                                    return `<td style="padding:15px 10px; text-align:center; cursor:pointer; font-size:1.5rem; transition:0.2s; ${selStyle}" onclick="window.toggleGridCorrectAns(${sIdx}, ${qIdx}, ${rIdx}, '${c}', '${q.type}')">${shape}</td>`;
+                                                    let isPG = q.type==='kisi_pilihan_ganda';
+                                                    let shape = isPG
+                                                        ? (isSel ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg>')
+                                                        : (isSel ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>');
+                                                    return `<td style="padding:15px 10px; text-align:center; cursor:pointer; font-size:1.5rem; transition:0.2s; ${selStyle}" onclick="window.toggleGridCorrectAns(${sIdx}, ${qIdx}, ${rIdx}, '${c}', '${q.type}')"><span style="display:inline-flex;align-items:center;justify-content:center;">${shape}</span></td>`;
                                                 }).join('')}
                                                 <td style="padding:15px 10px;">
                                                     <input type="number" class="gf-input inner-neumorph points-input" value="${rPts[rIdx] || 0}" min="0" onchange="window.updateGridRowPoints(${sIdx}, ${qIdx}, ${rIdx}, this.value)" style="width:60px; padding:8px;">
@@ -2098,8 +3343,9 @@
                             }
 
                             akHtml += `<div class="builder-card-footer" style="justify-content:space-between; margin-top:25px;">
-                                <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px;" onclick="window.openFeedbackModal(${sIdx}, ${qIdx})">
-                                    📋 ${q.feedback ? 'Edit masukan jawaban' : 'Tambahkan masukan jawaban'}
+                                <button class="gf-btn-clear neumorph-btn" style="color:#3b82f6; font-weight:700; border:none; box-shadow:none; padding:8px 10px; display:inline-flex; align-items:center; gap:6px;" onclick="window.openFeedbackModal(${sIdx}, ${qIdx})">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                    <span>${q.feedback ? 'Edit masukan jawaban' : 'Tambahkan masukan jawaban'}</span>
                                 </button>
                                 <button class="gf-btn-submit glow-effect" style="padding:10px 25px; border-radius:30px;" onclick="window.currentForm.sections[${sIdx}].questions[${qIdx}].isAnswerKeyMode=false; window.renderBuilder();">Selesai</button>
                             </div>`;
@@ -2109,10 +3355,12 @@
                         }
 
 
-                        let menuItems = `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showDescription')"><span style="width:20px;">${q.showDescription ? '✓' : ''}</span> Deskripsi</div>`;
+                        const checkSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--form-primary, #2563eb);"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+                        let menuItems = `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showDescription')"><span style="width:20px; display:inline-flex; align-items:center;">${q.showDescription ? checkSvg : ''}</span> Deskripsi</div>`;
 
                         if (q.type === 'jawaban_singkat' || q.type === 'paragraf') {
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')"><span style="width:20px;">${q.showValidation ? '✓' : ''}</span> Validasi jawaban</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')"><span style="width:20px; display:inline-flex; align-items:center;">${q.showValidation ? checkSvg : ''}</span> Validasi jawaban</div>`;
                             
                             if (q.showValidation) {
                                 let val = q.validation || { type: 'Teks', condition: 'Berisi', value: '', errorText: '' };
@@ -2132,17 +3380,17 @@
                                     </select>
                                     <input type="text" class="gf-input inner-neumorph" style="width:120px;" placeholder="${val.type==='Panjang'?'Angka':(val.type==='Angka'?'Angka':'Teks')}" value="${val.value || ''}" oninput="window.updateQValidation(${sIdx},${qIdx},'value',this.value)">
                                     <input type="text" class="gf-input inner-neumorph" style="flex:1; min-width:180px;" placeholder="Teks kesalahan khusus" value="${val.errorText || ''}" oninput="window.updateQValidation(${sIdx},${qIdx},'errorText',this.value)">
-                                    <button class="top-icon-btn neumorph-circle btn-sm text-danger" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')">✕</button>
+                                    <button class="top-icon-btn neumorph-circle btn-sm text-danger" style="display:inline-flex; align-items:center; justify-content:center;" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                 </div>`;
                             }
                         } 
                         else if (['pilihan_ganda', 'dropdown'].includes(q.type)) {
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showGoToSection')"><span style="width:20px;">${q.showGoToSection ? '✓' : ''}</span> Buka bagian berdasarkan jawaban</div>`;
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px;">${q.shuffleOptions ? '✓' : ''}</span> Acak urutan opsi</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showGoToSection')"><span style="width:20px; display:inline-flex; align-items:center;">${q.showGoToSection ? checkSvg : ''}</span> Buka bagian berdasarkan jawaban</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px; display:inline-flex; align-items:center;">${q.shuffleOptions ? checkSvg : ''}</span> Acak urutan opsi</div>`;
                         }
                         else if (q.type === 'kotak_centang') {
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')"><span style="width:20px;">${q.showValidation ? '✓' : ''}</span> Validasi jawaban</div>`;
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px;">${q.shuffleOptions ? '✓' : ''}</span> Acak urutan opsi</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')"><span style="width:20px; display:inline-flex; align-items:center;">${q.showValidation ? checkSvg : ''}</span> Validasi jawaban</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px; display:inline-flex; align-items:center;">${q.shuffleOptions ? checkSvg : ''}</span> Acak urutan opsi</div>`;
                             
                             if (q.showValidation) {
                                 let val = q.validation || { condition: 'Pilih paling sedikit', value: '1', errorText: '' };
@@ -2155,22 +3403,22 @@
                                     </select>
                                     <input type="number" class="gf-input inner-neumorph" style="width:100px;" placeholder="Angka" value="${val.value || 1}" oninput="window.updateQValidationCheck(${sIdx},${qIdx},null, this.value, null)">
                                     <input type="text" class="gf-input inner-neumorph" style="flex:1; min-width:180px;" placeholder="Teks kesalahan khusus" value="${val.errorText || ''}" oninput="window.updateQValidationCheck(${sIdx},${qIdx},null, null, this.value)">
-                                    <button class="top-icon-btn neumorph-circle btn-sm text-danger" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')">✕</button>
+                                    <button class="top-icon-btn neumorph-circle btn-sm text-danger" style="display:inline-flex; align-items:center; justify-content:center;" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'showValidation')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                 </div>`;
                             }
                         }
                         else if (['kisi_pilihan_ganda', 'kisi_kotak_centang'].includes(q.type)) {
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'limitOnePerCol')"><span style="width:20px;">${q.limitOnePerCol ? '✓' : ''}</span> Batasi satu jawaban per kolom</div>`;
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px;">${q.shuffleOptions ? '✓' : ''}</span> Acak urutan baris</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'limitOnePerCol')"><span style="width:20px; display:inline-flex; align-items:center;">${q.limitOnePerCol ? checkSvg : ''}</span> Batasi satu jawaban per kolom</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'shuffleOptions')"><span style="width:20px; display:inline-flex; align-items:center;">${q.shuffleOptions ? checkSvg : ''}</span> Acak urutan baris</div>`;
                         }
                         else if (q.type === 'tanggal') {
                             let showYear = q.includeYear !== false;
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'includeTime')"><span style="width:20px;">${q.includeTime ? '✓' : ''}</span> Sertakan waktu</div>`;
-                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'includeYear')"><span style="width:20px;">${showYear ? '✓' : ''}</span> Sertakan tahun</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'includeTime')"><span style="width:20px; display:inline-flex; align-items:center;">${q.includeTime ? checkSvg : ''}</span> Sertakan waktu</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="window.toggleQSetting(${sIdx}, ${qIdx}, 'includeYear')"><span style="width:20px; display:inline-flex; align-items:center;">${showYear ? checkSvg : ''}</span> Sertakan tahun</div>`;
                         }
                         else if (q.type === 'waktu') {
-                            menuItems += `<div class="q-menu-item" onclick="q.timeType='waktu'; window.debouncedSaveState(); window.renderBuilder();"><span style="width:20px;">${q.timeType !== 'durasi' ? '✓' : ''}</span> Waktu</div>`;
-                            menuItems += `<div class="q-menu-item" onclick="q.timeType='durasi'; window.debouncedSaveState(); window.renderBuilder();"><span style="width:20px;">${q.timeType === 'durasi' ? '✓' : ''}</span> Durasi</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="q.timeType='waktu'; window.debouncedSaveState(); window.renderBuilder();"><span style="width:20px; display:inline-flex; align-items:center;">${q.timeType !== 'durasi' ? checkSvg : ''}</span> Waktu</div>`;
+                            menuItems += `<div class="q-menu-item" onclick="q.timeType='durasi'; window.debouncedSaveState(); window.renderBuilder();"><span style="width:20px; display:inline-flex; align-items:center;">${q.timeType === 'durasi' ? checkSvg : ''}</span> Durasi</div>`;
                         }
 
                         if(['pilihan_ganda', 'kotak_centang', 'dropdown'].includes(q.type)) {
@@ -2194,11 +3442,11 @@
                                 <div style="display:flex; align-items:center; gap:15px;">
                                     <span style="margin-top:5px; flex-shrink:0;">${icon}</span>
                                     <input type="text" class="gf-input inner-neumorph" style="padding:10px 15px; font-size:${theme.textFontSize}px; border-radius:8px; flex:1;" value="${opt}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].options[${oIdx}]=this.value; window.debouncedSaveState()" placeholder="Ketik Opsi ${oIdx+1}">
-                                    <button class="top-icon-btn neumorph-circle btn-sm" style="width:38px; height:38px; flex-shrink:0;" onclick="window.deleteOption(${sIdx},${qIdx},${oIdx})">✕</button>
+                                    <button class="top-icon-btn neumorph-circle btn-sm" style="width:38px; height:38px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center;" onclick="window.deleteOption(${sIdx},${qIdx},${oIdx})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                     ${goToSelect}
                                 </div>`;
                             });
-                            optionsHtml += `<div style="display:flex; align-items:center; gap:15px; margin-top:5px;"><span style="color:#ccc; margin-left:4px;">${q.type === 'kotak_centang' ? '☐' : '○'}</span><button class="gf-btn-clear neumorph-btn" style="margin-left:0; font-weight:600; padding:8px 15px;" onclick="window.addOption(${sIdx},${qIdx})">➕ Tambahkan Opsi Lain</button></div></div>`;
+                            optionsHtml += `<div style="display:flex; align-items:center; gap:15px; margin-top:5px;"><span style="color:#94a3b8; margin-left:4px; display:inline-flex; align-items:center;">${q.type === 'kotak_centang' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>'}</span><button class="gf-btn-clear neumorph-btn" style="margin-left:0; font-weight:600; padding:8px 15px;" onclick="window.addOption(${sIdx},${qIdx})">+ Tambahkan Opsi Lain</button></div></div>`;
                         } 
                         
                         else if (q.type === 'paragraf' || q.type === 'jawaban_singkat') { 
@@ -2206,12 +3454,12 @@
                         } 
                         else if (q.type === 'tanggal') { 
                             let lbl = (q.includeYear !== false) ? 'Bulan, Hari, Tahun' : 'Bulan, Hari';
-                            optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">📅 ${lbl}</div>`; 
-                            if(q.includeTime) optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px;">⏰ Waktu</div>`;
+                            optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px; display:inline-flex; align-items:center; gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${lbl}</div>`; 
+                            if(q.includeTime) optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:120px; padding:12px; display:inline-flex; align-items:center; gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Waktu</div>`;
                         }
                         else if (q.type === 'waktu') { 
                             let lbl = (q.timeType === 'durasi') ? 'Jam : Menit : Detik' : 'Waktu';
-                            optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px;">⏰ ${lbl}</div>`; 
+                            optionsHtml += `<div class="inner-neumorph" style="margin-top:15px; color:var(--form-text-muted); width:180px; padding:12px; display:inline-flex; align-items:center; gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> ${lbl}</div>`; 
                         }
                         
                         else if (q.type === 'upload_file') { 
@@ -2300,10 +3548,10 @@
                                 rowsHtml += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                                     <span style="font-weight:600; color:var(--form-text-muted); width:20px;">${rIdx+1}.</span>
                                     <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${r}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].rows[${rIdx}]=this.value; window.debouncedSaveState()">
-                                    <button class="top-icon-btn neumorph-circle btn-sm" style="width:30px;height:30px;" onclick="window.removeGridRow(${sIdx},${qIdx},${rIdx})">✕</button>
+                                    <button class="top-icon-btn neumorph-circle btn-sm" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;" onclick="window.removeGridRow(${sIdx},${qIdx},${rIdx})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                 </div>`;
                             });
-                            rowsHtml += `<button class="gf-btn-clear neumorph-btn" style="padding:5px 15px; font-size:0.85rem;" onclick="window.addGridRow(${sIdx},${qIdx})">➕ Tambahkan baris</button>`;
+                            rowsHtml += `<button class="gf-btn-clear neumorph-btn" style="padding:5px 15px; font-size:0.85rem;" onclick="window.addGridRow(${sIdx},${qIdx})">+ Tambahkan baris</button>`;
 
                             let colsHtml = '';
                             let iconType = q.type === 'kisi_pilihan_ganda' ? '<div class="fake-radio"></div>' : '<div class="fake-checkbox"></div>';
@@ -2311,10 +3559,10 @@
                                 colsHtml += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                                     ${iconType}
                                     <input type="text" class="gf-input inner-neumorph" style="padding:10px; font-size:${theme.textFontSize}px;" value="${c}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].columns[${cIdx}]=this.value; window.debouncedSaveState()">
-                                    <button class="top-icon-btn neumorph-circle btn-sm" style="width:30px;height:30px;" onclick="window.removeGridCol(${sIdx},${qIdx},${cIdx})">✕</button>
+                                    <button class="top-icon-btn neumorph-circle btn-sm" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;" onclick="window.removeGridCol(${sIdx},${qIdx},${cIdx})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                 </div>`;
                             });
-                            colsHtml += `<button class="gf-btn-clear neumorph-btn" style="padding:5px 15px; font-size:0.85rem;" onclick="window.addGridCol(${sIdx},${qIdx})">➕ Tambahkan kolom</button>`;
+                            rowsHtml += `<button class="gf-btn-clear neumorph-btn" style="padding:5px 15px; font-size:0.85rem;" onclick="window.addGridCol(${sIdx},${qIdx})">+ Tambahkan kolom</button>`;
 
                             optionsHtml += `<div style="display:flex; gap:30px; margin-top:20px; flex-wrap:wrap;">
                                 <div style="flex:1; min-width:200px;"><h4 style="font-size:0.9rem; color:var(--form-text); margin-bottom:15px;">Baris</h4>${rowsHtml}</div>
@@ -2326,7 +3574,7 @@
 
                         html += `
                         <div class="form-question-card glass-card neumorph-outer ${isActive}" style="margin-bottom:30px;" onclick="window.setActive(${sIdx}, ${qIdx}, this)" id="q-${sIdx}-${qIdx}">
-                            <div class="drag-handle" title="Seret Atas/Bawah (Smooth)">⠿</div>
+                            <div class="drag-handle" title="Seret Atas/Bawah (Smooth)" style="display:inline-flex; align-items:center; justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg></div>
                             <div style="display:flex; gap: 15px; align-items:start; flex-wrap:wrap; margin-top:10px; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid rgba(139, 92, 246, 0.2);">
                                 <input type="text" class="gf-input question-title inner-neumorph" style="flex:1; padding:15px; font-size:${theme.questionFontSize}px; margin-bottom:0;" value="${q.title}" oninput="window.currentForm.sections[${sIdx}].questions[${qIdx}].title=this.value; window.debouncedSaveState()" placeholder="Pertanyaan">
                                 <select class="q-type-select neumorph-btn" style="background:var(--form-card-bg);" onchange="window.changeQType(${sIdx}, ${qIdx}, this.value)">
@@ -2362,8 +3610,8 @@
                                 </div>
 
                                 <div style="display:flex; align-items:center; gap:12px;">
-                                    <button class="top-icon-btn neumorph-circle" title="Duplikasikan" onclick="window.duplicateQuestion(${sIdx}, ${qIdx})">⧉</button>
-                                    <button class="top-icon-btn neumorph-circle text-danger" title="Hapus" onclick="window.deleteQuestion(${sIdx}, ${qIdx})">🗑️</button>
+                                    <button class="top-icon-btn neumorph-circle" title="Duplikasikan" onclick="window.duplicateQuestion(${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+                                    <button class="top-icon-btn neumorph-circle text-danger" title="Hapus" onclick="window.deleteQuestion(${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                                     <div style="width:2px; height:25px; background:var(--form-border); margin:0 10px;"></div>
                                     <div class="toggle-switch neumorph-switch">
                                         <span style="font-weight:600; color:var(--form-text);">Wajib diisi</span>
@@ -2372,7 +3620,7 @@
                                     </div>
                                     
                                     <div style="position:relative;">
-                                        <button class="top-icon-btn neumorph-circle" style="margin-left:5px;" onclick="window.toggleQMenu(event, ${sIdx}, ${qIdx})">⋮</button>
+                                        <button class="top-icon-btn neumorph-circle" style="margin-left:5px;" onclick="window.toggleQMenu(event, ${sIdx}, ${qIdx})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg></button>
                                         <div id="q-menu-${sIdx}-${qIdx}" class="q-menu-dropdown inner-neumorph" style="display:none;" onclick="event.stopPropagation()">
                                             <div style="font-size:0.75rem; color:var(--form-text-muted); padding:5px 10px; margin-bottom:5px; border-bottom:1px solid var(--form-border);">Tampilkan</div>
                                             ${menuItems}
