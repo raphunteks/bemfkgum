@@ -797,6 +797,184 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 .accordion-content-inner li { margin-bottom: 8px; }
 .accordion-content-inner strong { color: var(--text-light); font-weight: 700; transition: color 0.3s; }
 
+/* ================= MARS KBMFKG UMI EMBED (DITENGAH & RESPONSIVE) ================= */
+.history-mars-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 55px auto 0 auto;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.history-mars-card {
+    width: 100%;
+    max-width: 900px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 24px;
+    padding: 38px 32px 30px;
+    text-align: center;
+    box-shadow: 0 15px 35px var(--card-shadow);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+    box-sizing: border-box;
+}
+
+.history-mars-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--accent-neon);
+    border-radius: 0 0 10px 10px;
+    opacity: 0.8;
+    transition: width 0.4s ease, opacity 0.4s ease;
+}
+
+.history-mars-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-glow);
+    box-shadow: 0 20px 45px var(--card-shadow), 0 0 25px var(--accent-glow);
+}
+
+.history-mars-card:hover::before {
+    width: 130px;
+    opacity: 1;
+}
+
+.mars-header {
+    margin-bottom: 24px;
+}
+
+.mars-badge {
+    margin-bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    padding: 8px 18px;
+    pointer-events: none;
+}
+
+.mars-title {
+    font-size: 1.95rem;
+    font-weight: 800;
+    color: var(--text-light);
+    margin: 0 0 8px 0;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.mars-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.6;
+    transition: color 0.3s ease;
+}
+
+.mars-video-frame {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #000000;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-light);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mars-video-frame:hover {
+    border-color: var(--accent-neon);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35), 0 0 20px var(--accent-glow);
+}
+
+.mars-video-frame iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 18px;
+    display: block;
+}
+
+.mars-meta-info {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    transition: border-color 0.3s ease;
+}
+
+.mars-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.5;
+}
+
+.mars-meta-svg {
+    color: var(--accent-neon);
+    flex-shrink: 0;
+}
+
+.mars-meta-item strong {
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.mars-meta-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border-light);
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .history-mars-container {
+        margin-top: 35px;
+        padding: 0 10px;
+    }
+    .history-mars-card {
+        padding: 24px 16px 20px;
+        border-radius: 20px;
+    }
+    .mars-title {
+        font-size: 1.5rem;
+    }
+    .mars-subtitle {
+        font-size: 0.88rem;
+    }
+    .mars-meta-info {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        text-align: center;
+    }
+    .mars-meta-divider {
+        display: none;
+    }
+}
 
 /* ================= FILOSOFI LOGO & WARNA ================= */
 .filosofi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
