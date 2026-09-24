@@ -3662,13 +3662,13 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     left: 0;
     right: 0;
     height: 60px;
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-    z-index: 1050;
+    background: #0f172a !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    z-index: 1070;
     padding: 0 18px;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;
 }
 
@@ -3693,7 +3693,38 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 @media (max-width: 1024px) {
     .admin-mobile-header {
         display: flex !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 60px !important;
+        background: #0f172a !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
         z-index: 1070 !important;
+        padding: 0 18px !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
+        box-sizing: border-box !important;
+    }
+    .admin-mobile-header .mobile-toggle-btn,
+    .admin-mobile-header .sidebar-toggle-btn {
+        display: flex !important;
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+    .admin-mobile-header .mobile-toggle-btn:hover,
+    .admin-mobile-header .sidebar-toggle-btn:hover {
+        background: rgba(255, 255, 255, 0.22) !important;
+        color: #ffffff !important;
     }
     .admin-layout {
         padding-top: 60px !important;
