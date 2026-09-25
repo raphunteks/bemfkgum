@@ -27,67 +27,186 @@
          Di-render langsung dari Server Express.js (EJS) sebelum memuat JS Client!
          Menyelesaikan isu GSC "Halaman alternatif dengan tag kanonis yang tepat"
          ========================================================================= -->
+    <%
+        /* ============================================================
+           SSR SUPER BIG UPGRADE: SEO 100% DINAMIS GOLD STANDARD GSC
+           Semua metadata di-generate server-side (EJS) SEBELUM JS load
+           Mendukung: Google Images, Bing, Twitter, Facebook, LinkedIn
+           ============================================================ */
+        const SITE_URL  = 'https://bemkbmfkgumi.com';
+        const ORG_NAME  = 'BEM KBMFKG UMI';
+        const SITE_NAME = 'BEM KBMFKG UMI';
+        const DEF_IMG   = SITE_URL + '/img/bemfkgumi.png';
+
+        /* Scope-Safe State Variables (Global across entire template) */
+        let artSlug = '', artUrl = '', artTitle = '', artFullTitle = '';
+        let artDesc = '', artDescFull = '', artImg = DEF_IMG;
+        let artDatePub = '', artDateMod = '';
+        let artKat = 'Berita', artKatSlug = '', artKatUrl = '';
+        let artAuthor = 'Admin BEM FKG UMI', artKeywords = '';
+        let wordCount = 0, readMinutes = 1;
+
+        let isCat = false, catSlugPage = '', pageTitle = '', pageDesc = '', pageUrl = '', pageKeywords = '';
+        let schemaPageUrl = '', schemaPageTitle = '', schemaPageDesc = '';
+
+        if (typeof articleInfo !== 'undefined' && articleInfo) {
+            /* ============ ARTIKEL DETAIL SEO BLOCK ============ */
+            artSlug    = articleInfo.Slug_URL || articleInfo.ID_Berita || '';
+            artUrl     = SITE_URL + '/berita/' + artSlug;
+            artTitle   = (articleInfo.Judul || '').trim();
+            artFullTitle = artTitle + ' | ' + ORG_NAME;
+
+            /* Bersihkan HTML dari konten untuk meta desc */
+            const rawContent  = (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '');
+            const cleanText   = rawContent.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+            artDesc     = cleanText.substring(0, 155).trim() + (cleanText.length > 155 ? '...' : '');
+            artDescFull = cleanText.substring(0, 300).trim();
+
+            /* Image: pastikan absolut URL, tidak base64, tidak kosong */
+            artImg = articleInfo.Gambar_URL || DEF_IMG;
+            if (artImg.startsWith('data:image/')) artImg = DEF_IMG;
+            if (artImg.startsWith('/')) artImg = SITE_URL + artImg;
+
+            /* Tanggal ISO 8601 */
+            artDatePub = articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString();
+            artDateMod = articleInfo.Tgl_Update ? new Date(articleInfo.Tgl_Update).toISOString() : artDatePub;
+
+            /* Kategori slug untuk breadcrumb */
+            artKat     = articleInfo.Kategori || 'Berita';
+            artKatSlug = artKat.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            artKatUrl  = SITE_URL + '/berita/kategori/' + artKatSlug;
+
+            /* Penulis */
+            artAuthor  = articleInfo.Penulis || 'Admin BEM FKG UMI';
+
+            /* Keywords dinamis dari judul + kategori */
+            artKeywords = [
+                artKat,
+                'kedokteran gigi',
+                'BEM FKG UMI',
+                'BEM KBMFKG UMI',
+                'berita fkg umi',
+                'pubmed bem fkg umi',
+                ...artTitle.toLowerCase().split(/\s+/).filter(w => w.length > 4).slice(0, 5)
+            ].join(', ');
+
+            /* Hitung estimasi word count & waktu baca */
+            wordCount   = cleanText.split(/\s+/).filter(Boolean).length;
+            readMinutes = Math.max(1, Math.ceil(wordCount / 200));
+        } else {
+            /* ============ INDEX / KATEGORI SEO BLOCK ============ */
+            isCat       = (typeof currentCategory !== 'undefined' && currentCategory && currentCategory !== 'All');
+            catSlugPage = isCat ? currentCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : '';
+            pageTitle   = isCat ? ('Kategori: ' + currentCategory + ' | Portal Berita Pubmed') : 'Portal Berita Pubmed | BEM KBMFKG UMI';
+            pageDesc    = isCat
+                ? ('Kumpulan berita dan artikel kategori ' + currentCategory + ' dari BEM KBMFKG UMI, Fakultas Kedokteran Gigi Universitas Muslim Indonesia Makassar.')
+                : 'Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI. Temukan publikasi terbaru dari organisasi mahasiswa FKG UMI Makassar.';
+            pageUrl     = isCat ? (SITE_URL + '/berita/kategori/' + catSlugPage) : (SITE_URL + '/berita');
+            pageKeywords = isCat
+                ? (currentCategory + ', portal berita, kedokteran gigi, BEM FKG UMI, FKG UMI Makassar, pubmed bem fkg umi')
+                : 'portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi, berita mahasiswa makassar, organisasi kedokteran gigi';
+            schemaPageUrl   = pageUrl;
+            schemaPageTitle = pageTitle;
+            schemaPageDesc  = pageDesc;
+        }
+    %>
+
     <% if (typeof articleInfo !== 'undefined' && articleInfo) { %>
-        <!-- FIX: Konversi URL Relatif menjadi Absolut untuk SEO Open Graph -->
-        <% 
-            let ogImgUrl = articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png';
-            if (ogImgUrl.startsWith('/')) {
-                ogImgUrl = siteUrl + ogImgUrl;
-            }
-        %>
-        <!-- SEO SPESIFIK ARTIKEL -->
-        <title><%= articleInfo.Judul %> | BEM KBMFKG UMI</title>
-        <meta name="description" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
-        <meta name="keywords" content="<%= articleInfo.Kategori %>, kedokteran gigi, BEM FKG UMI, portal berita">
-        <meta name="author" content="<%= articleInfo.Penulis || 'Admin BEM FKG UMI' %>">
-        <meta name="robots" content="index, follow, max-image-preview:large">
-        
-        <!-- TAG KANONIS BERSIH (CLEAN URL) -->
-        <link rel="canonical" id="canonicalUrl" href="<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>">
-
-        <!-- OPEN GRAPH & TWITTER CARDS -->
-        <meta property="og:site_name" content="Portal Berita Pubmed BEM KBMFKG UMI">
-        <meta property="og:title" id="ogTitle" content="<%= articleInfo.Judul %> | BEM KBMFKG UMI">
-        <meta property="og:description" id="ogDesc" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
-        <meta property="og:type" id="ogType" content="article">
-        <meta property="og:url" id="ogUrl" content="<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>">
-        <meta property="og:image" id="ogImage" content="<%= ogImgUrl %>">
-        <meta property="article:published_time" content="<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>">
-        <meta property="article:section" content="<%= articleInfo.Kategori || 'Berita' %>">
-        
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" id="twTitle" content="<%= articleInfo.Judul %> | BEM KBMFKG UMI">
-        <meta name="twitter:description" content="<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...">
-        <meta name="twitter:image" content="<%= ogImgUrl %>">
-        
-    <% } else { %>
-        <!-- SEO DEFAULT INDEKS PORTAL & DYNAMIC KATEGORI -->
-        <% 
-            let pageTitle = "Portal Berita Pubmed | BEM KBMFKG UMI";
-            let pageUrl = "https://bemkbmfkgumi.com/berita";
-            if (typeof currentCategory !== 'undefined' && currentCategory && currentCategory !== 'All') {
-                pageTitle = "Kategori: " + currentCategory + " | Portal Berita Pubmed";
-                let catSlug = currentCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-                pageUrl = "https://bemkbmfkgumi.com/berita/kategori/" + catSlug;
-            }
-        %>
-        <title><%= pageTitle %></title>
-        <meta name="description" content="Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.">
-        <meta name="keywords" content="portal berita, pubmed, fkg umi, kedokteran gigi, artikel seo, bem fkg umi">
-        <meta name="author" content="BEM KBMFKG UMI">
+        <!-- ================================================================
+             TITLE & CORE META (SEO GOLD STANDARD)
+             ================================================================ -->
+        <title><%= artFullTitle %></title>
+        <meta name="description" content="<%= artDesc %>">
+        <meta name="keywords" content="<%= artKeywords %>">
+        <meta name="author" content="<%= artAuthor %>">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-        
-        <link rel="canonical" id="canonicalUrl" href="<%= pageUrl %>">
+        <meta name="language" content="id">
+        <meta name="geo.region" content="ID-SN">
+        <meta name="geo.placename" content="Makassar, Sulawesi Selatan">
+        <meta name="revisit-after" content="3 days">
+        <meta name="rating" content="General">
 
-        <meta property="og:site_name" content="Portal Berita Pubmed BEM KBMFKG UMI">
-        <meta property="og:title" id="ogTitle" content="<%= pageTitle %>">
-        <meta property="og:description" id="ogDesc" content="Portal berita kampus, inovasi kedokteran gigi, dan event terkini.">
+        <!-- CANONICAL URL (Clean URL, cegah duplicate content) -->
+        <link rel="canonical" id="canonicalUrl" href="<%= artUrl %>">
+        <link rel="alternate" hreflang="id" href="<%= artUrl %>">
+
+        <!-- ================================================================
+             OPEN GRAPH / FACEBOOK / LINKEDIN (FULL STANDARD)
+             ================================================================ -->
+        <meta property="og:site_name" content="<%= SITE_NAME %>">
+        <meta property="og:locale" content="id_ID">
+        <meta property="og:type" id="ogType" content="article">
+        <meta property="og:url" id="ogUrl" content="<%= artUrl %>">
+        <meta property="og:title" id="ogTitle" content="<%= artFullTitle %>">
+        <meta property="og:description" id="ogDesc" content="<%= artDesc %>">
+
+        <!-- OG IMAGE: Dimensi eksplisit agar muncul di Google Images & viewport sosmed -->
+        <meta property="og:image" id="ogImage" content="<%= artImg %>">
+        <meta property="og:image:secure_url" id="ogImageSecure" content="<%= artImg %>">
+        <meta property="og:image:type" content="image/jpeg">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:image:alt" content="<%= artTitle %> - <%= ORG_NAME %>">
+
+        <!-- ARTICLE META -->
+        <meta property="article:published_time" content="<%= artDatePub %>">
+        <meta property="article:modified_time" content="<%= artDateMod %>">
+        <meta property="article:expiration_time" content="">
+        <meta property="article:author" content="<%= artAuthor %>">
+        <meta property="article:section" content="<%= artKat %>">
+        <meta property="article:tag" content="<%= artKat %>">
+        <meta property="article:tag" content="BEM FKG UMI">
+        <meta property="article:tag" content="Kedokteran Gigi">
+        <meta property="article:tag" content="FKG UMI Makassar">
+
+        <!-- ================================================================
+             TWITTER / X CARDS (SUMMARY LARGE IMAGE — Standar Wajib)
+             ================================================================ -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@bemkbmfkgumi">
+        <meta name="twitter:creator" content="@bemkbmfkgumi">
+        <meta name="twitter:title" id="twTitle" content="<%= artFullTitle %>">
+        <meta name="twitter:description" content="<%= artDesc %>">
+        <meta name="twitter:image" content="<%= artImg %>">
+        <meta name="twitter:image:alt" content="<%= artTitle %> - <%= ORG_NAME %>">
+        <meta name="twitter:label1" content="Kategori">
+        <meta name="twitter:data1" content="<%= artKat %>">
+        <meta name="twitter:label2" content="Waktu Baca">
+        <meta name="twitter:data2" content="<%= readMinutes %> menit">
+
+    <% } else { %>
+        <title><%= pageTitle %></title>
+        <meta name="description" content="<%= pageDesc %>">
+        <meta name="keywords" content="<%= pageKeywords %>">
+        <meta name="author" content="<%= ORG_NAME %>">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        <meta name="language" content="id">
+        <meta name="geo.region" content="ID-SN">
+        <meta name="geo.placename" content="Makassar, Sulawesi Selatan">
+
+        <link rel="canonical" id="canonicalUrl" href="<%= pageUrl %>">
+        <link rel="alternate" hreflang="id" href="<%= pageUrl %>">
+
+        <meta property="og:site_name" content="<%= SITE_NAME %>">
+        <meta property="og:locale" content="id_ID">
         <meta property="og:type" id="ogType" content="website">
         <meta property="og:url" id="ogUrl" content="<%= pageUrl %>">
-        <meta property="og:image" id="ogImage" content="https://bemkbmfkgumi.com/img/bemfkgumi.png">
-        
+        <meta property="og:title" id="ogTitle" content="<%= pageTitle %>">
+        <meta property="og:description" id="ogDesc" content="<%= pageDesc %>">
+        <meta property="og:image" id="ogImage" content="<%= DEF_IMG %>">
+        <meta property="og:image:secure_url" content="<%= DEF_IMG %>">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:image:alt" content="<%= ORG_NAME %> — Portal Berita Pubmed">
+
         <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@bemkbmfkgumi">
+        <meta name="twitter:creator" content="@bemkbmfkgumi">
         <meta name="twitter:title" id="twTitle" content="<%= pageTitle %>">
+        <meta name="twitter:description" content="<%= pageDesc %>">
+        <meta name="twitter:image" content="<%= DEF_IMG %>">
+        <meta name="twitter:image:alt" content="<%= ORG_NAME %> — Portal Berita Pubmed">
     <% } %>
 
     <!-- MOBILE WEB APP & FAVICON OPTIMIZATION -->
@@ -127,113 +246,254 @@
 
     <link rel="sitemap" type="application/xml" title="Sitemap BEM KBMFKG UMI" href="https://bemkbmfkgumi.com/sitemap.xml">
 
+
     <!-- =========================================================================
-         SUPER BIG UPGRADE: DYNAMIC JSON-LD SCHEMA DARI SERVER (EJS)
-         Google akan langsung membaca Schema NewsArticle tanpa menunggu Javascript
+         SSR SUPER BIG UPGRADE: JSON-LD SCHEMA.ORG GOLD STANDARD GSC
+         Full @graph: NewsArticle+ImageObject, WebPage, WebSite+SearchAction,
+         Organization, BreadcrumbList, SiteNavigationElement, ItemList
+         Mendukung Google Rich Results, Google Images, Featured Snippets
          ========================================================================= -->
     <script type="application/ld+json" id="static-base-schema">
     <% if (typeof articleInfo !== 'undefined' && articleInfo) { %>
-        <% 
-            let schemaImgUrl = articleInfo.Gambar_URL || siteUrl + '/img/bemfkgumi.png';
-            if (schemaImgUrl.startsWith('/')) {
-                schemaImgUrl = siteUrl + schemaImgUrl;
-            }
-        %>
+    {
+      "@context": "https://schema.org",
+      "@graph": [
         {
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "NewsArticle",
-              "@id": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>#article",
-              "url": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>",
-              "headline": "<%= articleInfo.Judul %>",
-              "description": "<%= (articleInfo.Meta_Desc || articleInfo.Desc || articleInfo.Konten_HTML || '').replace(/<[^>]*>?/gm, '').substring(0, 155).trim() %>...",
-              "image": [ "<%= schemaImgUrl %>" ],
-              "datePublished": "<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>",
-              "dateModified": "<%= articleInfo.Tgl_Rilis ? new Date(articleInfo.Tgl_Rilis).toISOString() : new Date().toISOString() %>",
-              "author": { 
-                  "@type": "Person", 
-                  "name": "<%= articleInfo.Penulis || 'Admin BEM FKG UMI' %>",
-                  "url": "<%= siteUrl %>/tentang" 
-              },
-              "publisher": { 
-                  "@type": "Organization", 
-                  "@id": "<%= siteUrl %>/#organization", 
-                  "name": "BEM KBMFKG UMI", 
-                  "logo": { "@type": "ImageObject", "url": "<%= siteUrl %>/img/bemfkgumi.png" } 
-              },
-              "mainEntityOfPage": { "@type": "WebPage", "@id": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>" }
-            },
-            {
-              "@type": "BreadcrumbList",
-              "@id": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>#breadcrumb",
-              "name": "Breadcrumb Artikel",
-              "itemListElement": [
-                { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= siteUrl %>/" },
-                { "@type": "ListItem", "position": 2, "name": "Portal Pubmed", "item": "<%= siteUrl %>/berita" },
-                <% let schemaCatSlug = (articleInfo.Kategori || 'Berita').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''); %>
-                { "@type": "ListItem", "position": 3, "name": "<%= articleInfo.Kategori || 'Berita' %>", "item": "<%= siteUrl %>/berita/kategori/<%= schemaCatSlug %>" },
-                { "@type": "ListItem", "position": 4, "name": "<%= articleInfo.Judul %>", "item": "<%= siteUrl %>/berita/<%= articleInfo.Slug_URL || articleInfo.ID_Berita %>" }
-              ]
+          "@type": "NewsArticle",
+          "@id": "<%= artUrl %>#article",
+          "url": "<%= artUrl %>",
+          "mainEntityOfPage": { "@type": "WebPage", "@id": "<%= artUrl %>" },
+          "headline": "<%= artTitle.replace(/"/g, '&quot;') %>",
+          "name": "<%= artTitle.replace(/"/g, '&quot;') %>",
+          "description": "<%= artDesc.replace(/"/g, '&quot;') %>",
+          "articleBody": "<%= artDescFull.replace(/"/g, '&quot;') %>",
+          "wordCount": <%= wordCount %>,
+          "timeRequired": "PT<%= readMinutes %>M",
+          "inLanguage": "id-ID",
+          "datePublished": "<%= artDatePub %>",
+          "dateModified": "<%= artDateMod %>",
+          "isAccessibleForFree": "https://schema.org/True",
+          "keywords": "<%= artKeywords.replace(/"/g, '&quot;') %>",
+          "articleSection": "<%= artKat %>",
+          "image": {
+            "@type": "ImageObject",
+            "@id": "<%= artUrl %>#primaryimage",
+            "url": "<%= artImg %>",
+            "contentUrl": "<%= artImg %>",
+            "thumbnailUrl": "<%= artImg %>",
+            "width": 1200,
+            "height": 630,
+            "encodingFormat": "image/jpeg",
+            "caption": "<%= artTitle.replace(/"/g, '&quot;') %> — <%= ORG_NAME %>"
+          },
+          "author": {
+            "@type": "Person",
+            "@id": "<%= SITE_URL %>/tentang#author",
+            "name": "<%= artAuthor %>",
+            "url": "<%= SITE_URL %>/tentang"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "@id": "<%= SITE_URL %>/#organization",
+            "name": "<%= ORG_NAME %>",
+            "url": "<%= SITE_URL %>",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "<%= SITE_URL %>/img/bemfkgumi.png",
+              "width": 512, "height": 512
             }
+          },
+          "isPartOf": { "@id": "<%= artUrl %>" }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "<%= artUrl %>",
+          "url": "<%= artUrl %>",
+          "name": "<%= artFullTitle.replace(/"/g, '&quot;') %>",
+          "description": "<%= artDesc.replace(/"/g, '&quot;') %>",
+          "inLanguage": "id-ID",
+          "isPartOf": { "@id": "<%= SITE_URL %>/#website" },
+          "primaryImageOfPage": { "@id": "<%= artUrl %>#primaryimage" },
+          "breadcrumb": { "@id": "<%= artUrl %>#breadcrumb" },
+          "datePublished": "<%= artDatePub %>",
+          "dateModified": "<%= artDateMod %>"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "<%= artUrl %>#breadcrumb",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= SITE_URL %>/" },
+            { "@type": "ListItem", "position": 2, "name": "Berita", "item": "<%= SITE_URL %>/berita" },
+            { "@type": "ListItem", "position": 3, "name": "<%= artKat %>", "item": "<%= artKatUrl %>" },
+            { "@type": "ListItem", "position": 4, "name": "<%= artTitle.replace(/"/g, '&quot;') %>", "item": "<%= artUrl %>" }
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "<%= SITE_URL %>/#website",
+          "url": "<%= SITE_URL %>/",
+          "name": "<%= ORG_NAME %>",
+          "alternateName": [
+            "BEM FKG UMI",
+            "Badan Eksekutif Mahasiswa FKG UMI",
+            "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi UMI",
+            "BEM KBMFKG UMI Makassar"
+          ],
+          "description": "Website resmi BEM KBMFKG UMI — Badan Eksekutif Mahasiswa FKG UMI Makassar.",
+          "inLanguage": "id-ID",
+          "publisher": { "@id": "<%= SITE_URL %>/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": { "@type": "EntryPoint", "urlTemplate": "<%= SITE_URL %>/berita?q={search_term_string}" },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "<%= SITE_URL %>/#organization",
+          "name": "<%= ORG_NAME %>",
+          "alternateName": "BEM KBMFKG UMI",
+          "url": "<%= SITE_URL %>",
+          "logo": { "@type": "ImageObject", "url": "<%= SITE_URL %>/img/bemfkgumi.png", "width": 512, "height": 512 },
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Jl. Pajonga Dg. Ngalle No. 27 A, Pa'batong",
+            "addressLocality": "Makassar",
+            "addressRegion": "Sulawesi Selatan",
+            "postalCode": "90231",
+            "addressCountry": "ID"
+          },
+          "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "areaServed": "ID", "availableLanguage": ["Indonesian"] },
+          "sameAs": ["https://www.instagram.com/bemfkgumi", "https://bemkbmfkgumi.com"]
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "@id": "<%= SITE_URL %>/#sitenavigation",
+          "hasPart": [
+            { "@type": "SiteNavigationElement", "name": "Beranda", "url": "<%= SITE_URL %>/" },
+            { "@type": "SiteNavigationElement", "name": "Portal Berita Pubmed", "url": "<%= SITE_URL %>/berita" },
+            { "@type": "SiteNavigationElement", "name": "Tentang BEM", "url": "<%= SITE_URL %>/tentang" },
+            { "@type": "SiteNavigationElement", "name": "Informasi & Proker", "url": "<%= SITE_URL %>/informasi" },
+            { "@type": "SiteNavigationElement", "name": "Narahubung", "url": "<%= SITE_URL %>/narahubung" }
           ]
         }
+      ]
+    }
     <% } else { %>
+    {
+      "@context": "https://schema.org",
+      "@graph": [
         {
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "CollectionPage",
-              "@id": "https://bemkbmfkgumi.com/berita#webpage",
-              "url": "https://bemkbmfkgumi.com/berita",
-              "name": "Portal Berita Pubmed | BEM KBMFKG UMI",
-              "description": "Portal berita kampus, inovasi kedokteran gigi, teknologi, dan event terkini BEM KBMFKG UMI.",
-              "isPartOf": { 
-                  "@type": "WebSite",
-                  "@id": "https://bemkbmfkgumi.com/#website",
-                  "url": "https://bemkbmfkgumi.com/",
-                  "name": "BEM KBMFKG UMI"
-              }
-            },
-            {
-              "@type": "BreadcrumbList",
-              "@id": "https://bemkbmfkgumi.com/berita#breadcrumb",
-              "name": "Breadcrumb Portal Pubmed",
-              "itemListElement": [
-                {
-                  "@type": "ListItem",
-                  "position": 1,
-                  "name": "Beranda",
-                  "item": "https://bemkbmfkgumi.com/"
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 2,
-                  "name": "Portal Publik Pubmed",
-                  "item": "https://bemkbmfkgumi.com/berita"
-                }
-              ]
-            }
-            <% if (typeof latestArticles !== 'undefined' && latestArticles.length > 0) { %>
-            ,{
-              "@type": "ItemList",
-              "@id": "https://bemkbmfkgumi.com/berita#itemlist",
-              "name": "Daftar Publikasi Pubmed BEM KBMFKG UMI",
-              "itemListElement": [
-                <% latestArticles.forEach(function(art, index) { %>
-                {
-                  "@type": "ListItem",
-                  "position": <%= index + 1 %>,
-                  "url": "https://bemkbmfkgumi.com/berita/<%= art.Slug_URL || art.ID_Berita %>"
-                }<%= index < latestArticles.length - 1 ? ',' : '' %>
-                <% }); %>
-              ]
-            }
+          "@type": "CollectionPage",
+          "@id": "<%= schemaPageUrl %>#webpage",
+          "url": "<%= schemaPageUrl %>",
+          "name": "<%= schemaPageTitle %>",
+          "description": "<%= schemaPageDesc.replace(/"/g, '&quot;') %>",
+          "inLanguage": "id-ID",
+          "isPartOf": { "@id": "<%= SITE_URL %>/#website" },
+          "breadcrumb": { "@id": "<%= schemaPageUrl %>#breadcrumb" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "<%= schemaPageUrl %>#breadcrumb",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= SITE_URL %>/" },
+            { "@type": "ListItem", "position": 2, "name": "Berita", "item": "<%= SITE_URL %>/berita" }
+            <% if (isCat) { %>
+            ,{ "@type": "ListItem", "position": 3, "name": "<%= currentCategory %>", "item": "<%= SITE_URL %>/berita/kategori/<%= catSlugPage %>" }
             <% } %>
           ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "<%= SITE_URL %>/#website",
+          "url": "<%= SITE_URL %>/",
+          "name": "<%= ORG_NAME %>",
+          "alternateName": [
+            "BEM FKG UMI",
+            "Badan Eksekutif Mahasiswa FKG UMI",
+            "Badan Eksekutif Mahasiswa Fakultas Kedokteran Gigi UMI",
+            "BEM KBMFKG UMI Makassar"
+          ],
+          "description": "Website resmi BEM KBMFKG UMI — Badan Eksekutif Mahasiswa FKG UMI Makassar.",
+          "inLanguage": "id-ID",
+          "publisher": { "@id": "<%= SITE_URL %>/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": { "@type": "EntryPoint", "urlTemplate": "<%= SITE_URL %>/berita?q={search_term_string}" },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "<%= SITE_URL %>/#organization",
+          "name": "<%= ORG_NAME %>",
+          "url": "<%= SITE_URL %>",
+          "logo": { "@type": "ImageObject", "url": "<%= SITE_URL %>/img/bemfkgumi.png", "width": 512, "height": 512 },
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Jl. Pajonga Dg. Ngalle No. 27 A, Pa'batong",
+            "addressLocality": "Makassar",
+            "addressRegion": "Sulawesi Selatan",
+            "addressCountry": "ID"
+          },
+          "sameAs": ["https://www.instagram.com/bemfkgumi", "https://bemkbmfkgumi.com"]
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "@id": "<%= SITE_URL %>/#sitenavigation",
+          "hasPart": [
+            { "@type": "SiteNavigationElement", "name": "Beranda", "url": "<%= SITE_URL %>/" },
+            { "@type": "SiteNavigationElement", "name": "Portal Berita Pubmed", "url": "<%= SITE_URL %>/berita" },
+            { "@type": "SiteNavigationElement", "name": "Tentang BEM", "url": "<%= SITE_URL %>/tentang" },
+            { "@type": "SiteNavigationElement", "name": "Informasi & Proker", "url": "<%= SITE_URL %>/informasi" },
+            { "@type": "SiteNavigationElement", "name": "Narahubung", "url": "<%= SITE_URL %>/narahubung" }
+          ]
         }
+        <% if (typeof latestArticles !== 'undefined' && latestArticles.length > 0) { %>
+        ,{
+          "@type": "ItemList",
+          "@id": "<%= SITE_URL %>/berita#itemlist",
+          "name": "Daftar Publikasi Pubmed BEM KBMFKG UMI",
+          "description": "Artikel berita terbaru dari portal pubmed BEM KBMFKG UMI",
+          "numberOfItems": <%= latestArticles.length %>,
+          "itemListOrder": "https://schema.org/ItemListOrderDescending",
+          "itemListElement": [
+            <% latestArticles.forEach(function(art, idx) {
+               const artSlugI = art.Slug_URL || art.ID_Berita;
+               let artImgI = art.Gambar_URL || (SITE_URL + '/img/bemfkgumi.png');
+               if (artImgI.startsWith('data:image/')) artImgI = SITE_URL + '/img/bemfkgumi.png';
+               if (artImgI.startsWith('/')) artImgI = SITE_URL + artImgI;
+               const artDateI = art.Tgl_Rilis ? new Date(art.Tgl_Rilis).toISOString() : new Date().toISOString();
+            %>
+            {
+              "@type": "ListItem",
+              "position": <%= idx + 1 %>,
+              "item": {
+                "@type": "NewsArticle",
+                "@id": "<%= SITE_URL %>/berita/<%= artSlugI %>#article",
+                "url": "<%= SITE_URL %>/berita/<%= artSlugI %>",
+                "name": "<%= (art.Judul || '').replace(/"/g, '&quot;') %>",
+                "headline": "<%= (art.Judul || '').replace(/"/g, '&quot;') %>",
+                "description": "<%= (art.Meta_Desc || art.Desc || '').replace(/<[^>]*>?/gm, '').replace(/"/g, '&quot;').substring(0, 155).trim() %>",
+                "image": { "@type": "ImageObject", "url": "<%= artImgI %>", "thumbnailUrl": "<%= artImgI %>", "width": 1200, "height": 630 },
+                "datePublished": "<%= artDateI %>",
+                "articleSection": "<%= art.Kategori || 'Berita' %>",
+                "inLanguage": "id-ID",
+                "author": { "@type": "Person", "name": "<%= art.Penulis || 'Admin BEM FKG UMI' %>" },
+                "publisher": { "@id": "<%= SITE_URL %>/#organization" }
+              }
+            }<%= idx < latestArticles.length - 1 ? ',' : '' %>
+            <% }); %>
+          ]
+        }
+        <% } %>
+      ]
+    }
     <% } %>
     </script>
+
+
 
     <style>
         /* Tailwind Override untuk menyatu dengan CSS Root Main BEM UMI */
