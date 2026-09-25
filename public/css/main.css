@@ -3528,33 +3528,37 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     border-color: #94a3b8;
 }
 
-/* 5 KPI METRIC CARDS */
+/* 4 KPI METRIC CARDS (REALTIME) */
 .dash-kpi-grid {
     display: grid !important;
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     gap: 14px !important;
     width: 100% !important;
     margin-bottom: 24px !important;
 }
 
-@media (max-width: 1360px) {
+@media (max-width: 1100px) {
     .dash-kpi-grid {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
-    }
-}
-@media (max-width: 1024px) {
-    .dash-kpi-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
     }
 }
 @media (max-width: 768px) {
     .dash-kpi-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
     }
 }
 @media (max-width: 480px) {
     .dash-kpi-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+    .dash-kpi-card {
+        padding: 14px 10px !important;
+    }
+    .kpi-title {
+        font-size: 0.76rem !important;
     }
 }
 
@@ -4796,6 +4800,9 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     flex-direction: column;
     gap: 16px;
     height: 100%;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding-right: 4px;
 }
 
 /* Fact Tracker Card */
@@ -4805,6 +4812,7 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     border-radius: 16px;
     padding: 16px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+    flex-shrink: 0;
 }
 .ai-fact-header {
     display: flex;
@@ -4870,9 +4878,14 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     display: flex;
     flex-direction: column;
     gap: 12px;
-    flex: 1 1 0;
-    min-height: 0;
-    overflow: hidden;
+    flex: 1 1 auto;
+    min-height: 380px;
+    overflow: visible;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.ai-preview-card.ready-for-action {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2), 0 8px 24px rgba(16, 185, 129, 0.15);
 }
 .ai-preview-top {
     display: flex;
@@ -4943,8 +4956,7 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     font-size: 0.86rem;
     line-height: 1.7;
     color: var(--text-light, #334155);
-    flex: 1 1 0;
-    min-height: 0;
+    max-height: 240px;
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 6px;
@@ -4958,10 +4970,10 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding-top: 10px;
+    padding-top: 12px;
     border-top: 1px solid var(--border-light, #e2e8f0);
     flex-shrink: 0;
-    margin-top: auto;
+    margin-top: 12px;
 }
 .btn-ai-apply {
     display: flex;
@@ -5007,6 +5019,54 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
 .btn-ai-sub:hover {
     background: rgba(99, 102, 241, 0.08);
     border-color: rgba(99, 102, 241, 0.3);
+    color: #6366f1;
+}
+
+/* Custom Modal Revisi AI */
+.ai-revision-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 19, 43, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.ai-revision-modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+.ai-revision-modal-box {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-light, #e2e8f0);
+    border-radius: 20px;
+    padding: 24px;
+    width: 90%;
+    max-width: 520px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ai-revision-modal-overlay.active .ai-revision-modal-box {
+    transform: scale(1);
+}
+.btn-ai-chip {
+    background: var(--input-bg, #f1f5f9);
+    border: 1px solid var(--border-light, #cbd5e1);
+    color: var(--text-light, #334155);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.btn-ai-chip:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: #6366f1;
     color: #6366f1;
 }
 
@@ -5247,3 +5307,144 @@ header#main-header.scrolled .header-contact-btn { padding: 8px 20px !important; 
     border-color: #374151;
     color: #f8fafc;
 }
+
+/* ==========================================================================
+   STRUKTUR KEPENGURUSAN - MOBILE COMPACT & EXPANDABLE DEPARTEMEN
+   ========================================================================== */
+/* Desktop default: tampilkan semua anggota dalam grid tanpa tombol expand */
+.dept-more-members {
+    display: contents;
+}
+.dept-expand-wrapper {
+    display: none;
+}
+
+/* Mobile (@media max-width: 768px):
+   - Grid pimpinan & departemen menjadi 2 kolom rapi
+   - Anggota ke-5/ke-6 dst tersembunyi rapi di bawah tombol 'Lihat Anggota Lainnya'
+   - Kartu dibuat proporsional & compact agar nyaman di-scroll
+*/
+@media (max-width: 768px) {
+    #containerPimpinan,
+    .dept-members-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    /* Sembunyikan anggota tambahan sebelum diklik */
+    .dept-more-members {
+        display: none !important;
+    }
+
+    /* Saat tombol expand diklik, alirkan kartu langsung ke dalam grid 2-kolom */
+    .dept-more-members.expanded {
+        display: contents !important;
+    }
+
+    /* Tombol Expand/Collapse */
+    .dept-expand-wrapper {
+        display: flex !important;
+        justify-content: center !important;
+        margin-top: 18px !important;
+        width: 100% !important;
+    }
+
+    .btn-dept-expand {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        background: var(--card-bg, #ffffff) !important;
+        color: var(--accent-neon, #0284c7) !important;
+        border: 1.5px solid var(--accent-neon, #0284c7) !important;
+        border-radius: 30px !important;
+        padding: 9px 20px !important;
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        box-shadow: 0 4px 14px var(--card-shadow, rgba(0, 0, 0, 0.05)) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        width: 100% !important;
+        max-width: 300px !important;
+        user-select: none !important;
+        text-align: center !important;
+    }
+
+    .btn-dept-expand:hover,
+    .btn-dept-expand:active,
+    .btn-dept-expand.active {
+        background: var(--accent-neon, #0284c7) !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 20px var(--accent-glow, rgba(2, 132, 199, 0.35)) !important;
+        transform: translateY(-1px) !important;
+    }
+
+    .btn-dept-arrow {
+        transition: transform 0.3s ease !important;
+        flex-shrink: 0 !important;
+    }
+
+    .btn-dept-expand.active .btn-dept-arrow {
+        transform: rotate(180deg) !important;
+    }
+
+    /* Kartu Pimpinan & Anggota yang compact & elegan pada Mobile */
+    .leader-card {
+        padding: 16px 10px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 4px 15px var(--card-shadow, rgba(0,0,0,0.06)) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .leader-photo {
+        width: 70px !important;
+        height: 70px !important;
+        margin: 0 auto 10px !important;
+        border-width: 2.5px !important;
+        box-shadow: 0 0 12px var(--accent-glow, rgba(2, 132, 199, 0.25)) !important;
+    }
+
+    .leader-card h3 {
+        font-size: 0.92rem !important;
+        font-weight: 700 !important;
+        line-height: 1.25 !important;
+        margin-bottom: 3px !important;
+        color: var(--text-light) !important;
+        word-break: break-word !important;
+    }
+
+    .leader-card h4 {
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        line-height: 1.25 !important;
+        margin-bottom: 3px !important;
+        color: var(--text-light) !important;
+        word-break: break-word !important;
+    }
+
+    .leader-card p {
+        font-size: 0.72rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 0 !important;
+        word-break: break-word !important;
+    }
+
+    .dept-container {
+        padding: 20px 12px !important;
+        margin-bottom: 24px !important;
+        border-radius: 18px !important;
+    }
+
+    .dept-header {
+        font-size: 1.2rem !important;
+        margin-bottom: 16px !important;
+        padding-bottom: 10px !important;
+        letter-spacing: 0.5px !important;
+    }
+}
+
+
