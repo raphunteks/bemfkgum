@@ -34,6 +34,18 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// ================= SECURITY HEADERS (HARDENING PARIPURNA) =================
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+    res.setHeader('X-DNS-Prefetch-Control', 'on');
+    next();
+});
+
+
 // ================= SUPER BIG UPGRADE: ANTI-CACHE & IMAGE CACHE BYPASS =================
 // Memastikan request API realtime tidak di-cache, KECUALI untuk aset gambar uploads & endpoint SWR cache
 app.use('/api', (req, res, next) => {
@@ -684,9 +696,11 @@ app.post('/api/upload', async (req, res) => {
         let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
         const uniqueFilename = `${Date.now()}-${safeName}`;
 
-        // Simpan sbg STRING murni -> BEM_Files:1234-nama.jpg (Sesuai GBR 6 & 7)
+        // Simpan sbg STRING murni & HASH murni (Dual-Write untuk Interoperabilitas Vercel)
         const redisKey = `BEM_Files:${uniqueFilename}`;
-        await redis.set(redisKey, JSON.stringify({ filename: safeName, data: base64 }));
+        const filePayload = JSON.stringify({ filename: safeName, data: base64 });
+        await redis.set(redisKey, filePayload);
+        await redis.hset('BEM_Files', { [uniqueFilename]: filePayload });
 
         const fileUrl = `/api/uploads/${uniqueFilename}`;
         res.status(200).json({ success: true, url: fileUrl });
@@ -1811,20 +1825,57 @@ app.post('/api/delete-interaction', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-app.post('/api/admin/auth', (req, res) => {
-    const { username, password } = req.body;
+// ================= AUTH RATE LIMITER (In-Memory, 10 attempts / 15 menit per IP) =================
+const _authRateLimitMap = new Map();
+function checkAuthRateLimit(ip) {
+    const now = Date.now();
+    const windowMs = 15 * 60 * 1000; // 15 menit
+    const maxAttempts = 10;
+    let entry = _authRateLimitMap.get(ip);
+    if (!entry || now - entry.start > windowMs) {
+        entry = { start: now, count: 0 };
+    }
+    entry.count++;
+    _authRateLimitMap.set(ip, entry);
+    return entry.count <= maxAttempts;
+}
+// Bersihkan Map setiap 30 menit agar tidak memory leak
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, entry] of _authRateLimitMap.entries()) {
+        if (now - entry.start > 30 * 60 * 1000) _authRateLimitMap.delete(ip);
+    }
+}, 30 * 60 * 1000);
 
-    const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
-    const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
+app.post('/api/admin/auth', (req, res) => {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+    if (!checkAuthRateLimit(ip)) {
+        return res.status(429).json({ success: false, message: 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.' });
+    }
+
+    const { username, password } = req.body;
+    const validUser = process.env.ADMIN_USER;
+    const validPass = process.env.ADMIN_PASS;
+
+    // SECURITY: Wajib menggunakan .env. Tolak login jika env tidak terpasang.
+    if (!validUser || !validPass) {
+        console.error('⛔ SECURITY: ADMIN_USER / ADMIN_PASS tidak ditemukan di environment. Login ditolak.');
+        return res.status(503).json({ success: false, message: 'Konfigurasi server tidak lengkap.' });
+    }
+
+    const adminToken = process.env.ADMIN_TOKEN;
+    if (!adminToken) {
+        console.warn('⚠️  SECURITY WARNING: ADMIN_TOKEN tidak disetel di environment variables!');
+    }
 
     if (username === validUser && password === validPass) {
-        res.status(200).json({ success: true, token: process.env.ADMIN_TOKEN || 'AXA-XYZ-SECURE-TOKEN' });
+        res.status(200).json({ success: true, token: adminToken || '' });
     } else {
         res.status(401).json({ success: false, message: 'Kredensial salah!' });
     }
 });
 
-// ================= MIDDLEWARE AUTHENTICATION (SUPER ROBUST) =================
+// ================= MIDDLEWARE AUTHENTICATION (SUPER ROBUST — ENV ONLY) =================
 const verifyToken = (req, res, next) => {
     if (req.method === 'OPTIONS') return next();
 
@@ -1833,9 +1884,14 @@ const verifyToken = (req, res, next) => {
     if (typeof bearerHeader !== 'undefined' && bearerHeader) {
         const parts = bearerHeader.split(' ');
         const bearerToken = parts.length === 2 ? parts[1] : parts[0];
-        const validSecret = process.env.ADMIN_TOKEN || 'AXA-XYZ-SECURE-TOKEN';
+        const validSecret = process.env.ADMIN_TOKEN;
 
-        if (bearerToken === validSecret || bearerToken === 'AXA-XYZ-SECURE-TOKEN') {
+        if (!validSecret) {
+            console.warn('⚠️  SECURITY WARNING: ADMIN_TOKEN tidak disetel — akses terproteksi diblokir.');
+            return res.status(503).json({ success: false, message: 'Konfigurasi token server belum siap.' });
+        }
+
+        if (bearerToken === validSecret) {
             return next();
         } else {
             return res.status(403).json({ success: false, message: 'Token Invalid atau Kedaluwarsa' });
@@ -2424,7 +2480,7 @@ Tahap 6: Rangkaian Acara (Pembukaan, inti, penyerahan, penutup).
 Tahap 7: Tujuan, Manfaat, & Sasaran Kegiatan.
 Tahap 8: Kutipan/Poin Sambutan.
 Tahap 9: Perumusan Alternatif Judul (1, 3, 5, atau 10 opsi judul jurnalisme informatif, menarik, tanpa clickbait).
-Tahap 10: Konfirmasi Judul, Deskripsi Singkat (SEO Meta), dan Penyusunan Isi Artikel Lengkap (Lead 5W+1H, Detail, Sambutan, Penutup) + Editorial Check.
+Tahap 10: Konfirmasi Judul, Perumusan Deskripsi Singkat SEO Meta (WAJIB 120–155 karakter standar Google SERP snippet, padat, informatif, memuat entitas BEM FKG UMI), dan Penyusunan Isi Artikel Lengkap Jurnalisme Piramida Terbalik (Lead 5W+1H, Tubuh Berita, Kutipan Sambutan tidak langsung, Penutup harapan) + Editorial Check.
 
 GAYA BAHASA:
 Bahasa Indonesia baku jurnalistik profesional, objektif, humanis, mengalir, rapi, dan mudah dipahami civitas akademika serta masyarakat umum.
@@ -2779,17 +2835,30 @@ app.post('/api/ai/editorial', async (req, res) => {
         let articleDraft = null;
         const selectedTitle = facts.selectedTitle || (parsed.draft && parsed.draft.selectedTitle) || (titleOptions.length === 1 ? titleOptions[0] : "");
         const articleBody = facts.articleBody || (parsed.draft && parsed.draft.articleBody) || "";
-        const shortDescription = facts.shortDescription || (parsed.draft && parsed.draft.shortDescription) || "";
+        let shortDescription = facts.shortDescription || (parsed.draft && parsed.draft.shortDescription) || "";
         const category = facts.category || (parsed.draft && parsed.draft.category) || "Pengabdian Masyarakat";
         const dateRelease = facts.date ? facts.date.split(',').pop().trim() : (facts.eventDate || new Date().toISOString().split('T')[0]);
 
-        if (selectedTitle || articleBody || shortDescription) {
+        // Cerdas standarisasi Meta Deskripsi SEO (120-160 karakter standar Google Search)
+        let seoMetaDesc = (shortDescription || "").replace(/<[^>]*>/g, '').trim();
+        if (seoMetaDesc.length > 165) {
+            const sub = seoMetaDesc.substring(0, 158);
+            const lastPeriod = sub.lastIndexOf('.');
+            if (lastPeriod > 100) {
+                seoMetaDesc = sub.substring(0, lastPeriod + 1);
+            } else {
+                const lastSpace = sub.lastIndexOf(' ');
+                seoMetaDesc = (lastSpace > 100 ? sub.substring(0, lastSpace) : sub) + '...';
+            }
+        }
+
+        if (selectedTitle || articleBody || seoMetaDesc) {
             articleDraft = {
                 judul: selectedTitle || (facts.eventName ? `BEM FKG UMI Gelar ${facts.eventName}` : ""),
                 kategori: category,
                 slug: selectedTitle ? selectedTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : "",
-                penulis: "Humas BEM FKG UMI",
-                meta_desc: shortDescription,
+                penulis: "Admin BEM FKG UMI",
+                meta_desc: seoMetaDesc || shortDescription,
                 konten_bersih: articleBody,
                 tgl_rilis: dateRelease
             };
