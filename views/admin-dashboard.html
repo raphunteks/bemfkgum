@@ -211,7 +211,7 @@
                     </div>
                 </div>
 
-                <!-- 5 MODERN KPI STAT CARDS -->
+                <!-- 4 MODERN KPI STAT CARDS (REALTIME) -->
                 <div class="dash-kpi-grid">
                     <!-- CARD 1: INTERAKSI MASUK -->
                     <div class="dash-kpi-card">
@@ -231,31 +231,13 @@
                         </div>
                     </div>
 
-                    <!-- CARD 2: KETERLAKSANAAN PROKER -->
-                    <div class="dash-kpi-card">
-                        <div class="kpi-card-header">
-                            <div class="kpi-icon-pill" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            </div>
-                            <span class="kpi-title">Keterlaksanaan Proker</span>
-                        </div>
-                        <div class="kpi-card-val" id="statRateAgenda">85%</div>
-                        <div class="kpi-card-foot">
-                            <span class="kpi-trend-tag success">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                                +4%
-                            </span>
-                            <span>vs bulan lalu</span>
-                        </div>
-                    </div>
-
-                    <!-- CARD 3: TOTAL PENGURUS BEM (REALTIME) -->
+                    <!-- CARD 2: TOTAL PENGURUS (REALTIME) -->
                     <div class="dash-kpi-card">
                         <div class="kpi-card-header">
                             <div class="kpi-icon-pill" style="background: rgba(14, 165, 233, 0.12); color: #0ea5e9;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                             </div>
-                            <span class="kpi-title">Total Pengurus BEM</span>
+                            <span class="kpi-title">Total Pengurus</span>
                         </div>
                         <div class="kpi-card-val" id="statTotalPengurus"><span class="kpi-val-num">0</span> <span class="kpi-card-unit">Pengurus</span></div>
                         <div class="kpi-card-foot">
@@ -267,7 +249,7 @@
                         </div>
                     </div>
 
-                    <!-- CARD 4: PUBLIKASI BERITA (PORTAL PUBMED) -->
+                    <!-- CARD 3: PUBLIKASI BERITA (PORTAL PUBMED) -->
                     <div class="dash-kpi-card">
                         <div class="kpi-card-header">
                             <div class="kpi-icon-pill" style="background: rgba(99, 102, 241, 0.12); color: #818cf8;">
@@ -277,12 +259,12 @@
                         </div>
                         <div class="kpi-card-val" id="statTotalBerita">0</div>
                         <div class="kpi-card-foot">
-                            <span class="kpi-trend-tag info">+2 pekan ini</span>
+                            <span class="kpi-trend-tag info" id="statBeritaPekanIni">+0 pekan ini</span>
                             <span>• Portal Pubmed</span>
                         </div>
                     </div>
 
-                    <!-- CARD 5: TOTAL DASHBOARD -->
+                    <!-- CARD 4: TOTAL DASHBOARD -->
                     <div class="dash-kpi-card">
                         <div class="kpi-card-header">
                             <div class="kpi-icon-pill" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8;">
@@ -608,12 +590,20 @@
                                 <div class="ai-preview-meta-group">
                                     <h3 class="ai-preview-headline" id="aiPreviewJudul">Draf Naskah Belum Tersusun</h3>
                                     <div class="ai-preview-byline" id="aiPreviewByline">
-                                        <span>Oleh: Humas BEM FKG UMI</span>
+                                        <span>Oleh: Admin BEM FKG UMI</span>
                                         <span>•</span>
                                         <span id="aiPreviewTanggal">Hari Ini</span>
                                     </div>
                                 </div>
+                                <div class="ai-preview-section-tag" style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6366f1; margin-top:8px;">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    <span>🎯 Meta Deskripsi (SEO Google Search):</span>
+                                </div>
                                 <p class="ai-preview-desc" id="aiPreviewDesc">Meta Deskripsi ringkas akan muncul otomatis di sini...</p>
+                                <div class="ai-preview-section-tag" style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#10b981; margin-top:10px;">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                    <span>📰 Naskah Berita Lengkap (Piramida Terbalik):</span>
+                                </div>
                                 <div class="ai-preview-content" id="aiPreviewBody">
                                     <p style="color: #94a3b8; font-style: italic;">Lakukan wawancara 5W+1H bersama AI Editor. Draf artikel lengkap dengan piramida terbalik akan tampil secara real-time di sini.</p>
                                 </div>
@@ -623,7 +613,7 @@
                                         Masukkan ke Form Tambah Artikel
                                     </button>
                                     <div class="ai-preview-sub-actions">
-                                        <button class="btn-ai-sub" onclick="copyAIArticleToClipboard()">
+                                        <button class="btn-ai-sub" onclick="copyAIArticleToClipboard(this)">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                             Salin Naskah
                                         </button>
@@ -634,6 +624,43 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CUSTOM MODAL REVISI REDAKSI AI -->
+                <div class="ai-revision-modal-overlay" id="aiRevisionModal" onclick="closeAIRevisionModal(event)">
+                    <div class="ai-revision-modal-box" onclick="event.stopPropagation()">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:38px; height:38px; border-radius:12px; background:rgba(99,102,241,0.12); color:#6366f1; display:flex; align-items:center; justify-content:center; font-size:1.25rem;">
+                                    ✏️
+                                </div>
+                                <div>
+                                    <h4 style="margin:0; font-size:1.05rem; font-weight:800; color:var(--text-light, #0f172a);">Minta Revisi Redaksi AI</h4>
+                                    <p style="margin:0; font-size:0.78rem; color:var(--text-muted, #64748b);">Tentukan arahan atau sudut pandang (angle) baru untuk naskah</p>
+                                </div>
+                            </div>
+                            <button onclick="closeAIRevisionModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.5rem; line-height:1;" title="Tutup">&times;</button>
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Saran Revisi Cepat:</label>
+                            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                                <button type="button" class="btn-ai-chip" onclick="setRevisionSuggestion('Mohon pertajam kutipan narasumber dan kuatkan angle pesan utama.')">💬 Kutipan Narasumber</button>
+                                <button type="button" class="btn-ai-chip" onclick="setRevisionSuggestion('Tolong perjelas dampak sosial kegiatan bagi mahasiswa dan masyarakat sekitar.')">🌟 Dampak Kegiatan</button>
+                                <button type="button" class="btn-ai-chip" onclick="setRevisionSuggestion('Buatkan variasi judul yang lebih catchy, formal jurnalistik, dan memikat.')">📰 Judul Lebih Menarik</button>
+                                <button type="button" class="btn-ai-chip" onclick="setRevisionSuggestion('Perbaiki struktur alur piramida terbalik dan sempurnakan kaidah EYD.')">✍️ Rapikan EYD</button>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <textarea id="aiRevisionInput" rows="4" style="width:100%; border-radius:12px; border:1px solid var(--border-light, #cbd5e1); padding:12px; font-size:0.88rem; background:var(--input-bg, #f8fafc); color:var(--text-light, #0f172a); resize:vertical; outline:none; font-family:inherit; box-sizing:border-box;" placeholder="Tulis instruksi revisi yang diinginkan di sini..."></textarea>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; gap:8px;">
+                            <button type="button" class="btn-ai-sub" onclick="closeAIRevisionModal()">Batal</button>
+                            <button type="button" class="btn-ai-apply" style="width:auto; padding:10px 22px;" onclick="submitAIRevision()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                Kirim Revisi ke AI
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -849,12 +876,12 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>NO</th>
+                                <th style="width: 50px; text-align: center;">NO</th>
                                 <th>JUDUL ARTIKEL</th>
-                                <th>KATEGORI</th>
-                                <th>STATISTIK</th>
-                                <th>TANGGAL</th>
-                                <th>AKSI</th>
+                                <th style="width: 190px; text-align: center;">KATEGORI</th>
+                                <th style="width: 90px;">STATISTIK</th>
+                                <th style="width: 120px;">TANGGAL</th>
+                                <th style="width: 150px; text-align: center;">AKSI</th>
                             </tr>
                         </thead>
                         <tbody id="tableBodyArtikel">
@@ -1321,6 +1348,28 @@
             const elBerita = document.getElementById('statTotalBerita');
             if (elBerita) elBerita.innerText = (artikelData ? artikelData.length : 0);
 
+            // Hitung realtime jumlah artikel yang dirilis pada pekan ini
+            let rilisPekanIni = 0;
+            const now = new Date();
+            const dayOfWeek = (now.getDay() + 6) % 7; // 0 = Senin, 6 = Minggu
+            const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek, 0, 0, 0, 0);
+            const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+
+            (artikelData || []).forEach(item => {
+                const rawDate = item.Tgl_Rilis || item.Tanggal || item.tgl_rilis || item.created_at;
+                if (rawDate) {
+                    const artDate = new Date(rawDate);
+                    if (!isNaN(artDate.getTime()) && (artDate >= startOfWeek || artDate >= sevenDaysAgo)) {
+                        rilisPekanIni++;
+                    }
+                }
+            });
+
+            const elPekanIni = document.getElementById('statBeritaPekanIni');
+            if (elPekanIni) {
+                elPekanIni.innerText = rilisPekanIni > 0 ? `+${rilisPekanIni} pekan ini` : `0 pekan ini`;
+            }
+
             let totalPengurus = 0;
             if (db.org && Array.isArray(db.org.pimpinan)) totalPengurus += db.org.pimpinan.length;
             if (db.org && Array.isArray(db.org.departemen)) {
@@ -1562,10 +1611,15 @@
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/admin/auth';
                 const res = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
                 const data = await res.json();
-                if(data.success) { localStorage.setItem('axa_admin_token', data.token); unlockDashboard(); } else throw new Error();
+                if(data.success && data.token) {
+                    localStorage.setItem('axa_admin_token', data.token);
+                    unlockDashboard();
+                } else {
+                    document.getElementById('loginError').style.display = 'block';
+                }
             } catch(e) {
-                if(u === 'bemfkgumi2026' && p === 'bemfkgumi999') { localStorage.setItem('axa_admin_token', 'SIMULASI-TOKEN'); showToast("Simulasi Canvas Aktif."); unlockDashboard(); } 
-                else { document.getElementById('loginError').style.display = 'block'; }
+                // SECURITY: Tidak ada hardcoded fallback — server wajib online
+                document.getElementById('loginError').style.display = 'block';
             }
             btn.innerText = "Akses Sistem"; btn.disabled = false;
         }
@@ -2484,26 +2538,54 @@
             }
         }
 
+        function renderCategoryBadge(kategori) {
+            const rawCat = (kategori || 'Umum').trim();
+            const catLower = rawCat.toLowerCase();
+            
+            let color = '#10b981';
+            let bg = 'rgba(16, 185, 129, 0.12)';
+            let border = 'rgba(16, 185, 129, 0.35)';
+            
+            if (catLower.includes('pengumuman')) {
+                color = '#3b82f6';
+                bg = 'rgba(59, 130, 246, 0.12)';
+                border = 'rgba(59, 130, 246, 0.35)';
+            } else if (catLower.includes('sosial') || catLower.includes('pengabdian')) {
+                color = '#06b6d4';
+                bg = 'rgba(6, 182, 212, 0.12)';
+                border = 'rgba(6, 182, 212, 0.35)';
+            } else if (catLower.includes('event') || catLower.includes('kepanitiaan')) {
+                color = '#8b5cf6';
+                bg = 'rgba(139, 92, 246, 0.12)';
+                border = 'rgba(139, 92, 246, 0.35)';
+            } else if (catLower.includes('prestasi') || catLower.includes('edukasi') || catLower.includes('opini')) {
+                color = '#f59e0b';
+                bg = 'rgba(245, 158, 11, 0.12)';
+                border = 'rgba(245, 158, 11, 0.35)';
+            }
+
+            return `<div style="display:inline-flex; align-items:center; justify-content:center; text-align:center; max-width:180px; padding:6px 12px; border-radius:10px; font-size:0.75rem; font-weight:700; line-height:1.35; color:${color}; background:${bg}; border:1px solid ${border}; word-break:break-word; box-shadow:0 1px 3px rgba(0,0,0,0.06);">${rawCat}</div>`;
+        }
+
         function renderArtikelTable(dataToRender = artikelData) {
             const tbody = document.getElementById('tableBodyArtikel'); tbody.innerHTML = '';
             if (dataToRender.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color:var(--text-muted);">Tidak ada Artikel Publikasi.</td></tr>`;
             } else {
                 dataToRender.forEach((item, index) => {
-                    let catBadge = `<span style="color:#10b981; background:rgba(16, 185, 129, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #10b981;">${item.Kategori || 'Umum'}</span>`;
-                    if(item.Kategori === 'Pengumuman') catBadge = '<span style="color:#3b82f6; background:rgba(59, 130, 246, 0.1); padding:4px 12px; border-radius:20px; font-size:0.75rem; border:1px solid #3b82f6;">Pengumuman</span>';
+                    const catBadge = renderCategoryBadge(item.Kategori);
 
                     tbody.innerHTML += `
                     <tr style="background:var(--card-bg); transition:0.3s;">
-                        <td style="color:var(--text-muted); font-weight:bold;">${index + 1}</td>
+                        <td style="color:var(--text-muted); font-weight:bold; text-align:center;">${index + 1}</td>
                         <td>
                             <strong style="color:var(--text-light); font-size:1rem; display:block; margin-bottom:4px;">${item.Judul}</strong>
                             <span style="color:var(--text-muted); font-size:0.8rem; display:flex; align-items:center; gap:5px;">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                ${item.Penulis || 'Admin'}
+                                ${item.Penulis || 'Admin BEM FKG UMI'}
                             </span>
                         </td>
-                        <td>${catBadge}</td>
+                        <td style="text-align:center; vertical-align:middle;">${catBadge}</td>
                         <td>
                             <div style="display:flex; flex-direction:column; gap:4px; font-size:0.85rem; font-weight:600;">
                                 <span style="color:#ef4444; display:flex; align-items:center; gap:4px;">
@@ -2522,7 +2604,7 @@
                                 ${item.Tgl_Rilis ? item.Tgl_Rilis.split('T')[0] : '-'}
                             </span>
                         </td>
-                        <td>
+                        <td style="text-align:center;">
                             <button class="action-btn view" onclick="openArtikelModal('${item.ID_Berita}')" style="display:inline-flex; align-items:center; gap:4px;">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                                 Edit
@@ -2647,6 +2729,9 @@
                 document.getElementById('artLikes').value = 0;
                 document.getElementById('btnSaveArtikel').innerText = "Publikasikan";
             }
+
+            if (typeof updateArtDescCounter === 'function') updateArtDescCounter();
+            if (typeof updateArtIsiCounter === 'function') updateArtIsiCounter();
         }
 
         function closeArtikelModal() { document.getElementById('artikelModal').classList.remove('active'); }
@@ -2877,6 +2962,19 @@
                     pill.classList.add('active');
                 }
             });
+
+            if (currentStep >= 8) {
+                const card = document.getElementById('aiPreviewCard');
+                if (card) card.classList.add('ready-for-action');
+            }
+            if (currentStep === 10) {
+                const actionsEl = document.querySelector('.ai-preview-actions');
+                if (actionsEl) {
+                    setTimeout(() => {
+                        actionsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 400);
+                }
+            }
         }
 
         function updateAIFactTrackerUI(facts = {}) {
@@ -2953,7 +3051,7 @@
                     judul: currentTitle,
                     kategori: currentCategory,
                     slug: (draft && draft.slug) ? draft.slug : '',
-                    penulis: (draft && draft.penulis) ? draft.penulis : 'Humas BEM FKG UMI',
+                    penulis: 'Admin BEM FKG UMI',
                     meta_desc: currentDesc,
                     konten_bersih: currentBody,
                     konten: currentBody,
@@ -3287,67 +3385,254 @@
             sendAIBeritaMessage(`Saya memilih judul: "${titleText}". Silakan lanjutkan ke penyusunan Meta Deskripsi, Slug, dan Draf Berita lengkap.`);
         }
 
+        function formatToDateInputValue(dateStr) {
+            if (!dateStr) return getTodayDateStr();
+            const clean = String(dateStr).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) return clean;
+            
+            // Format Indo: "21 September 2026"
+            const bulanIndo = {
+                'januari': '01', 'februari': '02', 'maret': '03', 'april': '04',
+                'mei': '05', 'juni': '06', 'juli': '07', 'agustus': '08',
+                'september': '09', 'oktober': '10', 'november': '11', 'desember': '12'
+            };
+            const parts = clean.split(/\s+/);
+            if (parts.length >= 3) {
+                const day = parts[0].replace(/[^0-9]/g, '').padStart(2, '0');
+                const monthName = parts[1].toLowerCase();
+                const year = parts[2].replace(/[^0-9]/g, '');
+                if (bulanIndo[monthName] && year.length === 4) {
+                    return `${year}-${bulanIndo[monthName]}-${day}`;
+                }
+            }
+
+            const d = new Date(clean);
+            if (!isNaN(d.getTime())) {
+                return d.toISOString().split('T')[0];
+            }
+            return getTodayDateStr();
+        }
+
+        function updateArtDescCounter() {
+            const el = document.getElementById('artDesc');
+            const badge = document.getElementById('artDescBadge');
+            const countSpan = document.getElementById('artDescCharCount');
+            if (!el) return;
+            const len = el.value.length;
+            if (countSpan) countSpan.innerText = len;
+            if (badge) {
+                if (len >= 120 && len <= 160) {
+                    badge.style.background = 'rgba(16,185,129,0.15)';
+                    badge.style.color = '#10b981';
+                    badge.innerHTML = `<span id="artDescCharCount">${len}</span> / 160 Karakter • ✅ Optimal GSC`;
+                } else if (len > 160) {
+                    badge.style.background = 'rgba(239,68,68,0.15)';
+                    badge.style.color = '#ef4444';
+                    badge.innerHTML = `<span id="artDescCharCount">${len}</span> / 160 Karakter • ⚠️ Terlalu Panjang`;
+                } else {
+                    badge.style.background = 'rgba(99,102,241,0.12)';
+                    badge.style.color = '#6366f1';
+                    badge.innerHTML = `<span id="artDescCharCount">${len}</span> / 160 Karakter • Standar Emas GSC`;
+                }
+            }
+        }
+
+        function updateArtIsiCounter() {
+            const el = document.getElementById('artIsi');
+            const countEl = document.getElementById('artIsiWordCount');
+            if (!el || !countEl) return;
+            const text = el.value.trim();
+            if (!text) {
+                countEl.innerText = '0 Kata • 0 Paragraf';
+                return;
+            }
+            const words = text.split(/\s+/).filter(Boolean).length;
+            const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0).length;
+            countEl.innerText = `${words} Kata • ${paragraphs} Paragraf`;
+        }
+
         function applyAIArticleToForm() {
-            if (!aiCurrentArticleDraft || (!aiCurrentArticleDraft.judul && !aiFactsState.what)) {
+            const draft = aiCurrentArticleDraft || {};
+            const titleVal = draft.judul || document.getElementById('aiPreviewJudul')?.innerText || aiFactsState.what || '';
+            if (!titleVal || titleVal === 'Draf Naskah Belum Tersusun') {
                 showToast("Belum ada draf naskah yang siap dipindahkan.");
                 return;
             }
 
-            openArtikelModal(); // Open form modal
+            // 1. Buka modal formulir artikel (reset awal form)
+            openArtikelModal();
 
-            const draft = aiCurrentArticleDraft || {};
-            const titleVal = draft.judul || aiFactsState.what || '';
-            const catVal = draft.kategori || 'Kegiatan Sosial';
-            const penulisVal = draft.penulis || 'Humas BEM FKG UMI';
-            const descVal = draft.meta_desc || draft.shortDescription || (aiFactsState.why ? `Liputan: ${aiFactsState.why}` : '');
-            const rawBody = draft.konten_bersih || draft.konten || '';
-            const cleanBody = rawBody.replace(/<\/p>\s*<p>/gi, '\n\n').replace(/<p>/gi, '').replace(/<\/p>/gi, '').trim();
+            // 2. Ekstraksi nilai dengan multi-tier fallback (Objek Draf -> Kartu Preview UI -> State Wawancara 5W+1H)
+            const catBadgeText = document.getElementById('aiPreviewCategory')?.innerText;
+            const catVal = (catBadgeText && catBadgeText !== 'Kegiatan Sosial') ? catBadgeText : (draft.kategori || 'Kegiatan Sosial');
+            
+            const penulisVal = 'Admin BEM FKG UMI'; // Standarisasi mutlak: Admin BEM FKG UMI
 
-            if (document.getElementById('artJudul')) document.getElementById('artJudul').value = titleVal;
-            if (document.getElementById('artSlug')) {
-                const slugCandidate = draft.slug || titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                document.getElementById('artSlug').value = slugCandidate;
+            // Deskripsi Singkat (SEO Meta Google Search)
+            let descVal = (draft.meta_desc || draft.shortDescription || '').trim();
+            const previewDescEl = document.getElementById('aiPreviewDesc');
+            if ((!descVal || descVal.includes('Meta Deskripsi ringkas')) && previewDescEl) {
+                const descText = previewDescEl.innerText.trim();
+                if (descText && !descText.includes('Meta Deskripsi ringkas')) {
+                    descVal = descText;
+                }
             }
-            if (document.getElementById('artKategori')) {
-                const catEl = document.getElementById('artKategori');
-                for (let i = 0; i < catEl.options.length; i++) {
-                    if (catEl.options[i].text.toLowerCase().includes(catVal.toLowerCase()) || catEl.options[i].value.toLowerCase().includes(catVal.toLowerCase())) {
-                        catEl.selectedIndex = i;
-                        break;
+            if (!descVal && aiFactsState.why) {
+                descVal = `BEM KBMFKG UMI menggelar ${aiFactsState.what || 'kegiatan'} di ${aiFactsState.where || 'Makassar'} untuk ${aiFactsState.why}.`;
+            }
+            // Standarisasi Google Search Snippet: potong cerdas jika melebihi 160 karakter
+            if (descVal.length > 165) {
+                const sub = descVal.substring(0, 158);
+                const lastPeriod = sub.lastIndexOf('.');
+                if (lastPeriod > 100) {
+                    descVal = sub.substring(0, lastPeriod + 1);
+                } else {
+                    const lastSpace = sub.lastIndexOf(' ');
+                    descVal = (lastSpace > 100 ? sub.substring(0, lastSpace) : sub) + '...';
+                }
+            }
+
+            // Isi Naskah Berita Lengkap
+            let rawBody = (draft.konten_bersih || draft.konten || draft.articleBody || '').trim();
+            const previewBodyEl = document.getElementById('aiPreviewBody');
+            if (!rawBody && previewBodyEl) {
+                const pTags = Array.from(previewBodyEl.querySelectorAll('p')).map(p => p.innerText.trim()).filter(Boolean);
+                if (pTags.length > 0 && !pTags[0].includes('Lakukan wawancara 5W+1H')) {
+                    rawBody = pTags.join('\n\n');
+                }
+            }
+            // Deep fallback dari sesi tersimpan jika ada
+            if (!rawBody && aiCurrentSessionId) {
+                const activeSess = aiSavedSessions.find(s => s.id === aiCurrentSessionId);
+                if (activeSess && activeSess.article_draft) {
+                    rawBody = activeSess.article_draft.konten_bersih || activeSess.article_draft.konten || activeSess.article_draft.articleBody || '';
+                }
+            }
+
+            const cleanBody = (rawBody || '')
+                .replace(/<\/p>\s*<p>/gi, '\n\n')
+                .replace(/<p>/gi, '')
+                .replace(/<\/p>/gi, '')
+                .trim();
+
+            // Tanggal Rilis (Format YYYY-MM-DD standar HTML date input)
+            const previewTanggalText = document.getElementById('aiPreviewTanggal')?.innerText;
+            const tglVal = formatToDateInputValue(draft.tgl_rilis || previewTanggalText || (aiFactsState.when ? aiFactsState.when.split('•')[0] : ''));
+
+            // Slug URL
+            const slugCandidate = draft.slug || titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+            // 3. Masukkan ke elemen Form Tambah Artikel Baru secara tangguh
+            const elJudul = document.getElementById('artJudul');
+            if (elJudul) elJudul.value = titleVal;
+
+            const elSlug = document.getElementById('artSlug');
+            if (elSlug) elSlug.value = slugCandidate;
+
+            const elKategori = document.getElementById('artKategori');
+            if (elKategori) {
+                elKategori.value = catVal;
+                if (elKategori.tagName === 'SELECT' && elKategori.options) {
+                    for (let i = 0; i < elKategori.options.length; i++) {
+                        if (elKategori.options[i].text.toLowerCase().includes(catVal.toLowerCase()) || elKategori.options[i].value.toLowerCase().includes(catVal.toLowerCase())) {
+                            elKategori.selectedIndex = i;
+                            break;
+                        }
                     }
                 }
             }
-            if (document.getElementById('artPenulis')) document.getElementById('artPenulis').value = penulisVal;
-            if (document.getElementById('artDesc')) document.getElementById('artDesc').value = descVal;
-            if (document.getElementById('artIsi')) {
-                document.getElementById('artIsi').value = cleanBody || (aiFactsState.what ? `${titleVal}\n\n${aiFactsState.where}, ${aiFactsState.when} - ${aiFactsState.what} yang diselenggarakan oleh ${aiFactsState.who}.` : '');
-            }
-            if (document.getElementById('artTanggal')) document.getElementById('artTanggal').value = draft.tgl_rilis || getTodayDateStr();
 
-            showToast("✅ Berhasil memindahkan draf naskah AI ke Formulir Tambah Artikel!");
+            const elPenulis = document.getElementById('artPenulis');
+            if (elPenulis) elPenulis.value = penulisVal;
+
+            const elDesc = document.getElementById('artDesc');
+            if (elDesc) {
+                elDesc.value = descVal;
+                updateArtDescCounter();
+            }
+
+            const elIsi = document.getElementById('artIsi');
+            if (elIsi) {
+                elIsi.value = cleanBody || (aiFactsState.what ? `${titleVal}\n\n${aiFactsState.where}, ${aiFactsState.when} - ${aiFactsState.what} yang diselenggarakan oleh ${aiFactsState.who}.` : '');
+                updateArtIsiCounter();
+            }
+
+            const elTanggal = document.getElementById('artTanggal');
+            if (elTanggal) elTanggal.value = tglVal;
+
+            // Auto-scroll ke posisi Deskripsi & Isi Artikel agar langsung terlihat oleh Admin
+            const modalBody = document.getElementById('artModalBody');
+            if (modalBody) {
+                setTimeout(() => {
+                    if (elDesc) {
+                        elDesc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 100);
+            }
+
+            showToast("✅ Berhasil memindahkan Meta Deskripsi & Naskah Berita ke Formulir!");
         }
 
-        function copyAIArticleToClipboard() {
+        function copyAIArticleToClipboard(btnElement) {
             const draft = aiCurrentArticleDraft || {};
-            const titleVal = draft.judul || aiFactsState.what;
+            const titleVal = draft.judul || document.getElementById('aiPreviewJudul')?.innerText || aiFactsState.what;
             if (!titleVal) {
                 showToast("Belum ada naskah berita untuk disalin.");
                 return;
             }
-            const fullText = `JUDUL: ${titleVal}\nKATEGORI: ${draft.kategori || 'Kegiatan Sosial'}\nSLUG: /berita/${draft.slug || '-'}\nPENULIS: ${draft.penulis || 'Humas BEM FKG UMI'}\nTANGGAL: ${draft.tgl_rilis || getTodayDateStr()}\nMETA DESKRIPSI: ${draft.meta_desc || draft.shortDescription || '-'}\n\n--- NASKAH BERITA ---\n\n${draft.konten_bersih || draft.konten || (aiFactsState.what ? `${aiFactsState.where}, ${aiFactsState.when} - ${aiFactsState.what}` : '')}`;
+            const catVal = document.getElementById('aiPreviewCategory')?.innerText || draft.kategori || 'Kegiatan Sosial';
+            const descVal = document.getElementById('aiPreviewDesc')?.innerText || draft.meta_desc || draft.shortDescription || '-';
+            const rawBody = draft.konten_bersih || draft.konten || draft.articleBody || document.getElementById('aiPreviewBody')?.innerText || '';
+            const tglVal = document.getElementById('aiPreviewTanggal')?.innerText || draft.tgl_rilis || getTodayDateStr();
+
+            const fullText = `JUDUL: ${titleVal}\nKATEGORI: ${catVal}\nSLUG: /berita/${draft.slug || titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}\nPENULIS: Admin BEM FKG UMI\nTANGGAL: ${tglVal}\nMETA DESKRIPSI: ${descVal}\n\n--- NASKAH BERITA ---\n\n${rawBody.trim()}`;
             
             navigator.clipboard.writeText(fullText).then(() => {
                 showToast("📋 Seluruh naskah berita berhasil disalin ke Clipboard!");
+                // Visual Button Feedback
+                const btn = btnElement || document.querySelector('.ai-preview-sub-actions .btn-ai-sub');
+                if (btn) {
+                    const origHtml = btn.innerHTML;
+                    btn.innerHTML = '<span>✅ Tersalin!</span>';
+                    setTimeout(() => { btn.innerHTML = origHtml; }, 2000);
+                }
             }).catch(() => {
                 showToast("Gagal menyalin naskah.");
             });
         }
 
         function requestAIArticleRevision() {
-            const promptRev = prompt("Masukkan catatan revisi atau sudut pandang (angle) baru:", "Mohon pertajam angle liputan pada dampak kegiatan bagi masyarakat dan perjelas kutipan narasumber.");
-            if (promptRev && promptRev.trim()) {
-                sendAIBeritaMessage(`REVISI DRAF: ${promptRev.trim()}`);
+            const modal = document.getElementById('aiRevisionModal');
+            const input = document.getElementById('aiRevisionInput');
+            if (input) input.value = '';
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeAIRevisionModal(event) {
+            if (event && event.target && event.target.id !== 'aiRevisionModal' && !event.target.closest('button')) {
+                return;
             }
+            const modal = document.getElementById('aiRevisionModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function setRevisionSuggestion(text) {
+            const input = document.getElementById('aiRevisionInput');
+            if (input) {
+                input.value = text;
+                input.focus();
+            }
+        }
+
+        function submitAIRevision() {
+            const input = document.getElementById('aiRevisionInput');
+            const val = input ? input.value.trim() : '';
+            if (!val) {
+                showToast("Silakan tulis catatan revisi atau pilih salah satu saran.");
+                return;
+            }
+            closeAIRevisionModal();
+            sendAIBeritaMessage(`REVISI DRAF: ${val}`);
         }
 
         const AI_STAGE_LABELS = {
