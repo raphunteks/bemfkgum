@@ -8,10 +8,20 @@ require('dotenv').config();
 
 const app = express();
 
-// ================= KONFIGURASI CORS & LIMIT REQUEST =================
-// Mengizinkan header Authorization dan metode mutasi agar request preflight (OPTIONS) lolos tanpa blokir
+// ================= KONFIGURASI CORS (WHITELIST — BUKAN WILDCARD) =================
+const _allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['https://bemkbmfkgumi.com', 'http://localhost:3000', 'http://localhost:3001'];
+
 const corsOptions = {
-    origin: true,
+    origin: function(origin, callback) {
+        // Izinkan request tanpa origin (curl, Postman, SSR) dan origin yang whitelisted
+        if (!origin || _allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Blocked by CORS: origin tidak diizinkan'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
@@ -22,6 +32,17 @@ app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// ================= SECURITY HEADERS (HARDENING V2) =================
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+    next();
+});
+
 
 // Konfigurasi Cache File Statis
 const staticOptions = {
@@ -65,7 +86,21 @@ const safeParse = (data, fallbackData) => {
     }
 };
 
-// ================= MIDDLEWARE AUTHENTICATION (SUPER ROBUST) =================
+// ================= AUTH RATE LIMITER V2 (In-Memory) =================
+const _authRateLimitMapV2 = new Map();
+function checkAuthRateLimitV2(ip) {
+    const now = Date.now();
+    const windowMs = 15 * 60 * 1000;
+    const maxAttempts = 10;
+    let entry = _authRateLimitMapV2.get(ip);
+    if (!entry || now - entry.start > windowMs) entry = { start: now, count: 0 };
+    entry.count++;
+    _authRateLimitMapV2.set(ip, entry);
+    return entry.count <= maxAttempts;
+}
+setInterval(() => { const now = Date.now(); for (const [ip, e] of _authRateLimitMapV2.entries()) { if (now - e.start > 30 * 60 * 1000) _authRateLimitMapV2.delete(ip); } }, 30 * 60 * 1000);
+
+// ================= MIDDLEWARE AUTHENTICATION (SUPER ROBUST — ENV ONLY) =================
 const verifyToken = (req, res, next) => {
     // Lewatkan request preflight OPTIONS langsung ke handler CORS
     if (req.method === 'OPTIONS') return next();
@@ -75,9 +110,14 @@ const verifyToken = (req, res, next) => {
     if (typeof bearerHeader !== 'undefined' && bearerHeader) {
         const parts = bearerHeader.split(' ');
         const bearerToken = parts.length === 2 ? parts[1] : parts[0];
-        const validSecret = process.env.ADMIN_TOKEN || 'AXA-XYZ-SECURE-TOKEN';
+        const validSecret = process.env.ADMIN_TOKEN;
 
-        if (bearerToken === validSecret || bearerToken === 'AXA-XYZ-SECURE-TOKEN') {
+        if (!validSecret) {
+            console.warn('⚠️  V2 SECURITY WARNING: ADMIN_TOKEN tidak disetel.');
+            return res.status(503).json({ success: false, message: 'Konfigurasi token server belum siap.' });
+        }
+
+        if (bearerToken === validSecret) {
             return next();
         } else {
             return res.status(403).json({ success: false, message: 'Token Invalid atau Kedaluwarsa' });
@@ -87,15 +127,25 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-// ================= ENDPOINT AUTENTIKASI ADMIN (SECURITY) =================
+// ================= ENDPOINT AUTENTIKASI ADMIN (SECURITY — ENV ONLY) =================
 app.post('/api/admin/auth', (req, res) => {
-    const { username, password } = req.body;
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+    if (!checkAuthRateLimitV2(ip)) {
+        return res.status(429).json({ success: false, message: 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.' });
+    }
 
-    const validUser = process.env.ADMIN_USER || 'bemfkgumi2026';
-    const validPass = process.env.ADMIN_PASS || 'bemfkgumi999';
+    const { username, password } = req.body;
+    const validUser = process.env.ADMIN_USER;
+    const validPass = process.env.ADMIN_PASS;
+    const adminToken = process.env.ADMIN_TOKEN;
+
+    if (!validUser || !validPass) {
+        console.error('⛔ V2 SECURITY: ADMIN_USER/ADMIN_PASS tidak ada di env. Login ditolak.');
+        return res.status(503).json({ success: false, message: 'Konfigurasi server tidak lengkap.' });
+    }
 
     if (username === validUser && password === validPass) {
-        res.status(200).json({ success: true, token: 'AXA-XYZ-SECURE-TOKEN' });
+        res.status(200).json({ success: true, token: adminToken || '' });
     } else {
         res.status(401).json({ success: false, message: 'Kredensial salah!' });
     }
@@ -149,7 +199,9 @@ app.post('/api/upload', async (req, res) => {
         let safeName = filename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/(^-|-$)+/g, '');
         const uniqueFilename = `file-${Date.now()}-${safeName}`;
 
-        await redis.hset('BEM_Files', { [uniqueFilename]: JSON.stringify({ filename: safeName, data: base64 }) });
+        const payloadStr = JSON.stringify({ filename: safeName, data: base64 });
+        await redis.hset('BEM_Files', { [uniqueFilename]: payloadStr });
+        await redis.set(`BEM_Files:${uniqueFilename}`, payloadStr);
 
         const fileUrl = `/api/uploads/${uniqueFilename}`;
         res.status(200).json({ success: true, url: fileUrl });
@@ -161,7 +213,15 @@ app.post('/api/upload', async (req, res) => {
 app.get('/api/uploads/:filename', async (req, res) => {
     try {
         if (!redis) return res.status(503).send("Server Storage Offline");
-        const fileDataStr = await redis.hget('BEM_Files', req.params.filename);
+        const filename = req.params.filename;
+        let fileDataStr = await redis.hget('BEM_Files', filename);
+        if (!fileDataStr) {
+            fileDataStr = await redis.get(`BEM_Files:${filename}`);
+        }
+        if (!fileDataStr) {
+            const altFilename = filename.startsWith('file-') ? filename.replace(/^file-/, '') : `file-${filename}`;
+            fileDataStr = await redis.hget('BEM_Files', altFilename) || await redis.get(`BEM_Files:${altFilename}`);
+        }
         if (!fileDataStr) return res.status(404).send("File tidak ditemukan.");
 
         const fileObj = safeParse(fileDataStr, null);
