@@ -1853,12 +1853,20 @@ app.post('/api/admin/auth', (req, res) => {
         return res.status(429).json({ success: false, message: 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.' });
     }
 
-    const { username, password } = req.body;
-    const validUser = process.env.ADMIN_USER;
-    const validPass = process.env.ADMIN_PASS;
+    const { username, password } = req.body || {};
+    const cleanUser = String(username || '').trim().toLowerCase();
+    const cleanPass = String(password || '').trim();
+
+    // Mendukung multi-alias username dipisahkan koma (contoh: bemkbmfkgumi2026,bemfkgumi2026)
+    const rawValidUser = process.env.ADMIN_USER || '';
+    const validUsers = rawValidUser
+        .split(',')
+        .map(u => u.trim().toLowerCase())
+        .filter(Boolean);
+    const validPass = String(process.env.ADMIN_PASS || '').trim();
 
     // SECURITY: Wajib menggunakan .env. Tolak login jika env tidak terpasang.
-    if (!validUser || !validPass) {
+    if (validUsers.length === 0 || !validPass) {
         console.error('⛔ SECURITY: ADMIN_USER / ADMIN_PASS tidak ditemukan di environment. Login ditolak.');
         return res.status(503).json({ success: false, message: 'Konfigurasi server tidak lengkap.' });
     }
@@ -1868,10 +1876,13 @@ app.post('/api/admin/auth', (req, res) => {
         console.warn('⚠️  SECURITY WARNING: ADMIN_TOKEN tidak disetel di environment variables!');
     }
 
-    if (username === validUser && password === validPass) {
+    const isUserMatch = validUsers.includes(cleanUser);
+    const isPassMatch = cleanPass === validPass;
+
+    if (isUserMatch && isPassMatch) {
         res.status(200).json({ success: true, token: adminToken || '' });
     } else {
-        res.status(401).json({ success: false, message: 'Kredensial salah!' });
+        res.status(401).json({ success: false, message: 'Kredensial salah! Pastikan username dan password benar.' });
     }
 });
 
