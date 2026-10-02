@@ -8,18 +8,24 @@ require('dotenv').config();
 
 const app = express();
 
-// ================= KONFIGURASI CORS (WHITELIST — BUKAN WILDCARD) =================
-const _allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',')
-    : ['https://bemkbmfkgumi.com', 'http://localhost:3000', 'http://localhost:3001'];
-
+// ================= KONFIGURASI CORS (ROBUST ANTI-CRASH & COMPREHENSIVE) =================
 const corsOptions = {
     origin: function(origin, callback) {
-        // Izinkan request tanpa origin (curl, Postman, SSR) dan origin yang whitelisted
-        if (!origin || _allowedOrigins.includes(origin)) {
+        // Izinkan request tanpa origin (mobile apps, curl, SSR, serverless internal)
+        if (!origin) return callback(null, true);
+
+        // Toleran terhadap https / http, www, subdomain, vercel preview domain, dan localhost
+        const isAllowed = 
+            origin.includes('bemkbmfkgumi.com') ||
+            origin.includes('vercel.app') ||
+            origin.includes('localhost') ||
+            origin.includes('127.0.0.1');
+
+        if (isAllowed) {
             callback(null, true);
         } else {
-            callback(new Error('Blocked by CORS: origin tidak diizinkan'));
+            // PENTING: Jangan lempar fatal Error() agar tidak menjadi 500 HTML crash
+            callback(null, false);
         }
     },
     credentials: true,
@@ -809,6 +815,12 @@ app.delete('/api/qrcodes/:id', verifyToken, async (req, res) => {
     } catch (e) {
         res.status(500).json({ success: false, message: e.message });
     }
+});
+
+// SUPER UPGRADE: GLOBAL ERROR HANDLER V2 (ALWAYS JSON, NEVER RAW HTML)
+app.use((err, req, res, next) => {
+    console.error("🔥 V2 Server Error Intercepted:", err.stack || err.message || err);
+    res.status(500).json({ success: false, message: "Terjadi kesalahan internal server V2." });
 });
 
 const PORT = process.env.PORT || 3001;
