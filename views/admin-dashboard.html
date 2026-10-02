@@ -1651,23 +1651,59 @@
                 if(window.location.protocol === 'blob:' || window.location.origin === "null") apiUrl = 'https://bemkbmfkgumi.com/api/admin/auth';
                 const res = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
                     body: JSON.stringify({username: u, password: p})
                 });
-                const data = await res.json();
-                if(res.ok && data.success && data.token) {
+
+                let data = null;
+                const contentType = res.headers.get('content-type') || '';
+                if (contentType.includes('application/json')) {
+                    try {
+                        data = await res.json();
+                    } catch (parseErr) {
+                        data = null;
+                    }
+                }
+
+                if (res.ok && data && data.success && data.token) {
                     localStorage.setItem('axa_admin_token', data.token);
                     unlockDashboard();
+                } else if (data && data.message) {
+                    if (errEl) {
+                        errEl.innerText = data.message;
+                        errEl.style.display = 'block';
+                    }
+                } else if (res.status === 401) {
+                    if (errEl) {
+                        errEl.innerText = "Kredensial salah! Pastikan username dan password benar.";
+                        errEl.style.display = 'block';
+                    }
+                } else if (res.status === 403) {
+                    if (errEl) {
+                        errEl.innerText = "Akses ditolak (403) oleh sistem proteksi. Silakan refresh halaman dan coba kembali.";
+                        errEl.style.display = 'block';
+                    }
+                } else if (res.status === 429) {
+                    if (errEl) {
+                        errEl.innerText = "Terlalu banyak percobaan login. Coba lagi dalam 15 menit.";
+                        errEl.style.display = 'block';
+                    }
+                } else if (res.status >= 500) {
+                    if (errEl) {
+                        errEl.innerText = `Server sedang memproses pembaruan sistem (${res.status}). Silakan coba beberapa saat lagi.`;
+                        errEl.style.display = 'block';
+                    }
                 } else {
                     if (errEl) {
-                        errEl.innerText = data.message || "Kredensial tidak valid.";
+                        errEl.innerText = "Kredensial tidak valid.";
                         errEl.style.display = 'block';
                     }
                 }
             } catch(e) {
-                // SECURITY: Server wajib online
+                // SECURITY: Server wajib online & tangani offline/CORS
+                console.error("Auth Exception:", e);
                 if (errEl) {
-                    errEl.innerText = "Gagal terhubung ke server autentikasi. Pastikan koneksi aktif.";
+                    errEl.innerText = "Gagal terhubung ke server autentikasi. Pastikan koneksi internet stabil.";
                     errEl.style.display = 'block';
                 }
             } finally {
